@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Millionaire Calculator — When Will You Be Rich? | FinanceRateCalc</title>
-<meta name="description" content="Free millionaire calculator. Find out exactly when you'll reach $1 million based on your savings and investment rate. Plus inflation and salary growth tools.">
+<title>Financial Power Tools — FinanceRateCalc</title>
+<meta name="description" content="Free millionaire calculator. Find out exactly when you'll reach $1 million. Plus inflation destroyer and salary growth tools. Built by a licensed banking professional.">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -12,449 +12,595 @@
   gtag('js', new Date());
   gtag('config', 'G-13712175066');
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f9f7f4;
-    --white: #ffffff;
-    --dark: #111118;
-    --border: #e8e4dc;
-    --muted: #888;
-    --text: #2a2a2a;
-    --gold: #d4900a;
-    --gold-bg: rgba(212,144,10,0.08);
-    --red: #dc2626;
-    --red-bg: rgba(220,38,38,0.06);
-    --green: #16a34a;
-    --green-bg: rgba(22,163,74,0.06);
-    --blue: #1d4ed8;
-    --blue-bg: rgba(29,78,216,0.06);
-  }
+:root {
+  --ink: #0a0a0f;
+  --ink2: #13131a;
+  --ink3: #1c1c26;
+  --surface: #16161f;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #e8e6e0;
+  --muted: rgba(232,230,224,0.45);
+  --muted2: rgba(232,230,224,0.25);
+  --gold: #e8b84b;
+  --gold2: #f5d37a;
+  --gold-dim: rgba(232,184,75,0.12);
+  --gold-glow: rgba(232,184,75,0.25);
+  --red: #e05252;
+  --red-dim: rgba(224,82,82,0.1);
+  --green: #4ead7a;
+  --green-dim: rgba(78,173,122,0.1);
+  --radius: 14px;
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing:border-box; }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--ink);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  header {
-    background: var(--dark);
-    padding: 18px 48px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.6;
+}
 
-  .logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: #fff;
-  }
+/* Disclaimer */
+.disclaimer {
+  background: linear-gradient(90deg, #1a1a2e, #16213e, #1a1a2e);
+  border-bottom: 1px solid rgba(99,102,241,0.2);
+  text-align: center;
+  padding: 9px 24px;
+  font-size: 11px;
+  color: rgba(199,210,254,0.6);
+  letter-spacing: 0.4px;
+  font-weight: 400;
+}
+.disclaimer strong { color: rgba(199,210,254,0.9); font-weight: 600; }
 
-  .logo span { color: #fbbf24; }
+/* Header */
+header {
+  background: var(--ink2);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
 
-  nav a {
-    color: rgba(255,255,255,0.45);
-    text-decoration: none;
-    font-size: 13px;
-    margin-left: 20px;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+.logo em { color: var(--gold); font-style: normal; }
 
-  nav a:hover, nav a.active { color: #fbbf24; }
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 28px;
+  transition: color 0.2s;
+  letter-spacing: 0.2px;
+}
+nav a:hover, nav a.active { color: var(--gold); }
 
-  @media (max-width: 768px) {
-    header { padding: 16px 20px; }
-    nav { display: none; }
-  }
+@media (max-width: 768px) {
+  header { padding: 16px 20px; }
+  nav { display: none; }
+}
 
-  /* Tool switcher */
-  .switcher {
-    background: var(--dark);
-    padding: 0 48px 24px;
-    display: flex;
-    gap: 8px;
-  }
+/* Tool switcher */
+.switcher-wrap {
+  background: var(--ink2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px 24px;
+}
 
-  @media (max-width: 768px) { .switcher { padding: 0 20px 20px; flex-wrap: wrap; } }
+.switcher {
+  display: flex;
+  gap: 6px;
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-  .switch-btn {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.5);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
+@media (max-width: 768px) {
+  .switcher-wrap { padding: 0 16px 16px; }
+  .switcher { flex-direction: column; gap: 6px; }
+}
 
-  .switch-btn:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
-  .switch-btn.active { background: #fbbf24; border-color: #fbbf24; color: #111; }
+.switch-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.22s;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+.switch-btn:hover { color: var(--text); border-color: var(--border2); background: rgba(255,255,255,0.04); }
+.switch-btn.active-gold { background: var(--gold); border-color: var(--gold); color: #0a0a0f; }
+.switch-btn.active-red { background: var(--red); border-color: var(--red); color: #fff; }
+.switch-btn.active-green { background: var(--green); border-color: var(--green); color: #0a0a0f; }
 
-  /* Tool sections */
-  .tool { display: none; }
-  .tool.active { display: block; animation: fadeUp 0.35s ease; }
+/* Tool visibility */
+.tool { display: none; }
+.tool.active { display: block; animation: rise 0.4s cubic-bezier(0.16,1,0.3,1); }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-  /* Hero */
-  .tool-hero {
-    padding: 50px 48px 40px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
+/* Hero */
+.hero {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 56px 48px 40px;
+}
 
-  @media (max-width: 768px) { .tool-hero { padding: 36px 20px 28px; } }
+@media (max-width: 768px) { .hero { padding: 36px 20px 28px; } }
 
-  .tool-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 14px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-  }
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.tag-gold { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(232,184,75,0.2); }
+.tag-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(224,82,82,0.2); }
+.tag-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(78,173,122,0.2); }
 
-  .badge-gold { background: var(--gold-bg); color: var(--gold); border: 1px solid rgba(212,144,10,0.2); }
-  .badge-red { background: var(--red-bg); color: var(--red); border: 1px solid rgba(220,38,38,0.2); }
-  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(22,163,74,0.2); }
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 58px);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -1.5px;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+.hero h1 .accent-gold { color: var(--gold); }
+.hero h1 .accent-red { color: var(--red); }
+.hero h1 .accent-green { color: var(--green); }
 
-  .tool-hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(28px, 4vw, 48px);
-    font-weight: 800;
-    color: var(--dark);
-    line-height: 1.05;
-    letter-spacing: -1px;
-    margin-bottom: 12px;
-  }
+.hero p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.75;
+  max-width: 480px;
+  font-weight: 300;
+}
 
-  .tool-hero p {
-    color: var(--muted);
-    font-size: 15px;
-    line-height: 1.7;
-    max-width: 520px;
-    font-weight: 300;
-  }
+/* Body grid */
+.body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 48px 100px;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .body { grid-template-columns: 1fr; padding: 0 20px 60px; }
+}
 
-  /* Main layout */
-  .tool-body {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 48px 80px;
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 20px;
-    align-items: start;
-  }
+/* Card */
+.card {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: border-color 0.3s;
+}
+.card:hover { border-color: var(--border2); }
 
-  @media (max-width: 768px) {
-    .tool-body { grid-template-columns: 1fr; padding: 0 20px 60px; }
-  }
+.card-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
 
-  /* Cards */
-  .card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px;
-  }
+/* Fields */
+.field { margin-bottom: 20px; }
 
-  .card-title {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 22px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
+.field label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.field label .val {
+  font-family: 'DM Mono', monospace;
+  color: var(--text);
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 13px;
+}
 
-  /* Fields */
-  .field { margin-bottom: 18px; }
+.input-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--ink3);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-wrap:focus-within {
+  border-color: rgba(232,184,75,0.4);
+  box-shadow: 0 0 0 3px rgba(232,184,75,0.07);
+}
 
-  .field label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 7px;
-  }
+.pre, .suf {
+  padding: 0 13px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted2);
+  background: rgba(255,255,255,0.03);
+  height: 44px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.pre { border-right: 1px solid var(--border); }
+.suf { border-left: 1px solid var(--border); }
 
-  .field label .val { color: var(--dark); font-weight: 700; text-transform: none; letter-spacing: 0; font-size: 13px; }
+input[type="number"] {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0 14px;
+  height: 44px;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 15px;
+  font-weight: 500;
+  outline: none;
+  -moz-appearance: textfield;
+  min-width: 0;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
-  .input-wrap {
-    display: flex;
-    align-items: center;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    background: var(--bg);
-    transition: border-color 0.2s;
-  }
+input[type="range"] {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 2px;
+  background: var(--border2);
+  border-radius: 1px;
+  outline: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 2px solid var(--ink2);
+  box-shadow: 0 2px 8px rgba(232,184,75,0.4);
+  cursor: pointer;
+}
 
-  .input-wrap:focus-within { border-color: var(--dark); background: #fff; }
+/* Buttons */
+.btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 9px;
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.22s;
+  margin-top: 6px;
+  position: relative;
+  overflow: hidden;
+}
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.2s;
+}
+.btn:hover::after { background: rgba(255,255,255,0.08); }
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
 
-  .pre, .suf {
-    padding: 0 12px;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--muted);
-    background: rgba(0,0,0,0.03);
-    height: 42px;
-    display: flex;
-    align-items: center;
-    border-right: 1px solid var(--border);
-    flex-shrink: 0;
-  }
+.btn-gold { background: linear-gradient(135deg, var(--gold), #c9971e); color: #0a0a0f; box-shadow: 0 4px 20px rgba(232,184,75,0.3); }
+.btn-red { background: linear-gradient(135deg, #e05252, #c03030); color: #fff; box-shadow: 0 4px 20px rgba(224,82,82,0.3); }
+.btn-green { background: linear-gradient(135deg, #4ead7a, #2d8a58); color: #0a0a0f; box-shadow: 0 4px 20px rgba(78,173,122,0.3); }
 
-  .suf { border-right: none; border-left: 1px solid var(--border); }
+/* Result main banner */
+.result-main {
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  margin-bottom: 14px;
+  border: 1px solid;
+  position: relative;
+  overflow: hidden;
+}
+.result-main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% -20%, var(--glow-color, transparent) 0%, transparent 70%);
+  pointer-events: none;
+}
 
-  input[type="number"] {
-    flex: 1;
-    background: transparent;
-    border: none;
-    padding: 0 14px;
-    height: 42px;
-    color: var(--dark);
-    font-family: 'Inter', monospace;
-    font-size: 15px;
-    font-weight: 600;
-    outline: none;
-    -moz-appearance: textfield;
-    min-width: 0;
-  }
+.rm-gold { background: var(--gold-dim); border-color: rgba(232,184,75,0.2); --glow-color: rgba(232,184,75,0.15); }
+.rm-red { background: var(--red-dim); border-color: rgba(224,82,82,0.2); --glow-color: rgba(224,82,82,0.15); }
+.rm-green { background: var(--green-dim); border-color: rgba(78,173,122,0.2); --glow-color: rgba(78,173,122,0.15); }
 
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+.rm-label {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.rm-gold .rm-label { color: var(--gold); }
+.rm-red .rm-label { color: var(--red); }
+.rm-green .rm-label { color: var(--green); }
 
-  input[type="range"] {
-    width: 100%;
-    -webkit-appearance: none;
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-    margin-top: 8px;
-  }
+.rm-value {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(40px, 6vw, 60px);
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 8px;
+  letter-spacing: -2px;
+}
+.rm-gold .rm-value { color: var(--gold); }
+.rm-red .rm-value { color: var(--red); }
+.rm-green .rm-value { color: var(--green); }
 
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--dark);
-    border: 2px solid #fff;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-  }
+.rm-sub { font-size: 12px; color: var(--muted); font-weight: 300; letter-spacing: 0.3px; }
 
-  .btn {
-    width: 100%;
-    padding: 13px;
-    background: var(--dark);
-    border: none;
-    border-radius: 8px;
-    color: #fff;
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 6px;
-  }
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
 
-  .btn:hover { background: #2a2a2a; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
-  .btn.gold { background: var(--gold); }
-  .btn.gold:hover { background: #b8780a; }
-  .btn.red { background: var(--red); }
-  .btn.red:hover { background: #b91c1c; }
-  .btn.green { background: var(--green); }
-  .btn.green:hover { background: #15803d; }
+.stat-card {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: var(--border2); }
 
-  /* Result main */
-  .result-main {
-    border-radius: 14px;
-    padding: 28px;
-    text-align: center;
-    margin-bottom: 16px;
-    position: relative;
-    overflow: hidden;
-  }
+.stat-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted2);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.stat-value {
+  font-family: 'DM Mono', monospace;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+}
+.sv-gold { color: var(--gold); }
+.sv-red { color: var(--red); }
+.sv-green { color: var(--green); }
 
-  .result-main.gold { background: var(--gold-bg); border: 1px solid rgba(212,144,10,0.2); }
-  .result-main.red { background: var(--red-bg); border: 1px solid rgba(220,38,38,0.2); }
-  .result-main.green { background: var(--green-bg); border: 1px solid rgba(22,163,74,0.2); }
+/* Progress */
+.progress-section { margin-bottom: 14px; }
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+.progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); width: 0; }
+.pf-gold { background: linear-gradient(90deg, #c9971e, var(--gold)); }
+.pf-red { background: linear-gradient(90deg, #c03030, var(--red)); }
+.pf-green { background: linear-gradient(90deg, #2d8a58, var(--green)); }
 
-  .rm-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
-  .gold .rm-label { color: var(--gold); }
-  .red .rm-label { color: var(--red); }
-  .green .rm-label { color: var(--green); }
+/* Timeline */
+.timeline-card {
+  background: var(--ink2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 14px;
+}
+.tl-header {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 16px;
+}
+.tl-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.tl-year {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted2);
+  width: 44px;
+  flex-shrink: 0;
+}
+.tl-bar-wrap { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.tl-bar-fill { height: 100%; border-radius: 2px; transition: width 0.9s cubic-bezier(0.4,0,0.2,1); }
+.tl-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  width: 72px;
+  text-align: right;
+  flex-shrink: 0;
+}
 
-  .rm-value {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(36px, 5vw, 52px);
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 6px;
-    letter-spacing: -1px;
-  }
+/* Expert box */
+.expert-box {
+  background: var(--ink3);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.expert-box.red-accent { border-left-color: var(--red); }
+.expert-box.green-accent { border-left-color: var(--green); }
 
-  .gold .rm-value { color: var(--gold); }
-  .red .rm-value { color: var(--red); }
-  .green .rm-value { color: var(--green); }
+.ex-avatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--gold-dim), rgba(232,184,75,0.2));
+  border: 1px solid rgba(232,184,75,0.3);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+.ex-avatar.red-av {
+  background: linear-gradient(135deg, var(--red-dim), rgba(224,82,82,0.15));
+  border-color: rgba(224,82,82,0.3);
+  color: var(--red);
+}
+.ex-avatar.green-av {
+  background: linear-gradient(135deg, var(--green-dim), rgba(78,173,122,0.15));
+  border-color: rgba(78,173,122,0.3);
+  color: var(--green);
+}
 
-  .rm-sub { font-size: 13px; color: var(--muted); }
+.ex-name { font-weight: 600; color: var(--text); font-size: 12px; margin-bottom: 2px; }
+.ex-cred { font-size: 9px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.ex-cred.red-cred { color: var(--red); }
+.ex-cred.green-cred { color: var(--green); }
+.ex-text { font-size: 12px; color: var(--muted); line-height: 1.7; font-weight: 300; }
 
-  /* Stats grid */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
+/* Share */
+.share-btn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+.share-btn:hover { border-color: var(--gold); color: var(--gold); }
 
-  .stat-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px;
-  }
-
-  .stat-card .sl { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 600; margin-bottom: 5px; }
-  .stat-card .sv { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--dark); }
-  .stat-card .sv.gold { color: var(--gold); }
-  .stat-card .sv.red { color: var(--red); }
-  .stat-card .sv.green { color: var(--green); }
-
-  /* Progress bar */
-  .progress-section { margin-bottom: 16px; }
-  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
-  .progress-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(0.4,0,0.2,1); width: 0; }
-  .fill-gold { background: var(--gold); }
-  .fill-red { background: var(--red); }
-  .fill-green { background: var(--green); }
-
-  /* Timeline bars */
-  .timeline { margin-bottom: 16px; }
-  .tl-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
-  .tl-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .tl-year { font-size: 11px; font-weight: 600; color: var(--muted); width: 40px; flex-shrink: 0; }
-  .tl-bar-wrap { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-  .tl-bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
-  .tl-val { font-size: 11px; font-weight: 700; color: var(--dark); width: 70px; text-align: right; flex-shrink: 0; font-family: monospace; }
-
-  /* Expert */
-  .expert-box {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  .ex-av {
-    width: 34px;
-    height: 34px;
-    background: var(--dark);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 14px;
-    color: #fbbf24;
-    flex-shrink: 0;
-  }
-
-  .ex-name { font-weight: 700; color: var(--dark); font-size: 12px; margin-bottom: 2px; }
-  .ex-cred { font-size: 9px; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
-
-  /* Placeholder */
-  .placeholder { text-align: center; padding: 40px 20px; color: var(--muted); }
-  .placeholder .icon { font-size: 40px; margin-bottom: 10px; opacity: 0.3; }
-  .placeholder p { font-size: 13px; line-height: 1.7; }
-  .placeholder strong { color: var(--dark); }
-
-  /* Share button */
-  .share-btn {
-    width: 100%;
-    padding: 11px;
-    background: transparent;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    color: var(--muted);
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 10px;
-    letter-spacing: 0.5px;
-  }
-
-  .share-btn:hover { border-color: var(--dark); color: var(--dark); }
+/* Placeholder */
+.placeholder {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted2);
+}
+.placeholder .icon { font-size: 44px; margin-bottom: 14px; opacity: 0.25; display: block; }
+.placeholder p { font-size: 13px; line-height: 1.8; font-weight: 300; }
+.placeholder strong { color: var(--muted); font-weight: 500; }
 </style>
 </head>
 <body>
 
+<div class="disclaimer">
+  <strong>Educational Use Only</strong> — This tool is for informational purposes only and does not constitute financial advice. Not affiliated with any bank or financial institution.
+</div>
+
 <header>
-  <div class="logo">Finance<span>RateCalc</span></div>
+  <div class="logo">Finance<em>RateCalc</em></div>
   <nav>
     <a href="index.html">Home</a>
     <a href="mortgage-calculator.html">Mortgage</a>
     <a href="financial-twin.html">Financial Twin</a>
-    <a href="viral-tools.html" class="active">Viral Tools</a>
+    <a href="viral-tools.html" class="active">Power Tools</a>
   </nav>
 </header>
 
-<!-- Tool Switcher -->
-<div class="switcher">
-  <button class="switch-btn active" onclick="switchTool('millionaire')">💰 Millionaire Calculator</button>
-  <button class="switch-btn" onclick="switchTool('inflation')">📉 Inflation Destroyer</button>
-  <button class="switch-btn" onclick="switchTool('salary')">📈 Salary Growth</button>
+<div class="switcher-wrap">
+  <div class="switcher">
+    <button class="switch-btn active-gold" id="btn-millionaire" onclick="switchTool('millionaire')">💰 Millionaire Calculator</button>
+    <button class="switch-btn" id="btn-inflation" onclick="switchTool('inflation')">📉 Inflation Destroyer</button>
+    <button class="switch-btn" id="btn-salary" onclick="switchTool('salary')">📈 Salary Growth</button>
+  </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     TOOL 1: MILLIONAIRE CALCULATOR
-═══════════════════════════════════════════ -->
+<!-- ═══ TOOL 1: MILLIONAIRE ═══ -->
 <div class="tool active" id="tool-millionaire">
-  <div class="tool-hero">
-    <div class="tool-badge badge-gold">💰 Most Shared Tool</div>
-    <h1>When Will You Become<br>a Millionaire?</h1>
-    <p>Enter your savings and investment details. See the exact year you'll hit $1 million — and what it takes to get there faster.</p>
+  <div class="hero">
+    <div class="hero-tag tag-gold">💰 Most Shared</div>
+    <h1>When Will You Become<br>a <span class="accent-gold">Millionaire?</span></h1>
+    <p>Enter your savings and investment details. See the exact year you'll hit your target — and discover what compound interest does over time.</p>
   </div>
-
-  <div class="tool-body">
+  <div class="body">
     <div class="card">
       <div class="card-title">Your Numbers</div>
 
@@ -462,27 +608,27 @@
         <label>Current Savings <span class="val" id="m-savingsVal">$10,000</span></label>
         <div class="input-wrap">
           <span class="pre">$</span>
-          <input type="number" id="m-savings" value="10000" oninput="syncVal(this,'m-savingsVal','$')">
+          <input type="number" id="m-savings" value="10000" oninput="syncVal(this,'m-savingsVal','$');syncRange('m-savings-range',this.value)">
         </div>
-        <input type="range" min="0" max="500000" step="1000" value="10000" oninput="document.getElementById('m-savings').value=this.value;syncVal(document.getElementById('m-savings'),'m-savingsVal','$')">
+        <input type="range" id="m-savings-range" min="0" max="500000" step="1000" value="10000" oninput="syncInput('m-savings',this.value);syncVal(document.getElementById('m-savings'),'m-savingsVal','$')">
       </div>
 
       <div class="field">
         <label>Monthly Investment <span class="val" id="m-monthlyVal">$500</span></label>
         <div class="input-wrap">
           <span class="pre">$</span>
-          <input type="number" id="m-monthly" value="500" oninput="syncVal(this,'m-monthlyVal','$')">
+          <input type="number" id="m-monthly" value="500" oninput="syncVal(this,'m-monthlyVal','$');syncRange('m-monthly-range',this.value)">
         </div>
-        <input type="range" min="0" max="5000" step="50" value="500" oninput="document.getElementById('m-monthly').value=this.value;syncVal(document.getElementById('m-monthly'),'m-monthlyVal','$')">
+        <input type="range" id="m-monthly-range" min="0" max="5000" step="50" value="500" oninput="syncInput('m-monthly',this.value);syncVal(document.getElementById('m-monthly'),'m-monthlyVal','$')">
       </div>
 
       <div class="field">
         <label>Annual Return <span class="val" id="m-returnVal">7%</span></label>
         <div class="input-wrap">
-          <input type="number" id="m-return" value="7" style="padding-left:14px" oninput="syncVal(this,'m-returnVal','%')">
+          <input type="number" id="m-return" value="7" style="padding-left:14px" oninput="syncVal(this,'m-returnVal','%');syncRange('m-return-range',this.value)">
           <span class="suf">%</span>
         </div>
-        <input type="range" min="1" max="20" step="0.5" value="7" oninput="document.getElementById('m-return').value=this.value;syncVal(document.getElementById('m-return'),'m-returnVal','%')">
+        <input type="range" id="m-return-range" min="1" max="20" step="0.5" value="7" oninput="syncInput('m-return',this.value);syncVal(document.getElementById('m-return'),'m-returnVal','%')">
       </div>
 
       <div class="field">
@@ -493,13 +639,13 @@
         </div>
       </div>
 
-      <button class="btn gold" onclick="calcMillionaire()">💰 Calculate My Timeline</button>
+      <button class="btn btn-gold" onclick="calcMillionaire()">💰 Calculate My Timeline</button>
     </div>
 
     <div id="m-results">
       <div class="card">
         <div class="placeholder">
-          <div class="icon">💰</div>
+          <span class="icon">💰</span>
           <p>Enter your numbers and click<br><strong>Calculate My Timeline</strong></p>
         </div>
       </div>
@@ -507,36 +653,33 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     TOOL 2: INFLATION DESTROYER
-═══════════════════════════════════════════ -->
+<!-- ═══ TOOL 2: INFLATION ═══ -->
 <div class="tool" id="tool-inflation">
-  <div class="tool-hero">
-    <div class="tool-badge badge-red">📉 Eye Opener</div>
-    <h1>Inflation Is Destroying<br>Your Money Right Now</h1>
-    <p>See exactly how much purchasing power your savings are losing every year — and what you need to earn just to stay even.</p>
+  <div class="hero">
+    <div class="hero-tag tag-red">📉 Eye Opener</div>
+    <h1>Inflation Is <span class="accent-red">Destroying</span><br>Your Money Right Now</h1>
+    <p>See exactly how much purchasing power your savings are losing every year — and what return you need just to break even.</p>
   </div>
-
-  <div class="tool-body">
+  <div class="body">
     <div class="card">
       <div class="card-title">Your Situation</div>
 
       <div class="field">
-        <label>Current Savings / Investment <span class="val" id="i-savingsVal">$50,000</span></label>
+        <label>Current Savings <span class="val" id="i-savingsVal">$50,000</span></label>
         <div class="input-wrap">
           <span class="pre">$</span>
-          <input type="number" id="i-savings" value="50000" oninput="syncVal(this,'i-savingsVal','$')">
+          <input type="number" id="i-savings" value="50000" oninput="syncVal(this,'i-savingsVal','$');syncRange('i-savings-range',this.value)">
         </div>
-        <input type="range" min="1000" max="1000000" step="1000" value="50000" oninput="document.getElementById('i-savings').value=this.value;syncVal(document.getElementById('i-savings'),'i-savingsVal','$')">
+        <input type="range" id="i-savings-range" min="1000" max="1000000" step="1000" value="50000" oninput="syncInput('i-savings',this.value);syncVal(document.getElementById('i-savings'),'i-savingsVal','$')">
       </div>
 
       <div class="field">
         <label>Annual Inflation Rate <span class="val" id="i-inflationVal">3.2%</span></label>
         <div class="input-wrap">
-          <input type="number" id="i-inflation" value="3.2" step="0.1" style="padding-left:14px" oninput="syncVal(this,'i-inflationVal','%')">
+          <input type="number" id="i-inflation" value="3.2" step="0.1" style="padding-left:14px" oninput="syncVal(this,'i-inflationVal','%');syncRange('i-inflation-range',this.value)">
           <span class="suf">%</span>
         </div>
-        <input type="range" min="0.5" max="80" step="0.1" value="3.2" oninput="document.getElementById('i-inflation').value=this.value;syncVal(document.getElementById('i-inflation'),'i-inflationVal','%')">
+        <input type="range" id="i-inflation-range" min="0.5" max="20" step="0.1" value="3.2" oninput="syncInput('i-inflation',this.value);syncVal(document.getElementById('i-inflation'),'i-inflationVal','%')">
       </div>
 
       <div class="field">
@@ -553,34 +696,31 @@
           <input type="number" id="i-years" value="10" style="padding-left:14px" oninput="document.getElementById('i-yearsVal').textContent=this.value+' years'">
           <span class="suf">YRS</span>
         </div>
-        <input type="range" min="1" max="30" step="1" value="10" oninput="document.getElementById('i-years').value=this.value;document.getElementById('i-yearsVal').textContent=this.value+' years'">
+        <input type="range" min="1" max="30" step="1" value="10" oninput="syncInput('i-years',this.value);document.getElementById('i-yearsVal').textContent=this.value+' years'">
       </div>
 
-      <button class="btn red" onclick="calcInflation()">📉 Show The Damage</button>
+      <button class="btn btn-red" onclick="calcInflation()">📉 Show The Damage</button>
     </div>
 
     <div id="i-results">
       <div class="card">
         <div class="placeholder">
-          <div class="icon">📉</div>
-          <p>Enter your savings and inflation rate.<br>The result might shock you.<br><strong>Show The Damage</strong></p>
+          <span class="icon">📉</span>
+          <p>Enter your savings and inflation rate.<br>The result might <strong>shock you.</strong></p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     TOOL 3: SALARY GROWTH
-═══════════════════════════════════════════ -->
+<!-- ═══ TOOL 3: SALARY ═══ -->
 <div class="tool" id="tool-salary">
-  <div class="tool-hero">
-    <div class="tool-badge badge-green">📈 Career Tool</div>
-    <h1>Where Will Your<br>Salary Be in 10 Years?</h1>
-    <p>See your salary trajectory and find out if your raises are keeping up with inflation — or falling behind.</p>
+  <div class="hero">
+    <div class="hero-tag tag-green">📈 Career Tool</div>
+    <h1>Where Will Your<br><span class="accent-green">Salary</span> Be in 10 Years?</h1>
+    <p>See your salary trajectory and find out if your raises are keeping up with inflation — or quietly falling behind.</p>
   </div>
-
-  <div class="tool-body">
+  <div class="body">
     <div class="card">
       <div class="card-title">Your Career Numbers</div>
 
@@ -588,18 +728,18 @@
         <label>Current Annual Salary <span class="val" id="s-salaryVal">$60,000</span></label>
         <div class="input-wrap">
           <span class="pre">$</span>
-          <input type="number" id="s-salary" value="60000" oninput="syncVal(this,'s-salaryVal','$')">
+          <input type="number" id="s-salary" value="60000" oninput="syncVal(this,'s-salaryVal','$');syncRange('s-salary-range',this.value)">
         </div>
-        <input type="range" min="20000" max="500000" step="1000" value="60000" oninput="document.getElementById('s-salary').value=this.value;syncVal(document.getElementById('s-salary'),'s-salaryVal','$')">
+        <input type="range" id="s-salary-range" min="20000" max="500000" step="1000" value="60000" oninput="syncInput('s-salary',this.value);syncVal(document.getElementById('s-salary'),'s-salaryVal','$')">
       </div>
 
       <div class="field">
         <label>Annual Raise Rate <span class="val" id="s-raiseVal">3%</span></label>
         <div class="input-wrap">
-          <input type="number" id="s-raise" value="3" step="0.5" style="padding-left:14px" oninput="syncVal(this,'s-raiseVal','%')">
+          <input type="number" id="s-raise" value="3" step="0.5" style="padding-left:14px" oninput="syncVal(this,'s-raiseVal','%');syncRange('s-raise-range',this.value)">
           <span class="suf">%</span>
         </div>
-        <input type="range" min="0" max="20" step="0.5" value="3" oninput="document.getElementById('s-raise').value=this.value;syncVal(document.getElementById('s-raise'),'s-raiseVal','%')">
+        <input type="range" id="s-raise-range" min="0" max="20" step="0.5" value="3" oninput="syncInput('s-raise',this.value);syncVal(document.getElementById('s-raise'),'s-raiseVal','%')">
       </div>
 
       <div class="field">
@@ -616,16 +756,16 @@
           <input type="number" id="s-years" value="10" style="padding-left:14px" oninput="document.getElementById('s-yearsVal').textContent=this.value+' years'">
           <span class="suf">YRS</span>
         </div>
-        <input type="range" min="1" max="30" step="1" value="10" oninput="document.getElementById('s-years').value=this.value;document.getElementById('s-yearsVal').textContent=this.value+' years'">
+        <input type="range" min="1" max="30" step="1" value="10" oninput="syncInput('s-years',this.value);document.getElementById('s-yearsVal').textContent=this.value+' years'">
       </div>
 
-      <button class="btn green" onclick="calcSalary()">📈 Project My Salary</button>
+      <button class="btn btn-green" onclick="calcSalary()">📈 Project My Salary</button>
     </div>
 
     <div id="s-results">
       <div class="card">
         <div class="placeholder">
-          <div class="icon">📈</div>
+          <span class="icon">📈</span>
           <p>Enter your salary details and click<br><strong>Project My Salary</strong></p>
         </div>
       </div>
@@ -634,244 +774,233 @@
 </div>
 
 <script>
-  function switchTool(tool) {
-    document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.switch-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tool-' + tool).classList.add('active');
-    event.target.classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+function switchTool(tool) {
+  document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.switch-btn').forEach(b => {
+    b.classList.remove('active-gold','active-red','active-green');
+  });
+  document.getElementById('tool-' + tool).classList.add('active');
+  const map = { millionaire: 'active-gold', inflation: 'active-red', salary: 'active-green' };
+  document.getElementById('btn-' + tool).classList.add(map[tool]);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function syncVal(input, displayId, type) {
+  const val = parseFloat(input.value) || 0;
+  const el = document.getElementById(displayId);
+  if (type === '$') el.textContent = '$' + val.toLocaleString('en-US');
+  else if (type === '%') el.textContent = val + '%';
+  else el.textContent = val;
+}
+
+function syncRange(rangeId, val) {
+  const r = document.getElementById(rangeId);
+  if (r) r.value = val;
+}
+
+function syncInput(inputId, val) {
+  const el = document.getElementById(inputId);
+  if (el) el.value = val;
+}
+
+function fmt(n) {
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(2) + 'M';
+  if (n >= 1000) return '$' + Math.round(n/1000) + 'K';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+// ── MILLIONAIRE ──
+function calcMillionaire() {
+  const savings = parseFloat(document.getElementById('m-savings').value) || 0;
+  const monthly = parseFloat(document.getElementById('m-monthly').value) || 0;
+  const annualReturn = parseFloat(document.getElementById('m-return').value) || 7;
+  const target = parseFloat(document.getElementById('m-target').value) || 1000000;
+  const monthlyRate = annualReturn / 100 / 12;
+
+  let balance = savings;
+  let months = 0;
+  const maxMonths = 600;
+
+  while (balance < target && months < maxMonths) {
+    balance = balance * (1 + monthlyRate) + monthly;
+    months++;
   }
 
-  function syncVal(input, displayId, type) {
-    const val = parseFloat(input.value) || 0;
-    const el = document.getElementById(displayId);
-    if (type === '$') el.textContent = '$' + val.toLocaleString('en-US');
-    else if (type === '%') el.textContent = val + '%';
-    else el.textContent = val;
+  const years = months / 12;
+  const totalContributed = savings + (monthly * months);
+  const totalInterest = balance - totalContributed;
+  const currentYear = new Date().getFullYear();
+  const targetYear = currentYear + Math.ceil(years);
+  const interestPct = Math.round(totalInterest / balance * 100);
+  const contributionPct = 100 - interestPct;
+
+  const checkpoints = [5, 10, 15, 20, 25, 30].filter(y => y <= Math.ceil(years) + 5);
+  let tlRows = '';
+  const maxVal = target * 1.2;
+  checkpoints.forEach(y => {
+    let b = savings;
+    for (let m = 0; m < y * 12; m++) b = b * (1 + monthlyRate) + monthly;
+    const pct = Math.min(100, b / maxVal * 100);
+    tlRows += `<div class="tl-row">
+      <div class="tl-year">${currentYear + y}</div>
+      <div class="tl-bar-wrap"><div class="tl-bar-fill pf-gold" style="width:${pct}%"></div></div>
+      <div class="tl-val">${fmt(b)}</div>
+    </div>`;
+  });
+
+  if (months >= maxMonths) {
+    document.getElementById('m-results').innerHTML = `<div class="card"><div class="placeholder"><span class="icon">⚠️</span><p>With current settings, it would take <strong>50+ years.</strong><br>Try increasing your monthly investment.</p></div></div>`;
+    return;
   }
 
-  function fmt(n) {
-    if (n >= 1000000) return '$' + (n/1000000).toFixed(2) + 'M';
-    if (n >= 1000) return '$' + Math.round(n/1000) + 'K';
-    return '$' + Math.round(n).toLocaleString();
-  }
-
-  // ── MILLIONAIRE ──
-  function calcMillionaire() {
-    const savings = parseFloat(document.getElementById('m-savings').value) || 0;
-    const monthly = parseFloat(document.getElementById('m-monthly').value) || 0;
-    const annualReturn = parseFloat(document.getElementById('m-return').value) || 7;
-    const target = parseFloat(document.getElementById('m-target').value) || 1000000;
-    const monthlyRate = annualReturn / 100 / 12;
-
-    let balance = savings;
-    let months = 0;
-    const maxMonths = 600;
-
-    while (balance < target && months < maxMonths) {
-      balance = balance * (1 + monthlyRate) + monthly;
-      months++;
-    }
-
-    const years = months / 12;
-    const totalContributed = savings + (monthly * months);
-    const totalInterest = balance - totalContributed;
-    const currentYear = new Date().getFullYear();
-    const targetYear = currentYear + Math.ceil(years);
-
-    // Timeline data
-    const checkpoints = [5, 10, 15, 20, 25, 30].filter(y => y <= Math.ceil(years) + 5);
-    let tlRows = '';
-    const maxVal = target * 1.2;
-    checkpoints.forEach(y => {
-      let b = savings;
-      for (let m = 0; m < y * 12; m++) b = b * (1 + monthlyRate) + monthly;
-      const pct = Math.min(100, b / maxVal * 100);
-      tlRows += `<div class="tl-row">
-        <div class="tl-year">${currentYear + y}</div>
-        <div class="tl-bar-wrap"><div class="tl-bar-fill fill-gold" style="width:${pct}%"></div></div>
-        <div class="tl-val">${fmt(b)}</div>
-      </div>`;
-    });
-
-    const interestPct = (totalInterest / balance * 100).toFixed(0);
-    const contributionPct = (100 - interestPct);
-
-    document.getElementById('m-results').innerHTML = months >= maxMonths ? `
-      <div class="card">
-        <div class="placeholder">
-          <div class="icon">⚠️</div>
-          <p>With current savings rate, it would take <strong>50+ years</strong>.<br>Try increasing your monthly investment!</p>
-        </div>
-      </div>` : `
-      <div class="result-main gold">
-        <div class="rm-label">You'll Reach ${fmt(target)} In</div>
-        <div class="rm-value">${years.toFixed(1)} Years</div>
-        <div class="rm-sub">Target year: ${targetYear}</div>
+  document.getElementById('m-results').innerHTML = `
+    <div class="result-main rm-gold">
+      <div class="rm-label">You'll Reach ${fmt(target)} In</div>
+      <div class="rm-value">${years.toFixed(1)} yrs</div>
+      <div class="rm-sub">Target year: ${targetYear}</div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Total Invested</div><div class="stat-value">${fmt(totalContributed)}</div></div>
+      <div class="stat-card"><div class="stat-label">Interest Earned</div><div class="stat-value sv-gold">${fmt(totalInterest)}</div></div>
+      <div class="stat-card"><div class="stat-label">Final Balance</div><div class="stat-value sv-gold">${fmt(balance)}</div></div>
+      <div class="stat-card"><div class="stat-label">Money Made Money</div><div class="stat-value sv-gold">${interestPct}%</div></div>
+    </div>
+    <div class="progress-section">
+      <div class="progress-label"><span>Your contributions (${contributionPct}%)</span><span>${fmt(totalContributed)}</span></div>
+      <div class="progress-bar"><div class="progress-fill pf-gold" id="m-pbar" style="width:0"></div></div>
+      <div class="progress-label" style="margin-top:8px"><span>Compound interest (${interestPct}%)</span><span>${fmt(totalInterest)}</span></div>
+    </div>
+    <div class="timeline-card">
+      <div class="tl-header">📊 Growth Timeline</div>
+      ${tlRows}
+    </div>
+    <div class="expert-box">
+      <div class="ex-avatar">✦</div>
+      <div>
+        <div class="ex-name">Banking Professional Note</div>
+        <div class="ex-cred">Licensed Banking Pro · 20+ Years</div>
+        <div class="ex-text">${interestPct > 50 ? `Compound interest will do ${interestPct}% of the heavy lifting. This is why time in market matters far more than timing the market — every year you delay costs you exponentially.` : `You're contributing ${contributionPct}% yourself. Even adding $100/month more can shave years off this timeline. The math changes faster than most people expect.`}</div>
       </div>
+    </div>
+    <button class="share-btn" onclick="shareResult('millionaire','${years.toFixed(1)} years to reach ${fmt(target)}')">📤 Share My Result on X</button>`;
 
-      <div class="stats-grid">
-        <div class="stat-card"><div class="sl">Total Invested</div><div class="sv">${fmt(totalContributed)}</div></div>
-        <div class="stat-card"><div class="sl">Interest Earned</div><div class="sv gold">${fmt(totalInterest)}</div></div>
-        <div class="stat-card"><div class="sl">Final Balance</div><div class="sv gold">${fmt(balance)}</div></div>
-        <div class="stat-card"><div class="sl">Money Made Money</div><div class="sv gold">${interestPct}%</div></div>
+  setTimeout(() => {
+    const bar = document.getElementById('m-pbar');
+    if (bar) bar.style.width = contributionPct + '%';
+  }, 50);
+}
+
+// ── INFLATION ──
+function calcInflation() {
+  const savings = parseFloat(document.getElementById('i-savings').value) || 50000;
+  const inflation = parseFloat(document.getElementById('i-inflation').value) || 3.2;
+  const bankRate = parseFloat(document.getElementById('i-bank').value) || 0.5;
+  const years = parseInt(document.getElementById('i-years').value) || 10;
+
+  const realValue = savings * Math.pow(1 - (inflation - bankRate) / 100, years);
+  const nominalValue = savings * Math.pow(1 + bankRate / 100, years);
+  const lostValue = savings - realValue;
+  const lostPct = (lostValue / savings * 100).toFixed(1);
+  const annualLoss = savings * (inflation - bankRate) / 100;
+  const realReturn = bankRate - inflation;
+
+  const checkpoints = [1, 2, 3, 5, 10, 15, 20].filter(y => y <= years);
+  let tlRows = '';
+  checkpoints.forEach(y => {
+    const rv = savings * Math.pow(1 - (inflation - bankRate) / 100, y);
+    const pct = rv / savings * 100;
+    tlRows += `<div class="tl-row">
+      <div class="tl-year">Yr ${y}</div>
+      <div class="tl-bar-wrap"><div class="tl-bar-fill pf-red" style="width:${pct}%"></div></div>
+      <div class="tl-val">${fmt(rv)}</div>
+    </div>`;
+  });
+
+  document.getElementById('i-results').innerHTML = `
+    <div class="result-main rm-red">
+      <div class="rm-label">Real Value Lost in ${years} Years</div>
+      <div class="rm-value">−${lostPct}%</div>
+      <div class="rm-sub">Your ${fmt(savings)} is worth only ${fmt(realValue)} today</div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Nominal Balance</div><div class="stat-value">${fmt(nominalValue)}</div></div>
+      <div class="stat-card"><div class="stat-label">Real Buying Power</div><div class="stat-value sv-red">${fmt(realValue)}</div></div>
+      <div class="stat-card"><div class="stat-label">Annual Loss</div><div class="stat-value sv-red">−${fmt(annualLoss)}</div></div>
+      <div class="stat-card"><div class="stat-label">Real Return</div><div class="stat-value sv-red">${realReturn.toFixed(1)}%</div></div>
+    </div>
+    <div class="timeline-card">
+      <div class="tl-header">📉 Purchasing Power Decay</div>
+      ${tlRows}
+    </div>
+    <div class="expert-box red-accent">
+      <div class="ex-avatar red-av">✦</div>
+      <div>
+        <div class="ex-name">Banking Professional Note</div>
+        <div class="ex-cred red-cred">Licensed Banking Pro · 20+ Years</div>
+        <div class="ex-text">Your bank pays ${bankRate}% while inflation runs ${inflation}% — a real loss of ${Math.abs(realReturn).toFixed(1)}% annually. To protect wealth, target at least ${inflation}% returns through high-yield savings, bonds, or diversified index funds.</div>
       </div>
+    </div>
+    <button class="share-btn" onclick="shareResult('inflation','My savings lose ${lostPct}% of value in ${years} years')">📤 Share This Eye-Opener</button>`;
+}
 
-      <div class="progress-section">
-        <div class="progress-label"><span>Your contributions ${contributionPct}%</span><span>${fmt(totalContributed)}</span></div>
-        <div class="progress-bar"><div class="progress-fill fill-gold" id="m-pbar" style="width:0"></div></div>
-        <div class="progress-label" style="margin-top:6px"><span>Compound interest ${interestPct}%</span><span>${fmt(totalInterest)}</span></div>
+// ── SALARY ──
+function calcSalary() {
+  const salary = parseFloat(document.getElementById('s-salary').value) || 60000;
+  const raise = parseFloat(document.getElementById('s-raise').value) || 3;
+  const inflation = parseFloat(document.getElementById('s-inflation').value) || 3.2;
+  const years = parseInt(document.getElementById('s-years').value) || 10;
+
+  const futureSalary = salary * Math.pow(1 + raise / 100, years);
+  const realSalary = salary * Math.pow(1 + (raise - inflation) / 100, years);
+  const realGain = realSalary - salary;
+  const realRaise = raise - inflation;
+  const isBeatingInflation = realRaise > 0;
+  const totalEarned = salary * ((Math.pow(1 + raise/100, years) - 1) / (raise/100));
+
+  const checkpoints = [1, 2, 3, 5, 7, 10, 15, 20].filter(y => y <= years);
+  let tlRows = '';
+  checkpoints.forEach(y => {
+    const nominal = salary * Math.pow(1 + raise/100, y);
+    const pct = nominal / futureSalary * 100;
+    tlRows += `<div class="tl-row">
+      <div class="tl-year">Yr ${y}</div>
+      <div class="tl-bar-wrap"><div class="tl-bar-fill pf-green" style="width:${pct}%"></div></div>
+      <div class="tl-val">${fmt(nominal)}</div>
+    </div>`;
+  });
+
+  document.getElementById('s-results').innerHTML = `
+    <div class="result-main rm-green">
+      <div class="rm-label">Your Salary in ${years} Years</div>
+      <div class="rm-value">${fmt(futureSalary)}</div>
+      <div class="rm-sub">${isBeatingInflation ? '✅ Beating inflation by +' + realRaise.toFixed(1) + '%/yr' : '⚠️ Behind inflation by ' + Math.abs(realRaise).toFixed(1) + '%/yr'}</div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Nominal Salary</div><div class="stat-value sv-green">${fmt(futureSalary)}</div></div>
+      <div class="stat-card"><div class="stat-label">Real Value (today $)</div><div class="stat-value ${isBeatingInflation ? 'sv-green' : 'sv-red'}">${fmt(realSalary)}</div></div>
+      <div class="stat-card"><div class="stat-label">Real Gain</div><div class="stat-value ${isBeatingInflation ? 'sv-green' : 'sv-red'}">${realGain >= 0 ? '+' : ''}${fmt(realGain)}</div></div>
+      <div class="stat-card"><div class="stat-label">Total Earned (${years} yrs)</div><div class="stat-value sv-green">${fmt(totalEarned)}</div></div>
+    </div>
+    <div class="timeline-card">
+      <div class="tl-header">📈 Salary Trajectory</div>
+      ${tlRows}
+    </div>
+    <div class="expert-box green-accent">
+      <div class="ex-avatar green-av">✦</div>
+      <div>
+        <div class="ex-name">Banking Professional Note</div>
+        <div class="ex-cred green-cred">Licensed Banking Pro · 20+ Years</div>
+        <div class="ex-text">${isBeatingInflation ? `Your ${raise}% raise beats ${inflation}% inflation — a real gain of ${realRaise.toFixed(1)}%/yr. Invest that difference consistently and the compounding effect amplifies your advantage significantly over time.` : `Your ${raise}% raise doesn't keep pace with ${inflation}% inflation. You're losing ${Math.abs(realRaise).toFixed(1)}% in real purchasing power each year. Time to renegotiate — or build parallel income streams.`}</div>
       </div>
+    </div>
+    <button class="share-btn" onclick="shareResult('salary','My salary will be ${fmt(futureSalary)} in ${years} years')">📤 Share My Projection</button>`;
+}
 
-      <div class="card timeline">
-        <div class="tl-title">📊 Growth Timeline</div>
-        ${tlRows}
-      </div>
-
-      <div class="expert-box">
-        <div class="ex-av">Z</div>
-        <div>
-          <div class="ex-name">Finance Expert Note</div>
-          <div class="ex-cred">20+ Yrs Banking · Licensed Pro</div>
-          ${interestPct > 50
-            ? `Compound interest will do ${interestPct}% of the work for you. This is Einstein's "eighth wonder of the world" in action — the longer you wait, the more powerful it becomes.`
-            : `You're doing ${contributionPct}% of the heavy lifting through contributions. Consider increasing your monthly investment — even $100 more per month can shave years off your timeline.`}
-        </div>
-      </div>
-
-      <button class="share-btn" onclick="shareResult('millionaire', '${years.toFixed(1)} years to reach ${fmt(target)}')">📤 Share My Result</button>`;
-
-    setTimeout(() => {
-      const bar = document.getElementById('m-pbar');
-      if (bar) bar.style.width = contributionPct + '%';
-    }, 50);
-  }
-
-  // ── INFLATION ──
-  function calcInflation() {
-    const savings = parseFloat(document.getElementById('i-savings').value) || 50000;
-    const inflation = parseFloat(document.getElementById('i-inflation').value) || 3.2;
-    const bankRate = parseFloat(document.getElementById('i-bank').value) || 0.5;
-    const years = parseInt(document.getElementById('i-years').value) || 10;
-
-    const realValue = savings * Math.pow(1 - (inflation - bankRate) / 100, years);
-    const nominalValue = savings * Math.pow(1 + bankRate / 100, years);
-    const lostValue = savings - realValue;
-    const lostPct = (lostValue / savings * 100).toFixed(1);
-    const neededReturn = inflation;
-    const annualLoss = savings * (inflation - bankRate) / 100;
-    const realReturn = bankRate - inflation;
-
-    const checkpoints = [1, 2, 3, 5, 10, 15, 20].filter(y => y <= years);
-    let tlRows = '';
-    checkpoints.forEach(y => {
-      const rv = savings * Math.pow(1 - (inflation - bankRate) / 100, y);
-      const pct = rv / savings * 100;
-      tlRows += `<div class="tl-row">
-        <div class="tl-year">Yr ${y}</div>
-        <div class="tl-bar-wrap"><div class="tl-bar-fill fill-red" style="width:${pct}%"></div></div>
-        <div class="tl-val">${fmt(rv)}</div>
-      </div>`;
-    });
-
-    document.getElementById('i-results').innerHTML = `
-      <div class="result-main red">
-        <div class="rm-label">Real Value Lost in ${years} Years</div>
-        <div class="rm-value">-${lostPct}%</div>
-        <div class="rm-sub">Your ${fmt(savings)} is worth only ${fmt(realValue)} in today's money</div>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-card"><div class="sl">Money in Bank</div><div class="sv">${fmt(nominalValue)}</div></div>
-        <div class="stat-card"><div class="sl">Real Purchasing Power</div><div class="sv red">${fmt(realValue)}</div></div>
-        <div class="stat-card"><div class="sl">Annual Loss</div><div class="sv red">-${fmt(annualLoss)}</div></div>
-        <div class="stat-card"><div class="sl">Real Return</div><div class="sv red">${realReturn.toFixed(1)}%</div></div>
-      </div>
-
-      <div class="card timeline">
-        <div class="tl-title">📉 Purchasing Power Decay</div>
-        ${tlRows}
-      </div>
-
-      <div class="expert-box">
-        <div class="ex-av">Z</div>
-        <div>
-          <div class="ex-name">Finance Expert Note</div>
-          <div class="ex-cred">20+ Yrs Banking · Licensed Pro</div>
-          Your bank pays ${bankRate}% but inflation runs at ${inflation}% — that's a real loss of ${Math.abs(realReturn).toFixed(1)}% per year. To protect your wealth, you need investments returning at least ${neededReturn}% annually. Consider high-yield savings, bonds, or diversified index funds.
-        </div>
-      </div>
-
-      <button class="share-btn" onclick="shareResult('inflation', 'My savings lose ${lostPct}% to inflation in ${years} years')">📤 Share This Shocking Result</button>`;
-  }
-
-  // ── SALARY ──
-  function calcSalary() {
-    const salary = parseFloat(document.getElementById('s-salary').value) || 60000;
-    const raise = parseFloat(document.getElementById('s-raise').value) || 3;
-    const inflation = parseFloat(document.getElementById('s-inflation').value) || 3.2;
-    const years = parseInt(document.getElementById('s-years').value) || 10;
-
-    const futureSalary = salary * Math.pow(1 + raise / 100, years);
-    const realSalary = salary * Math.pow(1 + (raise - inflation) / 100, years);
-    const realGain = realSalary - salary;
-    const nominalGain = futureSalary - salary;
-    const realRaise = raise - inflation;
-    const isBeatingInflation = realRaise > 0;
-    const totalEarned = salary * ((Math.pow(1 + raise/100, years) - 1) / (raise/100));
-
-    const checkpoints = [1, 2, 3, 5, 7, 10, 15, 20].filter(y => y <= years);
-    let tlRows = '';
-    const maxSalary = futureSalary;
-    checkpoints.forEach(y => {
-      const nominal = salary * Math.pow(1 + raise/100, y);
-      const real = salary * Math.pow(1 + (raise-inflation)/100, y);
-      const pct = nominal / maxSalary * 100;
-      tlRows += `<div class="tl-row">
-        <div class="tl-year">Yr ${y}</div>
-        <div class="tl-bar-wrap"><div class="tl-bar-fill fill-green" style="width:${pct}%"></div></div>
-        <div class="tl-val">${fmt(nominal)}</div>
-      </div>`;
-    });
-
-    document.getElementById('s-results').innerHTML = `
-      <div class="result-main green">
-        <div class="rm-label">Your Salary in ${years} Years</div>
-        <div class="rm-value">${fmt(futureSalary)}</div>
-        <div class="rm-sub">${isBeatingInflation ? '✅ Beating inflation by ' + realRaise.toFixed(1) + '%/yr' : '⚠️ Falling behind inflation by ' + Math.abs(realRaise).toFixed(1) + '%/yr'}</div>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-card"><div class="sl">Nominal Salary</div><div class="sv green">${fmt(futureSalary)}</div></div>
-        <div class="stat-card"><div class="sl">Real Value (today's $)</div><div class="sv ${isBeatingInflation ? 'green' : 'red'}">${fmt(realSalary)}</div></div>
-        <div class="stat-card"><div class="sl">Real Gain</div><div class="sv ${isBeatingInflation ? 'green' : 'red'}">${realGain >= 0 ? '+' : ''}${fmt(realGain)}</div></div>
-        <div class="stat-card"><div class="sl">Total Earned (${years} yrs)</div><div class="sv green">${fmt(totalEarned)}</div></div>
-      </div>
-
-      <div class="card timeline">
-        <div class="tl-title">📈 Salary Trajectory</div>
-        ${tlRows}
-      </div>
-
-      <div class="expert-box">
-        <div class="ex-av">Z</div>
-        <div>
-          <div class="ex-name">Finance Expert Note</div>
-          <div class="ex-cred">20+ Yrs Banking · Licensed Pro</div>
-          ${isBeatingInflation
-            ? `Great news — your ${raise}% raise beats ${inflation}% inflation, giving you a real gain of ${realRaise.toFixed(1)}% per year. Keep investing the difference to maximize wealth building.`
-            : `Warning: Your ${raise}% raise doesn't keep up with ${inflation}% inflation. In real terms, you're losing ${Math.abs(realRaise).toFixed(1)}% of purchasing power annually. Negotiate harder or find additional income streams.`}
-        </div>
-      </div>
-
-      <button class="share-btn" onclick="shareResult('salary', 'My salary will be ${fmt(futureSalary)} in ${years} years')">📤 Share My Projection</button>`;
-  }
-
-  function shareResult(tool, text) {
-    const url = 'https://financeratecalc.com/viral-tools.html';
-    const tweet = encodeURIComponent(text + ' — calculated with ' + url + ' (free tool)');
-    window.open('https://twitter.com/intent/tweet?text=' + tweet, '_blank');
-  }
+function shareResult(tool, text) {
+  const url = 'https://financeratecalc.com/viral-tools.html';
+  const tweet = encodeURIComponent(text + ' — free tool: ' + url);
+  window.open('https://twitter.com/intent/tweet?text=' + tweet, '_blank');
+}
 </script>
 </body>
 </html>
