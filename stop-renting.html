@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>If You Stop Renting Today — What Could You Have Owned? | FinanceRateCalc</title>
+<meta name="description" content="Find out how much rent money you've already paid — and what percentage of a home you could have owned instead. The calculator that makes renters think twice.">
+<meta name="keywords" content="rent vs buy, stop renting, rent money wasted, home ownership calculator, renting calculator">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-13712175066');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@700;800;900&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080810;
+  --surface: #0f0f1a;
+  --surface2: #161622;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.12);
+  --text: #f0ede8;
+  --muted: rgba(240,237,232,0.45);
+  --muted2: rgba(240,237,232,0.2);
+  --gold: #f0c040;
+  --gold2: #ffd966;
+  --gold-dim: rgba(240,192,64,0.1);
+  --red: #ff4444;
+  --red-dim: rgba(255,68,68,0.08);
+  --green: #44dd88;
+  --green-dim: rgba(68,221,136,0.08);
+  --orange: #ff8c00;
+  --orange-dim: rgba(255,140,0,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:999;
+}
+
+/* Disclaimer */
+.disclaimer {
+  background: #0d0d1f;
+  border-bottom: 1px solid rgba(99,102,241,0.15);
+  text-align: center;
+  padding: 8px 20px;
+  font-size: 11px;
+  color: rgba(180,185,255,0.5);
+  letter-spacing: 0.3px;
+}
+.disclaimer strong { color: rgba(180,185,255,0.8); }
+
+/* Header */
+header {
+  background: rgba(8,8,16,0.95);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+}
+.logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.logo em { color: var(--gold); font-style: normal; }
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 28px;
+  transition: color 0.2s;
+}
+nav a:hover { color: var(--gold); }
+nav a.active { color: var(--red); }
+@media(max-width:768px){ header{padding:16px 20px;} nav{display:none;} }
+
+/* HERO — emotionally charged */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 100px 24px 80px;
+  text-align: center;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(ellipse, rgba(255,68,68,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,68,68,0.1);
+  border: 1px solid rgba(255,68,68,0.2);
+  color: var(--red);
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(52px, 10vw, 110px);
+  line-height: 0.88;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+}
+.hero h1 .l1 { color: var(--text); display: block; }
+.hero h1 .l2 {
+  display: block;
+  background: linear-gradient(135deg, #ff4444, #ff8c00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero h1 .l3 { color: var(--text); display: block; }
+
+.hero-sub {
+  font-size: 17px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 500px;
+  margin: 0 auto 20px;
+  font-weight: 300;
+}
+
+/* Shame counter */
+.shame-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255,68,68,0.06);
+  border: 1px solid rgba(255,68,68,0.15);
+  border-radius: 16px;
+  padding: 20px 32px;
+  margin-bottom: 60px;
+}
+.sc-label { font-size: 11px; color: var(--muted2); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+.sc-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  color: var(--red);
+  letter-spacing: 1px;
+  line-height: 1;
+  transition: all 0.3s;
+}
+.sc-ticker { font-size: 11px; color: rgba(255,68,68,0.5); font-weight: 600; margin-top: 2px; }
+
+/* Main container */
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px 100px;
+}
+
+/* Input card */
+.input-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.input-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--red), var(--orange), transparent);
+}
+
+.card-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted2);
+  margin-bottom: 32px;
+}
+
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
+@media(max-width:580px){ .fields{ grid-template-columns:1fr; } }
+
+.field label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.input-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-wrap:focus-within {
+  border-color: rgba(255,68,68,0.35);
+  box-shadow: 0 0 0 3px rgba(255,68,68,0.05);
+}
+
+.pre {
+  padding: 0 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--muted2);
+  background: rgba(255,255,255,0.02);
+  border-right: 1px solid var(--border);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+input[type="number"], select {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0 16px;
+  height: 48px;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 15px;
+  font-weight: 500;
+  outline: none;
+  -moz-appearance: textfield;
+  min-width: 0;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+select { font-family: 'Barlow', sans-serif; font-size: 14px; cursor: pointer; }
+select option { background: var(--surface2); }
+
+.field-full { grid-column: 1 / -1; }
+
+/* Rate options */
+.rate-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+@media(max-width:480px){ .rate-grid{ grid-template-columns: repeat(2,1fr); } }
+
+.rate-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 6px;
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: center;
+}
+.rate-btn:hover { border-color: var(--border2); color: var(--text); }
+.rate-btn.selected { background: rgba(255,68,68,0.1); border-color: rgba(255,68,68,0.35); color: var(--red); }
+
+.cta-btn {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #cc2200, var(--red), var(--orange));
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.22s;
+  box-shadow: 0 8px 32px rgba(255,68,68,0.2);
+}
+.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,68,68,0.3); }
+.cta-btn:active { transform: translateY(0); }
+
+/* Results */
+#results { display: none; }
+#results.show { display: block; animation: rise 0.5s cubic-bezier(0.16,1,0.3,1); }
+@keyframes rise {
+  from { opacity:0; transform:translateY(30px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* Verdict */
+.verdict {
+  background: rgba(255,68,68,0.06);
+  border: 1px solid rgba(255,68,68,0.2);
+  border-radius: 20px;
+  padding: 48px 40px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.verdict::before {
+  content: '';
+  position: absolute;
+  top: -100px; left: 50%;
+  transform: translateX(-50%);
+  width: 500px; height: 400px;
+  background: radial-gradient(ellipse, rgba(255,68,68,0.08), transparent 70%);
+  pointer-events: none;
+}
+.verdict-eye {
+  font-size: 48px;
+  margin-bottom: 16px;
+  display: block;
+}
+.verdict-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 8vw, 60px);
+  line-height: 1;
+  letter-spacing: 1px;
+  color: var(--red);
+  margin-bottom: 16px;
+}
+.verdict-line {
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 420px;
+  margin: 0 auto 8px;
+}
+.verdict-line strong { color: var(--text); font-weight: 700; }
+.verdict-sub { font-size: 13px; color: var(--muted2); margin-top: 8px; }
+
+/* Big numbers row */
+.big-numbers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media(max-width:480px){ .big-numbers{ grid-template-columns:1fr; } }
+
+.big-box {
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  border: 1px solid;
+}
+.big-box.red { background: var(--red-dim); border-color: rgba(255,68,68,0.2); }
+.big-box.green { background: var(--green-dim); border-color: rgba(68,221,136,0.2); }
+.big-box.orange { background: var(--orange-dim); border-color: rgba(255,140,0,0.2); }
+.big-box.gold { background: var(--gold-dim); border-color: rgba(240,192,64,0.2); }
+
+.bb-label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 10px; }
+.red .bb-label { color: var(--red); }
+.green .bb-label { color: var(--green); }
+.orange .bb-label { color: var(--orange); }
+.gold .bb-label { color: var(--gold); }
+
+.bb-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(32px, 7vw, 52px);
+  line-height: 1;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.red .bb-num { color: var(--red); }
+.green .bb-num { color: var(--green); }
+.orange .bb-num { color: var(--orange); }
+.gold .bb-num { color: var(--gold); }
+
+.bb-sub { font-size: 12px; color: var(--muted2); font-weight: 400; line-height: 1.4; }
+
+/* Ownership meter */
+.meter-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.meter-title { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted2); margin-bottom: 20px; }
+.meter-house {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.house-icon { font-size: 40px; flex-shrink: 0; }
+.house-info { flex: 1; }
+.house-label { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 6px; }
+.house-pct {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.meter-bar {
+  width: 100%;
+  height: 12px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.meter-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 1.6s cubic-bezier(0.4,0,0.2,1);
+  width: 0;
+  background: linear-gradient(90deg, #cc2200, var(--red), var(--orange));
+}
+.meter-fill.green { background: linear-gradient(90deg, #228855, var(--green)); }
+
+/* Timeline */
+.timeline-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.timeline-title { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted2); margin-bottom: 20px; }
+.timeline-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.timeline-row:last-child { border-bottom: none; }
+.tl-year {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--muted2);
+  width: 48px;
+  flex-shrink: 0;
+}
+.tl-bar-wrap { flex: 1; height: 8px; background: rgba(255,255,255,0.04); border-radius: 4px; overflow: hidden; }
+.tl-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #cc2200, var(--orange)); transition: width 1.4s cubic-bezier(0.4,0,0.2,1); width: 0; }
+.tl-amt {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--red);
+  width: 90px;
+  text-align: right;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+/* Banker note */
+.banker-note {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.bn-avatar {
+  width: 42px; height: 42px;
+  background: var(--gold-dim);
+  border: 1px solid rgba(240,192,64,0.3);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.bn-name { font-weight: 700; color: var(--text); font-size: 13px; margin-bottom: 2px; }
+.bn-cred { font-size: 9px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+.bn-text { font-size: 13px; color: var(--muted); line-height: 1.8; font-weight: 300; }
+
+/* CTA cards */
+.cta-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+@media(max-width:480px){ .cta-cards{ grid-template-columns:1fr; } }
+
+.cta-card {
+  border-radius: 12px;
+  padding: 20px;
+  text-decoration: none;
+  display: block;
+  border: 1px solid;
+  transition: all 0.2s;
+}
+.cta-card.primary {
+  background: rgba(68,221,136,0.08);
+  border-color: rgba(68,221,136,0.2);
+}
+.cta-card.primary:hover { background: rgba(68,221,136,0.14); transform: translateY(-2px); }
+.cta-card.secondary {
+  background: var(--gold-dim);
+  border-color: rgba(240,192,64,0.2);
+}
+.cta-card.secondary:hover { background: rgba(240,192,64,0.15); transform: translateY(-2px); }
+.cc-label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 8px; }
+.primary .cc-label { color: var(--green); }
+.secondary .cc-label { color: var(--gold); }
+.cc-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 800; margin-bottom: 6px; color: var(--text); }
+.cc-desc { font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.5; }
+
+/* Actions */
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+@media(max-width:480px){ .actions{ grid-template-columns:1fr; } }
+.action-btn {
+  padding: 14px; border-radius: 10px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+  letter-spacing: 0.5px; border: none; text-align: center;
+}
+.btn-share { background: #1da1f2; color: #fff; }
+.btn-share:hover { background: #0d8de0; transform: translateY(-1px); }
+.btn-reset { background: transparent; border: 1px solid var(--border2) !important; color: var(--muted); }
+.btn-reset:hover { border-color: var(--red) !important; color: var(--red); }
+
+/* Embed */
+.embed-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.embed-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted2); margin-bottom: 14px; }
+.embed-code {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; font-family: 'DM Mono', monospace; font-size: 12px;
+  color: var(--gold); word-break: break-all; margin-bottom: 12px; line-height: 1.6;
+}
+.copy-btn {
+  background: var(--gold-dim); border: 1px solid rgba(240,192,64,0.2);
+  color: var(--gold); padding: 10px 20px; border-radius: 8px;
+  font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.copy-btn:hover { background: rgba(240,192,64,0.2); }
+
+/* Footer */
+footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 32px 48px;
+  text-align: center;
+}
+.footer-copy { font-size: 12px; color: var(--muted2); line-height: 1.8; }
+.footer-copy a { color: var(--muted); text-decoration: none; }
+.footer-copy a:hover { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="disclaimer">
+  <strong>Educational Use Only</strong> — Results are estimates. Not financial advice. Past rent does not constitute financial loss.
+</div>
+
+<header>
+  <a href="index.html" class="logo">Finance<em>RateCalc</em></a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="are-you-rich.html">Are You Rich?</a>
+    <a href="mortgage-calculator.html">Mortgage</a>
+    <a href="financial-twin.html">Buy vs Rent</a>
+    <a href="stop-renting.html" class="active">Stop Renting</a>
+  </nav>
+</header>
+
+<!-- Live rent ticker -->
+<div style="background: rgba(255,68,68,0.06); border-bottom:1px solid rgba(255,68,68,0.12); padding:10px 24px; text-align:center; font-size:12px; color:rgba(255,68,68,0.7); font-weight:600; letter-spacing:0.5px;">
+  💸 The average American renter pays <strong style="color:var(--red)">$1,987/month</strong> — that's <strong style="color:var(--red)" id="live-ticker">$0</strong> paid to landlords in the last minute.
+</div>
+
+<div class="hero">
+  <div class="hero-tag">💸 The Wake-Up Call Calculator</div>
+  <h1>
+    <span class="l1">If You Stop</span>
+    <span class="l2">Renting Today</span>
+    <span class="l3">What Did It Cost?</span>
+  </h1>
+  <p class="hero-sub">See exactly how much rent money you've handed to your landlord — and what percentage of your own home that could have been.</p>
+</div>
+
+<div class="container">
+  <div class="input-card">
+    <div class="card-label">🏠 Your Rental History</div>
+
+    <div class="fields">
+      <div class="field">
+        <label>Monthly Rent</label>
+        <div class="input-wrap">
+          <span class="pre">$</span>
+          <input type="number" id="rent" placeholder="1800" min="0">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Years Renting</label>
+        <div class="input-wrap">
+          <span class="pre">Yrs</span>
+          <input type="number" id="years" placeholder="5" min="1" max="40">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Your City</label>
+        <div class="input-wrap">
+          <select id="city">
+            <option value="national">🇺🇸 National Average</option>
+            <optgroup label="Top Cities">
+              <option value="new-york">New York, NY</option>
+              <option value="los-angeles">Los Angeles, CA</option>
+              <option value="san-francisco">San Francisco, CA</option>
+              <option value="seattle">Seattle, WA</option>
+              <option value="boston">Boston, MA</option>
+              <option value="miami">Miami, FL</option>
+              <option value="chicago">Chicago, IL</option>
+              <option value="austin">Austin, TX</option>
+              <option value="denver">Denver, CO</option>
+              <option value="dallas">Dallas, TX</option>
+              <option value="houston">Houston, TX</option>
+              <option value="phoenix">Phoenix, AZ</option>
+              <option value="atlanta">Atlanta, GA</option>
+              <option value="nashville">Nashville, TN</option>
+              <option value="portland">Portland, OR</option>
+              <option value="las-vegas">Las Vegas, NV</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Annual Rent Increase</label>
+        <div class="rate-grid">
+          <button class="rate-btn" data-rate="0" onclick="selectRate(this)">0%</button>
+          <button class="rate-btn selected" data-rate="3" onclick="selectRate(this)">3%</button>
+          <button class="rate-btn" data-rate="5" onclick="selectRate(this)">5%</button>
+          <button class="rate-btn" data-rate="7" onclick="selectRate(this)">7%</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="cta-btn" onclick="calculate()">SHOW ME THE TRUTH →</button>
+  </div>
+
+  <div id="results"></div>
+</div>
+
+<footer>
+  <div class="footer-copy">
+    © 2026 FinanceRateCalc.com — All rights reserved.<br>
+    <small>Educational use only · Not financial advice · Home price data based on NAR & Zillow estimates</small><br><br>
+    <a href="index.html">Home</a> ·
+    <a href="are-you-rich.html">Are You Rich?</a> ·
+    <a href="mortgage-calculator.html">Mortgage Calculator</a> ·
+    <a href="financial-twin.html">Buy vs Rent</a> ·
+    <a href="loan-offer-analyzer.html">Loan Analyzer</a>
+  </div>
+</footer>
+
+<script>
+// City median home prices (2024 estimates)
+const cityData = {
+  'national':    { price: 420000, name: 'the US', appreciation: 4.2 },
+  'new-york':    { price: 750000, name: 'New York', appreciation: 3.8 },
+  'los-angeles': { price: 900000, name: 'Los Angeles', appreciation: 5.1 },
+  'san-francisco':{ price: 1200000, name: 'San Francisco', appreciation: 4.5 },
+  'seattle':     { price: 780000, name: 'Seattle', appreciation: 5.8 },
+  'boston':      { price: 720000, name: 'Boston', appreciation: 4.9 },
+  'miami':       { price: 580000, name: 'Miami', appreciation: 6.2 },
+  'chicago':     { price: 360000, name: 'Chicago', appreciation: 3.1 },
+  'austin':      { price: 520000, name: 'Austin', appreciation: 5.5 },
+  'denver':      { price: 580000, name: 'Denver', appreciation: 4.8 },
+  'dallas':      { price: 420000, name: 'Dallas', appreciation: 4.6 },
+  'houston':     { price: 350000, name: 'Houston', appreciation: 3.9 },
+  'phoenix':     { price: 430000, name: 'Phoenix', appreciation: 5.3 },
+  'atlanta':     { price: 390000, name: 'Atlanta', appreciation: 4.7 },
+  'nashville':   { price: 460000, name: 'Nashville', appreciation: 5.1 },
+  'portland':    { price: 530000, name: 'Portland', appreciation: 4.4 },
+  'las-vegas':   { price: 420000, name: 'Las Vegas', appreciation: 4.9 },
+};
+
+let selectedRate = 3;
+
+function selectRate(btn) {
+  document.querySelectorAll('.rate-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedRate = parseFloat(btn.dataset.rate);
+}
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+
+function calculate() {
+  const rent = parseFloat(document.getElementById('rent').value);
+  const years = parseFloat(document.getElementById('years').value);
+  const cityKey = document.getElementById('city').value;
+
+  if (!rent || rent <= 0 || !years || years <= 0) {
+    ['rent','years'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!parseFloat(el.value)) {
+        el.parentElement.style.borderColor = 'rgba(255,68,68,0.5)';
+        setTimeout(()=> el.parentElement.style.borderColor='', 1500);
+      }
+    });
+    return;
+  }
+
+  const city = cityData[cityKey] || cityData['national'];
+  const rate = selectedRate / 100;
+
+  // Total rent paid with annual increases
+  let totalRent = 0;
+  let currentRent = rent;
+  const yearlyRents = [];
+  for (let y = 1; y <= years; y++) {
+    const yearRent = currentRent * 12;
+    totalRent += yearRent;
+    yearlyRents.push({ year: y, amount: yearRent, cumulative: totalRent });
+    currentRent *= (1 + rate);
+  }
+
+  // What home they could own
+  const homePriceNow = city.price;
+  // What the home was worth X years ago (reverse appreciation)
+  const homePriceThen = homePriceNow / Math.pow(1 + city.appreciation/100, years);
+  // Ownership percentage
+  const ownershipPct = Math.min(99, (totalRent / homePriceThen) * 100);
+  const ownershipPctNow = Math.min(99, (totalRent / homePriceNow) * 100);
+
+  // Down payment needed today
+  const downPayment = homePriceNow * 0.20;
+  const downPaymentPct = Math.min(100, (totalRent / downPayment) * 100);
+
+  // Home appreciation missed
+  const appreciationMissed = homePriceThen * Math.pow(1 + city.appreciation/100, years) - homePriceThen;
+
+  // Monthly mortgage if had bought then
+  const loanThen = homePriceThen * 0.80;
+  const monthlyMortgage = loanThen * (0.065/12) / (1 - Math.pow(1+0.065/12, -360));
+
+  // How many down payments
+  const dpCount = totalRent / downPayment;
+
+  const bankerNote = getBankerNote(totalRent, years, ownershipPct, city.name, downPayment, homePriceNow);
+
+  // Timeline (show last 5 years or all if < 5)
+  const timelineYears = yearlyRents.slice(-Math.min(5, years));
+  const maxCumulative = totalRent;
+
+  const html = `
+    <div class="verdict">
+      <span class="verdict-eye">💸</span>
+      <div class="verdict-title">You Paid ${fmt(totalRent)} In Rent</div>
+      <div class="verdict-line">
+        That's <strong>${ownershipPct.toFixed(1)}%</strong> of a home in ${city.name}<br>
+        — and you own <strong>none of it.</strong>
+      </div>
+      <div class="verdict-sub">Over ${years} year${years>1?'s':''} · ${city.name} · ${selectedRate}% annual increase</div>
+    </div>
+
+    <div class="big-numbers">
+      <div class="big-box red">
+        <div class="bb-label">💸 Total Rent Paid</div>
+        <div class="bb-num">${fmt(totalRent)}</div>
+        <div class="bb-sub">Gone. Forever.<br>Zero equity built.</div>
+      </div>
+      <div class="big-box orange">
+        <div class="bb-label">🏠 Home You Could've Owned</div>
+        <div class="bb-num">${ownershipPct.toFixed(0)}%</div>
+        <div class="bb-sub">of a ${fmt(homePriceThen)} home<br>${years} years ago in ${city.name}</div>
+      </div>
+      <div class="big-box gold">
+        <div class="bb-label">📈 Appreciation You Missed</div>
+        <div class="bb-num">${fmt(appreciationMissed)}</div>
+        <div class="bb-sub">Home value gained<br>in the last ${years} year${years>1?'s':''}</div>
+      </div>
+      <div class="big-box green">
+        <div class="bb-label">🎯 Down Payments = Your Rent</div>
+        <div class="bb-num">${dpCount.toFixed(1)}×</div>
+        <div class="bb-sub">You paid ${dpCount.toFixed(1)} full down payments<br>to your landlord</div>
+      </div>
+    </div>
+
+    <div class="meter-card">
+      <div class="meter-title">🏠 Ownership Percentage — What You Could Have Had</div>
+
+      <div class="meter-house">
+        <div class="house-icon">🏚️</div>
+        <div class="house-info">
+          <div class="house-label">${city.name} Home ${years} Years Ago — ${fmt(homePriceThen)}</div>
+          <div class="house-pct" style="color:var(--red)">${ownershipPct.toFixed(1)}% Owned</div>
+          <div class="meter-bar"><div class="meter-fill" data-w="${Math.min(ownershipPct,100)}"></div></div>
+        </div>
+      </div>
+
+      <div class="meter-house" style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border)">
+        <div class="house-icon">🏡</div>
+        <div class="house-info">
+          <div class="house-label">Today's Down Payment Covered — ${fmt(downPayment)} needed (20%)</div>
+          <div class="house-pct" style="color:${downPaymentPct>=100?'var(--green)':'var(--orange)'}">${downPaymentPct.toFixed(0)}% Covered</div>
+          <div class="meter-bar"><div class="meter-fill ${downPaymentPct>=100?'green':''}" data-w="${Math.min(downPaymentPct,100)}"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-card">
+      <div class="timeline-title">📅 How Your Rent Piled Up${years > 5 ? ' (Last 5 Years)' : ''}</div>
+      ${timelineYears.map(r => `
+        <div class="timeline-row">
+          <div class="tl-year">Yr ${r.year}</div>
+          <div class="tl-bar-wrap"><div class="tl-bar" data-w="${(r.cumulative/maxCumulative*100).toFixed(1)}"></div></div>
+          <div class="tl-amt">${fmt(r.cumulative)}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="banker-note">
+      <div class="bn-avatar">✦</div>
+      <div>
+        <div class="bn-name">Banking Professional Note</div>
+        <div class="bn-cred">Licensed Banking Pro · 20+ Years Experience</div>
+        <div class="bn-text">${bankerNote}</div>
+      </div>
+    </div>
+
+    <div class="cta-cards">
+      <a href="mortgage-calculator.html" class="cta-card primary">
+        <div class="cc-label">✅ Next Step</div>
+        <div class="cc-title">Calculate Your Mortgage</div>
+        <div class="cc-desc">See what your monthly payment would be if you bought today. It might be less than your rent.</div>
+      </a>
+      <a href="financial-twin.html" class="cta-card secondary">
+        <div class="cc-label">📊 Deep Analysis</div>
+        <div class="cc-title">Buy vs Rent Calculator</div>
+        <div class="cc-desc">Full 30-year financial comparison with your exact city data — make the definitive decision.</div>
+      </a>
+    </div>
+
+    <div class="actions">
+      <button class="action-btn btn-share" onclick="shareResult(${fmt(totalRent).replace('$','').replace(',','')}, ${ownershipPct.toFixed(1)}, '${city.name}')">
+        𝕏 Share This Wake-Up Call
+      </button>
+      <button class="action-btn btn-reset" onclick="resetForm()">
+        ↺ Calculate Again
+      </button>
+    </div>
+
+    <div class="embed-section">
+      <div class="embed-title">📎 Embed this calculator on your site</div>
+      <div class="embed-code">&lt;iframe src="https://financeratecalc.com/stop-renting.html" width="100%" height="600" frameborder="0"&gt;&lt;/iframe&gt;</div>
+      <button class="copy-btn" onclick="copyEmbed()">📋 Copy Embed Code</button>
+    </div>
+  `;
+
+  const el = document.getElementById('results');
+  el.innerHTML = html;
+  el.classList.add('show');
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  setTimeout(() => {
+    document.querySelectorAll('.meter-fill').forEach(b => b.style.width = b.dataset.w + '%');
+    document.querySelectorAll('.tl-bar').forEach(b => b.style.width = b.dataset.w + '%');
+  }, 100);
+}
+
+function getBankerNote(total, years, pct, city, dp, homePrice) {
+  if (pct >= 80) return `After ${years} years, you've paid ${fmt(total)} in rent — enough to have owned over 80% of a home in ${city}. From a credit perspective, you clearly have consistent payment discipline. That's actually your strongest asset right now. Most lenders would approve you based on your rental history alone. The question isn't whether you CAN buy — it's whether you'll start building equity instead of someone else's.`;
+  if (pct >= 50) return `${fmt(total)} paid over ${years} years is a substantial number. The good news: your consistent rental payment history shows lenders you're a reliable borrower. A 20% down payment on today's ${city} home would require ${fmt(dp)} — start there. With your income profile, a conventional 30-year mortgage is likely within reach. Every month you wait, that number gets further away.`;
+  if (pct >= 25) return `You've paid ${fmt(total)} in rent — a solid chunk of equity you could have been building instead. In ${city}, today's median home requires ${fmt(dp)} down. If you're not there yet, FHA loans allow 3.5% down with a 580+ credit score. That means ${fmt(homePrice * 0.035)} could get you started. Stop waiting for the "perfect" time — in banking, the best time to buy was yesterday.`;
+  return `${fmt(total)} over ${years} years shows you're consistent with housing costs. You're in the earlier stages of building savings, but don't be discouraged. In ${city}, there are still entry-level options. Government-backed loans (FHA, USDA) are designed exactly for your situation. Start by checking your credit score and saving aggressively — even an extra $200/month toward a down payment fund changes the math significantly.`;
+}
+
+function shareResult(total, pct, city) {
+  const fmtd = '$' + Number(total).toLocaleString();
+  const text = `I just found out I paid ${fmtd} in rent 💸\n\nThat's ${pct}% of a home in ${city} — and I own NONE of it.\n\nSee how much YOUR rent has cost you 👇\nhttps://financeratecalc.com/stop-renting.html\n\n#RentMoney #HomeOwnership #PersonalFinance`;
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+}
+
+function resetForm() {
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('rent').value = '';
+  document.getElementById('years').value = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function copyEmbed() {
+  const code = '<iframe src="https://financeratecalc.com/stop-renting.html" width="100%" height="600" frameborder="0"></iframe>';
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ Copied!';
+    btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = '📋 Copy Embed Code'; btn.style.color = ''; }, 2000);
+  });
+}
+
+// Live ticker — shows rent paid globally this minute
+let tickerVal = 0;
+const avgMonthlyRent = 1987;
+const rentPerSecond = (avgMonthlyRent * 12 * 44000000) / (365 * 24 * 3600); // 44M renter households
+function updateTicker() {
+  tickerVal += rentPerSecond / 10;
+  const el = document.getElementById('live-ticker');
+  if (el) el.textContent = '$' + Math.round(tickerVal).toLocaleString();
+}
+setInterval(updateTicker, 100);
+</script>
+</body>
+</html>
