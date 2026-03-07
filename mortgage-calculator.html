@@ -2,18 +2,19 @@
 <html lang="en">
 <head>
   <!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8VGHR8XH4C"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-13712175066');
+  gtag('config', 'G-8VGHR8XH4C');
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mortgage Calculator | FinanceRateCalc</title>
 <meta name="description" content="Free mortgage calculator by a licensed financial professional. Calculate monthly payments, total interest, and amortization schedule instantly.">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
     --navy: #0a1628;
@@ -38,7 +39,6 @@
     overflow-x: hidden;
   }
 
-  /* Background texture */
   body::before {
     content: '';
     position: fixed;
@@ -50,7 +50,6 @@
     z-index: 0;
   }
 
-  /* Header */
   header {
     position: relative;
     z-index: 10;
@@ -59,6 +58,8 @@
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid rgba(201,168,76,0.2);
+    flex-wrap: wrap;
+    gap: 12px;
   }
 
   .logo {
@@ -66,11 +67,25 @@
     font-size: 22px;
     color: var(--gold);
     letter-spacing: 0.5px;
+    text-decoration: none;
   }
 
-  .logo span {
-    color: var(--cream);
-    font-weight: 400;
+  .logo span { color: var(--cream); font-weight: 400; }
+
+  .nav-links { display: flex; gap: 10px; flex-wrap: wrap; }
+  .nav-links a {
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 14px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    transition: all 0.2s;
+  }
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--gold);
+    border-color: rgba(201,168,76,0.4);
+    background: rgba(201,168,76,0.08);
   }
 
   .badge {
@@ -85,7 +100,6 @@
     text-transform: uppercase;
   }
 
-  /* Hero */
   .hero {
     position: relative;
     z-index: 10;
@@ -111,10 +125,7 @@
     margin-bottom: 16px;
   }
 
-  .hero h1 em {
-    font-style: italic;
-    color: var(--gold);
-  }
+  .hero h1 em { font-style: italic; color: var(--gold); }
 
   .hero p {
     color: var(--gray);
@@ -125,13 +136,12 @@
     font-weight: 300;
   }
 
-  /* Main layout */
   .container {
     position: relative;
     z-index: 10;
     max-width: 1100px;
     margin: 0 auto;
-    padding: 20px 20px 60px;
+    padding: 20px 20px 40px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
@@ -143,7 +153,6 @@
     header { padding: 20px; }
   }
 
-  /* Cards */
   .card {
     background: var(--navy-mid);
     border: 1px solid rgba(201,168,76,0.15);
@@ -161,10 +170,7 @@
     border-bottom: 1px solid rgba(201,168,76,0.15);
   }
 
-  /* Form inputs */
-  .field {
-    margin-bottom: 24px;
-  }
+  .field { margin-bottom: 24px; }
 
   .field label {
     display: block;
@@ -176,9 +182,7 @@
     font-weight: 500;
   }
 
-  .input-wrap {
-    position: relative;
-  }
+  .input-wrap { position: relative; }
 
   .input-prefix {
     position: absolute;
@@ -226,10 +230,7 @@
     box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
   }
 
-  /* Slider */
-  .slider-wrap {
-    margin-top: 10px;
-  }
+  .slider-wrap { margin-top: 10px; }
 
   input[type="range"] {
     width: 100%;
@@ -252,9 +253,7 @@
     transition: transform 0.15s;
   }
 
-  input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-  }
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
   .slider-labels {
     display: flex;
@@ -264,7 +263,6 @@
     color: var(--gray);
   }
 
-  /* Calculate button */
   .btn {
     width: 100%;
     padding: 16px;
@@ -289,7 +287,6 @@
 
   .btn:active { transform: translateY(0); }
 
-  /* Results */
   .result-main {
     text-align: center;
     background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.05));
@@ -315,10 +312,7 @@
     margin-bottom: 4px;
   }
 
-  .result-main .sub {
-    color: var(--gray);
-    font-size: 13px;
-  }
+  .result-main .sub { color: var(--gray); font-size: 13px; }
 
   .result-grid {
     display: grid;
@@ -343,19 +337,11 @@
     margin-bottom: 6px;
   }
 
-  .result-item .r-value {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--white);
-  }
-
+  .result-item .r-value { font-size: 20px; font-weight: 600; color: var(--white); }
   .result-item .r-value.red { color: #ff6b6b; }
   .result-item .r-value.green { color: #6bffb8; }
 
-  /* Progress bar */
-  .progress-section {
-    margin-bottom: 24px;
-  }
+  .progress-section { margin-bottom: 24px; }
 
   .progress-label {
     display: flex;
@@ -389,23 +375,38 @@
     width: 0%;
   }
 
-  .legend {
-    display: flex;
-    gap: 16px;
-    font-size: 12px;
-    color: var(--gray);
+  /* Chart section */
+  .chart-section {
+    position: relative;
+    z-index: 10;
+    max-width: 1100px;
+    margin: 0 auto 24px;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
   }
 
-  .legend-dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin-right: 6px;
-    vertical-align: middle;
+  @media (max-width: 768px) { .chart-section { grid-template-columns: 1fr; } }
+
+  .chart-card {
+    background: var(--navy-mid);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 16px;
+    padding: 28px;
   }
 
-  /* Amortization table */
+  .chart-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: var(--white);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .chart-wrap { position: relative; height: 240px; }
+
   .amort-toggle {
     background: none;
     border: 1px solid rgba(201,168,76,0.3);
@@ -421,9 +422,7 @@
     margin-bottom: 16px;
   }
 
-  .amort-toggle:hover {
-    background: rgba(201,168,76,0.1);
-  }
+  .amort-toggle:hover { background: rgba(201,168,76,0.1); }
 
   .amort-table {
     display: none;
@@ -434,16 +433,11 @@
   }
 
   .amort-table.show { display: block; }
-
   .amort-table::-webkit-scrollbar { width: 4px; }
   .amort-table::-webkit-scrollbar-track { background: var(--navy); }
   .amort-table::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
 
   thead th {
     background: var(--navy-light);
@@ -465,15 +459,9 @@
 
   tbody tr:hover { background: rgba(201,168,76,0.05); }
 
-  tbody td {
-    padding: 9px 12px;
-    text-align: right;
-    color: var(--cream);
-  }
-
+  tbody td { padding: 9px 12px; text-align: right; color: var(--cream); }
   tbody td:first-child { text-align: left; color: var(--gray); }
 
-  /* Expert note */
   .expert-note {
     position: relative;
     z-index: 10;
@@ -507,12 +495,7 @@
     flex-shrink: 0;
   }
 
-  .expert-text .name {
-    font-weight: 600;
-    color: var(--white);
-    margin-bottom: 4px;
-  }
-
+  .expert-text .name { font-weight: 600; color: var(--white); margin-bottom: 4px; }
   .expert-text .title {
     font-size: 12px;
     color: var(--gold);
@@ -520,32 +503,12 @@
     text-transform: uppercase;
     margin-bottom: 10px;
   }
+  .expert-text p { color: var(--gray); font-size: 14px; line-height: 1.7; }
 
-  .expert-text p {
-    color: var(--gray);
-    font-size: 14px;
-    line-height: 1.7;
-  }
+  .placeholder { text-align: center; padding: 40px 20px; color: var(--gray); }
+  .placeholder-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+  .placeholder p { font-size: 14px; line-height: 1.6; }
 
-  /* Placeholder state */
-  .placeholder {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--gray);
-  }
-
-  .placeholder-icon {
-    font-size: 48px;
-    margin-bottom: 12px;
-    opacity: 0.4;
-  }
-
-  .placeholder p {
-    font-size: 14px;
-    line-height: 1.6;
-  }
-
-  /* Animations */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -553,19 +516,22 @@
 
   .card { animation: fadeUp 0.5s ease both; }
   .card:nth-child(2) { animation-delay: 0.1s; }
-
   .results-content { animation: fadeUp 0.4s ease both; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">Finance<span>RateCalc</span></div>
-  <div class="badge">✦ Licensed Professional</div
-                                              <nav style="display:flex;gap:8px;margin-top:12px;">
-  <a href="index.html" style="color:#c9a84c;text-decoration:none;font-size:13px;padding:6px 14px;border:1px solid rgba(201,168,76,0.3);border-radius:20px;background:rgba(201,168,76,0.1);">Mortgage</a>
-  <a href="business-loan-calculator.html" style="color:#8892a4;text-decoration:none;font-size:13px;padding:6px 14px;border:1px solid rgba(255,255,255,0.1);border-radius:20px;">Business Loan</a>
-</nav>
+  <a href="index.html" class="logo">Finance<span>RateCalc</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="mortgage-calculator.html" class="active">Mortgage</a>
+    <a href="business-loan-calculator.html">Business Loan</a>
+    <a href="financial-twin.html">Buy vs Rent</a>
+    <a href="loan-offer-analyzer.html">Loan Analyzer</a>
+    <a href="bank-approval-simulator.html">Bank Simulator</a>
+  </div>
+  <div class="badge">✦ Licensed Professional</div>
 </header>
 
 <div class="hero">
@@ -575,7 +541,6 @@
 </div>
 
 <div class="container">
-
   <!-- Input Card -->
   <div class="card">
     <div class="card-title">Loan Details</div>
@@ -641,23 +606,40 @@
       </div>
     </div>
   </div>
+</div>
 
+<!-- Charts Section -->
+<div class="chart-section" id="chartSection" style="display:none;">
+  <div class="chart-card">
+    <div class="chart-title">📊 Principal vs Interest Over Time</div>
+    <div class="chart-wrap">
+      <canvas id="amortChart"></canvas>
+    </div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title">🥧 Total Payment Breakdown</div>
+    <div class="chart-wrap">
+      <canvas id="donutChart"></canvas>
+    </div>
+  </div>
 </div>
 
 <!-- Expert Note -->
 <div class="expert-note">
   <div class="expert-card">
-    <div class="expert-avatar">Z</div>
+    <div class="expert-avatar">🏦</div>
     <div class="expert-text">
-      <div class="name">Ziya — Licensed Financial Professional</div>
+      <div class="name">A Licensed Banking Professional</div>
       <div class="title">23 Years Banking Experience · SPK Licensed</div>
-      <p>This calculator uses the standard amortization formula used by banks worldwide. Your actual rate may vary based on credit score, lender, and market conditions. Always compare multiple lenders before committing to a mortgage.</p>
+      <p>This calculator uses the standard amortization formula used by banks worldwide. Your actual rate may vary based on credit score, lender, and market conditions. Always compare multiple lenders before committing to a mortgage. Educational purposes only — not financial advice.</p>
     </div>
   </div>
 </div>
 
 <script>
-  // Sync sliders with inputs
+  let amortChartInstance = null;
+  let donutChartInstance = null;
+
   function syncSlider(inputId, sliderId) {
     const input = document.getElementById(inputId);
     const slider = document.getElementById(sliderId);
@@ -695,21 +677,38 @@
     const interestPct = (totalInterest / totalPayment * 100).toFixed(1);
     const downPct = (downPayment / homePrice * 100).toFixed(1);
 
-    // Build amortization schedule
+    // Amortization schedule + chart data
     let balance = principal;
     let scheduleRows = '';
+    const chartLabels = [];
+    const chartPrincipal = [];
+    const chartInterest = [];
+    const chartBalance = [];
+
     for (let i = 1; i <= n; i++) {
       const interestPayment = balance * monthlyRate;
       const principalPayment = monthly - interestPayment;
       balance -= principalPayment;
+      if (balance < 0) balance = 0;
+
+      if (i % 12 === 0) {
+        const yr = i / 12;
+        chartLabels.push('Yr ' + yr);
+        const cumPrincipal = principal - balance;
+        const cumInterest = (monthly * i) - cumPrincipal;
+        chartPrincipal.push(Math.round(cumPrincipal));
+        chartInterest.push(Math.round(Math.max(0, cumInterest)));
+        chartBalance.push(Math.round(balance));
+      }
+
       if (i <= 12 || i % 12 === 0 || i === n) {
-        scheduleRows += `<tr>
-          <td>Month ${i}</td>
-          <td>${fmt(monthly)}</td>
-          <td>${fmt(principalPayment)}</td>
-          <td>${fmt(interestPayment)}</td>
-          <td>${fmt(Math.max(0, balance))}</td>
-        </tr>`;
+        scheduleRows += '<tr>' +
+          '<td>Month ' + i + '</td>' +
+          '<td>' + fmt(monthly) + '</td>' +
+          '<td>' + fmt(principalPayment) + '</td>' +
+          '<td>' + fmt(interestPayment) + '</td>' +
+          '<td>' + fmt(balance) + '</td>' +
+          '</tr>';
       }
     }
 
@@ -720,7 +719,6 @@
           <div class="amount">${fmt(monthly)}</div>
           <div class="sub">for ${years} years · ${annualRate}% annual rate</div>
         </div>
-
         <div class="result-grid">
           <div class="result-item">
             <div class="r-label">Loan Amount</div>
@@ -739,24 +737,18 @@
             <div class="r-value red">${fmt(totalInterest)}</div>
           </div>
         </div>
-
         <div class="progress-section">
           <div class="progress-label"><span>Principal</span><span>${principalPct}%</span></div>
           <div class="progress-bar"><div class="progress-fill-principal" id="pBar"></div></div>
           <div class="progress-label"><span>Interest</span><span>${interestPct}%</span></div>
           <div class="progress-bar"><div class="progress-fill-interest" id="iBar"></div></div>
         </div>
-
         <button class="amort-toggle" onclick="toggleAmort()">▼ Show Amortization Schedule</button>
         <div class="amort-table" id="amortTable">
           <table>
             <thead>
               <tr>
-                <th>Period</th>
-                <th>Payment</th>
-                <th>Principal</th>
-                <th>Interest</th>
-                <th>Balance</th>
+                <th>Period</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th>
               </tr>
             </thead>
             <tbody>${scheduleRows}</tbody>
@@ -771,6 +763,109 @@
       if (pBar) pBar.style.width = principalPct + '%';
       if (iBar) iBar.style.width = interestPct + '%';
     }, 50);
+
+    // Show charts
+    document.getElementById('chartSection').style.display = 'grid';
+    renderCharts(chartLabels, chartPrincipal, chartInterest, principal, totalInterest, downPayment);
+  }
+
+  function renderCharts(labels, principalData, interestData, principal, totalInterest, downPayment) {
+    // Destroy old charts
+    if (amortChartInstance) { amortChartInstance.destroy(); }
+    if (donutChartInstance) { donutChartInstance.destroy(); }
+
+    // Stacked bar chart — cumulative principal vs interest
+    const ctx1 = document.getElementById('amortChart').getContext('2d');
+    amortChartInstance = new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Principal Paid',
+            data: principalData,
+            backgroundColor: 'rgba(201,168,76,0.75)',
+            borderColor: 'rgba(201,168,76,1)',
+            borderWidth: 1,
+            borderRadius: 2,
+          },
+          {
+            label: 'Interest Paid',
+            data: interestData,
+            backgroundColor: 'rgba(255,107,107,0.65)',
+            borderColor: 'rgba(255,107,107,1)',
+            borderWidth: 1,
+            borderRadius: 2,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: { color: '#8892a4', font: { size: 11 }, boxWidth: 12 }
+          },
+          tooltip: {
+            callbacks: {
+              label: ctx => ' $' + ctx.raw.toLocaleString()
+            }
+          }
+        },
+        scales: {
+          x: {
+            stacked: true,
+            ticks: { color: '#8892a4', font: { size: 10 }, maxTicksLimit: 10 },
+            grid: { color: 'rgba(255,255,255,0.04)' }
+          },
+          y: {
+            stacked: true,
+            ticks: {
+              color: '#8892a4',
+              font: { size: 10 },
+              callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'K' : v)
+            },
+            grid: { color: 'rgba(255,255,255,0.06)' }
+          }
+        }
+      }
+    });
+
+    // Donut chart — breakdown
+    const ctx2 = document.getElementById('donutChart').getContext('2d');
+    donutChartInstance = new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: ['Principal', 'Interest', 'Down Payment'],
+        datasets: [{
+          data: [Math.round(principal), Math.round(totalInterest), Math.round(downPayment)],
+          backgroundColor: [
+            'rgba(201,168,76,0.8)',
+            'rgba(255,107,107,0.8)',
+            'rgba(107,255,184,0.8)'
+          ],
+          borderColor: ['#c9a84c', '#ff6b6b', '#6bffb8'],
+          borderWidth: 2,
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '62%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#8892a4', font: { size: 11 }, boxWidth: 12, padding: 16 }
+          },
+          tooltip: {
+            callbacks: {
+              label: ctx => ' $' + ctx.raw.toLocaleString()
+            }
+          }
+        }
+      }
+    });
   }
 
   function toggleAmort() {
@@ -780,7 +875,6 @@
     btn.textContent = table.classList.contains('show') ? '▲ Hide Amortization Schedule' : '▼ Show Amortization Schedule';
   }
 
-  // Auto-calculate on load
   calculate();
 </script>
 </body>
