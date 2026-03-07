@@ -1015,8 +1015,8 @@ function renderQuestion() {
 
   if (q.type === 'options') {
     const cols = q.options.length === 3 ? 'three' : q.options.length <= 2 ? 'single' : '';
-    body.innerHTML = `<div class="options-grid ${cols}">${q.options.map(o => `
-      <button class="option-btn ${answers[q.id] === o.value ? 'selected' : ''}" onclick="selectOption('${q.id}', ${JSON.stringify(o.value)}, this)">
+    body.innerHTML = `<div class="options-grid ${cols}">${q.options.map((o, idx) => `
+      <button class="option-btn ${answers[q.id] === o.value ? 'selected' : ''}" data-qid="${q.id}" data-idx="${idx}" onclick="selectOptionByIdx('${q.id}', ${idx}, this)">
         <span class="option-icon">${o.icon}</span>
         <div>
           <div class="option-label">${o.label}</div>
@@ -1040,8 +1040,9 @@ function renderQuestion() {
   updateProgress();
 }
 
-function selectOption(qId, value, el) {
-  answers[qId] = value;
+function selectOptionByIdx(qId, idx, el) {
+  const q = questions.find(q => q.id === qId);
+  answers[qId] = q.options[idx].value;
   document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
   document.getElementById('btnNext').disabled = false;
