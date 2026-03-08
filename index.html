@@ -6,7 +6,6 @@
 <title>FinanceRateCalc — Free Financial Calculators by a Licensed Professional</title>
 <meta name="description" content="Free mortgage, business loan, compound interest, and buy vs rent calculators built by a licensed financial professional with 23 years of banking experience. Trusted tools for smarter financial decisions.">
 <meta name="keywords" content="mortgage calculator, business loan calculator, compound interest calculator, buy vs rent calculator, financial calculator, loan calculator">
-<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-8VGHR8XH4C"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -31,595 +30,116 @@
     --border: #ddd8cc;
     --white: #ffffff;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Geist', sans-serif;
-    background: var(--paper);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  /* ─── HEADER ─── */
-  header {
-    background: var(--ink);
-    padding: 0 60px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .logo {
-    font-family: 'Fraunces', serif;
-    font-size: 22px;
-    font-weight: 900;
-    color: var(--white);
-    letter-spacing: -0.5px;
-  }
-
+  body { font-family: 'Geist', sans-serif; background: var(--paper); color: var(--text); min-height: 100vh; }
+  header { background: var(--ink); padding: 0 60px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 900; color: var(--white); letter-spacing: -0.5px; }
   .logo em { font-style: italic; color: var(--gold-light); }
-
-  .nav-links {
-    display: flex;
-    gap: 28px;
-    align-items: center;
-  }
-
-  .nav-links a {
-    color: rgba(255,255,255,0.5);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    transition: color 0.2s;
-    letter-spacing: 0.3px;
-  }
-
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
   .nav-links a:hover { color: var(--gold-light); }
-
-  .nav-badge {
-    background: var(--gold);
-    color: var(--ink);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-
-  @media (max-width: 768px) {
-    header { padding: 0 20px; }
-    .nav-links { display: none; }
-  }
-
-  /* ─── FEATURED BANNER ─── */
-  .featured-banner {
-    background: linear-gradient(135deg, #1a0533 0%, #2d1b69 50%, #1a0533 100%);
-    padding: 14px 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    border-bottom: 1px solid rgba(91,63,166,0.4);
-  }
-
-  .featured-banner-badge {
-    background: #f0c040;
-    color: #1a0533;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 20px;
-    white-space: nowrap;
-  }
-
-  .featured-banner-text {
-    color: rgba(255,255,255,0.85);
-    font-size: 14px;
-    font-weight: 400;
-  }
-
+  .nav-badge { background: var(--gold); color: var(--ink); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
+  @media (max-width: 768px) { header { padding: 0 20px; } .nav-links { display: none; } }
+  .featured-banner { background: linear-gradient(135deg, #1a0533 0%, #2d1b69 50%, #1a0533 100%); padding: 14px 60px; display: flex; align-items: center; justify-content: center; gap: 16px; border-bottom: 1px solid rgba(91,63,166,0.4); }
+  .featured-banner-badge { background: #f0c040; color: #1a0533; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .featured-banner-text { color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 400; }
   .featured-banner-text strong { color: #fff; font-weight: 600; }
-
-  .featured-banner-cta {
-    background: #5b3fa6;
-    color: #fff;
-    padding: 6px 16px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background 0.2s;
-    border: 1px solid rgba(255,255,255,0.2);
-  }
-
+  .featured-banner-cta { background: #5b3fa6; color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; transition: background 0.2s; border: 1px solid rgba(255,255,255,0.2); }
   .featured-banner-cta:hover { background: #7050c0; }
-
-  @media (max-width: 768px) {
-    .featured-banner { padding: 12px 20px; flex-wrap: wrap; gap: 8px; }
-    .featured-banner-text { font-size: 13px; text-align: center; }
-  }
-
-  /* ─── HERO ─── */
-  .hero {
-    background: var(--ink);
-    padding: 80px 60px 100px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 70% 50%, rgba(184,134,11,0.12) 0%, transparent 60%),
-      radial-gradient(ellipse at 20% 80%, rgba(26,58,92,0.3) 0%, transparent 50%);
-  }
-
-  .hero::after {
-    content: '';
-    position: absolute;
-    right: 60px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 300px;
-    height: 300px;
-    border: 1px solid rgba(184,134,11,0.15);
-    border-radius: 50%;
-    box-shadow: 0 0 0 40px rgba(184,134,11,0.05), 0 0 0 80px rgba(184,134,11,0.03);
-  }
-
-  .hero-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--gold-light);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-  }
-
-  .hero-eyebrow::before {
-    content: '';
-    display: inline-block;
-    width: 32px;
-    height: 1px;
-    background: var(--gold-light);
-  }
-
-  .hero h1 {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(40px, 6vw, 72px);
-    font-weight: 900;
-    color: var(--white);
-    line-height: 1.0;
-    letter-spacing: -1.5px;
-    margin-bottom: 24px;
-    max-width: 700px;
-  }
-
+  @media (max-width: 768px) { .featured-banner { padding: 12px 20px; flex-wrap: wrap; gap: 8px; } .featured-banner-text { font-size: 13px; text-align: center; } }
+  .hero { background: var(--ink); padding: 80px 60px 100px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, rgba(184,134,11,0.12) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(26,58,92,0.3) 0%, transparent 50%); }
+  .hero::after { content: ''; position: absolute; right: 60px; top: 50%; transform: translateY(-50%); width: 300px; height: 300px; border: 1px solid rgba(184,134,11,0.15); border-radius: 50%; box-shadow: 0 0 0 40px rgba(184,134,11,0.05), 0 0 0 80px rgba(184,134,11,0.03); }
+  .hero-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--gold-light); font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
+  .hero-eyebrow::before { content: ''; display: inline-block; width: 32px; height: 1px; background: var(--gold-light); }
+  .hero h1 { font-family: 'Fraunces', serif; font-size: clamp(40px, 6vw, 72px); font-weight: 900; color: var(--white); line-height: 1.0; letter-spacing: -1.5px; margin-bottom: 24px; max-width: 700px; }
   .hero h1 em { font-style: italic; color: var(--gold-light); }
-
-  .hero-desc {
-    color: rgba(255,255,255,0.55);
-    font-size: 17px;
-    line-height: 1.7;
-    max-width: 520px;
-    font-weight: 300;
-    margin-bottom: 40px;
-  }
-
+  .hero-desc { color: rgba(255,255,255,0.55); font-size: 17px; line-height: 1.7; max-width: 520px; font-weight: 300; margin-bottom: 40px; }
   .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
-
-  .hero-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--gold);
-    color: var(--ink);
-    padding: 14px 28px;
-    border-radius: 6px;
-    font-weight: 700;
-    font-size: 14px;
-    text-decoration: none;
-    letter-spacing: 0.5px;
-    transition: all 0.2s;
-  }
-
-  .hero-cta:hover {
-    background: var(--gold-light);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(184,134,11,0.3);
-  }
-
-  .hero-cta-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(91,63,166,0.25);
-    color: #c9b8ff;
-    padding: 14px 28px;
-    border-radius: 6px;
-    font-weight: 700;
-    font-size: 14px;
-    text-decoration: none;
-    letter-spacing: 0.5px;
-    border: 1px solid rgba(91,63,166,0.5);
-    transition: all 0.2s;
-  }
-
-  .hero-cta-secondary:hover {
-    background: rgba(91,63,166,0.4);
-    transform: translateY(-2px);
-  }
-
-  .hero-stats {
-    display: flex;
-    gap: 40px;
-    margin-top: 60px;
-    padding-top: 40px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .stat .s-num {
-    font-family: 'Fraunces', serif;
-    font-size: 32px;
-    font-weight: 900;
-    color: var(--gold-light);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .stat .s-label {
-    font-size: 12px;
-    color: rgba(255,255,255,0.4);
-    font-weight: 500;
-    letter-spacing: 0.5px;
-  }
-
-  @media (max-width: 768px) {
-    .hero { padding: 60px 20px 80px; }
-    .hero::after { display: none; }
-    .hero-stats { gap: 24px; flex-wrap: wrap; }
-  }
-
-  /* ─── TOOLS SECTION ─── */
-  .tools-section {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 80px 60px;
-  }
-
+  .hero-cta { display: inline-flex; align-items: center; gap: 10px; background: var(--gold); color: var(--ink); padding: 14px 28px; border-radius: 6px; font-weight: 700; font-size: 14px; text-decoration: none; letter-spacing: 0.5px; transition: all 0.2s; }
+  .hero-cta:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(184,134,11,0.3); }
+  .hero-cta-secondary { display: inline-flex; align-items: center; gap: 10px; background: rgba(91,63,166,0.25); color: #c9b8ff; padding: 14px 28px; border-radius: 6px; font-weight: 700; font-size: 14px; text-decoration: none; letter-spacing: 0.5px; border: 1px solid rgba(91,63,166,0.5); transition: all 0.2s; }
+  .hero-cta-secondary:hover { background: rgba(91,63,166,0.4); transform: translateY(-2px); }
+  .hero-stats { display: flex; gap: 40px; margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .stat .s-num { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 900; color: var(--gold-light); line-height: 1; margin-bottom: 4px; }
+  .stat .s-label { font-size: 12px; color: rgba(255,255,255,0.4); font-weight: 500; letter-spacing: 0.5px; }
+  @media (max-width: 768px) { .hero { padding: 60px 20px 80px; } .hero::after { display: none; } .hero-stats { gap: 24px; flex-wrap: wrap; } }
+  .tools-section { max-width: 1100px; margin: 0 auto; padding: 80px 60px; }
   @media (max-width: 768px) { .tools-section { padding: 50px 20px; } }
-
-  .section-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 40px;
-  }
-
-  .section-eyebrow {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 8px;
-  }
-
-  .section-title {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(28px, 4vw, 40px);
-    font-weight: 900;
-    color: var(--ink);
-    letter-spacing: -0.5px;
-    line-height: 1.1;
-  }
-
-  .tools-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
+  .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; }
+  .section-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .section-title { font-family: 'Fraunces', serif; font-size: clamp(28px, 4vw, 40px); font-weight: 900; color: var(--ink); letter-spacing: -0.5px; line-height: 1.1; }
+  .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .tool-card-featured { grid-column: 1 / -1; }
-
   @media (max-width: 900px) { .tools-grid { grid-template-columns: 1fr; } }
-
-  .tool-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-    text-decoration: none;
-    color: var(--text);
-    display: block;
-    transition: all 0.25s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .tool-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--card-color, var(--gold));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s;
-  }
-
-  .tool-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 40px rgba(0,0,0,0.1);
-    border-color: transparent;
-  }
-
+  .tool-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-decoration: none; color: var(--text); display: block; transition: all 0.25s; position: relative; overflow: hidden; }
+  .tool-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--card-color, var(--gold)); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+  .tool-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); border-color: transparent; }
   .tool-card:hover::before { transform: scaleX(1); }
-
-  /* Featured card */
-  .tool-card-featured {
-    background: linear-gradient(135deg, #12002a 0%, #1e0f4a 40%, #0d1a3a 100%);
-    border: 1px solid rgba(91,63,166,0.35);
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 32px;
-    align-items: center;
-    padding: 36px 40px;
-  }
-
-  .tool-card-featured::before {
-    background: linear-gradient(90deg, #5b3fa6, #f0c040);
-  }
-
-  .tool-card-featured:hover {
-    box-shadow: 0 16px 48px rgba(91,63,166,0.3);
-    border-color: rgba(91,63,166,0.6);
-  }
-
+  .tool-card-featured { background: linear-gradient(135deg, #12002a 0%, #1e0f4a 40%, #0d1a3a 100%); border: 1px solid rgba(91,63,166,0.35); display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center; padding: 36px 40px; }
+  .tool-card-featured::before { background: linear-gradient(90deg, #5b3fa6, #f0c040); }
+  .tool-card-featured:hover { box-shadow: 0 16px 48px rgba(91,63,166,0.3); border-color: rgba(91,63,166,0.6); }
   .tool-card-featured .tool-label { color: #f0c040; }
   .tool-card-featured .tool-name { color: #ffffff; font-size: 28px; }
   .tool-card-featured .tool-desc { color: rgba(255,255,255,0.55); font-size: 15px; margin-bottom: 20px; }
   .tool-card-featured .tool-feature { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.1); }
   .tool-card-featured .tool-link { color: #c9b8ff; font-size: 14px; }
-
-  .featured-visual {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    flex-shrink: 0;
-  }
-
-  .featured-cities {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
-    max-width: 260px;
-  }
-
-  .featured-city {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.12);
-    color: rgba(255,255,255,0.6);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
-    letter-spacing: 0.3px;
-  }
-
-  .featured-city.highlight {
-    background: rgba(91,63,166,0.3);
-    border-color: rgba(91,63,166,0.5);
-    color: #c9b8ff;
-  }
-
-  .featured-cta-btn {
-    background: #5b3fa6;
-    color: #fff;
-    padding: 12px 28px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s;
-    white-space: nowrap;
-  }
-
+  .featured-visual { display: flex; flex-direction: column; align-items: center; gap: 12px; flex-shrink: 0; }
+  .featured-cities { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 260px; }
+  .featured-city { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.6); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.3px; }
+  .featured-city.highlight { background: rgba(91,63,166,0.3); border-color: rgba(91,63,166,0.5); color: #c9b8ff; }
+  .featured-cta-btn { background: #5b3fa6; color: #fff; padding: 12px 28px; border-radius: 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; border: none; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
   .featured-cta-btn:hover { background: #7050c0; }
-
-  @media (max-width: 768px) {
-    .tool-card-featured { grid-template-columns: 1fr; padding: 28px 24px; }
-    .featured-visual { display: none; }
-  }
-
-  .tool-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-    background: var(--icon-bg, rgba(184,134,11,0.1));
-  }
-
-  .tool-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--card-color, var(--gold));
-    margin-bottom: 8px;
-  }
-
-  .tool-name {
-    font-family: 'Fraunces', serif;
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--ink);
-    margin-bottom: 10px;
-    letter-spacing: -0.3px;
-    line-height: 1.2;
-  }
-
-  .tool-desc {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.65;
-    margin-bottom: 24px;
-    font-weight: 300;
-  }
-
-  .tool-features {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 24px;
-  }
-
-  .tool-feature {
-    background: var(--cream);
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 500;
-  }
-
-  .tool-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--card-color, var(--gold));
-    letter-spacing: 0.3px;
-  }
-
+  @media (max-width: 768px) { .tool-card-featured { grid-template-columns: 1fr; padding: 28px 24px; } .featured-visual { display: none; } }
+  .tool-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; background: var(--icon-bg, rgba(184,134,11,0.1)); }
+  .tool-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--card-color, var(--gold)); margin-bottom: 8px; }
+  .tool-name { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.3px; line-height: 1.2; }
+  .tool-desc { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 24px; font-weight: 300; }
+  .tool-features { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+  .tool-feature { background: var(--cream); padding: 3px 10px; border-radius: 20px; font-size: 11px; color: var(--muted); font-weight: 500; }
+  .tool-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--card-color, var(--gold)); letter-spacing: 0.3px; }
   .tool-link::after { content: '→'; transition: transform 0.2s; }
   .tool-card:hover .tool-link::after { transform: translateX(4px); }
-
-  /* ─── EXPERT SECTION ─── */
-  .expert-section {
-    background: var(--cream);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 80px 60px;
-  }
-
+  .expert-section { background: var(--cream); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 80px 60px; }
   @media (max-width: 768px) { .expert-section { padding: 50px 20px; } }
-
-  .expert-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 48px;
-    align-items: center;
-  }
-
+  .expert-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr; gap: 48px; align-items: center; }
   @media (max-width: 768px) { .expert-inner { grid-template-columns: 1fr; gap: 24px; } }
-
-  .expert-portrait {
-    width: 160px;
-    height: 160px;
-    background: var(--ink);
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Fraunces', serif;
-    font-size: 64px;
-    font-weight: 900;
-    color: var(--gold-light);
-    flex-shrink: 0;
-    position: relative;
-  }
-
-  .expert-portrait::after {
-    content: '✓ Licensed';
-    position: absolute;
-    bottom: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--sage);
-    color: #fff;
-    font-family: 'Geist', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    white-space: nowrap;
-  }
-
+  .expert-portrait { width: 160px; height: 160px; background: var(--ink); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 64px; font-weight: 900; color: var(--gold-light); flex-shrink: 0; position: relative; }
+  .expert-portrait::after { content: '✓ Licensed'; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); background: var(--sage); color: #fff; font-family: 'Geist', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
   .expert-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
   .expert-name { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 900; color: var(--ink); letter-spacing: -0.5px; margin-bottom: 6px; }
   .expert-title { font-size: 14px; color: var(--muted); margin-bottom: 20px; font-weight: 400; }
   .expert-bio { font-size: 15px; color: var(--text); line-height: 1.75; font-weight: 300; max-width: 560px; margin-bottom: 24px; }
   .credentials { display: flex; flex-wrap: wrap; gap: 8px; }
   .credential { background: var(--white); border: 1px solid var(--border); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--text); }
-
-  /* ─── WHY SECTION ─── */
   .why-section { max-width: 1100px; margin: 0 auto; padding: 80px 60px; }
-
   @media (max-width: 768px) { .why-section { padding: 50px 20px; } }
-
   .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 40px; }
-
   @media (max-width: 768px) { .why-grid { grid-template-columns: 1fr; gap: 24px; } }
-
   .why-num { font-family: 'Fraunces', serif; font-size: 48px; font-weight: 900; color: var(--cream); line-height: 1; margin-bottom: 12px; -webkit-text-stroke: 2px var(--border); }
   .why-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
   .why-desc { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; }
-
-  /* ─── FOOTER ─── */
   footer { background: var(--ink); padding: 40px 60px; display: flex; align-items: center; justify-content: space-between; }
-
   @media (max-width: 768px) { footer { padding: 32px 20px; flex-direction: column; gap: 16px; text-align: center; } }
-
   .footer-logo { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 900; color: var(--white); }
   .footer-logo em { font-style: italic; color: var(--gold-light); }
   .footer-links { display: flex; gap: 24px; }
   .footer-links a { color: rgba(255,255,255,0.4); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
   .footer-links a:hover { color: var(--gold-light); }
   .footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
-
   @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
   .tool-card { animation: fadeUp 0.5s ease both; }
   .tool-card:nth-child(2) { animation-delay: 0.1s; }
   .tool-card:nth-child(3) { animation-delay: 0.2s; }
   .tool-card:nth-child(4) { animation-delay: 0.3s; }
+  .tool-card:nth-child(5) { animation-delay: 0.4s; }
+  .tool-card:nth-child(6) { animation-delay: 0.5s; }
+  .tool-card:nth-child(7) { animation-delay: 0.6s; }
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <header>
   <div class="logo">Finance<em>Rate</em>Calc</div>
   <div class="nav-links">
@@ -627,26 +147,24 @@
     <a href="mortgage-calculator.html">Mortgage</a>
     <a href="business-loan-calculator.html">Business Loan</a>
     <a href="compound-interest-calculator.html">Compound Interest</a>
-    <a href="financial-twin.html" style="color:#c9b8ff; font-weight:600;">🏠 Buy vs Rent</a>
-    <a href="loan-offer-analyzer.html" style="color:#e87070; font-weight:600;">🔍 Loan Analyzer</a>
-    <a href="bank-approval-simulator.html" style="color:#3ecf8e; font-weight:600;">🏦 Bank Simulator</a>
+    <a href="financial-twin.html" style="color:#c9b8ff;font-weight:600;">🏠 Buy vs Rent</a>
+    <a href="loan-offer-analyzer.html" style="color:#e87070;font-weight:600;">🔍 Loan Analyzer</a>
+    <a href="loan-comparator.html" style="color:#f0c040;font-weight:600;">⚖️ Comparator</a>
+    <a href="bank-approval-simulator.html" style="color:#3ecf8e;font-weight:600;">🏦 Bank Simulator</a>
     <span class="nav-badge">Licensed Pro</span>
   </div>
 </header>
 
-<!-- Featured Banner -->
 <div class="featured-banner">
   <span class="featured-banner-badge">🔥 New Tool</span>
   <span class="featured-banner-text"><strong>Should You Buy or Rent?</strong> — Real data for 25 cities worldwide. See your financial future in 10, 20, or 30 years.</span>
   <a href="financial-twin.html" class="featured-banner-cta">Try It Free →</a>
 </div>
 
-<!-- Disclaimer -->
 <div style="background:#1c1c2e;padding:9px 60px;text-align:center;font-size:11.5px;color:rgba(255,255,255,0.38);border-bottom:1px solid rgba(255,255,255,0.06);">
   <strong style="color:rgba(255,255,255,0.55);">Educational purposes only — not financial advice.</strong> All tools are free and for informational use only.
 </div>
 
-<!-- Hero -->
 <div class="hero">
   <div class="hero-inner">
     <div class="hero-eyebrow">Free Financial Calculators</div>
@@ -658,14 +176,13 @@
     </div>
     <div class="hero-stats">
       <div class="stat"><div class="s-num">23</div><div class="s-label">Years of Banking</div></div>
-      <div class="stat"><div class="s-num">5+</div><div class="s-label">Free Tools</div></div>
+      <div class="stat"><div class="s-num">6+</div><div class="s-label">Free Tools</div></div>
       <div class="stat"><div class="s-num">25</div><div class="s-label">Cities Covered</div></div>
       <div class="stat"><div class="s-num">SPK</div><div class="s-label">Licensed Professional</div></div>
     </div>
   </div>
 </div>
 
-<!-- Tools -->
 <div class="tools-section" id="tools">
   <div class="section-header">
     <div>
@@ -707,21 +224,21 @@
     </a>
 
     <!-- Mortgage -->
-    <a href="mortgage-calculator.html" class="tool-card" style="--card-color: #b8860b; --icon-bg: rgba(184,134,11,0.1)">
+    <a href="mortgage-calculator.html" class="tool-card" style="--card-color:#b8860b;--icon-bg:rgba(184,134,11,0.1)">
       <div class="tool-icon">🏠</div>
       <div class="tool-label">Most Popular</div>
       <div class="tool-name">Mortgage Calculator</div>
-      <div class="tool-desc">Calculate your monthly payments, total interest, and see a full amortization schedule for any home loan.</div>
+      <div class="tool-desc">Calculate your monthly payments, total interest, and see a full amortization schedule — now with interactive charts.</div>
       <div class="tool-features">
         <span class="tool-feature">Monthly Payment</span>
-        <span class="tool-feature">Amortization</span>
+        <span class="tool-feature">Amortization Chart</span>
         <span class="tool-feature">Total Interest</span>
       </div>
       <div class="tool-link">Calculate Now</div>
     </a>
 
     <!-- Business Loan -->
-    <a href="business-loan-calculator.html" class="tool-card" style="--card-color: #1a3a5c; --icon-bg: rgba(26,58,92,0.08)">
+    <a href="business-loan-calculator.html" class="tool-card" style="--card-color:#1a3a5c;--icon-bg:rgba(26,58,92,0.08)">
       <div class="tool-icon">💼</div>
       <div class="tool-label">For Businesses</div>
       <div class="tool-name">Business Loan Calculator</div>
@@ -735,7 +252,7 @@
     </a>
 
     <!-- Compound Interest -->
-    <a href="compound-interest-calculator.html" class="tool-card" style="--card-color: #4a6741; --icon-bg: rgba(74,103,65,0.08)">
+    <a href="compound-interest-calculator.html" class="tool-card" style="--card-color:#4a6741;--icon-bg:rgba(74,103,65,0.08)">
       <div class="tool-icon">📈</div>
       <div class="tool-label">18 Countries</div>
       <div class="tool-name">Compound Interest Calculator</div>
@@ -749,7 +266,7 @@
     </a>
 
     <!-- Loan Offer Analyzer -->
-    <a href="loan-offer-analyzer.html" class="tool-card" style="--card-color: #8b2a2a; --icon-bg: rgba(139,42,42,0.08)">
+    <a href="loan-offer-analyzer.html" class="tool-card" style="--card-color:#8b2a2a;--icon-bg:rgba(139,42,42,0.08)">
       <div class="tool-icon">🔍</div>
       <div class="tool-label">Banker's Reality Check</div>
       <div class="tool-name">Loan Offer Analyzer</div>
@@ -762,8 +279,23 @@
       <div class="tool-link">Analyze Now</div>
     </a>
 
+    <!-- Loan Comparator — NEW -->
+    <a href="loan-comparator.html" class="tool-card" style="--card-color:#b8860b;--icon-bg:rgba(184,134,11,0.1)">
+      <div class="tool-icon">⚖️</div>
+      <div class="tool-label">🆕 New · Side-by-Side</div>
+      <div class="tool-name">Loan Offer Comparator</div>
+      <div class="tool-desc">Compare up to 3 bank offers at once. See which is truly cheapest — total cost, fees, real APR — in one clear table with charts.</div>
+      <div class="tool-features">
+        <span class="tool-feature">3 Offers at Once</span>
+        <span class="tool-feature">True Total Cost</span>
+        <span class="tool-feature">Visual Charts</span>
+        <span class="tool-feature">Banker's Checklist</span>
+      </div>
+      <div class="tool-link">Compare Now</div>
+    </a>
+
     <!-- Bank Approval Simulator -->
-    <a href="bank-approval-simulator.html" class="tool-card" style="--card-color: #2a6b4a; --icon-bg: rgba(42,107,74,0.08)">
+    <a href="bank-approval-simulator.html" class="tool-card" style="--card-color:#2a6b4a;--icon-bg:rgba(42,107,74,0.08)">
       <div class="tool-icon">🏦</div>
       <div class="tool-label">Insider Simulator</div>
       <div class="tool-name">Bank Approval Simulator</div>
@@ -779,7 +311,6 @@
   </div>
 </div>
 
-<!-- Expert -->
 <div class="expert-section">
   <div class="expert-inner">
     <div class="expert-portrait">🏦</div>
@@ -799,7 +330,6 @@
   </div>
 </div>
 
-<!-- Why -->
 <div class="why-section">
   <div class="section-eyebrow">Why FinanceRateCalc</div>
   <div class="section-title">Built Different</div>
@@ -822,11 +352,11 @@
   </div>
 </div>
 
-<!-- Footer -->
 <footer>
   <div class="footer-logo">Finance<em>Rate</em>Calc</div>
   <div class="footer-links">
     <a href="financial-twin.html">Buy vs Rent</a>
+    <a href="loan-comparator.html">Loan Comparator</a>
     <a href="loan-offer-analyzer.html">Loan Analyzer</a>
     <a href="mortgage-calculator.html">Mortgage</a>
     <a href="business-loan-calculator.html">Business Loan</a>
