@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Time Machine — What If Simulator 2026 | FinanceRateCalc</title>
+<meta name="description" content="What happens to your finances if you lose your job, have a baby, or the market crashes? Simulate any life event and see the 20-year impact. Built by a licensed banker.">
+<link rel="canonical" href="https://financeratecalc.com/financial-time-machine.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-13712175066');</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f0e0c;--paper:#faf8f4;--cream:#f2ede4;--gold:#b8860b;--gold-light:#d4a017;--text:#2c2a26;--muted:#8a8070;--border:#ddd8cc;--white:#fff;--green:#2a6b4a;--red:#8b2a2a;--blue:#1a3a5c;--purple:#6b3fa0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:var(--paper);color:var(--text);}
+header{background:var(--ink);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold-light);}
+.nav-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;margin-left:24px;}
+.nav-links a:hover{color:var(--gold-light);}
+@media(max-width:768px){header{padding:0 20px;}.nav-links{display:none;}}
+
+.hero{background:var(--ink);padding:60px 60px 70px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 50%,rgba(107,63,160,0.12) 0%,transparent 60%);}
+.hero-inner{max-width:760px;margin:0 auto;position:relative;z-index:1;text-align:center;}
+.hero-eye{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#aa77ff;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,56px);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:16px;}
+.hero h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{color:rgba(255,255,255,0.45);font-size:15px;font-weight:300;max-width:520px;margin:0 auto;}
+@media(max-width:768px){.hero{padding:40px 20px 50px;}}
+
+.main{max-width:960px;margin:0 auto;padding:50px 60px 80px;}
+@media(max-width:768px){.main{padding:30px 20px 60px;}}
+
+/* STEP 1: BASE */
+.step{margin-bottom:48px;}
+.step-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.step-num{width:32px;height:32px;background:var(--ink);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:900;flex-shrink:0;}
+.step-title{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:var(--ink);}
+.base-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+.field{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}
+.field-input{position:relative;}
+.field-input .prefix{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);font-weight:600;}
+.field-input .suffix{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);font-weight:600;}
+.field input,.field select{width:100%;padding:9px 32px 9px 26px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-weight:500;color:var(--ink);background:var(--paper);outline:none;font-family:'Geist',sans-serif;}
+.field input:focus,.field select:focus{border-color:var(--gold);}
+.field input.np{padding-left:12px;}
+.field select{padding-left:12px;padding-right:12px;}
+
+/* EVENTS */
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.event-card{background:var(--white);border:2px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:all 0.2s;position:relative;user-select:none;}
+.event-card:hover{border-color:var(--gold);transform:translateY(-2px);}
+.event-card.selected{border-color:var(--gold);background:rgba(184,134,11,0.04);}
+.event-card.selected::after{content:'✓';position:absolute;top:10px;right:12px;font-size:14px;font-weight:700;color:var(--gold);}
+.ec-icon{font-size:28px;margin-bottom:8px;}
+.ec-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.ec-sub{font-size:12px;color:var(--muted);line-height:1.4;}
+.ec-impact{font-size:11px;font-weight:700;margin-top:8px;padding:3px 8px;border-radius:4px;display:inline-block;}
+.impact-high{background:rgba(139,42,42,0.1);color:var(--red);}
+.impact-med{background:rgba(184,134,11,0.1);color:var(--gold);}
+.impact-pos{background:rgba(42,107,74,0.1);color:var(--green);}
+
+/* WHEN */
+.when-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.when-label{font-size:14px;font-weight:600;color:var(--text);}
+.year-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.year-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'Geist',sans-serif;color:var(--muted);}
+.year-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+/* SIMULATE BTN */
+.sim-btn{width:100%;background:linear-gradient(135deg,var(--ink),#1a1a2e);color:#fff;border:none;padding:16px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'Geist',sans-serif;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.sim-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+.sim-btn .btn-icon{font-size:20px;}
+
+/* RESULTS */
+#resultsSection{display:none;margin-top:48px;}
+.results-title{font-family:'Fraunces',serif;font-size:clamp(24px,3vw,36px);font-weight:900;color:var(--ink);margin-bottom:6px;}
+.results-sub{font-size:14px;color:var(--muted);margin-bottom:28px;font-weight:300;}
+
+.scenario-diff{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;}
+@media(max-width:600px){.scenario-diff{grid-template-columns:1fr;}}
+.sc-box{border-radius:14px;padding:22px;}
+.sc-box.baseline{background:rgba(42,107,74,0.06);border:2px solid rgba(42,107,74,0.2);}
+.sc-box.scenario{background:rgba(139,42,42,0.06);border:2px solid rgba(139,42,42,0.2);}
+.sc-box.scenario.positive{background:rgba(42,107,74,0.06);border:2px solid rgba(42,107,74,0.2);}
+.sc-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.sc-box.baseline .sc-label{color:var(--green);}
+.sc-box.scenario .sc-label{color:var(--red);}
+.sc-box.scenario.positive .sc-label{color:var(--green);}
+.sc-val{font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:var(--ink);margin-bottom:4px;}
+.sc-sub{font-size:13px;color:var(--muted);font-weight:300;}
+.sc-diff{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:13px;font-weight:600;}
+
+.chart-section{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
+.chart-title{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--ink);margin-bottom:4px;}
+.chart-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+canvas{max-height:320px;}
+
+/* STRESS METER */
+.stress-section{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
+.stress-title{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--ink);margin-bottom:16px;}
+.stress-meter{height:20px;background:linear-gradient(90deg,#2a6b4a,#d4a017,#8b2a2a);border-radius:10px;position:relative;margin-bottom:10px;}
+.stress-needle{position:absolute;top:-4px;width:4px;height:28px;background:var(--ink);border-radius:2px;transform:translateX(-50%);transition:left 0.8s cubic-bezier(0.16,1,0.3,1);}
+.stress-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}
+.stress-status{text-align:center;margin-top:12px;}
+.stress-level{font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:4px;}
+.stress-desc{font-size:13px;color:var(--muted);font-weight:300;}
+
+.recovery-plan{background:var(--cream);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
+.rp-title{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--ink);margin-bottom:16px;}
+.rp-steps{display:flex;flex-direction:column;gap:12px;}
+.rp-step{display:flex;gap:14px;align-items:flex-start;}
+.rp-num{width:28px;height:28px;background:var(--gold);color:var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;margin-top:1px;}
+.rp-content{flex:1;}
+.rp-action{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.rp-detail{font-size:13px;color:var(--muted);font-weight:300;line-height:1.5;}
+
+.banker-note{background:var(--cream);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:20px 22px;margin-bottom:24px;display:flex;gap:14px;}
+.bn-icon{width:36px;height:36px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.bn-name{font-size:12px;font-weight:700;color:var(--ink);}
+.bn-cred{font-size:9px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:6px;}
+.bn-text{font-size:13px;color:var(--text);line-height:1.8;font-weight:300;}
+
+footer{background:var(--ink);padding:32px 60px;}
+@media(max-width:768px){footer{padding:24px 20px;}}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;}
+.footer-logo em{font-style:italic;color:var(--gold-light);}
+.footer-links{display:flex;gap:16px;flex-wrap:wrap;}
+.footer-links a{color:rgba(255,255,255,0.35);text-decoration:none;font-size:12px;}
+.footer-links a:hover{color:var(--gold-light);}
+.footer-copy{font-size:11px;color:rgba(255,255,255,0.2);width:100%;margin-top:8px;}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="mortgage-calculator.html">Mortgage</a>
+    <a href="financial-twin.html">Buy vs Rent</a>
+    <a href="are-you-rich.html">Are You Rich?</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eye">⏳ Financial Time Machine · 2026</div>
+    <h1>What Happens to Your Money<br>When <em>Life Happens</em>?</h1>
+    <p class="hero-sub">Simulate any life event — job loss, market crash, new baby, career change — and see the exact 20-year financial impact.</p>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div class="step-title">Your financial baseline</div>
+    </div>
+    <div class="base-grid">
+      <div class="field">
+        <label>Annual Income</label>
+        <div class="field-input"><span class="prefix">$</span><input type="number" id="income" value="75000"></div>
+      </div>
+      <div class="field">
+        <label>Monthly Savings</label>
+        <div class="field-input"><span class="prefix">$</span><input type="number" id="savings" value="800"></div>
+      </div>
+      <div class="field">
+        <label>Current Savings/Investments</label>
+        <div class="field-input"><span class="prefix">$</span><input type="number" id="currentSavings" value="25000"></div>
+      </div>
+      <div class="field">
+        <label>Monthly Expenses</label>
+        <div class="field-input"><span class="prefix">$</span><input type="number" id="expenses" value="4500"></div>
+      </div>
+      <div class="field">
+        <label>Investment Return</label>
+        <div class="field-input"><input type="number" id="investReturn" value="7" class="np"><span class="suffix">%/yr</span></div>
+      </div>
+      <div class="field">
+        <label>Time Horizon</label>
+        <div class="field-input"><input type="number" id="horizon" value="20" class="np"><span class="suffix">years</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div class="step-title">Choose a life event to simulate</div>
+    </div>
+    <div class="events-grid">
+      <div class="event-card" onclick="selectEvent(this,'job_loss')" data-event="job_loss">
+        <div class="ec-icon">💼</div>
+        <div class="ec-title">Job Loss</div>
+        <div class="ec-sub">6-month income gap, then new job at 85% of previous salary</div>
+        <span class="ec-impact impact-high">HIGH IMPACT</span>
+      </div>
+      <div class="event-card" onclick="selectEvent(this,'market_crash')" data-event="market_crash">
+        <div class="ec-icon">📉</div>
+        <div class="ec-title">Market Crash</div>
+        <div class="ec-sub">40% portfolio drop followed by 7-year recovery</div>
+        <span class="ec-impact impact-high">HIGH IMPACT</span>
+      </div>
+      <div class="event-card" onclick="selectEvent(this,'new_baby')" data-event="new_baby">
+        <div class="ec-icon">👶</div>
+        <div class="ec-title">New Baby</div>
+        <div class="ec-sub">$15k first-year costs, $1,200/mo ongoing for 5 years</div>
+        <span class="ec-impact impact-med">MED IMPACT</span>
+      </div>
+      <div class="event-card" onclick="selectEvent(this,'divorce')" data-event="divorce">
+        <div class="ec-icon">💔</div>
+        <div class="ec-title">Divorce</div>
+        <div class="ec-sub">50% asset split + $25k legal costs, income impact</div>
+        <span class="ec-impact impact-high">HIGH IMPACT</span>
+      </div>
+      <div class="event-card" onclick="selectEvent(this,'promotion')" data-event="promotion">
+        <div class="ec-icon">🚀</div>
+        <div class="ec-title">Major Promotion</div>
+        <div class="ec-sub">30% salary increase, investing the full difference</div>
+        <span class="ec-impact impact-pos">POSITIVE</span>
+      </div>
+      <div class="event-card" onclick="selectEvent(this,'medical')" data-event="medical">
+        <div class="ec-icon">🏥</div>
+        <div class="ec-title">Medical Emergency</div>
+        <div class="ec-sub">$40k unexpected medical bills, 3-month income disruption</div>
+        <span class="ec-impact impact-high">HIGH IMPACT</span>
+      </div>
+      <div class="event-card" onclick="selectEvent(this,'buy_home')" data-event="buy_home">
+        <div class="ec-icon">🏠</div>
+        <div class="ec-title">Buy a Home</div>
+        <div class="ec-sub">20% down on $400k home, 4% annual appreciation</div>
+        <span class="ec-impact impact-pos">POSITIVE</span>
+      </div>
+      <div class="event-card" onclick="selectEvent(this,'inflation')" data-event="inflation">
+        <div class="ec-icon">📈</div>
+        <div class="ec-title">High Inflation Period</div>
+        <div class="ec-sub">5 years of 7% inflation eroding purchasing power</div>
+        <span class="ec-impact impact-med">MED IMPACT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div class="step-title">When does this happen?</div>
+    </div>
+    <div class="when-row">
+      <span class="when-label">In year:</span>
+      <div class="year-btns">
+        <button class="year-btn active" onclick="selectYear(this,1)">Year 1</button>
+        <button class="year-btn" onclick="selectYear(this,2)">Year 2</button>
+        <button class="year-btn" onclick="selectYear(this,3)">Year 3</button>
+        <button class="year-btn" onclick="selectYear(this,5)">Year 5</button>
+        <button class="year-btn" onclick="selectYear(this,7)">Year 7</button>
+        <button class="year-btn" onclick="selectYear(this,10)">Year 10</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="sim-btn" onclick="simulate()">
+    <span class="btn-icon">⏳</span>
+    Run Simulation
+  </button>
+
+  <!-- RESULTS -->
+  <div id="resultsSection">
+    <div class="results-title" id="resultsTitle">—</div>
+    <div class="results-sub" id="resultsSub">—</div>
+
+    <div class="scenario-diff">
+      <div class="sc-box baseline">
+        <div class="sc-label">📈 Baseline (No Event)</div>
+        <div class="sc-val" id="baselineVal">—</div>
+        <div class="sc-sub" id="baselineSub">—</div>
+      </div>
+      <div class="sc-box scenario" id="scenarioBox">
+        <div class="sc-label" id="scenarioLabel">—</div>
+        <div class="sc-val" id="scenarioVal">—</div>
+        <div class="sc-sub" id="scenarioSub">—</div>
+        <div class="sc-diff" id="scenarioDiff">—</div>
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-title">Wealth Trajectory: With vs Without This Event</div>
+      <div class="chart-sub">See exactly when and how the event changes your financial path</div>
+      <canvas id="simChart"></canvas>
+    </div>
+
+    <div class="stress-section">
+      <div class="stress-title">Financial Stress Level</div>
+      <div class="stress-meter"><div class="stress-needle" id="stressNeedle"></div></div>
+      <div class="stress-labels"><span>🟢 Stable</span><span>🟡 Caution</span><span>🔴 Critical</span></div>
+      <div class="stress-status">
+        <div class="stress-level" id="stressLevel">—</div>
+        <div class="stress-desc" id="stressDesc">—</div>
+      </div>
+    </div>
+
+    <div class="recovery-plan">
+      <div class="rp-title">Your Recovery / Optimization Plan</div>
+      <div class="rp-steps" id="rpSteps"></div>
+    </div>
+
+    <div class="banker-note">
+      <div class="bn-icon">✦</div>
+      <div>
+        <div class="bn-name">Banker's Note</div>
+        <div class="bn-cred">23 Years · Licensed Professional</div>
+        <div class="bn-text" id="bankerNote">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Finance<em>Rate</em>Calc</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="mortgage-calculator.html">Mortgage</a>
+      <a href="financial-twin.html">Buy vs Rent</a>
+      <a href="compound-interest-calculator.html">Compound Interest</a>
+    </div>
+    <div class="footer-copy">© 2026 FinanceRateCalc.com — Educational Use Only · Not Financial Advice</div>
+  </div>
+</footer>
+
+<script>
+let selectedEvent = null;
+let selectedYear = 1;
+let simChartInstance = null;
+
+function selectEvent(el, event) {
+  document.querySelectorAll('.event-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedEvent = event;
+}
+
+function selectYear(el, year) {
+  document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedYear = year;
+}
+
+function fmt(n) { return '$' + Math.round(Math.abs(n)).toLocaleString(); }
+
+const EVENTS = {
+  job_loss: {
+    name: 'Job Loss',
+    icon: '💼',
+    apply: (y, eventYear, state) => {
+      if (y === eventYear) {
+        state.income *= 0; // 6 months no income
+        state.savings -= state.expenses * 6;
+        state.stressHit = 85;
+      }
+      if (y === eventYear + 1) {
+        state.income *= 0.85; // new job at 85%
+      }
+      return state;
+    },
+    bankerNote: `Job loss is the single most common financial shock I saw in 23 years of banking. The average gap between jobs is 4-6 months, and most people don't have the emergency fund to absorb it. The 85% salary recovery is actually optimistic — many people take 12-18 months to fully recover income. The compounding effect of that gap is what most people underestimate: it's not just the lost income, it's the missed investment contributions, the debt accumulated, and the behavioral shift that follows.`,
+    recoverySteps: [
+      { action: 'Build 6-month emergency fund before anything else', detail: 'This single buffer eliminates the catastrophic scenario. Even $500/month toward this changes your entire risk profile.' },
+      { action: 'Keep job skills current — always', detail: 'The people who recover fastest have skills that are in active demand. Regular upskilling is the best job loss insurance that exists.' },
+      { action: 'Negotiate salary at every new role', detail: 'Most people accept the first offer. The 85% recovery I modeled assumes no negotiation. Negotiating can close that gap entirely.' },
+    ]
+  },
+  market_crash: {
+    name: 'Market Crash',
+    icon: '📉',
+    apply: (y, eventYear, state) => {
+      if (y === eventYear) {
+        state.portfolio *= 0.60; // 40% drop
+        state.stressHit = 70;
+      }
+      if (y > eventYear && y <= eventYear + 7) {
+        state.returnRate = 0.10; // accelerated recovery
+      }
+      return state;
+    },
+    bankerNote: `A 40% market crash sounds catastrophic, and emotionally it is. But financially, for someone who doesn't panic-sell, it's survivable and often recoverable faster than people expect. The S&P 500 has recovered from every crash in history. The people who got permanently hurt were the ones who sold at the bottom and couldn't bring themselves to get back in. The simulation assumes you stay invested — and that discipline is genuinely the entire game.`,
+    recoverySteps: [
+      { action: 'Do not sell during the crash', detail: 'This sounds obvious but it\'s extraordinarily difficult in practice. The simulation assumes you hold. Selling locks in the loss permanently.' },
+      { action: 'Continue contributions during the downturn', detail: 'Buying at crash prices is the most powerful wealth-building move available. The math is clear — every dollar at the bottom buys significantly more future value.' },
+      { action: 'Diversify before the next crash', detail: 'Bonds, international equities, and real assets cushion volatility. Pure S&P 500 exposure is fine in your 30s, but needs rebalancing as you approach key milestones.' },
+    ]
+  },
+  new_baby: {
+    name: 'New Baby',
+    icon: '👶',
+    apply: (y, eventYear, state) => {
+      if (y === eventYear) {
+        state.savings -= 15000;
+        state.monthlyExpenseAdd = 1200;
+        state.stressHit = 45;
+      }
+      if (y > eventYear && y <= eventYear + 5) {
+        state.expenses += 1200;
+      }
+      return state;
+    },
+    bankerNote: `The financial impact of children is significant but often overstated in scary headlines. The $15k first-year figure is real — but it's one-time. The $1,200/month ongoing is the number that compounds. What I've seen derail new parents most isn't the baby costs themselves — it's the lifestyle inflation that comes with it: bigger house, bigger car, better school district. The families who manage it well treat baby costs as a fixed line item and resist the surrounding lifestyle creep.`,
+    recoverySteps: [
+      { action: 'Start a 529 college savings plan immediately', detail: 'Even $100/month from birth compounds to $45,000+ by college at 7% return. Early and consistent beats large and late.' },
+      { action: 'Review and update all insurance coverage', detail: 'Life insurance and disability insurance become critical once you have dependents. This is the most common financial gap I saw in young families.' },
+      { action: 'Budget the baby costs explicitly', detail: 'Parents who budget for child expenses fare dramatically better than those who absorb them into vague "extra spending." Make it visible.' },
+    ]
+  },
+  divorce: {
+    name: 'Divorce',
+    icon: '💔',
+    apply: (y, eventYear, state) => {
+      if (y === eventYear) {
+        state.portfolio *= 0.50;
+        state.savings -= 25000;
+        state.income *= 0.90;
+        state.stressHit = 90;
+      }
+      return state;
+    },
+    bankerNote: `Divorce is the most financially destructive event I saw in banking, and it's underappreciated because the damage is partly invisible. Beyond the 50% asset split, it's the loss of dual-income household efficiency, the duplicated fixed costs (two rents instead of one), the legal fees, and the long recovery period. The $25k legal cost estimate is conservative for contested divorces. The income impact assumes no career disruption — often the reality is worse. Financial preparation before marriage (prenuptial agreements, clear financial boundaries) is genuinely the most effective mitigation.`,
+    recoverySteps: [
+      { action: 'Rebuild emergency fund as first priority', detail: 'Post-divorce, the financial cushion is typically gone. Rebuild this before investing, before paying extra on debt.' },
+      { action: 'Rebuild credit independently', detail: 'Shared accounts typically close in divorce. Many people discover their credit history is thinner than they realized. Start building an independent profile now.' },
+      { action: 'Restructure budget for single-income reality', detail: 'The lifestyle calibrated for two incomes doesn\'t fit one. This recalibration, done early and honestly, determines recovery speed.' },
+    ]
+  },
+  promotion: {
+    name: 'Major Promotion',
+    icon: '🚀',
+    apply: (y, eventYear, state) => {
+      if (y >= eventYear) {
+        state.income *= 1.30;
+        state.savingsRate += 0.10;
+        state.stressHit = 10;
+      }
+      return state;
+    },
+    bankerNote: `A 30% raise is genuinely life-changing — if you don't let lifestyle inflation consume it. This is where I've seen the biggest behavioral difference between people who build wealth and those who don't. Same raise, completely different 20-year outcomes, based entirely on whether the extra money went to investments or expenses. The simulation assumes you invest the full difference. That discipline, sustained, is worth more than almost any other financial decision.`,
+    recoverySteps: [
+      { action: 'Automate the raise before you feel it', detail: 'Set up auto-transfers on your first paycheck at the new salary. If you never see it, you won\'t miss it. If you see it, you\'ll spend it.' },
+      { action: 'Max retirement contributions first', detail: '401k, IRA, HSA — fill tax-advantaged accounts before taxable accounts. The tax savings compound alongside the investment returns.' },
+      { action: 'Avoid housing upgrade for 12 months', detail: 'The most common wealth-destroying response to a raise is upgrading housing immediately. Sit with the new income for a year before making permanent fixed-cost changes.' },
+    ]
+  },
+  medical: {
+    name: 'Medical Emergency',
+    icon: '🏥',
+    apply: (y, eventYear, state) => {
+      if (y === eventYear) {
+        state.savings -= 40000;
+        state.income *= 0.75; // 3 months disruption
+        state.stressHit = 80;
+      }
+      return state;
+    },
+    bankerNote: `A $40k medical bill is the median outcome for a serious hospitalization in the US without adequate insurance — not an outlier. What makes this uniquely damaging is that it's simultaneous with income disruption. You're losing income while paying out. The behavioral aftermath is also significant: people often avoid preventive care after a large medical bill, creating compounding health and financial risk. The single most effective mitigation is maximizing health insurance quality and building a dedicated medical emergency fund separate from your general emergency fund.`,
+    recoverySteps: [
+      { action: 'Negotiate the medical bill directly', detail: 'Most people don\'t know that medical bills are negotiable. Hospitals routinely accept 40-60% of billed amounts. Always ask before paying.' },
+      { action: 'Open and maximize an HSA', detail: 'A Health Savings Account is the most tax-advantaged account that exists — triple tax benefit. It\'s specifically designed for this scenario.' },
+      { action: 'Review insurance coverage annually', detail: 'Most under-insurance happens from neglect — people set coverage at 25 and don\'t update it. Annual review is genuinely worth the 30 minutes.' },
+    ]
+  },
+  buy_home: {
+    name: 'Buy a Home',
+    icon: '🏠',
+    apply: (y, eventYear, state) => {
+      if (y === eventYear) {
+        const downPayment = 80000;
+        state.savings -= downPayment;
+        state.homeValue = 400000;
+        state.stressHit = 30;
+      }
+      if (y > eventYear) {
+        state.homeValue = (state.homeValue || 400000) * 1.04;
+        state.homeEquity = (state.homeValue || 400000) - Math.max(0, 320000 - (y - eventYear) * 12000);
+      }
+      return state;
+    },
+    bankerNote: `Buying a home is the most complex financial decision most people make, and the right answer is genuinely scenario-dependent. At 4% annual appreciation, the wealth-building math is solid — but it requires staying in the home long enough for the transaction costs to wash out (typically 4-7 years). The down payment withdrawal is the biggest short-term hit. The simulation models the equity build over time. What I always told buyers: buy the house for the life you want to live in it, not primarily as an investment. The investment case is real, but it's not predictable enough to be your primary motivation.`,
+    recoverySteps: [
+      { action: 'Maintain 3-month housing expense reserve', detail: 'Separate from your general emergency fund. Property tax bills, insurance renewals, and repairs cluster in ways that catch new homeowners off guard.' },
+      { action: 'Budget 1-2% of home value annually for maintenance', detail: 'This isn\'t optional — deferred maintenance compounds. A $400k home needs $4-8k/year budgeted for upkeep.' },
+      { action: 'Don\'t over-leverage for the upgrade', detail: 'The most common mistake I saw: buying at the absolute maximum the bank will approve. Leave financial buffer between qualification and actual purchase.' },
+    ]
+  },
+  inflation: {
+    name: 'High Inflation',
+    icon: '📈',
+    apply: (y, eventYear, state) => {
+      if (y >= eventYear && y < eventYear + 5) {
+        state.expenses *= 1.07;
+        state.inflationRate = 0.07;
+        state.stressHit = 55;
+      }
+      return state;
+    },
+    bankerNote: `Five years of 7% inflation is historically unusual but not unprecedented — the US saw it in the 1970s and briefly in 2021-2023. The insidious thing about inflation is that it's invisible damage. Your salary number stays the same; your lifestyle quietly degrades. People who hold large cash positions get hit hardest. The best inflation hedges are historically real assets (real estate, commodities), TIPS, and equity in companies with pricing power. The simulation assumes expenses inflate but income doesn't keep pace — which is the realistic scenario for most employees.`,
+    recoverySteps: [
+      { action: 'Negotiate salary increases aggressively during inflation', detail: 'Employers rarely volunteer inflation adjustments. You have to ask. A raise equal to inflation is just staying even — push for above-inflation increases.' },
+      { action: 'Shift cash to inflation-protected assets', detail: 'I-bonds, TIPS, and real estate are designed to track inflation. Holding large cash balances during inflationary periods is guaranteed real loss.' },
+      { action: 'Audit fixed expenses for renegotiation opportunities', detail: 'Insurance, subscriptions, service contracts — many can be renegotiated or replaced. Inflation creates leverage to renegotiate surprisingly often.' },
+    ]
+  }
+};
+
+function simulate() {
+  if (!selectedEvent) {
+    alert('Please select a life event first.');
+    return;
+  }
+
+  const income = parseFloat(document.getElementById('income').value);
+  const monthlySavings = parseFloat(document.getElementById('savings').value);
+  const currentSavings = parseFloat(document.getElementById('currentSavings').value);
+  const expenses = parseFloat(document.getElementById('expenses').value);
+  const returnRate = parseFloat(document.getElementById('investReturn').value) / 100;
+  const horizon = parseInt(document.getElementById('horizon').value);
+
+  const event = EVENTS[selectedEvent];
+  const baselineData = [], scenarioData = [];
+
+  // Baseline simulation
+  let portfolio = currentSavings;
+  for (let y = 1; y <= horizon; y++) {
+    portfolio = portfolio * (1 + returnRate) + monthlySavings * 12;
+    baselineData.push(Math.round(portfolio));
+  }
+
+  // Scenario simulation
+  portfolio = currentSavings;
+  let scenarioIncome = income;
+  let scenarioExpenses = expenses;
+  let scenarioSavings = monthlySavings;
+  let stressScore = 20;
+  let portfolioArr = [];
+
+  for (let y = 1; y <= horizon; y++) {
+    let state = { income: scenarioIncome, savings: scenarioSavings * 12, portfolio, expenses: scenarioExpenses, returnRate, stressHit: null };
+    state = event.apply(y, selectedYear, state);
+
+    if (state.stressHit !== null) stressScore = state.stressHit;
+    scenarioIncome = state.income || scenarioIncome;
+    scenarioExpenses = state.expenses || scenarioExpenses;
+    scenarioSavings = Math.max(0, (scenarioIncome / 12 - scenarioExpenses) * 0.5);
+
+    const effectiveReturn = state.returnRate || returnRate;
+    portfolio = Math.max(0, (state.portfolio !== undefined ? state.portfolio : portfolio) * (1 + effectiveReturn) + scenarioSavings * 12);
+    if (state.savings !== undefined && y === selectedYear) portfolio = Math.max(0, portfolio + state.savings - (monthlySavings * 12));
+    portfolioArr.push(Math.round(portfolio));
+  }
+  scenarioData.push(...portfolioArr);
+
+  const finalBaseline = baselineData[baselineData.length - 1];
+  const finalScenario = scenarioData[scenarioData.length - 1];
+  const diff = finalScenario - finalBaseline;
+  const isPositive = diff >= 0;
+
+  document.getElementById('resultsTitle').textContent = `Simulation: ${event.name} in Year ${selectedYear}`;
+  document.getElementById('resultsSub').textContent = `Over ${horizon} years, here's what changes — and what you can do about it.`;
+  document.getElementById('baselineVal').textContent = fmt(finalBaseline);
+  document.getElementById('baselineSub').textContent = `Projected wealth after ${horizon} years, no life events`;
+  document.getElementById('scenarioVal').textContent = fmt(finalScenario);
+  document.getElementById('scenarioSub').textContent = `Projected wealth after ${horizon} years, with ${event.name}`;
+
+  const scenarioBox = document.getElementById('scenarioBox');
+  scenarioBox.className = 'sc-box scenario' + (isPositive ? ' positive' : '');
+  document.getElementById('scenarioLabel').textContent = event.icon + ' With ' + event.name;
+  document.getElementById('scenarioDiff').innerHTML = isPositive
+    ? `<span style="color:var(--green)">+${fmt(diff)} more wealth</span>`
+    : `<span style="color:var(--red)">${fmt(diff)} less wealth</span>`;
+
+  // Stress meter
+  const needle = document.getElementById('stressNeedle');
+  needle.style.left = stressScore + '%';
+  const levels = stressScore < 30 ? ['🟢 Low Stress', 'Your financial position handles this event well.'] :
+                 stressScore < 60 ? ['🟡 Moderate Stress', 'Manageable with preparation and quick action.'] :
+                 ['🔴 High Stress', 'This event significantly disrupts your financial trajectory. Preparation is critical.'];
+  document.getElementById('stressLevel').textContent = levels[0];
+  document.getElementById('stressDesc').textContent = levels[1];
+
+  // Recovery plan
+  document.getElementById('rpSteps').innerHTML = event.recoverySteps.map((s, i) => `
+    <div class="rp-step">
+      <div class="rp-num">${i + 1}</div>
+      <div class="rp-content">
+        <div class="rp-action">${s.action}</div>
+        <div class="rp-detail">${s.detail}</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('bankerNote').textContent = event.bankerNote;
+
+  // Chart
+  if (simChartInstance) simChartInstance.destroy();
+  const ctx = document.getElementById('simChart').getContext('2d');
+  const labels = Array.from({length: horizon}, (_, i) => 'Yr ' + (i + 1));
+
+  simChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Baseline (No Event)', data: baselineData, borderColor: '#2a6b4a', backgroundColor: 'rgba(42,107,74,0.06)', fill: true, tension: 0.3, pointRadius: 1, borderWidth: 2 },
+        { label: `With ${event.name}`, data: scenarioData, borderColor: isPositive ? '#b8860b' : '#8b2a2a', backgroundColor: isPositive ? 'rgba(184,134,11,0.06)' : 'rgba(139,42,42,0.06)', fill: true, tension: 0.3, pointRadius: 1, borderWidth: 2 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top' }, annotation: {} },
+      scales: { y: { ticks: { callback: v => '$' + (v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : (v/1000).toFixed(0) + 'k') } } }
+    }
+  });
+
+  document.getElementById('resultsSection').style.display = 'block';
+  document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  if (typeof gtag !== 'undefined') gtag('event', 'simulation_run', { event_category: 'tool', event_label: selectedEvent });
+}
+</script>
+</body>
+</html>
