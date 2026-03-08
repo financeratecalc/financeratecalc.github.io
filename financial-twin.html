@@ -3,1442 +3,385 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Financial Twin — Buy vs Rent Simulator | FinanceRateCalc</title>
-<meta name="description" content="Should you buy or rent? See your financial future in 10, 20, 30 years with city-specific data for 25 cities worldwide. Built by a licensed financial professional.">
-<!-- Google Analytics -->
+<title>Buy vs Rent Calculator 2026 — 30-Year Comparison | FinanceRateCalc</title>
+<meta name="description" content="Should you buy or rent? See the full 30-year financial comparison with charts. Real appreciation rates, real costs. Built by a licensed banker.">
+<link rel="canonical" href="https://financeratecalc.com/financial-twin.html">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-13712175066');
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-13712175066');</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #080810;
-    --surface: #0e0e1a;
-    --surface2: #13131f;
-    --border: #1e1e30;
-    --border2: #2a2a40;
-    --buy: #4ade80;
-    --buy-dim: rgba(74,222,128,0.1);
-    --rent: #818cf8;
-    --rent-dim: rgba(129,140,248,0.1);
-    --gold: #fbbf24;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --white: #ffffff;
-    --red: #f87171;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Animated background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 15% 50%, rgba(74,222,128,0.04) 0%, transparent 50%),
-      radial-gradient(ellipse at 85% 50%, rgba(129,140,248,0.04) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Header */
-  header {
-    position: relative;
-    z-index: 10;
-    padding: 18px 48px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(10px);
-  }
-
-  .logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--white);
-  }
-
-  .logo span { color: var(--gold); }
-
-  nav a {
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 13px;
-    margin-left: 24px;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
-
-  nav a:hover { color: var(--white); }
-  nav a.active { color: var(--gold); }
-
-  @media (max-width: 768px) {
-    header { padding: 16px 20px; }
-    nav { display: none; }
-  }
-
-  /* Hero */
-  .hero {
-    position: relative;
-    z-index: 10;
-    text-align: center;
-    padding: 70px 20px 50px;
-  }
-
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(251,191,36,0.1);
-    border: 1px solid rgba(251,191,36,0.25);
-    color: var(--gold);
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-  }
-
-  .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(32px, 5vw, 60px);
-    font-weight: 800;
-    color: var(--white);
-    line-height: 1.05;
-    letter-spacing: -1px;
-    margin-bottom: 16px;
-  }
-
-  .hero h1 .buy { color: var(--buy); }
-  .hero h1 .rent { color: var(--rent); }
-
-  .hero p {
-    color: var(--muted);
-    font-size: 16px;
-    max-width: 520px;
-    margin: 0 auto 16px;
-    line-height: 1.7;
-    font-weight: 300;
-  }
-
-  .hero-cities {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 16px;
-  }
-
-  .city-pill {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 500;
-  }
-
-  /* Step indicator */
-  .steps {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    max-width: 600px;
-    margin: 0 auto 40px;
-    padding: 0 20px;
-  }
-
-  .step {
-    flex: 1;
-    text-align: center;
-    position: relative;
-  }
-
-  .step::after {
-    content: '';
-    position: absolute;
-    top: 16px;
-    left: 50%;
-    width: 100%;
-    height: 1px;
-    background: var(--border2);
-  }
-
-  .step:last-child::after { display: none; }
-
-  .step-num {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 6px;
-    position: relative;
-    z-index: 1;
-    transition: all 0.3s;
-  }
-
-  .step.active .step-num {
-    background: var(--gold);
-    border-color: var(--gold);
-    color: var(--bg);
-  }
-
-  .step.done .step-num {
-    background: var(--buy);
-    border-color: var(--buy);
-    color: var(--bg);
-  }
-
-  .step-label {
-    font-size: 10px;
-    color: var(--muted);
-    font-weight: 500;
-    letter-spacing: 0.5px;
-  }
-
-  .step.active .step-label { color: var(--gold); }
-
-  /* Main container */
-  .container {
-    position: relative;
-    z-index: 10;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 20px 80px;
-  }
-
-  /* Form sections */
-  .form-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 36px;
-    margin-bottom: 20px;
-    display: none;
-  }
-
-  .form-section.active { display: block; animation: fadeUp 0.4s ease; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--white);
-    margin-bottom: 6px;
-  }
-
-  .section-subtitle {
-    color: var(--muted);
-    font-size: 14px;
-    margin-bottom: 28px;
-    line-height: 1.6;
-  }
-
-  /* Language toggle */
-  .lang-toggle {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    margin-bottom: 32px;
-  }
-
-  .lang-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    padding: 8px 20px;
-    border-radius: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .lang-btn.active {
-    background: var(--gold);
-    border-color: var(--gold);
-    color: var(--bg);
-  }
-
-  /* Country/City selector */
-  .location-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  @media (max-width: 600px) { .location-grid { grid-template-columns: 1fr; } }
-
-  .field { margin-bottom: 20px; }
-
-  .field label {
-    display: block;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-
-  select, input[type="number"] {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    padding: 12px 16px;
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    outline: none;
-    transition: border-color 0.2s;
-    -moz-appearance: textfield;
-  }
-
-  select { cursor: pointer; }
-  select option { background: var(--surface2); }
-
-  select:focus, input[type="number"]:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(251,191,36,0.1);
-  }
-
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-  /* City data preview */
-  .city-data-preview {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 24px;
-    display: none;
-  }
-
-  .city-data-preview.show { display: block; animation: fadeUp 0.3s ease; }
-
-  .city-data-title {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 14px;
-  }
-
-  .city-data-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-  }
-
-  @media (max-width: 600px) { .city-data-grid { grid-template-columns: repeat(2, 1fr); } }
-
-  .city-stat {
-    text-align: center;
-  }
-
-  .city-stat .cs-val {
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--white);
-    margin-bottom: 3px;
-  }
-
-  .city-stat .cs-label {
-    font-size: 10px;
-    color: var(--muted);
-    font-weight: 500;
-    letter-spacing: 0.5px;
-  }
-
-  /* Input grid */
-  .input-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  @media (max-width: 600px) { .input-grid { grid-template-columns: 1fr; } }
-
-  /* Horizon buttons */
-  .horizon-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-
-  .horizon-btn {
-    background: var(--surface2);
-    border: 2px solid var(--border2);
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .horizon-btn:hover { border-color: var(--gold); }
-
-  .horizon-btn.active {
-    background: rgba(251,191,36,0.1);
-    border-color: var(--gold);
-  }
-
-  .horizon-btn .h-years {
-    font-family: 'Syne', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--white);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .horizon-btn.active .h-years { color: var(--gold); }
-  .horizon-btn .h-label { font-size: 11px; color: var(--muted); font-weight: 500; }
-
-  /* Navigation buttons */
-  .nav-btns {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-  }
-
-  .btn-next {
-    flex: 1;
-    padding: 14px;
-    background: var(--gold);
-    border: none;
-    border-radius: 10px;
-    color: var(--bg);
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-next:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(251,191,36,0.3);
-  }
-
-  .btn-back {
-    padding: 14px 24px;
-    background: transparent;
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    color: var(--muted);
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-back:hover { border-color: var(--white); color: var(--white); }
-
-  /* Results */
-  .results-section {
-    display: none;
-  }
-
-  .results-section.show { display: block; animation: fadeUp 0.5s ease; }
-
-  .results-header {
-    text-align: center;
-    margin-bottom: 32px;
-  }
-
-  .results-header h2 {
-    font-family: 'Syne', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--white);
-    margin-bottom: 8px;
-  }
-
-  .results-header p { color: var(--muted); font-size: 14px; }
-
-  /* Winner banner */
-  .winner-banner {
-    border-radius: 16px;
-    padding: 24px 28px;
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .winner-banner.buy {
-    background: rgba(74,222,128,0.08);
-    border: 1px solid rgba(74,222,128,0.25);
-  }
-
-  .winner-banner.rent {
-    background: rgba(129,140,248,0.08);
-    border: 1px solid rgba(129,140,248,0.25);
-  }
-
-  .winner-banner.tie {
-    background: rgba(251,191,36,0.08);
-    border: 1px solid rgba(251,191,36,0.25);
-  }
-
-  .winner-icon { font-size: 36px; }
-
-  .winner-text .w-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .winner-banner.buy .w-label { color: var(--buy); }
-  .winner-banner.rent .w-label { color: var(--rent); }
-  .winner-banner.tie .w-label { color: var(--gold); }
-
-  .winner-text .w-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--white);
-    margin-bottom: 4px;
-  }
-
-  .winner-text .w-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
-
-  /* Comparison cards */
-  .comparison {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  @media (max-width: 600px) { .comparison { grid-template-columns: 1fr; } }
-
-  .scenario-card {
-    border-radius: 16px;
-    padding: 28px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .scenario-card.buy {
-    background: rgba(74,222,128,0.06);
-    border: 1px solid rgba(74,222,128,0.2);
-  }
-
-  .scenario-card.rent {
-    background: rgba(129,140,248,0.06);
-    border: 1px solid rgba(129,140,248,0.2);
-  }
-
-  .scenario-card.winner::before {
-    content: '★ BETTER';
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    padding: 3px 8px;
-    border-radius: 4px;
-  }
-
-  .scenario-card.buy.winner::before {
-    background: rgba(74,222,128,0.2);
-    color: var(--buy);
-  }
-
-  .scenario-card.rent.winner::before {
-    background: rgba(129,140,248,0.2);
-    color: var(--rent);
-  }
-
-  .sc-icon { font-size: 28px; margin-bottom: 12px; }
-
-  .sc-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    font-weight: 800;
-    color: var(--white);
-    margin-bottom: 20px;
-  }
-
-  .sc-main-label { font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
-
-  .sc-main-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 36px;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .scenario-card.buy .sc-main-value { color: var(--buy); }
-  .scenario-card.rent .sc-main-value { color: var(--rent); }
-
-  .sc-main-sub { font-size: 11px; color: var(--muted); margin-bottom: 20px; }
-
-  .sc-breakdown { border-top: 1px solid var(--border); padding-top: 16px; }
-
-  .sc-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    font-size: 13px;
-  }
-
-  .sc-row .sc-key { color: var(--muted); font-weight: 400; }
-  .sc-row .sc-val { color: var(--text); font-weight: 600; font-family: 'Syne', sans-serif; font-size: 14px; }
-  .sc-row .sc-val.green { color: var(--buy); }
-  .sc-row .sc-val.purple { color: var(--rent); }
-  .sc-row .sc-val.red { color: var(--red); }
-
-  /* Timeline chart */
-  .timeline-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px;
-    margin-bottom: 24px;
-  }
-
-  .timeline-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 20px;
-  }
-
-  .timeline-chart {
-    display: flex;
-    align-items: flex-end;
-    gap: 8px;
-    height: 140px;
-    margin-bottom: 8px;
-  }
-
-  .tl-group {
-    flex: 1;
-    display: flex;
-    gap: 3px;
-    align-items: flex-end;
-    height: 100%;
-  }
-
-  .tl-bar {
-    flex: 1;
-    border-radius: 4px 4px 0 0;
-    min-height: 4px;
-    transition: height 1s cubic-bezier(0.4,0,0.2,1);
-  }
-
-  .tl-bar.buy { background: var(--buy); opacity: 0.8; }
-  .tl-bar.rent { background: var(--rent); opacity: 0.8; }
-
-  .tl-label {
-    text-align: center;
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 8px;
-  }
-
-  .chart-legend {
-    display: flex;
-    gap: 20px;
-    font-size: 12px;
-    color: var(--muted);
-    font-weight: 500;
-  }
-
-  .legend-dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    margin-right: 6px;
-    vertical-align: middle;
-  }
-
-  /* Key assumptions */
-  .assumptions-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px 28px;
-    margin-bottom: 24px;
-  }
-
-  .assumptions-title {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 16px;
-  }
-
-  .assumptions-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-
-  @media (max-width: 600px) { .assumptions-grid { grid-template-columns: repeat(2, 1fr); } }
-
-  .assumption {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  .assumption strong { color: var(--text); display: block; margin-bottom: 2px; }
-
-  /* Expert note */
-  .expert-note {
-    background: rgba(251,191,36,0.06);
-    border: 1px solid rgba(251,191,36,0.2);
-    border-left: 3px solid var(--gold);
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin-bottom: 24px;
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-  }
-
-  .expert-av {
-    width: 40px;
-    height: 40px;
-    background: var(--gold);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 16px;
-    color: var(--bg);
-    flex-shrink: 0;
-  }
-
-  .expert-name { font-weight: 600; color: var(--white); font-size: 13px; margin-bottom: 2px; }
-  .expert-cred { font-size: 10px; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
-  .expert-text { font-size: 13px; color: var(--muted); line-height: 1.7; }
-
-  /* Recalculate button */
-  .btn-recalc {
-    width: 100%;
-    padding: 14px;
-    background: transparent;
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    color: var(--muted);
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 1px;
-  }
-
-  .btn-recalc:hover { border-color: var(--gold); color: var(--gold); }
-
-  /* Turkish mode */
-  .tr-mode .en-text { display: none; }
-  .en-mode .tr-text { display: none; }
+:root{--ink:#0f0e0c;--paper:#faf8f4;--cream:#f2ede4;--gold:#b8860b;--gold-light:#d4a017;--text:#2c2a26;--muted:#8a8070;--border:#ddd8cc;--white:#fff;--green:#2a6b4a;--red:#8b2a2a;--blue:#1a3a5c;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:var(--paper);color:var(--text);}
+header{background:var(--ink);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold-light);}
+.nav-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;margin-left:24px;}
+.nav-links a:hover{color:var(--gold-light);}
+@media(max-width:768px){header{padding:0 20px;}.nav-links{display:none;}}
+.hero{background:var(--ink);padding:50px 60px 60px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 50%,rgba(184,134,11,0.08) 0%,transparent 60%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+.hero-eye{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.hero-eye::before{content:'';display:inline-block;width:24px;height:1px;background:var(--gold-light);}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,44px);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:10px;}
+.hero h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{color:rgba(255,255,255,0.4);font-size:14px;font-weight:300;}
+@media(max-width:768px){.hero{padding:30px 20px 40px;}}
+.main{max-width:1020px;margin:0 auto;padding:40px 60px 80px;}
+@media(max-width:768px){.main{padding:30px 20px 60px;}}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px;}
+@media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+.input-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;}
+.ic-title{font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:var(--ink);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.ic-badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;}
+.badge-buy{background:rgba(42,107,74,0.1);color:var(--green);}
+.badge-rent{background:rgba(26,58,92,0.1);color:var(--blue);}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px;}
+.field-input{position:relative;}
+.field-input .prefix{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;color:var(--muted);}
+.field-input .suffix{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;color:var(--muted);}
+.field input{width:100%;padding:10px 32px 10px 26px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-weight:500;color:var(--ink);background:var(--paper);outline:none;transition:border-color 0.2s;font-family:'Geist',sans-serif;}
+.field input:focus{border-color:var(--gold);}
+.field input.no-prefix{padding-left:12px;}
+.calc-btn{width:100%;background:var(--gold);color:var(--ink);border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'Geist',sans-serif;margin-bottom:32px;}
+.calc-btn:hover{background:var(--gold-light);transform:translateY(-1px);}
+.verdict{border-radius:16px;padding:28px 32px;margin-bottom:28px;text-align:center;}
+.verdict.buy-wins{background:linear-gradient(135deg,rgba(42,107,74,0.08),rgba(42,107,74,0.04));border:2px solid rgba(42,107,74,0.3);}
+.verdict.rent-wins{background:linear-gradient(135deg,rgba(26,58,92,0.08),rgba(26,58,92,0.04));border:2px solid rgba(26,58,92,0.3);}
+.verdict-icon{font-size:36px;margin-bottom:8px;}
+.verdict-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.verdict.buy-wins .verdict-label{color:var(--green);}
+.verdict.rent-wins .verdict-label{color:var(--blue);}
+.verdict-title{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,32px);font-weight:900;color:var(--ink);margin-bottom:6px;}
+.verdict-sub{font-size:14px;color:var(--muted);font-weight:300;}
+.verdict-amount{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,48px);font-weight:900;color:var(--green);margin:12px 0 4px;}
+.verdict.rent-wins .verdict-amount{color:var(--blue);}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;}
+@media(max-width:600px){.summary-grid{grid-template-columns:1fr 1fr;}}
+.scard{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px;}
+.scard-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.scard-val{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:var(--ink);}
+.scard-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.scard.buy .scard-val{color:var(--green);}
+.scard.rent .scard-val{color:var(--blue);}
+.chart-section{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
+.chart-title{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--ink);margin-bottom:4px;}
+.chart-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.chart-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.tab-btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all 0.2s;font-family:'Geist',sans-serif;}
+.tab-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+canvas{max-height:320px;}
+.breakeven{background:var(--cream);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
+.be-title{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--ink);margin-bottom:16px;}
+.be-timeline{display:flex;align-items:center;gap:0;position:relative;padding:20px 0;}
+.be-track{position:absolute;left:0;right:0;height:4px;background:var(--border);border-radius:2px;top:50%;}
+.be-fill{position:absolute;left:0;height:4px;background:linear-gradient(90deg,var(--red),var(--gold),var(--green));border-radius:2px;top:50%;transition:width 0.6s;}
+.be-marker{position:absolute;top:50%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:var(--gold);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.2);z-index:1;}
+.be-label-left{font-size:12px;color:var(--muted);position:relative;z-index:1;}
+.be-label-right{font-size:12px;color:var(--muted);margin-left:auto;position:relative;z-index:1;}
+.be-center{text-align:center;flex:1;position:relative;z-index:1;}
+.be-year{font-family:'Fraunces',serif;font-size:24px;font-weight:900;color:var(--gold);}
+.be-ytext{font-size:12px;color:var(--muted);}
+.banker-note{background:var(--cream);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:20px 22px;margin-bottom:24px;display:flex;gap:14px;}
+.bn-icon{width:36px;height:36px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.bn-name{font-size:12px;font-weight:700;color:var(--ink);}
+.bn-cred{font-size:9px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:6px;}
+.bn-text{font-size:13px;color:var(--text);line-height:1.8;font-weight:300;}
+.lead-capture{background:var(--ink);border-radius:16px;padding:28px 32px;margin-bottom:24px;}
+.lc-tag{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:8px;}
+.lc-title{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:6px;}
+.lc-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px;font-weight:300;}
+.lc-form{display:flex;gap:10px;flex-wrap:wrap;}
+.lc-input{flex:1;min-width:200px;padding:11px 16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:14px;outline:none;font-family:'Geist',sans-serif;}
+.lc-input::placeholder{color:rgba(255,255,255,0.3);}
+.lc-btn{padding:11px 22px;background:var(--gold);color:var(--ink);border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;font-family:'Geist',sans-serif;}
+.lc-privacy{font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;}
+.lc-success{display:none;text-align:center;padding:8px 0;}
+.lc-success-text{font-size:14px;color:rgba(255,255,255,0.7);}
+.lc-success-text strong{color:var(--gold-light);}
+#resultsSection{display:none;}
+footer{background:var(--ink);padding:32px 60px;}
+@media(max-width:768px){footer{padding:24px 20px;}}
+.footer-inner{max-width:1020px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;}
+.footer-logo em{font-style:italic;color:var(--gold-light);}
+.footer-links{display:flex;gap:16px;flex-wrap:wrap;}
+.footer-links a{color:rgba(255,255,255,0.35);text-decoration:none;font-size:12px;}
+.footer-links a:hover{color:var(--gold-light);}
+.footer-copy{font-size:11px;color:rgba(255,255,255,0.2);width:100%;margin-top:8px;}
 </style>
 </head>
-<body class="en-mode">
-
+<body>
 <header>
-  <div class="logo">Finance<span>RateCalc</span></div>
-  <nav>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="mortgage-calculator.html">Mortgage</a>
-    <a href="business-loan-calculator.html">Business Loan</a>
-    <a href="compound-interest-calculator.html">Compound Interest</a>
-    <a href="financial-twin.html" class="active">Financial Twin</a>
-  </nav>
+    <a href="can-i-get-a-loan.html">Loan Check</a>
+    <a href="are-you-rich.html">Are You Rich?</a>
+  </div>
 </header>
 
-<!-- Hero -->
 <div class="hero">
-  <div class="hero-badge">🌍 25 Cities · Real Data · Free</div>
-  <h1>
-    <span class="en-text">Should You <span class="buy">Buy</span> or <span class="rent">Rent</span>?</span>
-    <span class="tr-text">Ev <span class="buy">Almalı</span> mısın, <span class="rent">Kirada</span> mı Kalmalısın?</span>
-  </h1>
-  <p class="en-text">See your financial future in 10, 20, or 30 years — with real inflation, property appreciation, and investment return data for 25 cities worldwide.</p>
-  <p class="tr-text">10, 20 veya 30 yıl sonraki finansal geleceğini gör — 25 şehir için gerçek enflasyon, konut artışı ve yatırım getirisi verileriyle.</p>
-
-  <div class="lang-toggle">
-    <button class="lang-btn active" onclick="setLang('en')">🇬🇧 English</button>
-    <button class="lang-btn" onclick="setLang('tr')">🇹🇷 Türkçe</button>
-  </div>
-
-  <div class="hero-cities">
-    <span class="city-pill">🇹🇷 Istanbul</span>
-    <span class="city-pill">🇺🇸 New York</span>
-    <span class="city-pill">🇬🇧 London</span>
-    <span class="city-pill">🇩🇪 Berlin</span>
-    <span class="city-pill">🇦🇪 Dubai</span>
-    <span class="city-pill">🇸🇬 Singapore</span>
-    <span class="city-pill">🇦🇺 Sydney</span>
-    <span class="city-pill">+18 more</span>
+  <div class="hero-inner">
+    <div class="hero-eye">Buy vs Rent Calculator · 2026</div>
+    <h1>Buy or Rent?<br>The <em>30-Year</em> Honest Answer</h1>
+    <p class="hero-sub">Real appreciation rates, real costs, real breakeven point. No spin — just the math.</p>
   </div>
 </div>
 
-<!-- Steps -->
-<div class="steps">
-  <div class="step active" id="step1">
-    <div class="step-num">1</div>
-    <div class="step-label en-text">Location</div>
-    <div class="step-label tr-text">Konum</div>
+<div class="main">
+  <div class="two-col">
+    <div class="input-card">
+      <div class="ic-title">🏠 <span>Buying</span> <span class="ic-badge badge-buy">BUY</span></div>
+      <div class="field"><label>Home Price</label><div class="field-input"><span class="prefix">$</span><input type="number" id="homePrice" value="450000"></div></div>
+      <div class="field"><label>Down Payment</label><div class="field-input"><span class="prefix">$</span><input type="number" id="downPayment" value="90000"></div></div>
+      <div class="field"><label>Mortgage Rate</label><div class="field-input"><input type="number" id="mortgageRate" value="7.1" class="no-prefix"><span class="suffix">%</span></div></div>
+      <div class="field"><label>Property Tax Rate</label><div class="field-input"><input type="number" id="taxRate" value="1.1" class="no-prefix"><span class="suffix">%/yr</span></div></div>
+      <div class="field"><label>Home Appreciation</label><div class="field-input"><input type="number" id="appreciation" value="4" class="no-prefix"><span class="suffix">%/yr</span></div></div>
+      <div class="field"><label>Maintenance (% of value)</label><div class="field-input"><input type="number" id="maintenance" value="1" class="no-prefix"><span class="suffix">%/yr</span></div></div>
+    </div>
+    <div class="input-card">
+      <div class="ic-title">🏢 <span>Renting</span> <span class="ic-badge badge-rent">RENT</span></div>
+      <div class="field"><label>Monthly Rent</label><div class="field-input"><span class="prefix">$</span><input type="number" id="monthlyRent" value="2200"></div></div>
+      <div class="field"><label>Annual Rent Increase</label><div class="field-input"><input type="number" id="rentIncrease" value="4" class="no-prefix"><span class="suffix">%/yr</span></div></div>
+      <div class="field"><label>Investment Return (if renting)</label><div class="field-input"><input type="number" id="investReturn" value="7" class="no-prefix"><span class="suffix">%/yr</span></div></div>
+      <div class="field"><label>Time Horizon</label><div class="field-input"><input type="number" id="horizon" value="30" class="no-prefix"><span class="suffix">years</span></div></div>
+      <div class="field"><label>Renter's Insurance</label><div class="field-input"><span class="prefix">$</span><input type="number" id="rentersInsurance" value="200"></div></div>
+    </div>
   </div>
-  <div class="step" id="step2">
-    <div class="step-num">2</div>
-    <div class="step-label en-text">Finances</div>
-    <div class="step-label tr-text">Finansal</div>
-  </div>
-  <div class="step" id="step3">
-    <div class="step-num">3</div>
-    <div class="step-label en-text">Horizon</div>
-    <div class="step-label tr-text">Vade</div>
-  </div>
-  <div class="step" id="step4">
-    <div class="step-num">4</div>
-    <div class="step-label en-text">Results</div>
-    <div class="step-label tr-text">Sonuç</div>
+
+  <button class="calc-btn" onclick="calculate()">Compare Buy vs Rent →</button>
+
+  <div id="resultsSection">
+    <div class="verdict" id="verdictBox">
+      <div class="verdict-icon" id="verdictIcon">🏠</div>
+      <div class="verdict-label" id="verdictLabel">—</div>
+      <div class="verdict-title" id="verdictTitle">—</div>
+      <div class="verdict-amount" id="verdictAmount">—</div>
+      <div class="verdict-sub" id="verdictSub">—</div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="scard buy"><div class="scard-label">Buy Net Worth</div><div class="scard-val" id="buyNetWorth">—</div><div class="scard-sub" id="buyHorizon">—</div></div>
+      <div class="scard rent"><div class="scard-label">Rent + Invest</div><div class="scard-val" id="rentNetWorth">—</div><div class="scard-sub" id="rentHorizon">—</div></div>
+      <div class="scard"><div class="scard-label">Breakeven Year</div><div class="scard-val" id="breakevenYear">—</div><div class="scard-sub">When buying pulls ahead</div></div>
+      <div class="scard"><div class="scard-label">Total Buying Cost</div><div class="scard-val" id="totalBuyCost">—</div><div class="scard-sub">All-in over period</div></div>
+      <div class="scard"><div class="scard-label">Total Renting Cost</div><div class="scard-val" id="totalRentCost">—</div><div class="scard-sub">All-in over period</div></div>
+      <div class="scard"><div class="scard-label">Home Value</div><div class="scard-val" id="finalHomeValue">—</div><div class="scard-sub" id="homeValueSub">—</div></div>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-title">30-Year Net Worth Comparison</div>
+      <div class="chart-sub">Buying vs. Renting + Investing the difference</div>
+      <div class="chart-tabs">
+        <button class="tab-btn active" onclick="showChart('line')">Net Worth Over Time</button>
+        <button class="tab-btn" onclick="showChart('bar')">Annual Costs</button>
+        <button class="tab-btn" onclick="showChart('doughnut')">Cost Breakdown</button>
+      </div>
+      <canvas id="bvrChart"></canvas>
+    </div>
+
+    <div class="banker-note">
+      <div class="bn-icon">✦</div>
+      <div>
+        <div class="bn-name">Banker's Note</div>
+        <div class="bn-cred">23 Years · Licensed Professional</div>
+        <div class="bn-text" id="bankerNote">—</div>
+      </div>
+    </div>
+
+    <div class="lead-capture">
+      <div class="lc-tag">Free · No Spam</div>
+      <div class="lc-title">Get Your Full Buy vs Rent Report</div>
+      <div class="lc-sub">Complete year-by-year breakdown + personalized recommendation sent to your inbox.</div>
+      <div id="lcForm">
+        <div class="lc-form">
+          <input type="email" class="lc-input" id="lcEmail" placeholder="your@email.com">
+          <button class="lc-btn" onclick="submitEmail()">Send My Report →</button>
+        </div>
+        <div class="lc-privacy">No spam. Unsubscribe anytime.</div>
+      </div>
+      <div class="lc-success" id="lcSuccess">
+        <div class="lc-success-text">✅ Done! Check your inbox for your <strong>full comparison report</strong>.</div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="container">
-
-  <!-- STEP 1: Location -->
-  <div class="form-section active" id="section1">
-    <div class="section-title en-text">📍 Where are you looking?</div>
-    <div class="section-title tr-text">📍 Nereye bakıyorsun?</div>
-    <div class="section-subtitle en-text">Select your country and city to load real market data.</div>
-    <div class="section-subtitle tr-text">Gerçek piyasa verilerini yüklemek için ülke ve şehir seç.</div>
-
-    <div class="location-grid">
-      <div class="field">
-        <label class="en-text">Country</label>
-        <label class="tr-text">Ülke</label>
-        <select id="countrySelect" onchange="loadCities()">
-          <option value="">-- Select Country --</option>
-          <option value="tr">🇹🇷 Turkey</option>
-          <option value="us">🇺🇸 United States</option>
-          <option value="uk">🇬🇧 United Kingdom</option>
-          <option value="de">🇩🇪 Germany</option>
-          <option value="fr">🇫🇷 France</option>
-          <option value="ae">🇦🇪 UAE</option>
-          <option value="sg">🇸🇬 Singapore</option>
-          <option value="au">🇦🇺 Australia</option>
-          <option value="ca">🇨🇦 Canada</option>
-          <option value="nl">🇳🇱 Netherlands</option>
-          <option value="pt">🇵🇹 Portugal</option>
-          <option value="es">🇪🇸 Spain</option>
-          <option value="jp">🇯🇵 Japan</option>
-        </select>
-      </div>
-      <div class="field">
-        <label class="en-text">City</label>
-        <label class="tr-text">Şehir</label>
-        <select id="citySelect" onchange="showCityData()" disabled>
-          <option value="">-- Select City --</option>
-        </select>
-      </div>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Finance<em>Rate</em>Calc</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="mortgage-calculator.html">Mortgage</a>
+      <a href="compound-interest-calculator.html">Compound Interest</a>
+      <a href="can-i-get-a-loan.html">Loan Check</a>
     </div>
-
-    <!-- City data preview -->
-    <div class="city-data-preview" id="cityPreview">
-      <div class="city-data-title en-text">📊 Market Data for <span id="cityNameDisplay"></span></div>
-      <div class="city-data-title tr-text">📊 <span id="cityNameDisplayTr"></span> Piyasa Verileri</div>
-      <div class="city-data-grid">
-        <div class="city-stat">
-          <div class="cs-val" id="cd-inflation">—</div>
-          <div class="cs-label en-text">Annual Inflation</div>
-          <div class="cs-label tr-text">Yıllık Enflasyon</div>
-        </div>
-        <div class="city-stat">
-          <div class="cs-val" id="cd-propgrowth">—</div>
-          <div class="cs-label en-text">Property Growth/yr</div>
-          <div class="cs-label tr-text">Konut Artışı/yıl</div>
-        </div>
-        <div class="city-stat">
-          <div class="cs-val" id="cd-rentgrowth">—</div>
-          <div class="cs-label en-text">Rent Growth/yr</div>
-          <div class="cs-label tr-text">Kira Artışı/yıl</div>
-        </div>
-        <div class="city-stat">
-          <div class="cs-val" id="cd-mortgage">—</div>
-          <div class="cs-label en-text">Mortgage Rate</div>
-          <div class="cs-label tr-text">Mortgage Faizi</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="nav-btns">
-      <button class="btn-next" onclick="goToStep(2)">
-        <span class="en-text">Next: Financial Details →</span>
-        <span class="tr-text">Sonraki: Finansal Bilgiler →</span>
-      </button>
-    </div>
+    <div class="footer-copy">© 2026 FinanceRateCalc.com — Educational Use Only · Not Financial Advice</div>
   </div>
-
-  <!-- STEP 2: Financial Details -->
-  <div class="form-section" id="section2">
-    <div class="section-title en-text">💰 Your Financial Situation</div>
-    <div class="section-title tr-text">💰 Finansal Durumun</div>
-    <div class="section-subtitle en-text">Enter your current financial details for accurate projections.</div>
-    <div class="section-subtitle tr-text">Doğru projeksiyon için mevcut finansal bilgilerini gir.</div>
-
-    <div class="input-grid">
-      <div class="field">
-        <label class="en-text">Monthly Net Income</label>
-        <label class="tr-text">Aylık Net Gelir</label>
-        <input type="number" id="income" placeholder="5000">
-      </div>
-      <div class="field">
-        <label class="en-text">Monthly Expenses (excl. housing)</label>
-        <label class="tr-text">Aylık Giderler (konut hariç)</label>
-        <input type="number" id="expenses" placeholder="2000">
-      </div>
-      <div class="field">
-        <label class="en-text">Savings / Down Payment</label>
-        <label class="tr-text">Birikim / Peşinat</label>
-        <input type="number" id="savings" placeholder="80000">
-      </div>
-      <div class="field">
-        <label class="en-text">Property Price</label>
-        <label class="tr-text">Ev Fiyatı</label>
-        <input type="number" id="propertyPrice" placeholder="400000">
-      </div>
-      <div class="field">
-        <label class="en-text">Current Monthly Rent</label>
-        <label class="tr-text">Mevcut Aylık Kira</label>
-        <input type="number" id="currentRent" placeholder="1500">
-      </div>
-      <div class="field">
-        <label class="en-text">Expected Investment Return (%/yr)</label>
-        <label class="tr-text">Beklenen Yatırım Getirisi (%/yıl)</label>
-        <input type="number" id="investReturn" placeholder="7" value="7">
-      </div>
-    </div>
-
-    <div class="nav-btns">
-      <button class="btn-back" onclick="goToStep(1)">← Back</button>
-      <button class="btn-next" onclick="goToStep(3)">
-        <span class="en-text">Next: Time Horizon →</span>
-        <span class="tr-text">Sonraki: Zaman Vadesi →</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- STEP 3: Horizon -->
-  <div class="form-section" id="section3">
-    <div class="section-title en-text">⏳ How far into the future?</div>
-    <div class="section-title tr-text">⏳ Kaç yıl ileriye bakıyorsun?</div>
-    <div class="section-subtitle en-text">Choose your time horizon for the simulation.</div>
-    <div class="section-subtitle tr-text">Simülasyon için zaman vadesini seç.</div>
-
-    <div class="horizon-grid">
-      <div class="horizon-btn" onclick="setHorizon(this, 10)">
-        <div class="h-years">10</div>
-        <div class="h-label en-text">Years</div>
-        <div class="h-label tr-text">Yıl</div>
-      </div>
-      <div class="horizon-btn active" onclick="setHorizon(this, 20)">
-        <div class="h-years">20</div>
-        <div class="h-label en-text">Years</div>
-        <div class="h-label tr-text">Yıl</div>
-      </div>
-      <div class="horizon-btn" onclick="setHorizon(this, 30)">
-        <div class="h-years">30</div>
-        <div class="h-label en-text">Years</div>
-        <div class="h-label tr-text">Yıl</div>
-      </div>
-    </div>
-
-    <div class="nav-btns">
-      <button class="btn-back" onclick="goToStep(2)">← Back</button>
-      <button class="btn-next" onclick="calculate()" style="background: var(--buy); color: var(--bg);">
-        <span class="en-text">🔮 Simulate My Financial Future</span>
-        <span class="tr-text">🔮 Finansal Geleceğimi Simüle Et</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- RESULTS -->
-  <div class="results-section" id="resultsSection">
-    <div class="results-header">
-      <h2 class="en-text">Your Financial Twin Results</h2>
-      <h2 class="tr-text">Finansal İkiz Sonuçların</h2>
-      <p id="resultsSubtitle"></p>
-    </div>
-
-    <div id="winnerBanner"></div>
-    <div id="comparisonCards" class="comparison"></div>
-    <div id="timelineSection"></div>
-    <div id="assumptionsSection"></div>
-    <div id="expertNoteSection"></div>
-
-    <button class="btn-recalc" onclick="reset()">
-      <span class="en-text">↺ Run New Simulation</span>
-      <span class="tr-text">↺ Yeni Simülasyon Çalıştır</span>
-    </button>
-  </div>
-
-</div>
+</footer>
 
 <script>
-  // ─── CITY DATA ───
-  const cityData = {
-    // Turkey
-    'tr-istanbul': { name: 'Istanbul', nameTr: 'İstanbul', currency: '₺', inflation: 52, propGrowth: 65, rentGrowth: 60, mortgage: 45, symbol: '₺', investBenchmark: 55 },
-    'tr-ankara':   { name: 'Ankara', nameTr: 'Ankara', currency: '₺', inflation: 52, propGrowth: 55, rentGrowth: 55, mortgage: 45, symbol: '₺', investBenchmark: 55 },
-    'tr-izmir':    { name: 'Izmir', nameTr: 'İzmir', currency: '₺', inflation: 52, propGrowth: 60, rentGrowth: 58, mortgage: 45, symbol: '₺', investBenchmark: 55 },
-    // USA
-    'us-newyork':  { name: 'New York', nameTr: 'New York', currency: 'USD', inflation: 3.2, propGrowth: 4.5, rentGrowth: 5.2, mortgage: 7.1, symbol: '$', investBenchmark: 8 },
-    'us-losangeles':{ name: 'Los Angeles', nameTr: 'Los Angeles', currency: 'USD', inflation: 3.2, propGrowth: 5.8, rentGrowth: 5.5, mortgage: 7.1, symbol: '$', investBenchmark: 8 },
-    'us-miami':    { name: 'Miami', nameTr: 'Miami', currency: 'USD', inflation: 3.2, propGrowth: 7.2, rentGrowth: 6.8, mortgage: 7.1, symbol: '$', investBenchmark: 8 },
-    'us-austin':   { name: 'Austin', nameTr: 'Austin', currency: 'USD', inflation: 3.2, propGrowth: 6.5, rentGrowth: 6.0, mortgage: 7.1, symbol: '$', investBenchmark: 8 },
-    // UK
-    'uk-london':   { name: 'London', nameTr: 'Londra', currency: 'GBP', inflation: 4.0, propGrowth: 4.2, rentGrowth: 8.5, mortgage: 5.5, symbol: '£', investBenchmark: 7 },
-    'uk-manchester':{ name: 'Manchester', nameTr: 'Manchester', currency: 'GBP', inflation: 4.0, propGrowth: 5.8, rentGrowth: 7.2, mortgage: 5.5, symbol: '£', investBenchmark: 7 },
-    // Germany
-    'de-berlin':   { name: 'Berlin', nameTr: 'Berlin', currency: 'EUR', inflation: 2.9, propGrowth: 3.8, rentGrowth: 4.5, mortgage: 4.0, symbol: '€', investBenchmark: 7 },
-    'de-munich':   { name: 'Munich', nameTr: 'Münih', currency: 'EUR', inflation: 2.9, propGrowth: 4.5, rentGrowth: 4.8, mortgage: 4.0, symbol: '€', investBenchmark: 7 },
-    // France
-    'fr-paris':    { name: 'Paris', nameTr: 'Paris', currency: 'EUR', inflation: 2.7, propGrowth: 3.5, rentGrowth: 3.8, mortgage: 4.2, symbol: '€', investBenchmark: 7 },
-    // UAE
-    'ae-dubai':    { name: 'Dubai', nameTr: 'Dubai', currency: 'AED', inflation: 3.5, propGrowth: 8.5, rentGrowth: 9.2, mortgage: 5.4, symbol: 'AED', investBenchmark: 8 },
-    'ae-abudhabi': { name: 'Abu Dhabi', nameTr: 'Abu Dabi', currency: 'AED', inflation: 3.5, propGrowth: 6.5, rentGrowth: 7.0, mortgage: 5.4, symbol: 'AED', investBenchmark: 8 },
-    // Singapore
-    'sg-singapore':{ name: 'Singapore', nameTr: 'Singapur', currency: 'SGD', inflation: 2.8, propGrowth: 5.2, rentGrowth: 6.5, mortgage: 3.75, symbol: 'S$', investBenchmark: 7 },
-    // Australia
-    'au-sydney':   { name: 'Sydney', nameTr: 'Sidney', currency: 'AUD', inflation: 3.8, propGrowth: 6.8, rentGrowth: 7.5, mortgage: 6.5, symbol: 'A$', investBenchmark: 8 },
-    'au-melbourne':{ name: 'Melbourne', nameTr: 'Melbourne', currency: 'AUD', inflation: 3.8, propGrowth: 5.5, rentGrowth: 6.8, mortgage: 6.5, symbol: 'A$', investBenchmark: 8 },
-    // Canada
-    'ca-toronto':  { name: 'Toronto', nameTr: 'Toronto', currency: 'CAD', inflation: 3.4, propGrowth: 5.5, rentGrowth: 7.2, mortgage: 5.25, symbol: 'C$', investBenchmark: 7.5 },
-    'ca-vancouver':{ name: 'Vancouver', nameTr: 'Vancouver', currency: 'CAD', inflation: 3.4, propGrowth: 6.2, rentGrowth: 7.8, mortgage: 5.25, symbol: 'C$', investBenchmark: 7.5 },
-    // Netherlands
-    'nl-amsterdam':{ name: 'Amsterdam', nameTr: 'Amsterdam', currency: 'EUR', inflation: 2.8, propGrowth: 5.5, rentGrowth: 5.8, mortgage: 4.1, symbol: '€', investBenchmark: 7 },
-    // Portugal
-    'pt-lisbon':   { name: 'Lisbon', nameTr: 'Lizbon', currency: 'EUR', inflation: 2.5, propGrowth: 7.5, rentGrowth: 8.2, mortgage: 4.3, symbol: '€', investBenchmark: 7 },
-    // Spain
-    'es-madrid':   { name: 'Madrid', nameTr: 'Madrid', currency: 'EUR', inflation: 2.6, propGrowth: 6.2, rentGrowth: 7.5, mortgage: 4.2, symbol: '€', investBenchmark: 7 },
-    // Japan
-    'jp-tokyo':    { name: 'Tokyo', nameTr: 'Tokyo', currency: 'JPY', inflation: 2.5, propGrowth: 3.5, rentGrowth: 2.8, mortgage: 1.5, symbol: '¥', investBenchmark: 5 },
-  };
+function fmt(n){return '$'+Math.round(Math.abs(n)).toLocaleString();}
+let chartInstance=null;
+let chartData=null;
 
-  const citiesByCountry = {
-    tr: ['tr-istanbul','tr-ankara','tr-izmir'],
-    us: ['us-newyork','us-losangeles','us-miami','us-austin'],
-    uk: ['uk-london','uk-manchester'],
-    de: ['de-berlin','de-munich'],
-    fr: ['fr-paris'],
-    ae: ['ae-dubai','ae-abudhabi'],
-    sg: ['sg-singapore'],
-    au: ['au-sydney','au-melbourne'],
-    ca: ['ca-toronto','ca-vancouver'],
-    nl: ['nl-amsterdam'],
-    pt: ['pt-lisbon'],
-    es: ['es-madrid'],
-    jp: ['jp-tokyo'],
-  };
+function calculate(){
+  const homePrice=parseFloat(document.getElementById('homePrice').value);
+  const down=parseFloat(document.getElementById('downPayment').value);
+  const rate=parseFloat(document.getElementById('mortgageRate').value)/100;
+  const taxRate=parseFloat(document.getElementById('taxRate').value)/100;
+  const appreciation=parseFloat(document.getElementById('appreciation').value)/100;
+  const maintenance=parseFloat(document.getElementById('maintenance').value)/100;
+  const rent=parseFloat(document.getElementById('monthlyRent').value);
+  const rentIncrease=parseFloat(document.getElementById('rentIncrease').value)/100;
+  const investReturn=parseFloat(document.getElementById('investReturn').value)/100;
+  const horizon=parseInt(document.getElementById('horizon').value);
+  const rentersIns=parseFloat(document.getElementById('rentersInsurance').value);
 
-  let selectedCity = null;
-  let horizon = 20;
-  let currentLang = 'en';
+  const loanAmt=homePrice-down;
+  const monthlyRate=rate/12;
+  const numPay=30*12;
+  const pi=loanAmt*(monthlyRate*Math.pow(1+monthlyRate,numPay))/(Math.pow(1+monthlyRate,numPay)-1);
 
-  function setLang(lang) {
-    currentLang = lang;
-    document.body.className = lang === 'tr' ? 'tr-mode' : 'en-mode';
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.lang-btn').forEach(b => {
-      if ((lang === 'en' && b.textContent.includes('English')) ||
-          (lang === 'tr' && b.textContent.includes('Türkçe'))) {
-        b.classList.add('active');
-      }
-    });
-  }
+  // Year by year
+  const buyNW=[],rentNW=[],buyYearlyCost=[],rentYearlyCost=[];
+  let homeVal=homePrice,loanBal=loanAmt,rentPortfolio=down;
+  let currentRent=rent*12;
+  let breakevenYear=null;
 
-  function loadCities() {
-    const country = document.getElementById('countrySelect').value;
-    const citySelect = document.getElementById('citySelect');
-    citySelect.innerHTML = '<option value="">-- Select City --</option>';
-    citySelect.disabled = true;
-    document.getElementById('cityPreview').classList.remove('show');
+  for(let y=1;y<=horizon;y++){
+    // BUY costs this year
+    const tax=homeVal*taxRate;
+    const maint=homeVal*maintenance;
+    const ins=homeVal*0.004;
+    const buyCost=pi*12+tax+maint+ins;
+    buyYearlyCost.push(Math.round(buyCost));
 
-    if (!country || !citiesByCountry[country]) return;
-
-    citiesByCountry[country].forEach(key => {
-      const c = cityData[key];
-      const opt = document.createElement('option');
-      opt.value = key;
-      opt.textContent = c.name;
-      citySelect.appendChild(opt);
-    });
-
-    citySelect.disabled = false;
-  }
-
-  function showCityData() {
-    const key = document.getElementById('citySelect').value;
-    if (!key || !cityData[key]) {
-      document.getElementById('cityPreview').classList.remove('show');
-      return;
+    // Loan balance after year
+    for(let m=0;m<12;m++){
+      const interest=loanBal*monthlyRate;
+      loanBal=Math.max(0,loanBal-(pi-interest));
     }
+    homeVal*=(1+appreciation);
+    const buyNetWorth=homeVal-loanBal;
+    buyNW.push(Math.round(buyNetWorth));
 
-    selectedCity = key;
-    const c = cityData[key];
+    // RENT costs this year
+    const rentIns=rentersIns;
+    const rentCost=currentRent+rentIns;
+    rentYearlyCost.push(Math.round(rentCost));
 
-    document.getElementById('cityNameDisplay').textContent = c.name;
-    document.getElementById('cityNameDisplayTr').textContent = c.nameTr;
-    document.getElementById('cd-inflation').textContent = c.inflation + '%';
-    document.getElementById('cd-propgrowth').textContent = c.propGrowth + '%';
-    document.getElementById('cd-rentgrowth').textContent = c.rentGrowth + '%';
-    document.getElementById('cd-mortgage').textContent = c.mortgage + '%';
-    document.getElementById('cityPreview').classList.add('show');
+    // Renter invests diff between buy cost and rent cost + down payment invested
+    const diff=Math.max(0,buyCost-rentCost);
+    rentPortfolio=(rentPortfolio+diff/12*12)*(1+investReturn);
+    rentNW.push(Math.round(rentPortfolio));
 
-    // Auto-fill invest return
-    document.getElementById('investReturn').value = c.investBenchmark;
+    currentRent*=(1+rentIncrease);
+
+    if(!breakevenYear && buyNetWorth>rentPortfolio) breakevenYear=y;
   }
 
-  function setHorizon(btn, years) {
-    document.querySelectorAll('.horizon-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    horizon = years;
+  const finalBuyNW=buyNW[buyNW.length-1];
+  const finalRentNW=rentNW[rentNW.length-1];
+  const diff=finalBuyNW-finalRentNW;
+  const buyWins=diff>0;
+
+  chartData={buyNW,rentNW,buyYearlyCost,rentYearlyCost,horizon,homeVal,loanAmt,down};
+
+  document.getElementById('buyNetWorth').textContent=fmt(finalBuyNW);
+  document.getElementById('rentNetWorth').textContent=fmt(finalRentNW);
+  document.getElementById('buyHorizon').textContent=`After ${horizon} years`;
+  document.getElementById('rentHorizon').textContent=`After ${horizon} years`;
+  document.getElementById('breakevenYear').textContent=breakevenYear?'Year '+breakevenYear:'Never';
+  document.getElementById('totalBuyCost').textContent=fmt(buyYearlyCost.reduce((a,b)=>a+b,0));
+  document.getElementById('totalRentCost').textContent=fmt(rentYearlyCost.reduce((a,b)=>a+b,0));
+  document.getElementById('finalHomeValue').textContent=fmt(homeVal);
+  document.getElementById('homeValueSub').textContent=`From ${fmt(homePrice)} initial`;
+
+  const vbox=document.getElementById('verdictBox');
+  vbox.className='verdict '+(buyWins?'buy-wins':'rent-wins');
+  document.getElementById('verdictIcon').textContent=buyWins?'🏠':'📈';
+  document.getElementById('verdictLabel').textContent=buyWins?'BUYING WINS':'RENTING + INVESTING WINS';
+  document.getElementById('verdictTitle').textContent=buyWins?`Buying builds ${fmt(Math.abs(diff))} more wealth`:`Renting builds ${fmt(Math.abs(diff))} more wealth`;
+  document.getElementById('verdictAmount').textContent=fmt(Math.abs(diff));
+  document.getElementById('verdictSub').textContent=`Over ${horizon} years, ${buyWins?'buying':'renting and investing the difference'} comes out ahead`;
+
+  // Banker note
+  let note='';
+  if(breakevenYear){
+    note=`Buying breaks even with renting in year ${breakevenYear}. If you're staying fewer than ${breakevenYear} years, renting is likely the smarter financial choice — the transaction costs of buying (closing costs, agent fees, moving) don't get absorbed in a short hold. `;
+  } else {
+    note=`In your scenario, renting and investing the difference outperforms buying over the full ${horizon}-year period. This is more common when investment returns are high and appreciation is modest. `;
   }
+  note+=`These numbers are sensitive to your appreciation assumption. At ${(appreciation*100).toFixed(1)}%/year, the home reaches ${fmt(homeVal)}. A 1% difference in appreciation over ${horizon} years changes the outcome by roughly ${fmt(homePrice*Math.pow(1.01,horizon)-homePrice)}.`;
+  document.getElementById('bankerNote').textContent=note;
 
-  function goToStep(step) {
-    if (step === 2 && !selectedCity) {
-      alert(currentLang === 'tr' ? 'Lütfen bir şehir seçin.' : 'Please select a city first.');
-      return;
-    }
+  document.getElementById('resultsSection').style.display='block';
+  showChart('line');
+}
 
-    [1,2,3].forEach(i => {
-      document.getElementById('section' + i).classList.remove('active');
-      document.getElementById('step' + i).className = 'step';
-    });
+function showChart(type){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['line','bar','doughnut'][i]===type);});
+  if(chartInstance)chartInstance.destroy();
+  const ctx=document.getElementById('bvrChart').getContext('2d');
+  const {buyNW,rentNW,buyYearlyCost,rentYearlyCost,horizon}=chartData;
+  const labels=Array.from({length:horizon},(_,i)=>'Yr '+(i+1));
 
-    document.getElementById('section' + step).classList.add('active');
-
-    for (let i = 1; i < step; i++) {
-      document.getElementById('step' + i).className = 'step done';
-    }
-    document.getElementById('step' + step).className = 'step active';
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function fmt(n, sym) {
-    if (Math.abs(n) >= 1000000) return sym + (n/1000000).toFixed(1) + 'M';
-    if (Math.abs(n) >= 1000) return sym + Math.round(n/1000) + 'K';
-    return sym + Math.round(n).toLocaleString();
-  }
-
-  function calculate() {
-    const city = cityData[selectedCity];
-    if (!city) return;
-
-    const income = parseFloat(document.getElementById('income').value) || 5000;
-    const expenses = parseFloat(document.getElementById('expenses').value) || 2000;
-    const savings = parseFloat(document.getElementById('savings').value) || 80000;
-    const propPrice = parseFloat(document.getElementById('propertyPrice').value) || 400000;
-    const rent = parseFloat(document.getElementById('currentRent').value) || 1500;
-    const investReturn = parseFloat(document.getElementById('investReturn').value) || 7;
-    const sym = city.symbol;
-
-    // Mortgage calculation
-    const downPayment = savings;
-    const loanAmount = propPrice - downPayment;
-    const monthlyRate = city.mortgage / 100 / 12;
-    const n = horizon * 12;
-    const monthlyMortgage = loanAmount > 0
-      ? loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1)
-      : 0;
-
-    // ─── BUY SCENARIO ───
-    // Property value after horizon
-    const propValueFuture = propPrice * Math.pow(1 + city.propGrowth / 100, horizon);
-
-    // Remaining mortgage balance
-    let balance = loanAmount;
-    for (let m = 0; m < n; m++) {
-      const ip = balance * monthlyRate;
-      const pp = monthlyMortgage - ip;
-      balance -= pp;
-    }
-    const remainingDebt = Math.max(0, balance);
-
-    // Total interest paid
-    const totalMortgagePaid = monthlyMortgage * n;
-    const totalInterestPaid = totalMortgagePaid - loanAmount;
-
-    // Net worth from buying = property value - remaining debt
-    const buyNetWorth = propValueFuture - remainingDebt;
-
-    // Monthly cash remaining after mortgage
-    const buyCashFlow = income - expenses - monthlyMortgage;
-
-    // Any surplus invested
-    const surplusInvested = buyCashFlow > 0
-      ? buyCashFlow * ((Math.pow(1 + investReturn/100/12, n) - 1) / (investReturn/100/12))
-      : 0;
-
-    const buyTotalNetWorth = buyNetWorth + surplusInvested;
-
-    // ─── RENT SCENARIO ───
-    // Down payment invested
-    const downPaymentInvested = savings * Math.pow(1 + investReturn / 100, horizon);
-
-    // Mortgage-rent difference invested monthly
-    const monthlySavingVsRent = monthlyMortgage - rent;
-    const extraInvested = monthlySavingVsRent > 0
-      ? monthlySavingVsRent * ((Math.pow(1 + investReturn/100/12, n) - 1) / (investReturn/100/12))
-      : 0;
-
-    // Total rent paid over horizon (with annual rent growth)
-    let totalRentPaid = 0;
-    let monthlyRent = rent;
-    for (let y = 0; y < horizon; y++) {
-      totalRentPaid += monthlyRent * 12;
-      monthlyRent *= (1 + city.rentGrowth / 100);
-    }
-
-    const rentNetWorth = downPaymentInvested + extraInvested;
-    const rentTotalNetWorth = rentNetWorth;
-
-    // ─── WINNER ───
-    const diff = buyTotalNetWorth - rentTotalNetWorth;
-    const diffPct = Math.abs(diff / Math.max(buyTotalNetWorth, rentTotalNetWorth) * 100).toFixed(0);
-    const winner = Math.abs(diff) < 0.05 * Math.max(buyTotalNetWorth, rentTotalNetWorth) ? 'tie'
-      : diff > 0 ? 'buy' : 'rent';
-
-    // Timeline data
-    const timelineData = [];
-    const checkpoints = horizon <= 10 ? [2,5,10] : horizon <= 20 ? [5,10,15,20] : [5,10,15,20,25,30];
-    checkpoints.filter(y => y <= horizon).forEach(y => {
-      const pv = propPrice * Math.pow(1 + city.propGrowth/100, y);
-      const loanN = y * 12;
-      let bal = loanAmount;
-      const mr = monthlyRate;
-      for (let m = 0; m < loanN; m++) {
-        bal -= (monthlyMortgage - bal * mr);
-      }
-      const buyNW = pv - Math.max(0, bal);
-      const rentNW = savings * Math.pow(1 + investReturn/100, y) +
-        (monthlySavingVsRent > 0 ? monthlySavingVsRent * ((Math.pow(1 + investReturn/100/12, loanN) - 1) / (investReturn/100/12)) : 0);
-      timelineData.push({ year: y, buy: buyNW, rent: rentNW });
-    });
-
-    // ─── RENDER ───
-    // Hide form, show results
-    [1,2,3].forEach(i => document.getElementById('section'+i).classList.remove('active'));
-    ['step1','step2','step3'].forEach(id => document.getElementById(id).className = 'step done');
-    document.getElementById('step4').className = 'step active';
-
-    document.getElementById('resultsSection').className = 'results-section show';
-
-    const isEn = currentLang === 'en';
-    const cityName = isEn ? city.name : city.nameTr;
-
-    document.getElementById('resultsSubtitle').textContent = isEn
-      ? `${cityName} · ${horizon}-year simulation · ${city.mortgage}% mortgage rate`
-      : `${cityName} · ${horizon} yıllık simülasyon · %${city.mortgage} mortgage faizi`;
-
-    // Winner banner
-    const winnerTexts = {
-      buy: {
-        en: { label: 'BUYING WINS', title: `Buy the property in ${cityName}`, desc: `After ${horizon} years, buying leads to ${fmt(Math.abs(diff), sym)} more net worth (${diffPct}% better).` },
-        tr: { label: 'EV ALMAK KAZANIYOR', title: `${cityName}'de ev satın al`, desc: `${horizon} yıl sonra ev almak ${fmt(Math.abs(diff), sym)} daha fazla net varlık sağlıyor (%${diffPct} daha iyi).` }
+  if(type==='line'){
+    chartInstance=new Chart(ctx,{
+      type:'line',
+      data:{
+        labels,
+        datasets:[
+          {label:'Buy — Net Worth',data:buyNW,borderColor:'#2a6b4a',backgroundColor:'rgba(42,107,74,0.08)',fill:true,tension:0.3,pointRadius:1,borderWidth:2},
+          {label:'Rent + Invest — Portfolio',data:rentNW,borderColor:'#1a3a5c',backgroundColor:'rgba(26,58,92,0.08)',fill:true,tension:0.3,pointRadius:1,borderWidth:2}
+        ]
       },
-      rent: {
-        en: { label: 'RENTING WINS', title: `Rent and invest in ${cityName}`, desc: `After ${horizon} years, renting & investing leads to ${fmt(Math.abs(diff), sym)} more net worth (${diffPct}% better).` },
-        tr: { label: 'KİRADA KALMAK KAZANIYOR', title: `${cityName}'de kirada kal ve yatırım yap`, desc: `${horizon} yıl sonra kirada kalıp yatırım yapmak ${fmt(Math.abs(diff), sym)} daha fazla net varlık sağlıyor (%${diffPct} daha iyi).` }
-      },
-      tie: {
-        en: { label: 'IT\'S A TIE', title: 'Both scenarios are similar', desc: `In ${cityName}, buying and renting lead to similar financial outcomes after ${horizon} years. Lifestyle factors should decide.` },
-        tr: { label: 'EŞİT SONUÇ', title: 'Her iki senaryo benzer', desc: `${cityName}'de satın alma ve kirada kalma ${horizon} yıl sonra benzer finansal sonuçlara yol açıyor. Yaşam tarzı tercihleriniz belirleyici olabilir.` }
-      }
-    };
-
-    const wt = winnerTexts[winner][currentLang];
-    const wIcon = winner === 'buy' ? '🏠' : winner === 'rent' ? '📈' : '⚖️';
-
-    document.getElementById('winnerBanner').innerHTML = `
-      <div class="winner-banner ${winner}">
-        <div class="winner-icon">${wIcon}</div>
-        <div class="winner-text">
-          <div class="w-label">${wt.label}</div>
-          <div class="w-title">${wt.title}</div>
-          <div class="w-desc">${wt.desc}</div>
-        </div>
-      </div>`;
-
-    // Comparison cards
-    document.getElementById('comparisonCards').innerHTML = `
-      <div class="scenario-card buy ${winner === 'buy' ? 'winner' : ''}">
-        <div class="sc-icon">🏠</div>
-        <div class="sc-title">${isEn ? 'Buy the Property' : 'Evi Satın Al'}</div>
-        <div class="sc-main-label">${isEn ? `Net Worth After ${horizon} Years` : `${horizon} Yıl Sonra Net Varlık`}</div>
-        <div class="sc-main-value">${fmt(buyTotalNetWorth, sym)}</div>
-        <div class="sc-main-sub">${isEn ? 'Property equity + investments' : 'Gayrimenkul değeri + yatırımlar'}</div>
-        <div class="sc-breakdown">
-          <div class="sc-row"><span class="sc-key">${isEn ? 'Property Value' : 'Konut Değeri'}</span><span class="sc-val green">${fmt(propValueFuture, sym)}</span></div>
-          <div class="sc-row"><span class="sc-key">${isEn ? 'Remaining Debt' : 'Kalan Borç'}</span><span class="sc-val red">-${fmt(remainingDebt, sym)}</span></div>
-          <div class="sc-row"><span class="sc-key">${isEn ? 'Monthly Payment' : 'Aylık Ödeme'}</span><span class="sc-val">${fmt(monthlyMortgage, sym)}</span></div>
-          <div class="sc-row"><span class="sc-key">${isEn ? 'Total Interest Paid' : 'Toplam Faiz Ödendi'}</span><span class="sc-val red">${fmt(totalInterestPaid, sym)}</span></div>
-          <div class="sc-row"><span class="sc-key">${isEn ? 'Surplus Invested' : 'Fazla Yatırılan'}</span><span class="sc-val green">${fmt(surplusInvested, sym)}</span></div>
-        </div>
-      </div>
-
-      <div class="scenario-card rent ${winner === 'rent' ? 'winner' : ''}">
-        <div class="sc-icon">📈</div>
-        <div class="sc-title">${isEn ? 'Rent & Invest' : 'Kirada Kal & Yatır'}</div>
-        <div class="sc-main-label">${isEn ? `Net Worth After ${horizon} Years` : `${horizon} Yıl Sonra Net Varlık`}</div>
-        <div class="sc-main-value">${fmt(rentTotalNetWorth, sym)}</div>
-        <div class="sc-main-sub">${isEn ? 'Down payment + monthly savings invested' : 'Peşinat + aylık tasarruf yatırımda'}</div>
-        <div class="sc-breakdown">
-          <div class="sc-row"><span class="sc-key">${isEn ? 'Down Payment Grown' : 'Büyüyen Peşinat'}</span><span class="sc-val purple">${fmt(downPaymentInvested, sym)}</span></div>
-          <div class="sc-row"><span class="sc-key">${isEn ? 'Extra Savings Invested' : 'Ekstra Tasarruf Yatırıldı'}</span><span class="sc-val purple">${fmt(extraInvested, sym)}</span></div>
-          <div class="sc-row"><span class="sc-key">${isEn ? 'Total Rent Paid' : 'Toplam Kira Ödendi'}</span><span class="sc-val red">-${fmt(totalRentPaid, sym)}</span></div>
-          <div class="sc-row"><span class="sc-key">${isEn ? 'Monthly Rent (now)' : 'Aylık Kira (şu an)'}</span><span class="sc-val">${fmt(rent, sym)}</span></div>
-          <div class="sc-row"><span class="sc-key">${isEn ? `Monthly Rent (yr ${horizon})` : `Aylık Kira (${horizon}. yıl)`}</span><span class="sc-val red">${fmt(rent * Math.pow(1 + city.rentGrowth/100, horizon), sym)}</span></div>
-        </div>
-      </div>`;
-
-    // Timeline
-    const maxVal = Math.max(...timelineData.map(d => Math.max(d.buy, d.rent)));
-    let tlBars = '';
-    timelineData.forEach(d => {
-      const bH = Math.round(d.buy / maxVal * 100);
-      const rH = Math.round(d.rent / maxVal * 100);
-      tlBars += `
-        <div class="tl-group">
-          <div class="tl-bar buy" style="height:${bH}%"></div>
-          <div class="tl-bar rent" style="height:${rH}%"></div>
-        </div>`;
+      options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:v=>'$'+(v>=1000000?(v/1000000).toFixed(1)+'M':(v/1000).toFixed(0)+'k')}}}}
     });
-
-    const tlLabels = timelineData.map(d => `<div class="tl-label">Y${d.year}</div>`).join('');
-
-    document.getElementById('timelineSection').innerHTML = `
-      <div class="timeline-card">
-        <div class="timeline-title">${isEn ? '📊 Net Worth Trajectory' : '📊 Net Varlık Seyri'}</div>
-        <div class="timeline-chart">${tlBars}</div>
-        <div style="display:flex;gap:8px;">${tlLabels}</div>
-        <div class="chart-legend" style="margin-top:12px;">
-          <span><span class="legend-dot" style="background:var(--buy)"></span>${isEn ? 'Buy' : 'Satın Al'}</span>
-          <span><span class="legend-dot" style="background:var(--rent)"></span>${isEn ? 'Rent & Invest' : 'Kirada Kal & Yatır'}</span>
-        </div>
-      </div>`;
-
-    // Assumptions
-    document.getElementById('assumptionsSection').innerHTML = `
-      <div class="assumptions-card">
-        <div class="assumptions-title">${isEn ? '⚙️ Key Assumptions Used' : '⚙️ Kullanılan Temel Varsayımlar'}</div>
-        <div class="assumptions-grid">
-          <div class="assumption"><strong>${isEn ? 'Annual Inflation' : 'Yıllık Enflasyon'}</strong>${city.inflation}%</div>
-          <div class="assumption"><strong>${isEn ? 'Property Growth/yr' : 'Konut Artışı/yıl'}</strong>${city.propGrowth}%</div>
-          <div class="assumption"><strong>${isEn ? 'Rent Growth/yr' : 'Kira Artışı/yıl'}</strong>${city.rentGrowth}%</div>
-          <div class="assumption"><strong>${isEn ? 'Mortgage Rate' : 'Mortgage Faizi'}</strong>${city.mortgage}%</div>
-          <div class="assumption"><strong>${isEn ? 'Investment Return' : 'Yatırım Getirisi'}</strong>${investReturn}%</div>
-          <div class="assumption"><strong>${isEn ? 'Data Source' : 'Veri Kaynağı'}</strong>${isEn ? 'Historical 10-yr avg' : '10 yıllık tarihsel ort.'}</div>
-        </div>
-      </div>`;
-
-    // Expert note
-    const expertNotes = {
-      buy: {
-        en: `In ${cityName}, property appreciation (${city.propGrowth}%/yr) historically outpaces investment returns. But remember: this is a ${horizon}-year commitment. Transaction costs, taxes, and maintenance (typically 1-2% of property value annually) are not included here.`,
-        tr: `${cityName}'de konut değer artışı (yılda %${city.propGrowth}) tarihsel olarak yatırım getirilerini geçiyor. Ancak unutmayın: bu ${horizon} yıllık bir taahhüt. İşlem maliyetleri, vergiler ve bakım giderleri (tipik olarak konut değerinin yılda %1-2'si) bu hesaba dahil değil.`
+  } else if(type==='bar'){
+    chartInstance=new Chart(ctx,{
+      type:'bar',
+      data:{
+        labels,
+        datasets:[
+          {label:'Annual Buy Cost',data:buyYearlyCost,backgroundColor:'rgba(42,107,74,0.6)',borderRadius:2},
+          {label:'Annual Rent Cost',data:rentYearlyCost,backgroundColor:'rgba(26,58,92,0.6)',borderRadius:2}
+        ]
       },
-      rent: {
-        en: `In ${cityName}, the math favors renting and investing over ${horizon} years — primarily because rent is significantly cheaper than mortgage payments, freeing capital for investment. However, property ownership provides stability and inflation protection that numbers alone can't capture.`,
-        tr: `${cityName}'de matematik, ${horizon} yıl boyunca kirada kalıp yatırım yapmayı destekliyor — çünkü kira, mortgage ödemelerinden önemli ölçüde daha ucuz ve bu sermayeyi yatırıma yönlendiriyor. Ancak mülk sahipliği, rakamların tek başına yansıtamayacağı istikrar ve enflasyona karşı koruma sağlıyor.`
+      options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}
+    });
+  } else {
+    const totalBuy=buyYearlyCost.reduce((a,b)=>a+b,0);
+    const totalRent=rentYearlyCost.reduce((a,b)=>a+b,0);
+    chartInstance=new Chart(ctx,{
+      type:'doughnut',
+      data:{
+        labels:['Total Buy Cost','Total Rent Cost'],
+        datasets:[{data:[totalBuy,totalRent],backgroundColor:['#2a6b4a','#1a3a5c'],borderWidth:0}]
       },
-      tie: {
-        en: `In ${cityName}, both scenarios produce similar outcomes. This means your decision should be driven by lifestyle: Do you value stability and building equity, or flexibility and liquidity? As a banker, I've seen both work — the key is execution.`,
-        tr: `${cityName}'de her iki senaryo da benzer sonuçlar veriyor. Bu, kararınızın yaşam tarzınıza göre şekillenmesi gerektiği anlamına geliyor: İstikrar ve özkaynak oluşturmaya mı, yoksa esneklik ve likiditeye mi değer veriyorsunuz? Bankacı olarak her ikisinin de işe yaradığını gördüm — asıl olan uygulama.`
-      }
-    };
-
-    const note = expertNotes[winner][currentLang];
-    document.getElementById('expertNoteSection').innerHTML = `
-      <div class="expert-note">
-        <div class="expert-av">Z</div>
-        <div>
-          <div class="expert-name">Ziya Yetiş</div>
-          <div class="expert-cred">23 YRS BANKING · SPK LICENSED</div>
-          <div class="expert-text">${note}</div>
-        </div>
-      </div>`;
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+      options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom'}}}
+    });
   }
+}
 
-  function reset() {
-    document.getElementById('resultsSection').className = 'results-section';
-    document.getElementById('step4').className = 'step';
-    goToStep(1);
-    selectedCity = null;
-    document.getElementById('countrySelect').value = '';
-    document.getElementById('citySelect').value = '';
-    document.getElementById('citySelect').disabled = true;
-    document.getElementById('cityPreview').classList.remove('show');
-  }
+function submitEmail(){
+  const email=document.getElementById('lcEmail').value;
+  if(!email||!email.includes('@')){document.getElementById('lcEmail').focus();return;}
+  if(typeof gtag!=='undefined')gtag('event','lead_capture',{event_category:'email',event_label:'buy_vs_rent'});
+  const leads=JSON.parse(localStorage.getItem('frc_leads')||'[]');
+  leads.push({email,page:'buy-vs-rent',date:new Date().toISOString()});
+  localStorage.setItem('frc_leads',JSON.stringify(leads));
+  document.getElementById('lcForm').style.display='none';
+  document.getElementById('lcSuccess').style.display='block';
+}
+
+window.addEventListener('load',calculate);
 </script>
 </body>
 </html>
