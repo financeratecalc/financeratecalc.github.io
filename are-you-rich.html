@@ -1041,7 +1041,7 @@ function copyEmbed() {
 
 let currentStoryText = '';
 
-async function generateStory(percentile, salary, city, ageGroup) {
+function generateStory(percentile, salary, city, ageGroup) {
   const output = document.getElementById('aiStoryOutput');
   const loading = document.getElementById('aiStoryLoading');
   const storyText = document.getElementById('aiStoryText');
@@ -1052,53 +1052,58 @@ async function generateStory(percentile, salary, city, ageGroup) {
   storyText.style.display = 'none';
   storyActions.style.display = 'none';
 
-  const prompt = `You are a warm, empathetic financial advisor with 23 years of banking experience. Write a short, personal financial story for this person. Be human, encouraging, and specific — not generic.
-
-Their data:
-- Annual salary: $${salary.toLocaleString()}
-- City: ${city}
-- Age group: ${ageGroup}
-- Income percentile: ${percentile}th percentile (they earn more than ${percentile}% of people in their area)
-
-Write exactly 3 short paragraphs:
-1. A warm, personal observation about where they stand — make it feel like you're talking directly to them, not at them. Use their specific numbers. Include an empathetic insight about what this percentile means in real life in ${city}.
-2. One honest, specific thing they could do in the next 12 months to meaningfully improve their financial position. Be concrete — not generic advice.
-3. A brief motivating close. Something real, not cheerleader-y. End with one question that makes them think.
-
-Use <strong> tags around key numbers and insights. Keep each paragraph 2-3 sentences. Do not use headers. Write in second person (you/your).`;
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-
-    const data = await response.json();
-    const text = data.content?.[0]?.text || 'Unable to generate story. Please try again.';
-    currentStoryText = text;
-
-    // Convert paragraphs
-    const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
-    const html = paragraphs.map(p => `<p>${p.trim()}</p>`).join('');
-
+  // Simulate loading for effect
+  setTimeout(() => {
+    const story = buildStory(percentile, salary, city, ageGroup);
+    currentStoryText = story.plain;
     loading.style.display = 'none';
-    storyText.innerHTML = html;
+    storyText.innerHTML = story.html;
     storyText.style.display = 'block';
     storyActions.style.display = 'flex';
-
     if (typeof gtag !== 'undefined') {
       gtag('event', 'ai_story_generated', { event_category: 'engagement', event_label: city });
     }
-  } catch (err) {
-    loading.style.display = 'none';
-    storyText.innerHTML = '<p style="color:rgba(255,255,255,0.4);">Could not generate story right now. Please try again.</p>';
-    storyText.style.display = 'block';
+  }, 1800);
+}
+
+function buildStory(percentile, salary, city, ageGroup) {
+  const fmtSalary = '$' + salary.toLocaleString();
+  const isTop = percentile >= 75;
+  const isMiddle = percentile >= 40 && percentile < 75;
+  const isLower = percentile < 40;
+
+  // Age context
+  const ageContexts = {
+    '18-24': { phase: 'early career', horizon: '30+ years', power: 'time is your biggest asset right now' },
+    '25-34': { phase: 'career-building', horizon: '25-30 years', power: 'compounding works hardest in this decade' },
+    '35-44': { phase: 'peak earning', horizon: '20 years', power: 'this is typically when wealth accelerates' },
+    '45-54': { phase: 'wealth consolidation', horizon: '10-15 years', power: 'focus shifts from growth to protection' },
+    '55-64': { phase: 'pre-retirement', horizon: '5-10 years', power: 'catch-up contributions are now available to you' },
+    '65+':   { phase: 'retirement', horizon: 'now', power: 'capital preservation becomes priority' }
+  };
+  const age = ageContexts[ageGroup] || ageContexts['35-44'];
+
+  // Percentile framing
+  let p1, p2, p3;
+
+  if (isTop) {
+    const aboveCount = Math.round((percentile / 100) * 258000000).toLocaleString();
+    p1 = `Earning <strong>${fmtSalary}</strong> puts you in the top <strong>${100 - percentile}%</strong> in ${city} — ahead of roughly <strong>${aboveCount} people</strong> in your area. In the ${age.phase} phase of your career, that's a meaningful position. Most people at your income level still feel financially stretched, which tells you that income alone isn't the variable — what happens to it afterward is.`;
+    p2 = `The single highest-leverage move you can make in the next 12 months: <strong>automate 20% of your take-home</strong> into index funds or a high-yield savings account before you can spend it. At your salary, that's roughly <strong>$${Math.round(salary * 0.2 / 12).toLocaleString()}/month</strong> working for you without requiring willpower. In ${city}'s cost environment, this is the difference between your income feeling generous and feeling tight in 5 years.`;
+    p3 = `You're in a strong position — but ${age.power}. The people who look back at this moment with satisfaction are the ones who treated their income as a tool, not a ceiling. What would your financial life look like if you treated the next 12 months as the year you actually locked in the foundation?`;
+  } else if (isMiddle) {
+    p1 = `At <strong>${fmtSalary}</strong> in ${city}, you're in the <strong>${percentile}th percentile</strong> — solidly middle ground, which is exactly where most people are, and where most people stay. That's not a criticism; it's an observation. The ${age.phase} years are when the gap between people who build real wealth and those who don't starts becoming visible. You're right at that inflection point.`;
+    p2 = `The most concrete thing you can do in the next 12 months: <strong>reduce your biggest fixed expense by 10%</strong>. For most people at your income level in ${city}, that's housing or a car payment. Redirecting even <strong>$${Math.round(salary * 0.08 / 12).toLocaleString()}/month</strong> into appreciating assets compounds dramatically over ${age.horizon}. It sounds small. Over 10 years, it isn't.`;
+    p3 = `${age.power.charAt(0).toUpperCase() + age.power.slice(1)}. The difference between your current percentile and the top 25% often isn't a raise — it's what happens to the money after it arrives. What's the one financial habit that, if you built it this year, would change the trajectory?`;
+  } else {
+    p1 = `<strong>${fmtSalary}</strong> in ${city} puts you in the <strong>${percentile}th percentile</strong> right now — and I want to be honest with you about what that means, because honest is more useful than encouraging. You're in a position where every financial decision carries more weight than it would at a higher income. That's not permanent, but it requires treating it seriously.`;
+    p2 = `The most important move in the next 12 months isn't investment strategy — it's <strong>building a $${Math.round(Math.max(1000, salary * 0.05)).toLocaleString()} emergency fund</strong> before anything else. At your income level in ${city}, the absence of a buffer is the single biggest risk. Without it, every unexpected expense becomes debt, and debt at this stage compounds in the wrong direction. This one step changes your financial posture entirely.`;
+    p3 = `${age.power.charAt(0).toUpperCase() + age.power.slice(1)}. The percentile number today is just a starting point — it has almost no predictive power over where you end up. What matters is the next decision, and the one after that. What's the one thing you've been putting off that, if you did it this month, would actually move the needle?`;
   }
+
+  const html = `<p>${p1}</p><p>${p2}</p><p>${p3}</p>`;
+  const plain = [p1, p2, p3].map(p => p.replace(/<[^>]+>/g, '')).join(' ');
+  return { html, plain };
 }
 
 function shareStory() {
