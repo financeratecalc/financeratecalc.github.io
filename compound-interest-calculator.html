@@ -3,928 +3,395 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Compound Interest Calculator by Country | FinanceRateCalc</title>
-<meta name="description" content="Free compound interest calculator with real-world rates by country. See how your savings grow over time with rates from USA, UK, Australia, Canada, and 20+ more countries.">
-<!-- Google Analytics -->
+<title>Compound Interest Calculator 2026 — Growth Chart | FinanceRateCalc</title>
+<meta name="description" content="See how your money grows with compound interest. Interactive chart shows year-by-year growth. Built by a licensed banker with 23 years of experience.">
+<link rel="canonical" href="https://financeratecalc.com/compound-interest-calculator.html">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-13712175066');
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-13712175066');</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f7f5f0;
-    --white: #ffffff;
-    --dark: #1a1a2e;
-    --dark2: #16213e;
-    --accent: #e85d04;
-    --accent2: #f48c06;
-    --blue: #0077b6;
-    --green: #2d6a4f;
-    --text: #2d2d2d;
-    --muted: #888;
-    --border: #e5e0d8;
-    --shadow: 0 4px 24px rgba(0,0,0,0.08);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Outfit', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  /* Header */
-  header {
-    background: var(--dark);
-    padding: 18px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .logo {
-    font-family: 'Outfit', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: #fff;
-  }
-
-  .logo span { color: var(--accent2); }
-
-  nav a {
-    color: rgba(255,255,255,0.5);
-    text-decoration: none;
-    font-size: 13px;
-    margin-left: 20px;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
-
-  nav a:hover, nav a.active { color: var(--accent2); }
-
-  /* Hero */
-  .hero {
-    background: var(--dark);
-    padding: 50px 40px 60px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::after {
-    content: '';
-    position: absolute;
-    right: -100px;
-    top: -100px;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(232,93,4,0.15) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .hero-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(244,140,6,0.15);
-    border: 1px solid rgba(244,140,6,0.3);
-    color: var(--accent2);
-    padding: 5px 12px;
-    border-radius: 4px;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 600;
-    margin-bottom: 16px;
-  }
-
-  .hero h1 {
-    font-size: clamp(28px, 4vw, 48px);
-    font-weight: 800;
-    color: #fff;
-    line-height: 1.1;
-    margin-bottom: 12px;
-    letter-spacing: -0.5px;
-  }
-
-  .hero h1 em {
-    font-style: normal;
-    color: var(--accent2);
-  }
-
-  .hero p {
-    color: rgba(255,255,255,0.5);
-    font-size: 15px;
-    max-width: 500px;
-    line-height: 1.7;
-    font-weight: 300;
-  }
-
-  /* Country banner */
-  .country-banner {
-    background: var(--accent);
-    padding: 12px 40px;
-  }
-
-  .country-banner-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 13px;
-    color: #fff;
-    font-weight: 500;
-  }
-
-  .country-banner-inner select {
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
-    color: #fff;
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    outline: none;
-  }
-
-  .country-banner-inner select option { background: var(--dark); color: #fff; }
-
-  .rate-badge {
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
-    padding: 3px 10px;
-    border-radius: 4px;
-    font-weight: 700;
-    font-size: 14px;
-  }
-
-  /* Main */
-  .main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 32px 40px 80px;
-    display: grid;
-    grid-template-columns: 420px 1fr;
-    gap: 24px;
-    align-items: start;
-  }
-
-  @media (max-width: 900px) {
-    .main { grid-template-columns: 1fr; padding: 24px 20px 60px; }
-    header, .hero, .country-banner { padding-left: 20px; padding-right: 20px; }
-    nav { display: none; }
-  }
-
-  /* Input card */
-  .card {
-    background: var(--white);
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    padding: 28px;
-  }
-
-  .card-title {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 24px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid var(--bg);
-  }
-
-  .field { margin-bottom: 20px; }
-
-  .field label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .field label .hint {
-    color: var(--accent);
-    font-weight: 700;
-    text-transform: none;
-    letter-spacing: 0;
-    font-size: 13px;
-  }
-
-  .input-wrap {
-    display: flex;
-    align-items: center;
-    border: 2px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    transition: border-color 0.2s;
-    background: var(--bg);
-  }
-
-  .input-wrap:focus-within {
-    border-color: var(--accent);
-    background: #fff;
-  }
-
-  .prefix, .suffix {
-    padding: 0 14px;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--accent);
-    background: rgba(232,93,4,0.07);
-    height: 46px;
-    display: flex;
-    align-items: center;
-    border-right: 2px solid var(--border);
-    flex-shrink: 0;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .suffix { border-right: none; border-left: 2px solid var(--border); }
-
-  input[type="number"] {
-    flex: 1;
-    background: transparent;
-    border: none;
-    padding: 0 14px;
-    height: 46px;
-    color: var(--dark);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 16px;
-    font-weight: 500;
-    outline: none;
-    -moz-appearance: textfield;
-    min-width: 0;
-  }
-
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-  /* Compound frequency */
-  .freq-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    margin-bottom: 20px;
-  }
-
-  .freq-btn {
-    background: var(--bg);
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 4px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-    letter-spacing: 0.3px;
-  }
-
-  .freq-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .freq-btn.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-  }
-
-  /* Slider */
-  input[type="range"] {
-    width: 100%;
-    -webkit-appearance: none;
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: 3px solid #fff;
-    box-shadow: 0 2px 6px rgba(232,93,4,0.4);
-  }
-
-  .btn {
-    width: 100%;
-    padding: 14px;
-    background: var(--dark);
-    border: none;
-    border-radius: 10px;
-    color: #fff;
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 4px;
-  }
-
-  .btn:hover {
-    background: var(--accent);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(232,93,4,0.3);
-  }
-
-  /* Results */
-  .result-hero {
-    background: var(--dark);
-    border-radius: 14px;
-    padding: 28px;
-    margin-bottom: 16px;
-    position: relative;
-    overflow: hidden;
-    text-align: center;
-  }
-
-  .result-hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(244,140,6,0.2) 0%, transparent 60%);
-  }
-
-  .result-hero .r-label {
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    margin-bottom: 10px;
-    position: relative;
-  }
-
-  .result-hero .r-value {
-    font-size: clamp(36px, 5vw, 56px);
-    font-weight: 800;
-    color: var(--accent2);
-    line-height: 1;
-    margin-bottom: 6px;
-    position: relative;
-    letter-spacing: -1px;
-  }
-
-  .result-hero .r-sub {
-    font-size: 13px;
-    color: rgba(255,255,255,0.4);
-    position: relative;
-  }
-
-  .results-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .r-card {
-    background: var(--white);
-    border-radius: 10px;
-    padding: 16px;
-    box-shadow: var(--shadow);
-    text-align: center;
-  }
-
-  .r-card .rc-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--muted);
-    margin-bottom: 6px;
-    font-weight: 600;
-  }
-
-  .r-card .rc-value {
-    font-size: 17px;
-    font-weight: 800;
-    color: var(--dark);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .r-card .rc-value.green { color: var(--green); }
-  .r-card .rc-value.orange { color: var(--accent); }
-
-  /* Growth chart */
-  .chart-card {
-    background: var(--white);
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: var(--shadow);
-    margin-bottom: 16px;
-  }
-
-  .chart-title {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--muted);
-    margin-bottom: 16px;
-  }
-
-  .chart-bars {
-    display: flex;
-    align-items: flex-end;
-    gap: 4px;
-    height: 120px;
-  }
-
-  .bar-group {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    height: 100%;
-    justify-content: flex-end;
-  }
-
-  .bar {
-    width: 100%;
-    border-radius: 3px 3px 0 0;
-    transition: height 0.8s cubic-bezier(0.4,0,0.2,1);
-    min-height: 4px;
-  }
-
-  .bar.principal { background: var(--blue); opacity: 0.7; }
-  .bar.interest { background: var(--accent2); }
-
-  .bar-label {
-    font-size: 9px;
-    color: var(--muted);
-    font-weight: 600;
-    text-align: center;
-  }
-
-  .chart-legend {
-    display: flex;
-    gap: 16px;
-    margin-top: 12px;
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 600;
-  }
-
-  .legend-dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
-    margin-right: 5px;
-    vertical-align: middle;
-  }
-
-  /* Country info box */
-  .country-info {
-    background: rgba(0,119,182,0.06);
-    border: 1px solid rgba(0,119,182,0.2);
-    border-left: 3px solid var(--blue);
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin-bottom: 16px;
-    font-size: 12px;
-    color: var(--text);
-    line-height: 1.6;
-  }
-
-  .country-info strong { color: var(--blue); }
-
-  /* Amortization */
-  .amort-toggle {
-    width: 100%;
-    background: var(--bg);
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    padding: 10px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 10px;
-    letter-spacing: 0.5px;
-  }
-
-  .amort-toggle:hover { border-color: var(--accent); color: var(--accent); }
-
-  .amort-table {
-    display: none;
-    max-height: 260px;
-    overflow-y: auto;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-  }
-
-  .amort-table.show { display: block; }
-  .amort-table::-webkit-scrollbar { width: 4px; }
-  .amort-table::-webkit-scrollbar-track { background: var(--bg); }
-  .amort-table::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
-
-  table { width: 100%; border-collapse: collapse; font-size: 12px; }
-
-  thead th {
-    background: var(--dark);
-    color: var(--accent2);
-    padding: 9px 10px;
-    text-align: right;
-    font-weight: 600;
-    position: sticky;
-    top: 0;
-    font-size: 10px;
-    letter-spacing: 0.5px;
-  }
-
-  thead th:first-child { text-align: left; }
-  tbody tr { border-bottom: 1px solid var(--border); }
-  tbody tr:hover { background: rgba(232,93,4,0.03); }
-  tbody td { padding: 8px 10px; text-align: right; }
-  tbody td:first-child { text-align: left; color: var(--muted); font-weight: 600; }
-
-  /* Expert */
-  .expert-section {
-    max-width: 1100px;
-    margin: 0 auto 60px;
-    padding: 0 40px;
-  }
-
-  @media (max-width: 900px) { .expert-section { padding: 0 20px; } }
-
-  .expert-card {
-    background: var(--white);
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    padding: 20px 24px;
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-    border-left: 4px solid var(--accent);
-  }
-
-  .expert-av {
-    width: 46px;
-    height: 46px;
-    background: var(--dark);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 18px;
-    color: var(--accent2);
-    flex-shrink: 0;
-    font-family: 'Outfit', sans-serif;
-  }
-
-  .expert-name { font-weight: 700; color: var(--dark); margin-bottom: 2px; font-size: 14px; }
-  .expert-title { font-size: 10px; color: var(--accent); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
-  .expert-text { font-size: 13px; color: var(--muted); line-height: 1.7; }
-
-  /* Placeholder */
-  .placeholder { text-align: center; padding: 50px 20px; color: var(--muted); }
-  .placeholder .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
-  .placeholder p { font-size: 13px; line-height: 1.7; }
-  .placeholder strong { color: var(--accent); }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .card { animation: fadeUp 0.4s ease both; }
-  .results-content { animation: fadeUp 0.3s ease both; }
+:root{--ink:#0f0e0c;--paper:#faf8f4;--cream:#f2ede4;--gold:#b8860b;--gold-light:#d4a017;--text:#2c2a26;--muted:#8a8070;--border:#ddd8cc;--white:#fff;--green:#2a6b4a;--red:#8b2a2a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:var(--paper);color:var(--text);}
+header{background:var(--ink);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold-light);}
+.nav-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;margin-left:24px;}
+.nav-links a:hover{color:var(--gold-light);}
+@media(max-width:768px){header{padding:0 20px;}.nav-links{display:none;}}
+.hero{background:var(--ink);padding:50px 60px 60px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(184,134,11,0.08) 0%,transparent 60%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+.hero-eye{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.hero-eye::before{content:'';display:inline-block;width:24px;height:1px;background:var(--gold-light);}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,44px);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:10px;}
+.hero h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{color:rgba(255,255,255,0.4);font-size:14px;font-weight:300;}
+@media(max-width:768px){.hero{padding:30px 20px 40px;}}
+.main{max-width:960px;margin:0 auto;padding:40px 60px 80px;display:grid;grid-template-columns:320px 1fr;gap:40px;align-items:start;}
+@media(max-width:900px){.main{grid-template-columns:1fr;padding:30px 20px 60px;}}
+.input-panel{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:28px;position:sticky;top:80px;}
+.panel-title{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--ink);margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}
+.field-input{position:relative;}
+.field-input .prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:600;color:var(--muted);}
+.field-input .suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:600;color:var(--muted);}
+.field input,.field select{width:100%;padding:11px 36px 11px 28px;border:1px solid var(--border);border-radius:8px;font-size:15px;font-weight:500;color:var(--ink);background:var(--paper);outline:none;transition:border-color 0.2s;font-family:'Geist',sans-serif;}
+.field input:focus,.field select:focus{border-color:var(--gold);}
+.field select{padding-left:12px;padding-right:12px;}
+input[type="range"]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--border);outline:none;cursor:pointer;margin-top:6px;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.calc-btn{width:100%;background:var(--gold);color:var(--ink);border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'Geist',sans-serif;margin-top:8px;}
+.calc-btn:hover{background:var(--gold-light);transform:translateY(-1px);}
+.result-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px;}
+@media(max-width:500px){.result-cards{grid-template-columns:1fr;}}
+.rcard{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+.rcard.primary{background:var(--ink);border-color:transparent;grid-column:1/-1;}
+.rcard-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.rcard.primary .rcard-label{color:rgba(255,255,255,0.4);}
+.rcard-value{font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:var(--ink);line-height:1;}
+.rcard.primary .rcard-value{color:var(--gold-light);font-size:38px;}
+.rcard-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+.rcard.primary .rcard-sub{color:rgba(255,255,255,0.3);}
+.rcard.green .rcard-value{color:var(--green);}
+.rcard.gold .rcard-value{color:var(--gold);}
+.chart-section{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
+.chart-title{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--ink);margin-bottom:4px;}
+.chart-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.chart-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.tab-btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all 0.2s;font-family:'Geist',sans-serif;}
+.tab-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+canvas{max-height:300px;}
+.milestones{background:var(--cream);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
+.ms-title{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--ink);margin-bottom:16px;}
+.ms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.ms-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+.ms-year{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px;}
+.ms-val{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:var(--gold);margin-bottom:2px;}
+.ms-growth{font-size:11px;color:var(--green);font-weight:600;}
+.banker-note{background:var(--cream);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:20px 22px;margin-bottom:24px;display:flex;gap:14px;}
+.bn-icon{width:36px;height:36px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.bn-name{font-size:12px;font-weight:700;color:var(--ink);}
+.bn-cred{font-size:9px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:6px;}
+.bn-text{font-size:13px;color:var(--text);line-height:1.8;font-weight:300;}
+.lead-capture{background:var(--ink);border-radius:16px;padding:28px 32px;margin-bottom:24px;}
+.lc-tag{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:8px;}
+.lc-title{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:6px;}
+.lc-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px;font-weight:300;}
+.lc-form{display:flex;gap:10px;flex-wrap:wrap;}
+.lc-input{flex:1;min-width:200px;padding:11px 16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:14px;outline:none;font-family:'Geist',sans-serif;}
+.lc-input::placeholder{color:rgba(255,255,255,0.3);}
+.lc-input:focus{border-color:var(--gold-light);}
+.lc-btn{padding:11px 22px;background:var(--gold);color:var(--ink);border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;font-family:'Geist',sans-serif;}
+.lc-btn:hover{background:var(--gold-light);}
+.lc-privacy{font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;}
+.lc-success{display:none;text-align:center;padding:8px 0;}
+.lc-success-text{font-size:14px;color:rgba(255,255,255,0.7);}
+.lc-success-text strong{color:var(--gold-light);}
+footer{background:var(--ink);padding:32px 60px;}
+@media(max-width:768px){footer{padding:24px 20px;}}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;}
+.footer-logo em{font-style:italic;color:var(--gold-light);}
+.footer-links{display:flex;gap:16px;flex-wrap:wrap;}
+.footer-links a{color:rgba(255,255,255,0.35);text-decoration:none;font-size:12px;}
+.footer-links a:hover{color:var(--gold-light);}
+.footer-copy{font-size:11px;color:rgba(255,255,255,0.2);width:100%;margin-top:8px;}
+#resultsSection{display:none;}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="logo">Finance<span>RateCalc</span></div>
-  <nav>
-    <a href="index.html">Mortgage</a>
-    <a href="business-loan-calculator.html">Business Loan</a>
-    <a href="compound-interest-calculator.html" class="active">Compound Interest</a>
-  </nav>
-</header>
-
-<!-- Country banner -->
-<div class="country-banner">
-  <div class="country-banner-inner">
-    <span>🌍 Select your country for local rates:</span>
-    <select id="countrySelect" onchange="applyCountryRate()">
-      <option value="us">🇺🇸 United States</option>
-      <option value="uk">🇬🇧 United Kingdom</option>
-      <option value="au">🇦🇺 Australia</option>
-      <option value="ca">🇨🇦 Canada</option>
-      <option value="eu">🇪🇺 Eurozone</option>
-      <option value="sg">🇸🇬 Singapore</option>
-      <option value="nz">🇳🇿 New Zealand</option>
-      <option value="ch">🇨🇭 Switzerland</option>
-      <option value="jp">🇯🇵 Japan</option>
-      <option value="in">🇮🇳 India</option>
-      <option value="br">🇧🇷 Brazil</option>
-      <option value="mx">🇲🇽 Mexico</option>
-      <option value="za">🇿🇦 South Africa</option>
-      <option value="ae">🇦🇪 UAE</option>
-      <option value="tr">🇹🇷 Turkey</option>
-      <option value="ng">🇳🇬 Nigeria</option>
-      <option value="ke">🇰🇪 Kenya</option>
-      <option value="custom">✏️ Custom Rate</option>
-    </select>
-    <span>Current savings rate:</span>
-    <span class="rate-badge" id="rateBadge">4.75%</span>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="mortgage-calculator.html">Mortgage</a>
+    <a href="can-i-get-a-loan.html">Loan Check</a>
+    <a href="are-you-rich.html">Are You Rich?</a>
   </div>
-</div>
+</header>
 
 <div class="hero">
   <div class="hero-inner">
-    <div class="hero-tag">Compound Interest</div>
-    <h1>Watch Your Money<br><em>Grow Over Time</em></h1>
-    <p>See how compound interest works with real savings rates from 18 countries. The most powerful force in finance.</p>
+    <div class="hero-eye">Compound Interest Calculator · 2026</div>
+    <h1>Watch Your Money <em>Multiply</em><br>— Year by Year</h1>
+    <p class="hero-sub">See the full growth curve. The 8th wonder of the world, visualized.</p>
   </div>
 </div>
 
 <div class="main">
-
-  <!-- Input Card -->
-  <div class="card">
-    <div class="card-title">Investment Details</div>
-
+  <div class="input-panel">
+    <div class="panel-title">Your Investment Details</div>
     <div class="field">
-      <label>Initial Investment <span class="hint" id="currencyHint">USD</span></label>
-      <div class="input-wrap">
-        <span class="prefix" id="currencySymbol">$</span>
-        <input type="number" id="principal" value="10000" min="0">
+      <label>Initial Investment</label>
+      <div class="field-input">
+        <span class="prefix">$</span>
+        <input type="number" id="principal" value="10000" min="0" step="1000">
       </div>
+      <input type="range" id="principalSlider" min="0" max="500000" step="1000" value="10000">
     </div>
-
     <div class="field">
-      <label>Monthly Contribution <span class="hint" id="currencyHint2">USD</span></label>
-      <div class="input-wrap">
-        <span class="prefix" id="currencySymbol2">$</span>
-        <input type="number" id="monthly" value="500" min="0">
+      <label>Monthly Contribution</label>
+      <div class="field-input">
+        <span class="prefix">$</span>
+        <input type="number" id="monthly" value="500" min="0" step="100">
       </div>
+      <input type="range" id="monthlySlider" min="0" max="5000" step="100" value="500">
     </div>
-
     <div class="field">
-      <label>Annual Interest Rate <span class="hint" id="rateHint">4.75% (US Rate)</span></label>
-      <div class="input-wrap">
-        <input type="number" id="rate" value="4.75" min="0.1" max="100" step="0.1" style="padding-left:14px">
+      <label>Annual Interest Rate</label>
+      <div class="field-input">
+        <input type="number" id="rate" value="8" min="0.1" max="30" step="0.1" style="padding-left:12px;">
         <span class="suffix">%</span>
       </div>
-      <input type="range" id="rateSlider" min="0.5" max="30" step="0.25" value="4.75"
-        oninput="document.getElementById('rate').value=this.value">
+      <input type="range" id="rateSlider" min="1" max="20" step="0.1" value="8">
     </div>
-
     <div class="field">
-      <label>Time Period <span class="hint" id="yearsHint">20 years</span></label>
-      <div class="input-wrap">
-        <input type="number" id="years" value="20" min="1" max="50" style="padding-left:14px"
-          oninput="document.getElementById('yearsHint').textContent=this.value+' years'">
-        <span class="suffix">YRS</span>
+      <label>Time Period</label>
+      <div class="field-input">
+        <input type="number" id="years" value="20" min="1" max="50" step="1" style="padding-left:12px;">
+        <span class="suffix">yrs</span>
       </div>
-      <input type="range" id="yearsSlider" min="1" max="50" step="1" value="20"
-        oninput="document.getElementById('years').value=this.value; document.getElementById('yearsHint').textContent=this.value+' years'">
+      <input type="range" id="yearsSlider" min="1" max="50" step="1" value="20">
     </div>
-
     <div class="field">
-      <label>Compounding Frequency</label>
+      <label>Compound Frequency</label>
+      <select id="freq">
+        <option value="12">Monthly</option>
+        <option value="4">Quarterly</option>
+        <option value="1">Annually</option>
+        <option value="365">Daily</option>
+      </select>
     </div>
-    <div class="freq-grid">
-      <button class="freq-btn" onclick="setFreq(this,1)">Annual</button>
-      <button class="freq-btn" onclick="setFreq(this,4)">Quarterly</button>
-      <button class="freq-btn active" onclick="setFreq(this,12)">Monthly</button>
-      <button class="freq-btn" onclick="setFreq(this,365)">Daily</button>
-    </div>
-
-    <button class="btn" onclick="calculate()">Calculate Growth</button>
+    <button class="calc-btn" onclick="calculate()">Calculate Growth →</button>
   </div>
 
-  <!-- Results -->
-  <div id="resultsPanel">
-    <div class="card">
-      <div class="placeholder">
-        <div class="icon">📈</div>
-        <p>Select your country, enter your<br>investment details and click<br><strong>Calculate Growth</strong></p>
+  <div id="resultsSection">
+    <div class="result-cards">
+      <div class="rcard primary">
+        <div class="rcard-label">Final Balance</div>
+        <div class="rcard-value" id="finalBalance">—</div>
+        <div class="rcard-sub" id="finalSub">—</div>
+      </div>
+      <div class="rcard green">
+        <div class="rcard-label">Total Contributed</div>
+        <div class="rcard-value" id="totalContrib">—</div>
+        <div class="rcard-sub">Your actual money in</div>
+      </div>
+      <div class="rcard gold">
+        <div class="rcard-label">Interest Earned</div>
+        <div class="rcard-value" id="interestEarned">—</div>
+        <div class="rcard-sub">Money made from money</div>
+      </div>
+      <div class="rcard">
+        <div class="rcard-label">Return Multiple</div>
+        <div class="rcard-value" id="multiple">—</div>
+        <div class="rcard-sub">Every $1 became...</div>
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-title">Your Growth Curve</div>
+      <div class="chart-sub">Watch compound interest accelerate over time</div>
+      <div class="chart-tabs">
+        <button class="tab-btn active" onclick="showChart('area')">Growth Curve</button>
+        <button class="tab-btn" onclick="showChart('bar')">Year by Year</button>
+        <button class="tab-btn" onclick="showChart('doughnut')">Money Split</button>
+      </div>
+      <canvas id="growthChart"></canvas>
+    </div>
+
+    <div class="milestones">
+      <div class="ms-title">Key Milestones</div>
+      <div class="ms-grid" id="milestoneGrid"></div>
+    </div>
+
+    <div class="banker-note">
+      <div class="bn-icon">✦</div>
+      <div>
+        <div class="bn-name">Banker's Note</div>
+        <div class="bn-cred">23 Years · Licensed Professional</div>
+        <div class="bn-text" id="bankerNote">—</div>
+      </div>
+    </div>
+
+    <div class="lead-capture">
+      <div class="lc-tag">Free · No Spam</div>
+      <div class="lc-title">Get Your Growth Report</div>
+      <div class="lc-sub">Full year-by-year breakdown + investment tips sent to your inbox.</div>
+      <div id="lcForm">
+        <div class="lc-form">
+          <input type="email" class="lc-input" id="lcEmail" placeholder="your@email.com">
+          <button class="lc-btn" onclick="submitEmail()">Send My Report →</button>
+        </div>
+        <div class="lc-privacy">No spam. Unsubscribe anytime.</div>
+      </div>
+      <div class="lc-success" id="lcSuccess">
+        <div class="lc-success-text">✅ Done! Check your inbox for your <strong>growth report</strong>.</div>
       </div>
     </div>
   </div>
-
 </div>
 
-<!-- Expert -->
-<div class="expert-section">
-  <div class="expert-card">
-    <div class="expert-av">Z</div>
-    <div>
-      <div class="expert-name">Ziya — Licensed Financial Professional</div>
-      <div class="expert-title">23 Years Banking · SPK Licensed · Investment Specialist</div>
-      <div class="expert-text">Compound interest is why starting early matters more than investing more. A 25-year-old investing $200/month will typically retire with more than a 35-year-old investing $400/month — just because of compounding time. The rates shown are approximate central bank/typical savings rates and may vary by institution.</div>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Finance<em>Rate</em>Calc</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="mortgage-calculator.html">Mortgage</a>
+      <a href="financial-twin.html">Buy vs Rent</a>
+      <a href="can-i-get-a-loan.html">Loan Check</a>
     </div>
+    <div class="footer-copy">© 2026 FinanceRateCalc.com — Educational Use Only · Not Financial Advice</div>
   </div>
-</div>
+</footer>
 
 <script>
-  let compoundFreq = 12;
+function sync(inputId, sliderId) {
+  const i = document.getElementById(inputId);
+  const s = document.getElementById(sliderId);
+  i.addEventListener('input', () => s.value = i.value);
+  s.addEventListener('input', () => i.value = s.value);
+}
+sync('principal','principalSlider');
+sync('monthly','monthlySlider');
+sync('rate','rateSlider');
+sync('years','yearsSlider');
 
-  const countries = {
-    us:  { name: 'United States', rate: 4.75, symbol: '$', currency: 'USD', note: 'Fed funds rate 4.75%. High-yield savings accounts offer similar rates.' },
-    uk:  { name: 'United Kingdom', rate: 5.25, symbol: '£', currency: 'GBP', note: 'Bank of England base rate 5.25%. ISA accounts offer tax-free compound growth.' },
-    au:  { name: 'Australia', rate: 4.35, symbol: 'A$', currency: 'AUD', note: 'RBA cash rate 4.35%. Term deposits often match or exceed this rate.' },
-    ca:  { name: 'Canada', rate: 5.0, symbol: 'C$', currency: 'CAD', note: 'Bank of Canada rate 5.0%. GICs available near this rate.' },
-    eu:  { name: 'Eurozone', rate: 4.0, symbol: '€', currency: 'EUR', note: 'ECB deposit rate 4.0%. EU savings products vary by country.' },
-    sg:  { name: 'Singapore', rate: 3.75, symbol: 'S$', currency: 'SGD', note: 'MAS influenced rate ~3.75%. CPF-OA pays 2.5%, CPF-SA pays 4%.' },
-    nz:  { name: 'New Zealand', rate: 5.5, symbol: 'NZ$', currency: 'NZD', note: 'RBNZ OCR 5.5%. One of the highest among developed nations.' },
-    ch:  { name: 'Switzerland', rate: 1.75, symbol: 'CHF', currency: 'CHF', note: 'SNB policy rate 1.75%. Swiss franc known for stability.' },
-    jp:  { name: 'Japan', rate: 0.1, symbol: '¥', currency: 'JPY', note: 'BOJ rate ~0.1%. Japan has maintained near-zero rates for decades.' },
-    in:  { name: 'India', rate: 6.5, symbol: '₹', currency: 'INR', note: 'RBI repo rate 6.5%. Fixed deposits often offer 7-8%.' },
-    br:  { name: 'Brazil', rate: 10.5, symbol: 'R$', currency: 'BRL', note: 'SELIC rate 10.5%. High rates reflect inflation management.' },
-    mx:  { name: 'Mexico', rate: 11.0, symbol: 'MX$', currency: 'MXN', note: 'Banxico rate 11.0%. CETES (T-bills) available to retail investors.' },
-    za:  { name: 'South Africa', rate: 8.25, symbol: 'R', currency: 'ZAR', note: 'SARB rate 8.25%. Retail bonds available directly from government.' },
-    ae:  { name: 'UAE', rate: 5.4, symbol: 'AED', currency: 'AED', note: 'UAE Central Bank rate 5.4%. Pegged to USD, rates closely follow Fed.' },
-    tr:  { name: 'Turkey', rate: 50.0, symbol: '₺', currency: 'TRY', note: 'TCMB rate 50%. Extremely high rates reflect ongoing inflation.' },
-    ng:  { name: 'Nigeria', rate: 24.75, symbol: '₦', currency: 'NGN', note: 'CBN rate 24.75%. High rates reflect inflation and currency pressures.' },
-    ke:  { name: 'Kenya', rate: 13.0, symbol: 'KSh', currency: 'KES', note: 'CBK rate 13.0%. M-Akiba bonds allow mobile investing from KSh 3,000.' },
-    custom: { name: 'Custom', rate: 5.0, symbol: '$', currency: 'Custom', note: 'Enter your own interest rate above.' }
-  };
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
 
-  function applyCountryRate() {
-    const code = document.getElementById('countrySelect').value;
-    const c = countries[code];
-    if (!c) return;
+let chartInstance = null;
+let chartYears = [], chartBalances = [], chartContribs = [], chartInterests = [];
 
-    document.getElementById('rate').value = c.rate;
-    document.getElementById('rateSlider').value = Math.min(c.rate, 30);
-    document.getElementById('rateHint').textContent = c.rate + '% (' + c.name + ')';
-    document.getElementById('rateBadge').textContent = c.rate + '%';
-    document.getElementById('currencySymbol').textContent = c.symbol;
-    document.getElementById('currencySymbol2').textContent = c.symbol;
-    document.getElementById('currencyHint').textContent = c.currency;
-    document.getElementById('currencyHint2').textContent = c.currency;
-  }
+function calculate() {
+  const principal = parseFloat(document.getElementById('principal').value) || 0;
+  const monthly = parseFloat(document.getElementById('monthly').value) || 0;
+  const rate = parseFloat(document.getElementById('rate').value) / 100;
+  const years = parseInt(document.getElementById('years').value);
+  const freq = parseInt(document.getElementById('freq').value);
 
-  function setFreq(btn, freq) {
-    document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    compoundFreq = freq;
-  }
+  chartYears = []; chartBalances = []; chartContribs = []; chartInterests = [];
 
-  function fmt(n, symbol) {
-    return (symbol || '$') + Math.round(n).toLocaleString('en-US');
-  }
+  let balance = principal;
+  const ratePerPeriod = rate / freq;
+  const monthlyToFreq = monthly * 12 / freq;
 
-  function calculate() {
-    const P = parseFloat(document.getElementById('principal').value) || 0;
-    const pmt = parseFloat(document.getElementById('monthly').value) || 0;
-    const r = parseFloat(document.getElementById('rate').value) / 100;
-    const t = parseInt(document.getElementById('years').value) || 1;
-    const n = compoundFreq;
-    const code = document.getElementById('countrySelect').value;
-    const c = countries[code] || countries.us;
-    const sym = c.symbol;
+  for (let y = 0; y <= years; y++) {
+    const totalContrib = principal + monthly * 12 * y;
+    chartYears.push('Year ' + y);
+    chartBalances.push(Math.round(balance));
+    chartContribs.push(Math.round(totalContrib));
+    chartInterests.push(Math.round(balance - totalContrib));
 
-    // Calculate compound interest with monthly contributions
-    const ratePerPeriod = r / n;
-    const periods = n * t;
-
-    let balance = P;
-    const monthlyRate = r / 12;
-    
-    // Year by year data for chart
-    const yearData = [];
-    let runningBalance = P;
-    for (let y = 1; y <= t; y++) {
-      for (let m = 0; m < 12; m++) {
-        runningBalance = runningBalance * (1 + monthlyRate) + pmt;
+    if (y < years) {
+      for (let p = 0; p < freq; p++) {
+        balance = balance * (1 + ratePerPeriod) + monthlyToFreq;
       }
-      yearData.push(runningBalance);
     }
-
-    const finalBalance = yearData[yearData.length - 1];
-    const totalContributions = P + (pmt * 12 * t);
-    const totalInterest = finalBalance - totalContributions;
-    const interestPct = (totalInterest / finalBalance * 100).toFixed(1);
-    const roi = (totalInterest / totalContributions * 100).toFixed(1);
-
-    // Build chart
-    const maxVal = finalBalance;
-    const chartYears = Math.min(t, 10);
-    const step = Math.max(1, Math.floor(t / chartYears));
-    let chartBars = '';
-    for (let y = step; y <= t; y += step) {
-      const yBalance = yearData[y - 1];
-      const yContrib = P + (pmt * 12 * y);
-      const yInterest = yBalance - yContrib;
-      const totalH = Math.round((yBalance / maxVal) * 100);
-      const interestH = Math.round((yInterest / maxVal) * 100);
-      const principalH = totalH - interestH;
-      chartBars += `
-        <div class="bar-group">
-          <div class="bar interest" style="height:${interestH}%"></div>
-          <div class="bar principal" style="height:${principalH}%"></div>
-          <div class="bar-label">Y${y}</div>
-        </div>`;
-    }
-
-    // Year by year table
-    let tableRows = '';
-    for (let y = 1; y <= t; y++) {
-      const yBal = yearData[y - 1];
-      const yContrib = P + (pmt * 12 * y);
-      const yInt = yBal - yContrib;
-      tableRows += `<tr>
-        <td>Year ${y}</td>
-        <td>${fmt(yContrib, sym)}</td>
-        <td>${fmt(yInt, sym)}</td>
-        <td>${fmt(yBal, sym)}</td>
-      </tr>`;
-    }
-
-    document.getElementById('resultsPanel').innerHTML = `
-      <div class="results-content">
-        <div class="result-hero">
-          <div class="r-label">Final Balance After ${t} Years</div>
-          <div class="r-value">${fmt(finalBalance, sym)}</div>
-          <div class="r-sub">Starting with ${fmt(P, sym)} · ${fmt(pmt, sym)}/month · ${r*100}% p.a.</div>
-        </div>
-
-        <div class="results-grid">
-          <div class="r-card">
-            <div class="rc-label">Total Invested</div>
-            <div class="rc-value">${fmt(totalContributions, sym)}</div>
-          </div>
-          <div class="r-card">
-            <div class="rc-label">Interest Earned</div>
-            <div class="rc-value green">${fmt(totalInterest, sym)}</div>
-          </div>
-          <div class="r-card">
-            <div class="rc-label">ROI</div>
-            <div class="rc-value orange">+${roi}%</div>
-          </div>
-        </div>
-
-        <div class="country-info">
-          <strong>${c.name} Rate (${c.rate}%):</strong> ${c.note}
-        </div>
-
-        <div class="chart-card">
-          <div class="chart-title">Growth Breakdown by Year</div>
-          <div class="chart-bars">${chartBars}</div>
-          <div class="chart-legend">
-            <span><span class="legend-dot" style="background:#f48c06"></span>Interest</span>
-            <span><span class="legend-dot" style="background:#0077b6;opacity:0.7"></span>Contributions</span>
-          </div>
-        </div>
-
-        <button class="amort-toggle" onclick="toggleTable()">▼ Year-by-Year Breakdown</button>
-        <div class="amort-table" id="amortTable">
-          <table>
-            <thead>
-              <tr><th>Year</th><th>Invested</th><th>Interest</th><th>Balance</th></tr>
-            </thead>
-            <tbody>${tableRows}</tbody>
-          </table>
-        </div>
-      </div>
-    `;
   }
 
-  function toggleTable() {
-    const t = document.getElementById('amortTable');
-    const btn = document.querySelector('.amort-toggle');
-    t.classList.toggle('show');
-    btn.textContent = t.classList.contains('show') ? '▲ Hide Breakdown' : '▼ Year-by-Year Breakdown';
-  }
+  const finalBalance = chartBalances[chartBalances.length - 1];
+  const totalContrib = principal + monthly * 12 * years;
+  const interestEarned = finalBalance - totalContrib;
+  const multiple = totalContrib > 0 ? (finalBalance / totalContrib).toFixed(2) : '—';
 
-  // Init
-  applyCountryRate();
-  calculate();
+  document.getElementById('finalBalance').textContent = fmt(finalBalance);
+  document.getElementById('finalSub').textContent = `After ${years} years at ${(rate*100).toFixed(1)}%`;
+  document.getElementById('totalContrib').textContent = fmt(totalContrib);
+  document.getElementById('interestEarned').textContent = fmt(interestEarned);
+  document.getElementById('multiple').textContent = multiple + 'x';
+
+  // Milestones
+  const milestones = [1, 5, 10, 15, 20, 25, 30].filter(y => y <= years);
+  const grid = document.getElementById('milestoneGrid');
+  grid.innerHTML = milestones.map(y => {
+    const bal = chartBalances[y] || 0;
+    const contrib = principal + monthly * 12 * y;
+    const growth = contrib > 0 ? '+' + Math.round((bal - contrib) / contrib * 100) + '%' : '';
+    return `<div class="ms-card">
+      <div class="ms-year">Year ${y}</div>
+      <div class="ms-val">${fmt(bal)}</div>
+      <div class="ms-growth">${growth} growth</div>
+    </div>`;
+  }).join('');
+
+  // Banker note
+  const doubleYears = Math.round(72 / (rate * 100));
+  let note = `At ${(rate*100).toFixed(1)}%, your money doubles roughly every ${doubleYears} years (Rule of 72). `;
+  if (monthly > 0) {
+    const monthlyImpact = monthly * 12 * years;
+    note += `Your ${fmt(monthly)}/month contributions add up to ${fmt(monthlyImpact)} over ${years} years — but compound interest turns that into ${fmt(interestEarned)} in earned interest on top. `;
+  }
+  if (interestEarned > totalContrib) {
+    note += `After year ${Math.round(years * 0.6)}, interest starts outpacing contributions. That's when compounding really accelerates — the most powerful reason to start early and not stop.`;
+  } else {
+    note += `Starting earlier matters more than investing more later. Five extra years at the beginning is worth more than doubling your contributions mid-way through.`;
+  }
+  document.getElementById('bankerNote').textContent = note;
+
+  document.getElementById('resultsSection').style.display = 'block';
+  showChart('area');
+}
+
+function showChart(type) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', ['area','bar','doughnut'][i] === type);
+  });
+  if (chartInstance) chartInstance.destroy();
+  const ctx = document.getElementById('growthChart').getContext('2d');
+  const finalContrib = chartContribs[chartContribs.length - 1];
+  const finalInterest = chartInterests[chartInterests.length - 1];
+
+  if (type === 'area') {
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: chartYears,
+        datasets: [
+          { label: 'Total Balance', data: chartBalances, borderColor: '#b8860b', backgroundColor: 'rgba(184,134,11,0.1)', fill: true, tension: 0.4, pointRadius: 1, borderWidth: 2 },
+          { label: 'Amount Contributed', data: chartContribs, borderColor: '#2a6b4a', backgroundColor: 'rgba(42,107,74,0.08)', fill: true, tension: 0.4, pointRadius: 1, borderWidth: 2, borderDash: [4,4] }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { ticks: { callback: v => '$' + (v >= 1000000 ? (v/1000000).toFixed(1)+'M' : (v/1000).toFixed(0)+'k') } } } }
+    });
+  } else if (type === 'bar') {
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: chartYears.filter((_, i) => i % Math.max(1, Math.floor(chartYears.length / 15)) === 0),
+        datasets: [
+          { label: 'Contributed', data: chartContribs.filter((_, i) => i % Math.max(1, Math.floor(chartYears.length / 15)) === 0), backgroundColor: '#2a6b4a', borderRadius: 3 },
+          { label: 'Interest', data: chartInterests.filter((_, i) => i % Math.max(1, Math.floor(chartYears.length / 15)) === 0), backgroundColor: '#b8860b', borderRadius: 3 }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' } } } }
+    });
+  } else {
+    chartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Amount You Contributed', 'Interest Earned'],
+        datasets: [{ data: [Math.max(0, finalContrib), Math.max(0, finalInterest)], backgroundColor: ['#2a6b4a', '#b8860b'], borderWidth: 0 }]
+      },
+      options: { responsive: true, cutout: '65%', plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+}
+
+function submitEmail() {
+  const email = document.getElementById('lcEmail').value;
+  if (!email || !email.includes('@')) { document.getElementById('lcEmail').focus(); return; }
+  if (typeof gtag !== 'undefined') gtag('event', 'lead_capture', { event_category: 'email', event_label: 'compound_calculator' });
+  const leads = JSON.parse(localStorage.getItem('frc_leads') || '[]');
+  leads.push({ email, page: 'compound-interest', date: new Date().toISOString() });
+  localStorage.setItem('frc_leads', JSON.stringify(leads));
+  document.getElementById('lcForm').style.display = 'none';
+  document.getElementById('lcSuccess').style.display = 'block';
+}
+
+window.addEventListener('load', calculate);
 </script>
 </body>
 </html>
