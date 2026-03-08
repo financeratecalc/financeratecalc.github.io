@@ -1,881 +1,540 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8VGHR8XH4C"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Calculator 2026 — Monthly Payment + Amortization | FinanceRateCalc</title>
+<meta name="description" content="Free mortgage calculator with full amortization schedule and chart. See exactly how much goes to interest vs principal every month. Built by a licensed banker.">
+<link rel="canonical" href="https://financeratecalc.com/mortgage-calculator.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-8VGHR8XH4C');
+  gtag('config', 'G-13712175066');
 </script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mortgage Calculator | FinanceRateCalc</title>
-<meta name="description" content="Free mortgage calculator by a licensed financial professional. Calculate monthly payments, total interest, and amortization schedule instantly.">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --navy: #0a1628;
-    --navy-mid: #112240;
-    --navy-light: #1a3a5c;
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --cream: #f5f0e8;
-    --white: #ffffff;
-    --gray: #8892a4;
-    --green: #2ecc71;
-    --red: #e74c3c;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--navy);
-    color: var(--cream);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: 
-      radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(26,58,92,0.5) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  header {
-    position: relative;
-    z-index: 10;
-    padding: 24px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid rgba(201,168,76,0.2);
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    color: var(--gold);
-    letter-spacing: 0.5px;
-    text-decoration: none;
-  }
-
-  .logo span { color: var(--cream); font-weight: 400; }
-
-  .nav-links { display: flex; gap: 10px; flex-wrap: wrap; }
-  .nav-links a {
-    color: var(--gray);
-    text-decoration: none;
-    font-size: 13px;
-    padding: 6px 14px;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    transition: all 0.2s;
-  }
-  .nav-links a:hover, .nav-links a.active {
-    color: var(--gold);
-    border-color: rgba(201,168,76,0.4);
-    background: rgba(201,168,76,0.08);
-  }
-
-  .badge {
-    background: rgba(201,168,76,0.15);
-    border: 1px solid rgba(201,168,76,0.4);
-    color: var(--gold-light);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-  }
-
-  .hero {
-    position: relative;
-    z-index: 10;
-    text-align: center;
-    padding: 60px 20px 40px;
-  }
-
-  .hero-tag {
-    display: inline-block;
-    color: var(--gold);
-    font-size: 12px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    font-weight: 500;
-  }
-
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(36px, 6vw, 64px);
-    line-height: 1.1;
-    color: var(--white);
-    margin-bottom: 16px;
-  }
-
-  .hero h1 em { font-style: italic; color: var(--gold); }
-
-  .hero p {
-    color: var(--gray);
-    font-size: 17px;
-    max-width: 500px;
-    margin: 0 auto;
-    line-height: 1.7;
-    font-weight: 300;
-  }
-
-  .container {
-    position: relative;
-    z-index: 10;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 20px 20px 40px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    align-items: start;
-  }
-
-  @media (max-width: 768px) {
-    .container { grid-template-columns: 1fr; }
-    header { padding: 20px; }
-  }
-
-  .card {
-    background: var(--navy-mid);
-    border: 1px solid rgba(201,168,76,0.15);
-    border-radius: 16px;
-    padding: 36px;
-    backdrop-filter: blur(10px);
-  }
-
-  .card-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    color: var(--white);
-    margin-bottom: 28px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid rgba(201,168,76,0.15);
-  }
-
-  .field { margin-bottom: 24px; }
-
-  .field label {
-    display: block;
-    font-size: 12px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--gray);
-    margin-bottom: 10px;
-    font-weight: 500;
-  }
-
-  .input-wrap { position: relative; }
-
-  .input-prefix {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--gold);
-    font-size: 16px;
-    font-weight: 600;
-    pointer-events: none;
-  }
-
-  .input-suffix {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--gold);
-    font-size: 14px;
-    font-weight: 500;
-    pointer-events: none;
-  }
-
-  input[type="number"] {
-    width: 100%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 10px;
-    padding: 14px 44px 14px 40px;
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 17px;
-    font-weight: 500;
-    outline: none;
-    transition: all 0.2s;
-    -moz-appearance: textfield;
-  }
-
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-  input[type="number"]:focus {
-    border-color: var(--gold);
-    background: rgba(201,168,76,0.07);
-    box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
-  }
-
-  .slider-wrap { margin-top: 10px; }
-
-  input[type="range"] {
-    width: 100%;
-    -webkit-appearance: none;
-    height: 4px;
-    border-radius: 2px;
-    background: rgba(201,168,76,0.2);
-    outline: none;
-    cursor: pointer;
-  }
-
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--gold);
-    border: 2px solid var(--navy);
-    box-shadow: 0 0 0 3px rgba(201,168,76,0.3);
-    transition: transform 0.15s;
-  }
-
-  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
-  .slider-labels {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 6px;
-    font-size: 11px;
-    color: var(--gray);
-  }
-
-  .btn {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    border: none;
-    border-radius: 10px;
-    color: var(--navy);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 8px;
-  }
-
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(201,168,76,0.35);
-  }
-
-  .btn:active { transform: translateY(0); }
-
-  .result-main {
-    text-align: center;
-    background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.05));
-    border: 1px solid rgba(201,168,76,0.3);
-    border-radius: 12px;
-    padding: 28px;
-    margin-bottom: 24px;
-  }
-
-  .result-main .label {
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 8px;
-  }
-
-  .result-main .amount {
-    font-family: 'Playfair Display', serif;
-    font-size: 52px;
-    color: var(--white);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .result-main .sub { color: var(--gray); font-size: 13px; }
-
-  .result-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .result-item {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 10px;
-    padding: 16px;
-    text-align: center;
-  }
-
-  .result-item .r-label {
-    font-size: 11px;
-    color: var(--gray);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .result-item .r-value { font-size: 20px; font-weight: 600; color: var(--white); }
-  .result-item .r-value.red { color: #ff6b6b; }
-  .result-item .r-value.green { color: #6bffb8; }
-
-  .progress-section { margin-bottom: 24px; }
-
-  .progress-label {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 12px;
-    color: var(--gray);
-  }
-
-  .progress-bar {
-    height: 8px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 6px;
-  }
-
-  .progress-fill-principal {
-    height: 100%;
-    background: linear-gradient(90deg, var(--gold), var(--gold-light));
-    border-radius: 4px;
-    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
-    width: 0%;
-  }
-
-  .progress-fill-interest {
-    height: 100%;
-    background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
-    border-radius: 4px;
-    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
-    width: 0%;
-  }
-
-  /* Chart section */
-  .chart-section {
-    position: relative;
-    z-index: 10;
-    max-width: 1100px;
-    margin: 0 auto 24px;
-    padding: 0 20px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-
-  @media (max-width: 768px) { .chart-section { grid-template-columns: 1fr; } }
-
-  .chart-card {
-    background: var(--navy-mid);
-    border: 1px solid rgba(201,168,76,0.15);
-    border-radius: 16px;
-    padding: 28px;
-  }
-
-  .chart-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 17px;
-    color: var(--white);
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(201,168,76,0.15);
-  }
-
-  .chart-wrap { position: relative; height: 240px; }
-
-  .amort-toggle {
-    background: none;
-    border: 1px solid rgba(201,168,76,0.3);
-    color: var(--gold);
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    width: 100%;
-    transition: all 0.2s;
-    margin-bottom: 16px;
-  }
-
-  .amort-toggle:hover { background: rgba(201,168,76,0.1); }
-
-  .amort-table {
-    display: none;
-    max-height: 280px;
-    overflow-y: auto;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .amort-table.show { display: block; }
-  .amort-table::-webkit-scrollbar { width: 4px; }
-  .amort-table::-webkit-scrollbar-track { background: var(--navy); }
-  .amort-table::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
-
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-
-  thead th {
-    background: var(--navy-light);
-    color: var(--gold);
-    padding: 10px 12px;
-    text-align: right;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    position: sticky;
-    top: 0;
-  }
-
-  thead th:first-child { text-align: left; }
-
-  tbody tr {
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    transition: background 0.15s;
-  }
-
-  tbody tr:hover { background: rgba(201,168,76,0.05); }
-
-  tbody td { padding: 9px 12px; text-align: right; color: var(--cream); }
-  tbody td:first-child { text-align: left; color: var(--gray); }
-
-  .expert-note {
-    position: relative;
-    z-index: 10;
-    max-width: 1100px;
-    margin: 0 auto 40px;
-    padding: 0 20px;
-  }
-
-  .expert-card {
-    background: rgba(201,168,76,0.06);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-left: 3px solid var(--gold);
-    border-radius: 12px;
-    padding: 24px 28px;
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-  }
-
-  .expert-avatar {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    color: var(--navy);
-    flex-shrink: 0;
-  }
-
-  .expert-text .name { font-weight: 600; color: var(--white); margin-bottom: 4px; }
-  .expert-text .title {
-    font-size: 12px;
-    color: var(--gold);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .expert-text p { color: var(--gray); font-size: 14px; line-height: 1.7; }
-
-  .placeholder { text-align: center; padding: 40px 20px; color: var(--gray); }
-  .placeholder-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
-  .placeholder p { font-size: 14px; line-height: 1.6; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .card { animation: fadeUp 0.5s ease both; }
-  .card:nth-child(2) { animation-delay: 0.1s; }
-  .results-content { animation: fadeUp 0.4s ease both; }
+:root{--ink:#0f0e0c;--paper:#faf8f4;--cream:#f2ede4;--gold:#b8860b;--gold-light:#d4a017;--text:#2c2a26;--muted:#8a8070;--border:#ddd8cc;--white:#ffffff;--green:#2a6b4a;--red:#8b2a2a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:var(--paper);color:var(--text);line-height:1.6;}
+header{background:var(--ink);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold-light);}
+.nav-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;font-weight:500;margin-left:24px;transition:color 0.2s;}
+.nav-links a:hover{color:var(--gold-light);}
+@media(max-width:768px){header{padding:0 20px;}.nav-links{display:none;}}
+
+.hero{background:var(--ink);padding:50px 60px 60px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(184,134,11,0.08) 0%,transparent 60%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+.hero-eye{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.hero-eye::before{content:'';display:inline-block;width:24px;height:1px;background:var(--gold-light);}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,44px);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:10px;}
+.hero h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{color:rgba(255,255,255,0.4);font-size:14px;font-weight:300;}
+@media(max-width:768px){.hero{padding:30px 20px 40px;}}
+
+.main{max-width:960px;margin:0 auto;padding:40px 60px 80px;display:grid;grid-template-columns:340px 1fr;gap:40px;align-items:start;}
+@media(max-width:900px){.main{grid-template-columns:1fr;padding:30px 20px 60px;}}
+
+/* INPUT PANEL */
+.input-panel{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:28px;position:sticky;top:80px;}
+.panel-title{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--ink);margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}
+.field-input{position:relative;}
+.field-input .prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:600;color:var(--muted);}
+.field-input .suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:600;color:var(--muted);}
+.field input[type="number"], .field select{width:100%;padding:11px 36px 11px 28px;border:1px solid var(--border);border-radius:8px;font-size:15px;font-weight:500;color:var(--ink);background:var(--paper);outline:none;transition:border-color 0.2s;font-family:'Geist',sans-serif;}
+.field input[type="number"]:focus, .field select:focus{border-color:var(--gold);}
+.field select{padding-right:12px;padding-left:12px;cursor:pointer;}
+.field-hint{font-size:11px;color:var(--muted);margin-top:4px;}
+.slider-wrap{margin-top:6px;}
+input[type="range"]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--border);outline:none;cursor:pointer;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);border:2px solid var(--white);box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.calc-btn{width:100%;background:var(--gold);color:var(--ink);border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'Geist',sans-serif;margin-top:8px;}
+.calc-btn:hover{background:var(--gold-light);transform:translateY(-1px);}
+
+/* RESULTS */
+.results-panel{min-height:200px;}
+.result-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:28px;}
+@media(max-width:500px){.result-cards{grid-template-columns:1fr;}}
+.rcard{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+.rcard.primary{background:var(--ink);border-color:transparent;grid-column:1/-1;}
+.rcard-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.rcard.primary .rcard-label{color:rgba(255,255,255,0.4);}
+.rcard-value{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--ink);line-height:1;}
+.rcard.primary .rcard-value{color:var(--gold-light);font-size:38px;}
+.rcard-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+.rcard.primary .rcard-sub{color:rgba(255,255,255,0.3);}
+.rcard.green .rcard-value{color:var(--green);}
+.rcard.red .rcard-value{color:var(--red);}
+
+/* CHART */
+.chart-section{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
+.chart-title{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--ink);margin-bottom:4px;}
+.chart-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.chart-tabs{display:flex;gap:8px;margin-bottom:16px;}
+.tab-btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all 0.2s;font-family:'Geist',sans-serif;}
+.tab-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+canvas{max-height:280px;}
+
+/* AMORTIZATION TABLE */
+.amort-section{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
+.amort-title{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--ink);margin-bottom:4px;}
+.amort-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.amort-table{width:100%;border-collapse:collapse;font-size:13px;}
+.amort-table th{background:var(--ink);color:#fff;padding:9px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.amort-table td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text);}
+.amort-table tr:last-child td{border-bottom:none;}
+.amort-table tr:nth-child(even) td{background:var(--cream);}
+.td-p{color:var(--green);font-weight:600;}
+.td-i{color:var(--red);font-weight:600;}
+.show-more-btn{width:100%;padding:10px;background:transparent;border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;margin-top:12px;transition:all 0.2s;font-family:'Geist',sans-serif;}
+.show-more-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* BANKER NOTE */
+.banker-note{background:var(--cream);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:20px 22px;margin-bottom:24px;display:flex;gap:14px;}
+.bn-icon{width:36px;height:36px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.bn-name{font-size:12px;font-weight:700;color:var(--ink);}
+.bn-cred{font-size:9px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:6px;}
+.bn-text{font-size:13px;color:var(--text);line-height:1.8;font-weight:300;}
+
+/* LEAD CAPTURE */
+.lead-capture{background:var(--ink);border-radius:16px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.lead-capture::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:rgba(184,134,11,0.08);border-radius:50%;}
+.lc-tag{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:8px;}
+.lc-title{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:6px;line-height:1.2;}
+.lc-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px;font-weight:300;}
+.lc-form{display:flex;gap:10px;flex-wrap:wrap;}
+.lc-input{flex:1;min-width:200px;padding:11px 16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:14px;outline:none;font-family:'Geist',sans-serif;transition:border-color 0.2s;}
+.lc-input::placeholder{color:rgba(255,255,255,0.3);}
+.lc-input:focus{border-color:var(--gold-light);}
+.lc-btn{padding:11px 22px;background:var(--gold);color:var(--ink);border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:all 0.2s;font-family:'Geist',sans-serif;}
+.lc-btn:hover{background:var(--gold-light);}
+.lc-privacy{font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;}
+.lc-success{display:none;text-align:center;padding:16px 0;}
+.lc-success-icon{font-size:32px;margin-bottom:8px;}
+.lc-success-text{font-size:14px;color:rgba(255,255,255,0.7);font-weight:300;}
+.lc-success-text strong{color:var(--gold-light);}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:0.4;}
+.empty-text{font-size:15px;font-weight:300;}
+
+footer{background:var(--ink);padding:32px 60px;}
+@media(max-width:768px){footer{padding:24px 20px;}}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;}
+.footer-logo em{font-style:italic;color:var(--gold-light);}
+.footer-links{display:flex;gap:16px;flex-wrap:wrap;}
+.footer-links a{color:rgba(255,255,255,0.35);text-decoration:none;font-size:12px;transition:color 0.2s;}
+.footer-links a:hover{color:var(--gold-light);}
+.footer-copy{font-size:11px;color:rgba(255,255,255,0.2);width:100%;margin-top:8px;}
 </style>
 </head>
 <body>
 
 <header>
-  <a href="index.html" class="logo">Finance<span>RateCalc</span></a>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
   <div class="nav-links">
     <a href="index.html">Home</a>
-    <a href="mortgage-calculator.html" class="active">Mortgage</a>
-    <a href="business-loan-calculator.html">Business Loan</a>
+    <a href="can-i-get-a-loan.html">Loan Check</a>
     <a href="financial-twin.html">Buy vs Rent</a>
-    <a href="loan-offer-analyzer.html">Loan Analyzer</a>
-    <a href="bank-approval-simulator.html">Bank Simulator</a>
+    <a href="are-you-rich.html">Are You Rich?</a>
   </div>
-  <div class="badge">✦ Licensed Professional</div>
 </header>
 
 <div class="hero">
-  <div class="hero-tag">Mortgage Calculator</div>
-  <h1>Calculate Your<br><em>Mortgage Payment</em></h1>
-  <p>Accurate calculations by a licensed financial professional with 23 years of banking experience.</p>
+  <div class="hero-inner">
+    <div class="hero-eye">Mortgage Calculator · 2026</div>
+    <h1>See Your <em>Real</em> Monthly Payment<br>— Principal, Interest, Tax & Insurance</h1>
+    <p class="hero-sub">Full amortization schedule included. Built by a licensed banker with 23 years of experience.</p>
+  </div>
 </div>
 
-<div class="container">
-  <!-- Input Card -->
-  <div class="card">
-    <div class="card-title">Loan Details</div>
+<div class="main">
+
+  <!-- INPUT PANEL -->
+  <div class="input-panel">
+    <div class="panel-title">Your Mortgage Details</div>
 
     <div class="field">
       <label>Home Price</label>
-      <div class="input-wrap">
-        <span class="input-prefix">$</span>
-        <input type="number" id="homePrice" value="400000" min="10000" max="10000000">
+      <div class="field-input">
+        <span class="prefix">$</span>
+        <input type="number" id="homePrice" value="400000" min="50000" max="5000000" step="5000">
       </div>
-      <div class="slider-wrap">
-        <input type="range" id="homePriceSlider" min="50000" max="2000000" step="5000" value="400000">
-        <div class="slider-labels"><span>$50K</span><span>$2M</span></div>
-      </div>
+      <div class="slider-wrap"><input type="range" id="homePriceSlider" min="50000" max="2000000" step="5000" value="400000"></div>
     </div>
 
     <div class="field">
       <label>Down Payment</label>
-      <div class="input-wrap">
-        <span class="input-prefix">$</span>
-        <input type="number" id="downPayment" value="80000" min="0">
+      <div class="field-input">
+        <span class="prefix">$</span>
+        <input type="number" id="downPayment" value="80000" min="0" max="2000000" step="1000">
       </div>
-      <div class="slider-wrap">
-        <input type="range" id="downPaymentSlider" min="0" max="500000" step="1000" value="80000">
-        <div class="slider-labels"><span>$0</span><span>$500K</span></div>
-      </div>
+      <div class="field-hint" id="downPct">20.0% of home price</div>
+      <div class="slider-wrap"><input type="range" id="downPaymentSlider" min="0" max="500000" step="1000" value="80000"></div>
     </div>
 
     <div class="field">
-      <label>Annual Interest Rate</label>
-      <div class="input-wrap">
-        <input type="number" id="interestRate" value="6.5" min="0.1" max="30" step="0.1" style="padding-left:16px">
-        <span class="input-suffix">%</span>
+      <label>Interest Rate</label>
+      <div class="field-input">
+        <input type="number" id="rate" value="7.1" min="1" max="20" step="0.05" style="padding-left:12px;">
+        <span class="suffix">%</span>
       </div>
-      <div class="slider-wrap">
-        <input type="range" id="interestSlider" min="1" max="20" step="0.1" value="6.5">
-        <div class="slider-labels"><span>1%</span><span>20%</span></div>
-      </div>
+      <div class="slider-wrap"><input type="range" id="rateSlider" min="2" max="15" step="0.05" value="7.1"></div>
     </div>
 
     <div class="field">
       <label>Loan Term</label>
-      <div class="input-wrap">
-        <input type="number" id="loanTerm" value="30" min="1" max="50" style="padding-left:16px">
-        <span class="input-suffix">yrs</span>
+      <select id="term">
+        <option value="30">30 years (most common)</option>
+        <option value="20">20 years</option>
+        <option value="15">15 years</option>
+        <option value="10">10 years</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Property Tax Rate</label>
+      <div class="field-input">
+        <input type="number" id="taxRate" value="1.1" min="0" max="5" step="0.05" style="padding-left:12px;">
+        <span class="suffix">%/yr</span>
       </div>
-      <div class="slider-wrap">
-        <input type="range" id="termSlider" min="5" max="50" step="1" value="30">
-        <div class="slider-labels"><span>5 yrs</span><span>50 yrs</span></div>
+      <div class="field-hint">US avg ~1.1% — check your county</div>
+    </div>
+
+    <div class="field">
+      <label>Homeowner's Insurance</label>
+      <div class="field-input">
+        <span class="prefix">$</span>
+        <input type="number" id="insurance" value="1500" min="0" max="20000" step="100">
+        <span class="suffix">/yr</span>
       </div>
     </div>
 
-    <button class="btn" onclick="calculate()">Calculate Payment</button>
+    <button class="calc-btn" onclick="calculate()">Calculate →</button>
   </div>
 
-  <!-- Results Card -->
-  <div class="card">
-    <div class="card-title">Payment Breakdown</div>
-    <div id="resultsArea">
-      <div class="placeholder">
-        <div class="placeholder-icon">🏦</div>
-        <p>Enter your loan details and click<br><strong style="color:var(--gold)">Calculate Payment</strong> to see results.</p>
+  <!-- RESULTS PANEL -->
+  <div class="results-panel" id="resultsPanel">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🏠</div>
+      <div class="empty-text">Enter your details and click Calculate</div>
+    </div>
+
+    <!-- Result Cards -->
+    <div id="resultCards" style="display:none;">
+
+      <div class="result-cards">
+        <div class="rcard primary">
+          <div class="rcard-label">Total Monthly Payment (PITI)</div>
+          <div class="rcard-value" id="totalPayment">—</div>
+          <div class="rcard-sub">Principal + Interest + Tax + Insurance</div>
+        </div>
+        <div class="rcard">
+          <div class="rcard-label">Principal & Interest</div>
+          <div class="rcard-value" id="piPayment">—</div>
+          <div class="rcard-sub">Goes to your lender</div>
+        </div>
+        <div class="rcard">
+          <div class="rcard-label">Monthly Tax + Insurance</div>
+          <div class="rcard-value" id="tiPayment">—</div>
+          <div class="rcard-sub">Escrowed monthly</div>
+        </div>
+        <div class="rcard green">
+          <div class="rcard-label">Loan Amount</div>
+          <div class="rcard-value" id="loanAmt">—</div>
+          <div class="rcard-sub">After down payment</div>
+        </div>
+        <div class="rcard red">
+          <div class="rcard-label">Total Interest Paid</div>
+          <div class="rcard-value" id="totalInterest">—</div>
+          <div class="rcard-sub">Over full loan term</div>
+        </div>
       </div>
+
+      <!-- CHART -->
+      <div class="chart-section">
+        <div class="chart-title">Payment Breakdown Over Time</div>
+        <div class="chart-sub">Watch how principal and interest shift each year</div>
+        <div class="chart-tabs">
+          <button class="tab-btn active" onclick="showChart('bar')">Year by Year</button>
+          <button class="tab-btn" onclick="showChart('doughnut')">Total Split</button>
+          <button class="tab-btn" onclick="showChart('line')">Balance Over Time</button>
+        </div>
+        <canvas id="mortgageChart"></canvas>
+      </div>
+
+      <!-- BANKER NOTE -->
+      <div class="banker-note">
+        <div class="bn-icon">✦</div>
+        <div>
+          <div class="bn-name">Banker's Note</div>
+          <div class="bn-cred">23 Years · Licensed Professional</div>
+          <div class="bn-text" id="bankerNote">—</div>
+        </div>
+      </div>
+
+      <!-- LEAD CAPTURE -->
+      <div class="lead-capture">
+        <div class="lc-tag">Free · No Spam</div>
+        <div class="lc-title">Get Your Full Report by Email</div>
+        <div class="lc-sub">Complete amortization table + personalized banker's tips for your exact numbers.</div>
+        <div id="lcForm">
+          <div class="lc-form">
+            <input type="email" class="lc-input" id="lcEmail" placeholder="your@email.com">
+            <button class="lc-btn" onclick="submitEmail()">Send My Report →</button>
+          </div>
+          <div class="lc-privacy">No spam. No selling your data. Unsubscribe anytime.</div>
+        </div>
+        <div class="lc-success" id="lcSuccess">
+          <div class="lc-success-icon">✅</div>
+          <div class="lc-success-text">Done! Check your inbox for your <strong>full mortgage report</strong>.</div>
+        </div>
+      </div>
+
+      <!-- AMORTIZATION TABLE -->
+      <div class="amort-section">
+        <div class="amort-title">Year-by-Year Amortization</div>
+        <div class="amort-sub">How your loan balance changes each year</div>
+        <table class="amort-table">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Principal Paid</th>
+              <th>Interest Paid</th>
+              <th>Remaining Balance</th>
+              <th>Equity</th>
+            </tr>
+          </thead>
+          <tbody id="amortBody"></tbody>
+        </table>
+        <button class="show-more-btn" id="showMoreBtn" onclick="toggleTable()">Show All Years ↓</button>
+      </div>
+
     </div>
   </div>
 </div>
 
-<!-- Charts Section -->
-<div class="chart-section" id="chartSection" style="display:none;">
-  <div class="chart-card">
-    <div class="chart-title">📊 Principal vs Interest Over Time</div>
-    <div class="chart-wrap">
-      <canvas id="amortChart"></canvas>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Finance<em>Rate</em>Calc</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="financial-twin.html">Buy vs Rent</a>
+      <a href="can-i-get-a-loan.html">Loan Check</a>
+      <a href="are-you-rich.html">Are You Rich?</a>
+      <a href="compound-interest-calculator.html">Compound Interest</a>
     </div>
+    <div class="footer-copy">© 2026 FinanceRateCalc.com — Educational Use Only · Not Financial Advice</div>
   </div>
-  <div class="chart-card">
-    <div class="chart-title">🥧 Total Payment Breakdown</div>
-    <div class="chart-wrap">
-      <canvas id="donutChart"></canvas>
-    </div>
-  </div>
-</div>
-
-<!-- Expert Note -->
-<div class="expert-note">
-  <div class="expert-card">
-    <div class="expert-avatar">🏦</div>
-    <div class="expert-text">
-      <div class="name">A Licensed Banking Professional</div>
-      <div class="title">23 Years Banking Experience · SPK Licensed</div>
-      <p>This calculator uses the standard amortization formula used by banks worldwide. Your actual rate may vary based on credit score, lender, and market conditions. Always compare multiple lenders before committing to a mortgage. Educational purposes only — not financial advice.</p>
-    </div>
-  </div>
-</div>
+</footer>
 
 <script>
-  let amortChartInstance = null;
-  let donutChartInstance = null;
+// Sync sliders
+function syncSlider(inputId, sliderId) {
+  const input = document.getElementById(inputId);
+  const slider = document.getElementById(sliderId);
+  if (!slider) return;
+  input.addEventListener('input', () => { slider.value = input.value; updateDownPct(); });
+  slider.addEventListener('input', () => { input.value = slider.value; updateDownPct(); });
+}
+syncSlider('homePrice', 'homePriceSlider');
+syncSlider('downPayment', 'downPaymentSlider');
+syncSlider('rate', 'rateSlider');
 
-  function syncSlider(inputId, sliderId) {
-    const input = document.getElementById(inputId);
-    const slider = document.getElementById(sliderId);
-    input.addEventListener('input', () => { slider.value = input.value; });
-    slider.addEventListener('input', () => { input.value = slider.value; });
+function updateDownPct() {
+  const hp = parseFloat(document.getElementById('homePrice').value) || 0;
+  const dp = parseFloat(document.getElementById('downPayment').value) || 0;
+  const pct = hp > 0 ? (dp / hp * 100).toFixed(1) : '0.0';
+  document.getElementById('downPct').textContent = pct + '% of home price';
+}
+updateDownPct();
+
+let chartInstance = null;
+let chartData = null;
+let showAllRows = false;
+
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function calculate() {
+  const homePrice = parseFloat(document.getElementById('homePrice').value);
+  const downPayment = parseFloat(document.getElementById('downPayment').value);
+  const annualRate = parseFloat(document.getElementById('rate').value);
+  const termYears = parseInt(document.getElementById('term').value);
+  const taxRate = parseFloat(document.getElementById('taxRate').value);
+  const annualInsurance = parseFloat(document.getElementById('insurance').value);
+
+  const loanAmount = homePrice - downPayment;
+  const monthlyRate = annualRate / 100 / 12;
+  const numPayments = termYears * 12;
+
+  // PI Payment
+  let pi;
+  if (monthlyRate === 0) {
+    pi = loanAmount / numPayments;
+  } else {
+    pi = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
   }
 
-  syncSlider('homePrice', 'homePriceSlider');
-  syncSlider('downPayment', 'downPaymentSlider');
-  syncSlider('interestRate', 'interestSlider');
-  syncSlider('loanTerm', 'termSlider');
+  const monthlyTax = (homePrice * taxRate / 100) / 12;
+  const monthlyInsurance = annualInsurance / 12;
+  const totalMonthly = pi + monthlyTax + monthlyInsurance;
+  const totalPaid = pi * numPayments;
+  const totalInterest = totalPaid - loanAmount;
 
-  function fmt(n) {
-    return '$' + Math.round(n).toLocaleString('en-US');
-  }
-
-  function calculate() {
-    const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
-    const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
-    const annualRate = parseFloat(document.getElementById('interestRate').value) || 0;
-    const years = parseInt(document.getElementById('loanTerm').value) || 0;
-
-    const principal = homePrice - downPayment;
-    if (principal <= 0 || annualRate <= 0 || years <= 0) {
-      alert('Please enter valid values.');
-      return;
-    }
-
-    const monthlyRate = annualRate / 100 / 12;
-    const n = years * 12;
-    const monthly = principal * (monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1);
-    const totalPayment = monthly * n;
-    const totalInterest = totalPayment - principal;
-    const principalPct = (principal / totalPayment * 100).toFixed(1);
-    const interestPct = (totalInterest / totalPayment * 100).toFixed(1);
-    const downPct = (downPayment / homePrice * 100).toFixed(1);
-
-    // Amortization schedule + chart data
-    let balance = principal;
-    let scheduleRows = '';
-    const chartLabels = [];
-    const chartPrincipal = [];
-    const chartInterest = [];
-    const chartBalance = [];
-
-    for (let i = 1; i <= n; i++) {
+  // Build amortization
+  let balance = loanAmount;
+  const yearlyData = [];
+  for (let y = 1; y <= termYears; y++) {
+    let yearPrincipal = 0, yearInterest = 0;
+    for (let m = 0; m < 12; m++) {
       const interestPayment = balance * monthlyRate;
-      const principalPayment = monthly - interestPayment;
-      balance -= principalPayment;
-      if (balance < 0) balance = 0;
-
-      if (i % 12 === 0) {
-        const yr = i / 12;
-        chartLabels.push('Yr ' + yr);
-        const cumPrincipal = principal - balance;
-        const cumInterest = (monthly * i) - cumPrincipal;
-        chartPrincipal.push(Math.round(cumPrincipal));
-        chartInterest.push(Math.round(Math.max(0, cumInterest)));
-        chartBalance.push(Math.round(balance));
-      }
-
-      if (i <= 12 || i % 12 === 0 || i === n) {
-        scheduleRows += '<tr>' +
-          '<td>Month ' + i + '</td>' +
-          '<td>' + fmt(monthly) + '</td>' +
-          '<td>' + fmt(principalPayment) + '</td>' +
-          '<td>' + fmt(interestPayment) + '</td>' +
-          '<td>' + fmt(balance) + '</td>' +
-          '</tr>';
-      }
+      const principalPayment = pi - interestPayment;
+      yearInterest += interestPayment;
+      yearPrincipal += principalPayment;
+      balance = Math.max(0, balance - principalPayment);
     }
-
-    document.getElementById('resultsArea').innerHTML = `
-      <div class="results-content">
-        <div class="result-main">
-          <div class="label">Monthly Payment</div>
-          <div class="amount">${fmt(monthly)}</div>
-          <div class="sub">for ${years} years · ${annualRate}% annual rate</div>
-        </div>
-        <div class="result-grid">
-          <div class="result-item">
-            <div class="r-label">Loan Amount</div>
-            <div class="r-value">${fmt(principal)}</div>
-          </div>
-          <div class="result-item">
-            <div class="r-label">Down Payment</div>
-            <div class="r-value green">${fmt(downPayment)} <span style="font-size:13px;color:var(--gray)">(${downPct}%)</span></div>
-          </div>
-          <div class="result-item">
-            <div class="r-label">Total Payment</div>
-            <div class="r-value">${fmt(totalPayment)}</div>
-          </div>
-          <div class="result-item">
-            <div class="r-label">Total Interest</div>
-            <div class="r-value red">${fmt(totalInterest)}</div>
-          </div>
-        </div>
-        <div class="progress-section">
-          <div class="progress-label"><span>Principal</span><span>${principalPct}%</span></div>
-          <div class="progress-bar"><div class="progress-fill-principal" id="pBar"></div></div>
-          <div class="progress-label"><span>Interest</span><span>${interestPct}%</span></div>
-          <div class="progress-bar"><div class="progress-fill-interest" id="iBar"></div></div>
-        </div>
-        <button class="amort-toggle" onclick="toggleAmort()">▼ Show Amortization Schedule</button>
-        <div class="amort-table" id="amortTable">
-          <table>
-            <thead>
-              <tr>
-                <th>Period</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th>
-              </tr>
-            </thead>
-            <tbody>${scheduleRows}</tbody>
-          </table>
-        </div>
-      </div>
-    `;
-
-    setTimeout(() => {
-      const pBar = document.getElementById('pBar');
-      const iBar = document.getElementById('iBar');
-      if (pBar) pBar.style.width = principalPct + '%';
-      if (iBar) iBar.style.width = interestPct + '%';
-    }, 50);
-
-    // Show charts
-    document.getElementById('chartSection').style.display = 'grid';
-    renderCharts(chartLabels, chartPrincipal, chartInterest, principal, totalInterest, downPayment);
+    yearlyData.push({
+      year: y,
+      principal: yearPrincipal,
+      interest: yearInterest,
+      balance: balance,
+      equity: homePrice - balance
+    });
   }
 
-  function renderCharts(labels, principalData, interestData, principal, totalInterest, downPayment) {
-    // Destroy old charts
-    if (amortChartInstance) { amortChartInstance.destroy(); }
-    if (donutChartInstance) { donutChartInstance.destroy(); }
+  chartData = { yearlyData, loanAmount, totalInterest, homePrice, termYears };
 
-    // Stacked bar chart — cumulative principal vs interest
-    const ctx1 = document.getElementById('amortChart').getContext('2d');
-    amortChartInstance = new Chart(ctx1, {
+  // Update cards
+  document.getElementById('totalPayment').textContent = fmt(totalMonthly) + '/mo';
+  document.getElementById('piPayment').textContent = fmt(pi) + '/mo';
+  document.getElementById('tiPayment').textContent = fmt(monthlyTax + monthlyInsurance) + '/mo';
+  document.getElementById('loanAmt').textContent = fmt(loanAmount);
+  document.getElementById('totalInterest').textContent = fmt(totalInterest);
+
+  // Banker note
+  const downPct = (downPayment / homePrice * 100).toFixed(0);
+  const salaryNeeded = Math.round(totalMonthly * 12 / 0.28);
+  let note = '';
+  if (downPct < 20) {
+    note = `With ${downPct}% down, you'll pay PMI (Private Mortgage Insurance) — typically $50-200/month — until you reach 20% equity. That adds to your real monthly cost. Consider whether a larger down payment makes sense. `;
+  }
+  if (totalInterest > loanAmount * 0.8) {
+    note += `Over ${termYears} years, you'll pay ${fmt(totalInterest)} in interest alone — that's ${Math.round(totalInterest/loanAmount*100)}% of your loan amount. A 15-year mortgage would cut this roughly in half, though your monthly payment would be higher. `;
+  }
+  note += `To keep housing at 28% of gross income, you need a salary of approximately ${fmt(salaryNeeded)}/year. At 36% DTI (the max most lenders allow), you need ${fmt(Math.round(totalMonthly * 12 / 0.36))}/year.`;
+  document.getElementById('bankerNote').textContent = note;
+
+  // Amort table
+  buildTable(yearlyData, showAllRows);
+
+  // Show results
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('resultCards').style.display = 'block';
+
+  // Chart
+  showChart('bar');
+}
+
+function buildTable(yearlyData, showAll) {
+  const tbody = document.getElementById('amortBody');
+  const rows = showAll ? yearlyData : yearlyData.slice(0, 5);
+  tbody.innerHTML = rows.map(d => `
+    <tr>
+      <td>Year ${d.year}</td>
+      <td class="td-p">${fmt(d.principal)}</td>
+      <td class="td-i">${fmt(d.interest)}</td>
+      <td>${fmt(d.balance)}</td>
+      <td>${fmt(d.equity)}</td>
+    </tr>
+  `).join('');
+  const btn = document.getElementById('showMoreBtn');
+  if (yearlyData.length <= 5) { btn.style.display = 'none'; return; }
+  btn.style.display = 'block';
+  btn.textContent = showAll ? 'Show Less ↑' : `Show All ${yearlyData.length} Years ↓`;
+}
+
+function toggleTable() {
+  showAllRows = !showAllRows;
+  if (chartData) buildTable(chartData.yearlyData, showAllRows);
+}
+
+function showChart(type) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', ['bar','doughnut','line'][i] === type);
+  });
+  if (!chartData) return;
+  if (chartInstance) { chartInstance.destroy(); }
+
+  const ctx = document.getElementById('mortgageChart').getContext('2d');
+  const { yearlyData, loanAmount, totalInterest } = chartData;
+
+  if (type === 'bar') {
+    chartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: labels,
+        labels: yearlyData.map(d => 'Yr ' + d.year),
         datasets: [
-          {
-            label: 'Principal Paid',
-            data: principalData,
-            backgroundColor: 'rgba(201,168,76,0.75)',
-            borderColor: 'rgba(201,168,76,1)',
-            borderWidth: 1,
-            borderRadius: 2,
-          },
-          {
-            label: 'Interest Paid',
-            data: interestData,
-            backgroundColor: 'rgba(255,107,107,0.65)',
-            borderColor: 'rgba(255,107,107,1)',
-            borderWidth: 1,
-            borderRadius: 2,
-          }
+          { label: 'Principal', data: yearlyData.map(d => Math.round(d.principal)), backgroundColor: '#2a6b4a', borderRadius: 3 },
+          { label: 'Interest', data: yearlyData.map(d => Math.round(d.interest)), backgroundColor: '#8b2a2a', borderRadius: 3 }
         ]
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            labels: { color: '#8892a4', font: { size: 11 }, boxWidth: 12 }
-          },
-          tooltip: {
-            callbacks: {
-              label: ctx => ' $' + ctx.raw.toLocaleString()
-            }
-          }
-        },
-        scales: {
-          x: {
-            stacked: true,
-            ticks: { color: '#8892a4', font: { size: 10 }, maxTicksLimit: 10 },
-            grid: { color: 'rgba(255,255,255,0.04)' }
-          },
-          y: {
-            stacked: true,
-            ticks: {
-              color: '#8892a4',
-              font: { size: 10 },
-              callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'K' : v)
-            },
-            grid: { color: 'rgba(255,255,255,0.06)' }
-          }
-        }
-      }
+      options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' } } } }
     });
-
-    // Donut chart — breakdown
-    const ctx2 = document.getElementById('donutChart').getContext('2d');
-    donutChartInstance = new Chart(ctx2, {
+  } else if (type === 'doughnut') {
+    chartInstance = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: ['Principal', 'Interest', 'Down Payment'],
-        datasets: [{
-          data: [Math.round(principal), Math.round(totalInterest), Math.round(downPayment)],
-          backgroundColor: [
-            'rgba(201,168,76,0.8)',
-            'rgba(255,107,107,0.8)',
-            'rgba(107,255,184,0.8)'
-          ],
-          borderColor: ['#c9a84c', '#ff6b6b', '#6bffb8'],
-          borderWidth: 2,
-          hoverOffset: 8
-        }]
+        labels: ['Principal (Loan)', 'Total Interest'],
+        datasets: [{ data: [Math.round(loanAmount), Math.round(totalInterest)], backgroundColor: ['#2a6b4a', '#8b2a2a'], borderWidth: 0 }]
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '62%',
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: { color: '#8892a4', font: { size: 11 }, boxWidth: 12, padding: 16 }
-          },
-          tooltip: {
-            callbacks: {
-              label: ctx => ' $' + ctx.raw.toLocaleString()
-            }
-          }
-        }
-      }
+      options: { responsive: true, cutout: '65%', plugins: { legend: { position: 'bottom' } } }
+    });
+  } else {
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: yearlyData.map(d => 'Yr ' + d.year),
+        datasets: [
+          { label: 'Remaining Balance', data: yearlyData.map(d => Math.round(d.balance)), borderColor: '#8b2a2a', backgroundColor: 'rgba(139,42,42,0.08)', fill: true, tension: 0.3, pointRadius: 2 },
+          { label: 'Equity Built', data: yearlyData.map(d => Math.round(d.equity)), borderColor: '#2a6b4a', backgroundColor: 'rgba(42,107,74,0.08)', fill: true, tension: 0.3, pointRadius: 2 }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' } } } }
     });
   }
+}
 
-  function toggleAmort() {
-    const table = document.getElementById('amortTable');
-    const btn = document.querySelector('.amort-toggle');
-    table.classList.toggle('show');
-    btn.textContent = table.classList.contains('show') ? '▲ Hide Amortization Schedule' : '▼ Show Amortization Schedule';
+function submitEmail() {
+  const email = document.getElementById('lcEmail').value;
+  if (!email || !email.includes('@')) {
+    document.getElementById('lcEmail').style.borderColor = '#d4a017';
+    document.getElementById('lcEmail').focus();
+    return;
   }
+  // Track in GA
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'lead_capture', { event_category: 'email', event_label: 'mortgage_calculator' });
+  }
+  // Store locally (later connect to Mailchimp)
+  const leads = JSON.parse(localStorage.getItem('frc_leads') || '[]');
+  leads.push({ email, page: 'mortgage-calculator', date: new Date().toISOString() });
+  localStorage.setItem('frc_leads', JSON.stringify(leads));
+  document.getElementById('lcForm').style.display = 'none';
+  document.getElementById('lcSuccess').style.display = 'block';
+}
 
-  calculate();
+// Auto-calculate on load
+window.addEventListener('load', calculate);
 </script>
 </body>
 </html>
