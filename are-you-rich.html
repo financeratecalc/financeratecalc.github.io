@@ -557,6 +557,86 @@ footer {
 }
 .footer-copy a { color: var(--muted); text-decoration: none; }
 .footer-copy a:hover { color: var(--gold); }
+
+.ai-story-section {
+  background: linear-gradient(135deg, #0d0d1a 0%, #1a1a2e 100%);
+  border: 1px solid rgba(170,102,255,0.2);
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 20px;
+}
+.ai-story-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.ai-story-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.ai-story-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.ai-story-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+}
+.ai-story-btn {
+  margin-left: auto;
+  background: linear-gradient(135deg, #aa66ff, #7744cc);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.ai-story-btn:hover { transform: translateY(-1px); opacity: 0.9; }
+.ai-story-output {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.ai-dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+.ai-dots span {
+  width: 8px; height: 8px;
+  background: #aa66ff;
+  border-radius: 50%;
+  animation: dot-bounce 1.2s infinite;
+}
+.ai-dots span:nth-child(2) { animation-delay: 0.2s; }
+.ai-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-8px); opacity: 1; }
+}
+.ai-story-text {
+  font-size: 14px;
+  line-height: 1.9;
+  color: rgba(240,237,232,0.8);
+  font-weight: 300;
+}
+.ai-story-text p { margin-bottom: 14px; }
+.ai-story-text p:last-child { margin-bottom: 0; }
+.ai-story-text strong { color: #f0c040; font-weight: 600; }
+.ai-story-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 </style>
 </head>
 <body>
@@ -878,9 +958,33 @@ function calculate() {
       </div>
     </div>
 
+    <div class="ai-story-section" id="aiStorySection">
+      <div class="ai-story-header">
+        <div class="ai-story-icon">✨</div>
+        <div>
+          <div class="ai-story-title">Your Personal Financial Story</div>
+          <div class="ai-story-sub">AI-generated just for you — based on your exact numbers</div>
+        </div>
+        <button class="ai-story-btn" onclick="generateStory(${result.percentile}, ${salary}, '${result.cityName}', '${selectedAge}')">
+          Generate My Story →
+        </button>
+      </div>
+      <div class="ai-story-output" id="aiStoryOutput" style="display:none;">
+        <div class="ai-story-loading" id="aiStoryLoading">
+          <div class="ai-dots"><span></span><span></span><span></span></div>
+          <div style="font-size:13px;color:var(--muted);margin-top:8px;">Writing your story...</div>
+        </div>
+        <div class="ai-story-text" id="aiStoryText" style="display:none;"></div>
+        <div class="ai-story-actions" id="aiStoryActions" style="display:none;">
+          <button class="action-btn btn-share" onclick="shareStory()">Share My Story on X</button>
+          <button class="action-btn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);" onclick="generateStory(${result.percentile}, ${salary}, '${result.cityName}', '${selectedAge}')">↺ Regenerate</button>
+        </div>
+      </div>
+    </div>
+
     <div class="actions">
       <button class="action-btn btn-share" onclick="shareResult(${result.percentile}, '${result.cityName}')">
-        𝕏 Share My Result
+        Share My Result
       </button>
       <button class="action-btn btn-reset" onclick="resetForm()">
         ↺ Calculate Again
@@ -934,6 +1038,76 @@ function copyEmbed() {
     }, 2000);
   });
 }
+
+let currentStoryText = '';
+
+async function generateStory(percentile, salary, city, ageGroup) {
+  const output = document.getElementById('aiStoryOutput');
+  const loading = document.getElementById('aiStoryLoading');
+  const storyText = document.getElementById('aiStoryText');
+  const storyActions = document.getElementById('aiStoryActions');
+
+  output.style.display = 'block';
+  loading.style.display = 'block';
+  storyText.style.display = 'none';
+  storyActions.style.display = 'none';
+
+  const prompt = `You are a warm, empathetic financial advisor with 23 years of banking experience. Write a short, personal financial story for this person. Be human, encouraging, and specific — not generic.
+
+Their data:
+- Annual salary: $${salary.toLocaleString()}
+- City: ${city}
+- Age group: ${ageGroup}
+- Income percentile: ${percentile}th percentile (they earn more than ${percentile}% of people in their area)
+
+Write exactly 3 short paragraphs:
+1. A warm, personal observation about where they stand — make it feel like you're talking directly to them, not at them. Use their specific numbers. Include an empathetic insight about what this percentile means in real life in ${city}.
+2. One honest, specific thing they could do in the next 12 months to meaningfully improve their financial position. Be concrete — not generic advice.
+3. A brief motivating close. Something real, not cheerleader-y. End with one question that makes them think.
+
+Use <strong> tags around key numbers and insights. Keep each paragraph 2-3 sentences. Do not use headers. Write in second person (you/your).`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content?.[0]?.text || 'Unable to generate story. Please try again.';
+    currentStoryText = text;
+
+    // Convert paragraphs
+    const paragraphs = text.split(/\n\n+/).filter(p => p.trim());
+    const html = paragraphs.map(p => `<p>${p.trim()}</p>`).join('');
+
+    loading.style.display = 'none';
+    storyText.innerHTML = html;
+    storyText.style.display = 'block';
+    storyActions.style.display = 'flex';
+
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'ai_story_generated', { event_category: 'engagement', event_label: city });
+    }
+  } catch (err) {
+    loading.style.display = 'none';
+    storyText.innerHTML = '<p style="color:rgba(255,255,255,0.4);">Could not generate story right now. Please try again.</p>';
+    storyText.style.display = 'block';
+  }
+}
+
+function shareStory() {
+  const text = currentStoryText.replace(/<[^>]+>/g, '').substring(0, 200);
+  const url = 'https://financeratecalc.com/are-you-rich.html';
+  const tweet = `My personal financial story from an AI banker:\n\n"${text}..."\n\nGet yours: ${url}`;
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(tweet), '_blank');
+}
+
 </script>
 </body>
 </html>
