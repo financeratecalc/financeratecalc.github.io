@@ -74,17 +74,6 @@ header{background:var(--ink);padding:0 60px;height:64px;display:flex;align-items
 .tab-btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all 0.2s;font-family:'Geist',sans-serif;}
 .tab-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
 canvas{max-height:320px;}
-.breakeven{background:var(--cream);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
-.be-title{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--ink);margin-bottom:16px;}
-.be-timeline{display:flex;align-items:center;gap:0;position:relative;padding:20px 0;}
-.be-track{position:absolute;left:0;right:0;height:4px;background:var(--border);border-radius:2px;top:50%;}
-.be-fill{position:absolute;left:0;height:4px;background:linear-gradient(90deg,var(--red),var(--gold),var(--green));border-radius:2px;top:50%;transition:width 0.6s;}
-.be-marker{position:absolute;top:50%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:var(--gold);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.2);z-index:1;}
-.be-label-left{font-size:12px;color:var(--muted);position:relative;z-index:1;}
-.be-label-right{font-size:12px;color:var(--muted);margin-left:auto;position:relative;z-index:1;}
-.be-center{text-align:center;flex:1;position:relative;z-index:1;}
-.be-year{font-family:'Fraunces',serif;font-size:24px;font-weight:900;color:var(--gold);}
-.be-ytext{font-size:12px;color:var(--muted);}
 .banker-note{background:var(--cream);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:20px 22px;margin-bottom:24px;display:flex;gap:14px;}
 .bn-icon{width:36px;height:36px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
 .bn-name{font-size:12px;font-weight:700;color:var(--ink);}
@@ -103,6 +92,19 @@ canvas{max-height:320px;}
 .lc-success-text{font-size:14px;color:rgba(255,255,255,0.7);}
 .lc-success-text strong{color:var(--gold-light);}
 #resultsSection{display:none;}
+
+/* LawDepot Box */
+.lawdepot-box{max-width:1020px;margin:0 auto 40px;padding:0 60px;}
+@media(max-width:768px){.lawdepot-box{padding:0 20px;}}
+.lawdepot-inner{background:linear-gradient(135deg,#f8f4ec,#faf8f4);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.lawdepot-icon{font-size:28px;flex-shrink:0;}
+.lawdepot-content{flex:1;min-width:200px;}
+.lawdepot-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.lawdepot-title{font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:var(--ink);margin-bottom:4px;}
+.lawdepot-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.lawdepot-cta{background:var(--gold);color:var(--ink);padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;transition:all 0.2s;flex-shrink:0;}
+.lawdepot-cta:hover{background:var(--gold-light);transform:translateY(-1px);}
+
 footer{background:var(--ink);padding:32px 60px;}
 @media(max-width:768px){footer{padding:24px 20px;}}
 .footer-inner{max-width:1020px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
@@ -212,6 +214,19 @@ footer{background:var(--ink);padding:32px 60px;}
   </div>
 </div>
 
+<!-- LawDepot Affiliate Box -->
+<div class="lawdepot-box">
+  <div class="lawdepot-inner">
+    <div class="lawdepot-icon">📄</div>
+    <div class="lawdepot-content">
+      <div class="lawdepot-label">Legal Documents</div>
+      <div class="lawdepot-title">Ready to Buy? Get Your Purchase Agreement or Lease Contract</div>
+      <div class="lawdepot-desc">Whether you're buying a home or signing a lease, LawDepot has state-specific legal documents ready in minutes — no lawyer needed.</div>
+    </div>
+    <a href="https://www.kqzyfj.com/click-101700650-16996011" target="_blank" rel="noopener" class="lawdepot-cta">Create Document →</a>
+  </div>
+</div>
+
 <footer>
   <div class="footer-inner">
     <div class="footer-logo">Finance<em>Rate</em>Calc</div>
@@ -248,21 +263,17 @@ function calculate(){
   const numPay=30*12;
   const pi=loanAmt*(monthlyRate*Math.pow(1+monthlyRate,numPay))/(Math.pow(1+monthlyRate,numPay)-1);
 
-  // Year by year
   const buyNW=[],rentNW=[],buyYearlyCost=[],rentYearlyCost=[];
   let homeVal=homePrice,loanBal=loanAmt,rentPortfolio=down;
   let currentRent=rent*12;
   let breakevenYear=null;
 
   for(let y=1;y<=horizon;y++){
-    // BUY costs this year
     const tax=homeVal*taxRate;
     const maint=homeVal*maintenance;
     const ins=homeVal*0.004;
     const buyCost=pi*12+tax+maint+ins;
     buyYearlyCost.push(Math.round(buyCost));
-
-    // Loan balance after year
     for(let m=0;m<12;m++){
       const interest=loanBal*monthlyRate;
       loanBal=Math.max(0,loanBal-(pi-interest));
@@ -270,19 +281,13 @@ function calculate(){
     homeVal*=(1+appreciation);
     const buyNetWorth=homeVal-loanBal;
     buyNW.push(Math.round(buyNetWorth));
-
-    // RENT costs this year
     const rentIns=rentersIns;
     const rentCost=currentRent+rentIns;
     rentYearlyCost.push(Math.round(rentCost));
-
-    // Renter invests diff between buy cost and rent cost + down payment invested
     const diff=Math.max(0,buyCost-rentCost);
     rentPortfolio=(rentPortfolio+diff/12*12)*(1+investReturn);
     rentNW.push(Math.round(rentPortfolio));
-
     currentRent*=(1+rentIncrease);
-
     if(!breakevenYear && buyNetWorth>rentPortfolio) breakevenYear=y;
   }
 
@@ -311,7 +316,6 @@ function calculate(){
   document.getElementById('verdictAmount').textContent=fmt(Math.abs(diff));
   document.getElementById('verdictSub').textContent=`Over ${horizon} years, ${buyWins?'buying':'renting and investing the difference'} comes out ahead`;
 
-  // Banker note
   let note='';
   if(breakevenYear){
     note=`Buying breaks even with renting in year ${breakevenYear}. If you're staying fewer than ${breakevenYear} years, renting is likely the smarter financial choice — the transaction costs of buying (closing costs, agent fees, moving) don't get absorbed in a short hold. `;
@@ -331,42 +335,14 @@ function showChart(type){
   const ctx=document.getElementById('bvrChart').getContext('2d');
   const {buyNW,rentNW,buyYearlyCost,rentYearlyCost,horizon}=chartData;
   const labels=Array.from({length:horizon},(_,i)=>'Yr '+(i+1));
-
   if(type==='line'){
-    chartInstance=new Chart(ctx,{
-      type:'line',
-      data:{
-        labels,
-        datasets:[
-          {label:'Buy — Net Worth',data:buyNW,borderColor:'#2a6b4a',backgroundColor:'rgba(42,107,74,0.08)',fill:true,tension:0.3,pointRadius:1,borderWidth:2},
-          {label:'Rent + Invest — Portfolio',data:rentNW,borderColor:'#1a3a5c',backgroundColor:'rgba(26,58,92,0.08)',fill:true,tension:0.3,pointRadius:1,borderWidth:2}
-        ]
-      },
-      options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:v=>'$'+(v>=1000000?(v/1000000).toFixed(1)+'M':(v/1000).toFixed(0)+'k')}}}}
-    });
+    chartInstance=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Buy — Net Worth',data:buyNW,borderColor:'#2a6b4a',backgroundColor:'rgba(42,107,74,0.08)',fill:true,tension:0.3,pointRadius:1,borderWidth:2},{label:'Rent + Invest — Portfolio',data:rentNW,borderColor:'#1a3a5c',backgroundColor:'rgba(26,58,92,0.08)',fill:true,tension:0.3,pointRadius:1,borderWidth:2}]},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:v=>'$'+(v>=1000000?(v/1000000).toFixed(1)+'M':(v/1000).toFixed(0)+'k')}}}}});
   } else if(type==='bar'){
-    chartInstance=new Chart(ctx,{
-      type:'bar',
-      data:{
-        labels,
-        datasets:[
-          {label:'Annual Buy Cost',data:buyYearlyCost,backgroundColor:'rgba(42,107,74,0.6)',borderRadius:2},
-          {label:'Annual Rent Cost',data:rentYearlyCost,backgroundColor:'rgba(26,58,92,0.6)',borderRadius:2}
-        ]
-      },
-      options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}
-    });
+    chartInstance=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Annual Buy Cost',data:buyYearlyCost,backgroundColor:'rgba(42,107,74,0.6)',borderRadius:2},{label:'Annual Rent Cost',data:rentYearlyCost,backgroundColor:'rgba(26,58,92,0.6)',borderRadius:2}]},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}});
   } else {
     const totalBuy=buyYearlyCost.reduce((a,b)=>a+b,0);
     const totalRent=rentYearlyCost.reduce((a,b)=>a+b,0);
-    chartInstance=new Chart(ctx,{
-      type:'doughnut',
-      data:{
-        labels:['Total Buy Cost','Total Rent Cost'],
-        datasets:[{data:[totalBuy,totalRent],backgroundColor:['#2a6b4a','#1a3a5c'],borderWidth:0}]
-      },
-      options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom'}}}
-    });
+    chartInstance=new Chart(ctx,{type:'doughnut',data:{labels:['Total Buy Cost','Total Rent Cost'],datasets:[{data:[totalBuy,totalRent],backgroundColor:['#2a6b4a','#1a3a5c'],borderWidth:0}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom'}}}});
   }
 }
 
