@@ -7,7 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Geist:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#0f0e0c;--paper:#faf8f4;--gold:#b8860b;--gold-light:#d4a017;--border:#ddd8cc;--white:#ffffff;--green:#2a6b4a;--red:#8b2a2a;}
+:root{--ink:#0f0e0c;--paper:#faf8f4;--gold:#b8860b;--gold-light:#d4a017;--border:#ddd8cc;--white:#ffffff;}
 body{font-family:'Geist',sans-serif;background:var(--paper);color:var(--ink);margin:0;padding:0;}
 header{background:var(--ink);padding:15px 40px;display:flex;justify-content:space-between;align-items:center;}
 .logo{font-family:'Fraunces',serif;color:#fff;text-decoration:none;font-size:20px;font-weight:900;}
@@ -17,20 +17,14 @@ header{background:var(--ink);padding:15px 40px;display:flex;justify-content:spac
 .card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:25px;box-shadow:0 4px 12px rgba(0,0,0,0.03);position:sticky;top:20px;}
 .field{margin-bottom:15px;}
 .field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:#888;margin-bottom:5px;}
-.field input, .field select{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:15px;box-sizing:border-box;font-family:'Geist';}
-.calc-btn{width:100%;background:var(--gold);color:white;border:none;padding:15px;border-radius:10px;font-weight:700;cursor:pointer;font-size:16px;transition:0.2s;}
-.calc-btn:hover{background:var(--gold-light);transform:translateY(-2px);}
-
+.field input, .field select{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:15px;box-sizing:border-box;font-family:'Geist';outline:none;}
+.field input:focus{border-color:var(--gold);}
+.calc-btn{width:100%;background:var(--gold);color:white;border:none;padding:15px;border-radius:10px;font-weight:700;cursor:pointer;font-size:16px;}
 .result-box{background:var(--ink);color:white;padding:30px;border-radius:16px;text-align:center;margin-bottom:25px;}
 .res-val{font-family:'Fraunces',serif;font-size:42px;color:var(--gold-light);margin:10px 0;}
-
-#smart-advisor{border:2px solid var(--gold);border-radius:16px;padding:25px;margin-bottom:25px;background:white;box-shadow:0 10px 20px rgba(184,134,11,0.1);}
+#smart-advisor{border:2px solid var(--gold);border-radius:16px;padding:25px;margin-bottom:25px;background:white;}
 .smart-btn{display:block;background:var(--ink);color:var(--gold-light);text-align:center;padding:14px;text-decoration:none;border-radius:8px;font-weight:700;margin-top:15px;}
-
-.amort-table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px;background:white;border-radius:12px;overflow:hidden;border:1px solid var(--border);}
-.amort-table th{background:#f8f5f0;padding:12px;text-align:left;font-size:11px;text-transform:uppercase;color:#888;}
-.amort-table td{padding:12px;border-bottom:1px solid #f0f0f0;}
-.chart-wrap{background:white;border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:25px;}
+.chart-wrap{background:white;border:1px solid var(--border);border-radius:16px;padding:20px;}
 </style>
 </head>
 <body>
@@ -44,64 +38,48 @@ header{background:var(--ink);padding:15px 40px;display:flex;justify-content:spac
     <h2 style="font-family:'Fraunces';margin-top:0;font-size:24px;">Mortgage Tool</h2>
     <div class="field">
       <label>Home Price ($)</label>
-      <input type="text" id="homePrice" value="400,000" onfocus="this.value=''">
+      <input type="text" id="homePrice" value="400000">
     </div>
     <div class="field">
       <label>Down Payment ($)</label>
-      <input type="text" id="downPayment" value="80,000">
+      <input type="text" id="downPayment" value="80000">
     </div>
     <div class="field">
       <label>Interest Rate (%)</label>
       <input type="text" id="rate" value="7.1">
     </div>
     <div class="field">
-      <label>Loan Term</label>
+      <label>Term (Years)</label>
       <select id="term">
-        <option value="30">30 Years Fixed</option>
-        <option value="15">15 Years Fixed</option>
-        <option value="10">10 Years Fixed</option>
+        <option value="30">30 Years</option>
+        <option value="15">15 Years</option>
       </select>
     </div>
-    <button class="calc-btn" onclick="calculate()">Calculate Payment →</button>
+    <button class="calc-btn" onclick="runCalc()">Calculate Now →</button>
   </div>
 
   <div id="results">
-    <div id="empty-msg" style="text-align:center;padding:120px 20px;border:2px dashed var(--border);border-radius:20px;color:#888;">
-      <div style="font-size:40px;margin-bottom:15px;">📊</div>
-      Enter your mortgage details to generate the full amortization report and legal advice.
+    <div id="welcome-box" style="text-align:center;padding:100px 20px;border:2px dashed var(--border);border-radius:20px;color:#888;">
+      Enter numbers and hit Calculate to see your banker-approved report.
     </div>
-    
-    <div id="result-content" style="display:none;">
+
+    <div id="output" style="display:none;">
       <div class="result-box">
-        <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;">Est. Monthly Payment (P&I)</div>
+        <div style="font-size:12px;text-transform:uppercase;">Monthly Payment</div>
         <div class="res-val" id="monthlyVal">$0</div>
-        <div id="bankerNote" style="font-size:14px;opacity:0.8;font-weight:300;"></div>
+        <div id="totalInt" style="font-size:14px;opacity:0.8;"></div>
       </div>
 
       <div id="smart-advisor">
-        <div style="font-weight:800;color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Banker's Expert Recommendation</div>
-        <h3 style="margin:0 0 10px 0;font-family:'Fraunces';font-size:22px;">Secure Your Home Purchase Agreement</h3>
-        <p style="font-size:15px;color:#444;line-height:1.6;">Don't rely on verbal promises. At these interest rates, every legal detail counts. Use <strong>LawDepot's</strong> professional templates to create a binding Purchase Agreement in minutes.</p>
-        <a href="https://www.kqzyfj.com/click-101700650-16996011" target="_blank" class="smart-btn">Generate My Legal Contract →</a>
+        <div style="font-weight:800;color:var(--gold);font-size:11px;text-transform:uppercase;margin-bottom:10px;">Banker's Recommendation</div>
+        <h3 style="margin:0 0 10px 0;font-family:'Fraunces';">Legal Protection Required</h3>
+        <p style="font-size:15px;color:#444;">Ensure your <strong>Service Agreement</strong> is legally binding. Use LawDepot to protect your purchase.</p>
+        <a href="https://www.kqzyfj.com/click-101700650-16996011" target="_blank" class="smart-btn">Generate Contract →</a>
       </div>
 
       <div class="chart-wrap">
-        <h4 style="margin:0 0 15px 0;font-family:'Fraunces';">Balance vs. Equity</h4>
-        <canvas id="mortgageChart" height="120"></canvas>
+        <canvas id="mortgageChart" height="150"></canvas>
       </div>
-
-      <h4 style="font-family:'Fraunces';margin-bottom:10px;">Amortization Schedule (First 10 Years)</h4>
-      <table class="amort-table">
-        <thead>
-          <tr>
-            <th>Year</th>
-            <th>Principal</th>
-            <th>Interest</th>
-            <th>Remaining Balance</th>
-          </tr>
-        </thead>
-        <tbody id="amortBody"></tbody>
-      </table>
     </div>
   </div>
 </div>
@@ -109,62 +87,34 @@ header{background:var(--ink);padding:15px 40px;display:flex;justify-content:spac
 <script>
 let myChart = null;
 
-function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+function runCalc() {
+    try {
+        let hp = parseFloat(document.getElementById('homePrice').value.replace(',', '.'));
+        let dp = parseFloat(document.getElementById('downPayment').value.replace(',', '.'));
+        let r = parseFloat(document.getElementById('rate').value.replace(',', '.'));
+        let t = parseInt(document.getElementById('term').value);
 
-function calculate() {
-  let hp = parseFloat(document.getElementById('homePrice').value.replace(/,/g, '').replace(',', '.'));
-  let dp = parseFloat(document.getElementById('downPayment').value.replace(/,/g, '').replace(',', '.'));
-  let r = parseFloat(document.getElementById('rate').value.replace(',', '.'));
-  let t = parseInt(document.getElementById('term').value);
+        let loan = hp - dp;
+        let mRate = r / 100 / 12;
+        let n = t * 12;
 
-  if(isNaN(hp) || isNaN(r)) { alert("Please check your numbers"); return; }
+        let pmt = loan * (mRate * Math.pow(1 + mRate, n)) / (Math.pow(1 + mRate, n) - 1);
+        let ti = (pmt * n) - loan;
 
-  let loan = hp - dp;
-  let mRate = r / 100 / 12;
-  let n = t * 12;
-  
-  let pmt = loan * (mRate * Math.pow(1 + mRate, n)) / (Math.pow(1 + mRate, n) - 1);
-  let totalInt = (pmt * n) - loan;
+        document.getElementById('monthlyVal').innerText = '$' + Math.round(pmt).toLocaleString();
+        document.getElementById('totalInt').innerText = "Total Interest: $" + Math.round(ti).toLocaleString();
 
-  document.getElementById('monthlyVal').innerText = fmt(pmt);
-  document.getElementById('bankerNote').innerText = "Total Loan Interest: " + fmt(totalInt);
-  
-  // Tabloyu Oluştur (İlk 10 yıl)
-  let balance = loan;
-  let tableHtml = '';
-  let chartLabels = [];
-  let chartBalance = [];
-  let chartEquity = [];
+        document.getElementById('welcome-box').style.display = 'none';
+        document.getElementById('output').style.display = 'block';
 
-  for(let y=1; y<=t; y++) {
-    let yrInterest = 0;
-    let yrPrincipal = 0;
-    for(let m=1; m<=12; m++) {
-      let interest = balance * mRate;
-      let principal = pmt - interest;
-      yrInterest += interest;
-      yrPrincipal += principal;
-      balance -= principal;
-    }
-    if(y <= 10) {
-      tableHtml += `<tr><td>Year ${y}</td><td>${fmt(yrPrincipal)}</td><td>${fmt(yrInterest)}</td><td>${fmt(Math.max(0, balance))}</td></tr>`;
-    }
-    chartLabels.push("Yr " + y);
-    chartBalance.push(Math.round(balance));
-    chartEquity.push(Math.round(hp - balance));
-  }
-  document.getElementById('amortBody').innerHTML = tableHtml;
-
-  // Grafik Oluştur
-  if(myChart) myChart.destroy();
-  const ctx = document.getElementById('mortgageChart').getContext('2d');
-  myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: chartLabels,
-      datasets: [
-        { label: 'Remaining Balance', data: chartBalance, borderColor: '#8b2a2a', fill: false, tension: 0.1 },
-        { label: 'Your Equity', data: chartEquity, borderColor: '#2a6b4a', fill: false, tension: 0.1 }
-      ]
-    },
-    options: { responsive: true, plugins: { legend: { position
+        if(myChart) myChart.destroy();
+        const ctx = document.getElementById('mortgageChart').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Principal', 'Total Interest'],
+                datasets: [{
+                    data: [loan, ti],
+                    backgroundColor: ['#2a6b4a', '#8b2a2a']
+                }]
+            },
