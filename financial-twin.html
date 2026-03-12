@@ -260,36 +260,36 @@ footer{background:var(--ink);padding:32px 60px;}
 <script>
 // 25 Cities: flag, name, homePrice, downPct, mortgageRate, taxRate, appreciation, maintenance, monthlyRent, rentIncrease, investReturn
 const CITIES = [
-  // USA
-  { flag:'🇺🇸', name:'New York',     homePrice:850000, downPct:20, mortgageRate:7.1, taxRate:1.2, appreciation:4.5, maintenance:1.0, monthlyRent:3800, rentIncrease:4, investReturn:7 },
-  { flag:'🇺🇸', name:'Los Angeles',  homePrice:950000, downPct:20, mortgageRate:7.1, taxRate:1.1, appreciation:5.0, maintenance:1.0, monthlyRent:3200, rentIncrease:4, investReturn:7 },
-  { flag:'🇺🇸', name:'Miami',        homePrice:620000, downPct:20, mortgageRate:7.1, taxRate:1.0, appreciation:5.5, maintenance:1.1, monthlyRent:2800, rentIncrease:5, investReturn:7 },
-  { flag:'🇺🇸', name:'Dallas',       homePrice:420000, downPct:20, mortgageRate:7.1, taxRate:1.8, appreciation:4.0, maintenance:1.0, monthlyRent:1900, rentIncrease:4, investReturn:7 },
-  { flag:'🇺🇸', name:'Austin',       homePrice:520000, downPct:20, mortgageRate:7.1, taxRate:1.9, appreciation:4.5, maintenance:1.0, monthlyRent:2100, rentIncrease:4, investReturn:7 },
-  { flag:'🇺🇸', name:'Seattle',      homePrice:780000, downPct:20, mortgageRate:7.1, taxRate:1.0, appreciation:5.0, maintenance:1.0, monthlyRent:2900, rentIncrease:4, investReturn:7 },
-  { flag:'🇺🇸', name:'Chicago',      homePrice:380000, downPct:20, mortgageRate:7.1, taxRate:2.1, appreciation:3.5, maintenance:1.1, monthlyRent:1800, rentIncrease:3, investReturn:7 },
-  { flag:'🇺🇸', name:'Denver',       homePrice:580000, downPct:20, mortgageRate:7.1, taxRate:0.6, appreciation:4.5, maintenance:1.0, monthlyRent:2400, rentIncrease:4, investReturn:7 },
+  // USA — USD
+  { flag:'🇺🇸', name:'New York',     currency:'$',  currencyCode:'USD', homePrice:850000,   downPct:20, mortgageRate:7.1,  taxRate:1.2, appreciation:4.5,  maintenance:1.0, monthlyRent:3800, rentIncrease:4,  investReturn:7 },
+  { flag:'🇺🇸', name:'Los Angeles',  currency:'$',  currencyCode:'USD', homePrice:950000,   downPct:20, mortgageRate:7.1,  taxRate:1.1, appreciation:5.0,  maintenance:1.0, monthlyRent:3200, rentIncrease:4,  investReturn:7 },
+  { flag:'🇺🇸', name:'Miami',        currency:'$',  currencyCode:'USD', homePrice:620000,   downPct:20, mortgageRate:7.1,  taxRate:1.0, appreciation:5.5,  maintenance:1.1, monthlyRent:2800, rentIncrease:5,  investReturn:7 },
+  { flag:'🇺🇸', name:'Dallas',       currency:'$',  currencyCode:'USD', homePrice:420000,   downPct:20, mortgageRate:7.1,  taxRate:1.8, appreciation:4.0,  maintenance:1.0, monthlyRent:1900, rentIncrease:4,  investReturn:7 },
+  { flag:'🇺🇸', name:'Austin',       currency:'$',  currencyCode:'USD', homePrice:520000,   downPct:20, mortgageRate:7.1,  taxRate:1.9, appreciation:4.5,  maintenance:1.0, monthlyRent:2100, rentIncrease:4,  investReturn:7 },
+  { flag:'🇺🇸', name:'Seattle',      currency:'$',  currencyCode:'USD', homePrice:780000,   downPct:20, mortgageRate:7.1,  taxRate:1.0, appreciation:5.0,  maintenance:1.0, monthlyRent:2900, rentIncrease:4,  investReturn:7 },
+  { flag:'🇺🇸', name:'Chicago',      currency:'$',  currencyCode:'USD', homePrice:380000,   downPct:20, mortgageRate:7.1,  taxRate:2.1, appreciation:3.5,  maintenance:1.1, monthlyRent:1800, rentIncrease:3,  investReturn:7 },
+  { flag:'🇺🇸', name:'Denver',       currency:'$',  currencyCode:'USD', homePrice:580000,   downPct:20, mortgageRate:7.1,  taxRate:0.6, appreciation:4.5,  maintenance:1.0, monthlyRent:2400, rentIncrease:4,  investReturn:7 },
   // Europe
-  { flag:'🇬🇧', name:'London',       homePrice:750000, downPct:10, mortgageRate:5.2, taxRate:0.5, appreciation:4.0, maintenance:1.0, monthlyRent:2800, rentIncrease:3, investReturn:6 },
-  { flag:'🇩🇪', name:'Berlin',       homePrice:480000, downPct:20, mortgageRate:4.0, taxRate:0.3, appreciation:3.5, maintenance:1.2, monthlyRent:1600, rentIncrease:3, investReturn:6 },
-  { flag:'🇫🇷', name:'Paris',        homePrice:680000, downPct:20, mortgageRate:3.8, taxRate:0.2, appreciation:3.5, maintenance:1.0, monthlyRent:2200, rentIncrease:2, investReturn:6 },
-  { flag:'🇳🇱', name:'Amsterdam',    homePrice:560000, downPct:10, mortgageRate:4.1, taxRate:0.1, appreciation:4.0, maintenance:1.1, monthlyRent:2000, rentIncrease:3, investReturn:6 },
-  { flag:'🇪🇸', name:'Madrid',       homePrice:420000, downPct:20, mortgageRate:4.5, taxRate:0.4, appreciation:4.5, maintenance:1.0, monthlyRent:1400, rentIncrease:4, investReturn:6 },
-  { flag:'🇨🇭', name:'Zurich',       homePrice:1200000, downPct:20, mortgageRate:2.2, taxRate:0.1, appreciation:2.5, maintenance:0.8, monthlyRent:3500, rentIncrease:1, investReturn:5 },
+  { flag:'🇬🇧', name:'London',       currency:'£',  currencyCode:'GBP', homePrice:620000,   downPct:10, mortgageRate:5.2,  taxRate:0.5, appreciation:4.0,  maintenance:1.0, monthlyRent:2300, rentIncrease:3,  investReturn:6 },
+  { flag:'🇩🇪', name:'Berlin',       currency:'€',  currencyCode:'EUR', homePrice:450000,   downPct:20, mortgageRate:4.0,  taxRate:0.3, appreciation:3.5,  maintenance:1.2, monthlyRent:1500, rentIncrease:3,  investReturn:6 },
+  { flag:'🇫🇷', name:'Paris',        currency:'€',  currencyCode:'EUR', homePrice:640000,   downPct:20, mortgageRate:3.8,  taxRate:0.2, appreciation:3.5,  maintenance:1.0, monthlyRent:2000, rentIncrease:2,  investReturn:6 },
+  { flag:'🇳🇱', name:'Amsterdam',    currency:'€',  currencyCode:'EUR', homePrice:520000,   downPct:10, mortgageRate:4.1,  taxRate:0.1, appreciation:4.0,  maintenance:1.1, monthlyRent:1800, rentIncrease:3,  investReturn:6 },
+  { flag:'🇪🇸', name:'Madrid',       currency:'€',  currencyCode:'EUR', homePrice:390000,   downPct:20, mortgageRate:4.5,  taxRate:0.4, appreciation:4.5,  maintenance:1.0, monthlyRent:1300, rentIncrease:4,  investReturn:6 },
+  { flag:'🇨🇭', name:'Zurich',       currency:'Fr', currencyCode:'CHF', homePrice:1100000,  downPct:20, mortgageRate:2.2,  taxRate:0.1, appreciation:2.5,  maintenance:0.8, monthlyRent:3200, rentIncrease:1,  investReturn:5 },
   // Middle East
-  { flag:'🇦🇪', name:'Dubai',        homePrice:680000, downPct:25, mortgageRate:5.5, taxRate:0.0, appreciation:6.0, maintenance:1.5, monthlyRent:2800, rentIncrease:5, investReturn:7 },
-  { flag:'🇦🇪', name:'Abu Dhabi',    homePrice:520000, downPct:25, mortgageRate:5.5, taxRate:0.0, appreciation:5.0, maintenance:1.5, monthlyRent:2200, rentIncrease:4, investReturn:7 },
-  { flag:'🇸🇦', name:'Riyadh',       homePrice:380000, downPct:30, mortgageRate:6.0, taxRate:0.0, appreciation:5.5, maintenance:1.5, monthlyRent:1400, rentIncrease:4, investReturn:7 },
-  { flag:'🇹🇷', name:'Istanbul',     homePrice:200000, downPct:30, mortgageRate:35.0, taxRate:0.3, appreciation:15.0, maintenance:1.5, monthlyRent:600, rentIncrease:40, investReturn:15 },
+  { flag:'🇦🇪', name:'Dubai',        currency:'AED',currencyCode:'AED', homePrice:2500000,  downPct:25, mortgageRate:5.5,  taxRate:0.0, appreciation:6.0,  maintenance:1.5, monthlyRent:10000,rentIncrease:5,  investReturn:7 },
+  { flag:'🇦🇪', name:'Abu Dhabi',    currency:'AED',currencyCode:'AED', homePrice:1900000,  downPct:25, mortgageRate:5.5,  taxRate:0.0, appreciation:5.0,  maintenance:1.5, monthlyRent:8000, rentIncrease:4,  investReturn:7 },
+  { flag:'🇸🇦', name:'Riyadh',       currency:'SAR',currencyCode:'SAR', homePrice:1400000,  downPct:30, mortgageRate:6.0,  taxRate:0.0, appreciation:5.5,  maintenance:1.5, monthlyRent:5000, rentIncrease:4,  investReturn:7 },
+  { flag:'🇹🇷', name:'Istanbul',     currency:'₺',  currencyCode:'TRY', homePrice:5000000,  downPct:30, mortgageRate:35.0, taxRate:0.3, appreciation:30.0, maintenance:1.5, monthlyRent:15000,rentIncrease:40, investReturn:20 },
   // Asia-Pacific
-  { flag:'🇸🇬', name:'Singapore',    homePrice:1100000, downPct:25, mortgageRate:4.0, taxRate:0.4, appreciation:4.0, maintenance:0.8, monthlyRent:3200, rentIncrease:3, investReturn:6 },
-  { flag:'🇯🇵', name:'Tokyo',        homePrice:750000, downPct:20, mortgageRate:1.5, taxRate:1.4, appreciation:2.5, maintenance:1.0, monthlyRent:2000, rentIncrease:1, investReturn:5 },
-  { flag:'🇦🇺', name:'Sydney',       homePrice:1050000, downPct:20, mortgageRate:6.5, taxRate:0.4, appreciation:5.0, maintenance:1.0, monthlyRent:2800, rentIncrease:4, investReturn:7 },
-  { flag:'🇭🇰', name:'Hong Kong',    homePrice:1400000, downPct:30, mortgageRate:4.5, taxRate:0.1, appreciation:3.5, maintenance:0.8, monthlyRent:3500, rentIncrease:2, investReturn:6 },
-  { flag:'🇹🇭', name:'Bangkok',      homePrice:280000, downPct:30, mortgageRate:7.0, taxRate:0.3, appreciation:4.5, maintenance:1.5, monthlyRent:900, rentIncrease:3, investReturn:6 },
+  { flag:'🇸🇬', name:'Singapore',    currency:'S$', currencyCode:'SGD', homePrice:1500000,  downPct:25, mortgageRate:4.0,  taxRate:0.4, appreciation:4.0,  maintenance:0.8, monthlyRent:4500, rentIncrease:3,  investReturn:6 },
+  { flag:'🇯🇵', name:'Tokyo',        currency:'¥',  currencyCode:'JPY', homePrice:75000000, downPct:20, mortgageRate:1.5,  taxRate:1.4, appreciation:2.5,  maintenance:1.0, monthlyRent:200000,rentIncrease:1, investReturn:5 },
+  { flag:'🇦🇺', name:'Sydney',       currency:'A$', currencyCode:'AUD', homePrice:1300000,  downPct:20, mortgageRate:6.5,  taxRate:0.4, appreciation:5.0,  maintenance:1.0, monthlyRent:3500, rentIncrease:4,  investReturn:7 },
+  { flag:'🇭🇰', name:'Hong Kong',    currency:'HK$',currencyCode:'HKD', homePrice:10000000, downPct:30, mortgageRate:4.5,  taxRate:0.1, appreciation:3.5,  maintenance:0.8, monthlyRent:25000,rentIncrease:2,  investReturn:6 },
+  { flag:'🇹🇭', name:'Bangkok',      currency:'฿',  currencyCode:'THB', homePrice:9000000,  downPct:30, mortgageRate:7.0,  taxRate:0.3, appreciation:4.5,  maintenance:1.5, monthlyRent:30000,rentIncrease:3,  investReturn:6 },
   // Canada
-  { flag:'🇨🇦', name:'Toronto',      homePrice:980000, downPct:20, mortgageRate:6.5, taxRate:0.7, appreciation:4.5, maintenance:1.0, monthlyRent:2800, rentIncrease:4, investReturn:7 },
-  { flag:'🇨🇦', name:'Vancouver',    homePrice:1100000, downPct:20, mortgageRate:6.5, taxRate:0.3, appreciation:4.5, maintenance:1.0, monthlyRent:2900, rentIncrease:4, investReturn:7 },
+  { flag:'🇨🇦', name:'Toronto',      currency:'C$', currencyCode:'CAD', homePrice:1100000,  downPct:20, mortgageRate:6.5,  taxRate:0.7, appreciation:4.5,  maintenance:1.0, monthlyRent:3200, rentIncrease:4,  investReturn:7 },
+  { flag:'🇨🇦', name:'Vancouver',    currency:'C$', currencyCode:'CAD', homePrice:1250000,  downPct:20, mortgageRate:6.5,  taxRate:0.3, appreciation:4.5,  maintenance:1.0, monthlyRent:3400, rentIncrease:4,  investReturn:7 },
 ];
 
 let activeCity = 0;
@@ -301,6 +301,10 @@ function buildCityGrid() {
       <span class="city-flag">${c.flag}</span>${c.name}
     </button>
   `).join('');
+}
+
+function updatePrefixes(symbol) {
+  document.querySelectorAll('.field-input .prefix').forEach(el => el.textContent = symbol);
 }
 
 function selectCity(i) {
@@ -316,10 +320,17 @@ function selectCity(i) {
   document.getElementById('monthlyRent').value = c.monthlyRent;
   document.getElementById('rentIncrease').value = c.rentIncrease;
   document.getElementById('investReturn').value = c.investReturn;
+  updatePrefixes(c.currency);
   calculate();
 }
 
-function fmt(n){return '$'+Math.round(Math.abs(n)).toLocaleString();}
+function fmt(n) {
+  const c = CITIES[activeCity];
+  const sym = c ? c.currency : '$';
+  const abs = Math.round(Math.abs(n));
+  // JPY, THB, IDR vb. büyük sayılar — virgüllü göster ama "k/M" kısaltma yapmadan
+  return sym + abs.toLocaleString();
+}
 let chartInstance=null;
 let chartData=null;
 
@@ -413,9 +424,11 @@ function showChart(type){
   const {buyNW,rentNW,buyYearlyCost,rentYearlyCost,horizon}=chartData;
   const labels=Array.from({length:horizon},(_,i)=>'Yr '+(i+1));
   if(type==='line'){
-    chartInstance=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Buy — Net Worth',data:buyNW,borderColor:'#2a6b4a',backgroundColor:'rgba(42,107,74,0.08)',fill:true,tension:0.3,pointRadius:1,borderWidth:2},{label:'Rent + Invest — Portfolio',data:rentNW,borderColor:'#1a3a5c',backgroundColor:'rgba(26,58,92,0.08)',fill:true,tension:0.3,pointRadius:1,borderWidth:2}]},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:v=>'$'+(v>=1000000?(v/1000000).toFixed(1)+'M':(v/1000).toFixed(0)+'k')}}}}});
+    const sym = CITIES[activeCity].currency;
+    chartInstance=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Buy — Net Worth',data:buyNW,borderColor:'#2a6b4a',backgroundColor:'rgba(42,107,74,0.08)',fill:true,tension:0.3,pointRadius:1,borderWidth:2},{label:'Rent + Invest — Portfolio',data:rentNW,borderColor:'#1a3a5c',backgroundColor:'rgba(26,58,92,0.08)',fill:true,tension:0.3,pointRadius:1,borderWidth:2}]},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:v=>sym+(v>=1000000?(v/1000000).toFixed(1)+'M':(v/1000).toFixed(0)+'k')}}}}});
   } else if(type==='bar'){
-    chartInstance=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Annual Buy Cost',data:buyYearlyCost,backgroundColor:'rgba(42,107,74,0.6)',borderRadius:2},{label:'Annual Rent Cost',data:rentYearlyCost,backgroundColor:'rgba(26,58,92,0.6)',borderRadius:2}]},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}});
+    const sym = CITIES[activeCity].currency;
+    chartInstance=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Annual Buy Cost',data:buyYearlyCost,backgroundColor:'rgba(42,107,74,0.6)',borderRadius:2},{label:'Annual Rent Cost',data:rentYearlyCost,backgroundColor:'rgba(26,58,92,0.6)',borderRadius:2}]},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:v=>sym+(v/1000).toFixed(0)+'k'}}}}});
   } else {
     const totalBuy=buyYearlyCost.reduce((a,b)=>a+b,0);
     const totalRent=rentYearlyCost.reduce((a,b)=>a+b,0);
