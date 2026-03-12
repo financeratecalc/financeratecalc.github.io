@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home Equity Protector | How Much Are You Really Worth? | FinanceRateCalc</title>
+  <meta name="description" content="Find out exactly how much equity you have — and what you could lose if you walk away. Free tool by a licensed banking professional."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8VGHR8XH4C"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-8VGHR8XH4C');</script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --paper:#f8f6f1;--ink:#1a1a18;--ink-light:#4a4a45;--ink-faint:#8a8a82;
+      --rule:#d4d0c8;--gold:#b8860b;--gold-light:#fdf8e8;
+      --green:#1a6b2a;--green-bg:#e6f4ea;
+      --red:#8b1a1a;--red-bg:#fdf0f0;
+      --blue:#1a3a6b;--blue-bg:#e8f0fd;
+    }
+    body{font-family:'Outfit',sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;}
+
+    nav{background:var(--ink);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
+    .nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--paper);text-decoration:none;}
+    .nav-links{display:flex;gap:.25rem;list-style:none;}
+    .nav-links a{color:#c8c4bc;text-decoration:none;font-size:.78rem;padding:.35rem .6rem;border-radius:3px;transition:color .2s;text-transform:uppercase;letter-spacing:.03em;}
+    .nav-links a:hover{color:var(--paper);background:rgba(255,255,255,.1);}
+
+    .hero{background:var(--ink);color:var(--paper);padding:3.5rem 2rem 3rem;text-align:center;position:relative;overflow:hidden;}
+    .hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,.02) 39px,rgba(255,255,255,.02) 40px);}
+    .hero-eyebrow{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#8a8a82;margin-bottom:.75rem;position:relative;}
+    .hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:600;margin-bottom:.75rem;line-height:1.2;position:relative;}
+    .hero h1 em{font-style:italic;color:#d4a820;}
+    .hero-sub{font-size:.95rem;color:#c8c4bc;font-weight:300;max-width:520px;margin:0 auto;line-height:1.7;position:relative;}
+
+    .main-wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+
+    /* CALCULATOR */
+    .calc-card{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:2rem;margin-bottom:1.5rem;}
+    .calc-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;margin-bottom:1.5rem;color:var(--ink);}
+
+    .input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.5rem;}
+    @media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
+    .input-group label{display:block;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.4rem;}
+    .input-group input{width:100%;padding:.75rem 1rem;border:1.5px solid var(--rule);border-radius:6px;font-family:'Outfit',sans-serif;font-size:1rem;color:var(--ink);background:var(--paper);outline:none;transition:border-color .2s;}
+    .input-group input:focus{border-color:var(--gold);}
+    .input-hint{font-size:.72rem;color:var(--ink-faint);margin-top:.3rem;}
+
+    .calc-btn{width:100%;padding:.9rem;background:var(--ink);color:var(--paper);border:none;border-radius:6px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s;letter-spacing:.03em;}
+    .calc-btn:hover{background:#2a2a28;}
+
+    /* RESULTS */
+    #results{display:none;animation:fadeIn .4s ease;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+    .equity-banner{border-radius:10px;padding:2rem;text-align:center;margin-bottom:1.5rem;}
+    .equity-banner.positive{background:linear-gradient(135deg,#0f2f12,#1a4520);border:1px solid rgba(45,158,69,.3);}
+    .equity-banner.negative{background:linear-gradient(135deg,#2a0808,#3a1010);border:1px solid rgba(192,57,43,.3);}
+    .equity-label{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:#9a9a92;margin-bottom:.5rem;}
+    .equity-amount{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,6vw,4rem);font-weight:700;line-height:1;margin-bottom:.4rem;}
+    .equity-amount.positive{color:#4dce6a;}
+    .equity-amount.negative{color:#e87070;}
+    .equity-sub{font-size:.85rem;color:#9a9a92;}
+
+    .metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+    @media(max-width:600px){.metrics-grid{grid-template-columns:1fr;}}
+    .metric-box{background:#fff;border:1px solid var(--rule);border-radius:8px;padding:1.25rem;text-align:center;}
+    .metric-label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.4rem;}
+    .metric-value{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--ink);}
+    .metric-note{font-size:.72rem;color:var(--ink-faint);margin-top:.2rem;}
+
+    /* SCENARIO BOXES */
+    .scenario-title{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1rem;display:flex;align-items:center;gap:.75rem;}
+    .scenario-title::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+    .scenario-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+    @media(max-width:600px){.scenario-grid{grid-template-columns:1fr;}}
+
+    .scenario-box{border-radius:8px;padding:1.5rem;}
+    .scenario-box.bad{background:var(--red-bg);border:1px solid #d09090;}
+    .scenario-box.good{background:var(--green-bg);border:1px solid #a0d0a8;}
+    .scenario-box-label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:.5rem;}
+    .scenario-box.bad .scenario-box-label{color:var(--red);}
+    .scenario-box.good .scenario-box-label{color:var(--green);}
+    .scenario-box-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--ink);}
+    .scenario-box-amount{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;margin-bottom:.4rem;}
+    .scenario-box.bad .scenario-box-amount{color:var(--red);}
+    .scenario-box.good .scenario-box-amount{color:var(--green);}
+    .scenario-box-desc{font-size:.8rem;color:var(--ink-light);line-height:1.5;}
+
+    /* CTA */
+    .cta-box{background:linear-gradient(135deg,#0f2f12,#1a4520);border:1px solid rgba(45,158,69,.3);border-radius:8px;padding:2rem;text-align:center;margin-bottom:1.5rem;}
+    .cta-box h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:#fff;margin-bottom:.4rem;}
+    .cta-box p{font-size:.84rem;color:#9a9a92;margin-bottom:1.25rem;line-height:1.5;}
+    .cta-btn{display:inline-block;padding:.8rem 2rem;background:#2d9e45;color:#fff;border-radius:5px;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:600;text-decoration:none;transition:background .2s;}
+    .cta-btn:hover{background:#248a3a;}
+    .cta-disclaimer{font-size:.68rem;color:#4a4a42;margin-top:.75rem;}
+
+    /* CREDIT REPAIR CTA */
+    .repair-box{background:var(--blue-bg);border:1px solid #a0b8d8;border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:1.5rem;margin-bottom:1.5rem;}
+    .repair-label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);font-weight:600;margin-bottom:.5rem;}
+    .repair-box h3{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;margin-bottom:.4rem;}
+    .repair-box p{font-size:.84rem;color:var(--ink-light);margin-bottom:1rem;line-height:1.5;}
+    .repair-btn{display:inline-block;padding:.65rem 1.4rem;background:var(--blue);color:#fff;border-radius:5px;font-family:'Outfit',sans-serif;font-size:.84rem;font-weight:600;text-decoration:none;transition:background .2s;}
+    .repair-btn:hover{background:#142d55;}
+
+    /* BANKER NOTE */
+    .banker-note{background:var(--gold-light);border:1px solid #d4c080;border-left:4px solid var(--gold);border-radius:0 6px 6px 0;padding:1.25rem 1.5rem;margin-bottom:1.5rem;}
+    .banker-note-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;font-weight:600;}
+    .banker-note p{font-size:.85rem;color:var(--ink-light);margin:0;line-height:1.6;}
+
+    .recalc-btn{width:100%;padding:.75rem;background:none;border:1px solid var(--rule);border-radius:6px;font-family:'Outfit',sans-serif;font-size:.85rem;color:var(--ink-faint);cursor:pointer;transition:all .2s;margin-top:.5rem;}
+    .recalc-btn:hover{border-color:var(--ink);color:var(--ink);}
+
+    footer{background:var(--ink);color:#8a8a82;padding:2rem;text-align:center;font-size:.8rem;}
+    footer a{color:#c8c4bc;text-decoration:none;}
+    .footer-links{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1rem;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">FinanceRateCalc</a>
+  <ul class="nav-links">
+    <li><a href="mortgage-calculator.html">🏠 Mortgage</a></li>
+    <li><a href="mortgage-crisis-map.html">🚨 Crisis Map</a></li>
+    <li><a href="debt-consolidation-calculator.html">💳 Debt</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <p class="hero-eyebrow">Free Tool · Instant Results · No Login Required</p>
+  <h1>How Much of Your Home<br/>Do You <em>Actually</em> Own?</h1>
+  <p class="hero-sub">Most homeowners don't know their real equity — and banks count on that. Enter two numbers and find out exactly what you stand to lose, protect, or unlock.</p>
+</div>
+
+<div class="main-wrap">
+
+  <!-- CALCULATOR -->
+  <div class="calc-card">
+    <div class="calc-title">📊 Your Equity Snapshot</div>
+    <div class="input-grid">
+      <div class="input-group">
+        <label>Current Home Value ($)</label>
+        <input type="number" id="homeValue" placeholder="e.g. 450000" min="0"/>
+        <div class="input-hint">Use Zillow or a recent appraisal estimate</div>
+      </div>
+      <div class="input-group">
+        <label>Remaining Mortgage Balance ($)</label>
+        <input type="number" id="mortgageBalance" placeholder="e.g. 280000" min="0"/>
+        <div class="input-hint">Check your latest mortgage statement</div>
+      </div>
+      <div class="input-group">
+        <label>Current Interest Rate (%)</label>
+        <input type="number" id="currentRate" placeholder="e.g. 7.2" step="0.1" min="0"/>
+        <div class="input-hint">Your current mortgage rate</div>
+      </div>
+      <div class="input-group">
+        <label>Years Remaining on Mortgage</label>
+        <input type="number" id="yearsLeft" placeholder="e.g. 24" min="1" max="30"/>
+        <div class="input-hint">How many years left on your loan</div>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate My Equity →</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results"></div>
+
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms-of-service.html">Terms of Service</a>
+    <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+  </div>
+  <p>© 2026 FinanceRateCalc.com · For informational purposes only · Not financial advice</p>
+</footer>
+
+<script>
+function fmt(n) {
+  return '$' + Math.abs(Math.round(n)).toLocaleString();
+}
+function pct(n) {
+  return Math.abs(n).toFixed(1) + '%';
+}
+
+function calculate() {
+  const homeVal = parseFloat(document.getElementById('homeValue').value);
+  const mortgage = parseFloat(document.getElementById('mortgageBalance').value);
+  const rate = parseFloat(document.getElementById('currentRate').value);
+  const years = parseFloat(document.getElementById('yearsLeft').value);
+
+  if (!homeVal || !mortgage) {
+    alert('Please enter your home value and mortgage balance.');
+    return;
+  }
+
+  const equity = homeVal - mortgage;
+  const equityPct = (equity / homeVal) * 100;
+  const ltv = (mortgage / homeVal) * 100;
+
+  // Closing costs if they sold (~7%)
+  const sellingCosts = homeVal * 0.07;
+  const netIfSold = equity - sellingCosts;
+
+  // Cash-out refi: borrow to 80% LTV
+  const maxCashOut = (homeVal * 0.80) - mortgage;
+
+  // Monthly payment
+  let monthlyPayment = 0;
+  if (rate && years) {
+    const r = (rate / 100) / 12;
+    const n = years * 12;
+    monthlyPayment = mortgage * (r * Math.pow(1+r,n)) / (Math.pow(1+r,n)-1);
+  }
+
+  // Refi savings (hypothetical at 6.5%)
+  let refiMonthly = 0;
+  let refiSavings = 0;
+  if (years) {
+    const r2 = (6.5 / 100) / 12;
+    const n2 = 30 * 12;
+    refiMonthly = mortgage * (r2 * Math.pow(1+r2,n2)) / (Math.pow(1+r2,n2)-1);
+    refiSavings = rate ? (monthlyPayment - refiMonthly) : 0;
+  }
+
+  const isPositive = equity > 0;
+  const isUnderwater = equity < 0;
+  const hasCashOutOption = maxCashOut > 10000;
+
+  let html = '';
+
+  // EQUITY BANNER
+  html += `
+    <div class="equity-banner ${isPositive ? 'positive' : 'negative'}">
+      <div class="equity-label">${isPositive ? 'Your Home Equity' : 'You Are Underwater By'}</div>
+      <div class="equity-amount ${isPositive ? 'positive' : 'negative'}">${fmt(equity)}</div>
+      <div class="equity-sub">${isPositive
+        ? `You own ${pct(equityPct)} of your home. Your loan-to-value ratio is ${pct(ltv)}.`
+        : `You owe more than your home is worth. Your LTV is ${pct(ltv)}.`
+      }</div>
+    </div>
+  `;
+
+  // METRICS
+  html += `
+    <div class="metrics-grid">
+      <div class="metric-box">
+        <div class="metric-label">Home Value</div>
+        <div class="metric-value">${fmt(homeVal)}</div>
+        <div class="metric-note">What you own</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Mortgage Balance</div>
+        <div class="metric-value">${fmt(mortgage)}</div>
+        <div class="metric-note">What you owe</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Loan-to-Value</div>
+        <div class="metric-value" style="color:${ltv > 90 ? '#8b1a1a' : ltv > 80 ? '#92650a' : '#1a6b2a'}">${pct(ltv)}</div>
+        <div class="metric-note">${ltv > 90 ? 'High risk' : ltv > 80 ? 'Watch carefully' : 'Healthy range'}</div>
+      </div>
+    </div>
+  `;
+
+  // SCENARIOS
+  if (isPositive) {
+    html += `<div class="scenario-title">What You Could Gain or Lose</div>`;
+    html += `<div class="scenario-grid">`;
+
+    // BAD: walk away / foreclosure
+    html += `
+      <div class="scenario-box bad">
+        <div class="scenario-box-label">❌ If You Walk Away or Foreclose</div>
+        <div class="scenario-box-title">Equity You'd Lose</div>
+        <div class="scenario-box-amount">${fmt(equity)}</div>
+        <div class="scenario-box-desc">Foreclosure means the bank sells your home — often below market value. You walk away with nothing, and your credit score drops 100–150 points for 7 years.</div>
+      </div>
+    `;
+
+    // GOOD: cash-out refi or sell properly
+    if (hasCashOutOption) {
+      html += `
+        <div class="scenario-box good">
+          <div class="scenario-box-label">✅ Cash-Out Refinance Option</div>
+          <div class="scenario-box-title">Available to Unlock</div>
+          <div class="scenario-box-amount">${fmt(maxCashOut)}</div>
+          <div class="scenario-box-desc">At 80% LTV, you could access ${fmt(maxCashOut)} in cash — to pay off high-interest debt, make repairs, or create an emergency fund — while keeping your home.</div>
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="scenario-box good">
+          <div class="scenario-box-label">✅ If You Sell Properly</div>
+          <div class="scenario-box-title">Net Proceeds After Costs</div>
+          <div class="scenario-box-amount">${fmt(Math.max(0, netIfSold))}</div>
+          <div class="scenario-box-desc">After agent fees and closing costs (~7%), you'd walk away with approximately ${fmt(Math.max(0, netIfSold))} in your pocket — versus $0 in foreclosure.</div>
+        </div>
+      `;
+    }
+    html += `</div>`;
+  }
+
+  // REFI SAVINGS
+  if (rate && rate > 6.5 && refiSavings > 50) {
+    html += `
+      <div class="banker-note">
+        <div class="banker-note-label">💡 Rate Opportunity</div>
+        <p>Your current rate is ${rate}%. At today's market rate of ~6.5%, refinancing could save you approximately <strong>${fmt(refiSavings)}/month</strong> — that's <strong>${fmt(refiSavings * 12)}/year</strong> back in your pocket. Worth exploring before rates move again.</p>
+      </div>
+    `;
+  }
+
+  // PRIMARY CTA
+  if (isPositive && hasCashOutOption) {
+    html += `
+      <div class="cta-box">
+        <h3>Your equity is real money. Don't let the bank take it.</h3>
+        <p>See if you qualify for a cash-out refinance or a lower rate. Free quote — won't affect your credit score.</p>
+        <a href="YOUR-LENDINGTREE-AFFILIATE-LINK" class="cta-btn">🔍 Check My Refinance Options →</a>
+        <div class="cta-disclaimer">*Affiliate link — we may earn a commission if you apply. <a href="affiliate-disclosure.html" style="color:#6a6a62;">See disclosure.</a></div>
+      </div>
+    `;
+  } else if (isPositive) {
+    html += `
+      <div class="cta-box">
+        <h3>Protect what you've built.</h3>
+        <p>Even with limited equity, options exist. Run your full financial profile to see where you stand before your lender does.</p>
+        <a href="bank-approval-simulator.html" class="cta-btn">🏦 Run My Approval Profile →</a>
+        <div class="cta-disclaimer">*Free tool. No personal data collected.</div>
+      </div>
+    `;
+  } else {
+    // UNDERWATER
+    html += `
+      <div class="cta-box" style="background:linear-gradient(135deg,#2a0808,#3a1010);border:1px solid rgba(192,57,43,.3);">
+        <h3 style="color:#fff;">You're underwater — but you're not out of options.</h3>
+        <p>Short sales, loan modifications, and forbearance agreements all exist for this situation. See your full crisis assessment first.</p>
+        <a href="mortgage-crisis-map.html" class="cta-btn" style="background:#c0392b;">🚨 See My Crisis Assessment →</a>
+        <div class="cta-disclaimer" style="color:#4a4a42;">*Free tool. Not financial advice.</div>
+      </div>
+    `;
+  }
+
+  // CREDIT REPAIR CTA (always show)
+  html += `
+    <div class="repair-box">
+      <div class="repair-label">🔧 Credit Score Issue?</div>
+      <h3>Low credit score blocking your options?</h3>
+      <p>If your credit score is below 640, most refinance and loan modification programs won't approve you. Credit repair services can raise your score 50–100+ points in 3–6 months — reopening options that are currently closed.</p>
+      <a href="YOUR-CREDIT-REPAIR-AFFILIATE-LINK" class="repair-btn">📈 Check My Credit Repair Options →</a>
+    </div>
+  `;
+
+  // BANKER NOTE
+  html += `
+    <div class="banker-note">
+      <div class="banker-note-label">📋 Ziya Y. — Senior Banker & Founder of FinanceRateCalc</div>
+      <p>In 23 years of banking, the biggest mistake I saw homeowners make was not knowing their equity number. Banks know it. Real estate agents know it. You should too — because whoever has the information has the power in any negotiation.</p>
+    </div>
+  `;
+
+  html += `<button class="recalc-btn" onclick="recalculate()">↩ Recalculate</button>`;
+
+  document.getElementById('results').innerHTML = html;
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+
+  gtag('event', 'equity_calculator_used', {
+    equity_positive: isPositive,
+    ltv_range: ltv > 90 ? 'high' : ltv > 80 ? 'medium' : 'low'
+  });
+}
+
+function recalculate() {
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('results').innerHTML = '';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
