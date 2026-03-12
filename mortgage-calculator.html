@@ -3,163 +3,168 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mortgage Calculator 2026 — Monthly Payment + Amortization | FinanceRateCalc</title>
-<meta name="description" content="Free mortgage calculator with full amortization schedule and chart. See exactly how much goes to interest vs principal every month. Built by a licensed banker.">
-<link rel="canonical" href="https://financeratecalc.com/mortgage-calculator.html">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-13712175066');
-</script>
+<title>Mortgage Calculator 2026 | FinanceRateCalc</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Geist:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#0f0e0c;--paper:#faf8f4;--cream:#f2ede4;--gold:#b8860b;--gold-light:#d4a017;--text:#2c2a26;--muted:#8a8070;--border:#ddd8cc;--white:#ffffff;--green:#2a6b4a;--red:#8b2a2a;}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Geist',sans-serif;background:var(--paper);color:var(--text);line-height:1.6;}
-header{background:var(--ink);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
-.logo em{font-style:italic;color:var(--gold-light);}
-.nav-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;font-weight:500;margin-left:24px;transition:color 0.2s;}
-.nav-links a:hover{color:var(--gold-light);}
-@media(max-width:768px){header{padding:0 20px;}.nav-links{display:none;}}
+:root{--ink:#0f0e0c;--paper:#faf8f4;--gold:#b8860b;--gold-light:#d4a017;--border:#ddd8cc;--white:#ffffff;--green:#2a6b4a;--red:#8b2a2a;}
+body{font-family:'Geist',sans-serif;background:var(--paper);color:var(--ink);margin:0;padding:0;}
+header{background:var(--ink);padding:15px 40px;display:flex;justify-content:space-between;align-items:center;}
+.logo{font-family:'Fraunces',serif;color:#fff;text-decoration:none;font-size:20px;font-weight:900;}
+.logo em{color:var(--gold-light);font-style:italic;}
+.main-container{max-width:1100px;margin:40px auto;padding:0 20px;display:grid;grid-template-columns:350px 1fr;gap:30px;}
+@media(max-width:900px){.main-container{grid-template-columns:1fr;}}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:25px;box-shadow:0 4px 12px rgba(0,0,0,0.03);position:sticky;top:20px;}
+.field{margin-bottom:15px;}
+.field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:#888;margin-bottom:5px;}
+.field input, .field select{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:15px;box-sizing:border-box;font-family:'Geist';}
+.calc-btn{width:100%;background:var(--gold);color:white;border:none;padding:15px;border-radius:10px;font-weight:700;cursor:pointer;font-size:16px;transition:0.2s;}
+.calc-btn:hover{background:var(--gold-light);transform:translateY(-2px);}
 
-.hero{background:var(--ink);padding:50px 60px 60px;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(184,134,11,0.08) 0%,transparent 60%);}
-.hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:1;}
-.hero-eye{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-.hero-eye::before{content:'';display:inline-block;width:24px;height:1px;background:var(--gold-light);}
-.hero h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,44px);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:10px;}
-.hero h1 em{font-style:italic;color:var(--gold-light);}
-.hero-sub{color:rgba(255,255,255,0.4);font-size:14px;font-weight:300;}
+.result-box{background:var(--ink);color:white;padding:30px;border-radius:16px;text-align:center;margin-bottom:25px;}
+.res-val{font-family:'Fraunces',serif;font-size:42px;color:var(--gold-light);margin:10px 0;}
 
-.main{max-width:960px;margin:0 auto;padding:40px 60px 80px;display:grid;grid-template-columns:340px 1fr;gap:40px;align-items:start;}
-@media(max-width:900px){.main{grid-template-columns:1fr;padding:30px 20px 60px;}}
+#smart-advisor{border:2px solid var(--gold);border-radius:16px;padding:25px;margin-bottom:25px;background:white;box-shadow:0 10px 20px rgba(184,134,11,0.1);}
+.smart-btn{display:block;background:var(--ink);color:var(--gold-light);text-align:center;padding:14px;text-decoration:none;border-radius:8px;font-weight:700;margin-top:15px;}
 
-.input-panel{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:28px;position:sticky;top:80px;}
-.panel-title{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--ink);margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-.field{margin-bottom:18px;}
-.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}
-.field input[type="number"], .field select{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:8px;font-size:15px;background:var(--paper);outline:none;font-family:'Geist',sans-serif;}
-.calc-btn{width:100%;background:var(--gold);color:var(--ink);border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px;}
-.calc-btn:hover{background:var(--gold-light);transform:translateY(-1px);}
-
-.results-panel{min-height:200px;}
-.result-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:28px;}
-@media(max-width:500px){.result-cards{grid-template-columns:1fr;}}
-.rcard{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
-.rcard.primary{background:var(--ink);border-color:transparent;grid-column:1/-1;}
-.rcard-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-.rcard-value{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--ink);line-height:1;}
-.rcard.primary .rcard-value{color:var(--gold-light);font-size:38px;}
-
-/* ZIYA'S SMART ADVISOR CSS */
-#smart-alert-container {
-    background: #ffffff;
-    border: 2px solid var(--gold);
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 24px;
-    box-shadow: 0 10px 15px -3px rgba(184, 134, 11, 0.1);
-}
-.smart-tag {
-    background: var(--gold);
-    color: var(--ink);
-    font-size: 10px;
-    font-weight: 800;
-    padding: 3px 10px;
-    border-radius: 50px;
-    text-transform: uppercase;
-    display: inline-block;
-    margin-bottom: 10px;
-}
-.smart-title {
-    font-family: 'Fraunces', serif;
-    font-size: 18px;
-    font-weight: 900;
-    color: var(--ink);
-    margin-bottom: 8px;
-}
-.smart-desc {
-    font-size: 14px;
-    color: var(--text);
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
-.smart-link-btn {
-    display: block;
-    text-align: center;
-    background: var(--ink);
-    color: var(--gold-light) !important;
-    padding: 12px;
-    border-radius: 8px;
-    text-decoration: none !important;
-    font-weight: 700;
-}
-
-.banker-note{background:var(--cream);border-left:3px solid var(--gold);border-radius:12px;padding:20px;margin-bottom:24px;display:flex;gap:14px;}
-footer{background:var(--ink);padding:32px 60px; color: white; text-align: center;}
+.amort-table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px;background:white;border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+.amort-table th{background:#f8f5f0;padding:12px;text-align:left;font-size:11px;text-transform:uppercase;color:#888;}
+.amort-table td{padding:12px;border-bottom:1px solid #f0f0f0;}
+.chart-wrap{background:white;border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:25px;}
 </style>
 </head>
 <body>
 
 <header>
   <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
-  <div class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="can-i-get-a-loan.html">Loan Check</a>
-  </div>
 </header>
 
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-eye">Mortgage Calculator · 2026</div>
-    <h1>See Your <em>Real</em> Monthly Payment</h1>
-    <p class="hero-sub">Licensed Banker Tool for Professional Amortization.</p>
-  </div>
-</div>
-
-<div class="main">
-  <div class="input-panel">
-    <div class="panel-title">Calculator</div>
+<div class="main-container">
+  <div class="card">
+    <h2 style="font-family:'Fraunces';margin-top:0;font-size:24px;">Mortgage Tool</h2>
     <div class="field">
       <label>Home Price ($)</label>
-      <input type="number" id="homePrice" value="400000">
+      <input type="text" id="homePrice" value="400,000" onfocus="this.value=''">
     </div>
     <div class="field">
       <label>Down Payment ($)</label>
-      <input type="number" id="downPayment" value="80000">
+      <input type="text" id="downPayment" value="80,000">
     </div>
     <div class="field">
       <label>Interest Rate (%)</label>
-      <input type="number" id="rate" value="7.1" step="0.1">
+      <input type="text" id="rate" value="7.1">
     </div>
     <div class="field">
-      <label>Term (Years)</label>
+      <label>Loan Term</label>
       <select id="term">
-        <option value="30">30 Years</option>
-        <option value="15">15 Years</option>
+        <option value="30">30 Years Fixed</option>
+        <option value="15">15 Years Fixed</option>
+        <option value="10">10 Years Fixed</option>
       </select>
     </div>
-    <button class="calc-btn" onclick="calculate()">Calculate →</button>
+    <button class="calc-btn" onclick="calculate()">Calculate Payment →</button>
   </div>
 
-  <div class="results-panel" id="resultsPanel">
-    <div id="emptyState" style="text-align:center; padding: 50px;">
-      <p>Enter details and click Calculate</p>
+  <div id="results">
+    <div id="empty-msg" style="text-align:center;padding:120px 20px;border:2px dashed var(--border);border-radius:20px;color:#888;">
+      <div style="font-size:40px;margin-bottom:15px;">📊</div>
+      Enter your mortgage details to generate the full amortization report and legal advice.
     </div>
-
-    <div id="resultCards" style="display:none;">
-      <div class="result-cards">
-        <div class="rcard primary">
-          <div class="rcard-label">Monthly Payment</div>
-          <div class="rcard-value" id="totalPayment">—</div>
-        </div>
+    
+    <div id="result-content" style="display:none;">
+      <div class="result-box">
+        <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;">Est. Monthly Payment (P&I)</div>
+        <div class="res-val" id="monthlyVal">$0</div>
+        <div id="bankerNote" style="font-size:14px;opacity:0.8;font-weight:300;"></div>
       </div>
 
-      <div id="smart-alert-container">
-          <div class="smart-tag">Licensed Banker Advice</div>
-          <div class="smart-title">Secure Your Agreement</div>
-          <p class="smart
+      <div id="smart-advisor">
+        <div style="font-weight:800;color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Banker's Expert Recommendation</div>
+        <h3 style="margin:0 0 10px 0;font-family:'Fraunces';font-size:22px;">Secure Your Home Purchase Agreement</h3>
+        <p style="font-size:15px;color:#444;line-height:1.6;">Don't rely on verbal promises. At these interest rates, every legal detail counts. Use <strong>LawDepot's</strong> professional templates to create a binding Purchase Agreement in minutes.</p>
+        <a href="https://www.kqzyfj.com/click-101700650-16996011" target="_blank" class="smart-btn">Generate My Legal Contract →</a>
+      </div>
+
+      <div class="chart-wrap">
+        <h4 style="margin:0 0 15px 0;font-family:'Fraunces';">Balance vs. Equity</h4>
+        <canvas id="mortgageChart" height="120"></canvas>
+      </div>
+
+      <h4 style="font-family:'Fraunces';margin-bottom:10px;">Amortization Schedule (First 10 Years)</h4>
+      <table class="amort-table">
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Principal</th>
+            <th>Interest</th>
+            <th>Remaining Balance</th>
+          </tr>
+        </thead>
+        <tbody id="amortBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+let myChart = null;
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+
+function calculate() {
+  let hp = parseFloat(document.getElementById('homePrice').value.replace(/,/g, '').replace(',', '.'));
+  let dp = parseFloat(document.getElementById('downPayment').value.replace(/,/g, '').replace(',', '.'));
+  let r = parseFloat(document.getElementById('rate').value.replace(',', '.'));
+  let t = parseInt(document.getElementById('term').value);
+
+  if(isNaN(hp) || isNaN(r)) { alert("Please check your numbers"); return; }
+
+  let loan = hp - dp;
+  let mRate = r / 100 / 12;
+  let n = t * 12;
+  
+  let pmt = loan * (mRate * Math.pow(1 + mRate, n)) / (Math.pow(1 + mRate, n) - 1);
+  let totalInt = (pmt * n) - loan;
+
+  document.getElementById('monthlyVal').innerText = fmt(pmt);
+  document.getElementById('bankerNote').innerText = "Total Loan Interest: " + fmt(totalInt);
+  
+  // Tabloyu Oluştur (İlk 10 yıl)
+  let balance = loan;
+  let tableHtml = '';
+  let chartLabels = [];
+  let chartBalance = [];
+  let chartEquity = [];
+
+  for(let y=1; y<=t; y++) {
+    let yrInterest = 0;
+    let yrPrincipal = 0;
+    for(let m=1; m<=12; m++) {
+      let interest = balance * mRate;
+      let principal = pmt - interest;
+      yrInterest += interest;
+      yrPrincipal += principal;
+      balance -= principal;
+    }
+    if(y <= 10) {
+      tableHtml += `<tr><td>Year ${y}</td><td>${fmt(yrPrincipal)}</td><td>${fmt(yrInterest)}</td><td>${fmt(Math.max(0, balance))}</td></tr>`;
+    }
+    chartLabels.push("Yr " + y);
+    chartBalance.push(Math.round(balance));
+    chartEquity.push(Math.round(hp - balance));
+  }
+  document.getElementById('amortBody').innerHTML = tableHtml;
+
+  // Grafik Oluştur
+  if(myChart) myChart.destroy();
+  const ctx = document.getElementById('mortgageChart').getContext('2d');
+  myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: chartLabels,
+      datasets: [
+        { label: 'Remaining Balance', data: chartBalance, borderColor: '#8b2a2a', fill: false, tension: 0.1 },
+        { label: 'Your Equity', data: chartEquity, borderColor: '#2a6b4a', fill: false, tension: 0.1 }
+      ]
+    },
+    options: { responsive: true, plugins: { legend: { position
