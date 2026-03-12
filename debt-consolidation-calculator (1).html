@@ -447,77 +447,161 @@
     .amort-table tr:hover td { background: var(--accent-light); }
 
     /* CTA AFFILIATE */
+    /* AFFILIATE BOX — DYNAMIC */
     .affiliate-box {
-      background: linear-gradient(135deg, #1a1a18 0%, #2c3e2c 100%);
-      border-radius: 8px;
-      padding: 2rem;
-      text-align: center;
+      background: linear-gradient(135deg, #0f1f0f 0%, #1a2e1a 50%, #0f1f0f 100%);
+      border-radius: 10px;
       margin-bottom: 2rem;
       color: var(--paper);
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(44,95,46,0.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     }
-    .affiliate-box-eyebrow {
-      font-size: 0.68rem;
-      letter-spacing: 0.18em;
+    .affiliate-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), #4a9f4c, var(--gold), #4a9f4c, var(--accent));
+      background-size: 200% 100%;
+      animation: shimmer 3s linear infinite;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .affiliate-box-savings {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      padding: 1.75rem 2rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      flex-wrap: wrap;
+    }
+    .aff-saving-item { text-align: center; }
+    .aff-saving-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: #8a8a82;
-      margin-bottom: 0.5rem;
+      color: #6a6a62;
+      margin-bottom: 0.4rem;
     }
+    .aff-saving-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1;
+      color: #5dba5f;
+    }
+    .aff-saving-value.gold { color: #d4a820; }
+    .aff-saving-divider {
+      width: 1px; height: 52px;
+      background: rgba(255,255,255,0.08);
+    }
+    @media (max-width: 500px) { .aff-saving-divider { display: none; } }
+
+    .affiliate-box-bottom {
+      padding: 1.5rem 2rem 1.75rem;
+      text-align: center;
+    }
+    .affiliate-urgency {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      color: #d4a820;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .urgency-dot {
+      width: 6px; height: 6px;
+      background: #d4a820;
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(0.7); } }
+
     .affiliate-box h3 {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.6rem;
+      font-size: 1.55rem;
       font-weight: 600;
-      margin-bottom: 0.5rem;
-      line-height: 1.2;
+      margin-bottom: 0.4rem;
+      line-height: 1.25;
+      color: var(--paper);
     }
-    .affiliate-box p {
-      font-size: 0.88rem;
-      color: #c8c4bc;
-      margin-bottom: 1.5rem;
-      max-width: 480px;
-      margin-left: auto;
-      margin-right: auto;
+    .affiliate-box-sub {
+      font-size: 0.83rem;
+      color: #7a7a72;
+      margin-bottom: 1.25rem;
+      line-height: 1.6;
     }
     .affiliate-btns {
       display: flex;
       gap: 0.75rem;
       justify-content: center;
       flex-wrap: wrap;
+      margin-bottom: 1rem;
     }
     .affiliate-btn-primary {
-      padding: 0.85rem 2rem;
+      padding: 0.9rem 2.25rem;
       background: var(--accent);
       color: white;
       border: none;
       border-radius: 5px;
       font-family: 'Outfit', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
       letter-spacing: 0.02em;
+      box-shadow: 0 4px 16px rgba(44,95,46,0.4);
     }
-    .affiliate-btn-primary:hover { background: var(--accent-hover); }
+    .affiliate-btn-primary:hover {
+      background: #3a7a3c;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(44,95,46,0.5);
+    }
     .affiliate-btn-secondary {
-      padding: 0.85rem 2rem;
+      padding: 0.9rem 2rem;
       background: transparent;
       color: var(--paper);
-      border: 1px solid rgba(255,255,255,0.3);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 5px;
       font-family: 'Outfit', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 400;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .affiliate-btn-secondary:hover { border-color: rgba(255,255,255,0.6); }
+    .affiliate-btn-secondary:hover {
+      border-color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.05);
+    }
+    .affiliate-trust {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      color: #5a5a52;
+    }
+    .trust-item span { color: #5dba5f; }
     .affiliate-disclaimer {
-      font-size: 0.72rem;
-      color: #6a6a62;
-      margin-top: 1rem;
+      font-size: 0.68rem;
+      color: #3a3a32;
+      margin-top: 0;
     }
 
     /* BANKER NOTE */
@@ -662,16 +746,46 @@
       <p id="banker-advice"></p>
     </div>
 
-    <!-- AFFILIATE CTA -->
+    <!-- AFFILIATE CTA — DYNAMIC -->
     <div class="affiliate-box">
-      <div class="affiliate-box-eyebrow">Personalized Offers · 2 Minutes · No Credit Impact</div>
-      <h3>Ready to Lock In Your<br/>Consolidation Rate?</h3>
-      <p>Compare real offers from multiple lenders. Check your rate without affecting your credit score.</p>
-      <div class="affiliate-btns">
-        <a href="YOUR-AFFILIATE-LINK-HERE" class="affiliate-btn-primary">Check My Rate — Free →</a>
-        <a href="YOUR-AFFILIATE-LINK-HERE" class="affiliate-btn-secondary">Compare Top Lenders</a>
+      <!-- TOP: savings numbers pulled from calculation -->
+      <div class="affiliate-box-savings">
+        <div class="aff-saving-item">
+          <div class="aff-saving-label">Your Monthly Savings</div>
+          <div class="aff-saving-value" id="aff-monthly">—</div>
+        </div>
+        <div class="aff-saving-divider"></div>
+        <div class="aff-saving-item">
+          <div class="aff-saving-label">Per Year</div>
+          <div class="aff-saving-value gold" id="aff-annual">—</div>
+        </div>
+        <div class="aff-saving-divider"></div>
+        <div class="aff-saving-item">
+          <div class="aff-saving-label">Total Interest Saved</div>
+          <div class="aff-saving-value gold" id="aff-total">—</div>
+        </div>
       </div>
-      <p class="affiliate-disclaimer">*Affiliate links — we may earn a commission at no cost to you. This does not affect our analysis.</p>
+
+      <!-- BOTTOM: CTA -->
+      <div class="affiliate-box-bottom">
+        <div class="affiliate-urgency">
+          <span class="urgency-dot"></span>
+          Rates change daily — lock yours in now
+        </div>
+        <h3 id="aff-headline">Ready to Lock In Your<br/>Consolidation Rate?</h3>
+        <p class="affiliate-box-sub">Check real offers from multiple lenders in 2 minutes.<br/>No impact on your credit score.</p>
+        <div class="affiliate-btns">
+          <a href="YOUR-AFFILIATE-LINK-HERE" class="affiliate-btn-primary">Check My Rate — Free →</a>
+          <a href="YOUR-AFFILIATE-LINK-HERE" class="affiliate-btn-secondary">Compare Top Lenders</a>
+        </div>
+        <div class="affiliate-trust">
+          <div class="trust-item"><span>✓</span> No credit impact</div>
+          <div class="trust-item"><span>✓</span> Takes 2 minutes</div>
+          <div class="trust-item"><span>✓</span> Multiple lenders</div>
+          <div class="trust-item"><span>✓</span> Free to check</div>
+        </div>
+        <p class="affiliate-disclaimer">*Affiliate links — we may earn a commission at no cost to you. This does not affect our analysis.</p>
+      </div>
     </div>
 
     <!-- AMORTIZATION -->
@@ -896,6 +1010,35 @@
 
     resultsEl.classList.add('visible');
     setTimeout(() => resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+    // Update affiliate box dynamically
+    function animateCount(el, target, prefix, duration) {
+      const start = 0;
+      const startTime = performance.now();
+      const update = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(start + (target - start) * eased);
+        el.textContent = prefix + current.toLocaleString('en-US');
+        if (progress < 1) requestAnimationFrame(update);
+      };
+      requestAnimationFrame(update);
+    }
+
+    if (monthlySavings > 0) {
+      animateCount(document.getElementById('aff-monthly'), Math.round(monthlySavings), '$', 1200);
+      animateCount(document.getElementById('aff-annual'), Math.round(annualSavings), '$', 1400);
+      animateCount(document.getElementById('aff-total'), Math.round(Math.max(0, interestSavings)), '$', 1600);
+      document.getElementById('aff-headline').innerHTML =
+        `You could save <span style="color:#5dba5f">${fmtD(monthlySavings)}/mo</span><br/>Lock in your rate today.`;
+    } else {
+      document.getElementById('aff-monthly').textContent = '—';
+      document.getElementById('aff-annual').textContent = '—';
+      document.getElementById('aff-total').textContent = '—';
+      document.getElementById('aff-headline').innerHTML =
+        `Simplify Your Payments<br/>Into One Monthly Bill.`;
+    }
 
     // GA event
     gtag('event', 'debt_consolidation_calculated', {
