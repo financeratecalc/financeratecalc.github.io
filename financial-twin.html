@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buy vs Rent Calculator 2026 — 30-Year Comparison | FinanceRateCalc</title>
-<meta name="description" content="Should you buy or rent? See the full 30-year financial comparison with charts. Real appreciation rates, real costs. Built by a licensed banker.">
+<title>Buy vs Rent Calculator 2026 — 25 Cities Worldwide | FinanceRateCalc</title>
+<meta name="description" content="Should you buy or rent? Real data for 25 cities worldwide. See the full 30-year financial comparison with charts. Built by a licensed banker with 23 years experience.">
 <link rel="canonical" href="https://financeratecalc.com/financial-twin.html">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-13712175066');</script>
@@ -31,6 +31,19 @@ header{background:var(--ink);padding:0 60px;height:64px;display:flex;align-items
 @media(max-width:768px){.hero{padding:30px 20px 40px;}}
 .main{max-width:1020px;margin:0 auto;padding:40px 60px 80px;}
 @media(max-width:768px){.main{padding:30px 20px 60px;}}
+
+/* City Selector */
+.city-selector{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px;}
+.cs-title{font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:var(--ink);margin-bottom:4px;}
+.cs-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.city-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+@media(max-width:700px){.city-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:420px){.city-grid{grid-template-columns:repeat(2,1fr);}}
+.city-btn{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:8px 6px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;text-align:center;transition:all 0.2s;line-height:1.4;}
+.city-btn:hover{border-color:var(--gold);color:var(--gold);}
+.city-btn.active{background:var(--gold);border-color:var(--gold);color:var(--ink);}
+.city-btn .city-flag{font-size:16px;display:block;margin-bottom:2px;}
+
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px;}
 @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
 .input-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;}
@@ -92,10 +105,7 @@ canvas{max-height:320px;}
 .lc-success-text{font-size:14px;color:rgba(255,255,255,0.7);}
 .lc-success-text strong{color:var(--gold-light);}
 #resultsSection{display:none;}
-
-/* LawDepot Box */
-.lawdepot-box{max-width:1020px;margin:0 auto 40px;padding:0 60px;}
-@media(max-width:768px){.lawdepot-box{padding:0 20px;}}
+.lawdepot-box{margin-bottom:40px;}
 .lawdepot-inner{background:linear-gradient(135deg,#f8f4ec,#faf8f4);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
 .lawdepot-icon{font-size:28px;flex-shrink:0;}
 .lawdepot-content{flex:1;min-width:200px;}
@@ -104,7 +114,6 @@ canvas{max-height:320px;}
 .lawdepot-desc{font-size:12px;color:var(--muted);line-height:1.6;}
 .lawdepot-cta{background:var(--gold);color:var(--ink);padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;transition:all 0.2s;flex-shrink:0;}
 .lawdepot-cta:hover{background:var(--gold-light);transform:translateY(-1px);}
-
 footer{background:var(--ink);padding:32px 60px;}
 @media(max-width:768px){footer{padding:24px 20px;}}
 .footer-inner{max-width:1020px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
@@ -122,20 +131,28 @@ footer{background:var(--ink);padding:32px 60px;}
   <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="mortgage-calculator.html">Mortgage</a>
-    <a href="can-i-get-a-loan.html">Loan Check</a>
+    <a href="compound-interest-calculator.html">Compound Interest</a>
     <a href="are-you-rich.html">Are You Rich?</a>
   </div>
 </header>
 
 <div class="hero">
   <div class="hero-inner">
-    <div class="hero-eye">Buy vs Rent Calculator · 2026</div>
+    <div class="hero-eye">Buy vs Rent Calculator · 25 Cities · 2026</div>
     <h1>Buy or Rent?<br>The <em>30-Year</em> Honest Answer</h1>
-    <p class="hero-sub">Real appreciation rates, real costs, real breakeven point. No spin — just the math.</p>
+    <p class="hero-sub">Real market data for 25 cities worldwide. Appreciation rates, costs, breakeven point. No spin — just the math.</p>
   </div>
 </div>
 
 <div class="main">
+
+  <!-- City Selector -->
+  <div class="city-selector">
+    <div class="cs-title">🌍 Select Your City</div>
+    <div class="cs-sub">Choose a city to load real local market data — or adjust the numbers manually below.</div>
+    <div class="city-grid" id="cityGrid"></div>
+  </div>
+
   <div class="two-col">
     <div class="input-card">
       <div class="ic-title">🏠 <span>Buying</span> <span class="ic-badge badge-buy">BUY</span></div>
@@ -211,19 +228,19 @@ footer{background:var(--ink);padding:32px 60px;}
         <div class="lc-success-text">✅ Done! Check your inbox for your <strong>full comparison report</strong>.</div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- LawDepot Affiliate Box -->
-<div class="lawdepot-box">
-  <div class="lawdepot-inner">
-    <div class="lawdepot-icon">📄</div>
-    <div class="lawdepot-content">
-      <div class="lawdepot-label">Legal Documents</div>
-      <div class="lawdepot-title">Ready to Buy? Get Your Purchase Agreement or Lease Contract</div>
-      <div class="lawdepot-desc">Whether you're buying a home or signing a lease, LawDepot has state-specific legal documents ready in minutes — no lawyer needed.</div>
+    <!-- LawDepot Affiliate Box -->
+    <div class="lawdepot-box">
+      <div class="lawdepot-inner">
+        <div class="lawdepot-icon">📄</div>
+        <div class="lawdepot-content">
+          <div class="lawdepot-label">Legal Documents</div>
+          <div class="lawdepot-title">Ready to Buy? Get Your Purchase Agreement or Lease Contract</div>
+          <div class="lawdepot-desc">Whether you're buying a home or signing a lease, LawDepot has state-specific legal documents ready in minutes — no lawyer needed.</div>
+        </div>
+        <a href="https://www.kqzyfj.com/click-101700650-16996011" target="_blank" rel="noopener" class="lawdepot-cta">Create Document →</a>
+      </div>
     </div>
-    <a href="https://www.kqzyfj.com/click-101700650-16996011" target="_blank" rel="noopener" class="lawdepot-cta">Create Document →</a>
   </div>
 </div>
 
@@ -241,6 +258,67 @@ footer{background:var(--ink);padding:32px 60px;}
 </footer>
 
 <script>
+// 25 Cities: flag, name, homePrice, downPct, mortgageRate, taxRate, appreciation, maintenance, monthlyRent, rentIncrease, investReturn
+const CITIES = [
+  // USA
+  { flag:'🇺🇸', name:'New York',     homePrice:850000, downPct:20, mortgageRate:7.1, taxRate:1.2, appreciation:4.5, maintenance:1.0, monthlyRent:3800, rentIncrease:4, investReturn:7 },
+  { flag:'🇺🇸', name:'Los Angeles',  homePrice:950000, downPct:20, mortgageRate:7.1, taxRate:1.1, appreciation:5.0, maintenance:1.0, monthlyRent:3200, rentIncrease:4, investReturn:7 },
+  { flag:'🇺🇸', name:'Miami',        homePrice:620000, downPct:20, mortgageRate:7.1, taxRate:1.0, appreciation:5.5, maintenance:1.1, monthlyRent:2800, rentIncrease:5, investReturn:7 },
+  { flag:'🇺🇸', name:'Dallas',       homePrice:420000, downPct:20, mortgageRate:7.1, taxRate:1.8, appreciation:4.0, maintenance:1.0, monthlyRent:1900, rentIncrease:4, investReturn:7 },
+  { flag:'🇺🇸', name:'Austin',       homePrice:520000, downPct:20, mortgageRate:7.1, taxRate:1.9, appreciation:4.5, maintenance:1.0, monthlyRent:2100, rentIncrease:4, investReturn:7 },
+  { flag:'🇺🇸', name:'Seattle',      homePrice:780000, downPct:20, mortgageRate:7.1, taxRate:1.0, appreciation:5.0, maintenance:1.0, monthlyRent:2900, rentIncrease:4, investReturn:7 },
+  { flag:'🇺🇸', name:'Chicago',      homePrice:380000, downPct:20, mortgageRate:7.1, taxRate:2.1, appreciation:3.5, maintenance:1.1, monthlyRent:1800, rentIncrease:3, investReturn:7 },
+  { flag:'🇺🇸', name:'Denver',       homePrice:580000, downPct:20, mortgageRate:7.1, taxRate:0.6, appreciation:4.5, maintenance:1.0, monthlyRent:2400, rentIncrease:4, investReturn:7 },
+  // Europe
+  { flag:'🇬🇧', name:'London',       homePrice:750000, downPct:10, mortgageRate:5.2, taxRate:0.5, appreciation:4.0, maintenance:1.0, monthlyRent:2800, rentIncrease:3, investReturn:6 },
+  { flag:'🇩🇪', name:'Berlin',       homePrice:480000, downPct:20, mortgageRate:4.0, taxRate:0.3, appreciation:3.5, maintenance:1.2, monthlyRent:1600, rentIncrease:3, investReturn:6 },
+  { flag:'🇫🇷', name:'Paris',        homePrice:680000, downPct:20, mortgageRate:3.8, taxRate:0.2, appreciation:3.5, maintenance:1.0, monthlyRent:2200, rentIncrease:2, investReturn:6 },
+  { flag:'🇳🇱', name:'Amsterdam',    homePrice:560000, downPct:10, mortgageRate:4.1, taxRate:0.1, appreciation:4.0, maintenance:1.1, monthlyRent:2000, rentIncrease:3, investReturn:6 },
+  { flag:'🇪🇸', name:'Madrid',       homePrice:420000, downPct:20, mortgageRate:4.5, taxRate:0.4, appreciation:4.5, maintenance:1.0, monthlyRent:1400, rentIncrease:4, investReturn:6 },
+  { flag:'🇨🇭', name:'Zurich',       homePrice:1200000, downPct:20, mortgageRate:2.2, taxRate:0.1, appreciation:2.5, maintenance:0.8, monthlyRent:3500, rentIncrease:1, investReturn:5 },
+  // Middle East
+  { flag:'🇦🇪', name:'Dubai',        homePrice:680000, downPct:25, mortgageRate:5.5, taxRate:0.0, appreciation:6.0, maintenance:1.5, monthlyRent:2800, rentIncrease:5, investReturn:7 },
+  { flag:'🇦🇪', name:'Abu Dhabi',    homePrice:520000, downPct:25, mortgageRate:5.5, taxRate:0.0, appreciation:5.0, maintenance:1.5, monthlyRent:2200, rentIncrease:4, investReturn:7 },
+  { flag:'🇸🇦', name:'Riyadh',       homePrice:380000, downPct:30, mortgageRate:6.0, taxRate:0.0, appreciation:5.5, maintenance:1.5, monthlyRent:1400, rentIncrease:4, investReturn:7 },
+  { flag:'🇹🇷', name:'Istanbul',     homePrice:200000, downPct:30, mortgageRate:35.0, taxRate:0.3, appreciation:15.0, maintenance:1.5, monthlyRent:600, rentIncrease:40, investReturn:15 },
+  // Asia-Pacific
+  { flag:'🇸🇬', name:'Singapore',    homePrice:1100000, downPct:25, mortgageRate:4.0, taxRate:0.4, appreciation:4.0, maintenance:0.8, monthlyRent:3200, rentIncrease:3, investReturn:6 },
+  { flag:'🇯🇵', name:'Tokyo',        homePrice:750000, downPct:20, mortgageRate:1.5, taxRate:1.4, appreciation:2.5, maintenance:1.0, monthlyRent:2000, rentIncrease:1, investReturn:5 },
+  { flag:'🇦🇺', name:'Sydney',       homePrice:1050000, downPct:20, mortgageRate:6.5, taxRate:0.4, appreciation:5.0, maintenance:1.0, monthlyRent:2800, rentIncrease:4, investReturn:7 },
+  { flag:'🇭🇰', name:'Hong Kong',    homePrice:1400000, downPct:30, mortgageRate:4.5, taxRate:0.1, appreciation:3.5, maintenance:0.8, monthlyRent:3500, rentIncrease:2, investReturn:6 },
+  { flag:'🇹🇭', name:'Bangkok',      homePrice:280000, downPct:30, mortgageRate:7.0, taxRate:0.3, appreciation:4.5, maintenance:1.5, monthlyRent:900, rentIncrease:3, investReturn:6 },
+  // Canada
+  { flag:'🇨🇦', name:'Toronto',      homePrice:980000, downPct:20, mortgageRate:6.5, taxRate:0.7, appreciation:4.5, maintenance:1.0, monthlyRent:2800, rentIncrease:4, investReturn:7 },
+  { flag:'🇨🇦', name:'Vancouver',    homePrice:1100000, downPct:20, mortgageRate:6.5, taxRate:0.3, appreciation:4.5, maintenance:1.0, monthlyRent:2900, rentIncrease:4, investReturn:7 },
+];
+
+let activeCity = 0;
+
+function buildCityGrid() {
+  const grid = document.getElementById('cityGrid');
+  grid.innerHTML = CITIES.map((c, i) => `
+    <button class="city-btn ${i===0?'active':''}" onclick="selectCity(${i})">
+      <span class="city-flag">${c.flag}</span>${c.name}
+    </button>
+  `).join('');
+}
+
+function selectCity(i) {
+  activeCity = i;
+  document.querySelectorAll('.city-btn').forEach((b,j) => b.classList.toggle('active', j===i));
+  const c = CITIES[i];
+  document.getElementById('homePrice').value = c.homePrice;
+  document.getElementById('downPayment').value = Math.round(c.homePrice * c.downPct / 100);
+  document.getElementById('mortgageRate').value = c.mortgageRate;
+  document.getElementById('taxRate').value = c.taxRate;
+  document.getElementById('appreciation').value = c.appreciation;
+  document.getElementById('maintenance').value = c.maintenance;
+  document.getElementById('monthlyRent').value = c.monthlyRent;
+  document.getElementById('rentIncrease').value = c.rentIncrease;
+  document.getElementById('investReturn').value = c.investReturn;
+  calculate();
+}
+
 function fmt(n){return '$'+Math.round(Math.abs(n)).toLocaleString();}
 let chartInstance=null;
 let chartData=null;
@@ -261,7 +339,7 @@ function calculate(){
   const loanAmt=homePrice-down;
   const monthlyRate=rate/12;
   const numPay=30*12;
-  const pi=loanAmt*(monthlyRate*Math.pow(1+monthlyRate,numPay))/(Math.pow(1+monthlyRate,numPay)-1);
+  const pi=loanAmt>0?loanAmt*(monthlyRate*Math.pow(1+monthlyRate,numPay))/(Math.pow(1+monthlyRate,numPay)-1):0;
 
   const buyNW=[],rentNW=[],buyYearlyCost=[],rentYearlyCost=[];
   let homeVal=homePrice,loanBal=loanAmt,rentPortfolio=down;
@@ -281,21 +359,19 @@ function calculate(){
     homeVal*=(1+appreciation);
     const buyNetWorth=homeVal-loanBal;
     buyNW.push(Math.round(buyNetWorth));
-    const rentIns=rentersIns;
-    const rentCost=currentRent+rentIns;
+    const rentCost=currentRent+rentersIns;
     rentYearlyCost.push(Math.round(rentCost));
     const diff=Math.max(0,buyCost-rentCost);
-    rentPortfolio=(rentPortfolio+diff/12*12)*(1+investReturn);
+    rentPortfolio=(rentPortfolio+diff)*(1+investReturn);
     rentNW.push(Math.round(rentPortfolio));
     currentRent*=(1+rentIncrease);
-    if(!breakevenYear && buyNetWorth>rentPortfolio) breakevenYear=y;
+    if(!breakevenYear&&buyNetWorth>rentPortfolio)breakevenYear=y;
   }
 
   const finalBuyNW=buyNW[buyNW.length-1];
   const finalRentNW=rentNW[rentNW.length-1];
   const diff=finalBuyNW-finalRentNW;
   const buyWins=diff>0;
-
   chartData={buyNW,rentNW,buyYearlyCost,rentYearlyCost,horizon,homeVal,loanAmt,down};
 
   document.getElementById('buyNetWorth').textContent=fmt(finalBuyNW);
@@ -316,13 +392,14 @@ function calculate(){
   document.getElementById('verdictAmount').textContent=fmt(Math.abs(diff));
   document.getElementById('verdictSub').textContent=`Over ${horizon} years, ${buyWins?'buying':'renting and investing the difference'} comes out ahead`;
 
+  const city=CITIES[activeCity];
   let note='';
   if(breakevenYear){
-    note=`Buying breaks even with renting in year ${breakevenYear}. If you're staying fewer than ${breakevenYear} years, renting is likely the smarter financial choice — the transaction costs of buying (closing costs, agent fees, moving) don't get absorbed in a short hold. `;
+    note=`In ${city.name}, buying breaks even with renting in year ${breakevenYear}. If you plan to stay fewer than ${breakevenYear} years, renting is likely the smarter financial choice — transaction costs alone (closing, agent fees, moving) take years to recover. `;
   } else {
-    note=`In your scenario, renting and investing the difference outperforms buying over the full ${horizon}-year period. This is more common when investment returns are high and appreciation is modest. `;
+    note=`In ${city.name}, renting and investing the difference outperforms buying over the full ${horizon}-year period. This is more common in expensive markets with high mortgage rates and strong investment return assumptions. `;
   }
-  note+=`These numbers are sensitive to your appreciation assumption. At ${(appreciation*100).toFixed(1)}%/year, the home reaches ${fmt(homeVal)}. A 1% difference in appreciation over ${horizon} years changes the outcome by roughly ${fmt(homePrice*Math.pow(1.01,horizon)-homePrice)}.`;
+  note+=`These numbers are sensitive to the appreciation assumption. At ${(appreciation*100).toFixed(1)}%/year, the home reaches ${fmt(homeVal)} — a 1% difference in appreciation over ${horizon} years has an enormous compounding effect.`;
   document.getElementById('bankerNote').textContent=note;
 
   document.getElementById('resultsSection').style.display='block';
@@ -350,14 +427,12 @@ function submitEmail(){
   const email=document.getElementById('lcEmail').value;
   if(!email||!email.includes('@')){document.getElementById('lcEmail').focus();return;}
   if(typeof gtag!=='undefined')gtag('event','lead_capture',{event_category:'email',event_label:'buy_vs_rent'});
-  const leads=JSON.parse(localStorage.getItem('frc_leads')||'[]');
-  leads.push({email,page:'buy-vs-rent',date:new Date().toISOString()});
-  localStorage.setItem('frc_leads',JSON.stringify(leads));
   document.getElementById('lcForm').style.display='none';
   document.getElementById('lcSuccess').style.display='block';
 }
 
-window.addEventListener('load',calculate);
+buildCityGrid();
+window.addEventListener('load', calculate);
 </script>
 </body>
 </html>
