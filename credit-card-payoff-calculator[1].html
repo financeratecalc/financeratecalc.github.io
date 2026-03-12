@@ -177,6 +177,19 @@ nav a:hover { color:var(--text); }
 .info-card p { font-size:13px; color:var(--muted); line-height:1.6; margin:0; }
 footer { border-top:1px solid var(--border); padding:32px 48px; text-align:center; color:var(--muted); font-size:13px; }
 footer a { color:var(--gold); text-decoration:none; }
+.trust-signals { display:flex; justify-content:center; gap:24px; flex-wrap:wrap; margin-bottom:16px; }
+.trust-item { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); }
+.trust-item span { font-size:16px; }
+.smart-alert { display:none; background:linear-gradient(135deg,rgba(255,68,68,0.1),rgba(240,192,64,0.08)); border:1px solid rgba(255,68,68,0.35); border-radius:12px; padding:18px 20px; margin-bottom:16px; animation: alertIn 0.4s ease; }
+@keyframes alertIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+.smart-alert .sa-tag { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--red); margin-bottom:6px; font-weight:700; }
+.smart-alert .sa-title { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:6px; }
+.smart-alert .sa-sub { font-size:13px; color:var(--muted); margin-bottom:12px; line-height:1.5; }
+.smart-alert a { display:inline-block; background:var(--red); color:#fff; padding:10px 18px; border-radius:6px; text-decoration:none; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; transition:opacity .2s; }
+.smart-alert a:hover { opacity:0.85; }
+.copy-btn { width:100%; background:transparent; border:1px solid var(--border2); border-radius:8px; padding:10px; color:var(--muted); font-family:'Barlow',sans-serif; font-size:13px; cursor:pointer; margin-top:12px; transition:all .2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+.copy-btn:hover { border-color:var(--gold); color:var(--gold); }
+.copy-btn.copied { border-color:var(--green); color:var(--green); }
 </style>
 </head>
 <body>
@@ -273,12 +286,22 @@ footer a { color:var(--gold); text-decoration:none; }
 
     <div class="scenario-grid" id="scenarios"></div>
 
+    <!-- SMART ALERT — shows dynamically -->
+    <div class="smart-alert" id="smartAlert">
+      <div class="sa-tag">⚡ Smart Alert — Personalized to Your Numbers</div>
+      <div class="sa-title" id="saTitle">You're paying high interest</div>
+      <div class="sa-sub" id="saSub">Based on your balance and rate, you could save significantly by consolidating at a lower rate.</div>
+      <a href="https://www.lendingtree.com/personal/debt-consolidation-loans/" target="_blank" rel="sponsored" id="saLink">See My Lower Rate Options →</a>
+    </div>
+
     <div class="affiliate-box">
       <div class="aff-label">💡 Banker's Tip</div>
       <p>A debt consolidation loan at a lower rate can cut your payoff time in half. Check your options — it takes 2 minutes and won't hurt your credit score.</p>
       <a href="https://www.lendingtree.com/personal/debt-consolidation-loans/" target="_blank" rel="sponsored">Lower My Rate — See My Options</a>
       <div class="aff-note">Sponsored · No impact on credit score to check · No obligation</div>
     </div>
+
+    <button class="copy-btn" id="copyBtn" onclick="copyResults()">📋 Copy My Results</button>
   </div>
 </div>
 
@@ -307,6 +330,12 @@ footer a { color:var(--gold); text-decoration:none; }
 </div>
 
 <footer>
+  <div class="trust-signals">
+    <div class="trust-item"><span>🔒</span> SSL Secure</div>
+    <div class="trust-item"><span>🧮</span> Independent Calculations</div>
+    <div class="trust-item"><span>🚫</span> No Personal Data Stored</div>
+    <div class="trust-item"><span>🏦</span> Built by Licensed Banker</div>
+  </div>
   <p>© 2026 FinanceRateCalc · <a href="/">Home</a> · <a href="/mortgage-calculator.html">Mortgage Calculator</a> · <a href="/car-loan-calculator.html">Car Loan Calculator</a></p>
   <p style="margin-top:8px;">Educational tool only. Not financial advice.</p>
 </footer>
@@ -404,9 +433,45 @@ function calculatePayoff(){
   });
   document.getElementById('scenarios').innerHTML = scenHTML;
 
+  // SMART ALERT LOGIC
+  const alert = document.getElementById('smartAlert');
+  const saTitle = document.getElementById('saTitle');
+  const saSub = document.getElementById('saSub');
+  
+  if(apr >= 20 && totalInterest >= 1000){
+    saTitle.textContent = `⚠️ You're paying ${fmt(totalInterest)} in interest`;
+    saSub.textContent = `Your ${apr}% APR is costing you heavily. A personal loan at 10-14% could cut your interest by more than half and pay off your debt ${Math.round(months*0.3)} months faster.`;
+    alert.style.display='block';
+  } else if(balance >= 10000){
+    saTitle.textContent = `💡 Smart move for a $${balance.toLocaleString()} balance`;
+    saSub.textContent = `At this balance, consolidating into a lower-rate personal loan typically saves $${Math.round(totalInterest*0.4).toLocaleString()}+ in interest. Takes 2 minutes to check your rate.`;
+    alert.style.display='block';
+  } else if(months >= 48){
+    saTitle.textContent = `📅 ${fmtMonths(months)} is a long time to carry debt`;
+    saSub.textContent = `A debt consolidation loan could get you debt-free in under 36 months at a lower rate. No credit score impact to check.`;
+    alert.style.display='block';
+  } else {
+    alert.style.display='none';
+  }
+
+  // Store results for copy
+  window._lastResults = { balance, apr, monthly, months, totalInterest, totalPaid };
+
   const results = document.getElementById('results');
   results.classList.add('show');
   results.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function copyResults(){
+  const r = window._lastResults;
+  if(!r) return;
+  const text = `My Credit Card Payoff Plan (via FinanceRateCalc.com)\n\nBalance: $${r.balance.toLocaleString()}\nAPR: ${r.apr}%\nMonthly Payment: $${Math.round(r.monthly).toLocaleString()}\nPayoff Time: ${fmtMonths(r.months)}\nTotal Interest: $${Math.round(r.totalInterest).toLocaleString()}\nTotal Paid: $${Math.round(r.totalPaid).toLocaleString()}\n\nCalculated at financeratecalc.com/credit-card-payoff-calculator.html`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent='📋 Copy My Results'; btn.classList.remove('copied'); }, 2500);
+  });
 }
 
 calculatePayoff();
