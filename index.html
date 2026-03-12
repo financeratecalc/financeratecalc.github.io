@@ -33,11 +33,41 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Geist', sans-serif; background: var(--paper); color: var(--text); min-height: 100vh; }
   header { background: var(--ink); padding: 0 60px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-  .logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 900; color: var(--white); letter-spacing: -0.5px; }
+  .logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 900; color: var(--white); letter-spacing: -0.5px; text-decoration: none; }
   .logo em { font-style: italic; color: var(--gold-light); }
-  .nav-links { display: flex; gap: 28px; align-items: center; }
-  .nav-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+  .nav-links { display: flex; gap: 8px; align-items: center; }
+  .nav-links a { color: rgba(255,255,255,0.55); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; padding: 6px 10px; border-radius: 4px; }
   .nav-links a:hover { color: var(--gold-light); }
+  .nav-dropdown { position: relative; }
+  .nav-dropdown-btn { background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.55); font-size: 13px; font-weight: 500; font-family: inherit; padding: 6px 10px; border-radius: 4px; display: flex; align-items: center; gap: 5px; transition: color 0.2s; letter-spacing: 0.3px; }
+  .nav-dropdown-btn:hover { color: var(--gold-light); }
+  .nav-dropdown-btn svg { width: 10px; height: 10px; transition: transform 0.2s; }
+  .nav-dropdown.open .nav-dropdown-btn svg { transform: rotate(180deg); }
+  .nav-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: #1e1e1c;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-width: 220px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    z-index: 200;
+  }
+  .nav-dropdown.open .nav-dropdown-menu { display: block; animation: dropDown 0.15s ease; }
+  @keyframes dropDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  .nav-dropdown-menu a {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.55rem 0.75rem; border-radius: 5px;
+    color: rgba(255,255,255,0.65); text-decoration: none;
+    font-size: 13px; font-weight: 400;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .nav-dropdown-menu a:hover { background: rgba(255,255,255,0.07); color: var(--gold-light); }
+  .nav-dropdown-menu .menu-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 0.4rem 0; }
   .nav-badge { background: var(--gold); color: var(--ink); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
   @media (max-width: 768px) { header { padding: 0 20px; } .nav-links { display: none; } }
   .featured-banner { background: linear-gradient(135deg, #1a0533 0%, #2d1b69 50%, #1a0533 100%); padding: 14px 60px; display: flex; align-items: center; justify-content: center; gap: 16px; border-bottom: 1px solid rgba(91,63,166,0.4); }
@@ -141,17 +171,29 @@
 <body>
 
 <header>
-  <div class="logo">Finance<em>Rate</em>Calc</div>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
   <div class="nav-links">
     <a href="index.html">Home</a>
-    <a href="mortgage-calculator.html">Mortgage</a>
-    <a href="business-loan-calculator.html">Business Loan</a>
-    <a href="compound-interest-calculator.html">Compound Interest</a>
-    <a href="financial-twin.html" style="color:#c9b8ff;font-weight:600;">🏠 Buy vs Rent</a>
-    <a href="loan-offer-analyzer.html" style="color:#e87070;font-weight:600;">🔍 Loan Analyzer</a>
-    <a href="loan-comparator.html" style="color:#f0c040;font-weight:600;">⚖️ Comparator</a>
-    <a href="debt-consolidation-calculator.html" style="color:#f0c040;font-weight:600;">💳 Debt</a>
-    <a href="bank-approval-simulator.html" style="color:#3ecf8e;font-weight:600;">🏦 Bank Simulator</a>
+    <div class="nav-dropdown" id="calcDropdown">
+      <button class="nav-dropdown-btn" onclick="toggleDropdown()">
+        Calculators
+        <svg viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="nav-dropdown-menu">
+        <a href="mortgage-calculator.html">🏠 Mortgage Calculator</a>
+        <a href="debt-consolidation-calculator.html">💳 Debt Consolidation</a>
+        <a href="bank-approval-simulator.html">🏦 Bank Approval Simulator</a>
+        <a href="loan-comparator.html">⚖️ Loan Comparator</a>
+        <a href="loan-offer-analyzer.html">🔍 Loan Analyzer</a>
+        <div class="menu-divider"></div>
+        <a href="financial-twin.html">🏡 Buy vs Rent</a>
+        <a href="compound-interest-calculator.html">📈 Compound Interest</a>
+        <a href="business-loan-calculator.html">💼 Business Loan</a>
+      </div>
+    </div>
+    <a href="about.html">About</a>
     <span class="nav-badge">Licensed Pro</span>
   </div>
 </header>
@@ -388,5 +430,15 @@
   <div class="footer-copy">© 2026 FinanceRateCalc · Educational Use Only · Not Financial Advice</div>
 </footer>
 
+<script>
+  function toggleDropdown() {
+    const d = document.getElementById('calcDropdown');
+    d.classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    const d = document.getElementById('calcDropdown');
+    if (!d.contains(e.target)) d.classList.remove('open');
+  });
+</script>
 </body>
 </html>
