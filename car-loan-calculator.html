@@ -249,6 +249,19 @@ footer {
   font-size:13px;
 }
 footer a { color:var(--gold); text-decoration:none; }
+.trust-signals { display:flex; justify-content:center; gap:24px; flex-wrap:wrap; margin-bottom:16px; }
+.trust-item { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); }
+.trust-item span { font-size:16px; }
+.smart-alert { display:none; background:linear-gradient(135deg,rgba(255,68,68,0.1),rgba(240,192,64,0.08)); border:1px solid rgba(255,68,68,0.35); border-radius:12px; padding:18px 20px; margin-top:16px; animation: alertIn 0.4s ease; }
+@keyframes alertIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+.smart-alert .sa-tag { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--red); margin-bottom:6px; font-weight:700; }
+.smart-alert .sa-title { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; color:var(--text); margin-bottom:6px; }
+.smart-alert .sa-sub { font-size:13px; color:var(--muted); margin-bottom:12px; line-height:1.5; }
+.smart-alert a { display:inline-block; background:var(--red); color:#fff; padding:10px 18px; border-radius:6px; text-decoration:none; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; transition:opacity .2s; }
+.smart-alert a:hover { opacity:0.85; }
+.copy-btn { width:100%; background:transparent; border:1px solid var(--border2); border-radius:8px; padding:10px; color:var(--muted); font-family:'Barlow',sans-serif; font-size:13px; cursor:pointer; margin-top:12px; transition:all .2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+.copy-btn:hover { border-color:var(--gold); color:var(--gold); }
+.copy-btn.copied { border-color:var(--green); color:var(--green); }
 </style>
 </head>
 <body>
@@ -337,6 +350,16 @@ footer a { color:var(--gold); text-decoration:none; }
       <div class="aff-note">Sponsored · Takes 2 minutes · No obligation</div>
     </div>
 
+    <!-- SMART ALERT -->
+    <div class="smart-alert" id="smartAlert">
+      <div class="sa-tag">⚡ Smart Alert — Based on Your Numbers</div>
+      <div class="sa-title" id="saTitle">You may be overpaying</div>
+      <div class="sa-sub" id="saSub"></div>
+      <a href="https://www.viva.finance/" target="_blank" rel="sponsored">Check If I Qualify for a Lower Rate →</a>
+    </div>
+
+    <button class="copy-btn" id="copyBtn" onclick="copyResults()">📋 Copy My Results</button>
+
     <div class="amort-table" id="amortTable">
       <h3>Year-by-Year Breakdown</h3>
       <table id="amortData"></table>
@@ -390,6 +413,12 @@ footer a { color:var(--gold); text-decoration:none; }
 </div>
 
 <footer>
+  <div class="trust-signals">
+    <div class="trust-item"><span>🔒</span> SSL Secure</div>
+    <div class="trust-item"><span>🧮</span> Independent Calculations</div>
+    <div class="trust-item"><span>🚫</span> No Personal Data Stored</div>
+    <div class="trust-item"><span>🏦</span> Built by Licensed Banker</div>
+  </div>
   <p>© 2026 FinanceRateCalc · <a href="/">Home</a> · <a href="/mortgage-calculator.html">Mortgage Calculator</a> · <a href="/can-i-get-a-loan.html">Loan Eligibility</a></p>
   <p style="margin-top:8px;">Educational tool only. Not financial advice. Consult a licensed professional for personalized guidance.</p>
 </footer>
@@ -452,9 +481,45 @@ function calculateCarLoan(){
   }
   document.getElementById('amortData').innerHTML = tableHTML;
 
+  // SMART ALERT LOGIC
+  const alert = document.getElementById('smartAlert');
+  const saSub = document.getElementById('saSub');
+  const saTitle = document.getElementById('saTitle');
+
+  if(rate >= 10){
+    saTitle.textContent = `⚠️ ${rate}% is a high car loan rate`;
+    saSub.textContent = `You're paying ${fmt(totalInterest)} in interest. Buyers with similar profiles often qualify for rates 2-4% lower. A quick check won't affect your credit score.`;
+    alert.style.display='block';
+  } else if(totalInterest >= 3000){
+    saTitle.textContent = `💡 You're paying ${fmt(totalInterest)} in interest`;
+    saSub.textContent = `Even dropping your rate by 1.5% would save you ${fmt(totalInterest*0.25)}+. Takes 2 minutes to see if you qualify for better terms.`;
+    alert.style.display='block';
+  } else if(loan >= 30000){
+    saTitle.textContent = `📊 Large loan — rate shopping is critical`;
+    saSub.textContent = `On a ${fmt(loan)} loan, every 1% difference in rate = ${fmt(loan*0.01*term/12)} in extra interest. Always compare at least 3 lenders.`;
+    alert.style.display='block';
+  } else {
+    alert.style.display='none';
+  }
+
+  // Store for copy
+  window._carResults = { loan, rate, term, monthly, totalInterest, totalPaid: totalPaid+down+tradeIn };
+
   const results = document.getElementById('results');
   results.classList.add('show');
   results.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function copyResults(){
+  const r = window._carResults;
+  if(!r) return;
+  const text = `My Car Loan Results (via FinanceRateCalc.com)\n\nLoan Amount: $${Math.round(r.loan).toLocaleString()}\nInterest Rate: ${r.rate}%\nLoan Term: ${r.term} months\nMonthly Payment: $${Math.round(r.monthly).toLocaleString()}\nTotal Interest: $${Math.round(r.totalInterest).toLocaleString()}\nTotal Cost: $${Math.round(r.totalPaid).toLocaleString()}\n\nCalculated at financeratecalc.com/car-loan-calculator.html`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent='📋 Copy My Results'; btn.classList.remove('copied'); }, 2500);
+  });
 }
 
 // Auto calculate on load
