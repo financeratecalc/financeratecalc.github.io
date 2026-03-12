@@ -1,120 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mortgage Calculator 2026 | FinanceRateCalc</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Geist:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-:root{--ink:#0f0e0c;--paper:#faf8f4;--gold:#b8860b;--gold-light:#d4a017;--border:#ddd8cc;--white:#ffffff;}
-body{font-family:'Geist',sans-serif;background:var(--paper);color:var(--ink);margin:0;padding:0;}
-header{background:var(--ink);padding:15px 40px;display:flex;justify-content:space-between;align-items:center;}
-.logo{font-family:'Fraunces',serif;color:#fff;text-decoration:none;font-size:20px;font-weight:900;}
-.logo em{color:var(--gold-light);font-style:italic;}
-.main-container{max-width:1100px;margin:40px auto;padding:0 20px;display:grid;grid-template-columns:350px 1fr;gap:30px;}
-@media(max-width:900px){.main-container{grid-template-columns:1fr;}}
-.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:25px;box-shadow:0 4px 12px rgba(0,0,0,0.03);position:sticky;top:20px;}
-.field{margin-bottom:15px;}
-.field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;color:#888;margin-bottom:5px;}
-.field input, .field select{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:15px;box-sizing:border-box;font-family:'Geist';outline:none;}
-.field input:focus{border-color:var(--gold);}
-.calc-btn{width:100%;background:var(--gold);color:white;border:none;padding:15px;border-radius:10px;font-weight:700;cursor:pointer;font-size:16px;}
-.result-box{background:var(--ink);color:white;padding:30px;border-radius:16px;text-align:center;margin-bottom:25px;}
-.res-val{font-family:'Fraunces',serif;font-size:42px;color:var(--gold-light);margin:10px 0;}
-#smart-advisor{border:2px solid var(--gold);border-radius:16px;padding:25px;margin-bottom:25px;background:white;}
-.smart-btn{display:block;background:var(--ink);color:var(--gold-light);text-align:center;padding:14px;text-decoration:none;border-radius:8px;font-weight:700;margin-top:15px;}
-.chart-wrap{background:white;border:1px solid var(--border);border-radius:16px;padding:20px;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Calculator - Professional Banker Tool</title>
+    <style>
+        :root { --gold: #b8860b; --ink: #0f0e0c; --paper: #faf8f4; }
+        body { font-family: sans-serif; background: var(--paper); margin: 0; color: var(--ink); }
+        header { background: var(--ink); color: white; padding: 20px; text-align: center; font-weight: bold; font-size: 24px; }
+        .container { max-width: 900px; margin: 30px auto; padding: 20px; display: flex; flex-wrap: wrap; gap: 20px; }
+        .card { background: white; padding: 25px; border-radius: 12px; border: 1px solid #ddd; flex: 1; min-width: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #666; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 15px; background: var(--gold); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 18px; margin-top: 10px; }
+        button:hover { background: #966d09; }
+        #results { display: none; margin-top: 20px; }
+        .res-box { background: var(--ink); color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
+        .res-val { font-size: 32px; color: #d4a017; font-weight: bold; margin: 10px 0; }
+        .advisor { border: 2px solid var(--gold); padding: 20px; border-radius: 8px; background: #fffdf5; }
+        .btn-link { display: block; background: var(--ink); color: #d4a017; text-align: center; padding: 15px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 15px; }
+    </style>
 </head>
 <body>
 
-<header>
-  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
-</header>
+<header>FinanceRateCalc</header>
 
-<div class="main-container">
-  <div class="card">
-    <h2 style="font-family:'Fraunces';margin-top:0;font-size:24px;">Mortgage Tool</h2>
-    <div class="field">
-      <label>Home Price ($)</label>
-      <input type="text" id="homePrice" value="400000">
-    </div>
-    <div class="field">
-      <label>Down Payment ($)</label>
-      <input type="text" id="downPayment" value="80000">
-    </div>
-    <div class="field">
-      <label>Interest Rate (%)</label>
-      <input type="text" id="rate" value="7.1">
-    </div>
-    <div class="field">
-      <label>Term (Years)</label>
-      <select id="term">
-        <option value="30">30 Years</option>
-        <option value="15">15 Years</option>
-      </select>
-    </div>
-    <button class="calc-btn" onclick="runCalc()">Calculate Now →</button>
-  </div>
-
-  <div id="results">
-    <div id="welcome-box" style="text-align:center;padding:100px 20px;border:2px dashed var(--border);border-radius:20px;color:#888;">
-      Enter numbers and hit Calculate to see your banker-approved report.
+<div class="container">
+    <div class="card">
+        <h2 style="margin-top:0">Mortgage Input</h2>
+        <div class="input-group">
+            <label>Home Price ($)</label>
+            <input type="text" id="hp" value="400000">
+        </div>
+        <div class="input-group">
+            <label>Down Payment ($)</label>
+            <input type="text" id="dp" value="80000">
+        </div>
+        <div class="input-group">
+            <label>Interest Rate (%)</label>
+            <input type="text" id="ir" value="7.1">
+        </div>
+        <div class="input-group">
+            <label>Years</label>
+            <select id="yr">
+                <option value="30">30 Years</option>
+                <option value="15">15 Years</option>
+            </select>
+        </div>
+        <button onclick="calc()">Calculate My Payment</button>
     </div>
 
-    <div id="output" style="display:none;">
-      <div class="result-box">
-        <div style="font-size:12px;text-transform:uppercase;">Monthly Payment</div>
-        <div class="res-val" id="monthlyVal">$0</div>
-        <div id="totalInt" style="font-size:14px;opacity:0.8;"></div>
-      </div>
+    <div class="card" id="res-side">
+        <div id="welcome">
+            <h3 style="color:#888; text-align:center; padding-top:50px;">Please enter your numbers and click the button to see the banker's report.</h3>
+        </div>
+        
+        <div id="results">
+            <div class="res-box">
+                <div>Monthly Payment</div>
+                <div class="res-val" id="monthly"></div>
+                <div id="total" style="font-size:14px; opacity:0.8;"></div>
+            </div>
 
-      <div id="smart-advisor">
-        <div style="font-weight:800;color:var(--gold);font-size:11px;text-transform:uppercase;margin-bottom:10px;">Banker's Recommendation</div>
-        <h3 style="margin:0 0 10px 0;font-family:'Fraunces';">Legal Protection Required</h3>
-        <p style="font-size:15px;color:#444;">Ensure your <strong>Service Agreement</strong> is legally binding. Use LawDepot to protect your purchase.</p>
-        <a href="https://www.kqzyfj.com/click-101700650-16996011" target="_blank" class="smart-btn">Generate Contract →</a>
-      </div>
-
-      <div class="chart-wrap">
-        <canvas id="mortgageChart" height="150"></canvas>
-      </div>
+            <div class="advisor">
+                <strong style="color:var(--gold)">BANKER'S ADVICE:</strong>
+                <p style="font-size:14px;">As a professional, I recommend securing your purchase with a <strong>Service Agreement</strong>. Don't risk your down payment without legal protection.</p>
+                <a href="https://www.kqzyfj.com/click-101700650-16996011" target="_blank" class="btn-link">Get Your Legal Contract →</a>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
-let myChart = null;
+function calc() {
+    var h = parseFloat(document.getElementById('hp').value.replace(',', '.'));
+    var d = parseFloat(document.getElementById('dp').value.replace(',', '.'));
+    var r = parseFloat(document.getElementById('ir').value.replace(',', '.'));
+    var y = parseInt(document.getElementById('yr').value);
 
-function runCalc() {
-    try {
-        let hp = parseFloat(document.getElementById('homePrice').value.replace(',', '.'));
-        let dp = parseFloat(document.getElementById('downPayment').value.replace(',', '.'));
-        let r = parseFloat(document.getElementById('rate').value.replace(',', '.'));
-        let t = parseInt(document.getElementById('term').value);
+    var loan = h - d;
+    var mR = (r / 100) / 12;
+    var n = y * 12;
 
-        let loan = hp - dp;
-        let mRate = r / 100 / 12;
-        let n = t * 12;
+    var pmt = loan * (mR * Math.pow(1 + mR, n)) / (Math.pow(1 + mR, n) - 1);
+    var ti = (pmt * n) - loan;
 
-        let pmt = loan * (mRate * Math.pow(1 + mRate, n)) / (Math.pow(1 + mRate, n) - 1);
-        let ti = (pmt * n) - loan;
+    document.getElementById('monthly').innerText = '$' + Math.round(pmt).toLocaleString();
+    document.getElementById('total').innerText = "Total Interest: $" + Math.round(ti).toLocaleString();
 
-        document.getElementById('monthlyVal').innerText = '$' + Math.round(pmt).toLocaleString();
-        document.getElementById('totalInt').innerText = "Total Interest: $" + Math.round(ti).toLocaleString();
+    document.getElementById('welcome').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+}
+</script>
 
-        document.getElementById('welcome-box').style.display = 'none';
-        document.getElementById('output').style.display = 'block';
-
-        if(myChart) myChart.destroy();
-        const ctx = document.getElementById('mortgageChart').getContext('2d');
-        myChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Principal', 'Total Interest'],
-                datasets: [{
-                    data: [loan, ti],
-                    backgroundColor: ['#2a6b4a', '#8b2a2a']
-                }]
-            },
+</body>
+</html>
