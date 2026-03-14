@@ -68,8 +68,12 @@
     color: var(--gold);
     letter-spacing: 0.5px;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
+  .logo img { height: 36px; width: auto; }
   .logo span { color: var(--cream); font-weight: 400; }
 
   .nav-links { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -375,7 +379,6 @@
     width: 0%;
   }
 
-  /* Chart section */
   .chart-section {
     position: relative;
     z-index: 10;
@@ -509,6 +512,100 @@
   .placeholder-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
   .placeholder p { font-size: 14px; line-height: 1.6; }
 
+  /* Affiliate CTA */
+  .affiliate-cta {
+    position: relative;
+    z-index: 10;
+    max-width: 1100px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+  }
+
+  .affiliate-cta-inner {
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 16px;
+    padding: 32px 36px;
+  }
+
+  .affiliate-cta-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .affiliate-cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .affiliate-cta-sub {
+    color: var(--gray);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    max-width: 560px;
+  }
+
+  .affiliate-cta-buttons {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .cta-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--navy);
+    padding: 13px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    transition: all 0.2s;
+  }
+
+  .cta-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(201,168,76,0.3);
+  }
+
+  .cta-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    color: var(--cream);
+    padding: 13px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: all 0.2s;
+  }
+
+  .cta-btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.25);
+  }
+
+  .affiliate-disclosure {
+    font-size: 11px;
+    color: rgba(136,146,164,0.6);
+    margin-top: 16px;
+  }
+
+  .affiliate-disclosure a { color: rgba(136,146,164,0.6); text-decoration: underline; }
+
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -522,7 +619,11 @@
 <body>
 
 <header>
-  <a href="index.html" class="logo">Finance<span>RateCalc</span></a>
+  <a href="index.html" class="logo">
+    <img src="assets/frc-logo.png" alt="FinanceRateCalc"
+         onerror="this.style.display='none';this.nextSibling.style.display='inline'">
+    <span style="display:none">Finance<span style="color:var(--cream);font-weight:400">RateCalc</span></span>
+  </a>
   <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="mortgage-calculator.html" class="active">Mortgage</a>
@@ -624,6 +725,32 @@
   </div>
 </div>
 
+<!-- ===== AFFILIATE CTA ===== -->
+<div class="affiliate-cta" id="affiliateCta" style="display:none;">
+  <div class="affiliate-cta-inner">
+    <div class="affiliate-cta-label">Sponsored · Take the Next Step</div>
+    <div class="affiliate-cta-title">You've seen the numbers — now act on them</div>
+    <div class="affiliate-cta-sub">In 23 years of banking, I've seen buyers lose deals over missing paperwork and not comparing lenders. Don't let that be you. Get your documents ready and explore funding options today.</div>
+    <div class="affiliate-cta-buttons">
+      <a href="https://www.dpbolvw.net/click-101700650-17144681"
+         target="_blank" rel="noopener sponsored"
+         class="cta-btn-primary">
+        💸 Get Fast Funding →
+      </a>
+      <a href="https://www.tkqlhce.com/click-101700650-16996011"
+         target="_blank" rel="noopener sponsored"
+         class="cta-btn-secondary">
+        📄 Get Legal Docs — LawDepot
+      </a>
+    </div>
+    <div class="affiliate-disclosure">
+      Sponsored links. We may earn a commission at no cost to you. &nbsp;
+      <a href="affiliate-disclosure.html">See disclosure →</a>
+    </div>
+  </div>
+</div>
+<!-- ===== END AFFILIATE CTA ===== -->
+
 <!-- Expert Note -->
 <div class="expert-note">
   <div class="expert-card">
@@ -677,13 +804,11 @@
     const interestPct = (totalInterest / totalPayment * 100).toFixed(1);
     const downPct = (downPayment / homePrice * 100).toFixed(1);
 
-    // Amortization schedule + chart data
     let balance = principal;
     let scheduleRows = '';
     const chartLabels = [];
     const chartPrincipal = [];
     const chartInterest = [];
-    const chartBalance = [];
 
     for (let i = 1; i <= n; i++) {
       const interestPayment = balance * monthlyRate;
@@ -698,7 +823,6 @@
         const cumInterest = (monthly * i) - cumPrincipal;
         chartPrincipal.push(Math.round(cumPrincipal));
         chartInterest.push(Math.round(Math.max(0, cumInterest)));
-        chartBalance.push(Math.round(balance));
       }
 
       if (i <= 12 || i % 12 === 0 || i === n) {
@@ -754,18 +878,6 @@
             <tbody>${scheduleRows}</tbody>
           </table>
         </div>
-
-        <div style="margin-top:1.5rem;background:linear-gradient(135deg,#1a1a18,#2a2a20);border:1px solid rgba(184,134,11,0.3);border-radius:8px;padding:1.25rem 1.5rem;position:relative;overflow:hidden;">
-          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#b8860b,#d4a820,#b8860b);"></div>
-          <div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:#8a8a82;margin-bottom:0.5rem;">Banker's Tip · Protect Your Investment</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:#f8f6f1;margin-bottom:0.4rem;">You're committing to <span style="color:#d4a820">${fmt(totalPayment)}</span> over ${years} years. Protect it.</div>
-          <div style="font-size:0.82rem;color:#9a9a92;margin-bottom:1rem;line-height:1.5;">In 23 years of banking, I've seen buyers lose their down payment over missing paperwork. A proper purchase agreement protects every dollar you're putting in.</div>
-          <a href="https://www.kqzyfj.com/click-101700650-16996011?sid=mortgage" target="_blank" rel="sponsored" style="display:inline-flex;align-items:center;gap:0.5rem;background:#b8860b;color:#fff;padding:0.7rem 1.4rem;border-radius:5px;text-decoration:none;font-size:0.88rem;font-weight:600;letter-spacing:0.02em;" onmouseover="this.style.background='#9a700a'" onmouseout="this.style.background='#b8860b'">
-            📄 Get Your Purchase Agreement →
-          </a>
-          <div style="font-size:0.68rem;color:#4a4a42;margin-top:0.75rem;">*Affiliate link — we may earn a commission at no cost to you.</div>
-        </div>
-
       </div>
     `;
 
@@ -776,17 +888,16 @@
       if (iBar) iBar.style.width = interestPct + '%';
     }, 50);
 
-    // Show charts
+    // Show charts and affiliate CTA
     document.getElementById('chartSection').style.display = 'grid';
+    document.getElementById('affiliateCta').style.display = 'block';
     renderCharts(chartLabels, chartPrincipal, chartInterest, principal, totalInterest, downPayment);
   }
 
   function renderCharts(labels, principalData, interestData, principal, totalInterest, downPayment) {
-    // Destroy old charts
     if (amortChartInstance) { amortChartInstance.destroy(); }
     if (donutChartInstance) { donutChartInstance.destroy(); }
 
-    // Stacked bar chart — cumulative principal vs interest
     const ctx1 = document.getElementById('amortChart').getContext('2d');
     amortChartInstance = new Chart(ctx1, {
       type: 'bar',
@@ -843,7 +954,6 @@
       }
     });
 
-    // Donut chart — breakdown
     const ctx2 = document.getElementById('donutChart').getContext('2d');
     donutChartInstance = new Chart(ctx2, {
       type: 'doughnut',
