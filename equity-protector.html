@@ -34,7 +34,6 @@
 
     .main-wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
 
-    /* CALCULATOR */
     .calc-card{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:2rem;margin-bottom:1.5rem;}
     .calc-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;margin-bottom:1.5rem;color:var(--ink);}
 
@@ -48,7 +47,6 @@
     .calc-btn{width:100%;padding:.9rem;background:var(--ink);color:var(--paper);border:none;border-radius:6px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s;letter-spacing:.03em;}
     .calc-btn:hover{background:#2a2a28;}
 
-    /* RESULTS */
     #results{display:none;animation:fadeIn .4s ease;}
     @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
@@ -68,7 +66,6 @@
     .metric-value{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--ink);}
     .metric-note{font-size:.72rem;color:var(--ink-faint);margin-top:.2rem;}
 
-    /* SCENARIO BOXES */
     .scenario-title{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1rem;display:flex;align-items:center;gap:.75rem;}
     .scenario-title::after{content:'';flex:1;height:1px;background:var(--rule);}
 
@@ -87,7 +84,6 @@
     .scenario-box.good .scenario-box-amount{color:var(--green);}
     .scenario-box-desc{font-size:.8rem;color:var(--ink-light);line-height:1.5;}
 
-    /* CTA */
     .cta-box{background:linear-gradient(135deg,#0f2f12,#1a4520);border:1px solid rgba(45,158,69,.3);border-radius:8px;padding:2rem;text-align:center;margin-bottom:1.5rem;}
     .cta-box h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:#fff;margin-bottom:.4rem;}
     .cta-box p{font-size:.84rem;color:#9a9a92;margin-bottom:1.25rem;line-height:1.5;}
@@ -95,15 +91,6 @@
     .cta-btn:hover{background:#248a3a;}
     .cta-disclaimer{font-size:.68rem;color:#4a4a42;margin-top:.75rem;}
 
-    /* CREDIT REPAIR CTA */
-    .repair-box{background:var(--blue-bg);border:1px solid #a0b8d8;border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:1.5rem;margin-bottom:1.5rem;}
-    .repair-label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);font-weight:600;margin-bottom:.5rem;}
-    .repair-box h3{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;margin-bottom:.4rem;}
-    .repair-box p{font-size:.84rem;color:var(--ink-light);margin-bottom:1rem;line-height:1.5;}
-    .repair-btn{display:inline-block;padding:.65rem 1.4rem;background:var(--blue);color:#fff;border-radius:5px;font-family:'Outfit',sans-serif;font-size:.84rem;font-weight:600;text-decoration:none;transition:background .2s;}
-    .repair-btn:hover{background:#142d55;}
-
-    /* BANKER NOTE */
     .banker-note{background:var(--gold-light);border:1px solid #d4c080;border-left:4px solid var(--gold);border-radius:0 6px 6px 0;padding:1.25rem 1.5rem;margin-bottom:1.5rem;}
     .banker-note-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;font-weight:600;}
     .banker-note p{font-size:.85rem;color:var(--ink-light);margin:0;line-height:1.6;}
@@ -131,12 +118,11 @@
 <div class="hero">
   <p class="hero-eyebrow">Free Tool · Instant Results · No Login Required</p>
   <h1>How Much of Your Home<br/>Do You <em>Actually</em> Own?</h1>
-  <p class="hero-sub">Most homeowners don't know their real equity — and banks count on that. Enter two numbers and find out exactly what you stand to lose, protect, or unlock.</p>
+  <p class="hero-sub">Most homeowners don't have an accurate picture of their equity — and that number matters more than most people realize. Enter two numbers and see exactly where you stand.</p>
 </div>
 
 <div class="main-wrap">
 
-  <!-- CALCULATOR -->
   <div class="calc-card">
     <div class="calc-title">📊 Your Equity Snapshot</div>
     <div class="input-grid">
@@ -164,7 +150,6 @@
     <button class="calc-btn" onclick="calculate()">Calculate My Equity →</button>
   </div>
 
-  <!-- RESULTS -->
   <div id="results"></div>
 
 </div>
@@ -202,15 +187,10 @@ function calculate() {
   const equity = homeVal - mortgage;
   const equityPct = (equity / homeVal) * 100;
   const ltv = (mortgage / homeVal) * 100;
-
-  // Closing costs if they sold (~7%)
   const sellingCosts = homeVal * 0.07;
   const netIfSold = equity - sellingCosts;
-
-  // Cash-out refi: borrow to 80% LTV
   const maxCashOut = (homeVal * 0.80) - mortgage;
 
-  // Monthly payment
   let monthlyPayment = 0;
   if (rate && years) {
     const r = (rate / 100) / 12;
@@ -218,7 +198,6 @@ function calculate() {
     monthlyPayment = mortgage * (r * Math.pow(1+r,n)) / (Math.pow(1+r,n)-1);
   }
 
-  // Refi savings (hypothetical at 6.5%)
   let refiMonthly = 0;
   let refiSavings = 0;
   if (years) {
@@ -229,12 +208,10 @@ function calculate() {
   }
 
   const isPositive = equity > 0;
-  const isUnderwater = equity < 0;
   const hasCashOutOption = maxCashOut > 10000;
 
   let html = '';
 
-  // EQUITY BANNER
   html += `
     <div class="equity-banner ${isPositive ? 'positive' : 'negative'}">
       <div class="equity-label">${isPositive ? 'Your Home Equity' : 'You Are Underwater By'}</div>
@@ -246,7 +223,6 @@ function calculate() {
     </div>
   `;
 
-  // METRICS
   html += `
     <div class="metrics-grid">
       <div class="metric-box">
@@ -267,100 +243,83 @@ function calculate() {
     </div>
   `;
 
-  // SCENARIOS
   if (isPositive) {
-    html += `<div class="scenario-title">What You Could Gain or Lose</div>`;
+    html += `<div class="scenario-title">What Your Equity Means in Practice</div>`;
     html += `<div class="scenario-grid">`;
 
-    // BAD: walk away / foreclosure
     html += `
       <div class="scenario-box bad">
-        <div class="scenario-box-label">❌ If You Walk Away or Foreclose</div>
-        <div class="scenario-box-title">Equity You'd Lose</div>
+        <div class="scenario-box-label">⚠️ If You Foreclose or Walk Away</div>
+        <div class="scenario-box-title">Equity at Risk</div>
         <div class="scenario-box-amount">${fmt(equity)}</div>
-        <div class="scenario-box-desc">Foreclosure means the bank sells your home — often below market value. You walk away with nothing, and your credit score drops 100–150 points for 7 years.</div>
+        <div class="scenario-box-desc">In a foreclosure, the property is typically sold under market value. The equity you've built — ${fmt(equity)} — would be lost, along with a significant impact to your credit for up to 7 years.</div>
       </div>
     `;
 
-    // GOOD: cash-out refi or sell properly
     if (hasCashOutOption) {
       html += `
         <div class="scenario-box good">
           <div class="scenario-box-label">✅ Cash-Out Refinance Option</div>
-          <div class="scenario-box-title">Available to Unlock</div>
+          <div class="scenario-box-title">Available to Access</div>
           <div class="scenario-box-amount">${fmt(maxCashOut)}</div>
-          <div class="scenario-box-desc">At 80% LTV, you could access ${fmt(maxCashOut)} in cash — to pay off high-interest debt, make repairs, or create an emergency fund — while keeping your home.</div>
+          <div class="scenario-box-desc">At 80% LTV, you could access ${fmt(maxCashOut)} in equity — to consolidate debt, fund repairs, or build an emergency reserve — while keeping your home.</div>
         </div>
       `;
     } else {
       html += `
         <div class="scenario-box good">
-          <div class="scenario-box-label">✅ If You Sell Properly</div>
-          <div class="scenario-box-title">Net Proceeds After Costs</div>
+          <div class="scenario-box-label">✅ If You Sell Through an Agent</div>
+          <div class="scenario-box-title">Estimated Net Proceeds</div>
           <div class="scenario-box-amount">${fmt(Math.max(0, netIfSold))}</div>
-          <div class="scenario-box-desc">After agent fees and closing costs (~7%), you'd walk away with approximately ${fmt(Math.max(0, netIfSold))} in your pocket — versus $0 in foreclosure.</div>
+          <div class="scenario-box-desc">After typical agent fees and closing costs (~7%), you'd receive approximately ${fmt(Math.max(0, netIfSold))} — versus nothing in a distressed sale.</div>
         </div>
       `;
     }
     html += `</div>`;
   }
 
-  // REFI SAVINGS
   if (rate && rate > 6.5 && refiSavings > 50) {
     html += `
       <div class="banker-note">
         <div class="banker-note-label">💡 Rate Opportunity</div>
-        <p>Your current rate is ${rate}%. At today's market rate of ~6.5%, refinancing could save you approximately <strong>${fmt(refiSavings)}/month</strong> — that's <strong>${fmt(refiSavings * 12)}/year</strong> back in your pocket. Worth exploring before rates move again.</p>
+        <p>Your current rate is ${rate}%. At today's market rate of ~6.5%, refinancing could reduce your payment by approximately <strong>${fmt(refiSavings)}/month</strong> — that's <strong>${fmt(refiSavings * 12)}/year</strong>. Worth comparing before rates shift again.</p>
       </div>
     `;
   }
 
-  // PRIMARY CTA
   if (isPositive && hasCashOutOption) {
     html += `
       <div class="cta-box">
-        <h3>Your equity is real money. Don't let the bank take it.</h3>
-        <p>See if you qualify for a cash-out refinance or a lower rate. Free quote — won't affect your credit score.</p>
-        <a href="YOUR-LENDINGTREE-AFFILIATE-LINK" class="cta-btn">🔍 Check My Refinance Options →</a>
+        <h3>Your equity is an asset. Put it to work.</h3>
+        <p>See if you qualify for a cash-out refinance or a lower rate. Free pre-qualification — no commitment, no credit impact to check.</p>
+        <a href="https://www.dpbolvw.net/click-101700650-17144681" target="_blank" rel="noopener sponsored" class="cta-btn">💸 Explore Funding Options →</a>
         <div class="cta-disclaimer">*Affiliate link — we may earn a commission if you apply. <a href="affiliate-disclosure.html" style="color:#6a6a62;">See disclosure.</a></div>
       </div>
     `;
   } else if (isPositive) {
     html += `
       <div class="cta-box">
-        <h3>Protect what you've built.</h3>
-        <p>Even with limited equity, options exist. Run your full financial profile to see where you stand before your lender does.</p>
+        <h3>Know where you stand before any major decision.</h3>
+        <p>Run your full financial profile to see how a lender would view your application today.</p>
         <a href="bank-approval-simulator.html" class="cta-btn">🏦 Run My Approval Profile →</a>
         <div class="cta-disclaimer">*Free tool. No personal data collected.</div>
       </div>
     `;
   } else {
-    // UNDERWATER
     html += `
       <div class="cta-box" style="background:linear-gradient(135deg,#2a0808,#3a1010);border:1px solid rgba(192,57,43,.3);">
-        <h3 style="color:#fff;">You're underwater — but you're not out of options.</h3>
-        <p>Short sales, loan modifications, and forbearance agreements all exist for this situation. See your full crisis assessment first.</p>
+        <h3 style="color:#fff;">Being underwater is a difficult position — but there are options.</h3>
+        <p>Short sales, loan modifications, and forbearance agreements exist for exactly this situation. Start with a full crisis assessment.</p>
         <a href="mortgage-crisis-map.html" class="cta-btn" style="background:#c0392b;">🚨 See My Crisis Assessment →</a>
         <div class="cta-disclaimer" style="color:#4a4a42;">*Free tool. Not financial advice.</div>
       </div>
     `;
   }
 
-  // CREDIT REPAIR CTA (always show)
-  html += `
-    <div class="repair-box">
-      <div class="repair-label">🔧 Credit Score Issue?</div>
-      <h3>Low credit score blocking your options?</h3>
-      <p>If your credit score is below 640, most refinance and loan modification programs won't approve you. Credit repair services can raise your score 50–100+ points in 3–6 months — reopening options that are currently closed.</p>
-      <a href="YOUR-CREDIT-REPAIR-AFFILIATE-LINK" class="repair-btn">📈 Check My Credit Repair Options →</a>
-    </div>
-  `;
-
-  // BANKER NOTE
   html += `
     <div class="banker-note">
       <div class="banker-note-label">📋 Ziya Y. — Senior Banker & Founder of FinanceRateCalc</div>
-      <p>In 23 years of banking, the biggest mistake I saw homeowners make was not knowing their equity number. Banks know it. Real estate agents know it. You should too — because whoever has the information has the power in any negotiation.</p>
+      <p>In 23 years of banking, the most important thing I saw was this: homeowners who understood their equity number made better decisions at every stage — buying, refinancing, or selling. Whoever has accurate information makes better decisions in any financial conversation.</p>
     </div>
   `;
 
