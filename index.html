@@ -84,7 +84,35 @@
   .nav-dropdown-menu a:hover { background: rgba(255,255,255,0.07); color: var(--gold-light); }
   .nav-dropdown-menu .menu-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 0.4rem 0; }
   .nav-badge { background: var(--gold); color: var(--ink); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
-  @media (max-width: 768px) { header { padding: 0 20px; } .nav-links { display: none; } }
+  /* Hamburger */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+  .hamburger span { width: 24px; height: 2px; background: rgba(255,255,255,0.7); border-radius: 2px; transition: all 0.3s; display: block; }
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 64px; left: 0; right: 0;
+    background: #1a1a18;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 16px 20px;
+    z-index: 99;
+    flex-direction: column;
+    gap: 2px;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+  }
+  .mobile-menu.open { display: flex; animation: dropDown 0.2s ease; }
+  .mobile-menu a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .mobile-menu a:hover { background: rgba(255,255,255,0.07); color: var(--gold-light); }
+  .mobile-menu .mob-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 6px 0; }
+  @media (max-width: 768px) { header { padding: 0 20px; } .nav-links { display: none; } .hamburger { display: flex; } }
   .featured-banner { background: linear-gradient(135deg, #1a0533 0%, #2d1b69 50%, #1a0533 100%); padding: 14px 60px; display: flex; align-items: center; justify-content: center; gap: 16px; border-bottom: 1px solid rgba(91,63,166,0.4); }
   .featured-banner-badge { background: #f0c040; color: #1a0533; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
   .featured-banner-text { color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 400; }
@@ -182,6 +210,7 @@
   .tool-card:nth-child(6) { animation-delay: 0.5s; }
   .tool-card:nth-child(7) { animation-delay: 0.6s; }
   .tool-card:nth-child(8) { animation-delay: 0.7s; }
+  .tool-card:nth-child(9) { animation-delay: 0.8s; }
 </style>
 </head>
 <body>
@@ -215,6 +244,8 @@
         <div class="menu-divider"></div>
         <a href="mortgage-glossary.html">📖 Mortgage Glossary</a>
         <a href="faq.html">❓ Mortgage FAQ</a>
+        <a href="are-you-house-poor.html">🏚️ Are You House Poor?</a>
+        <a href="can-two-salaries-buy-this-house.html">💑 Two Salaries Calculator</a>
         <div class="menu-divider"></div>
         <a href="credit-cards.html">💳 Credit Cards <span style="font-size:10px;background:rgba(184,134,11,0.2);color:#d4a820;padding:1px 6px;border-radius:10px;margin-left:4px;">Soon</span></a>
       </div>
@@ -222,7 +253,27 @@
     <a href="about.html">About</a>
     <span class="nav-badge">Licensed Pro</span>
   </div>
+  <button class="hamburger" onclick="toggleMobile()" id="hamburger">
+    <span></span><span></span><span></span>
+  </button>
 </header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">🏠 Home</a>
+  <a href="mortgage-calculator.html">🏠 Mortgage Calculator</a>
+  <a href="bank-approval-simulator.html">🏦 Bank Approval Simulator</a>
+  <a href="financial-twin.html">🏡 Buy vs Rent</a>
+  <a href="loan-offer-analyzer.html">🔍 Loan Analyzer</a>
+  <a href="mortgage-auditor.html">🤖 AI Mortgage Auditor</a>
+  <a href="mortgage-crisis-map.html">🚨 Crisis Assessment</a>
+  <div class="mob-divider"></div>
+  <a href="are-you-house-poor.html">🏚️ Are You House Poor?</a>
+  <a href="can-two-salaries-buy-this-house.html">💑 Two Salaries Calculator</a>
+  <a href="mortgage-glossary.html">📖 Mortgage Glossary</a>
+  <a href="faq.html">❓ Mortgage FAQ</a>
+  <div class="mob-divider"></div>
+  <a href="about.html">About</a>
+</div>
 
 <div class="featured-banner">
   <span class="featured-banner-badge">🔥 New Tool</span>
@@ -256,14 +307,13 @@
 <div class="tools-section" id="tools">
   <div class="section-header">
     <div>
-      <div class="section-eyebrow">Our Calculators</div>
+      <div class="section-eyebrow">Our Tools & Resources</div>
       <div class="section-title">Free Tools for<br>Every Decision</div>
     </div>
   </div>
 
   <div class="tools-grid">
 
-    <!-- Crisis Map — Featured -->
     <a href="mortgage-crisis-map.html" class="tool-card tool-card-featured" style="background:linear-gradient(135deg,#2a0808 0%,#3a1010 40%,#1a0808 100%);border:1px solid rgba(192,57,43,0.35);">
       <div>
         <div class="tool-label" style="color:#e87070;">🚨 New · Instant Assessment</div>
@@ -279,7 +329,6 @@
       </div>
     </a>
 
-    <!-- Buy vs Rent — Featured -->
     <a href="financial-twin.html" class="tool-card tool-card-featured">
       <div>
         <div class="tool-label">⭐ Most Unique · 25 Cities</div>
@@ -308,7 +357,6 @@
       </div>
     </a>
 
-    <!-- Mortgage -->
     <a href="mortgage-calculator.html" class="tool-card" style="--card-color:#b8860b;--icon-bg:rgba(184,134,11,0.1)">
       <div class="tool-icon">🏠</div>
       <div class="tool-label">Most Popular</div>
@@ -322,7 +370,6 @@
       <div class="tool-link">Calculate Now</div>
     </a>
 
-    <!-- Business Loan -->
     <a href="business-loan-calculator.html" class="tool-card" style="--card-color:#1a3a5c;--icon-bg:rgba(26,58,92,0.08)">
       <div class="tool-icon">💼</div>
       <div class="tool-label">For Businesses</div>
@@ -336,7 +383,6 @@
       <div class="tool-link">Calculate Now</div>
     </a>
 
-    <!-- Compound Interest -->
     <a href="compound-interest-calculator.html" class="tool-card" style="--card-color:#4a6741;--icon-bg:rgba(74,103,65,0.08)">
       <div class="tool-icon">📈</div>
       <div class="tool-label">18 Countries</div>
@@ -350,7 +396,6 @@
       <div class="tool-link">Calculate Now</div>
     </a>
 
-    <!-- Loan Offer Analyzer -->
     <a href="loan-offer-analyzer.html" class="tool-card" style="--card-color:#8b2a2a;--icon-bg:rgba(139,42,42,0.08)">
       <div class="tool-icon">🔍</div>
       <div class="tool-label">Banker's Reality Check</div>
@@ -364,7 +409,6 @@
       <div class="tool-link">Analyze Now</div>
     </a>
 
-    <!-- Debt Consolidation -->
     <a href="debt-consolidation-calculator.html" class="tool-card" style="--card-color:#8b1a1a;--icon-bg:rgba(139,26,26,0.08)">
       <div class="tool-icon">💳</div>
       <div class="tool-label">🆕 New · Save Monthly</div>
@@ -379,7 +423,6 @@
       <div class="tool-link">Calculate Savings →</div>
     </a>
 
-    <!-- Loan Comparator -->
     <a href="loan-comparator.html" class="tool-card" style="--card-color:#b8860b;--icon-bg:rgba(184,134,11,0.1)">
       <div class="tool-icon">⚖️</div>
       <div class="tool-label">🆕 New · Side-by-Side</div>
@@ -394,7 +437,6 @@
       <div class="tool-link">Compare Now</div>
     </a>
 
-    <!-- Bank Approval Simulator -->
     <a href="bank-approval-simulator.html" class="tool-card" style="--card-color:#2a6b4a;--icon-bg:rgba(42,107,74,0.08)">
       <div class="tool-icon">🏦</div>
       <div class="tool-label">Insider Simulator</div>
@@ -408,7 +450,6 @@
       <div class="tool-link">Check Your Profile →</div>
     </a>
 
-    <!-- Mortgage Glossary -->
     <a href="mortgage-glossary.html" class="tool-card" style="--card-color:#1a3a5c;--icon-bg:rgba(26,58,92,0.08)">
       <div class="tool-icon">📖</div>
       <div class="tool-label">Free Reference</div>
@@ -422,6 +463,7 @@
       </div>
       <div class="tool-link">Browse Glossary →</div>
     </a>
+
     <a href="are-you-house-poor.html" class="tool-card" style="--card-color:#cc0000;--icon-bg:rgba(204,0,0,0.08)">
       <div class="tool-icon">🏚️</div>
       <div class="tool-label">🔥 Viral Quiz</div>
@@ -434,7 +476,7 @@
       </div>
       <div class="tool-link">Take the Quiz →</div>
     </a>
-    <!-- Can Two Salaries Buy This House? -->
+
     <a href="can-two-salaries-buy-this-house.html" class="tool-card" style="--card-color:#ff6699;--icon-bg:rgba(255,102,153,0.08)">
       <div class="tool-icon">💑</div>
       <div class="tool-label">🆕 New · Couples Tool</div>
@@ -448,7 +490,7 @@
       </div>
       <div class="tool-link">Try It Together →</div>
     </a>
-    <!-- Mortgage FAQ -->
+
     <a href="faq.html" class="tool-card" style="--card-color:#4a6741;--icon-bg:rgba(74,103,65,0.08)">
       <div class="tool-icon">❓</div>
       <div class="tool-label">Free Resource</div>
@@ -533,9 +575,16 @@
     const d = document.getElementById('calcDropdown');
     d.classList.toggle('open');
   }
+  function toggleMobile() {
+    const m = document.getElementById('mobileMenu');
+    m.classList.toggle('open');
+  }
   document.addEventListener('click', function(e) {
     const d = document.getElementById('calcDropdown');
     if (!d.contains(e.target)) d.classList.remove('open');
+    const m = document.getElementById('mobileMenu');
+    const b = document.getElementById('hamburger');
+    if (!m.contains(e.target) && !b.contains(e.target)) m.classList.remove('open');
   });
 </script>
 </body>
