@@ -3,334 +3,524 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Business Loan Calculator | FinanceRateCalc</title>
-<meta name="description" content="Free business loan calculator by a licensed financial professional. Calculate monthly payments, total cost, and full amortization for your business loan.">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-13712175066');
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Business Loan Calculator 2026 | FinanceRateCalc</title>
+<meta name="description" content="Free business loan calculator by a licensed banking professional. Calculate monthly payments, total cost, and full amortization for term loans, SBA loans, equipment financing, and lines of credit.">
+<link rel="canonical" href="https://financeratecalc.com/business-loan-calculator.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8VGHR8XH4C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-8VGHR8XH4C');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0d0d0d;
-    --surface: #141414;
-    --surface2: #1a1a1a;
-    --border: #2a2a2a;
-    --accent: #00ff88;
-    --accent2: #00cc6a;
-    --danger: #ff4444;
-    --warning: #ffaa00;
-    --text: #e8e8e8;
-    --muted: #666;
-    --white: #ffffff;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'IBM Plex Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
-  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
-  header { position: relative; z-index: 10; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-  .logo { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--white); letter-spacing: -0.5px; }
-  .logo span { color: var(--accent); }
-  nav a { color: var(--muted); text-decoration: none; font-size: 12px; letter-spacing: 1px; margin-left: 24px; transition: color 0.2s; }
-  nav a:hover { color: var(--accent); }
-  nav a.active { color: var(--accent); }
-  .hero { position: relative; z-index: 10; padding: 60px 40px 40px; max-width: 1200px; margin: 0 auto; }
-  .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); color: var(--accent); padding: 6px 14px; border-radius: 4px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
-  .hero-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
-  .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(32px, 5vw, 56px); font-weight: 800; color: var(--white); line-height: 1.05; letter-spacing: -1px; margin-bottom: 12px; }
-  .hero h1 .accent { color: var(--accent); }
-  .hero p { color: var(--muted); font-size: 14px; line-height: 1.7; max-width: 480px; }
-  .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 0 40px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
-  @media (max-width: 768px) { .container { grid-template-columns: 1fr; padding: 0 20px 60px; } header { padding: 16px 20px; } .hero { padding: 40px 20px 30px; } nav { display: none; } }
-  .panel { background: var(--surface); border: 1px solid var(--border); padding: 32px; animation: fadeIn 0.4s ease both; }
-  .panel:first-child { border-radius: 12px 0 0 12px; }
-  .panel:last-child { border-radius: 0 12px 12px 0; }
-  @media (max-width: 768px) { .panel:first-child { border-radius: 12px 12px 0 0; } .panel:last-child { border-radius: 0 0 12px 12px; } }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-  .panel:last-child { animation-delay: 0.1s; }
-  .panel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-  .panel-header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
-  .panel-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--white); letter-spacing: 1px; text-transform: uppercase; }
-  .field { margin-bottom: 22px; }
-  .field label { display: flex; justify-content: space-between; align-items: center; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-  .field label .value-display { color: var(--accent); font-size: 12px; letter-spacing: 0; font-weight: 500; }
-  .input-row { display: flex; align-items: center; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; transition: border-color 0.2s; }
-  .input-row:focus-within { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,255,136,0.1); }
-  .input-prefix, .input-suffix { padding: 0 12px; color: var(--accent); font-size: 13px; font-weight: 500; background: rgba(0,255,136,0.06); height: 44px; display: flex; align-items: center; border-right: 1px solid var(--border); flex-shrink: 0; }
-  .input-suffix { border-right: none; border-left: 1px solid var(--border); }
-  input[type="number"] { flex: 1; background: transparent; border: none; padding: 0 14px; height: 44px; color: var(--white); font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 500; outline: none; -moz-appearance: textfield; min-width: 0; }
-  input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 22px; }
-  .type-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 10px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; text-align: center; letter-spacing: 0.5px; }
-  .type-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .type-btn.active { background: rgba(0,255,136,0.1); border-color: var(--accent); color: var(--accent); }
-  input[type="range"] { width: 100%; -webkit-appearance: none; height: 2px; background: var(--border); outline: none; cursor: pointer; margin-top: 10px; }
-  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 0 8px rgba(0,255,136,0.5); }
-  .btn { width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: 6px; color: var(--bg); font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; margin-top: 4px; }
-  .btn:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,255,136,0.3); }
-  .metric-main { background: var(--surface2); border: 1px solid rgba(0,255,136,0.2); border-radius: 8px; padding: 24px; margin-bottom: 16px; text-align: center; position: relative; overflow: hidden; }
-  .metric-main::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
-  .metric-main .m-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-  .metric-main .m-value { font-family: 'Syne', sans-serif; font-size: 48px; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 4px; letter-spacing: -1px; }
-  .metric-main .m-sub { font-size: 11px; color: var(--muted); }
-  .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-  .metric { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; }
-  .metric .m-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-  .metric .m-value { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); }
-  .metric .m-value.red { color: var(--danger); }
-  .metric .m-value.green { color: var(--accent); }
-  .metric .m-value.yellow { color: var(--warning); }
-  .cost-bar-section { margin-bottom: 16px; }
-  .cost-bar-label { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
-  .cost-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
-  .cost-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(0.4,0,0.2,1); width: 0%; }
-  .cost-fill.principal { background: var(--accent); }
-  .cost-fill.interest { background: var(--danger); }
-  .amort-btn { width: 100%; background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 10px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; letter-spacing: 1px; }
-  .amort-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .amort-wrap { display: none; max-height: 260px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
-  .amort-wrap.show { display: block; }
-  .amort-wrap::-webkit-scrollbar { width: 3px; }
-  .amort-wrap::-webkit-scrollbar-track { background: var(--surface); }
-  .amort-wrap::-webkit-scrollbar-thumb { background: var(--accent); }
-  table { width: 100%; border-collapse: collapse; font-size: 11px; }
-  thead th { background: var(--surface2); color: var(--accent); padding: 8px 10px; text-align: right; font-weight: 500; letter-spacing: 1px; position: sticky; top: 0; text-transform: uppercase; font-size: 9px; }
-  thead th:first-child { text-align: left; }
-  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.03); }
-  tbody tr:hover { background: rgba(0,255,136,0.03); }
-  tbody td { padding: 7px 10px; text-align: right; color: var(--text); }
-  tbody td:first-child { text-align: left; color: var(--muted); }
-  .placeholder { text-align: center; padding: 50px 20px; color: var(--muted); }
-  .placeholder .icon { font-size: 40px; margin-bottom: 12px; opacity: 0.3; }
-  .placeholder p { font-size: 12px; line-height: 1.7; }
-  .placeholder strong { color: var(--accent); }
-  .expert { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto 40px; padding: 0 40px; }
-  @media (max-width: 768px) { .expert { padding: 0 20px; } }
-  .expert-inner { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 20px 24px; display: flex; gap: 16px; align-items: flex-start; }
-  .expert-avatar { width: 44px; height: 44px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; color: var(--bg); flex-shrink: 0; }
-  .expert-name { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--white); font-size: 14px; margin-bottom: 2px; }
-  .expert-title { font-size: 10px; color: var(--accent); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
-  .expert-note { font-size: 12px; color: var(--muted); line-height: 1.7; }
+:root {
+  --ink: #0f0e0c;
+  --paper: #faf8f4;
+  --cream: #f2ede4;
+  --gold: #b8860b;
+  --gold-light: #d4a017;
+  --gold-dim: rgba(184,134,11,0.1);
+  --text: #2c2a26;
+  --muted: #8a8070;
+  --border: #ddd8cc;
+  --white: #ffffff;
+  --green: #2a6b4a;
+  --green-dim: rgba(42,107,74,0.08);
+  --red: #8b2a2a;
+  --red-dim: rgba(139,42,42,0.08);
+  --blue: #1a3a5c;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Geist', sans-serif; background: var(--paper); color: var(--text); min-height: 100vh; }
 
-  /* LawDepot Affiliate Box */
-  .lawdepot-box { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto 60px; padding: 0 40px; }
-  @media (max-width: 768px) { .lawdepot-box { padding: 0 20px; } }
-  .lawdepot-inner { background: linear-gradient(135deg, #0d1f0d 0%, #111a11 100%); border: 1px solid rgba(0,255,136,0.2); border-left: 3px solid var(--accent); border-radius: 8px; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-  .lawdepot-icon { font-size: 28px; flex-shrink: 0; }
-  .lawdepot-content { flex: 1; min-width: 200px; }
-  .lawdepot-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
-  .lawdepot-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
-  .lawdepot-desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
-  .lawdepot-cta { background: var(--accent); color: var(--bg); padding: 10px 20px; border-radius: 6px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-decoration: none; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
-  .lawdepot-cta:hover { background: var(--accent2); transform: translateY(-1px); }
+/* Header */
+header { background: var(--ink); padding: 0 60px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.logo { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 900; color: #fff; text-decoration: none; letter-spacing: -0.5px; }
+.logo em { font-style: italic; color: var(--gold-light); }
+.nav-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; margin-left: 24px; transition: color 0.2s; font-weight: 500; }
+.nav-links a:hover { color: var(--gold-light); }
+.nav-badge { background: var(--gold); color: var(--ink); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-left: 16px; }
+@media(max-width:768px) { header { padding: 0 20px; } .nav-links { display: none; } }
+
+/* Hero */
+.hero { background: var(--ink); padding: 56px 60px 68px; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 75% 50%, rgba(26,58,92,0.4) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(184,134,11,0.08) 0%, transparent 50%); }
+.hero::after { content: ''; position: absolute; right: 60px; top: 50%; transform: translateY(-50%); width: 280px; height: 280px; border: 1px solid rgba(26,58,92,0.3); border-radius: 50%; box-shadow: 0 0 0 40px rgba(26,58,92,0.1), 0 0 0 80px rgba(26,58,92,0.05); }
+.hero-inner { max-width: 960px; margin: 0 auto; position: relative; z-index: 1; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--gold-light); font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 20px; }
+.hero-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--gold-light); }
+.hero h1 { font-family: 'Fraunces', serif; font-size: clamp(30px, 4.5vw, 52px); font-weight: 900; color: #fff; line-height: 1.05; letter-spacing: -1px; margin-bottom: 14px; max-width: 600px; }
+.hero h1 em { font-style: italic; color: var(--gold-light); }
+.hero-sub { color: rgba(255,255,255,0.45); font-size: 15px; line-height: 1.7; font-weight: 300; max-width: 500px; margin-bottom: 32px; }
+.hero-tags { display: flex; gap: 10px; flex-wrap: wrap; }
+.hero-tag { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.55); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+@media(max-width:768px) { .hero { padding: 40px 20px 50px; } .hero::after { display: none; } }
+
+/* Loan type selector */
+.type-section { background: var(--ink); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0 60px 32px; }
+@media(max-width:768px) { .type-section { padding: 0 20px 24px; } }
+.type-inner { max-width: 960px; margin: 0 auto; }
+.type-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 12px; }
+.type-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+@media(max-width:600px) { .type-grid { grid-template-columns: repeat(2, 1fr); } }
+.type-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 14px 12px; cursor: pointer; transition: all 0.2s; text-align: left; }
+.type-btn:hover { border-color: rgba(184,134,11,0.4); background: rgba(184,134,11,0.06); }
+.type-btn.active { background: rgba(184,134,11,0.12); border-color: rgba(184,134,11,0.5); }
+.type-icon { font-size: 20px; margin-bottom: 8px; display: block; }
+.type-name { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+.type-btn.active .type-name { color: var(--gold-light); }
+.type-rate { font-size: 11px; color: rgba(255,255,255,0.35); }
+.type-btn.active .type-rate { color: var(--gold); }
+
+/* Main layout */
+.main { max-width: 960px; margin: 0 auto; padding: 40px 60px 80px; display: grid; grid-template-columns: 300px 1fr; gap: 32px; align-items: start; }
+@media(max-width:900px) { .main { grid-template-columns: 1fr; padding: 28px 20px 60px; } }
+
+/* Input panel */
+.input-panel { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; position: sticky; top: 80px; }
+.panel-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 900; color: var(--ink); margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+
+.field { margin-bottom: 18px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.field-input { position: relative; }
+.prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 600; color: var(--muted); pointer-events: none; }
+.suffix { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--muted); pointer-events: none; }
+.field input, .field select { width: 100%; padding: 11px 36px 11px 28px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; font-weight: 500; color: var(--ink); background: var(--paper); outline: none; transition: border-color 0.2s; font-family: 'Geist', sans-serif; -moz-appearance: textfield; }
+.field input::-webkit-outer-spin-button, .field input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.field input:focus, .field select:focus { border-color: var(--gold); background: rgba(184,134,11,0.03); }
+.field select { padding-left: 12px; padding-right: 12px; cursor: pointer; }
+.field .no-prefix { padding-left: 12px !important; }
+
+input[type="range"] { width: 100%; -webkit-appearance: none; height: 3px; border-radius: 2px; background: var(--border); outline: none; cursor: pointer; margin-top: 8px; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+
+.calc-btn { width: 100%; background: var(--gold); color: var(--ink); border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Geist', sans-serif; margin-top: 8px; letter-spacing: 0.3px; }
+.calc-btn:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(184,134,11,0.25); }
+
+/* Results */
+.results-area { }
+
+.result-main { background: var(--ink); border-radius: 16px; padding: 28px; text-align: center; margin-bottom: 16px; position: relative; overflow: hidden; }
+.result-main::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--blue), var(--gold)); }
+.result-main::after { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; border: 1px solid rgba(255,255,255,0.04); border-radius: 50%; }
+.rm-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 8px; }
+.rm-value { font-family: 'Fraunces', serif; font-size: clamp(40px, 8vw, 60px); font-weight: 900; color: var(--gold-light); line-height: 1; margin-bottom: 6px; position: relative; z-index: 1; }
+.rm-sub { font-size: 13px; color: rgba(255,255,255,0.35); font-weight: 300; }
+
+.metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.metric { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+.metric-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.metric-value { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 900; color: var(--ink); line-height: 1; }
+.metric-value.green { color: var(--green); }
+.metric-value.red { color: var(--red); }
+.metric-value.gold { color: var(--gold); }
+.metric-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+/* Cost bars */
+.cost-section { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 22px 24px; margin-bottom: 16px; }
+.cost-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 900; color: var(--ink); margin-bottom: 16px; }
+.cost-row { margin-bottom: 14px; }
+.cost-row:last-child { margin-bottom: 0; }
+.cost-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.cost-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.cost-amount { font-size: 12px; font-weight: 600; color: var(--muted); }
+.cost-bar { height: 6px; background: var(--cream); border-radius: 3px; overflow: hidden; }
+.cost-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(0.4,0,0.2,1); width: 0%; }
+.cost-fill.principal { background: linear-gradient(90deg, var(--green), #3a8b5f); }
+.cost-fill.interest { background: linear-gradient(90deg, var(--red), #b83a3a); }
+
+/* Banker note */
+.banker-note { background: var(--cream); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 12px; padding: 20px 22px; margin-bottom: 16px; display: flex; gap: 14px; }
+.bn-icon { width: 38px; height: 38px; background: var(--ink); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.bn-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.bn-cred { font-size: 9px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.bn-text { font-size: 13px; color: var(--text); line-height: 1.8; font-weight: 300; }
+
+/* Amortization */
+.amort-section { background: var(--white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 16px; }
+.amort-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 22px; cursor: pointer; transition: background 0.2s; }
+.amort-header:hover { background: var(--cream); }
+.amort-header-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 900; color: var(--ink); }
+.amort-toggle { font-size: 12px; color: var(--muted); font-weight: 600; }
+.amort-body { display: none; max-height: 280px; overflow-y: auto; border-top: 1px solid var(--border); }
+.amort-body.show { display: block; }
+.amort-body::-webkit-scrollbar { width: 4px; }
+.amort-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead th { background: var(--cream); color: var(--muted); padding: 10px 14px; text-align: right; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; font-size: 10px; position: sticky; top: 0; }
+thead th:first-child { text-align: left; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+tbody tr:hover { background: var(--cream); }
+tbody td { padding: 9px 14px; text-align: right; color: var(--text); }
+tbody td:first-child { text-align: left; color: var(--muted); font-weight: 600; }
+
+/* Affiliate */
+.aff-block { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.aff-text { flex: 1; min-width: 160px; }
+.aff-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+.aff-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.aff-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.aff-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--gold); color: var(--ink); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 12px; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
+.aff-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+.aff-disclosure { font-size: 10px; color: var(--muted); width: 100%; margin-top: 6px; }
+.aff-disclosure a { color: inherit; }
+
+/* Placeholder */
+.placeholder { text-align: center; padding: 60px 24px; }
+.placeholder-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+.placeholder-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 900; color: var(--ink); margin-bottom: 8px; }
+.placeholder-sub { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; }
+
+/* Expert section */
+.expert-section { background: var(--cream); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 48px 60px; }
+@media(max-width:768px) { .expert-section { padding: 36px 20px; } }
+.expert-inner { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr; gap: 36px; align-items: center; }
+@media(max-width:600px) { .expert-inner { grid-template-columns: 1fr; gap: 20px; } }
+.expert-portrait { width: 120px; height: 120px; background: var(--ink); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 48px; font-weight: 900; color: var(--gold-light); flex-shrink: 0; position: relative; }
+.expert-portrait::after { content: '✓ Licensed'; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); background: var(--green); color: #fff; font-family: 'Geist', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 1px; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+.expert-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.expert-name { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 900; color: var(--ink); margin-bottom: 4px; }
+.expert-title { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+.expert-bio { font-size: 14px; color: var(--text); line-height: 1.8; font-weight: 300; max-width: 520px; }
+
+footer { background: var(--ink); padding: 36px 60px; }
+@media(max-width:768px) { footer { padding: 28px 20px; } }
+.footer-inner { max-width: 960px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.footer-logo { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 900; color: #fff; }
+.footer-logo em { font-style: italic; color: var(--gold-light); }
+.footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
+.footer-links a { color: rgba(255,255,255,0.35); text-decoration: none; font-size: 12px; font-weight: 500; transition: color 0.2s; }
+.footer-links a:hover { color: var(--gold-light); }
+.footer-copy { font-size: 11px; color: rgba(255,255,255,0.2); width: 100%; margin-top: 8px; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: fadeUp 0.5s ease both; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">Finance<span>RateCalc</span></div>
-  <nav>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="mortgage-calculator.html">Mortgage</a>
-    <a href="business-loan-calculator.html" class="active">Business Loan</a>
-  </nav>
+    <a href="bank-approval-simulator.html">Loan Check</a>
+    <a href="loan-offer-analyzer.html">Loan Analyzer</a>
+    <span class="nav-badge">Licensed Pro</span>
+  </div>
 </header>
 
 <div class="hero">
-  <div class="hero-tag">Business Loan Calculator</div>
-  <h1>Calculate Your<br><span class="accent">Business Loan</span> Cost</h1>
-  <p>Instant payment calculations with full amortization schedule. Built by a licensed financial professional.</p>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Business Loan Calculator · 2026</div>
+    <h1>Know Your Real<br><em>Business Loan Cost</em></h1>
+    <p class="hero-sub">Monthly payments, total interest, and full amortization — for term loans, SBA, equipment financing, and lines of credit. Built by a banker.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">4 Loan Types</span>
+      <span class="hero-tag">Full Amortization</span>
+      <span class="hero-tag">23 Years Experience</span>
+      <span class="hero-tag">Free · No Signup</span>
+    </div>
+  </div>
 </div>
 
-<div class="container">
-  <div class="panel">
-    <div class="panel-header">
-      <div class="dot"></div>
-      <div class="panel-title">Loan Parameters</div>
-    </div>
-
-    <div class="field">
-      <label>Loan Type</label>
-    </div>
+<div class="type-section">
+  <div class="type-inner">
+    <div class="type-label">Select Loan Type</div>
     <div class="type-grid">
-      <button class="type-btn active" onclick="setType(this, 'term')">Term Loan</button>
-      <button class="type-btn" onclick="setType(this, 'sba')">SBA Loan</button>
-      <button class="type-btn" onclick="setType(this, 'equipment')">Equipment</button>
-      <button class="type-btn" onclick="setType(this, 'line')">Line of Credit</button>
-    </div>
-
-    <div class="field">
-      <label>Loan Amount <span class="value-display" id="loanAmountDisplay">$250,000</span></label>
-      <div class="input-row">
-        <span class="input-prefix">$</span>
-        <input type="number" id="loanAmount" value="250000" min="1000" oninput="syncDisplay('loanAmount','loanAmountDisplay','$')">
-      </div>
-      <input type="range" id="loanSlider" min="10000" max="5000000" step="5000" value="250000"
-        oninput="document.getElementById('loanAmount').value=this.value; syncDisplay('loanAmount','loanAmountDisplay','$')">
-    </div>
-
-    <div class="field">
-      <label>Annual Interest Rate <span class="value-display" id="rateDisplay">7.5%</span></label>
-      <div class="input-row">
-        <input type="number" id="interestRate" value="7.5" min="0.1" max="50" step="0.1" style="padding-left:14px"
-          oninput="syncDisplay('interestRate','rateDisplay','%')">
-        <span class="input-suffix">%</span>
-      </div>
-      <input type="range" id="rateSlider" min="1" max="30" step="0.1" value="7.5"
-        oninput="document.getElementById('interestRate').value=this.value; syncDisplay('interestRate','rateDisplay','%')">
-    </div>
-
-    <div class="field">
-      <label>Loan Term <span class="value-display" id="termDisplay">5 years</span></label>
-      <div class="input-row">
-        <input type="number" id="loanTerm" value="5" min="1" max="30" style="padding-left:14px"
-          oninput="syncDisplay('loanTerm','termDisplay',' yrs')">
-        <span class="input-suffix">YRS</span>
-      </div>
-      <input type="range" id="termSlider" min="1" max="30" step="1" value="5"
-        oninput="document.getElementById('loanTerm').value=this.value; syncDisplay('loanTerm','termDisplay',' yrs')">
-    </div>
-
-    <div class="field">
-      <label>Down Payment (Optional) <span class="value-display" id="downDisplay">$0</span></label>
-      <div class="input-row">
-        <span class="input-prefix">$</span>
-        <input type="number" id="downPayment" value="0" min="0" oninput="syncDisplay('downPayment','downDisplay','$')">
-      </div>
-    </div>
-
-    <button class="btn" onclick="calculate()">▶ Calculate</button>
-  </div>
-
-  <div class="panel">
-    <div class="panel-header">
-      <div class="dot" style="background: var(--warning)"></div>
-      <div class="panel-title">Analysis</div>
-    </div>
-    <div id="results">
-      <div class="placeholder">
-        <div class="icon">📊</div>
-        <p>Configure your loan parameters<br>and click <strong>Calculate</strong> to see<br>the full cost analysis.</p>
-      </div>
+      <button class="type-btn active" onclick="selectType(this, 7.5, 'term')">
+        <span class="type-icon">🏢</span>
+        <div class="type-name">Term Loan</div>
+        <div class="type-rate">Typical: 6–10%</div>
+      </button>
+      <button class="type-btn" onclick="selectType(this, 6.5, 'sba')">
+        <span class="type-icon">🇺🇸</span>
+        <div class="type-name">SBA Loan</div>
+        <div class="type-rate">Typical: 5.5–8%</div>
+      </button>
+      <button class="type-btn" onclick="selectType(this, 8.0, 'equipment')">
+        <span class="type-icon">⚙️</span>
+        <div class="type-name">Equipment</div>
+        <div class="type-rate">Typical: 7–12%</div>
+      </button>
+      <button class="type-btn" onclick="selectType(this, 9.5, 'line')">
+        <span class="type-icon">💳</span>
+        <div class="type-name">Line of Credit</div>
+        <div class="type-rate">Typical: 8–15%</div>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- Expert Note -->
-<div class="expert">
+<div class="main">
+  <div class="input-panel">
+    <div class="panel-title">Loan Parameters</div>
+
+    <div class="field">
+      <label>Loan Amount</label>
+      <div class="field-input">
+        <span class="prefix">$</span>
+        <input type="number" id="loanAmount" value="250000" min="1000" step="5000">
+      </div>
+      <input type="range" id="loanSlider" min="10000" max="5000000" step="5000" value="250000">
+    </div>
+
+    <div class="field">
+      <label>Annual Interest Rate</label>
+      <div class="field-input">
+        <input type="number" id="interestRate" value="7.5" min="0.1" max="50" step="0.1" class="no-prefix">
+        <span class="suffix">%</span>
+      </div>
+      <input type="range" id="rateSlider" min="1" max="30" step="0.1" value="7.5">
+    </div>
+
+    <div class="field">
+      <label>Loan Term</label>
+      <div class="field-input">
+        <input type="number" id="loanTerm" value="5" min="1" max="30" class="no-prefix">
+        <span class="suffix">yrs</span>
+      </div>
+      <input type="range" id="termSlider" min="1" max="30" step="1" value="5">
+    </div>
+
+    <div class="field">
+      <label>Down Payment (Optional)</label>
+      <div class="field-input">
+        <span class="prefix">$</span>
+        <input type="number" id="downPayment" value="0" min="0" step="5000">
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">Calculate Loan Cost →</button>
+  </div>
+
+  <div id="resultsArea">
+    <div class="placeholder fade-up">
+      <div class="placeholder-icon">💼</div>
+      <div class="placeholder-title">Enter Your Loan Details</div>
+      <div class="placeholder-sub">Configure your loan parameters on the left and click Calculate to see full payment breakdown, amortization schedule, and banker's analysis.</div>
+    </div>
+  </div>
+</div>
+
+<div class="expert-section">
   <div class="expert-inner">
-    <div class="expert-avatar">B</div>
+    <div class="expert-portrait">🏦</div>
     <div>
-      <div class="expert-name">Licensed Banking Professional</div>
-      <div class="expert-title">23 Years Banking · SPK Licensed · Loan Specialist</div>
-      <div class="expert-note">Business loan rates vary significantly based on credit score, collateral, industry, and lender type. SBA loans typically offer lower rates (6-9%) but require more documentation. Compare at least 3 lenders before committing — even 0.5% difference on a $250K loan saves thousands over the term.</div>
+      <div class="expert-eyebrow">About the Calculator</div>
+      <div class="expert-name">Built by a Licensed Banker</div>
+      <div class="expert-title">23 Years in Banking & Finance · SPK Licensed · Credit Specialist</div>
+      <div class="expert-bio">Business loan rates vary significantly based on credit score, collateral, industry, and lender type. SBA loans typically offer the lowest rates but require more documentation. Always compare at least 3 lenders — even a 0.5% rate difference on a $250,000 loan can save $8,000+ over a 5-year term.</div>
     </div>
   </div>
 </div>
 
-<!-- LawDepot Affiliate Box -->
-<div class="lawdepot-box">
-  <div class="lawdepot-inner">
-    <div class="lawdepot-icon">📄</div>
-    <div class="lawdepot-content">
-      <div class="lawdepot-label">Legal Documents</div>
-      <div class="lawdepot-title">Need a Loan Agreement or Promissory Note?</div>
-      <div class="lawdepot-desc">Protect your business deal with a legally binding loan agreement. LawDepot offers state-specific templates — create yours in minutes.</div>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Finance<em>Rate</em>Calc</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="mortgage-calculator.html">Mortgage</a>
+      <a href="loan-offer-analyzer.html">Loan Analyzer</a>
+      <a href="bank-approval-simulator.html">Approval Simulator</a>
+      <a href="faq.html">FAQ</a>
     </div>
-    <a href="https://www.kqzyfj.com/click-101700650-16996011" target="_blank" rel="noopener" class="lawdepot-cta">Create Document →</a>
+    <div class="footer-copy">© 2026 FinanceRateCalc.com — Educational Use Only · Not Financial Advice</div>
   </div>
-</div>
+</footer>
 
 <script>
-  function syncDisplay(inputId, displayId, suffix) {
-    const val = parseFloat(document.getElementById(inputId).value) || 0;
-    const el = document.getElementById(displayId);
-    if (suffix === '$') el.textContent = '$' + val.toLocaleString('en-US');
-    else if (suffix === '%') el.textContent = val + '%';
-    else el.textContent = val + suffix;
-    const sliderMap = { loanAmount: 'loanSlider', interestRate: 'rateSlider', loanTerm: 'termSlider' };
-    if (sliderMap[inputId]) document.getElementById(sliderMap[inputId]).value = val;
+function fmt(n) { return '$' + Math.round(Math.abs(n)).toLocaleString('en-US'); }
+
+// Sync sliders
+function syncSliders() {
+  const pairs = [
+    ['loanAmount', 'loanSlider'],
+    ['interestRate', 'rateSlider'],
+    ['loanTerm', 'termSlider']
+  ];
+  pairs.forEach(([inputId, sliderId]) => {
+    const input = document.getElementById(inputId);
+    const slider = document.getElementById(sliderId);
+    input.addEventListener('input', () => { slider.value = input.value; });
+    slider.addEventListener('input', () => { input.value = slider.value; });
+  });
+}
+syncSliders();
+
+function selectType(btn, rate, type) {
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('interestRate').value = rate;
+  document.getElementById('rateSlider').value = rate;
+
+  const terms = { term: 5, sba: 10, equipment: 5, line: 3 };
+  document.getElementById('loanTerm').value = terms[type];
+  document.getElementById('termSlider').value = terms[type];
+}
+
+function calculate() {
+  const loanAmount = parseFloat(document.getElementById('loanAmount').value) || 0;
+  const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+  const annualRate = parseFloat(document.getElementById('interestRate').value) || 0;
+  const years = parseInt(document.getElementById('loanTerm').value) || 0;
+  const principal = loanAmount - downPayment;
+
+  if (principal <= 0 || annualRate <= 0 || years <= 0) {
+    alert('Please enter valid loan values.');
+    return;
   }
 
-  function setType(btn, type) {
-    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const rates = { term: 7.5, sba: 6.5, equipment: 8.0, line: 9.5 };
-    document.getElementById('interestRate').value = rates[type];
-    syncDisplay('interestRate', 'rateDisplay', '%');
-  }
+  const monthlyRate = annualRate / 100 / 12;
+  const n = years * 12;
+  const monthly = principal * (monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1);
+  const totalPayment = monthly * n;
+  const totalInterest = totalPayment - principal;
+  const principalRatio = (principal / totalPayment * 100).toFixed(1);
+  const interestRatio = (totalInterest / totalPayment * 100).toFixed(1);
+  const effectiveCost = (totalInterest / principal * 100).toFixed(1);
 
-  function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
-
-  function calculate() {
-    const loanAmount = parseFloat(document.getElementById('loanAmount').value) || 0;
-    const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
-    const annualRate = parseFloat(document.getElementById('interestRate').value) || 0;
-    const years = parseInt(document.getElementById('loanTerm').value) || 0;
-    const principal = loanAmount - downPayment;
-    if (principal <= 0 || annualRate <= 0 || years <= 0) { alert('Please enter valid values.'); return; }
-    const monthlyRate = annualRate / 100 / 12;
-    const n = years * 12;
-    const monthly = principal * (monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1);
-    const totalPayment = monthly * n;
-    const totalInterest = totalPayment - principal;
-    const interestRatio = (totalInterest / totalPayment * 100).toFixed(1);
-    const principalRatio = (principal / totalPayment * 100).toFixed(1);
-    const effectiveCost = (totalInterest / principal * 100).toFixed(1);
-    let balance = principal;
-    let rows = '';
-    for (let i = 1; i <= n; i++) {
-      const ip = balance * monthlyRate;
-      const pp = monthly - ip;
-      balance -= pp;
-      if (i <= 6 || i % 12 === 0 || i === n) {
-        rows += `<tr><td>Mo. ${i}</td><td>${fmt(monthly)}</td><td>${fmt(pp)}</td><td>${fmt(ip)}</td><td>${fmt(Math.max(0, balance))}</td></tr>`;
-      }
+  // Amortization table
+  let balance = principal;
+  let rows = '';
+  for (let i = 1; i <= n; i++) {
+    const ip = balance * monthlyRate;
+    const pp = monthly - ip;
+    balance -= pp;
+    if (i <= 6 || i % 12 === 0 || i === n) {
+      rows += `<tr>
+        <td>Mo. ${i}</td>
+        <td>${fmt(monthly)}</td>
+        <td>${fmt(pp)}</td>
+        <td>${fmt(ip)}</td>
+        <td>${fmt(Math.max(0, balance))}</td>
+      </tr>`;
     }
-    document.getElementById('results').innerHTML = `
-      <div class="metric-main">
-        <div class="m-label">Monthly Payment</div>
-        <div class="m-value">${fmt(monthly)}</div>
-        <div class="m-sub">${years} year term · ${annualRate}% APR</div>
+  }
+
+  // Banker note
+  let bankerNote = '';
+  if (annualRate > 12) {
+    bankerNote = `At ${annualRate}%, this loan is expensive. Your total interest burden of ${fmt(totalInterest)} is ${effectiveCost}% of the principal. Before accepting this rate, check whether an SBA loan or equipment financing could get you under 9%. Even a 2% rate reduction saves ${fmt(totalInterest * 0.25)} on this loan.`;
+  } else if (annualRate <= 7) {
+    bankerNote = `${annualRate}% is a competitive rate for a business loan. Your effective cost is ${effectiveCost}% of the principal — that's reasonable for most business scenarios. Focus on ensuring your monthly cash flow comfortably covers ${fmt(monthly)} before committing.`;
+  } else {
+    bankerNote = `At ${annualRate}%, your monthly payment of ${fmt(monthly)} represents roughly ${(monthly / (loanAmount / 12 * 0.15) * 100).toFixed(0)}% of what your gross revenue should be. A good rule: loan payments shouldn't exceed 15-20% of your monthly gross revenue. Make sure the cash flow projections support this before signing.`;
+  }
+
+  document.getElementById('resultsArea').innerHTML = `
+    <div class="result-main fade-up">
+      <div class="rm-eyebrow">Monthly Payment</div>
+      <div class="rm-value">${fmt(monthly)}</div>
+      <div class="rm-sub">${years}-year term · ${annualRate}% APR · ${fmt(principal)} financed</div>
+    </div>
+
+    <div class="metrics-grid fade-up">
+      <div class="metric">
+        <div class="metric-label">Loan Principal</div>
+        <div class="metric-value green">${fmt(principal)}</div>
+        <div class="metric-sub">Amount financed</div>
       </div>
-      <div class="metrics-grid">
-        <div class="metric"><div class="m-label">Principal</div><div class="m-value green">${fmt(principal)}</div></div>
-        <div class="metric"><div class="m-label">Total Cost</div><div class="m-value">${fmt(totalPayment)}</div></div>
-        <div class="metric"><div class="m-label">Total Interest</div><div class="m-value red">${fmt(totalInterest)}</div></div>
-        <div class="metric"><div class="m-label">Interest Burden</div><div class="m-value yellow">${effectiveCost}%</div></div>
+      <div class="metric">
+        <div class="metric-label">Total Cost</div>
+        <div class="metric-value">${fmt(totalPayment)}</div>
+        <div class="metric-sub">All payments combined</div>
       </div>
-      <div class="cost-bar-section">
-        <div class="cost-bar-label"><span>Principal ${principalRatio}%</span><span>${fmt(principal)}</span></div>
+      <div class="metric">
+        <div class="metric-label">Total Interest</div>
+        <div class="metric-value red">${fmt(totalInterest)}</div>
+        <div class="metric-sub">Cost of borrowing</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Interest Burden</div>
+        <div class="metric-value gold">${effectiveCost}%</div>
+        <div class="metric-sub">Of principal borrowed</div>
+      </div>
+    </div>
+
+    <div class="cost-section fade-up">
+      <div class="cost-title">Where Your Money Goes</div>
+      <div class="cost-row">
+        <div class="cost-meta">
+          <span class="cost-name">Principal Repaid</span>
+          <span class="cost-amount">${fmt(principal)} · ${principalRatio}%</span>
+        </div>
         <div class="cost-bar"><div class="cost-fill principal" id="pBar"></div></div>
-        <div class="cost-bar-label"><span>Interest ${interestRatio}%</span><span>${fmt(totalInterest)}</span></div>
+      </div>
+      <div class="cost-row">
+        <div class="cost-meta">
+          <span class="cost-name">Interest Paid to Lender</span>
+          <span class="cost-amount">${fmt(totalInterest)} · ${interestRatio}%</span>
+        </div>
         <div class="cost-bar"><div class="cost-fill interest" id="iBar"></div></div>
       </div>
-      <button class="amort-btn" onclick="toggleAmort()">▼ Amortization Schedule</button>
-      <div class="amort-wrap" id="amortWrap">
+    </div>
+
+    <div class="banker-note fade-up">
+      <div class="bn-icon">🏦</div>
+      <div>
+        <div class="bn-name">23-Year Banker's Take</div>
+        <div class="bn-cred">Licensed Professional · SPK Certified</div>
+        <div class="bn-text">${bankerNote}</div>
+      </div>
+    </div>
+
+    <div class="amort-section fade-up">
+      <div class="amort-header" onclick="toggleAmort()">
+        <div class="amort-header-title">📋 Amortization Schedule</div>
+        <div class="amort-toggle" id="amortToggle">Show ↓</div>
+      </div>
+      <div class="amort-body" id="amortBody">
         <table>
-          <thead><tr><th>Period</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>Payment</th>
+              <th>Principal</th>
+              <th>Interest</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
           <tbody>${rows}</tbody>
         </table>
-      </div>`;
-    setTimeout(() => {
-      const pBar = document.getElementById('pBar');
-      const iBar = document.getElementById('iBar');
-      if (pBar) pBar.style.width = principalRatio + '%';
-      if (iBar) iBar.style.width = interestRatio + '%';
-    }, 50);
-  }
+      </div>
+    </div>
 
-  function toggleAmort() {
-    const wrap = document.getElementById('amortWrap');
-    const btn = document.querySelector('.amort-btn');
-    wrap.classList.toggle('show');
-    btn.textContent = wrap.classList.contains('show') ? '▲ Hide Schedule' : '▼ Amortization Schedule';
-  }
+    <div class="aff-block fade-up">
+      <div class="aff-text">
+        <div class="aff-label">Sponsored</div>
+        <div class="aff-title">Need a Loan Agreement?</div>
+        <div class="aff-sub">Protect your business deal with a legally binding document. State-specific templates ready in minutes.</div>
+      </div>
+      <a href="https://www.tkqlhce.com/click-101700650-16996011" target="_blank" rel="noopener sponsored" class="aff-btn">📄 LawDepot →</a>
+      <div class="aff-disclosure">Sponsored. Commission may be earned. <a href="affiliate-disclosure.html">Disclosure →</a></div>
+    </div>
 
-  calculate();
+    <div class="aff-block fade-up">
+      <div class="aff-text">
+        <div class="aff-label">Compare Lenders</div>
+        <div class="aff-title">Get Funded Faster</div>
+        <div class="aff-sub">Compare business loan offers and find the best rate before committing.</div>
+      </div>
+      <a href="https://www.dpbolvw.net/click-101700650-17144681" target="_blank" rel="noopener sponsored" class="aff-btn">💰 Compare Rates →</a>
+      <div class="aff-disclosure">Sponsored. Commission may be earned. <a href="affiliate-disclosure.html">Disclosure →</a></div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    const pBar = document.getElementById('pBar');
+    const iBar = document.getElementById('iBar');
+    if (pBar) pBar.style.width = principalRatio + '%';
+    if (iBar) iBar.style.width = interestRatio + '%';
+    window.scrollTo({ top: document.getElementById('resultsArea').offsetTop - 80, behavior: 'smooth' });
+  }, 100);
+
+  gtag('event', 'business_loan_calculated', { loan_amount: loanAmount, rate: annualRate, years: years });
+}
+
+function toggleAmort() {
+  const body = document.getElementById('amortBody');
+  const toggle = document.getElementById('amortToggle');
+  body.classList.toggle('show');
+  toggle.textContent = body.classList.contains('show') ? 'Hide ↑' : 'Show ↓';
+}
 </script>
 </body>
 </html>
