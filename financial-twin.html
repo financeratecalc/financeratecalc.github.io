@@ -316,9 +316,15 @@ function buildCityGrid() {
 }
 
 function updatePrefixes(symbol) {
-  document.querySelectorAll('.field-input .prefix').forEach(el => el.textContent = symbol);
+  document.querySelectorAll('.field-input .prefix').forEach(el => {
+    el.textContent = symbol;
+  });
+  const padMap = { 1: '26px', 2: '34px', 3: '42px', 4: '50px' };
+  const padLeft = padMap[symbol.length] || '42px';
+  document.querySelectorAll('.field-input input:not(.no-prefix)').forEach(el => {
+    el.style.paddingLeft = padLeft;
+  });
 }
-
 function selectCity(i) {
   activeCity = i;
   document.querySelectorAll('.city-btn').forEach((b,j) => b.classList.toggle('active', j===i));
