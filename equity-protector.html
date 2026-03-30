@@ -1,345 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Home Equity Protector | How Much Are You Really Worth? | FinanceRateCalc</title>
-  <meta name="description" content="Find out exactly how much equity you have — and what you could lose if you walk away. Free tool by a licensed banking professional."/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8VGHR8XH4C"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-8VGHR8XH4C');</script>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    :root{
-      --paper:#f8f6f1;--ink:#1a1a18;--ink-light:#4a4a45;--ink-faint:#8a8a82;
-      --rule:#d4d0c8;--gold:#b8860b;--gold-light:#fdf8e8;
-      --green:#1a6b2a;--green-bg:#e6f4ea;
-      --red:#8b1a1a;--red-bg:#fdf0f0;
-      --blue:#1a3a6b;--blue-bg:#e8f0fd;
-    }
-    body{font-family:'Outfit',sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;}
-
-    nav{background:var(--ink);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
-    .nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--paper);text-decoration:none;}
-    .nav-links{display:flex;gap:.25rem;list-style:none;}
-    .nav-links a{color:#c8c4bc;text-decoration:none;font-size:.78rem;padding:.35rem .6rem;border-radius:3px;transition:color .2s;text-transform:uppercase;letter-spacing:.03em;}
-    .nav-links a:hover{color:var(--paper);background:rgba(255,255,255,.1);}
-
-    .hero{background:var(--ink);color:var(--paper);padding:3.5rem 2rem 3rem;text-align:center;position:relative;overflow:hidden;}
-    .hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,.02) 39px,rgba(255,255,255,.02) 40px);}
-    .hero-eyebrow{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#8a8a82;margin-bottom:.75rem;position:relative;}
-    .hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:600;margin-bottom:.75rem;line-height:1.2;position:relative;}
-    .hero h1 em{font-style:italic;color:#d4a820;}
-    .hero-sub{font-size:.95rem;color:#c8c4bc;font-weight:300;max-width:520px;margin:0 auto;line-height:1.7;position:relative;}
-
-    .main-wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
-
-    .calc-card{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:2rem;margin-bottom:1.5rem;}
-    .calc-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;margin-bottom:1.5rem;color:var(--ink);}
-
-    .input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.5rem;}
-    @media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
-    .input-group label{display:block;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.4rem;}
-    .input-group input{width:100%;padding:.75rem 1rem;border:1.5px solid var(--rule);border-radius:6px;font-family:'Outfit',sans-serif;font-size:1rem;color:var(--ink);background:var(--paper);outline:none;transition:border-color .2s;}
-    .input-group input:focus{border-color:var(--gold);}
-    .input-hint{font-size:.72rem;color:var(--ink-faint);margin-top:.3rem;}
-
-    .calc-btn{width:100%;padding:.9rem;background:var(--ink);color:var(--paper);border:none;border-radius:6px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s;letter-spacing:.03em;}
-    .calc-btn:hover{background:#2a2a28;}
-
-    #results{display:none;animation:fadeIn .4s ease;}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-
-    .equity-banner{border-radius:10px;padding:2rem;text-align:center;margin-bottom:1.5rem;}
-    .equity-banner.positive{background:linear-gradient(135deg,#0f2f12,#1a4520);border:1px solid rgba(45,158,69,.3);}
-    .equity-banner.negative{background:linear-gradient(135deg,#2a0808,#3a1010);border:1px solid rgba(192,57,43,.3);}
-    .equity-label{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:#9a9a92;margin-bottom:.5rem;}
-    .equity-amount{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,6vw,4rem);font-weight:700;line-height:1;margin-bottom:.4rem;}
-    .equity-amount.positive{color:#4dce6a;}
-    .equity-amount.negative{color:#e87070;}
-    .equity-sub{font-size:.85rem;color:#9a9a92;}
-
-    .metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
-    @media(max-width:600px){.metrics-grid{grid-template-columns:1fr;}}
-    .metric-box{background:#fff;border:1px solid var(--rule);border-radius:8px;padding:1.25rem;text-align:center;}
-    .metric-label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.4rem;}
-    .metric-value{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--ink);}
-    .metric-note{font-size:.72rem;color:var(--ink-faint);margin-top:.2rem;}
-
-    .scenario-title{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1rem;display:flex;align-items:center;gap:.75rem;}
-    .scenario-title::after{content:'';flex:1;height:1px;background:var(--rule);}
-
-    .scenario-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
-    @media(max-width:600px){.scenario-grid{grid-template-columns:1fr;}}
-
-    .scenario-box{border-radius:8px;padding:1.5rem;}
-    .scenario-box.bad{background:var(--red-bg);border:1px solid #d09090;}
-    .scenario-box.good{background:var(--green-bg);border:1px solid #a0d0a8;}
-    .scenario-box-label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:.5rem;}
-    .scenario-box.bad .scenario-box-label{color:var(--red);}
-    .scenario-box.good .scenario-box-label{color:var(--green);}
-    .scenario-box-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;margin-bottom:.5rem;color:var(--ink);}
-    .scenario-box-amount{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;margin-bottom:.4rem;}
-    .scenario-box.bad .scenario-box-amount{color:var(--red);}
-    .scenario-box.good .scenario-box-amount{color:var(--green);}
-    .scenario-box-desc{font-size:.8rem;color:var(--ink-light);line-height:1.5;}
-
-    .cta-box{background:linear-gradient(135deg,#0f2f12,#1a4520);border:1px solid rgba(45,158,69,.3);border-radius:8px;padding:2rem;text-align:center;margin-bottom:1.5rem;}
-    .cta-box h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:#fff;margin-bottom:.4rem;}
-    .cta-box p{font-size:.84rem;color:#9a9a92;margin-bottom:1.25rem;line-height:1.5;}
-    .cta-btn{display:inline-block;padding:.8rem 2rem;background:#2d9e45;color:#fff;border-radius:5px;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:600;text-decoration:none;transition:background .2s;}
-    .cta-btn:hover{background:#248a3a;}
-    .cta-disclaimer{font-size:.68rem;color:#4a4a42;margin-top:.75rem;}
-
-    .banker-note{background:var(--gold-light);border:1px solid #d4c080;border-left:4px solid var(--gold);border-radius:0 6px 6px 0;padding:1.25rem 1.5rem;margin-bottom:1.5rem;}
-    .banker-note-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;font-weight:600;}
-    .banker-note p{font-size:.85rem;color:var(--ink-light);margin:0;line-height:1.6;}
-
-    .recalc-btn{width:100%;padding:.75rem;background:none;border:1px solid var(--rule);border-radius:6px;font-family:'Outfit',sans-serif;font-size:.85rem;color:var(--ink-faint);cursor:pointer;transition:all .2s;margin-top:.5rem;}
-    .recalc-btn:hover{border-color:var(--ink);color:var(--ink);}
-
-    footer{background:var(--ink);color:#8a8a82;padding:2rem;text-align:center;font-size:.8rem;}
-    footer a{color:#c8c4bc;text-decoration:none;}
-    .footer-links{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1rem;}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Much Down Payment for a $1.0M House? | FinanceRateCalc</title>
+<meta name="description" content="Buying a $1.0M home? Here are your down payment options — from 3% FHA to 20% conventional — with exact monthly payments and a banker's honest recommendation.">
+<meta name="keywords" content="down payment $1.0M house, how much down payment $1.0M home, $1.0M mortgage down payment options 2026">
+<link rel="canonical" href="https://financeratecalc.com/down-payment-for-1000k-house.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-13712175066');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#0f0e0c; --paper:#faf8f4; --cream:#f2ede4; --gold:#b8860b; --gold-light:#d4a017;
+    --sage:#4a6741; --blue:#1a3a5c; --text:#2c2a26; --muted:#8a8070; --border:#ddd8cc; --white:#ffffff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Geist',sans-serif;background:var(--paper);color:var(--text);line-height:1.7;}
+  header{background:var(--ink);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+  .logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+  .logo em{font-style:italic;color:var(--gold-light);}
+  .nav-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;font-weight:500;margin-left:24px;transition:color 0.2s;}
+  .nav-links a:hover{color:var(--gold-light);}
+  @media(max-width:768px){header{padding:0 20px;}.nav-links{display:none;}}
+  .hero{background:var(--ink);padding:60px 60px 80px;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 50%, rgba(184,134,11,0.1) 0%, transparent 60%);}
+  .hero-inner{max-width:860px;margin:0 auto;position:relative;z-index:1;}
+  .breadcrumb{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:20px;flex-wrap:wrap;}
+  .breadcrumb a{color:rgba(255,255,255,0.4);text-decoration:none;}
+  .breadcrumb span{color:rgba(255,255,255,0.2);}
+  .hero-eye{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+  .hero-eye::before{content:'';display:inline-block;width:24px;height:1px;background:var(--gold-light);}
+  .hero h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,56px);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:20px;}
+  .hero h1 em{font-style:italic;color:var(--gold-light);}
+  .hero-desc{color:rgba(255,255,255,0.55);font-size:16px;line-height:1.7;max-width:580px;font-weight:300;margin-bottom:32px;}
+  .hero-answer{display:inline-flex;align-items:center;gap:12px;background:rgba(184,134,11,0.12);border:1px solid rgba(184,134,11,0.25);border-radius:12px;padding:16px 24px;}
+  .ha-label{font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;}
+  .ha-num{font-family:'Fraunces',serif;font-size:36px;font-weight:900;color:var(--gold-light);line-height:1;}
+  .ha-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;}
+  @media(max-width:768px){.hero{padding:40px 20px 60px;}}
+  .content{max-width:860px;margin:0 auto;padding:60px 60px 80px;display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:start;}
+  @media(max-width:900px){.content{grid-template-columns:1fr;padding:40px 20px 60px;}}
+  article h2{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,30px);font-weight:900;color:var(--ink);letter-spacing:-0.3px;margin:40px 0 16px;line-height:1.2;}
+  article h2:first-child{margin-top:0;}
+  article h3{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--ink);margin:28px 0 12px;}
+  article p{font-size:15px;color:var(--text);line-height:1.8;margin-bottom:16px;font-weight:300;}
+  article p strong{font-weight:600;color:var(--ink);}
+  article ul,article ol{padding-left:24px;margin-bottom:16px;}
+  article li{font-size:15px;color:var(--text);line-height:1.8;margin-bottom:6px;font-weight:300;}
+  article li strong{font-weight:600;color:var(--ink);}
+  .data-table{width:100%;border-collapse:collapse;margin:24px 0;font-size:14px;}
+  .data-table th{background:var(--ink);color:#fff;padding:12px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+  .data-table td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text);font-weight:300;}
+  .data-table tr:last-child td{border-bottom:none;}
+  .data-table tr:nth-child(even) td{background:var(--cream);}
+  .data-table .highlight td{background:rgba(184,134,11,0.08);font-weight:600;color:var(--ink);}
+  .td-green{color:#2a6b4a;font-weight:600!important;}
+  .td-red{color:#8b2a2a;font-weight:600!important;}
+  .td-gold{color:var(--gold);font-weight:600!important;}
+  .info-box{border-radius:12px;padding:20px 24px;margin:24px 0;}
+  .info-box.green{background:rgba(42,107,74,0.06);border:1px solid rgba(42,107,74,0.15);border-left:3px solid #2a6b4a;}
+  .info-box.red{background:rgba(139,42,42,0.06);border:1px solid rgba(139,42,42,0.15);border-left:3px solid #8b2a2a;}
+  .info-box.gold{background:rgba(184,134,11,0.06);border:1px solid rgba(184,134,11,0.15);border-left:3px solid var(--gold);}
+  .info-box-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+  .info-box.green .info-box-title{color:#2a6b4a;}
+  .info-box.red .info-box-title{color:#8b2a2a;}
+  .info-box.gold .info-box-title{color:var(--gold);}
+  .info-box p{margin-bottom:0;font-size:14px;}
+  .banker-note{background:var(--cream);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:24px;margin:28px 0;display:flex;gap:16px;}
+  .bn-avatar{width:40px;height:40px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .bn-name{font-weight:700;font-size:13px;color:var(--ink);margin-bottom:2px;}
+  .bn-cred{font-size:9px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+  .bn-text{font-size:13px;color:var(--text);line-height:1.8;font-weight:300;}
+  .sidebar{position:sticky;top:80px;}
+  .sidebar-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;}
+  .sc-title{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+  .sc-sub{font-size:12px;color:var(--muted);margin-bottom:16px;font-weight:300;}
+  .sc-btn{display:block;background:var(--gold);color:var(--ink);padding:12px 20px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;text-align:center;transition:all 0.2s;margin-bottom:10px;}
+  .sc-btn:hover{background:var(--gold-light);transform:translateY(-1px);}
+  .sc-btn.secondary{background:transparent;border:1px solid var(--border);color:var(--text);}
+  .sc-btn.secondary:hover{border-color:var(--gold);color:var(--gold);}
+  .quick-facts{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;}
+  .qf-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+  .qf-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+  .qf-row:last-child{border-bottom:none;padding-bottom:0;}
+  .qf-label{font-size:12px;color:var(--muted);font-weight:400;}
+  .qf-val{font-size:14px;font-weight:700;color:var(--ink);}
+  .qf-val.green{color:#2a6b4a;}
+  .qf-val.gold{color:var(--gold);}
+  .related-links{background:var(--cream);border:1px solid var(--border);border-radius:14px;padding:24px;}
+  .rl-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+  .rl-link{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);text-decoration:none;color:var(--text);font-size:13px;font-weight:500;transition:color 0.2s;}
+  .rl-link:last-child{border-bottom:none;padding-bottom:0;}
+  .rl-link:hover{color:var(--gold);}
+  .rl-arrow{color:var(--muted);font-size:10px;}
+  footer{background:var(--ink);padding:40px 60px;text-align:center;}
+  footer p{color:rgba(255,255,255,0.3);font-size:12px;}
+  footer a{color:rgba(255,255,255,0.4);text-decoration:none;}
+  footer a:hover{color:var(--gold-light);}
+  @media(max-width:768px){footer{padding:40px 20px;}}
+</style>
 </head>
 <body>
-
-<nav>
-  <a href="index.html" class="nav-brand">FinanceRateCalc</a>
-  <ul class="nav-links">
-    <li><a href="mortgage-calculator.html">🏠 Mortgage</a></li>
-    <li><a href="mortgage-crisis-map.html">🚨 Crisis Map</a></li>
-    <li><a href="debt-consolidation-calculator.html">💳 Debt</a></li>
-    <li><a href="about.html">About</a></li>
-  </ul>
-</nav>
+<header>
+  <a class="logo" href="/">Finance<em>Rate</em>Calc</a>
+  <nav class="nav-links">
+    <a href="/mortgage-calculator.html">Mortgage</a>
+    <a href="/compound-interest-calculator.html">Compound Interest</a>
+    <a href="/financial-twin.html">Buy vs Rent</a>
+    <a href="/are-you-rich.html">Are You Rich?</a>
+  </nav>
+</header>
 
 <div class="hero">
-  <p class="hero-eyebrow">Free Tool · Instant Results · No Login Required</p>
-  <h1>How Much of Your Home<br/>Do You <em>Actually</em> Own?</h1>
-  <p class="hero-sub">Most homeowners don't have an accurate picture of their equity — and that number matters more than most people realize. Enter two numbers and see exactly where you stand.</p>
-</div>
-
-<div class="main-wrap">
-
-  <div class="calc-card">
-    <div class="calc-title">📊 Your Equity Snapshot</div>
-    <div class="input-grid">
-      <div class="input-group">
-        <label>Current Home Value ($)</label>
-        <input type="number" id="homeValue" placeholder="e.g. 450000" min="0"/>
-        <div class="input-hint">Use Zillow or a recent appraisal estimate</div>
+  <div class="hero-inner">
+    <div class="breadcrumb">
+      <a href="/">Home</a><span>›</span>
+      <a href="/mortgage-calculator.html">Mortgage</a><span>›</span>
+      <span>Down Payment for $1.0M Home</span>
+    </div>
+    <div class="hero-eye">Down Payment Guide · 2026</div>
+    <h1>How Much Down Payment for a <em>$1.0M</em> House?</h1>
+    <p class="hero-desc">You have options — from 3% FHA to 20% conventional. A 23-year banking veteran breaks down what each choice really costs you.</p>
+    <div class="hero-answer">
+      <div>
+        <div class="ha-label">Minimum (FHA)</div>
+        <div class="ha-num">$30K</div>
+        <div class="ha-sub">3% down — highest monthly cost</div>
       </div>
-      <div class="input-group">
-        <label>Remaining Mortgage Balance ($)</label>
-        <input type="number" id="mortgageBalance" placeholder="e.g. 280000" min="0"/>
-        <div class="input-hint">Check your latest mortgage statement</div>
-      </div>
-      <div class="input-group">
-        <label>Current Interest Rate (%)</label>
-        <input type="number" id="currentRate" placeholder="e.g. 7.2" step="0.1" min="0"/>
-        <div class="input-hint">Your current mortgage rate</div>
-      </div>
-      <div class="input-group">
-        <label>Years Remaining on Mortgage</label>
-        <input type="number" id="yearsLeft" placeholder="e.g. 24" min="1" max="30"/>
-        <div class="input-hint">How many years left on your loan</div>
+      <div style="width:1px;height:48px;background:rgba(255,255,255,0.1);margin:0 8px;"></div>
+      <div>
+        <div class="ha-label">Recommended</div>
+        <div class="ha-num">$200K</div>
+        <div class="ha-sub">20% down — no PMI</div>
       </div>
     </div>
-    <button class="calc-btn" onclick="calculate()">Calculate My Equity →</button>
   </div>
+</div>
 
-  <div id="results"></div>
+<div class="content">
+  <article>
+    <h2>Down Payment Options for a $1.0M Home</h2>
+    <p>The size of your down payment dramatically affects your monthly payment, whether you pay PMI, and how much cash you need on day one. Here's the full comparison:</p>
 
+    <table class="data-table">
+      <thead><tr><th>Down Payment</th><th>Amount</th><th>Monthly Payment</th><th>PMI</th><th>Total Cash Needed</th></tr></thead>
+      <tbody>
+        <tr><td>3% (FHA)</td><td>$30,000</td><td class="td-red">$6,870</td><td>Yes (~$417/mo)</td><td>$65,000</td></tr>
+        <tr><td>5% Conventional</td><td>$50,000</td><td>$6,737</td><td>Yes (~$417/mo)</td><td>$85,000</td></tr>
+        <tr><td>10% Conventional</td><td>$100,000</td><td>$6,196</td><td>Reduced</td><td>$135,000</td></tr>
+        <tr class="highlight"><td>20% Conventional</td><td class="td-gold">$200,000</td><td class="td-green">$5,322</td><td>None</td><td class="td-gold">$235,000</td></tr>
+      </tbody>
+    </table>
+
+    <div class="banker-note">
+      <div class="bn-avatar">🏦</div>
+      <div>
+        <div class="bn-name">Licensed Banking Professional</div>
+        <div class="bn-cred">23 Years · Mortgage Specialist</div>
+        <div class="bn-text">The difference between 3% and 20% down on a $1.0M home is $1,548/month. Over 5 years, that's $92,861 extra — plus PMI. If you can wait and save to 20%, it's almost always worth it.</div>
+      </div>
+    </div>
+
+    <h2>What Is PMI and How Do You Avoid It?</h2>
+    <p>Private Mortgage Insurance (PMI) protects the lender — not you — if you default. It typically costs 0.5-1% of the loan amount annually. On a $1.0M home with 3% down, that's approximately $5,000/year in PMI alone.</p>
+    <p>You can request PMI removal once you reach 20% equity in the home (through payments + appreciation). But the fastest way to avoid it is to put 20% down from the start.</p>
+
+    <h2>FHA vs Conventional: Which Is Better?</h2>
+    <ul>
+      <li><strong>FHA (3.5% down):</strong> Best for credit scores 580-679. Lower down payment but higher long-term cost due to MIP (mortgage insurance premium that lasts the life of the loan)</li>
+      <li><strong>Conventional (5-20% down):</strong> Best for credit scores 680+. PMI can be removed; MIP cannot on FHA</li>
+      <li><strong>Verdict:</strong> If your credit score is 680+, conventional almost always wins long-term</li>
+    </ul>
+
+    <div class="info-box gold">
+      <div class="info-box-title">→ Calculate Your Exact Payment</div>
+      <p>Use our mortgage calculator to compare exact monthly payments at different down payment amounts for your specific situation.</p>
+    </div>
+  </article>
+
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <div class="sc-title">Compare Down Payment Scenarios</div>
+      <div class="sc-sub">See exact monthly payments</div>
+      <a href="/mortgage-calculator.html" class="sc-btn">→ Mortgage Calculator</a>
+      <a href="/can-i-get-a-loan.html" class="sc-btn secondary">Check Loan Eligibility</a>
+    </div>
+
+    <div class="quick-facts">
+      <div class="qf-title">Quick Facts · $1.0M Home</div>
+      <div class="qf-row"><span class="qf-label">Minimum Down (FHA)</span><span class="qf-val">$30K</span></div>
+      <div class="qf-row"><span class="qf-label">No-PMI Down (20%)</span><span class="qf-val gold">$200K</span></div>
+      <div class="qf-row"><span class="qf-label">Monthly w/ 20% Down</span><span class="qf-val green">$5,322</span></div>
+      <div class="qf-row"><span class="qf-label">Monthly w/ 3% Down</span><span class="qf-val">$6,870</span></div>
+      <div class="qf-row"><span class="qf-label">PMI Savings (20% vs 3%)</span><span class="qf-val green">$18,572/yr</span></div>
+    </div>
+
+    <div class="related-links">
+      <div class="rl-title">Related Pages</div>
+      <a href="/down-payment-for-950k-house.html" class="rl-link"><span>Down Payment for $950K Home</span><span class="rl-arrow">→</span></a><a href="/mortgage-calculator.html" class="rl-link"><span>Mortgage Calculator</span><span class="rl-arrow">→</span></a><a href="/can-i-get-a-loan.html" class="rl-link"><span>Can I Get a Loan?</span><span class="rl-arrow">→</span></a>
+    </div>
+  </aside>
 </div>
 
 <footer>
-  <div class="footer-links">
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="privacy-policy.html">Privacy Policy</a>
-    <a href="terms-of-service.html">Terms of Service</a>
-    <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
-  </div>
-  <p>© 2026 FinanceRateCalc.com · For informational purposes only · Not financial advice</p>
+  <p>© 2026 FinanceRateCalc · Built by a <a href="/">Licensed Banking Professional</a> · Not financial advice</p>
 </footer>
-
-<script>
-function fmt(n) {
-  return '$' + Math.abs(Math.round(n)).toLocaleString();
-}
-function pct(n) {
-  return Math.abs(n).toFixed(1) + '%';
-}
-
-function calculate() {
-  const homeVal = parseFloat(document.getElementById('homeValue').value);
-  const mortgage = parseFloat(document.getElementById('mortgageBalance').value);
-  const rate = parseFloat(document.getElementById('currentRate').value);
-  const years = parseFloat(document.getElementById('yearsLeft').value);
-
-  if (!homeVal || !mortgage) {
-    alert('Please enter your home value and mortgage balance.');
-    return;
-  }
-
-  const equity = homeVal - mortgage;
-  const equityPct = (equity / homeVal) * 100;
-  const ltv = (mortgage / homeVal) * 100;
-  const sellingCosts = homeVal * 0.07;
-  const netIfSold = equity - sellingCosts;
-  const maxCashOut = (homeVal * 0.80) - mortgage;
-
-  let monthlyPayment = 0;
-  if (rate && years) {
-    const r = (rate / 100) / 12;
-    const n = years * 12;
-    monthlyPayment = mortgage * (r * Math.pow(1+r,n)) / (Math.pow(1+r,n)-1);
-  }
-
-  let refiMonthly = 0;
-  let refiSavings = 0;
-  if (years) {
-    const r2 = (6.5 / 100) / 12;
-    const n2 = 30 * 12;
-    refiMonthly = mortgage * (r2 * Math.pow(1+r2,n2)) / (Math.pow(1+r2,n2)-1);
-    refiSavings = rate ? (monthlyPayment - refiMonthly) : 0;
-  }
-
-  const isPositive = equity > 0;
-  const hasCashOutOption = maxCashOut > 10000;
-
-  let html = '';
-
-  html += `
-    <div class="equity-banner ${isPositive ? 'positive' : 'negative'}">
-      <div class="equity-label">${isPositive ? 'Your Home Equity' : 'You Are Underwater By'}</div>
-      <div class="equity-amount ${isPositive ? 'positive' : 'negative'}">${fmt(equity)}</div>
-      <div class="equity-sub">${isPositive
-        ? `You own ${pct(equityPct)} of your home. Your loan-to-value ratio is ${pct(ltv)}.`
-        : `You owe more than your home is worth. Your LTV is ${pct(ltv)}.`
-      }</div>
-    </div>
-  `;
-
-  html += `
-    <div class="metrics-grid">
-      <div class="metric-box">
-        <div class="metric-label">Home Value</div>
-        <div class="metric-value">${fmt(homeVal)}</div>
-        <div class="metric-note">What you own</div>
-      </div>
-      <div class="metric-box">
-        <div class="metric-label">Mortgage Balance</div>
-        <div class="metric-value">${fmt(mortgage)}</div>
-        <div class="metric-note">What you owe</div>
-      </div>
-      <div class="metric-box">
-        <div class="metric-label">Loan-to-Value</div>
-        <div class="metric-value" style="color:${ltv > 90 ? '#8b1a1a' : ltv > 80 ? '#92650a' : '#1a6b2a'}">${pct(ltv)}</div>
-        <div class="metric-note">${ltv > 90 ? 'High risk' : ltv > 80 ? 'Watch carefully' : 'Healthy range'}</div>
-      </div>
-    </div>
-  `;
-
-  if (isPositive) {
-    html += `<div class="scenario-title">What Your Equity Means in Practice</div>`;
-    html += `<div class="scenario-grid">`;
-
-    html += `
-      <div class="scenario-box bad">
-        <div class="scenario-box-label">⚠️ If You Foreclose or Walk Away</div>
-        <div class="scenario-box-title">Equity at Risk</div>
-        <div class="scenario-box-amount">${fmt(equity)}</div>
-        <div class="scenario-box-desc">In a foreclosure, the property is typically sold under market value. The equity you've built — ${fmt(equity)} — would be lost, along with a significant impact to your credit for up to 7 years.</div>
-      </div>
-    `;
-
-    if (hasCashOutOption) {
-      html += `
-        <div class="scenario-box good">
-          <div class="scenario-box-label">✅ Cash-Out Refinance Option</div>
-          <div class="scenario-box-title">Available to Access</div>
-          <div class="scenario-box-amount">${fmt(maxCashOut)}</div>
-          <div class="scenario-box-desc">At 80% LTV, you could access ${fmt(maxCashOut)} in equity — to consolidate debt, fund repairs, or build an emergency reserve — while keeping your home.</div>
-        </div>
-      `;
-    } else {
-      html += `
-        <div class="scenario-box good">
-          <div class="scenario-box-label">✅ If You Sell Through an Agent</div>
-          <div class="scenario-box-title">Estimated Net Proceeds</div>
-          <div class="scenario-box-amount">${fmt(Math.max(0, netIfSold))}</div>
-          <div class="scenario-box-desc">After typical agent fees and closing costs (~7%), you'd receive approximately ${fmt(Math.max(0, netIfSold))} — versus nothing in a distressed sale.</div>
-        </div>
-      `;
-    }
-    html += `</div>`;
-  }
-
-  if (rate && rate > 6.5 && refiSavings > 50) {
-    html += `
-      <div class="banker-note">
-        <div class="banker-note-label">💡 Rate Opportunity</div>
-        <p>Your current rate is ${rate}%. At today's market rate of ~6.5%, refinancing could reduce your payment by approximately <strong>${fmt(refiSavings)}/month</strong> — that's <strong>${fmt(refiSavings * 12)}/year</strong>. Worth comparing before rates shift again.</p>
-      </div>
-    `;
-  }
-
-  if (isPositive && hasCashOutOption) {
-    html += `
-      <div class="cta-box">
-        <h3>Your equity is an asset. Put it to work.</h3>
-        <p>See if you qualify for a cash-out refinance or a lower rate. Free pre-qualification — no commitment, no credit impact to check.</p>
-        <a href="https://www.dpbolvw.net/click-101700650-17144681" target="_blank" rel="noopener sponsored" class="cta-btn">💸 Explore Funding Options →</a>
-        <div class="cta-disclaimer">*Affiliate link — we may earn a commission if you apply. <a href="affiliate-disclosure.html" style="color:#6a6a62;">See disclosure.</a></div>
-      </div>
-    `;
-  } else if (isPositive) {
-    html += `
-      <div class="cta-box">
-        <h3>Know where you stand before any major decision.</h3>
-        <p>Run your full financial profile to see how a lender would view your application today.</p>
-        <a href="bank-approval-simulator.html" class="cta-btn">🏦 Run My Approval Profile →</a>
-        <div class="cta-disclaimer">*Free tool. No personal data collected.</div>
-      </div>
-    `;
-  } else {
-    html += `
-      <div class="cta-box" style="background:linear-gradient(135deg,#2a0808,#3a1010);border:1px solid rgba(192,57,43,.3);">
-        <h3 style="color:#fff;">Being underwater is a difficult position — but there are options.</h3>
-        <p>Short sales, loan modifications, and forbearance agreements exist for exactly this situation. Start with a full crisis assessment.</p>
-        <a href="mortgage-crisis-map.html" class="cta-btn" style="background:#c0392b;">🚨 See My Crisis Assessment →</a>
-        <div class="cta-disclaimer" style="color:#4a4a42;">*Free tool. Not financial advice.</div>
-      </div>
-    `;
-  }
-
-  html += `
-    <div class="banker-note">
-      <div class="banker-note-label">📋 Ziya Y. — Senior Banker & Founder of FinanceRateCalc</div>
-      <p>In 23 years of banking, the most important thing I saw was this: homeowners who understood their equity number made better decisions at every stage — buying, refinancing, or selling. Whoever has accurate information makes better decisions in any financial conversation.</p>
-    </div>
-  `;
-
-  html += `<button class="recalc-btn" onclick="recalculate()">↩ Recalculate</button>`;
-
-  document.getElementById('results').innerHTML = html;
-  document.getElementById('results').style.display = 'block';
-  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
-
-  gtag('event', 'equity_calculator_used', {
-    equity_positive: isPositive,
-    ltv_range: ltv > 90 ? 'high' : ltv > 80 ? 'medium' : 'low'
-  });
-}
-
-function recalculate() {
-  document.getElementById('results').style.display = 'none';
-  document.getElementById('results').innerHTML = '';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-</script>
 </body>
 </html>

@@ -3,434 +3,272 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Real Cost of Waiting to Buy a Home | FinanceRateCalc</title>
-<meta name="description" content="Find out exactly how much waiting to buy a home is costing you. Lost equity, rising prices, rent money gone — calculated by a licensed banker.">
-<link rel="canonical" href="https://financeratecalc.com/cost-of-waiting.html">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8VGHR8XH4C"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-8VGHR8XH4C');</script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>Compound Interest Calculator 2026 — 18 Countries | FinanceRateCalc</title>
+<meta name="description" content="See how your money grows with compound interest. Real savings rates from 18 countries. Interactive chart shows year-by-year growth. Built by a licensed banker.">
+<link rel="canonical" href="https://financeratecalc.com/compound-interest-calculator.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-13712175066');</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --ink: #0f0e0c;
-  --paper: #faf8f4;
-  --cream: #f2ede4;
-  --gold: #b8860b;
-  --gold-light: #d4a017;
-  --gold-dim: rgba(184,134,11,0.1);
-  --text: #2c2a26;
-  --muted: #8a8070;
-  --border: #ddd8cc;
-  --white: #ffffff;
-  --green: #2a6b4a;
-  --red: #8b2a2a;
-  --red-bright: #cc3333;
-  --blue: #1a3a5c;
-  --orange: #c45c00;
-}
+:root{--ink:#0f0e0c;--paper:#faf8f4;--cream:#f2ede4;--gold:#b8860b;--gold-light:#d4a017;--text:#2c2a26;--muted:#8a8070;--border:#ddd8cc;--white:#fff;--green:#2a6b4a;--red:#8b2a2a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:var(--paper);color:var(--text);}
+header{background:var(--ink);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold-light);}
+.nav-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;margin-left:24px;}
+.nav-links a:hover{color:var(--gold-light);}
+@media(max-width:768px){header{padding:0 20px;}.nav-links{display:none;}}
+.hero{background:var(--ink);padding:50px 60px 60px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(184,134,11,0.08) 0%,transparent 60%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+.hero-eye{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.hero-eye::before{content:'';display:inline-block;width:24px;height:1px;background:var(--gold-light);}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,44px);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:10px;}
+.hero h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{color:rgba(255,255,255,0.4);font-size:14px;font-weight:300;}
+@media(max-width:768px){.hero{padding:30px 20px 40px;}}
+.main{max-width:960px;margin:0 auto;padding:40px 60px 80px;display:grid;grid-template-columns:320px 1fr;gap:40px;align-items:start;}
+@media(max-width:900px){.main{grid-template-columns:1fr;padding:30px 20px 60px;}}
+.input-panel{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:28px;position:sticky;top:80px;}
+.panel-title{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--ink);margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}
+.field-input{position:relative;}
+.field-input .prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:600;color:var(--muted);}
+.field-input .suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:600;color:var(--muted);}
+.field input,.field select{width:100%;padding:11px 36px 11px 28px;border:1px solid var(--border);border-radius:8px;font-size:15px;font-weight:500;color:var(--ink);background:var(--paper);outline:none;transition:border-color 0.2s;font-family:'Geist',sans-serif;}
+.field input:focus,.field select:focus{border-color:var(--gold);}
+.field select{padding-left:12px;padding-right:12px;}
+input[type="range"]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--border);outline:none;cursor:pointer;margin-top:6px;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.calc-btn{width:100%;background:var(--gold);color:var(--ink);border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'Geist',sans-serif;margin-top:8px;}
+.calc-btn:hover{background:var(--gold-light);transform:translateY(-1px);}
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Geist', sans-serif; background: var(--paper); color: var(--text); min-height: 100vh; }
+/* Country selector */
+.country-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;}
+.country-btn{background:var(--cream);border:1px solid var(--border);border-radius:6px;padding:6px 4px;font-size:10px;font-weight:600;color:var(--muted);cursor:pointer;text-align:center;transition:all 0.2s;line-height:1.3;}
+.country-btn:hover{border-color:var(--gold);color:var(--gold);}
+.country-btn.active{background:var(--gold);border-color:var(--gold);color:var(--ink);}
+.country-rate-badge{display:inline-block;background:rgba(184,134,11,0.1);border:1px solid rgba(184,134,11,0.3);color:var(--gold);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:10px;}
 
-header { background: var(--ink); padding: 0 60px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-.logo { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 900; color: #fff; text-decoration: none; letter-spacing: -0.5px; }
-.logo em { font-style: italic; color: var(--gold-light); }
-.nav-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 13px; margin-left: 24px; transition: color 0.2s; }
-.nav-links a:hover { color: var(--gold-light); }
-.nav-badge { background: var(--gold); color: var(--ink); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-left: 16px; }
-@media(max-width:768px) { header { padding: 0 20px; } .nav-links { display: none; } }
-
-/* Hero — dark, urgent */
-.hero {
-  background: var(--ink);
-  padding: 60px 60px 72px;
-  position: relative;
-  overflow: hidden;
-}
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 85% 30%, rgba(196,92,0,0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 15% 70%, rgba(139,42,42,0.12) 0%, transparent 50%);
-}
-.hero::after {
-  content: '⏰';
-  position: absolute;
-  right: 60px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 200px;
-  opacity: 0.05;
-}
-.hero-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
-.hero-warning {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(196,92,0,0.15);
-  border: 1px solid rgba(196,92,0,0.4);
-  color: #ff9944;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 24px;
-}
-.hero h1 {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(34px, 5.5vw, 64px);
-  font-weight: 900;
-  color: #fff;
-  line-height: 1.0;
-  letter-spacing: -1.5px;
-  margin-bottom: 16px;
-  max-width: 680px;
-}
-.hero h1 em { font-style: italic; color: #ff9944; }
-.hero-sub {
-  color: rgba(255,255,255,0.45);
-  font-size: 16px;
-  line-height: 1.7;
-  font-weight: 300;
-  max-width: 500px;
-  margin-bottom: 32px;
-}
-.hero-stats { display: flex; gap: 40px; flex-wrap: wrap; }
-.hero-stat-num { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 900; color: #ff9944; line-height: 1; }
-.hero-stat-label { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 0.5px; margin-top: 2px; }
-@media(max-width:768px) { .hero { padding: 40px 20px 52px; } .hero::after { display: none; } }
-
-/* Main */
-.main { max-width: 900px; margin: 0 auto; padding: 48px 60px 80px; }
-@media(max-width:768px) { .main { padding: 32px 20px 60px; } }
-
-/* Input card */
-.input-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 36px;
-  margin-bottom: 24px;
-}
-.card-title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 900; color: var(--ink); margin-bottom: 6px; }
-.card-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; font-weight: 300; }
-
-.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-@media(max-width:560px) { .field-grid { grid-template-columns: 1fr; } }
-
-.field { }
-.field label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 7px; }
-.field-input { position: relative; }
-.prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 600; color: var(--muted); pointer-events: none; }
-.suffix { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--muted); pointer-events: none; }
-.inp { width: 100%; padding: 12px 36px 12px 28px; border: 1px solid var(--border); border-radius: 10px; font-size: 15px; font-weight: 500; color: var(--ink); background: var(--paper); outline: none; transition: border-color 0.2s; font-family: 'Geist', sans-serif; -moz-appearance: textfield; }
-.inp::-webkit-outer-spin-button, .inp::-webkit-inner-spin-button { -webkit-appearance: none; }
-.inp:focus { border-color: var(--gold); background: rgba(184,134,11,0.03); }
-.inp-no-prefix { padding-left: 12px !important; }
-
-/* Wait period selector */
-.wait-selector { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 20px; }
-@media(max-width:480px) { .wait-selector { grid-template-columns: repeat(2,1fr); } }
-.wait-btn {
-  background: var(--cream);
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 8px;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.2s;
-}
-.wait-btn:hover { border-color: rgba(196,92,0,0.4); }
-.wait-btn.active { background: rgba(196,92,0,0.1); border-color: rgba(196,92,0,0.5); }
-.wb-num { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 900; color: var(--ink); display: block; line-height: 1; }
-.wait-btn.active .wb-num { color: var(--orange); }
-.wb-label { font-size: 11px; color: var(--muted); font-weight: 500; }
-
-/* Calculate button */
-.calc-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #8b2a2a, #c43333);
-  color: #fff;
-  border: none;
-  padding: 16px;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'Geist', sans-serif;
-  margin-top: 24px;
-  box-shadow: 0 6px 24px rgba(139,42,42,0.25);
-  letter-spacing: 0.3px;
-}
-.calc-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(139,42,42,0.35); }
-
-/* Results */
-#results { display: none; }
-#results.show { display: block; animation: riseUp 0.5s cubic-bezier(0.16,1,0.3,1); }
-@keyframes riseUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
-
-/* Big verdict */
-.verdict-card {
-  background: linear-gradient(135deg, #1a0808, #2a0f0f);
-  border: 1.5px solid rgba(204,51,51,0.3);
-  border-radius: 20px;
-  padding: 48px 40px;
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-  overflow: hidden;
-}
-.verdict-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, #8b2a2a, #ff9944, #8b2a2a);
-}
-.verdict-card::after {
-  content: '';
-  position: absolute;
-  top: -100px; left: 50%;
-  transform: translateX(-50%);
-  width: 600px; height: 400px;
-  background: radial-gradient(ellipse, rgba(204,51,51,0.08), transparent 70%);
-  pointer-events: none;
-}
-.vc-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 12px; position: relative; z-index: 1; }
-.vc-amount {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(52px, 10vw, 96px);
-  font-weight: 900;
-  color: #ff9944;
-  line-height: 0.9;
-  letter-spacing: -2px;
-  margin-bottom: 12px;
-  position: relative; z-index: 1;
-}
-.vc-title {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(20px, 3vw, 28px);
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 10px;
-  position: relative; z-index: 1;
-}
-.vc-sub { font-size: 14px; color: rgba(255,255,255,0.4); line-height: 1.7; font-weight: 300; max-width: 480px; margin: 0 auto; position: relative; z-index: 1; }
-
-/* Breakdown */
-.breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-@media(max-width:600px) { .breakdown { grid-template-columns: 1fr; } }
-.bc { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; position: relative; overflow: hidden; }
-.bc::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-.bc-rent::before { background: linear-gradient(90deg, #8b2a2a, transparent); }
-.bc-price::before { background: linear-gradient(90deg, var(--orange), transparent); }
-.bc-equity::before { background: linear-gradient(90deg, var(--gold), transparent); }
-.bc-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-.bc-value { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 900; line-height: 1; margin-bottom: 3px; }
-.bc-rent .bc-value { color: var(--red); }
-.bc-price .bc-value { color: var(--orange); }
-.bc-equity .bc-value { color: var(--gold); }
-.bc-sub { font-size: 11px; color: var(--muted); }
-
-/* Timeline */
-.timeline-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
-.tc-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 900; color: var(--ink); margin-bottom: 20px; }
-.timeline { position: relative; }
-.timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: var(--border); }
-.tl-item { display: flex; gap: 20px; margin-bottom: 20px; position: relative; }
-.tl-item:last-child { margin-bottom: 0; }
-.tl-dot { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; position: relative; z-index: 1; border: 2px solid var(--border); background: var(--white); }
-.tl-dot.now { background: var(--green); border-color: var(--green); }
-.tl-dot.wait { background: rgba(139,42,42,0.1); border-color: rgba(139,42,42,0.3); }
-.tl-dot.future { background: var(--gold-dim); border-color: rgba(184,134,11,0.3); }
-.tl-label { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 3px; margin-top: 10px; }
-.tl-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
-.tl-amount { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 900; }
-.tl-amount.red { color: var(--red); }
-.tl-amount.gold { color: var(--gold); }
-
-/* Progress bars */
-.progress-card { background: var(--cream); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
-.pc-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 900; color: var(--ink); margin-bottom: 16px; }
-.prog-row { margin-bottom: 14px; }
-.prog-row:last-child { margin-bottom: 0; }
-.prog-meta { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
-.prog-name { font-weight: 600; color: var(--text); }
-.prog-val { font-weight: 700; }
-.prog-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
-.prog-fill { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); width: 0%; }
-.fill-red { background: linear-gradient(90deg, #8b2a2a, #cc3333); }
-.fill-orange { background: linear-gradient(90deg, #c45c00, #f07c20); }
-.fill-gold { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
-
-/* Banker note */
-.banker-note { background: var(--cream); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 14px; padding: 20px 22px; margin-bottom: 20px; display: flex; gap: 14px; }
-.bn-icon { width: 38px; height: 38px; background: var(--ink); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-.bn-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
-.bn-text { font-size: 13px; color: var(--text); line-height: 1.8; font-weight: 300; }
-
-/* CTA blocks */
-.cta-urgent {
-  background: linear-gradient(135deg, #1a0808, #2a1010);
-  border: 1px solid rgba(204,51,51,0.2);
-  border-radius: 16px;
-  padding: 28px 32px;
-  margin-bottom: 16px;
-  text-align: center;
-}
-.cta-urgent-title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 6px; }
-.cta-urgent-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 20px; line-height: 1.6; }
-.cta-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-.cta-primary { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #c43333, #e04444); color: #fff; padding: 12px 22px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 13px; transition: all 0.2s; }
-.cta-primary:hover { transform: translateY(-2px); }
-.cta-secondary { display: inline-flex; align-items: center; gap: 8px; background: var(--gold-dim); color: var(--gold-light); padding: 12px 22px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 13px; border: 1px solid rgba(184,134,11,0.3); transition: all 0.2s; }
-.cta-secondary:hover { background: rgba(184,134,11,0.15); }
-
-.aff-block { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
-.aff-text { flex: 1; min-width: 160px; }
-.aff-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
-.aff-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
-.aff-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
-.aff-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--gold); color: var(--ink); padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 12px; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
-.aff-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
-.aff-disclosure { font-size: 10px; color: var(--muted); width: 100%; margin-top: 6px; }
-.aff-disclosure a { color: inherit; }
-
-.share-block { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; text-align: center; margin-bottom: 16px; }
-.share-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
-.share-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-.share-btn { padding: 9px 18px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: none; display: inline-flex; align-items: center; gap: 6px; }
-.share-x { background: #000; color: #fff; border: 1px solid rgba(255,255,255,0.15); }
-.share-copy { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(184,134,11,0.2); }
-
-.restart-btn { width: 100%; padding: 12px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 16px; }
-.restart-btn:hover { border-color: rgba(0,0,0,0.2); color: var(--text); }
-
-footer { background: var(--ink); padding: 36px 60px; }
-@media(max-width:768px) { footer { padding: 28px 20px; } }
-.footer-inner { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-.footer-logo { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 900; color: #fff; }
-.footer-logo em { font-style: italic; color: var(--gold-light); }
-.footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
-.footer-links a { color: rgba(255,255,255,0.35); text-decoration: none; font-size: 12px; transition: color 0.2s; }
-.footer-links a:hover { color: var(--gold-light); }
-.footer-copy { font-size: 11px; color: rgba(255,255,255,0.2); width: 100%; margin-top: 8px; }
+.result-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px;}
+@media(max-width:500px){.result-cards{grid-template-columns:1fr;}}
+.rcard{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+.rcard.primary{background:var(--ink);border-color:transparent;grid-column:1/-1;}
+.rcard-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.rcard.primary .rcard-label{color:rgba(255,255,255,0.4);}
+.rcard-value{font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:var(--ink);line-height:1;}
+.rcard.primary .rcard-value{color:var(--gold-light);font-size:38px;}
+.rcard-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+.rcard.primary .rcard-sub{color:rgba(255,255,255,0.3);}
+.rcard.green .rcard-value{color:var(--green);}
+.rcard.gold .rcard-value{color:var(--gold);}
+.chart-section{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
+.chart-title{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--ink);margin-bottom:4px;}
+.chart-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.chart-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.tab-btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all 0.2s;font-family:'Geist',sans-serif;}
+.tab-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+canvas{max-height:300px;}
+.milestones{background:var(--cream);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;}
+.ms-title{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:var(--ink);margin-bottom:16px;}
+.ms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.ms-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+.ms-year{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px;}
+.ms-val{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:var(--gold);margin-bottom:2px;}
+.ms-growth{font-size:11px;color:var(--green);font-weight:600;}
+.banker-note{background:var(--cream);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:20px 22px;margin-bottom:24px;display:flex;gap:14px;}
+.bn-icon{width:36px;height:36px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.bn-name{font-size:12px;font-weight:700;color:var(--ink);}
+.bn-cred{font-size:9px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:6px;}
+.bn-text{font-size:13px;color:var(--text);line-height:1.8;font-weight:300;}
+.lead-capture{background:var(--ink);border-radius:16px;padding:28px 32px;margin-bottom:24px;}
+.lc-tag{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:8px;}
+.lc-title{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:6px;}
+.lc-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px;font-weight:300;}
+.lc-form{display:flex;gap:10px;flex-wrap:wrap;}
+.lc-input{flex:1;min-width:200px;padding:11px 16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:14px;outline:none;font-family:'Geist',sans-serif;}
+.lc-input::placeholder{color:rgba(255,255,255,0.3);}
+.lc-btn{padding:11px 22px;background:var(--gold);color:var(--ink);border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;font-family:'Geist',sans-serif;}
+.lc-privacy{font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;}
+.lc-success{display:none;text-align:center;padding:8px 0;}
+.lc-success-text{font-size:14px;color:rgba(255,255,255,0.7);}
+.lc-success-text strong{color:var(--gold-light);}
+footer{background:var(--ink);padding:32px 60px;}
+@media(max-width:768px){footer{padding:24px 20px;}}
+.footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.footer-logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;}
+.footer-logo em{font-style:italic;color:var(--gold-light);}
+.footer-links{display:flex;gap:16px;flex-wrap:wrap;}
+.footer-links a{color:rgba(255,255,255,0.35);text-decoration:none;font-size:12px;}
+.footer-links a:hover{color:var(--gold-light);}
+.footer-copy{font-size:11px;color:rgba(255,255,255,0.2);width:100%;margin-top:8px;}
+#resultsSection{display:none;}
 </style>
 </head>
 <body>
-
 <header>
   <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
   <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="mortgage-calculator.html">Mortgage</a>
-    <a href="bank-approval-simulator.html">Loan Check</a>
-    <a href="faq.html">FAQ</a>
-    <span class="nav-badge">Licensed Pro</span>
+    <a href="financial-twin.html">Buy vs Rent</a>
+    <a href="are-you-rich.html">Are You Rich?</a>
   </div>
 </header>
 
 <div class="hero">
   <div class="hero-inner">
-    <div class="hero-warning">⚠️ Every Month You Wait Has a Price Tag</div>
-    <h1>The Real Cost of<br><em>Waiting to Buy</em></h1>
-    <p class="hero-sub">Rising prices. Rent money gone. Lost equity. Find out exactly what waiting is costing you — in dollars, not vague advice.</p>
-    <div class="hero-stats">
-      <div>
-        <div class="hero-stat-num">4.2%</div>
-        <div class="hero-stat-label">Avg. annual home price increase</div>
-      </div>
-      <div>
-        <div class="hero-stat-num">$1,800</div>
-        <div class="hero-stat-label">Avg. monthly US rent 2026</div>
-      </div>
-      <div>
-        <div class="hero-stat-num">$0</div>
-        <div class="hero-stat-label">Equity built while renting</div>
-      </div>
-    </div>
+    <div class="hero-eye">Compound Interest Calculator · 18 Countries · 2026</div>
+    <h1>Watch Your Money <em>Multiply</em><br>— Year by Year</h1>
+    <p class="hero-sub">Real savings rates from 18 countries. See the full growth curve — the 8th wonder of the world, visualized.</p>
   </div>
 </div>
 
 <div class="main">
-  <div class="input-card">
-    <div class="card-title">Your Situation</div>
-    <div class="card-sub">Enter your details to see the real financial cost of waiting</div>
+  <div class="input-panel">
+    <div class="panel-title">Your Investment Details</div>
 
-    <div class="field-grid">
-      <div class="field">
-        <label>Target Home Price</label>
-        <div class="field-input">
-          <span class="prefix">$</span>
-          <input type="number" class="inp" id="homePrice" placeholder="350000" min="0">
-        </div>
-      </div>
-      <div class="field">
-        <label>Your Monthly Rent</label>
-        <div class="field-input">
-          <span class="prefix">$</span>
-          <input type="number" class="inp" id="rent" placeholder="1800" min="0">
-        </div>
-      </div>
-      <div class="field">
-        <label>Expected Down Payment %</label>
-        <div class="field-input">
-          <input type="number" class="inp inp-no-prefix" id="downPct" value="10" min="0" max="100">
-          <span class="suffix">%</span>
-        </div>
-      </div>
-      <div class="field">
-        <label>Annual Home Price Growth %</label>
-        <div class="field-input">
-          <input type="number" class="inp inp-no-prefix" id="appreciation" value="4.2" min="0" max="20" step="0.1">
-          <span class="suffix">%</span>
-        </div>
-      </div>
-      <div class="field">
-        <label>Mortgage Interest Rate</label>
-        <div class="field-input">
-          <input type="number" class="inp inp-no-prefix" id="rate" value="7.0" min="0.1" max="20" step="0.1">
-          <span class="suffix">%</span>
-        </div>
-      </div>
-      <div class="field">
-        <label>Annual Rent Increase %</label>
-        <div class="field-input">
-          <input type="number" class="inp inp-no-prefix" id="rentIncrease" value="3.5" min="0" max="20" step="0.1">
-          <span class="suffix">%</span>
-        </div>
-      </div>
+    <!-- Country Selector -->
+    <div class="field">
+      <label>Country / Region <span id="countryRateBadge" class="country-rate-badge">🇺🇸 USA · 4.8%</span></label>
+      <div class="country-grid" id="countryGrid"></div>
     </div>
 
-    <div class="field" style="margin-top:20px;">
-      <label>How Long Are You Thinking of Waiting?</label>
+    <div class="field">
+      <label>Initial Investment</label>
+      <div class="field-input">
+        <span class="prefix">$</span>
+        <input type="number" id="principal" value="10000" min="0" step="1000">
+      </div>
+      <input type="range" id="principalSlider" min="0" max="500000" step="1000" value="10000">
     </div>
-    <div class="wait-selector">
-      <button class="wait-btn" onclick="setWait(this, 1)">
-        <span class="wb-num">1</span>
-        <span class="wb-label">year</span>
-      </button>
-      <button class="wait-btn active" onclick="setWait(this, 2)">
-        <span class="wb-num">2</span>
-        <span class="wb-label">years</span>
-      </button>
-      <button class="wait-btn" onclick="setWait(this, 3)">
-        <span class="wb-num">3</span>
-        <span class="wb-label">years</span>
-      </button>
-      <button class="wait-btn" onclick="setWait(this, 5)">
-        <span class="wb-num">5</span>
-        <span class="wb-label">years</span>
-      </button>
+    <div class="field">
+      <label>Monthly Contribution</label>
+      <div class="field-input">
+        <span class="prefix">$</span>
+        <input type="number" id="monthly" value="500" min="0" step="100">
+      </div>
+      <input type="range" id="monthlySlider" min="0" max="5000" step="100" value="500">
     </div>
-
-    <button class="calc-btn" onclick="calculate()">⏰ Calculate What Waiting Is Costing Me →</button>
+    <div class="field">
+      <label>Annual Interest Rate</label>
+      <div class="field-input">
+        <input type="number" id="rate" value="4.8" min="0.1" max="30" step="0.1" style="padding-left:12px;">
+        <span class="suffix">%</span>
+      </div>
+      <input type="range" id="rateSlider" min="1" max="20" step="0.1" value="4.8">
+    </div>
+    <div class="field">
+      <label>Time Period</label>
+      <div class="field-input">
+        <input type="number" id="years" value="20" min="1" max="50" step="1" style="padding-left:12px;">
+        <span class="suffix">yrs</span>
+      </div>
+      <input type="range" id="yearsSlider" min="1" max="50" step="1" value="20">
+    </div>
+    <div class="field">
+      <label>Compound Frequency</label>
+      <select id="freq">
+        <option value="12">Monthly</option>
+        <option value="4">Quarterly</option>
+        <option value="1">Annually</option>
+        <option value="365">Daily</option>
+      </select>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Growth →</button>
   </div>
 
-  <div id="results"></div>
+  <div id="resultsSection">
+    <div class="result-cards">
+      <div class="rcard primary">
+        <div class="rcard-label">Final Balance</div>
+        <div class="rcard-value" id="finalBalance">—</div>
+        <div class="rcard-sub" id="finalSub">—</div>
+      </div>
+      <div class="rcard green">
+        <div class="rcard-label">Total Contributed</div>
+        <div class="rcard-value" id="totalContrib">—</div>
+        <div class="rcard-sub">Your actual money in</div>
+      </div>
+      <div class="rcard gold">
+        <div class="rcard-label">Interest Earned</div>
+        <div class="rcard-value" id="interestEarned">—</div>
+        <div class="rcard-sub">Money made from money</div>
+      </div>
+      <div class="rcard">
+        <div class="rcard-label">Return Multiple</div>
+        <div class="rcard-value" id="multiple">—</div>
+        <div class="rcard-sub">Every $1 became...</div>
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-title">Your Growth Curve</div>
+      <div class="chart-sub">Watch compound interest accelerate over time</div>
+      <div class="chart-tabs">
+        <button class="tab-btn active" onclick="showChart('area')">Growth Curve</button>
+        <button class="tab-btn" onclick="showChart('bar')">Year by Year</button>
+        <button class="tab-btn" onclick="showChart('doughnut')">Money Split</button>
+      </div>
+      <canvas id="growthChart"></canvas>
+    </div>
+
+    <div class="milestones">
+      <div class="ms-title">Key Milestones</div>
+      <div class="ms-grid" id="milestoneGrid"></div>
+    </div>
+
+    <div class="banker-note">
+      <div class="bn-icon">✦</div>
+      <div>
+        <div class="bn-name">Banker's Note</div>
+        <div class="bn-cred">23 Years · Licensed Professional</div>
+        <div class="bn-text" id="bankerNote">—</div>
+      </div>
+    </div>
+<!-- E-FILE CTA BLOCK — compound-interest-calculator.html, business-loan-calculator.html, faq.html -->
+<!-- Place this block just before the closing </div> of the main content area -->
+
+<div style="background:linear-gradient(135deg,rgba(184,134,11,0.06),rgba(26,58,92,0.06));border:1px solid rgba(184,134,11,0.2);border-radius:16px;padding:24px 28px;margin:20px 0;">
+  <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
+    <div style="font-size:32px;flex-shrink:0;">🗂️</div>
+    <div style="flex:1;min-width:200px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8a8070;margin-bottom:6px;">Tax Season · File Online</div>
+      <div style="font-size:16px;font-weight:700;color:#2c2a26;margin-bottom:6px;">File Your Taxes at Half the Cost</div>
+      <div style="font-size:13px;color:#8a8070;line-height:1.6;">E-file.com offers the same features as the big names — at half the price. Free federal filing if you qualify. Takes minutes.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;">
+      <a href="https://www.anrdoezrs.net/click-101700651-11917163" target="_blank" rel="noopener sponsored"
+         style="display:inline-flex;align-items:center;gap:8px;background:#b8860b;color:#fff;padding:11px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;white-space:nowrap;">
+        📋 File Your IRS Taxes →
+      </a>
+      <a href="https://www.dpbolvw.net/click-101700651-11917168" target="_blank" rel="noopener sponsored"
+         style="display:inline-flex;align-items:center;gap:8px;background:transparent;color:#b8860b;padding:11px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;white-space:nowrap;border:1px solid rgba(184,134,11,0.3);">
+        💰 Save 20% at E-file.com →
+      </a>
+    </div>
+  </div>
+  <div style="font-size:10px;color:rgba(0,0,0,0.25);margin-top:10px;">Sponsored. Commission may be earned. <a href="affiliate-disclosure.html" style="color:inherit;">Disclosure →</a></div>
+</div>
+    <div class="lead-capture">
+      <div class="lc-tag">Free · No Spam</div>
+      <div class="lc-title">Get Your Growth Report</div>
+      <div class="lc-sub">Full year-by-year breakdown + investment tips sent to your inbox.</div>
+      <div id="lcForm">
+        <div class="lc-form">
+          <input type="email" class="lc-input" id="lcEmail" placeholder="your@email.com">
+          <button class="lc-btn" onclick="submitEmail()">Send My Report →</button>
+        </div>
+        <div class="lc-privacy">No spam. Unsubscribe anytime.</div>
+      </div>
+      <div class="lc-success" id="lcSuccess">
+        <div class="lc-success-text">✅ Done! Check your inbox for your <strong>growth report</strong>.</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <footer>
@@ -438,236 +276,201 @@ footer { background: var(--ink); padding: 36px 60px; }
     <div class="footer-logo">Finance<em>Rate</em>Calc</div>
     <div class="footer-links">
       <a href="index.html">Home</a>
-      <a href="mortgage-calculator.html">Mortgage Calculator</a>
-      <a href="bank-approval-simulator.html">Approval Simulator</a>
-      <a href="tax-refund-home-calculator.html">Tax Refund Tool</a>
-      <a href="can-two-salaries-buy-this-house.html">Two Salaries</a>
+      <a href="mortgage-calculator.html">Mortgage</a>
+      <a href="financial-twin.html">Buy vs Rent</a>
+      <a href="can-i-get-a-loan.html">Loan Check</a>
     </div>
     <div class="footer-copy">© 2026 FinanceRateCalc.com — Educational Use Only · Not Financial Advice</div>
   </div>
 </footer>
 
 <script>
-let waitYears = 2;
+// 18 Country data: flag, name, rate (avg savings/investment rate 2026)
+const COUNTRIES = [
+  { flag:'🇺🇸', name:'USA',         rate: 4.8 },
+  { flag:'🇬🇧', name:'UK',          rate: 5.1 },
+  { flag:'🇩🇪', name:'Germany',     rate: 3.9 },
+  { flag:'🇫🇷', name:'France',      rate: 3.5 },
+  { flag:'🇨🇭', name:'Switzerland', rate: 1.8 },
+  { flag:'🇳🇱', name:'Netherlands', rate: 3.7 },
+  { flag:'🇨🇦', name:'Canada',      rate: 4.5 },
+  { flag:'🇦🇺', name:'Australia',   rate: 4.6 },
+  { flag:'🇯🇵', name:'Japan',       rate: 0.6 },
+  { flag:'🇸🇬', name:'Singapore',   rate: 3.2 },
+  { flag:'🇭🇰', name:'Hong Kong',   rate: 4.1 },
+  { flag:'🇦🇪', name:'UAE',         rate: 5.4 },
+  { flag:'🇸🇦', name:'S. Arabia',   rate: 5.8 },
+  { flag:'🇹🇷', name:'Turkey',      rate:48.0 },
+  { flag:'🇧🇷', name:'Brazil',      rate:11.2 },
+  { flag:'🇲🇽', name:'Mexico',      rate: 9.5 },
+  { flag:'🇮🇳', name:'India',       rate: 6.8 },
+  { flag:'🇿🇦', name:'S. Africa',   rate: 8.2 },
+];
 
-function setWait(btn, years) {
-  document.querySelectorAll('.wait-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  waitYears = years;
+let activeCountry = 0;
+
+function buildCountryGrid() {
+  const grid = document.getElementById('countryGrid');
+  grid.innerHTML = COUNTRIES.map((c, i) => `
+    <button class="country-btn ${i===0?'active':''}" onclick="selectCountry(${i})">
+      ${c.flag} ${c.name}<br><small>${c.rate}%</small>
+    </button>
+  `).join('');
 }
 
-function fmt(n) { return '$' + Math.round(Math.abs(n)).toLocaleString('en-US'); }
+function selectCountry(i) {
+  activeCountry = i;
+  document.querySelectorAll('.country-btn').forEach((b,j) => b.classList.toggle('active', j===i));
+  const c = COUNTRIES[i];
+  document.getElementById('rate').value = c.rate;
+  document.getElementById('rateSlider').value = Math.min(c.rate, 20);
+  document.getElementById('countryRateBadge').textContent = `${c.flag} ${c.name} · ${c.rate}%`;
+  calculate();
+}
+
+function sync(inputId, sliderId) {
+  const i = document.getElementById(inputId);
+  const s = document.getElementById(sliderId);
+  i.addEventListener('input', () => s.value = i.value);
+  s.addEventListener('input', () => i.value = s.value);
+}
+sync('principal','principalSlider');
+sync('monthly','monthlySlider');
+sync('rate','rateSlider');
+sync('years','yearsSlider');
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+
+let chartInstance = null;
+let chartYears = [], chartBalances = [], chartContribs = [], chartInterests = [];
 
 function calculate() {
-  const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
-  const rent = parseFloat(document.getElementById('rent').value) || 0;
-  const downPct = parseFloat(document.getElementById('downPct').value) || 10;
-  const appreciation = parseFloat(document.getElementById('appreciation').value) || 4.2;
-  const rate = parseFloat(document.getElementById('rate').value) || 7.0;
-  const rentIncrease = parseFloat(document.getElementById('rentIncrease').value) || 3.5;
-  const years = waitYears;
+  const principal = parseFloat(document.getElementById('principal').value) || 0;
+  const monthly = parseFloat(document.getElementById('monthly').value) || 0;
+  const rate = parseFloat(document.getElementById('rate').value) / 100;
+  const years = parseInt(document.getElementById('years').value);
+  const freq = parseInt(document.getElementById('freq').value);
 
-  if (!homePrice || !rent) {
-    alert('Please enter your home price and monthly rent.');
-    return;
+  chartYears = []; chartBalances = []; chartContribs = []; chartInterests = [];
+
+  let balance = principal;
+  const ratePerPeriod = rate / freq;
+  const monthlyToFreq = monthly * 12 / freq;
+
+  for (let y = 0; y <= years; y++) {
+    const totalContrib = principal + monthly * 12 * y;
+    chartYears.push('Year ' + y);
+    chartBalances.push(Math.round(balance));
+    chartContribs.push(Math.round(totalContrib));
+    chartInterests.push(Math.round(balance - totalContrib));
+    if (y < years) {
+      for (let p = 0; p < freq; p++) {
+        balance = balance * (1 + ratePerPeriod) + monthlyToFreq;
+      }
+    }
   }
 
-  // Future home price
-  const futureHomePrice = homePrice * Math.pow(1 + appreciation / 100, years);
-  const priceDiff = futureHomePrice - homePrice;
+  const finalBalance = chartBalances[chartBalances.length - 1];
+  const totalContrib = principal + monthly * 12 * years;
+  const interestEarned = finalBalance - totalContrib;
+  const multiple = totalContrib > 0 ? (finalBalance / totalContrib).toFixed(2) : '—';
 
-  // Rent paid while waiting
-  let totalRent = 0;
-  let monthlyRent = rent;
-  for (let y = 0; y < years; y++) {
-    totalRent += monthlyRent * 12;
-    monthlyRent *= (1 + rentIncrease / 100);
+  document.getElementById('finalBalance').textContent = fmt(finalBalance);
+  document.getElementById('finalSub').textContent = `After ${years} years at ${(rate*100).toFixed(1)}% — ${COUNTRIES[activeCountry].flag} ${COUNTRIES[activeCountry].name}`;
+  document.getElementById('totalContrib').textContent = fmt(totalContrib);
+  document.getElementById('interestEarned').textContent = fmt(interestEarned);
+  document.getElementById('multiple').textContent = multiple + 'x';
+
+  const milestones = [1, 5, 10, 15, 20, 25, 30].filter(y => y <= years);
+  const grid = document.getElementById('milestoneGrid');
+  grid.innerHTML = milestones.map(y => {
+    const bal = chartBalances[y] || 0;
+    const contrib = principal + monthly * 12 * y;
+    const growth = contrib > 0 ? '+' + Math.round((bal - contrib) / contrib * 100) + '%' : '';
+    return `<div class="ms-card">
+      <div class="ms-year">Year ${y}</div>
+      <div class="ms-val">${fmt(bal)}</div>
+      <div class="ms-growth">${growth} growth</div>
+    </div>`;
+  }).join('');
+
+  const doubleYears = rate > 0 ? Math.round(72 / (rate * 100)) : '—';
+  const country = COUNTRIES[activeCountry];
+  let note = `In ${country.name} (${country.rate}%), your money doubles roughly every ${doubleYears} years (Rule of 72). `;
+  if (monthly > 0) {
+    note += `Your ${fmt(monthly)}/month contributions add up to ${fmt(monthly*12*years)} over ${years} years — compound interest turns that into ${fmt(interestEarned)} in earned interest on top. `;
   }
-
-  // Lost equity — if bought today, equity built in same period
-  const loanNow = homePrice * (1 - downPct / 100);
-  const monthlyRateNow = rate / 100 / 12;
-  const n = 30 * 12;
-  const paymentNow = loanNow * (monthlyRateNow * Math.pow(1 + monthlyRateNow, n)) / (Math.pow(1 + monthlyRateNow, n) - 1);
-
-  let balanceNow = loanNow;
-  let equityBuilt = 0;
-  const waitMonths = years * 12;
-  for (let m = 0; m < waitMonths; m++) {
-    const ip = balanceNow * monthlyRateNow;
-    const pp = paymentNow - ip;
-    balanceNow -= pp;
-    equityBuilt += pp;
+  if (country.rate > 10) {
+    note += `Note: ${country.name}'s high rate reflects elevated inflation — real purchasing power gains may be lower. Always compare to local inflation when evaluating savings returns.`;
+  } else if (country.rate < 2) {
+    note += `${country.name}'s low rate environment makes equity investing more attractive relative to savings accounts. Consider diversified index funds for better long-term returns.`;
+  } else {
+    note += `Starting earlier matters more than investing more later. Five extra years at the beginning is worth more than doubling contributions mid-way through.`;
   }
-  // Plus appreciation on equity
-  const equityWithAppreciation = equityBuilt + (priceDiff * (downPct / 100));
+  document.getElementById('bankerNote').textContent = note;
 
-  // Down payment needed in future
-  const downNow = homePrice * (downPct / 100);
-  const downFuture = futureHomePrice * (downPct / 100);
-  const extraDownNeeded = downFuture - downNow;
-
-  // Total cost of waiting
-  const totalCost = totalRent + priceDiff + equityBuilt;
-
-  // Monthly payment comparison
-  const loanFuture = futureHomePrice * (1 - downPct / 100);
-  const paymentFuture = loanFuture * (monthlyRateNow * Math.pow(1 + monthlyRateNow, n)) / (Math.pow(1 + monthlyRateNow, n) - 1);
-  const monthlyDiff = paymentFuture - paymentNow;
-
-  const maxPct = Math.max(totalRent, priceDiff, equityBuilt);
-
-  document.getElementById('results').innerHTML = `
-    <div class="verdict-card">
-      <div class="vc-label">Total Cost of Waiting ${years} Year${years > 1 ? 's' : ''}</div>
-      <div class="vc-amount">${fmt(totalCost)}</div>
-      <div class="vc-title">That's What Waiting Is Costing You</div>
-      <div class="vc-sub">Rent paid to someone else, rising home prices, and equity you didn't build — all adding up while you wait for the "perfect" moment.</div>
-    </div>
-
-    <div class="breakdown">
-      <div class="bc bc-rent">
-        <div class="bc-label">Rent Paid</div>
-        <div class="bc-value">${fmt(totalRent)}</div>
-        <div class="bc-sub">Money gone forever</div>
-      </div>
-      <div class="bc bc-price">
-        <div class="bc-label">Price Increase</div>
-        <div class="bc-value">${fmt(priceDiff)}</div>
-        <div class="bc-sub">Home will cost more</div>
-      </div>
-      <div class="bc bc-equity">
-        <div class="bc-label">Lost Equity</div>
-        <div class="bc-value">${fmt(equityBuilt)}</div>
-        <div class="bc-sub">Could have been yours</div>
-      </div>
-    </div>
-
-    <div class="progress-card">
-      <div class="pc-title">The Three Ways Waiting Costs You</div>
-      <div class="prog-row">
-        <div class="prog-meta">
-          <span class="prog-name">🔴 Rent — Money to Your Landlord</span>
-          <span class="prog-val" style="color:var(--red)">${fmt(totalRent)}</span>
-        </div>
-        <div class="prog-bar"><div class="prog-fill fill-red" data-w="${(totalRent/maxPct*100).toFixed(0)}"></div></div>
-      </div>
-      <div class="prog-row">
-        <div class="prog-meta">
-          <span class="prog-name">🟠 Home Price — Rising Every Month</span>
-          <span class="prog-val" style="color:var(--orange)">${fmt(priceDiff)}</span>
-        </div>
-        <div class="prog-bar"><div class="prog-fill fill-orange" data-w="${(priceDiff/maxPct*100).toFixed(0)}"></div></div>
-      </div>
-      <div class="prog-row">
-        <div class="prog-meta">
-          <span class="prog-name">🟡 Equity — Could Have Been Yours</span>
-          <span class="prog-val" style="color:var(--gold)">${fmt(equityBuilt)}</span>
-        </div>
-        <div class="prog-bar"><div class="prog-fill fill-gold" data-w="${(equityBuilt/maxPct*100).toFixed(0)}"></div></div>
-      </div>
-    </div>
-
-    <div class="timeline-card">
-      <div class="tc-title">📅 What Your Timeline Looks Like</div>
-      <div class="timeline">
-        <div class="tl-item">
-          <div class="tl-dot now">🏠</div>
-          <div>
-            <div class="tl-label">Buy Today</div>
-            <div class="tl-desc">Home price: ${fmt(homePrice)} · Down payment: ${fmt(downNow)} · Monthly payment: ${fmt(paymentNow)}</div>
-          </div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-dot wait">⏳</div>
-          <div>
-            <div class="tl-label">While You Wait (${years} year${years>1?'s':''})</div>
-            <div class="tl-desc">You pay <span class="tl-amount red">${fmt(totalRent)}</span> in rent · Home price rises by <span class="tl-amount red">${fmt(priceDiff)}</span></div>
-          </div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-dot future">📈</div>
-          <div>
-            <div class="tl-label">Buy in ${years} Year${years>1?'s':''}</div>
-            <div class="tl-desc">Home price: <span class="tl-amount red">${fmt(Math.round(futureHomePrice))}</span> · Down payment needed: <span class="tl-amount red">${fmt(Math.round(downFuture))}</span> · Monthly payment: <span class="tl-amount red">${fmt(Math.round(paymentFuture))}</span> <span style="color:var(--muted);font-size:11px;">(+${fmt(monthlyDiff)}/mo more)</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="banker-note">
-      <div class="bn-icon">🏦</div>
-      <div>
-        <div class="bn-label">23-Year Banker's Take</div>
-        <div class="bn-text">I've had this conversation hundreds of times. "I'm waiting for rates to drop" or "I'm waiting for prices to fall" — and while waiting, ${fmt(totalRent)} goes to a landlord who IS building equity. The perfect time to buy doesn't exist. The right time is when you can afford the monthly payment and you have ${fmt(downNow)} ready. If that's close, the cost of waiting ${years} more year${years>1?'s':''} is ${fmt(totalCost)} — that's not a small number.</div>
-      </div>
-    </div>
-
-    <div class="cta-urgent">
-      <div class="cta-urgent-title">Ready to stop the clock?</div>
-      <div class="cta-urgent-sub">See if you'd qualify today — before the price goes up another ${fmt(Math.round(homePrice * appreciation / 100))} this year.</div>
-      <div class="cta-btns">
-        <a href="bank-approval-simulator.html" class="cta-primary">🏦 Check My Approval Odds →</a>
-        <a href="mortgage-calculator.html" class="cta-secondary">📊 Calculate My Payment →</a>
-      </div>
-    </div>
-
-    <div class="aff-block">
-      <div class="aff-text">
-        <div class="aff-eyebrow">Credit Score Holding You Back?</div>
-        <div class="aff-title">Fix Your Credit — Get to 700+ Faster</div>
-        <div class="aff-sub">Sky Blue Credit has helped hundreds of thousands improve their score. You only pay if they deliver results.</div>
-      </div>
-      <a href="SKYBLUE_LINK" target="_blank" rel="noopener sponsored" class="aff-btn">📈 Check Eligibility →</a>
-      <div class="aff-disclosure">Sponsored. Commission may be earned. <a href="affiliate-disclosure.html">Disclosure →</a></div>
-    </div>
-
-    <div class="share-block">
-      <div class="share-title">Show someone who's been "waiting for the right time" 👀</div>
-      <div class="share-btns">
-        <button class="share-btn share-x" onclick="shareResult(${Math.round(totalCost)}, ${years})">𝕏 Share My Result</button>
-        <button class="share-btn share-copy" onclick="copyLink()">📋 Copy Link</button>
-      </div>
-    </div>
-
-    <button class="restart-btn" onclick="restart()">↺ Try Different Numbers</button>
-  `;
-
-  document.getElementById('results').classList.add('show');
-
+  document.getElementById('resultsSection').style.display = 'block';
   setTimeout(() => {
-    document.querySelectorAll('.prog-fill[data-w]').forEach(el => {
-      el.style.width = el.dataset.w + '%';
+  window.scrollTo({ top: document.getElementById('resultsSection').offsetTop - 80, behavior: 'smooth' });
+}, 100);
+  showChart('area');
+}
+
+function showChart(type) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', ['area','bar','doughnut'][i] === type);
+  });
+  if (chartInstance) chartInstance.destroy();
+  const ctx = document.getElementById('growthChart').getContext('2d');
+  const finalContrib = chartContribs[chartContribs.length - 1];
+  const finalInterest = chartInterests[chartInterests.length - 1];
+
+  if (type === 'area') {
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: chartYears,
+        datasets: [
+          { label: 'Total Balance', data: chartBalances, borderColor: '#b8860b', backgroundColor: 'rgba(184,134,11,0.1)', fill: true, tension: 0.4, pointRadius: 1, borderWidth: 2 },
+          { label: 'Amount Contributed', data: chartContribs, borderColor: '#2a6b4a', backgroundColor: 'rgba(42,107,74,0.08)', fill: true, tension: 0.4, pointRadius: 1, borderWidth: 2, borderDash: [4,4] }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { ticks: { callback: v => '$' + (v >= 1000000 ? (v/1000000).toFixed(1)+'M' : (v/1000).toFixed(0)+'k') } } } }
     });
-    window.scrollTo({ top: document.getElementById('results').offsetTop - 80, behavior: 'smooth' });
-  }, 150);
-
-  gtag('event', 'waiting_cost_calculated', {
-    home_price: homePrice,
-    wait_years: years,
-    total_cost: Math.round(totalCost)
-  });
+  } else if (type === 'bar') {
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: chartYears.filter((_, i) => i % Math.max(1, Math.floor(chartYears.length / 15)) === 0),
+        datasets: [
+          { label: 'Contributed', data: chartContribs.filter((_, i) => i % Math.max(1, Math.floor(chartYears.length / 15)) === 0), backgroundColor: '#2a6b4a', borderRadius: 3 },
+          { label: 'Interest', data: chartInterests.filter((_, i) => i % Math.max(1, Math.floor(chartYears.length / 15)) === 0), backgroundColor: '#b8860b', borderRadius: 3 }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'k' } } } }
+    });
+  } else {
+    chartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Amount You Contributed', 'Interest Earned'],
+        datasets: [{ data: [Math.max(0, finalContrib), Math.max(0, finalInterest)], backgroundColor: ['#2a6b4a', '#b8860b'], borderWidth: 0 }]
+      },
+      options: { responsive: true, cutout: '65%', plugins: { legend: { position: 'bottom' } } }
+    });
+  }
 }
 
-function shareResult(cost, years) {
-  const text = `I just calculated the real cost of waiting ${years} year${years>1?'s':''} to buy a home — it's $${cost.toLocaleString()} in lost rent, rising prices, and missed equity 😳\n\nFind out YOUR cost of waiting:\nhttps://financeratecalc.com/cost-of-waiting.html\n\n#homebuying #mortgage #realestate #personalfinance`;
-  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+function submitEmail() {
+  const email = document.getElementById('lcEmail').value;
+  if (!email || !email.includes('@')) { document.getElementById('lcEmail').focus(); return; }
+  if (typeof gtag !== 'undefined') gtag('event', 'lead_capture', { event_category: 'email', event_label: 'compound_calculator' });
+  document.getElementById('lcForm').style.display = 'none';
+  document.getElementById('lcSuccess').style.display = 'block';
 }
 
-function copyLink() {
-  navigator.clipboard.writeText('https://financeratecalc.com/cost-of-waiting.html').then(() => {
-    const btn = document.querySelector('.share-copy');
-    btn.textContent = '✓ Copied!';
-    setTimeout(() => btn.textContent = '📋 Copy Link', 2000);
-  });
-}
-
-function restart() {
-  document.getElementById('results').classList.remove('show');
-  document.getElementById('results').innerHTML = '';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+buildCountryGrid();
+window.addEventListener('load', calculate);
 </script>
-  <script src="skyblue-popup.js"></script>
 </body>
 </html>

@@ -1,542 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "AI Mortgage Auditor",
-  "url": "https://financeratecalc.com/mortgage-auditor.html",
-  "description": "Upload your mortgage statement or enter your loan details. AI trained on 23 years of banking knowledge reviews your loan for errors and overcharges.",
-  "applicationCategory": "FinanceApplication",
-  "operatingSystem": "Web",
-  "offers": {"@type": "Offer","price": "0","priceCurrency": "USD"}
-}
-</script>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Mortgage Auditor — Find Hidden Errors in Your Loan | FinanceRateCalc</title>
-  <meta name="description" content="Upload your mortgage statement or paste your loan details. Our AI — trained on 23 years of banking knowledge — scans for hidden fees, calculation errors, and overcharges. Free."/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8VGHR8XH4C"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-8VGHR8XH4C');</script>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    :root{
-      --paper:#f8f6f1;--ink:#1a1a18;--ink-light:#4a4a45;--ink-faint:#8a8a82;
-      --rule:#d4d0c8;--gold:#b8860b;--gold-light:#fdf8e8;
-      --green:#1a6b2a;--green-bg:#e6f4ea;
-      --red:#8b1a1a;--red-bg:#fdf0f0;
-      --blue:#1a3a6b;--blue-bg:#e8f0fd;
-    }
-    body{font-family:'Outfit',sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;}
-
-    nav{background:var(--ink);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
-    .nav-brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--paper);text-decoration:none;}
-    .nav-links{display:flex;gap:.25rem;list-style:none;}
-    .nav-links a{color:#c8c4bc;text-decoration:none;font-size:.78rem;padding:.35rem .6rem;border-radius:3px;transition:color .2s;text-transform:uppercase;letter-spacing:.03em;}
-    .nav-links a:hover{color:var(--paper);background:rgba(255,255,255,.1);}
-
-    #emergency-bar{background:#8b1a1a;color:#fff;padding:10px 24px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:13px;font-weight:500;position:relative;}
-    #emergency-bar a.ebar-btn{background:#fff;color:#8b1a1a;padding:5px 14px;border-radius:20px;font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap;}
-    #emergency-bar button{background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:18px;position:absolute;right:16px;}
-    @keyframes epulse{0%,100%{opacity:1;}50%{opacity:.5;}}
-
-    .hero{background:var(--ink);color:var(--paper);padding:3.5rem 2rem 3rem;text-align:center;position:relative;overflow:hidden;}
-    .hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,.02) 39px,rgba(255,255,255,.02) 40px);}
-    .hero-eyebrow{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#8a8a82;margin-bottom:.75rem;position:relative;}
-    .hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4.5vw,2.8rem);font-weight:600;margin-bottom:.75rem;line-height:1.2;position:relative;}
-    .hero h1 em{font-style:italic;color:#d4a820;}
-    .hero-sub{font-size:.95rem;color:#c8c4bc;font-weight:300;max-width:540px;margin:0 auto 1.5rem;line-height:1.7;position:relative;}
-    .hero-stats{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;position:relative;}
-    .hero-stat{text-align:center;}
-    .hero-stat-num{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:#d4a820;}
-    .hero-stat-label{font-size:.72rem;color:#8a8a82;letter-spacing:.05em;}
-
-    .main-wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
-
-    .mode-tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;background:#fff;border:1px solid var(--rule);border-radius:8px;padding:.4rem;}
-    .mode-tab{flex:1;padding:.6rem;border:none;background:none;border-radius:5px;font-family:'Outfit',sans-serif;font-size:.85rem;cursor:pointer;color:var(--ink-faint);transition:all .2s;text-align:center;}
-    .mode-tab.active{background:var(--ink);color:#fff;font-weight:600;}
-
-    .upload-zone{border:2px dashed var(--rule);border-radius:10px;padding:2.5rem;text-align:center;background:#fff;cursor:pointer;transition:all .2s;margin-bottom:1rem;}
-    .upload-zone:hover,.upload-zone.dragover{border-color:var(--gold);background:var(--gold-light);}
-    .upload-icon{font-size:2.5rem;margin-bottom:.75rem;}
-    .upload-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;margin-bottom:.3rem;}
-    .upload-sub{font-size:.82rem;color:var(--ink-faint);}
-    .upload-input{display:none;}
-    .upload-selected{font-size:.82rem;color:var(--green);margin-top:.5rem;font-weight:600;}
-
-    .text-panel{display:none;}
-    .form-group{margin-bottom:1.25rem;}
-    .form-group label{display:block;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.4rem;}
-    .form-group input,.form-group textarea,.form-group select{width:100%;padding:.75rem 1rem;border:1.5px solid var(--rule);border-radius:6px;font-family:'Outfit',sans-serif;font-size:.92rem;color:var(--ink);background:var(--paper);outline:none;transition:border-color .2s;resize:vertical;}
-    .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--gold);}
-    .form-hint{font-size:.72rem;color:var(--ink-faint);margin-top:.3rem;}
-    .input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-    @media(max-width:560px){.input-grid{grid-template-columns:1fr;}}
-
-    .concern-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.5rem;}
-    @media(max-width:500px){.concern-grid{grid-template-columns:1fr;}}
-    .concern-item{display:flex;align-items:center;gap:.6rem;padding:.65rem .9rem;border:1.5px solid var(--rule);border-radius:6px;cursor:pointer;transition:all .15s;background:#fff;}
-    .concern-item:hover{border-color:var(--gold);background:var(--gold-light);}
-    .concern-item input{width:14px;height:14px;accent-color:var(--gold);flex-shrink:0;}
-    .concern-item span{font-size:.82rem;color:var(--ink-light);}
-
-    .audit-btn{width:100%;padding:1rem;background:var(--ink);color:#fff;border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.03em;display:flex;align-items:center;justify-content:center;gap:.6rem;}
-    .audit-btn:hover{background:#2a2a28;transform:translateY(-1px);}
-    .audit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-
-    #loading{display:none;text-align:center;padding:3rem 1.5rem;}
-    .loading-spinner{width:48px;height:48px;border:3px solid var(--rule);border-top-color:var(--ink);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1.5rem;}
-    @keyframes spin{to{transform:rotate(360deg);}}
-    .loading-steps{display:flex;flex-direction:column;gap:.5rem;max-width:320px;margin:0 auto;}
-    .loading-step{font-size:.85rem;color:var(--ink-faint);display:flex;align-items:center;gap:.6rem;opacity:0;animation:stepIn .4s ease forwards;}
-    .loading-step.active{color:var(--ink);font-weight:500;}
-    .loading-step::before{content:'○';flex-shrink:0;}
-    .loading-step.done::before{content:'✓';color:var(--green);}
-    .loading-step.active::before{content:'●';color:var(--gold);}
-    @keyframes stepIn{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:translateX(0);}}
-
-    #results{display:none;animation:fadeIn .5s ease;}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-
-    .audit-header{background:var(--ink);border-radius:10px;padding:1.75rem 2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;}
-    .audit-score-wrap{flex-shrink:0;text-align:center;}
-    .audit-score{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;border:3px solid;}
-    .audit-score.clean{background:rgba(45,158,69,.15);color:#4dce6a;border-color:#4dce6a;}
-    .audit-score.warning{background:rgba(230,168,23,.15);color:#e6a817;border-color:#e6a817;}
-    .audit-score.issues{background:rgba(192,57,43,.15);color:#e87070;border-color:#e87070;}
-    .audit-header-text h2{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:#fff;margin-bottom:.25rem;}
-    .audit-header-text p{font-size:.84rem;color:#9a9a92;line-height:1.5;}
-
-    .section-label{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1rem;display:flex;align-items:center;gap:.75rem;}
-    .section-label::after{content:'';flex:1;height:1px;background:var(--rule);}
-
-    .findings-list{display:flex;flex-direction:column;gap:.75rem;margin-bottom:1.5rem;}
-    .finding-card{background:#fff;border:1px solid var(--rule);border-radius:8px;padding:1.25rem;border-left:4px solid var(--rule);}
-    .finding-card.critical{border-left-color:#c0392b;background:var(--red-bg);}
-    .finding-card.warning{border-left-color:#e6a817;background:#fefae6;}
-    .finding-card.ok{border-left-color:#2d9e45;background:var(--green-bg);}
-    .finding-top{display:flex;align-items:center;gap:.75rem;margin-bottom:.4rem;}
-    .finding-badge{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap;}
-    .finding-card.critical .finding-badge{background:#c0392b;color:#fff;}
-    .finding-card.warning .finding-badge{background:#e6a817;color:#fff;}
-    .finding-card.ok .finding-badge{background:#2d9e45;color:#fff;}
-    .finding-title{font-weight:600;font-size:.92rem;color:var(--ink);}
-    .finding-desc{font-size:.84rem;color:var(--ink-light);line-height:1.6;}
-    .finding-action{font-size:.78rem;font-weight:600;color:var(--blue);margin-top:.5rem;}
-
-    /* ACTION BOXES — düzeltildi */
-    .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
-    @media(max-width:560px){.action-grid{grid-template-columns:1fr;}}
-    .action-box{border-radius:8px;padding:1.25rem;}
-    .action-box.legal{background:linear-gradient(135deg,#1a1a18,#2a2a28);border:1px solid rgba(184,134,11,.3);}
-    .action-box.funding{background:linear-gradient(135deg,#0f1f3f,#1a3a6b);border:1px solid rgba(68,136,255,.3);}
-    .action-box-icon{font-size:1.4rem;margin-bottom:.5rem;}
-    .action-box h3{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:#fff;margin-bottom:.3rem;}
-    .action-box p{font-size:.78rem;color:#9a9a92;margin-bottom:.9rem;line-height:1.5;}
-    .action-btn{display:inline-block;padding:.6rem 1.25rem;border-radius:5px;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;text-decoration:none;transition:background .2s;}
-    .action-btn.gold{background:var(--gold);color:#fff;}
-    .action-btn.gold:hover{background:#9a700a;}
-    .action-btn.blue{background:#1a6bb5;color:#fff;}
-    .action-btn.blue:hover{background:#155a9a;}
-    .action-disclaimer{font-size:.62rem;color:#5a5a52;margin-top:.5rem;}
-    .action-disclaimer a{color:#6a6a62;}
-
-    .banker-note{background:var(--gold-light);border:1px solid #d4c080;border-left:4px solid var(--gold);border-radius:0 6px 6px 0;padding:1.25rem 1.5rem;margin-bottom:1.5rem;}
-    .banker-note-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;font-weight:600;}
-    .banker-note p{font-size:.85rem;color:var(--ink-light);margin:0;line-height:1.6;}
-
-    .restart-btn{width:100%;padding:.75rem;background:none;border:1px solid var(--rule);border-radius:6px;font-family:'Outfit',sans-serif;font-size:.85rem;color:var(--ink-faint);cursor:pointer;transition:all .2s;}
-    .restart-btn:hover{border-color:var(--ink);color:var(--ink);}
-
-    .privacy-note{font-size:.72rem;color:var(--ink-faint);text-align:center;margin-top:.75rem;line-height:1.5;}
-
-    footer{background:var(--ink);color:#8a8a82;padding:2rem;text-align:center;font-size:.8rem;}
-    footer a{color:#c8c4bc;text-decoration:none;}
-    .footer-links{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1rem;}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage in Atlanta, GA — What You Need to Know in 2026 | FinanceRateCalc</title>
+<meta name="description" content="Buying a home in Atlanta, GA? Get the honest breakdown — median prices, monthly payments, what salary you need, and a licensed banker's take on the Atlanta market.">
+<meta name="keywords" content="mortgage Atlanta GA, home buying Atlanta, Atlanta mortgage calculator, how much house Atlanta, atlanta real estate 2026">
+<link rel="canonical" href="https://financeratecalc.com/mortgage-atlanta-ga.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-13712175066');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0f0e0c;--paper:#faf8f4;--cream:#f2ede4;--gold:#b8860b;--gold-light:#d4a017;--sage:#4a6741;--text:#2c2a26;--muted:#8a8070;--border:#ddd8cc;--white:#ffffff;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Geist',sans-serif;background:var(--paper);color:var(--text);line-height:1.7;}
+  header{background:var(--ink);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+  .logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+  .logo em{font-style:italic;color:var(--gold-light);}
+  .nav-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;font-weight:500;margin-left:24px;transition:color 0.2s;}
+  .nav-links a:hover{color:var(--gold-light);}
+  @media(max-width:768px){header{padding:0 20px;}.nav-links{display:none;}}
+  .hero{background:var(--ink);padding:70px 60px 90px;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 50%,rgba(184,134,11,0.1) 0%,transparent 60%);}
+  .hero-inner{max-width:860px;margin:0 auto;position:relative;z-index:1;}
+  .breadcrumb{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:20px;flex-wrap:wrap;}
+  .breadcrumb a{color:rgba(255,255,255,0.4);text-decoration:none;}
+  .breadcrumb span{color:rgba(255,255,255,0.15);}
+  .hero-eye{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+  .hero-eye::before{content:'';display:inline-block;width:24px;height:1px;background:var(--gold-light);}
+  .hero h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,56px);font-weight:900;color:#fff;line-height:1.1;letter-spacing:-1px;margin-bottom:20px;}
+  .hero h1 em{font-style:italic;color:var(--gold-light);}
+  .hero-desc{color:rgba(255,255,255,0.5);font-size:16px;line-height:1.7;max-width:580px;font-weight:300;margin-bottom:32px;}
+  .hero-stats{display:flex;gap:32px;flex-wrap:wrap;}
+  .hs{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px 20px;}
+  .hs-num{font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:var(--gold-light);line-height:1;margin-bottom:3px;}
+  .hs-lbl{font-size:11px;color:rgba(255,255,255,0.35);font-weight:500;}
+  @media(max-width:768px){.hero{padding:40px 20px 60px;}}
+  .content{max-width:1020px;margin:0 auto;padding:60px 60px 80px;display:grid;grid-template-columns:1fr 280px;gap:48px;align-items:start;}
+  @media(max-width:960px){.content{grid-template-columns:1fr;padding:40px 20px 60px;}}
+  article h2{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,30px);font-weight:900;color:var(--ink);letter-spacing:-0.3px;margin:44px 0 16px;line-height:1.2;}
+  article h2:first-child{margin-top:0;}
+  article p{font-size:15px;color:var(--text);line-height:1.85;margin-bottom:16px;font-weight:300;}
+  article p strong{font-weight:600;color:var(--ink);}
+  article ul{padding-left:24px;margin-bottom:16px;}
+  article li{font-size:15px;color:var(--text);line-height:1.85;margin-bottom:6px;font-weight:300;}
+  article li strong{font-weight:600;color:var(--ink);}
+  .data-table{width:100%;border-collapse:collapse;margin:24px 0;font-size:14px;}
+  .data-table th{background:var(--ink);color:#fff;padding:12px 16px;text-align:left;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+  .data-table td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text);font-weight:300;}
+  .data-table tr:last-child td{border-bottom:none;}
+  .data-table tr:nth-child(even) td{background:var(--cream);}
+  .data-table .highlight td{background:rgba(184,134,11,0.08);font-weight:600;color:var(--ink);}
+  .td-green{color:#2a6b4a;font-weight:600!important;}
+  .td-red{color:#8b2a2a;font-weight:600!important;}
+  .td-gold{color:var(--gold);font-weight:600!important;}
+  .banker-note{background:var(--cream);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:24px;margin:28px 0;display:flex;gap:16px;}
+  .bn-avatar{width:40px;height:40px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .bn-name{font-weight:700;font-size:13px;color:var(--ink);margin-bottom:2px;}
+  .bn-cred{font-size:9px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+  .bn-text{font-size:13px;color:var(--text);line-height:1.8;font-weight:300;}
+  .pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;}
+  @media(max-width:600px){.pros-cons{grid-template-columns:1fr;}}
+  .pc-box{border-radius:12px;padding:20px;}
+  .pc-box.pros{background:rgba(42,107,74,0.06);border:1px solid rgba(42,107,74,0.15);}
+  .pc-box.cons{background:rgba(139,42,42,0.06);border:1px solid rgba(139,42,42,0.15);}
+  .pc-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+  .pc-box.pros .pc-title{color:#2a6b4a;}
+  .pc-box.cons .pc-title{color:#8b2a2a;}
+  .pc-box ul{padding-left:18px;margin:0;}
+  .pc-box li{font-size:13px;line-height:1.7;margin-bottom:6px;font-weight:400;}
+  .neighborhoods{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 24px;}
+  .neighborhoods span{background:var(--cream);border:1px solid var(--border);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;color:var(--text);}
+  .cta-inline{background:var(--ink);border-radius:14px;padding:24px 28px;margin:32px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .cta-inline-text .t{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;margin-bottom:3px;}
+  .cta-inline-text .s{font-size:13px;color:rgba(255,255,255,0.45);font-weight:300;}
+  .cta-btn{background:var(--gold);color:var(--ink);padding:11px 22px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;white-space:nowrap;transition:all 0.2s;}
+  .cta-btn:hover{background:var(--gold-light);transform:translateY(-1px);}
+  .sidebar{position:sticky;top:80px;}
+  .sidebar-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:14px;}
+  .sc-title{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+  .sc-sub{font-size:12px;color:var(--muted);margin-bottom:14px;font-weight:300;line-height:1.5;}
+  .sc-btn{display:block;background:var(--gold);color:var(--ink);padding:11px 18px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;text-align:center;transition:all 0.2s;margin-bottom:8px;}
+  .sc-btn:hover{background:var(--gold-light);transform:translateY(-1px);}
+  .sc-btn.sec{background:transparent;border:1px solid var(--border);color:var(--text);}
+  .sc-btn.sec:hover{border-color:var(--gold);color:var(--gold);}
+  .quick-facts{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:14px;}
+  .qf-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+  .qf-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);}
+  .qf-row:last-child{border-bottom:none;padding-bottom:0;}
+  .qf-label{font-size:12px;color:var(--muted);}
+  .qf-val{font-size:13px;font-weight:700;color:var(--ink);}
+  .qf-val.gold{color:var(--gold);}
+  .qf-val.green{color:#2a6b4a;}
+  .related-links{background:var(--cream);border:1px solid var(--border);border-radius:14px;padding:22px;}
+  .rl-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+  .rl-link{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);text-decoration:none;color:var(--text);font-size:13px;font-weight:500;transition:color 0.2s;}
+  .rl-link:last-child{border-bottom:none;padding-bottom:0;}
+  .rl-link:hover{color:var(--gold);}
+  .rl-link::after{content:'→';margin-left:auto;color:var(--muted);font-size:12px;}
+  footer{background:var(--ink);padding:32px 60px;}
+  @media(max-width:768px){footer{padding:24px 20px;}}
+  .footer-inner{max-width:1020px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .footer-logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;}
+  .footer-logo em{font-style:italic;color:var(--gold-light);}
+  .footer-links{display:flex;gap:16px;flex-wrap:wrap;}
+  .footer-links a{color:rgba(255,255,255,0.35);text-decoration:none;font-size:12px;transition:color 0.2s;}
+  .footer-links a:hover{color:var(--gold-light);}
+  .footer-copy{font-size:11px;color:rgba(255,255,255,0.2);width:100%;margin-top:8px;}
+</style>
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="nav-brand">FinanceRateCalc</a>
-  <ul class="nav-links">
-    <li><a href="mortgage-calculator.html">🏠 Mortgage</a></li>
-    <li><a href="mortgage-crisis-map.html">🚨 Crisis Map</a></li>
-    <li><a href="equity-protector.html">💰 Equity</a></li>
-    <li><a href="about.html">About</a></li>
-  </ul>
-</nav>
-
-<div id="emergency-bar">
-  <span style="background:#c0392b;border-radius:50%;width:8px;height:8px;display:inline-block;animation:epulse 1.5s infinite;flex-shrink:0;"></span>
-  <span>At risk of losing your home? <strong>Get your free crisis assessment now.</strong></span>
-  <a href="mortgage-crisis-map.html" class="ebar-btn">Start Here →</a>
-  <button onclick="document.getElementById('emergency-bar').style.display='none'">×</button>
-</div>
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="mortgage-calculator.html">Mortgage Calculator</a>
+    <a href="can-i-get-a-loan.html">Loan Check</a>
+    <a href="are-you-rich.html">Are You Rich?</a>
+  </div>
+</header>
 
 <div class="hero">
-  <p class="hero-eyebrow">Free · AI-Powered · Built on 23 Years of Banking Experience</p>
-  <h1>Is Your Mortgage Costing<br/><em>More Than It Should?</em></h1>
-  <p class="hero-sub">Paste your loan details or describe your mortgage. Our AI — trained on 23 years of real banking knowledge — reviews your loan structure, fees, and rate for anything worth a closer look.</p>
-  <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-num">$40K+</div><div class="hero-stat-label">avg. savings identified</div></div>
-    <div class="hero-stat"><div class="hero-stat-num">1 in 3</div><div class="hero-stat-label">mortgages have errors</div></div>
-    <div class="hero-stat"><div class="hero-stat-num">Free</div><div class="hero-stat-label">no login required</div></div>
+  <div class="hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a><span>/</span>
+      <a href="mortgage-calculator.html">Mortgage Tools</a><span>/</span>
+      <span>Atlanta, GA</span>
+    </div>
+    <div class="hero-eye">City Mortgage Guide · 2026</div>
+    <h1>Buying a Home in<br><em>Atlanta, GA</em> —<br>The Honest Breakdown</h1>
+    <p class="hero-desc">Median prices, monthly payments, salary requirements, and a licensed banker's take on the Atlanta market. No fluff.</p>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-num">$390,000</div><div class="hs-lbl">Median Home Price</div></div>
+      <div class="hs"><div class="hs-num">$2,511/mo</div><div class="hs-lbl">Est. Total Payment</div></div>
+      <div class="hs"><div class="hs-num">$115,000</div><div class="hs-lbl">Min. Salary Needed</div></div>
+      <div class="hs"><div class="hs-num">0.91%</div><div class="hs-lbl">Property Tax Rate</div></div>
+    </div>
   </div>
 </div>
 
-<div class="main-wrap">
+<div class="content">
+  <article>
 
-  <div id="inputPanel">
-    <div class="mode-tabs">
-      <button class="mode-tab active" id="tabManual" onclick="switchMode('manual')">📝 Enter Loan Details</button>
-      <button class="mode-tab" id="tabPDF" onclick="switchMode('pdf')">📄 Upload Statement (PDF)</button>
-      <button class="mode-tab" id="tabDescribe" onclick="switchMode('describe')">💬 Describe Your Situation</button>
-    </div>
+    <h2>The Numbers at a Glance</h2>
+    <p>The median home price in Atlanta is approximately <strong>$390,000</strong> as of early 2026. With a standard 20% down payment of <strong>$78,000</strong> and current rates around 7.1%, here's what your monthly costs look like:</p>
 
-    <div id="panelManual">
-      <div style="background:#fff;border:1px solid var(--rule);border-radius:10px;padding:1.75rem;margin-bottom:1rem;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;margin-bottom:1.25rem;">Your Loan Details</div>
-        <div class="input-grid">
-          <div class="form-group">
-            <label>Original Loan Amount ($)</label>
-            <input type="number" id="m_loanAmount" placeholder="e.g. 320000"/>
-          </div>
-          <div class="form-group">
-            <label>Current Balance ($)</label>
-            <input type="number" id="m_balance" placeholder="e.g. 287000"/>
-          </div>
-          <div class="form-group">
-            <label>Interest Rate (%)</label>
-            <input type="number" id="m_rate" placeholder="e.g. 7.25" step="0.01"/>
-          </div>
-          <div class="form-group">
-            <label>Loan Term (Years)</label>
-            <select id="m_term">
-              <option value="30">30 Years</option>
-              <option value="20">20 Years</option>
-              <option value="15">15 Years</option>
-              <option value="10">10 Years</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Monthly Payment ($)</label>
-            <input type="number" id="m_payment" placeholder="e.g. 2180"/>
-            <div class="form-hint">What you actually pay each month</div>
-          </div>
-          <div class="form-group">
-            <label>Years into Loan</label>
-            <input type="number" id="m_yearsIn" placeholder="e.g. 4" min="0" max="30"/>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Monthly Fees & Escrow ($) — Optional</label>
-          <input type="number" id="m_fees" placeholder="e.g. 450 (taxes + insurance + PMI)"/>
-          <div class="form-hint">Include property taxes, insurance, PMI if bundled into your payment</div>
-        </div>
-        <div class="form-group">
-          <label>Lender Name — Optional</label>
-          <input type="text" id="m_lender" placeholder="e.g. Wells Fargo, Chase, Rocket Mortgage"/>
-        </div>
+    <table class="data-table">
+      <thead><tr><th>Cost Component</th><th>Monthly Amount</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Principal & Interest</td><td>$2,085</td><td>7.1% rate, 30-year fixed</td></tr>
+        <tr><td>Property Tax</td><td>$296</td><td>0.91% annual rate</td></tr>
+        <tr><td>Homeowner's Insurance</td><td>$130</td><td>Estimate — get local quotes</td></tr>
+        <tr class="highlight"><td><strong>Total PITI</strong></td><td><strong>$2,511</strong></td><td>Before HOA, utilities</td></tr>
+      </tbody>
+    </table>
+
+    <p>To keep housing costs at the recommended 28% of gross income, you'd need an annual salary of approximately <strong>$115,000</strong>. At 36% DTI (the conventional maximum), the requirement drops slightly but leaves less financial breathing room.</p>
+
+    <div class="banker-note">
+      <div class="bn-avatar">✦</div>
+      <div>
+        <div class="bn-name">Banker's Note on Atlanta</div>
+        <div class="bn-cred">Licensed Banking Pro · 23 Years Experience</div>
+        <div class="bn-text">Atlanta's biggest factor is location — more than almost any other city. The difference between a 20-minute and 90-minute commute can be the same neighborhood on paper but completely different in practice. Alpharetta and Roswell are premium northern suburbs with strong schools. Smyrna and Marietta offer better value. One critical point: Atlanta neighborhoods can change dramatically block by block — always walk the streets, not just the house.</div>
       </div>
     </div>
 
-    <div id="panelPDF" style="display:none;">
-      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('pdfInput').click()"
-           ondragover="event.preventDefault();this.classList.add('dragover')"
-           ondragleave="this.classList.remove('dragover')"
-           ondrop="handleDrop(event)">
-        <div class="upload-icon">📄</div>
-        <div class="upload-title">Drop your mortgage statement here</div>
-        <div class="upload-sub">PDF, JPG, or PNG · Max 10MB · Your data is never stored</div>
-        <div class="upload-selected" id="uploadSelected"></div>
-        <input type="file" id="pdfInput" class="upload-input" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(this)"/>
-      </div>
-      <div style="background:#fff;border:1px solid var(--rule);border-radius:8px;padding:1.25rem;margin-bottom:1rem;">
-        <div class="form-group" style="margin-bottom:0;">
-          <label>Any specific concerns? — Optional</label>
-          <input type="text" id="pdf_concern" placeholder="e.g. My payment went up $200 last month unexpectedly"/>
-        </div>
-      </div>
-    </div>
+    <h2>The Atlanta Market in 2026</h2>
+    <p>The Atlanta housing market is currently <strong>competitive with strong in-migration</strong>, with sustained demand from corporate relocations. Here's how it stacks up across the key metrics buyers care about:</p>
 
-    <div id="panelDescribe" style="display:none;">
-      <div style="background:#fff;border:1px solid var(--rule);border-radius:10px;padding:1.75rem;margin-bottom:1rem;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;margin-bottom:1.25rem;">Describe Your Mortgage Situation</div>
-        <div class="form-group">
-          <label>Tell us what's going on</label>
-          <textarea id="d_situation" rows="5" placeholder="e.g. I have a 30-year mortgage at 7.25% on a $320,000 home. My monthly payment is $2,180 but it went up $200 last month and my lender won't explain why..."></textarea>
-          <div class="form-hint">The more detail you provide, the more specific the analysis will be.</div>
-        </div>
-      </div>
-    </div>
+    <table class="data-table">
+      <thead><tr><th>Metric</th><th>Atlanta</th><th>US Average</th></tr></thead>
+      <tbody>
+        <tr><td>Median Home Price</td><td class="td-gold">$390,000</td><td>~$420,000</td></tr>
+        <tr><td>Property Tax Rate</td><td><span class="td-green">0.91% (low)</span></td><td>~1.1%</td></tr>
+        <tr><td>Monthly PITI (median home)</td><td>$2,511</td><td>~$2,800</td></tr>
+        <tr><td>Down Payment (20%)</td><td>$78,000</td><td>~$84,000</td></tr>
+        <tr><td>Salary Needed (28% DTI)</td><td>$115,000</td><td>~$120,000</td></tr>
+      </tbody>
+    </table>
 
-    <div style="background:#fff;border:1px solid var(--rule);border-radius:10px;padding:1.5rem;margin-bottom:1rem;">
-      <div style="font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.75rem;">What concerns you most? (Select all that apply)</div>
-      <div class="concern-grid">
-        <label class="concern-item"><input type="checkbox" value="payment_increase"/> <span>My payment increased unexpectedly</span></label>
-        <label class="concern-item"><input type="checkbox" value="balance_not_dropping"/> <span>My balance isn't going down</span></label>
-        <label class="concern-item"><input type="checkbox" value="hidden_fees"/> <span>Suspicious fees on statement</span></label>
-        <label class="concern-item"><input type="checkbox" value="rate_wrong"/> <span>My interest rate seems wrong</span></label>
-        <label class="concern-item"><input type="checkbox" value="pmi_overcharged"/> <span>PMI still being charged</span></label>
-        <label class="concern-item"><input type="checkbox" value="escrow_issue"/> <span>Escrow calculation issues</span></label>
-        <label class="concern-item"><input type="checkbox" value="prepayment"/> <span>Prepayment penalty concerns</span></label>
-        <label class="concern-item"><input type="checkbox" value="general"/> <span>General audit — check everything</span></label>
+    <h2>Pros & Cons of Buying in Atlanta</h2>
+    <div class="pros-cons">
+      <div class="pc-box pros">
+        <div class="pc-title">✅ Pros</div>
+        <ul><li>Major corporate hub (Delta, Coca-Cola, CNN)</li>
+<li>Diverse neighborhoods</li>
+<li>Relatively affordable vs. coastal cities</li></ul>
+      </div>
+      <div class="pc-box cons">
+        <div class="pc-title">⚠️ Watch Out For</div>
+        <ul><li>Traffic is severe — location critical</li>
+<li>Neighborhood quality varies dramatically</li>
+<li>Some areas have high crime</li></ul>
       </div>
     </div>
 
-    <button class="audit-btn" id="auditBtn" onclick="runAudit()">
-      🔍 Run My Mortgage Audit
-    </button>
-    <p class="privacy-note">🔒 Your data is processed securely and never stored or shared. This tool provides educational analysis, not legal advice.</p>
-  </div>
+    <h2>Best Neighborhoods & Suburbs</h2>
+    <p>Where you buy matters as much as what you buy. These Atlanta area neighborhoods offer the best combination of value, schools, and livability:</p>
+    <div class="neighborhoods"><span>Alpharetta</span> · <span>Marietta</span> · <span>Smyrna</span> · <span>Roswell</span> · <span>Decatur</span></div>
 
-  <div id="loading">
-    <div class="loading-spinner"></div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;margin-bottom:1rem;">Analyzing your mortgage...</div>
-    <div class="loading-steps" id="loadingSteps">
-      <div class="loading-step" id="step1">Reviewing loan structure & amortization</div>
-      <div class="loading-step" id="step2">Checking interest rate calculations</div>
-      <div class="loading-step" id="step3">Reviewing fees and charges against market benchmarks</div>
-      <div class="loading-step" id="step4">Cross-referencing with current market rates</div>
-      <div class="loading-step" id="step5">Preparing your audit report</div>
+    <div class="cta-inline">
+      <div class="cta-inline-text">
+        <div class="t">Calculate your exact Atlanta payment</div>
+        <div class="s">Enter your actual price, rate, and down payment.</div>
+      </div>
+      <a href="mortgage-calculator.html" class="cta-btn">Open Calculator →</a>
     </div>
-  </div>
 
-  <div id="results"></div>
+    <h2>What Salary Do You Need to Buy in Atlanta?</h2>
+    <p>Based on the median home price of $390,000 and a 20% down payment:</p>
 
+    <table class="data-table">
+      <thead><tr><th>DTI Target</th><th>Max Monthly Housing</th><th>Required Salary</th><th>Comfort Level</th></tr></thead>
+      <tbody>
+        <tr><td>28% (conservative)</td><td>$2,511/mo</td><td class="td-gold">$115,000</td><td class="td-green">✓ Comfortable</td></tr>
+        <tr class="highlight"><td>36% (standard)</td><td>$2,511/mo</td><td class="td-gold">$83,700</td><td class="td-gold">✓ Approved</td></tr>
+        <tr><td>43% (maximum)</td><td>$2,511/mo</td><td>$70,074</td><td class="td-red">⚠ Stretched</td></tr>
+      </tbody>
+    </table>
+
+    <p>See the full affordability breakdown for your salary level in our <a href="how-much-house-can-i-afford-100k-salary.html" style="color:var(--gold);">mortgage affordability guide</a>.</p>
+
+    <h2>Should You Buy or Rent in Atlanta?</h2>
+    <p>The buy vs. rent decision depends on how long you plan to stay, local appreciation rates, and your personal financial situation. As a general rule: if you're staying less than 3-4 years, renting is usually smarter. Beyond that, the math typically favors buying in most Atlanta neighborhoods.</p>
+    <p>Run the full 30-year comparison for Atlanta in our <a href="financial-twin.html" style="color:var(--gold);">Buy vs. Rent Calculator</a>.</p>
+
+  </article>
+
+  <aside class="sidebar">
+    <div class="quick-facts">
+      <div class="qf-title">Atlanta Quick Facts</div>
+      <div class="qf-row"><span class="qf-label">Median price</span><span class="qf-val gold">$390,000</span></div>
+      <div class="qf-row"><span class="qf-label">Down payment (20%)</span><span class="qf-val">$78,000</span></div>
+      <div class="qf-row"><span class="qf-label">Monthly PITI</span><span class="qf-val">$2,511</span></div>
+      <div class="qf-row"><span class="qf-label">Property tax</span><span class="qf-val">0.91%/yr</span></div>
+      <div class="qf-row"><span class="qf-label">Min. salary needed</span><span class="qf-val green">$115,000</span></div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sc-title">Calculate Your Payment</div>
+      <div class="sc-sub">Enter your actual price, rate, and down payment for Atlanta.</div>
+      <a href="mortgage-calculator.html" class="sc-btn">Mortgage Calculator →</a>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sc-title">Can You Get Approved?</div>
+      <div class="sc-sub">8 questions. Instant eligibility check.</div>
+      <a href="can-i-get-a-loan.html" class="sc-btn sec">Check Eligibility →</a>
+    </div>
+
+    <div class="related-links">
+      <div class="rl-title">Other City Guides</div>
+      <a href="mortgage-austin-tx.html" class="rl-link">Austin, TX</a>
+      <a href="mortgage-miami-fl.html" class="rl-link">Miami, FL</a>
+      <a href="mortgage-dallas-tx.html" class="rl-link">Dallas, TX</a>
+      <a href="mortgage-houston-tx.html" class="rl-link">Houston, TX</a>
+      <a href="mortgage-phoenix-az.html" class="rl-link">Phoenix, AZ</a>
+      <a href="mortgage-nashville-tn.html" class="rl-link">Nashville, TN</a>
+      <a href="mortgage-charlotte-nc.html" class="rl-link">Charlotte, NC</a>
+      <a href="mortgage-atlanta-ga.html" class="rl-link">Atlanta, GA</a>
+      <a href="mortgage-denver-co.html" class="rl-link">Denver, CO</a>
+      <a href="mortgage-seattle-wa.html" class="rl-link">Seattle, WA</a>
+    </div>
+  </aside>
 </div>
 
 <footer>
-  <div class="footer-links">
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="privacy-policy.html">Privacy Policy</a>
-    <a href="terms-of-service.html">Terms of Service</a>
-    <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+  <div class="footer-inner">
+    <div class="footer-logo">Finance<em>Rate</em>Calc</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="mortgage-calculator.html">Mortgage</a>
+      <a href="can-i-get-a-loan.html">Loan Check</a>
+      <a href="are-you-rich.html">Are You Rich?</a>
+      <a href="financial-twin.html">Buy vs Rent</a>
+    </div>
+    <div class="footer-copy">© 2026 FinanceRateCalc.com — All rights reserved · Educational Use Only · Not Financial Advice</div>
   </div>
-  <p>© 2026 FinanceRateCalc.com · Educational analysis only · Not legal or financial advice</p>
 </footer>
 
-<script>
-let activeMode = 'manual';
-let uploadedFile = null;
-let uploadedFileData = null;
-
-function switchMode(mode) {
-  activeMode = mode;
-  ['manual','pdf','describe'].forEach(m => {
-    document.getElementById('panel' + m.charAt(0).toUpperCase() + m.slice(1)).style.display = m === mode ? '' : 'none';
-    document.getElementById('tab' + m.charAt(0).toUpperCase() + m.slice(1)).classList.toggle('active', m === mode);
-  });
-}
-
-function handleFileSelect(input) {
-  const file = input.files[0];
-  if (!file) return;
-  uploadedFile = file;
-  document.getElementById('uploadSelected').textContent = '✓ ' + file.name + ' selected';
-  const reader = new FileReader();
-  reader.onload = (e) => { uploadedFileData = e.target.result.split(',')[1]; };
-  reader.readAsDataURL(file);
-}
-
-function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('uploadZone').classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file) {
-    document.getElementById('pdfInput').files = e.dataTransfer.files;
-    handleFileSelect(document.getElementById('pdfInput'));
-  }
-}
-
-function getCheckedConcerns() {
-  return Array.from(document.querySelectorAll('.concern-item input:checked')).map(cb => cb.value);
-}
-
-function buildPrompt() {
-  const concerns = getCheckedConcerns();
-  const concernText = concerns.length > 0 ? `\nUser's specific concerns: ${concerns.join(', ')}` : '';
-
-  if (activeMode === 'manual') {
-    const loanAmount = document.getElementById('m_loanAmount').value;
-    const balance = document.getElementById('m_balance').value;
-    const rate = document.getElementById('m_rate').value;
-    const term = document.getElementById('m_term').value;
-    const payment = document.getElementById('m_payment').value;
-    const yearsIn = document.getElementById('m_yearsIn').value;
-    const fees = document.getElementById('m_fees').value;
-    const lender = document.getElementById('m_lender').value;
-    if (!loanAmount && !balance && !rate) return null;
-    return `You are a mortgage auditor AI with 23 years of banking experience. Analyze this mortgage and identify any potential issues, errors, or overcharges.\n\nLoan Details:\n- Original loan amount: ${loanAmount ? '$' + loanAmount : 'not provided'}\n- Current balance: ${balance ? '$' + balance : 'not provided'}\n- Interest rate: ${rate ? rate + '%' : 'not provided'}\n- Loan term: ${term} years\n- Monthly payment: ${payment ? '$' + payment : 'not provided'}\n- Years into loan: ${yearsIn || 'not provided'}\n- Monthly fees/escrow: ${fees ? '$' + fees : 'not provided'}\n- Lender: ${lender || 'not specified'}\n${concernText}\n\nPerform a thorough mortgage audit. Respond in this EXACT JSON format (no markdown, no backticks, pure JSON):\n{\n  "verdict": "clean|warning|issues",\n  "summary": "2-3 sentence summary",\n  "score_label": "short label",\n  "findings": [{"severity": "critical|warning|ok","title": "title","description": "description","action": "action"}],\n  "potential_savings": "amount or null",\n  "recommend_legal": true|false,\n  "recommend_funding": true|false,\n  "banker_note": "personal note"\n}`;
-  } else if (activeMode === 'describe') {
-    const situation = document.getElementById('d_situation').value;
-    if (!situation || situation.length < 20) return null;
-    return `You are a mortgage auditor AI with 23 years of banking experience. Analyze this situation:\n\n"${situation}"\n${concernText}\n\nRespond in this EXACT JSON format (no markdown, no backticks, pure JSON):\n{\n  "verdict": "clean|warning|issues",\n  "summary": "2-3 sentence summary",\n  "score_label": "short label",\n  "findings": [{"severity": "critical|warning|ok","title": "title","description": "description","action": "action"}],\n  "potential_savings": "amount or null",\n  "recommend_legal": true|false,\n  "recommend_funding": true|false,\n  "banker_note": "personal note"\n}`;
-  } else if (activeMode === 'pdf') {
-    const concern = document.getElementById('pdf_concern').value;
-    return `You are a mortgage auditor AI with 23 years of banking experience. Analyze this mortgage document.\n${concern ? '\nConcern: ' + concern : ''}\n${concernText}\n\nRespond in this EXACT JSON format (no markdown, no backticks, pure JSON):\n{\n  "verdict": "clean|warning|issues",\n  "summary": "2-3 sentence summary",\n  "score_label": "short label",\n  "findings": [{"severity": "critical|warning|ok","title": "title","description": "description","action": "action"}],\n  "potential_savings": "amount or null",\n  "recommend_legal": true|false,\n  "recommend_funding": true|false,\n  "banker_note": "personal note"\n}`;
-  }
-  return null;
-}
-
-async function runAudit() {
-  const prompt = buildPrompt();
-  if (!prompt) {
-    alert('Please fill in your loan details or describe your situation before running the audit.');
-    return;
-  }
-
-  document.getElementById('inputPanel').style.display = 'none';
-  document.getElementById('loading').style.display = 'block';
-
-  const steps = ['step1','step2','step3','step4','step5'];
-  steps.forEach((s, i) => {
-    setTimeout(() => {
-      steps.forEach(ss => document.getElementById(ss).classList.remove('active'));
-      document.getElementById(s).classList.add('active');
-      if (i > 0) document.getElementById(steps[i-1]).classList.add('done');
-    }, i * 1200);
-  });
-
-  try {
-    let messages;
-    if (activeMode === 'pdf' && uploadedFileData && uploadedFile) {
-      const mediaType = uploadedFile.type === 'application/pdf' ? 'application/pdf' : 'image/jpeg';
-      messages = [{
-        role: 'user',
-        content: [
-          mediaType === 'application/pdf'
-            ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: uploadedFileData } }
-            : { type: 'image', source: { type: 'base64', media_type: mediaType, data: uploadedFileData } },
-          { type: 'text', text: prompt }
-        ]
-      }];
-    } else {
-      messages = [{ role: 'user', content: prompt }];
-    }
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages })
-    });
-
-    const data = await response.json();
-    const rawText = data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '';
-
-    let audit;
-    try {
-      audit = JSON.parse(rawText.replace(/```json|```/g, '').trim());
-    } catch {
-      audit = {
-        verdict: 'warning', summary: rawText.substring(0, 300), score_label: 'Analysis Complete',
-        findings: [{ severity: 'warning', title: 'Analysis Complete', description: rawText, action: 'Review the findings and consult a mortgage professional.' }],
-        potential_savings: null, recommend_legal: false, recommend_funding: true,
-        banker_note: 'Based on the information provided, review your loan documents carefully and compare your current rate to market rates.'
-      };
-    }
-
-    document.getElementById('loading').style.display = 'none';
-    showResults(audit);
-
-  } catch (err) {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('inputPanel').style.display = 'block';
-    alert('Something went wrong. Please try again.');
-  }
-}
-
-function showResults(audit) {
-  const verdictClass = audit.verdict === 'clean' ? 'clean' : audit.verdict === 'warning' ? 'warning' : 'issues';
-  const verdictEmoji = audit.verdict === 'clean' ? '✓' : audit.verdict === 'warning' ? '!' : '⚠';
-
-  let findingsHTML = '';
-  (audit.findings || []).forEach(f => {
-    findingsHTML += `
-      <div class="finding-card ${f.severity}">
-        <div class="finding-top">
-          <span class="finding-badge">${f.severity === 'critical' ? '🔴 Issue Found' : f.severity === 'warning' ? '🟡 Review Needed' : '✅ Looks Good'}</span>
-          <span class="finding-title">${f.title}</span>
-        </div>
-        <div class="finding-desc">${f.description}</div>
-        ${f.action ? `<div class="finding-action">→ ${f.action}</div>` : ''}
-      </div>
-    `;
-  });
-
-  // BUG FIX: İki ayrı affiliate linki — LawDepot ve Instant Funding
-  // Artık aynı linke gitmiyor
-  let actionsHTML = '';
-  if (audit.recommend_legal || audit.verdict !== 'clean') {
-    actionsHTML += `
-      <div class="action-box legal">
-        <div class="action-box-icon">⚖️</div>
-        <h3>Address Errors with Your Lender</h3>
-        <p>If the audit identified issues, a formal written request to your lender is the right first step. LawDepot provides professionally drafted templates.</p>
-        <a href="https://www.tkqlhce.com/click-101700650-16996011" target="_blank" rel="noopener sponsored" class="action-btn gold">📄 Draft a Dispute Letter →</a>
-        <div class="action-disclaimer">*Affiliate link. <a href="affiliate-disclosure.html">See disclosure.</a></div>
-      </div>
-    `;
-  }
-  if (audit.recommend_funding || audit.verdict !== 'clean') {
-    actionsHTML += `
-      <div class="action-box funding">
-        <div class="action-box-icon">💸</div>
-        <h3>Compare Your Funding Options</h3>
-        <p>If your rate is above current market levels, exploring alternatives could save you significantly. Fast pre-qualification, no commitment required.</p>
-        <a href="https://www.dpbolvw.net/click-101700650-17144681" target="_blank" rel="noopener sponsored" class="action-btn blue">💸 Compare Funding Options →</a>
-        <div class="action-disclaimer">*Affiliate link. <a href="affiliate-disclosure.html">See disclosure.</a></div>
-      </div>
-    `;
-  }
-
-  const html = `
-    <div class="audit-header">
-      <div class="audit-score-wrap">
-        <div class="audit-score ${verdictClass}">${verdictEmoji}</div>
-      </div>
-      <div class="audit-header-text">
-        <h2>${audit.score_label || 'Audit Complete'}</h2>
-        <p>${audit.summary}</p>
-        ${audit.potential_savings ? `<div style="margin-top:.5rem;font-size:.88rem;color:#4dce6a;font-weight:600;">💰 Potential recovery: ${audit.potential_savings}</div>` : ''}
-      </div>
-    </div>
-
-    <p class="section-label">Audit Findings</p>
-    <div class="findings-list">${findingsHTML}</div>
-
-    ${actionsHTML ? `<p class="section-label">Recommended Actions</p><div class="action-grid">${actionsHTML}</div>` : ''}
-
-    <div class="banker-note">
-      <div class="banker-note-label">📋 Ziya Y. — Senior Banker & Founder of FinanceRateCalc</div>
-      <p>${audit.banker_note || "Review the findings above carefully. If you're unsure about any result, bring this analysis to your lender and ask them to explain each charge line by line."}</p>
-    </div>
-
-    <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem;">
-      <a href="mortgage-crisis-map.html" style="display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.1rem;border:1px solid var(--rule);border-radius:5px;font-size:.82rem;color:var(--ink);text-decoration:none;">🚨 Crisis Assessment</a>
-      <a href="equity-protector.html" style="display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.1rem;border:1px solid var(--rule);border-radius:5px;font-size:.82rem;color:var(--ink);text-decoration:none;">💰 Equity Protector</a>
-      <a href="foreclosure-clock.html" style="display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.1rem;border:1px solid var(--rule);border-radius:5px;font-size:.82rem;color:var(--ink);text-decoration:none;">⏱️ Foreclosure Clock</a>
-    </div>
-
-    <button class="restart-btn" onclick="restartAudit()">↩ Run Another Audit</button>
-  `;
-
-  document.getElementById('results').innerHTML = html;
-  document.getElementById('results').style.display = 'block';
-  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-function restartAudit() {
-  document.getElementById('results').style.display = 'none';
-  document.getElementById('results').innerHTML = '';
-  document.getElementById('inputPanel').style.display = 'block';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-</script>
 </body>
 </html>

@@ -1,154 +1,725 @@
 <!DOCTYPE html>
 <html lang="en">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Bank Approval Simulator",
+  "url": "https://financeratecalc.com/bank-approval-simulator.html",
+  "description": "Find out what a bank credit analyst would really think about your loan application before you apply. Free simulator by a licensed banking professional.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": {"@type": "Offer","price": "0","priceCurrency": "USD"}
+}
+</script>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>I've Reviewed 10,000 Loan Applications. Here's What Kills Them. | FinanceRateCalc</title>
-<meta name="description" content="After 23 years in banking and reviewing over 10,000 loan applications, I've seen the same mistakes destroy approvals over and over. Here's exactly what kills loan applications — and how to avoid them.">
-<meta name="keywords" content="why loan applications get denied, loan application mistakes, how to get approved for a loan, banker advice loan, mortgage denial reasons">
-<link rel="canonical" href="https://financeratecalc.com/blog-loan-application-mistakes.html">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
+<title>Bank Approval Simulator — What Would a Bank Actually Say About You? | FinanceRateCalc</title>
+<meta name="description" content="Find out what a bank credit analyst would really think about your loan application — before you apply. Free simulator built by a licensed banking professional with 23 years of experience.">
+<meta name="keywords" content="will I get approved for a mortgage, bank approval simulator, mortgage approval calculator, loan approval chances, credit analysis tool">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8VGHR8XH4C"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-13712175066');
+  gtag('config', 'G-8VGHR8XH4C');
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #0f0e0c;
-    --paper: #faf8f4;
-    --cream: #f2ede4;
-    --gold: #b8860b;
-    --gold-light: #d4a017;
-    --sage: #4a6741;
-    --blue: #1a3a5c;
-    --text: #2c2a26;
-    --muted: #8a8070;
-    --border: #ddd8cc;
-    --white: #ffffff;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Geist',sans-serif; background:var(--paper); color:var(--text); line-height:1.7; }
+:root {
+  --bg: #0a0a0f;
+  --surface: #111118;
+  --surface2: #16161f;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.12);
+  --text: #e8e6e0;
+  --muted: rgba(255,255,255,0.38);
+  --gold: #c9a84c;
+  --gold-dim: rgba(201,168,76,0.15);
+  --green: #3ecf8e;
+  --green-dim: rgba(62,207,142,0.12);
+  --yellow: #f5c842;
+  --yellow-dim: rgba(245,200,66,0.12);
+  --red: #f5524a;
+  --red-dim: rgba(245,82,74,0.12);
+  --white: #ffffff;
+}
 
-  header { background:var(--ink); padding:0 60px; height:64px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
-  .logo { font-family:'Fraunces',serif; font-size:20px; font-weight:900; color:#fff; text-decoration:none; }
-  .logo em { font-style:italic; color:var(--gold-light); }
-  .nav-links a { color:rgba(255,255,255,0.5); text-decoration:none; font-size:13px; font-weight:500; margin-left:24px; transition:color 0.2s; }
-  .nav-links a:hover { color:var(--gold-light); }
-  @media(max-width:768px){ header{padding:0 20px;} .nav-links{display:none;} }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-  /* HERO */
-  .hero { background:var(--ink); padding:80px 60px 100px; position:relative; overflow:hidden; }
-  .hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 30% 50%, rgba(184,134,11,0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(26,58,92,0.2) 0%, transparent 50%); }
-  .hero-inner { max-width:760px; margin:0 auto; position:relative; z-index:1; }
-  .breadcrumb { display:flex; align-items:center; gap:8px; font-size:12px; color:rgba(255,255,255,0.3); margin-bottom:24px; flex-wrap:wrap; }
-  .breadcrumb a { color:rgba(255,255,255,0.4); text-decoration:none; }
-  .breadcrumb a:hover { color:var(--gold-light); }
-  .breadcrumb span { color:rgba(255,255,255,0.15); }
-  .hero-meta { display:flex; align-items:center; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
-  .hero-tag { background:rgba(184,134,11,0.15); color:var(--gold-light); padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; border:1px solid rgba(184,134,11,0.25); }
-  .hero-date { font-size:12px; color:rgba(255,255,255,0.3); }
-  .hero-read { font-size:12px; color:rgba(255,255,255,0.3); }
-  .hero h1 { font-family:'Fraunces',serif; font-size:clamp(34px,5vw,60px); font-weight:900; color:#fff; line-height:1.05; letter-spacing:-1.5px; margin-bottom:28px; }
-  .hero h1 em { font-style:italic; color:var(--gold-light); }
-  .hero-desc { color:rgba(255,255,255,0.5); font-size:18px; line-height:1.75; font-weight:300; margin-bottom:40px; }
-  .author-strip { display:flex; align-items:center; gap:16px; padding:20px 24px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; }
-  .author-avatar { width:48px; height:48px; background:var(--gold); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
-  .author-name { font-weight:700; font-size:14px; color:#fff; margin-bottom:2px; }
-  .author-cred { font-size:11px; color:rgba(255,255,255,0.4); }
-  .author-badge { margin-left:auto; background:rgba(74,103,65,0.25); border:1px solid rgba(74,103,65,0.4); color:#7ec87e; padding:4px 12px; border-radius:20px; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; white-space:nowrap; }
-  @media(max-width:768px){ .hero{padding:50px 20px 70px;} .author-badge{display:none;} }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  /* LAYOUT */
-  .layout { max-width:1060px; margin:0 auto; padding:72px 60px; display:grid; grid-template-columns:1fr 280px; gap:60px; align-items:start; }
-  @media(max-width:960px){ .layout{grid-template-columns:1fr; padding:50px 20px;} }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.4;
+}
 
-  /* ARTICLE */
-  .article-body { max-width:680px; }
-  .article-body h2 { font-family:'Fraunces',serif; font-size:clamp(24px,3.5vw,34px); font-weight:900; color:var(--ink); letter-spacing:-0.5px; margin:56px 0 18px; line-height:1.15; }
-  .article-body h2:first-child { margin-top:0; }
-  .article-body h3 { font-family:'Fraunces',serif; font-size:22px; font-weight:700; color:var(--ink); margin:36px 0 12px; line-height:1.2; }
-  .article-body p { font-size:16px; color:var(--text); line-height:1.85; margin-bottom:20px; font-weight:300; }
-  .article-body p strong { font-weight:600; color:var(--ink); }
-  .article-body ul, .article-body ol { padding-left:28px; margin-bottom:20px; }
-  .article-body li { font-size:16px; color:var(--text); line-height:1.85; margin-bottom:10px; font-weight:300; }
-  .article-body li strong { font-weight:600; color:var(--ink); }
-  .article-body a { color:var(--gold); text-decoration:underline; text-underline-offset:3px; }
+header {
+  padding: 0 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: rgba(10,10,15,0.92);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+}
 
-  /* PULL QUOTE */
-  .pull-quote { border-left:4px solid var(--gold); margin:36px 0; padding:20px 28px; background:var(--cream); border-radius:0 12px 12px 0; }
-  .pull-quote p { font-family:'Fraunces',serif; font-size:20px; font-style:italic; color:var(--ink); line-height:1.5; margin:0; font-weight:700; }
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--white);
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
 
-  /* STAT BOX */
-  .stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:32px 0; }
-  @media(max-width:600px){ .stat-row{grid-template-columns:1fr;} }
-  .stat-box { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:20px; text-align:center; }
-  .stat-box .num { font-family:'Fraunces',serif; font-size:36px; font-weight:900; color:var(--gold); line-height:1; margin-bottom:6px; }
-  .stat-box .lbl { font-size:12px; color:var(--muted); font-weight:500; line-height:1.4; }
+.logo em { font-style: italic; color: var(--gold); }
 
-  /* KILLER ITEM */
-  .killer { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:28px 32px; margin:28px 0; position:relative; overflow:hidden; }
-  .killer::before { content:''; position:absolute; top:0; left:0; bottom:0; width:4px; background:var(--kc, var(--gold)); }
-  .killer-num { font-family:'Fraunces',serif; font-size:48px; font-weight:900; color:var(--cream); line-height:1; position:absolute; right:24px; top:16px; -webkit-text-stroke:2px var(--border); }
-  .killer-label { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--kc, var(--gold)); margin-bottom:8px; }
-  .killer h3 { font-family:'Fraunces',serif; font-size:22px; font-weight:900; color:var(--ink); margin-bottom:12px; line-height:1.2; position:relative; z-index:1; }
-  .killer p { font-size:14px; color:var(--text); line-height:1.8; font-weight:300; margin-bottom:12px; position:relative; z-index:1; }
-  .killer p:last-child { margin-bottom:0; }
-  .killer p strong { font-weight:600; color:var(--ink); }
-  .killer-fix { background:rgba(42,107,74,0.06); border:1px solid rgba(42,107,74,0.15); border-radius:8px; padding:12px 16px; margin-top:12px; font-size:13px; color:#2a6b4a; font-weight:500; position:relative; z-index:1; }
-  .killer-fix::before { content:'✓ Fix: '; font-weight:700; }
+.nav-links { display: flex; gap: 24px; align-items: center; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover { color: var(--gold); }
+.nav-badge { background: var(--gold); color: #0a0a0f; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
 
-  /* INFO BOX */
-  .info-box { border-radius:12px; padding:20px 24px; margin:28px 0; }
-  .info-box.gold { background:rgba(184,134,11,0.06); border:1px solid rgba(184,134,11,0.18); border-left:3px solid var(--gold); }
-  .info-box.red { background:rgba(139,42,42,0.05); border:1px solid rgba(139,42,42,0.15); border-left:3px solid #8b2a2a; }
-  .info-box.green { background:rgba(42,107,74,0.05); border:1px solid rgba(42,107,74,0.15); border-left:3px solid #2a6b4a; }
-  .info-box-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
-  .info-box.gold .info-box-title { color:var(--gold); }
-  .info-box.red .info-box-title { color:#8b2a2a; }
-  .info-box.green .info-box-title { color:#2a6b4a; }
-  .info-box p { font-size:14px; margin-bottom:0; line-height:1.75; }
+@media (max-width: 768px) { header { padding: 0 20px; } .nav-links { display: none; } }
 
-  /* CTA INLINE */
-  .cta-inline { background:var(--ink); border-radius:14px; padding:28px 32px; margin:36px 0; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
-  .cta-inline-text .t { font-family:'Fraunces',serif; font-size:20px; font-weight:900; color:#fff; margin-bottom:4px; }
-  .cta-inline-text .s { font-size:13px; color:rgba(255,255,255,0.45); font-weight:300; }
-  .cta-inline-btn { background:var(--gold); color:var(--ink); padding:12px 24px; border-radius:8px; font-weight:700; font-size:13px; text-decoration:none; white-space:nowrap; transition:all 0.2s; }
-  .cta-inline-btn:hover { background:var(--gold-light); transform:translateY(-1px); }
+.disclaimer-bar {
+  background: rgba(201,168,76,0.06);
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+  padding: 8px 60px;
+  text-align: center;
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.3);
+}
+.disclaimer-bar strong { color: rgba(201,168,76,0.7); }
+@media (max-width: 768px) { .disclaimer-bar { padding: 8px 20px; } }
 
-  /* DIVIDER */
-  .section-divider { display:flex; align-items:center; gap:16px; margin:48px 0 32px; }
-  .section-divider::before, .section-divider::after { content:''; flex:1; height:1px; background:var(--border); }
-  .section-divider span { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
+.hero {
+  padding: 80px 60px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
 
-  /* SIDEBAR */
-  .sidebar { position:sticky; top:80px; }
-  .sidebar-card { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:16px; }
-  .sc-title { font-family:'Fraunces',serif; font-size:16px; font-weight:700; color:var(--ink); margin-bottom:4px; }
-  .sc-sub { font-size:12px; color:var(--muted); margin-bottom:16px; font-weight:300; line-height:1.6; }
-  .sc-btn { display:block; background:var(--gold); color:var(--ink); padding:12px 20px; border-radius:8px; font-weight:700; font-size:13px; text-decoration:none; text-align:center; transition:all 0.2s; margin-bottom:8px; }
-  .sc-btn:hover { background:var(--gold-light); transform:translateY(-1px); }
-  .sc-btn.sec { background:transparent; border:1px solid var(--border); color:var(--text); }
-  .sc-btn.sec:hover { border-color:var(--gold); color:var(--gold); }
-  .toc { background:var(--cream); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:16px; }
-  .toc-title { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:16px; }
-  .toc-item { display:flex; align-items:flex-start; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); text-decoration:none; color:var(--text); font-size:13px; font-weight:500; transition:color 0.2s; line-height:1.4; }
-  .toc-item:last-child { border-bottom:none; padding-bottom:0; }
-  .toc-item:hover { color:var(--gold); }
-  .toc-num { font-family:'Fraunces',serif; font-size:13px; font-weight:700; color:var(--gold); flex-shrink:0; width:18px; }
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(201,168,76,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
 
-  /* FOOTER */
-  footer { background:var(--ink); padding:36px 60px; }
-  @media(max-width:768px){ footer{padding:24px 20px;} }
-  .footer-inner { max-width:1060px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
-  .footer-logo { font-family:'Fraunces',serif; font-size:16px; font-weight:900; color:#fff; }
-  .footer-logo em { font-style:italic; color:var(--gold-light); }
-  .footer-links { display:flex; gap:18px; flex-wrap:wrap; }
-  .footer-links a { color:rgba(255,255,255,0.35); text-decoration:none; font-size:12px; transition:color 0.2s; }
-  .footer-links a:hover { color:var(--gold-light); }
-  .footer-copy { font-size:11px; color:rgba(255,255,255,0.2); width:100%; margin-top:8px; }
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  background: var(--gold-dim);
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(201,168,76,0.2);
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.05;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+}
+
+.hero h1 em { font-style: italic; color: var(--gold); }
+
+.hero-desc {
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.7;
+  max-width: 560px;
+  margin: 0 auto 32px;
+  font-weight: 300;
+}
+
+.hero-tags { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.hero-tag {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) { .hero { padding: 60px 20px 40px; } }
+
+.simulator {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 60px 80px;
+}
+
+@media (max-width: 768px) { .simulator { padding: 0 20px 60px; } }
+
+.progress-wrap { margin-bottom: 40px; }
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.progress-steps::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  height: 1px;
+  background: var(--border);
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  transition: all 0.3s;
+}
+
+.step-dot.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+.step-dot.done { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+
+.step-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.5px; white-space: nowrap; }
+.progress-step.active .step-label { color: var(--gold); }
+.progress-step.done .step-label { color: var(--green); }
+
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  animation: fadeUp 0.4s ease;
+}
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+.q-header {
+  padding: 28px 36px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+.q-counter {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.q-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.3;
+  letter-spacing: -0.3px;
+}
+
+.q-subtext {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.q-body { padding: 28px 36px; }
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.options-grid.single { grid-template-columns: 1fr; }
+.options-grid.three { grid-template-columns: repeat(3, 1fr); }
+
+@media (max-width: 600px) {
+  .options-grid, .options-grid.three { grid-template-columns: 1fr; }
+}
+
+.option-btn {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.option-btn:hover { border-color: var(--gold); background: var(--gold-dim); }
+.option-btn.selected { border-color: var(--gold); background: var(--gold-dim); }
+
+.option-icon { font-size: 20px; flex-shrink: 0; }
+.option-label { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.option-sub { font-size: 11px; color: var(--muted); margin-top: 2px; font-weight: 400; }
+
+.q-input-wrap { position: relative; }
+
+.q-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 18px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--white);
+  outline: none;
+  transition: border-color 0.2s;
+  font-weight: 500;
+}
+
+.q-input:focus { border-color: var(--gold); }
+.q-input::placeholder { color: var(--muted); font-weight: 300; font-size: 15px; }
+.q-input-hint { font-size: 12px; color: var(--muted); margin-top: 8px; font-weight: 400; }
+
+.q-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 36px 28px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-back {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+}
+
+.btn-back:hover { border-color: var(--border2); color: var(--text); }
+
+.btn-next {
+  background: var(--gold);
+  border: none;
+  color: #0a0a0f;
+  padding: 13px 32px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-next:hover { background: #d4b055; transform: translateY(-1px); }
+.btn-next:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.analyzing-screen {
+  display: none;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.analyzing-screen.visible { display: block; animation: fadeUp 0.4s ease; }
+.analyzing-icon { font-size: 48px; margin-bottom: 24px; animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+.analyzing-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+.analyzing-sub { font-size: 15px; color: var(--muted); font-weight: 300; }
+
+.analyzing-bar {
+  width: 200px;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 24px auto 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.analyzing-bar::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--gold);
+  animation: slide 1.5s ease-in-out infinite;
+}
+
+@keyframes slide { 0% { left: -100%; } 100% { left: 100%; } }
+
+.results-screen { display: none; }
+.results-screen.visible { display: block; animation: fadeUp 0.5s ease; }
+
+.verdict-card {
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  border: 1.5px solid transparent;
+}
+
+.verdict-card.approved { background: var(--green-dim); border-color: rgba(62,207,142,0.25); }
+.verdict-card.conditional { background: var(--yellow-dim); border-color: rgba(245,200,66,0.25); }
+.verdict-card.declined { background: var(--red-dim); border-color: rgba(245,82,74,0.25); }
+
+.verdict-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.verdict-card.approved::before { background: linear-gradient(90deg, #3ecf8e, #52d9a0); }
+.verdict-card.conditional::before { background: linear-gradient(90deg, #f5c842, #fad46a); }
+.verdict-card.declined::before { background: linear-gradient(90deg, #f5524a, #f77068); }
+
+.verdict-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.verdict-label { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 8px; }
+.verdict-card.approved .verdict-label { color: var(--green); }
+.verdict-card.conditional .verdict-label { color: var(--yellow); }
+.verdict-card.declined .verdict-label { color: var(--red); }
+
+.verdict-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.verdict-emoji { font-size: 48px; }
+.verdict-body { font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.7; font-weight: 300; margin-bottom: 24px; }
+
+.score-meters {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) { .score-meters { grid-template-columns: 1fr; } }
+
+.score-meter {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.meter-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.meter-value { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
+.meter-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.meter-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+.meter-fill.green { background: var(--green); }
+.meter-fill.yellow { background: var(--yellow); }
+.meter-fill.red { background: var(--red); }
+.meter-status { font-size: 11px; font-weight: 600; margin-top: 6px; }
+.meter-status.green { color: var(--green); }
+.meter-status.yellow { color: var(--yellow); }
+.meter-status.red { color: var(--red); }
+
+.banker-notes {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.banker-notes-title {
+  padding: 16px 24px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.note-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.note-item:last-child { border-bottom: none; }
+.note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.note-text { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6; font-weight: 400; }
+.note-text strong { color: var(--text); font-weight: 600; }
+
+.action-steps {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.action-steps-title {
+  padding: 16px 24px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.action-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.action-item:last-child { border-bottom: none; }
+
+.action-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.action-text { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+.action-text strong { color: var(--text); font-weight: 600; }
+
+/* Affiliate CTA */
+.affiliate-cta {
+  background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 16px;
+  padding: 28px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.affiliate-cta-label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.affiliate-cta-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+
+.affiliate-cta-sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 20px;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+.affiliate-cta-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cta-btn-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold);
+  color: #0a0a0f;
+  padding: 13px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.cta-btn-gold:hover { background: #d4b055; transform: translateY(-2px); }
+
+.cta-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--text);
+  padding: 13px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1.5px solid var(--border2);
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.cta-btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+.affiliate-disclosure {
+  font-size: 11px;
+  color: rgba(136,146,164,0.5);
+  margin-top: 14px;
+}
+
+.affiliate-disclosure a { color: rgba(136,146,164,0.5); text-decoration: underline; }
+
+.restart-btn {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  padding: 13px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+  margin-top: 12px;
+}
+
+.restart-btn:hover { border-color: var(--border2); color: var(--text); }
+
+.page-disclaimer {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 60px 60px;
+}
+
+.disclaimer-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.disclaimer-box strong { color: rgba(255,255,255,0.45); }
+@media (max-width: 768px) { .page-disclaimer { padding: 0 20px 40px; } }
+
+footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 32px 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) { footer { padding: 24px 20px; flex-direction: column; gap: 14px; text-align: center; } }
+
+.footer-logo { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--white); }
+.footer-logo em { font-style: italic; color: var(--gold); }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a { color: var(--muted); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+.footer-links a:hover { color: var(--gold); }
+.footer-copy { font-size: 12px; color: rgba(255,255,255,0.2); }
 </style>
 </head>
 <body>
@@ -157,264 +728,481 @@
   <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
   <div class="nav-links">
     <a href="index.html">Home</a>
-    <a href="can-i-get-a-loan.html">Loan Check</a>
-    <a href="mortgage-calculator.html">Mortgage</a>
-    <a href="are-you-rich.html">Are You Rich?</a>
+    <a href="financial-twin.html">Buy vs Rent</a>
+    <a href="loan-offer-analyzer.html">Loan Analyzer</a>
+    <a href="bank-approval-simulator.html" style="color:var(--gold);">Bank Simulator</a>
+    <span class="nav-badge">Licensed Pro</span>
   </div>
 </header>
 
+<div class="disclaimer-bar">
+  <strong>Educational purposes only — not financial advice.</strong> Results are estimates based on typical lending benchmarks.
+</div>
+
 <div class="hero">
-  <div class="hero-inner">
-    <div class="breadcrumb">
-      <a href="index.html">Home</a><span>/</span>
-      <span>Banking Insider</span>
-    </div>
-    <div class="hero-meta">
-      <span class="hero-tag">🏦 Banker's Perspective</span>
-      <span class="hero-date">March 2026</span>
-      <span class="hero-read">12 min read</span>
-    </div>
-    <h1>I've Reviewed <em>10,000</em> Loan Applications.<br>Here's What Kills Them.</h1>
-    <p class="hero-desc">After 23 years in banking, I've seen brilliant people get denied and mediocre applications sail through. The difference is almost never what people think.</p>
-    <div class="author-strip">
-      <div class="author-avatar">✦</div>
-      <div>
-        <div class="author-name">Licensed Banking Professional</div>
-        <div class="author-cred">23 Years · Credit Analyst · SPK Licensed · Seen it all</div>
-      </div>
-      <div class="author-badge">✓ Verified Expert</div>
-    </div>
+  <div class="hero-eyebrow">🏦 Insider Simulator</div>
+  <h1>What Would a Bank<br><em>Actually Say About You?</em></h1>
+  <p class="hero-desc">Before you apply for a loan, find out what a credit analyst would really think — the approval chances, red flags, and exactly what to fix. Built from 23 years inside banking.</p>
+  <div class="hero-tags">
+    <span class="hero-tag">✓ Takes 2 minutes</span>
+    <span class="hero-tag">✓ No sign-up needed</span>
+    <span class="hero-tag">✓ Banker's honest perspective</span>
+    <span class="hero-tag">✓ Free forever</span>
   </div>
 </div>
 
-<div class="layout">
-  <article class="article-body">
+<div class="simulator">
 
-    <div class="stat-row">
-      <div class="stat-box"><div class="num">10,000+</div><div class="lbl">Loan applications reviewed</div></div>
-      <div class="stat-box"><div class="num">23</div><div class="lbl">Years in banking & finance</div></div>
-      <div class="stat-box"><div class="num">~40%</div><div class="lbl">Denials that were avoidable</div></div>
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-steps" id="progressSteps"></div>
+  </div>
+
+  <div class="q-card" id="questionCard">
+    <div class="q-header">
+      <div class="q-counter" id="qCounter">QUESTION 1 OF 8</div>
+      <div class="q-text" id="qText"></div>
+      <div class="q-subtext" id="qSubtext"></div>
     </div>
-
-    <p>I have reviewed over ten thousand loan applications in my career. Mortgages, business loans, personal loans, lines of credit. Small businesses trying to survive. Families trying to buy their first home. Individuals trying to consolidate debt.</p>
-
-    <p>And after all of that, I can tell you with certainty: <strong>most denials are not about the money.</strong></p>
-
-    <p>The people who get denied often have enough income. Sometimes they have great credit. What kills them is almost always one of the same recurring mistakes — the kind of things banks never explain, and the kind of things no one tells you until it's too late.</p>
-
-    <p>Today I'm telling you. All of it.</p>
-
-    <div class="pull-quote">
-      <p>"The banks that denied you weren't wrong about your numbers. They were right — but they were looking at numbers you didn't know they were looking at."</p>
+    <div class="q-body" id="qBody"></div>
+    <div class="q-nav">
+      <button class="btn-back" id="btnBack" onclick="goBack()">← Back</button>
+      <button class="btn-next" id="btnNext" onclick="goNext()" disabled>Continue →</button>
     </div>
+  </div>
 
-    <h2>Killer #1: The DTI Trap</h2>
+  <div class="analyzing-screen" id="analyzingScreen">
+    <div class="analyzing-icon">🔍</div>
+    <div class="analyzing-title">Running Credit Analysis...</div>
+    <div class="analyzing-sub">Reviewing your profile against real banking criteria</div>
+    <div class="analyzing-bar"></div>
+  </div>
 
-    <div class="killer" style="--kc:#8b2a2a;">
-      <div class="killer-num">01</div>
-      <div class="killer-label">🔴 Most Common Denial Reason</div>
-      <h3>Your Debt-to-Income Ratio Is Too High — And You Don't Know It</h3>
-      <p>Debt-to-Income ratio (DTI) is the single most important number in any loan application. It's the percentage of your gross monthly income that goes toward debt payments. Most conventional lenders want it below 43%. The sweet spot is under 36%.</p>
-      <p>Here's what I saw constantly: people would come in confident because they had a good salary — say $80,000 a year. But they also had a $450 car payment, $320 in student loans, $180 in minimum credit card payments, and a $200 personal loan. That's <strong>$1,150/month in existing debt</strong> before the mortgage even enters the picture.</p>
-      <p>On $80k salary, gross monthly income is $6,667. Add a $1,800 mortgage payment and their DTI is 44.2% — above the conventional limit. Denied. And they had no idea why.</p>
-      <div class="killer-fix">Calculate your DTI before applying. Add up ALL monthly debt payments ÷ gross monthly income. If you're above 36%, pay down the smallest debts first to drop the ratio fast. Use our <a href="can-i-get-a-loan.html">Loan Eligibility Check</a> to see where you stand.</div>
-    </div>
-
-    <h2>Killer #2: The Credit Score Cliff</h2>
-
-    <div class="killer" style="--kc:#8b2a2a;">
-      <div class="killer-num">02</div>
-      <div class="killer-label">🔴 Costs Thousands Even When Approved</div>
-      <h3>Being 20 Points Below a Threshold Costs You $30,000</h3>
-      <p>Credit scores have hard thresholds — invisible lines that completely change your loan terms. The difference between a 679 and a 680 credit score can mean <strong>half a percentage point in interest rate</strong>. On a $300,000 mortgage over 30 years, that's $30,000+ in extra interest.</p>
-      <p>The thresholds to know: 580 (FHA minimum), 620 (conventional minimum), 660 (better rates), 680 (good rates), 720 (great rates), 760+ (best rates). Most people applying for mortgages don't know which tier they're in until the lender tells them — by which point it's too late to fix.</p>
-      <p>I've seen applicants denied for a 618 score when 620 would have cleared them. Two points. It had happened because they closed an old credit card the month before applying — which shortened their credit history and dropped the score.</p>
-      <div class="killer-fix">Check your credit score 6 months before applying. If you're within 20 points of a threshold, delay the application and take targeted actions: pay down balances below 30% utilization, don't close old accounts, don't open new ones.</div>
-    </div>
-
-    <div class="cta-inline">
-      <div class="cta-inline-text">
-        <div class="t">Where do you stand right now?</div>
-        <div class="s">8 questions. Instant loan eligibility assessment. No credit check.</div>
+  <div class="results-screen" id="resultsScreen">
+    <div class="verdict-card" id="verdictCard">
+      <div class="verdict-top">
+        <div>
+          <div class="verdict-label" id="verdictLabel"></div>
+          <div class="verdict-title" id="verdictTitle"></div>
+        </div>
+        <div class="verdict-emoji" id="verdictEmoji"></div>
       </div>
-      <a href="can-i-get-a-loan.html" class="cta-inline-btn">Check My Eligibility →</a>
+      <div class="verdict-body" id="verdictBody"></div>
     </div>
 
-    <h2>Killer #3: The Employment Gap</h2>
+    <div class="score-meters" id="scoreMeters"></div>
 
-    <div class="killer" style="--kc:#b8860b;">
-      <div class="killer-num">03</div>
-      <div class="killer-label">🟡 Frequently Misunderstood</div>
-      <h3>That Gap in Employment History Is Louder Than Your Salary</h3>
-      <p>Banks don't just look at what you earn — they look at how consistently you've earned it. The standard requirement for most mortgage loans is <strong>2 years of continuous employment history</strong> in the same field. A gap — even a brief one — triggers scrutiny.</p>
-      <p>I had an applicant who quit his job for 4 months to travel after a burnout. Came back, got a better job at higher pay. By every financial metric he was stronger. But that 4-month gap sat in his application file like a red flag. The underwriters wanted a letter of explanation. Then they wanted more documentation. The loan was delayed six weeks and he nearly lost the home.</p>
-      <p>Self-employed applicants face this even harder. Banks want 2 years of tax returns showing consistent income — and they'll use your <em>net</em> income (after deductions), not your gross revenue. A business owner making $200k gross but showing $60k net on taxes will be approved on $60k.</p>
-      <div class="killer-fix">If you have a gap, write a clear explanation letter before the bank asks. If you're self-employed, talk to your accountant about the tax vs. income tradeoff before applying — reducing deductions for 1–2 years before a loan application can increase your qualifying income significantly.</div>
+    <div class="banker-notes" id="bankerNotes">
+      <div class="banker-notes-title">🏦 What the Credit Analyst Sees</div>
+      <div id="notesList"></div>
     </div>
 
-    <h2>Killer #4: The Timing Mistake</h2>
-
-    <div class="killer" style="--kc:#b8860b;">
-      <div class="killer-num">04</div>
-      <div class="killer-label">🟡 Completely Avoidable</div>
-      <h3>Making a Big Financial Move Right Before Applying</h3>
-      <p>I cannot count the number of times someone torpedoed their own loan application by doing something financially significant in the 60–90 days before applying. The most common moves I saw destroy applications:</p>
-      <ul>
-        <li><strong>Buying a car on credit</strong> — added monthly debt, raised DTI, triggered a hard inquiry on credit</li>
-        <li><strong>Closing a credit card</strong> — reduced available credit, increased utilization ratio, shortened credit history</li>
-        <li><strong>Depositing a large cash amount</strong> — banks can't verify cash sources; anything unexplained is a red flag</li>
-        <li><strong>Switching jobs</strong> — even for higher pay, breaks the employment continuity banks want</li>
-        <li><strong>Co-signing someone else's loan</strong> — that debt now appears on your DTI calculation</li>
-      </ul>
-      <p>One applicant deposited $15,000 cash that his father had given him as a gift — perfectly legal, perfectly documented in his mind. But there was no paper trail. The underwriter flagged it as potentially undisclosed debt or suspicious funds. The application was frozen for 3 weeks while they investigated.</p>
-      <div class="killer-fix">Treat the 90 days before a loan application like pre-surgery: no new debt, no big moves, no closing accounts. Keep your financial profile frozen and boring. If you receive a cash gift, document it immediately with a gift letter.</div>
+    <div class="action-steps" id="actionSteps">
+      <div class="action-steps-title">📋 Your Action Plan</div>
+      <div id="actionList"></div>
     </div>
 
-    <div class="section-divider"><span>The Less Obvious Killers</span></div>
-
-    <h2>Killer #5: Not Shopping Lenders</h2>
-
-    <div class="killer" style="--kc:#4a6741;">
-      <div class="killer-num">05</div>
-      <div class="killer-label">🟢 Costs Money, Not Approval</div>
-      <h3>Going With the First Lender and Leaving $15,000 on the Table</h3>
-      <p>This one doesn't kill the application — it kills your wallet over the next 30 years. Most people apply to one or two lenders. The research is overwhelming, the process is stressful, and when someone says yes, you just want it to be over.</p>
-      <p>But lender rates vary more than people realize. On a $300,000 mortgage, a 0.5% rate difference is roughly <strong>$90/month</strong> — or $32,000 over 30 years. I've seen applicants at the same credit score get quotes ranging 0.75% apart from different lenders on the same day.</p>
-      <p>Multiple loan inquiries within a 14–45 day window (depending on scoring model) count as a single hard inquiry for scoring purposes. The system is designed to let you shop. Use it.</p>
-      <div class="killer-fix">Get quotes from at least 3 lenders: your current bank, a credit union, and an online lender. Do it within a 2-week window so it counts as one inquiry. The 2 hours this takes can save you $15,000–$30,000.</div>
-    </div>
-
-    <h2>Killer #6: The Down Payment Misunderstanding</h2>
-
-    <div class="killer" style="--kc:#4a6741;">
-      <div class="killer-num">06</div>
-      <div class="killer-label">🟢 Fixable With Planning</div>
-      <h3>Saving Exactly Enough — And Getting Surprised by Closing Costs</h3>
-      <p>Buyers save for a down payment and assume that's all they need. Then they get to closing and discover they owe an additional <strong>2–5% of the home price in closing costs</strong>. On a $300,000 home, that's $6,000–$15,000 they weren't expecting.</p>
-      <p>Closing costs include: loan origination fees, appraisal, title insurance, attorney fees, prepaid property taxes, prepaid homeowner's insurance, and more. Some of these can be negotiated or rolled into the loan. Many first-time buyers don't know to ask.</p>
-      <p>I've seen buyers fully approved for a mortgage, reach closing day, and realize they don't have enough cash to close. The deal falls through. They lose the earnest money deposit. It's devastating — and entirely preventable.</p>
-      <div class="killer-fix">Budget for down payment + 3% of home price for closing costs, minimum. Ask your lender for a Loan Estimate early — they're legally required to provide one within 3 business days of application. Review every line item. Ask what's negotiable.</div>
-    </div>
-
-    <h2>Killer #7: The Documentation Disaster</h2>
-
-    <div class="killer" style="--kc:#8b2a2a;">
-      <div class="killer-num">07</div>
-      <div class="killer-label">🔴 Kills Good Applications</div>
-      <h3>Having the Money But Not Being Able to Prove It</h3>
-      <p>This one frustrated me most as a banker. Applicants who genuinely had the income and the creditworthiness — but couldn't document it properly. The bank isn't being difficult. They're legally required to verify what you claim.</p>
-      <p>Common documentation failures I saw:</p>
-      <ul>
-        <li><strong>Freelancers/contractors</strong> with income spread across multiple platforms — no single clean income statement</li>
-        <li><strong>Tips and cash income</strong> that wasn't reported on taxes — bank can only count documented income</li>
-        <li><strong>Rental income</strong> without proper lease agreements and tax filing history</li>
-        <li><strong>Recent raises or bonuses</strong> — banks want to see it sustained, not just one month's payslip</li>
-        <li><strong>Assets in foreign accounts</strong> — requires additional documentation and sometimes translation</li>
-      </ul>
-      <div class="killer-fix">Before applying, gather: 2 years of tax returns, 2 months of bank statements, 30 days of pay stubs, W-2s for 2 years, and documentation for any other income sources. If your income is complex, consult a mortgage broker who specializes in non-traditional income situations.</div>
-    </div>
-
-    <div class="pull-quote">
-      <p>"The bank isn't your enemy. But it's not your friend either. It's a machine — and you need to know how to feed it."</p>
-    </div>
-
-    <h2>The Pattern I've Seen in Every Successful Application</h2>
-
-    <p>After all those applications, there's a clear pattern in the ones that sail through. The applicants who get approved quickly — often at better rates — share these traits:</p>
-
-    <div class="info-box green">
-      <div class="info-box-title">✅ The Anatomy of a Perfect Application</div>
-      <p><strong>1. They applied at the right time.</strong> They checked their credit 6+ months before, improved it, then applied. They hadn't opened new credit accounts or made big financial moves in the prior 90 days.<br><br>
-      <strong>2. They knew their DTI cold.</strong> Before walking in, they could tell me their exact monthly debt obligations and gross income. They had already paid down smaller debts to get under 36%.<br><br>
-      <strong>3. Their documentation was organized.</strong> Tax returns, bank statements, pay stubs — in a folder, ready to go. No chasing documents, no delays.<br><br>
-      <strong>4. They had shopped rates.</strong> They came in with a competing offer. This alone sometimes moved their rate.<br><br>
-      <strong>5. They had a cash buffer beyond the down payment.</strong> Banks want to see reserves — typically 2–3 months of mortgage payments in savings after closing costs.</p>
-    </div>
-
-    <h2>What to Do Right Now</h2>
-
-    <p>If you're thinking about applying for any loan in the next 6–12 months, here's your action plan:</p>
-
-    <ol>
-      <li><strong>Check your credit score</strong> — Free at annualcreditreport.com. Dispute any errors immediately.</li>
-      <li><strong>Calculate your DTI</strong> — Add all monthly debt payments ÷ gross monthly income. Target under 36%.</li>
-      <li><strong>Identify your threshold gap</strong> — If your credit score is 695, work to get above 720. The rate improvement is worth it.</li>
-      <li><strong>Freeze your finances</strong> — No new credit, no big purchases, no job changes in the 90 days before applying.</li>
-      <li><strong>Gather your documents now</strong> — Don't wait until you're under contract on a house.</li>
-      <li><strong>Get at least 3 quotes</strong> — Your bank, a credit union, and one online lender. Do it within 14 days.</li>
-    </ol>
-
-    <div class="cta-inline">
-      <div class="cta-inline-text">
-        <div class="t">Where do you stand?</div>
-        <div class="s">Use our free tool to get an instant assessment of your loan eligibility — 8 questions, no credit check.</div>
+    <!-- AFFILIATE CTA -->
+    <div class="affiliate-cta">
+      <div class="affiliate-cta-label">Sponsored · Take the Next Step</div>
+      <div class="affiliate-cta-title">You've seen your profile — now act on it</div>
+      <div class="affiliate-cta-sub">Get your legal documents ready and explore funding options before you apply. Both take minutes.</div>
+      <div class="affiliate-cta-buttons">
+        <a href="https://www.dpbolvw.net/click-101700650-17144681"
+           target="_blank" rel="noopener sponsored"
+           class="cta-btn-gold">
+          💸 Explore Funding Options →
+        </a>
+        <a href="https://www.tkqlhce.com/click-101700650-16996011"
+           target="_blank" rel="noopener sponsored"
+           class="cta-btn-outline">
+          📄 Get Legal Docs — LawDepot
+        </a>
       </div>
-      <a href="can-i-get-a-loan.html" class="cta-inline-btn">Check Now — Free →</a>
+      <div class="affiliate-disclosure">
+        Sponsored. We may earn a commission at no cost to you. <a href="affiliate-disclosure.html">See disclosure →</a>
+      </div>
     </div>
 
-    <h2>One Last Thing</h2>
+    <button class="restart-btn" onclick="restart()">↺ Start Over</button>
+  </div>
 
-    <p>The banking system is not designed to help you understand it. The complexity benefits the lender — confused applicants accept worse terms, miss better options, and don't push back.</p>
+</div>
 
-    <p>That's exactly why I built this site. Every calculator here, every guide, every number — it's the information I wish applicants had walked in with. The banks already have this knowledge. Now you do too.</p>
-
-    <p>Use it.</p>
-
-    <p style="color:var(--muted); font-size:13px; margin-top:40px; padding-top:20px; border-top:1px solid var(--border);">
-      <em>This article is for educational purposes only and does not constitute financial or legal advice. Loan eligibility criteria vary by lender, loan type, and jurisdiction. Consult a licensed financial professional for advice specific to your situation.</em>
-    </p>
-
-  </article>
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-
-    <div class="toc">
-      <div class="toc-title">In This Article</div>
-      <a href="#" class="toc-item"><span class="toc-num">01</span>The DTI Trap</a>
-      <a href="#" class="toc-item"><span class="toc-num">02</span>The Credit Score Cliff</a>
-      <a href="#" class="toc-item"><span class="toc-num">03</span>The Employment Gap</a>
-      <a href="#" class="toc-item"><span class="toc-num">04</span>The Timing Mistake</a>
-      <a href="#" class="toc-item"><span class="toc-num">05</span>Not Shopping Lenders</a>
-      <a href="#" class="toc-item"><span class="toc-num">06</span>Down Payment Surprise</a>
-      <a href="#" class="toc-item"><span class="toc-num">07</span>Documentation Disaster</a>
-    </div>
-
-    <div class="sidebar-card">
-      <div class="sc-title">Check Your Eligibility</div>
-      <div class="sc-sub">8 questions. Instant assessment. No credit check required.</div>
-      <a href="can-i-get-a-loan.html" class="sc-btn">Check Now — Free →</a>
-    </div>
-
-    <div class="sidebar-card">
-      <div class="sc-title">Calculate Your Mortgage</div>
-      <div class="sc-sub">Monthly payment, total interest, full amortization.</div>
-      <a href="mortgage-calculator.html" class="sc-btn sec">Open Calculator →</a>
-    </div>
-
-    <div class="sidebar-card">
-      <div class="sc-title">Is Your Loan Offer Fair?</div>
-      <div class="sc-sub">Get a banker's instant red/yellow/green assessment.</div>
-      <a href="loan-offer-analyzer.html" class="sc-btn sec">Analyze My Offer →</a>
-    </div>
-
-  </aside>
+<div class="page-disclaimer">
+  <div class="disclaimer-box">
+    <strong>⚠️ Educational Purposes Only — Not Financial Advice.</strong> This simulator provides general estimates based on typical US lending benchmarks and is for educational use only. It does not constitute financial, legal, or lending advice. Actual loan decisions depend on many factors including lender policies, current rates, and your full credit profile. Always consult a licensed financial advisor before applying for any loan.
+  </div>
 </div>
 
 <footer>
-  <div class="footer-inner">
-    <div class="footer-logo">Finance<em>Rate</em>Calc</div>
-    <div class="footer-links">
-      <a href="index.html">Home</a>
-      <a href="can-i-get-a-loan.html">Loan Check</a>
-      <a href="mortgage-calculator.html">Mortgage</a>
-      <a href="are-you-rich.html">Are You Rich?</a>
-      <a href="stop-renting.html">Stop Renting</a>
-      <a href="mortgage-iq.html">Mortgage IQ</a>
-    </div>
-    <div class="footer-copy">© 2026 FinanceRateCalc.com — All rights reserved · Educational Use Only · Not Financial Advice</div>
+  <div class="footer-logo">Finance<em>Rate</em>Calc</div>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="financial-twin.html">Buy vs Rent</a>
+    <a href="loan-offer-analyzer.html">Loan Analyzer</a>
+    <a href="mortgage-calculator.html">Mortgage</a>
   </div>
+  <div class="footer-copy">© 2026 FinanceRateCalc · Educational Use Only</div>
 </footer>
 
+<script>
+const questions = [
+  {
+    id: 'loanType',
+    text: 'What type of loan are you applying for?',
+    sub: 'Each loan type has different approval criteria at most banks.',
+    type: 'options',
+    options: [
+      { icon: '🏠', label: 'Mortgage', sub: 'Home purchase or refinance', value: 'mortgage' },
+      { icon: '🚗', label: 'Auto Loan', sub: 'New or used vehicle', value: 'auto' },
+      { icon: '👤', label: 'Personal Loan', sub: 'Unsecured personal credit', value: 'personal' },
+      { icon: '💼', label: 'Business Loan', sub: 'For your business', value: 'business' },
+    ]
+  },
+  {
+    id: 'creditScore',
+    text: 'What is your credit score range?',
+    sub: 'This is the single biggest factor in any loan decision.',
+    type: 'options',
+    options: [
+      { icon: '🏆', label: 'Excellent', sub: '750 or above', value: 800 },
+      { icon: '✅', label: 'Good', sub: '700 – 749', value: 725 },
+      { icon: '📊', label: 'Fair', sub: '650 – 699', value: 675 },
+      { icon: '⚠️', label: 'Poor', sub: '600 – 649', value: 625 },
+      { icon: '🚨', label: 'Bad', sub: 'Below 600', value: 560 },
+      { icon: '❓', label: "Don't know", sub: "I haven't checked", value: 640 },
+    ]
+  },
+  {
+    id: 'annualIncome',
+    text: "What is your gross annual income?",
+    sub: 'Before taxes. Include all income sources.',
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 75000',
+    prefix: '$',
+    hint: 'Enter your total yearly income before taxes'
+  },
+  {
+    id: 'monthlyDebts',
+    text: 'What are your total monthly debt payments?',
+    sub: 'Include all loans, credit cards, student loans, car payments — everything you pay monthly.',
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 800',
+    prefix: '$',
+    hint: 'Monthly minimums on all existing debts'
+  },
+  {
+    id: 'loanAmount',
+    text: 'How much are you looking to borrow?',
+    sub: 'Enter the total loan amount you need.',
+    type: 'input',
+    inputType: 'number',
+    placeholder: 'e.g. 350000',
+    prefix: '$',
+    hint: 'The total amount you want to borrow'
+  },
+  {
+    id: 'employmentStatus',
+    text: 'What is your employment situation?',
+    sub: 'Banks heavily weight income stability when making lending decisions.',
+    type: 'options',
+    options: [
+      { icon: '💼', label: 'Employed (2+ years)', sub: 'Same employer, stable', value: 'stable' },
+      { icon: '📅', label: 'Employed (under 2 years)', sub: 'Newer position', value: 'newer' },
+      { icon: '🏢', label: 'Self-employed', sub: 'Business owner / freelancer', value: 'self' },
+      { icon: '🔄', label: 'Recently changed jobs', sub: 'Within last 6 months', value: 'recent' },
+      { icon: '📋', label: 'Contract / Part-time', sub: 'Non-permanent employment', value: 'contract' },
+    ]
+  },
+  {
+    id: 'downPayment',
+    text: 'How much do you have available for a down payment or collateral?',
+    sub: 'More down payment = lower risk for the bank = better terms for you.',
+    type: 'options',
+    options: [
+      { icon: '💰', label: '20% or more', sub: 'Avoids PMI on mortgages', value: 20 },
+      { icon: '✅', label: '10% – 19%', sub: 'Solid position', value: 15 },
+      { icon: '📊', label: '5% – 9%', sub: 'Minimum for most loans', value: 7 },
+      { icon: '⚠️', label: 'Less than 5%', sub: 'May limit options', value: 3 },
+      { icon: '❌', label: 'Nothing / N/A', sub: 'No down payment available', value: 0 },
+    ]
+  },
+  {
+    id: 'bankruptcyOrDefaults',
+    text: 'Any history of bankruptcy, foreclosure, or loan defaults?',
+    sub: 'These appear on your credit report and affect decisions significantly.',
+    type: 'options',
+    options: [
+      { icon: '✅', label: 'None', sub: 'Clean history', value: 'none' },
+      { icon: '📅', label: 'Over 7 years ago', sub: 'May no longer appear on report', value: 'old' },
+      { icon: '⚠️', label: '3 – 7 years ago', sub: 'Still visible, improving', value: 'medium' },
+      { icon: '🚨', label: 'Within last 3 years', sub: 'Significant impact on approval', value: 'recent' },
+    ]
+  }
+];
+
+let currentQ = 0;
+let answers = {};
+
+// -------------------------------------------------------
+// BUG FIX: answers[id] === undefined kontrolü
+// Önceki kod !answers[q.id] kullanıyordu — bu 0 ve ''
+// değerlerini de falsy sayıyordu. Şimdi undefined ile karşılaştırıyoruz.
+// -------------------------------------------------------
+function hasAnswer(qId) {
+  return answers[qId] !== undefined && answers[qId] !== null && answers[qId] !== '';
+}
+
+function initProgress() {
+  const stepsEl = document.getElementById('progressSteps');
+  stepsEl.innerHTML = questions.map((q, i) => `
+    <div class="progress-step" id="step-${i}">
+      <div class="step-dot" id="dot-${i}">${i + 1}</div>
+      <div class="step-label">${['Loan', 'Credit', 'Income', 'Debts', 'Amount', 'Employment', 'Down Pmt', 'History'][i]}</div>
+    </div>
+  `).join('');
+  updateProgress();
+}
+
+function updateProgress() {
+  questions.forEach((_, i) => {
+    const step = document.getElementById(`step-${i}`);
+    const dot = document.getElementById(`dot-${i}`);
+    step.className = 'progress-step';
+    dot.className = 'step-dot';
+    if (i < currentQ) { step.classList.add('done'); dot.classList.add('done'); dot.textContent = '✓'; }
+    else if (i === currentQ) { step.classList.add('active'); dot.classList.add('active'); dot.textContent = i + 1; }
+    else { dot.textContent = i + 1; }
+  });
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('qCounter').textContent = `QUESTION ${currentQ + 1} OF ${questions.length}`;
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('qSubtext').textContent = q.sub || '';
+  document.getElementById('btnBack').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+  document.getElementById('btnNext').disabled = !hasAnswer(q.id);
+
+  const body = document.getElementById('qBody');
+
+  if (q.type === 'options') {
+    const cols = q.options.length === 3 ? 'three' : q.options.length <= 2 ? 'single' : '';
+    body.innerHTML = `<div class="options-grid ${cols}">${q.options.map((o, idx) => `
+      <button class="option-btn ${hasAnswer(q.id) && answers[q.id] === o.value ? 'selected' : ''}"
+              onclick="selectOption('${q.id}', ${idx}, this)">
+        <span class="option-icon">${o.icon}</span>
+        <div>
+          <div class="option-label">${o.label}</div>
+          ${o.sub ? `<div class="option-sub">${o.sub}</div>` : ''}
+        </div>
+      </button>
+    `).join('')}</div>`;
+  } else if (q.type === 'input') {
+    body.innerHTML = `
+      <div class="q-input-wrap">
+        <input type="${q.inputType}" class="q-input" id="qInputField"
+          placeholder="${q.placeholder}"
+          value="${answers[q.id] !== undefined ? answers[q.id] : ''}"
+          oninput="handleInput('${q.id}', this.value)"
+          onkeydown="if(event.key==='Enter') goNext()">
+        <div class="q-input-hint">${q.hint || ''}</div>
+      </div>
+    `;
+    setTimeout(() => document.getElementById('qInputField')?.focus(), 50);
+  }
+
+  updateProgress();
+}
+
+function selectOption(qId, idx, el) {
+  const q = questions.find(q => q.id === qId);
+  answers[qId] = q.options[idx].value;
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('btnNext').disabled = false;
+}
+
+function handleInput(qId, value) {
+  if (value === '' || value === null) {
+    answers[qId] = undefined;
+    document.getElementById('btnNext').disabled = true;
+  } else {
+    const num = parseFloat(value);
+    if (!isNaN(num) && num >= 0) {
+      answers[qId] = num;
+      document.getElementById('btnNext').disabled = false;
+    } else {
+      answers[qId] = undefined;
+      document.getElementById('btnNext').disabled = true;
+    }
+  }
+}
+
+function goNext() {
+  if (!hasAnswer(questions[currentQ].id)) return;
+  if (currentQ < questions.length - 1) {
+    currentQ++;
+    document.getElementById('questionCard').style.animation = 'none';
+    setTimeout(() => {
+      document.getElementById('questionCard').style.animation = 'fadeUp 0.3s ease';
+      renderQuestion();
+    }, 10);
+  } else {
+    showAnalyzing();
+  }
+}
+
+function goBack() {
+  if (currentQ > 0) {
+    currentQ--;
+    renderQuestion();
+  }
+}
+
+function showAnalyzing() {
+  document.getElementById('questionCard').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  const aScreen = document.getElementById('analyzingScreen');
+  aScreen.style.display = 'block';
+  aScreen.classList.add('visible');
+  setTimeout(showResults, 2800);
+}
+
+function showResults() {
+  document.getElementById('analyzingScreen').style.display = 'none';
+  document.getElementById('resultsScreen').classList.add('visible');
+  calculateAndRender();
+}
+
+function calculateAndRender() {
+  const a = answers;
+  const income = a.annualIncome || 0;
+  const monthlyIncome = income / 12;
+  const monthlyDebts = a.monthlyDebts || 0;
+  const loanAmount = a.loanAmount || 0;
+  const creditScore = a.creditScore || 640;
+  const downPct = a.downPayment !== undefined ? a.downPayment : 0;
+  const employment = a.employmentStatus;
+  const history = a.bankruptcyOrDefaults;
+  const loanType = a.loanType;
+
+  const estRate = 0.07 / 12;
+  const estTerm = loanType === 'mortgage' ? 360 : loanType === 'auto' ? 60 : 36;
+  const estPayment = loanAmount * (estRate * Math.pow(1 + estRate, estTerm)) / (Math.pow(1 + estRate, estTerm) - 1);
+
+  const totalMonthlyDebt = monthlyDebts + estPayment;
+  const dti = monthlyIncome > 0 ? (totalMonthlyDebt / monthlyIncome) * 100 : 100;
+
+  let score = 100;
+  let notes = [];
+  let actions = [];
+
+  let creditStatus, creditPct;
+  if (creditScore >= 750) { creditStatus = 'green'; creditPct = 95; }
+  else if (creditScore >= 700) { creditStatus = 'green'; creditPct = 80; }
+  else if (creditScore >= 650) { creditStatus = 'yellow'; creditPct = 55; score -= 15; }
+  else if (creditScore >= 600) { creditStatus = 'red'; creditPct = 30; score -= 30; notes.push({ icon: '🚨', text: `<strong>Credit score is a major concern.</strong> Most conventional lenders require 620+. FHA loans accept lower, but rates will be significantly higher.` }); actions.push(`<strong>Priority 1:</strong> Pay down credit card balances below 30% utilization — this alone can raise your score 20-40 points within 60 days.`); }
+  else { creditStatus = 'red'; creditPct = 10; score -= 50; notes.push({ icon: '🚨', text: `<strong>Credit score below 600 is a significant barrier.</strong> Most banks will decline or offer very unfavorable terms. Rebuilding credit takes 6-12 months of consistent effort.` }); }
+
+  let dtiStatus, dtiPct;
+  if (dti <= 36) { dtiStatus = 'green'; dtiPct = 90; notes.push({ icon: '✅', text: `<strong>Debt-to-Income ratio of ${dti.toFixed(0)}% is strong.</strong> Banks typically want to see under 43%. You're well within the acceptable range.` }); }
+  else if (dti <= 43) { dtiStatus = 'yellow'; dtiPct = 60; score -= 10; notes.push({ icon: '⚠️', text: `<strong>DTI of ${dti.toFixed(0)}% is acceptable but tight.</strong> The 43% threshold is the standard cutoff for most qualified mortgages. You're close to the limit.` }); }
+  else if (dti <= 50) { dtiStatus = 'yellow'; dtiPct = 35; score -= 20; notes.push({ icon: '⚠️', text: `<strong>DTI of ${dti.toFixed(0)}% is above the standard 43% threshold.</strong> Many lenders will decline. You need to either reduce existing debts or increase income before applying.` }); actions.push(`<strong>Reduce DTI:</strong> Pay off your highest monthly payment debt first.`); }
+  else { dtiStatus = 'red'; dtiPct = 10; score -= 35; notes.push({ icon: '🚨', text: `<strong>DTI of ${dti.toFixed(0)}% is very high.</strong> At this level, most banks will automatically decline.` }); actions.push(`<strong>Critical:</strong> Your DTI is too high to qualify. Focus on aggressively paying down existing debt before applying for any new loan.`); }
+
+  let empStatus, empPct;
+  if (employment === 'stable') { empStatus = 'green'; empPct = 95; notes.push({ icon: '✅', text: `<strong>2+ years at the same employer is ideal.</strong> Banks love employment stability. This is one of your strongest factors.` }); }
+  else if (employment === 'newer') { empStatus = 'yellow'; empPct = 65; score -= 8; notes.push({ icon: '⚠️', text: `<strong>Under 2 years employment may raise questions.</strong> Be prepared to explain your employment history.` }); }
+  else if (employment === 'self') { empStatus = 'yellow'; empPct = 55; score -= 12; notes.push({ icon: '⚠️', text: `<strong>Self-employment requires extra documentation.</strong> Banks will want 2 years of tax returns.` }); actions.push(`<strong>If self-employed:</strong> Have 2 years of complete tax returns ready.`); }
+  else if (employment === 'recent') { empStatus = 'red'; empPct = 30; score -= 20; notes.push({ icon: '🚨', text: `<strong>Very recent job change is a red flag.</strong> Waiting 6-12 months significantly improves your chances.` }); actions.push(`<strong>Wait 6 months:</strong> Stay in your current job before applying.`); }
+  else { empStatus = 'yellow'; empPct = 45; score -= 15; notes.push({ icon: '⚠️', text: `<strong>Contract or part-time employment complicates approval.</strong> You may need a co-signer or larger down payment.` }); }
+
+  let dpStatus, dpPct;
+  if (downPct >= 20) { dpStatus = 'green'; dpPct = 100; notes.push({ icon: '✅', text: `<strong>20%+ down payment is excellent.</strong> You avoid PMI and demonstrate financial strength.` }); }
+  else if (downPct >= 10) { dpStatus = 'green'; dpPct = 70; notes.push({ icon: '✅', text: `<strong>${downPct}% down payment is solid.</strong> Good position, though you may need PMI.` }); }
+  else if (downPct >= 5) { dpStatus = 'yellow'; dpPct = 45; score -= 8; notes.push({ icon: '⚠️', text: `<strong>${downPct}% down is minimal.</strong> You'll likely pay PMI which adds to your monthly costs.` }); }
+  else if (downPct > 0) { dpStatus = 'red'; dpPct = 20; score -= 15; notes.push({ icon: '⚠️', text: `<strong>Less than 5% down significantly limits your options.</strong> Look into FHA loans (3.5% minimum).` }); }
+  else { dpStatus = 'red'; dpPct = 5; score -= 20; notes.push({ icon: '🚨', text: `<strong>No down payment available is a major obstacle.</strong> Very few programs exist for zero-down loans.` }); actions.push(`<strong>Save for a down payment:</strong> Even 3-5% dramatically improves your options.`); }
+
+  if (history === 'recent') { score -= 40; notes.push({ icon: '🚨', text: `<strong>Recent bankruptcy or default is the hardest obstacle.</strong> Most conventional lenders require 2-4 years after discharge.` }); actions.push(`<strong>Rebuild credit history:</strong> Get a secured credit card, pay it in full monthly, and wait.`); }
+  else if (history === 'medium') { score -= 20; notes.push({ icon: '⚠️', text: `<strong>Bankruptcy or default 3-7 years ago still appears on your report.</strong> Many lenders will work with you if you've rebuilt since.` }); }
+  else if (history === 'old') { score -= 5; notes.push({ icon: '📅', text: `<strong>History over 7 years ago may no longer appear on your report.</strong> Check to confirm.` }); }
+
+  score = Math.max(0, Math.min(100, score));
+
+  let verdictClass, verdictLabel, verdictTitle, verdictEmoji, verdictBody;
+  if (score >= 75) {
+    verdictClass = 'approved'; verdictLabel = '✓ Strong Application'; verdictTitle = "You're in a good position to apply."; verdictEmoji = '✅';
+    verdictBody = `Based on your profile, a bank credit analyst would likely view this as a viable application. Your key metrics are within acceptable ranges. Getting pre-qualified with 2-3 lenders before choosing is always smart.`;
+  } else if (score >= 50) {
+    verdictClass = 'conditional'; verdictLabel = '⚠ Conditional Position'; verdictTitle = 'Possible, but with significant conditions.'; verdictEmoji = '⚠️';
+    verdictBody = `Your application has real strengths but also factors that will cause hesitation. You might get approved — but likely at a higher rate or with stricter conditions. Addressing the issues in your action plan before applying could make a meaningful difference.`;
+  } else {
+    verdictClass = 'declined'; verdictLabel = '✗ High Decline Risk'; verdictTitle = 'Most banks would decline at this stage.'; verdictEmoji = '🚫';
+    verdictBody = `Based on your current profile, a credit analyst would likely recommend declining. This doesn't mean you can't get a loan — it means now is not the ideal time. Following the action plan below can meaningfully improve your position within 6-12 months.`;
+  }
+
+  if (actions.length === 0) {
+    actions.push(`<strong>Get pre-qualified:</strong> Apply to 2-3 lenders within a 14-day window — multiple inquiries in a short period count as one on your credit report.`);
+    actions.push(`<strong>Compare offers:</strong> Don't accept the first offer. Even 0.25% difference in rate saves thousands over a loan's lifetime.`);
+  }
+
+  const vc = document.getElementById('verdictCard');
+  vc.className = `verdict-card ${verdictClass}`;
+  document.getElementById('verdictLabel').textContent = verdictLabel;
+  document.getElementById('verdictTitle').textContent = verdictTitle;
+  document.getElementById('verdictEmoji').textContent = verdictEmoji;
+  document.getElementById('verdictBody').textContent = verdictBody;
+
+  document.getElementById('scoreMeters').innerHTML = [
+    { label: 'Credit Score', value: creditScore >= 750 ? 'Excellent' : creditScore >= 700 ? 'Good' : creditScore >= 650 ? 'Fair' : 'Poor', pct: creditPct, status: creditStatus },
+    { label: 'Debt-to-Income', value: dti.toFixed(0) + '%', pct: Math.max(0, 100 - dtiPct), status: dtiStatus },
+    { label: 'Employment', value: employment === 'stable' ? 'Strong' : employment === 'self' ? 'Self-Emp.' : employment === 'recent' ? 'Recent Change' : 'Variable', pct: empPct, status: empStatus },
+    { label: 'Down Payment', value: downPct + '%', pct: dpPct, status: dpStatus },
+  ].map(m => `
+    <div class="score-meter">
+      <div class="meter-label">${m.label}</div>
+      <div class="meter-value">${m.value}</div>
+      <div class="meter-bar"><div class="meter-fill ${m.status}" style="width:0%" id="mf-${m.label.replace(/[\s-]/g,'')}"></div></div>
+      <div class="meter-status ${m.status}">${m.status === 'green' ? '✓ Strong' : m.status === 'yellow' ? '~ Moderate' : '✗ Weak'}</div>
+    </div>
+  `).join('');
+
+  setTimeout(() => {
+    [
+      { id: 'CreditScore', pct: creditPct },
+      { id: 'DebttoIncome', pct: Math.max(0, 100 - dtiPct) },
+      { id: 'Employment', pct: empPct },
+      { id: 'DownPayment', pct: dpPct },
+    ].forEach(m => {
+      const el = document.getElementById(`mf-${m.id}`);
+      if (el) el.style.width = m.pct + '%';
+    });
+  }, 100);
+
+  document.getElementById('notesList').innerHTML = notes.map(n =>
+    `<div class="note-item"><div class="note-icon">${n.icon}</div><div class="note-text">${n.text}</div></div>`
+  ).join('');
+
+  document.getElementById('actionList').innerHTML = actions.map((a, i) =>
+    `<div class="action-item"><div class="action-num">${i + 1}</div><div class="action-text">${a}</div></div>`
+  ).join('');
+}
+
+function restart() {
+  currentQ = 0;
+  answers = {};
+  document.getElementById('questionCard').style.display = 'block';
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('resultsScreen').classList.remove('visible');
+  renderQuestion();
+}
+
+initProgress();
+renderQuestion();
+</script>
 </body>
 </html>
