@@ -775,7 +775,6 @@ function showResults() {
   document.getElementById('quiz').style.display = 'none';
   document.getElementById('progress-header').style.display = 'none';
 
-  // Calculate total score
   const empScore = Math.max(0, scores.employment || 0);
   const incScore = scores.income || 0;
   const dtiScore = scores.dti || 0;
@@ -785,10 +784,9 @@ function showResults() {
   const amtScore = scores.loan_amount || scores.amount || 0;
 
   const rawTotal = empScore + incScore + dtiScore + payScore + savScore + colScore + amtScore;
-  const maxPossible = 4 + 5 + 5 + 5 + 4 + 4 + 5; // 32
+  const maxPossible = 4 + 5 + 5 + 5 + 4 + 4 + 5;
   const normalizedScore = Math.max(0, Math.round((rawTotal / maxPossible) * 100));
 
-  // Determine verdict
   let verdict, verdictClass, verdictIcon, verdictTitle, verdictLine;
   let strengths = [], warnings = [], nextSteps = [];
 
@@ -824,7 +822,6 @@ function showResults() {
     verdictLine = 'Your current profile will face rejection from most conventional lenders. But this is fixable — here\'s where to focus.';
   }
 
-  // Build strengths
   if (empScore >= 3) strengths.push('Stable employment history — lenders love this');
   if (incScore >= 4) strengths.push('Strong income level for most loan types');
   if (dtiScore >= 4) strengths.push('Low existing debt — excellent DTI ratio');
@@ -833,7 +830,6 @@ function showResults() {
   if (colScore >= 2) strengths.push('Collateral or co-signer reduces lender risk');
   if (strengths.length === 0) strengths.push('Starting point identified — clear path to improve');
 
-  // Build warnings
   if (empScore <= 1) warnings.push('Employment instability is a major concern for lenders');
   if (incScore <= 2) warnings.push('Income may be too low for the loan amount requested');
   if (dtiScore <= 2) warnings.push('High existing debt will hurt your DTI ratio significantly');
@@ -842,7 +838,6 @@ function showResults() {
   if (colScore === 0) warnings.push('No collateral means higher risk — expect higher rates');
   if (warnings.length === 0) warnings.push('No major red flags — focus on documentation');
 
-  // Build next steps
   const loanType = questions[5].options[answers['loan_type']]?.title || 'your loan';
 
   if (verdict === 'approved') {
@@ -873,7 +868,6 @@ function showResults() {
 
   const bankerNote = getBankerNote(verdict, normalizedScore, empScore, dtiScore, payScore, loanType);
 
-  // Factor scores for display
   const factors = [
     { label: 'Employment', score: empScore, max: 4, color: empScore >= 3 ? '#44dd88' : empScore >= 2 ? '#ffcc00' : '#ff4444' },
     { label: 'Income Level', score: incScore, max: 5, color: incScore >= 4 ? '#44dd88' : incScore >= 2 ? '#ffcc00' : '#ff4444' },
@@ -884,6 +878,20 @@ function showResults() {
   ];
 
   const scoreColor = verdict === 'approved' ? '#44dd88' : verdict === 'likely' ? '#4488ff' : verdict === 'conditional' ? '#ffcc00' : '#ff4444';
+
+  // Sky Blue block — shown for conditional and difficult verdicts
+  const skyBlueBlock = (verdict === 'conditional' || verdict === 'difficult') ? `
+    <div style="background:linear-gradient(135deg,rgba(255,68,68,0.06),rgba(255,204,0,0.04));border:1px solid rgba(255,204,0,0.2);border-radius:16px;padding:24px;margin-bottom:20px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,204,0,0.6);margin-bottom:10px;">Credit Score Holding You Back?</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:#f0ede8;margin-bottom:8px;letter-spacing:0.5px;">FIX YOUR CREDIT BEFORE YOU APPLY</div>
+      <div style="font-size:13px;color:rgba(240,237,232,0.5);margin-bottom:18px;line-height:1.6;">A low credit score is often the only thing standing between you and loan approval. Professional credit repair can remove incorrect negative items and move your score faster than doing it alone.</div>
+      <a href="https://financeratecalc.com/go/credit-repair" target="_blank" rel="noopener sponsored"
+         style="display:inline-block;background:linear-gradient(135deg,#1a6644,#44dd88);color:#080810;padding:13px 26px;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px;font-family:'Barlow',sans-serif;letter-spacing:0.5px;">
+        🔧 Start Credit Repair with Sky Blue →
+      </a>
+      <div style="font-size:10px;color:rgba(240,237,232,0.2);margin-top:12px;">Sponsored. Commission may be earned. <a href="affiliate-disclosure.html" style="color:rgba(240,237,232,0.2);text-decoration:underline;">Disclosure →</a></div>
+    </div>
+  ` : '';
 
   const html = `
     <div class="verdict ${verdictClass}">
@@ -948,7 +956,10 @@ function showResults() {
         </div>
       `).join('')}
     </div>
-<div style="background:linear-gradient(135deg,rgba(68,221,136,0.06),rgba(68,136,255,0.06));border:1px solid rgba(68,221,136,0.2);border-radius:16px;padding:24px;margin-bottom:20px;text-align:center;">
+
+    ${skyBlueBlock}
+
+    <div style="background:linear-gradient(135deg,rgba(68,221,136,0.06),rgba(68,136,255,0.06));border:1px solid rgba(68,221,136,0.2);border-radius:16px;padding:24px;margin-bottom:20px;text-align:center;">
       <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(240,237,232,0.35);margin-bottom:8px;">Sponsored · Take the Next Step</div>
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:0.5px;">YOU'VE SEEN YOUR PROFILE — NOW ACT ON IT</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;max-width:400px;display:inline-block;">Get fast funding or prepare your legal documents before you apply to any lender.</div>
@@ -964,6 +975,7 @@ function showResults() {
       </div>
       <div style="font-size:10px;color:rgba(240,237,232,0.2);margin-top:12px;">Sponsored. Commission may be earned. <a href="affiliate-disclosure.html" style="color:rgba(240,237,232,0.2);text-decoration:underline;">Disclosure →</a></div>
     </div>
+
     <div class="actions">
       <button class="action-btn btn-share" onclick="shareResult('${verdictTitle}', ${normalizedScore})">
         𝕏 Share My Result
@@ -994,8 +1006,8 @@ function getBankerNote(verdict, score, emp, dti, pay, loanType) {
   if (pay < 0) return `Bankruptcy is serious, but it's not permanent. After Chapter 7, conventional loans typically require a 4-year wait; FHA requires 2 years. Chapter 13 has shorter timelines. Use this period strategically: rebuild with a secured card, keep utilization below 30%, and document your financial recovery. I've seen people go from bankruptcy to mortgage approval in 3 years with disciplined effort.`;
   if (verdict === 'approved') return `With a score of ${score}/100, your profile is genuinely strong. When you apply, shop multiple lenders — the same borrower can get rate quotes that differ by 0.5% or more, which on a 30-year mortgage is tens of thousands of dollars. Get pre-approved before house hunting. And check your credit report at annualcreditreport.com before applying — errors show up in about 20% of reports and can silently cost you a better rate.`;
   if (verdict === 'likely') return `You're in a solid position with a score of ${score}/100. The area to focus on before applying is your debt-to-income ratio — paying down any revolving credit card balances to under 30% of the limit has an outsized positive impact. Also, avoid opening any new credit accounts in the 3-6 months before applying. Both of these steps can meaningfully improve the rate you're offered.`;
-  if (verdict === 'conditional') return `At ${score}/100, you're in what I call the "improvement zone" — you're not far from a much stronger position. The single highest-impact action is usually reducing monthly debt payments, which directly improves your DTI. If you can pay off one installment loan or significantly reduce a credit card balance, revisit this in 90 days. FHA loans (3.5% down, 580+ credit score) and credit unions are also worth exploring — they often have more flexible criteria than big banks.`;
-  return `A score of ${score}/100 reflects real challenges, but I want to be direct: this is fixable. The most common path I've seen work is 12 months of disciplined credit rebuilding — on-time payments, reduced debt, and a secured credit card used responsibly. At the end of that period, many people's profiles look dramatically different. Don't let one bad cycle define your financial future. Come back to this tool in 6 months.`;
+  if (verdict === 'conditional') return `At ${score}/100, you're in what I call the "improvement zone" — you're not far from a much stronger position. The single highest-impact action is usually reducing monthly debt payments, which directly improves your DTI. If your credit score is holding you back, professional credit repair can remove incorrect negative marks faster than DIY. Revisit this in 90 days.`;
+  return `A score of ${score}/100 reflects real challenges, but I want to be direct: this is fixable. The most common path I've seen work is 12 months of disciplined credit rebuilding — on-time payments, reduced debt, and professional help disputing inaccurate negative items on your report. Many people's profiles look dramatically different in under a year.`;
 }
 
 function shareResult(verdict, score) {
@@ -1025,7 +1037,6 @@ function copyEmbed() {
   });
 }
 
-// Init
 renderQuestion(0);
 </script>
 </body>
