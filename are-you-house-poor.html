@@ -31,610 +31,120 @@
   --orange: #ff6d00;
   --red: #ff1744;
 }
-
 * { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  font-family: 'Barlow', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-header {
-  padding: 20px 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  background: rgba(10,10,10,0.95);
-  backdrop-filter: blur(20px);
-  z-index: 100;
-}
-
-.logo {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--text);
-  text-decoration: none;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
+body { font-family: 'Barlow', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+header { padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); z-index: 100; }
+.logo { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; }
 .logo em { color: var(--gold); font-style: normal; }
-
 .nav-links { display: flex; gap: 24px; }
 .nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
 .nav-links a:hover { color: var(--gold); }
-
 @media(max-width:768px) { header { padding: 16px 20px; } .nav-links { display: none; } }
-
-/* HERO */
-.hero {
-  padding: 80px 24px 60px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -200px; left: 50%;
-  transform: translateX(-50%);
-  width: 800px; height: 600px;
-  background: radial-gradient(ellipse, rgba(255,23,68,0.07) 0%, transparent 65%);
-  pointer-events: none;
-}
-
-.hero-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255,23,68,0.1);
-  border: 1px solid rgba(255,23,68,0.25);
-  color: #ff6b6b;
-  padding: 6px 18px;
-  border-radius: 20px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  margin-bottom: 28px;
-}
-
-.hero h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(64px, 14vw, 140px);
-  line-height: 0.85;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 24px;
-}
-
+.hero { padding: 80px 24px 60px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%); width: 800px; height: 600px; background: radial-gradient(ellipse, rgba(255,23,68,0.07) 0%, transparent 65%); pointer-events: none; }
+.hero-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,23,68,0.1); border: 1px solid rgba(255,23,68,0.25); color: #ff6b6b; padding: 6px 18px; border-radius: 20px; font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 28px; }
+.hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(64px, 14vw, 140px); line-height: 0.85; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
 .hero h1 .l1 { color: var(--text); display: block; }
-.hero h1 .l2 {
-  display: block;
-  background: linear-gradient(135deg, #ff1744, #ff6d00);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+.hero h1 .l2 { display: block; background: linear-gradient(135deg, #ff1744, #ff6d00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .hero h1 .l3 { color: var(--text); display: block; font-size: 0.5em; letter-spacing: 8px; }
-
-.hero p {
-  color: var(--muted);
-  font-size: 17px;
-  line-height: 1.7;
-  max-width: 500px;
-  margin: 0 auto 48px;
-  font-weight: 300;
-}
-
-.hero-stats {
-  display: flex;
-  gap: 32px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 48px;
-}
-
-.hero-stat {
-  text-align: center;
-}
-
-.hero-stat-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 36px;
-  color: var(--gold);
-  display: block;
-  line-height: 1;
-}
-
-.hero-stat-label {
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-/* QUIZ */
-.quiz-wrap {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 0 24px 80px;
-}
-
-.progress-wrap {
-  margin-bottom: 32px;
-}
-
-.progress-top {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.progress-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.progress-num {
-  font-size: 13px;
-  color: var(--gold);
-  font-weight: 600;
-}
-
-.progress-bar {
-  height: 3px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #ff1744, var(--gold));
-  border-radius: 2px;
-  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
-}
-
-/* Question */
-.q-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  overflow: hidden;
-  animation: slideUp 0.4s cubic-bezier(0.16,1,0.3,1);
-}
-
-@keyframes slideUp {
-  from { opacity:0; transform:translateY(24px); }
-  to { opacity:1; transform:translateY(0); }
-}
-
-.q-header {
-  padding: 28px 32px 24px;
-  border-bottom: 1px solid var(--border);
-}
-
-.q-num {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #ff6b6b;
-  margin-bottom: 12px;
-}
-
-.q-text {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: clamp(22px, 4vw, 28px);
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.2;
-  margin-bottom: 6px;
-}
-
-.q-sub {
-  font-size: 13px;
-  color: var(--muted);
-  font-weight: 300;
-  line-height: 1.5;
-}
-
+.hero p { color: var(--muted); font-size: 17px; line-height: 1.7; max-width: 500px; margin: 0 auto 48px; font-weight: 300; }
+.hero-stats { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
+.hero-stat { text-align: center; }
+.hero-stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--gold); display: block; line-height: 1; }
+.hero-stat-label { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+.quiz-wrap { max-width: 640px; margin: 0 auto; padding: 0 24px 80px; }
+.progress-wrap { margin-bottom: 32px; }
+.progress-top { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.progress-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.progress-num { font-size: 13px; color: var(--gold); font-weight: 600; }
+.progress-bar { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #ff1744, var(--gold)); border-radius: 2px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+.q-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; animation: slideUp 0.4s cubic-bezier(0.16,1,0.3,1); }
+@keyframes slideUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+.q-header { padding: 28px 32px 24px; border-bottom: 1px solid var(--border); }
+.q-num { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #ff6b6b; margin-bottom: 12px; }
+.q-text { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(22px, 4vw, 28px); font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.q-sub { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.5; }
 .q-body { padding: 24px 32px; }
-
 .options { display: flex; flex-direction: column; gap: 10px; }
-
-.opt-btn {
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 20px;
-  cursor: pointer;
-  transition: all 0.18s;
-  text-align: left;
-  font-family: 'Barlow', sans-serif;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-}
-
-.opt-btn:hover {
-  border-color: rgba(255,23,68,0.4);
-  background: rgba(255,23,68,0.06);
-  transform: translateX(4px);
-}
-
-.opt-btn.selected {
-  border-color: rgba(255,23,68,0.5);
-  background: rgba(255,23,68,0.1);
-}
-
-.opt-icon {
-  font-size: 22px;
-  flex-shrink: 0;
-  width: 36px;
-  text-align: center;
-}
-
+.opt-btn { background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.18s; text-align: left; font-family: 'Barlow', sans-serif; color: var(--text); display: flex; align-items: center; gap: 14px; width: 100%; }
+.opt-btn:hover { border-color: rgba(255,23,68,0.4); background: rgba(255,23,68,0.06); transform: translateX(4px); }
+.opt-btn.selected { border-color: rgba(255,23,68,0.5); background: rgba(255,23,68,0.1); }
+.opt-icon { font-size: 22px; flex-shrink: 0; width: 36px; text-align: center; }
 .opt-label { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
 .opt-sub { font-size: 12px; color: var(--muted); font-weight: 400; }
-
-.q-nav {
-  display: flex;
-  gap: 12px;
-  padding: 20px 32px 28px;
-  border-top: 1px solid var(--border);
-}
-
-.btn-next {
-  flex: 1;
-  padding: 15px;
-  background: linear-gradient(135deg, #cc0000, #ff1744);
-  border: none;
-  border-radius: 10px;
-  color: #fff;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 18px;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: none;
-  box-shadow: 0 6px 24px rgba(255,23,68,0.25);
-}
-
+.q-nav { display: flex; gap: 12px; padding: 20px 32px 28px; border-top: 1px solid var(--border); }
+.btn-next { flex: 1; padding: 15px; background: linear-gradient(135deg, #cc0000, #ff1744); border: none; border-radius: 10px; color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; cursor: pointer; transition: all 0.2s; display: none; box-shadow: 0 6px 24px rgba(255,23,68,0.25); }
 .btn-next:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(255,23,68,0.35); }
 .btn-next.show { display: block; }
-
-.btn-back {
-  padding: 15px 20px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  color: var(--muted);
-  font-family: 'Barlow', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: none;
-}
+.btn-back { padding: 15px 20px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: none; }
 .btn-back:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
 .btn-back.show { display: block; }
-
-/* RESULTS */
 #results { display: none; }
 #results.show { display: block; animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1); }
-
-.result-hero {
-  border-radius: 20px;
-  padding: 48px 40px;
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-  overflow: hidden;
-  border: 1.5px solid;
-}
-
-.result-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% 0%, var(--glow), transparent 65%);
-}
-
+.result-hero { border-radius: 20px; padding: 48px 40px; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; border: 1.5px solid; }
+.result-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, var(--glow), transparent 65%); }
 .r-wealth { background: rgba(0,230,118,0.06); border-color: rgba(0,230,118,0.25); --glow: rgba(0,230,118,0.08); }
 .r-comfortable { background: rgba(240,192,64,0.06); border-color: rgba(240,192,64,0.25); --glow: rgba(240,192,64,0.08); }
 .r-stretched { background: rgba(255,109,0,0.06); border-color: rgba(255,109,0,0.25); --glow: rgba(255,109,0,0.08); }
 .r-housepoor { background: rgba(255,23,68,0.06); border-color: rgba(255,23,68,0.25); --glow: rgba(255,23,68,0.08); }
-
-.result-badge {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  padding: 5px 14px;
-  border-radius: 20px;
-  margin-bottom: 20px;
-}
-
+.result-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; margin-bottom: 20px; }
 .r-wealth .result-badge { background: rgba(0,230,118,0.15); color: var(--green); }
 .r-comfortable .result-badge { background: rgba(240,192,64,0.15); color: var(--gold); }
 .r-stretched .result-badge { background: rgba(255,109,0,0.15); color: var(--orange); }
 .r-housepoor .result-badge { background: rgba(255,23,68,0.15); color: var(--red); }
-
 .result-icon { font-size: 64px; display: block; margin-bottom: 16px; position: relative; z-index: 1; }
-
-.result-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(48px, 10vw, 80px);
-  line-height: 0.9;
-  letter-spacing: 2px;
-  margin-bottom: 16px;
-  position: relative;
-  z-index: 1;
-}
-
+.result-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 10vw, 80px); line-height: 0.9; letter-spacing: 2px; margin-bottom: 16px; position: relative; z-index: 1; }
 .r-wealth .result-title { color: var(--green); }
 .r-comfortable .result-title { color: var(--gold); }
 .r-stretched .result-title { color: var(--orange); }
 .r-housepoor .result-title { color: var(--red); }
-
-.result-line {
-  font-size: 16px;
-  color: var(--muted);
-  line-height: 1.6;
-  max-width: 420px;
-  margin: 0 auto;
-  font-weight: 300;
-  position: relative;
-  z-index: 1;
-}
-
-/* Score meters */
-.score-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
+.result-line { font-size: 16px; color: var(--muted); line-height: 1.6; max-width: 420px; margin: 0 auto; font-weight: 300; position: relative; z-index: 1; }
+.score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
 @media(max-width:480px) { .score-grid { grid-template-columns: 1fr; } }
-
-.score-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-}
-
-.score-box-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-
-.score-box-value {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 28px;
-  margin-bottom: 8px;
-  line-height: 1;
-}
-
-.score-box-bar {
-  height: 4px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.score-box-fill {
-  height: 100%;
-  border-radius: 2px;
-  transition: width 1s ease;
-}
-
-/* Banker note */
-.banker-note {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--gold);
-  border-radius: 14px;
-  padding: 22px 24px;
-  margin-bottom: 20px;
-  display: flex;
-  gap: 14px;
-}
-
-.bn-icon {
-  width: 40px; height: 40px;
-  background: var(--gold-dim);
-  border: 1px solid rgba(240,192,64,0.3);
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
-}
-
+.score-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+.score-box-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.score-box-value { font-family: 'Bebas Neue', sans-serif; font-size: 28px; margin-bottom: 8px; line-height: 1; }
+.score-box-bar { height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.score-box-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+.banker-note { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 14px; padding: 22px 24px; margin-bottom: 20px; display: flex; gap: 14px; }
+.bn-icon { width: 40px; height: 40px; background: var(--gold-dim); border: 1px solid rgba(240,192,64,0.3); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
 .bn-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
 .bn-text { font-size: 13px; color: var(--muted); line-height: 1.7; font-weight: 300; }
-
-/* Action steps */
-.action-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 20px;
-}
-
-.action-title {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 18px;
-}
-
-.action-item {
-  display: flex;
-  gap: 14px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-
+.action-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+.action-title { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; }
+.action-item { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
 .action-item:last-child { border-bottom: none; padding-bottom: 0; }
-
-.action-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px;
-  color: #ff6b6b;
-  width: 24px;
-  flex-shrink: 0;
-  line-height: 1;
-}
-
+.action-num { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #ff6b6b; width: 24px; flex-shrink: 0; line-height: 1; }
 .action-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
 .action-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
-
-/* CTA */
-.cta-block {
-  background: linear-gradient(135deg, rgba(255,23,68,0.08), rgba(240,192,64,0.06));
-  border: 1px solid rgba(255,23,68,0.2);
-  border-radius: 16px;
-  padding: 28px;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.cta-title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 6px;
-}
-
+.cta-block { background: linear-gradient(135deg, rgba(255,23,68,0.08), rgba(240,192,64,0.06)); border: 1px solid rgba(255,23,68,0.2); border-radius: 16px; padding: 28px; text-align: center; margin-bottom: 20px; }
+.cta-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
 .cta-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
-
 .cta-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-
-.cta-primary {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: linear-gradient(135deg, #cc0000, #ff1744);
-  color: #fff; padding: 12px 22px; border-radius: 10px;
-  text-decoration: none; font-weight: 700; font-size: 13px;
-  transition: all 0.2s; font-family: 'Barlow', sans-serif;
-  box-shadow: 0 4px 16px rgba(255,23,68,0.25);
-}
-
-.cta-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,23,68,0.35); }
-
-.cta-secondary {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: transparent; color: var(--muted);
-  padding: 12px 22px; border-radius: 10px;
-  text-decoration: none; font-weight: 600; font-size: 13px;
-  border: 1px solid var(--border); transition: all 0.2s;
-  font-family: 'Barlow', sans-serif;
-}
-
+.cta-primary { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #cc0000, #ff1744); color: #fff; padding: 12px 22px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 13px; transition: all 0.2s; font-family: 'Barlow', sans-serif; box-shadow: 0 4px 16px rgba(255,23,68,0.25); }
+.cta-primary:hover { transform: translateY(-2px); }
+.cta-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--muted); padding: 12px 22px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 13px; border: 1px solid var(--border); transition: all 0.2s; font-family: 'Barlow', sans-serif; }
 .cta-secondary:hover { border-color: var(--gold); color: var(--gold); }
-
-/* Share */
-.share-block {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 22px;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
+.share-block { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; text-align: center; margin-bottom: 20px; }
 .share-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
-
 .share-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-
-.share-btn {
-  padding: 10px 20px; border-radius: 8px;
-  font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700;
-  cursor: pointer; transition: all 0.2s; border: none; text-decoration: none;
-  display: inline-flex; align-items: center; gap: 6px;
-}
-
+.share-btn { padding: 10px 20px; border-radius: 8px; font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
 .share-x { background: #000; color: #fff; border: 1px solid rgba(255,255,255,0.15); }
 .share-x:hover { background: #111; }
 .share-copy { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(240,192,64,0.2); }
 .share-copy:hover { background: rgba(240,192,64,0.2); }
-
-.restart-btn {
-  width: 100%;
-  padding: 13px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  color: var(--muted);
-  font-family: 'Barlow', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
+.restart-btn { width: 100%; padding: 13px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .restart-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
-
-/* Affiliate */
-.affiliate-block {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px 24px;
-  margin-bottom: 20px;
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
+.affiliate-block { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 20px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
 .aff-text { flex: 1; min-width: 180px; }
 .aff-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
 .aff-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
 .aff-sub { font-size: 12px; color: var(--muted); }
-
-.aff-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--gold); color: #0a0a0a;
-  padding: 10px 18px; border-radius: 8px;
-  text-decoration: none; font-weight: 700; font-size: 12px;
-  white-space: nowrap; flex-shrink: 0;
-  transition: all 0.2s; font-family: 'Barlow', sans-serif;
-}
-
+.aff-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--gold); color: #0a0a0a; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 12px; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; font-family: 'Barlow', sans-serif; }
 .aff-btn:hover { transform: translateY(-1px); }
-
 .aff-disclosure { font-size: 10px; color: rgba(245,245,240,0.2); width: 100%; margin-top: 8px; }
-
-footer {
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  padding: 28px 48px;
-  text-align: center;
-}
-
+footer { background: var(--surface); border-top: 1px solid var(--border); padding: 28px 48px; text-align: center; }
 .footer-copy { font-size: 12px; color: var(--muted); line-height: 1.8; }
 .footer-copy a { color: var(--muted); text-decoration: none; }
 .footer-copy a:hover { color: var(--gold); }
@@ -653,7 +163,7 @@ footer {
 </header>
 
 <div class="hero">
-  <div class="hero-tag">⚡ 60 Second Reality Check</div>
+  <div class="hero-tag">60 Second Reality Check</div>
   <h1>
     <span class="l1">Are You</span>
     <span class="l2">House Poor?</span>
@@ -661,36 +171,30 @@ footer {
   </h1>
   <p>1 in 4 American homeowners is house poor — spending so much on housing that everything else suffers. Are you one of them?</p>
   <div class="hero-stats">
-    <div class="hero-stat">
-      <span class="hero-stat-num">1 in 4</span>
-      <span class="hero-stat-label">Americans house poor</span>
-    </div>
-    <div class="hero-stat">
-      <span class="hero-stat-num">5</span>
-      <span class="hero-stat-label">Questions only</span>
-    </div>
-    <div class="hero-stat">
-      <span class="hero-stat-num">Free</span>
-      <span class="hero-stat-label">No sign-up</span>
-    </div>
+    <div class="hero-stat"><span class="hero-stat-num">1 in 4</span><span class="hero-stat-label">Americans house poor</span></div>
+    <div class="hero-stat"><span class="hero-stat-num">5</span><span class="hero-stat-label">Questions only</span></div>
+    <div class="hero-stat"><span class="hero-stat-num">Free</span><span class="hero-stat-label">No sign-up</span></div>
   </div>
 </div>
 
 <div class="quiz-wrap">
-
   <div class="progress-wrap" id="progressWrap">
     <div class="progress-top">
       <span class="progress-label">Your Assessment</span>
       <span class="progress-num" id="progressNum">Question 1 of 5</span>
     </div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill" style="width:20%"></div>
-    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
   </div>
-
   <div id="quiz"></div>
   <div id="results"></div>
+</div>
 
+<div style="background:linear-gradient(135deg,rgba(255,68,68,0.06),rgba(255,204,0,0.04));border:1px solid rgba(255,204,0,0.2);border-radius:16px;padding:24px;margin:0 24px 40px;max-width:640px;margin-left:auto;margin-right:auto;">
+  <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,204,0,0.7);margin-bottom:10px;">Credit Score Holding You Back?</div>
+  <div style="font-size:20px;font-weight:700;color:#f0ede8;margin-bottom:8px;">FIX YOUR CREDIT BEFORE YOU APPLY</div>
+  <div style="font-size:13px;color:rgba(240,237,232,0.5);margin-bottom:18px;line-height:1.6;">A low credit score is often the only thing standing between you and loan approval. Professional credit repair can remove incorrect negative items faster than doing it alone.</div>
+  <a href="https://financeratecalc.com/go/credit-repair" target="_blank" rel="noopener sponsored" style="display:inline-block;background:linear-gradient(135deg,#1a6644,#44dd88);color:#080810;padding:13px 26px;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px;letter-spacing:0.5px;">Start Credit Repair with Sky Blue</a>
+  <div style="font-size:10px;color:rgba(240,237,232,0.2);margin-top:12px;">Sponsored. Commission may be earned. <a href="affiliate-disclosure.html" style="color:rgba(240,237,232,0.2);text-decoration:underline;">Disclosure</a></div>
 </div>
 
 <footer>
@@ -708,8 +212,7 @@ footer {
 <script>
 const questions = [
   {
-    id: 'housing_pct',
-    num: '01',
+    id: 'housing_pct', num: '01',
     text: 'What percentage of your gross monthly income goes to housing?',
     sub: 'Include mortgage/rent, property taxes, insurance, HOA — everything housing-related.',
     options: [
@@ -721,8 +224,7 @@ const questions = [
     ]
   },
   {
-    id: 'savings',
-    num: '02',
+    id: 'savings', num: '02',
     text: 'How much do you save each month after all expenses?',
     sub: 'Be honest — this is the true measure of financial health.',
     options: [
@@ -734,21 +236,19 @@ const questions = [
     ]
   },
   {
-    id: 'stress',
-    num: '03',
+    id: 'stress', num: '03',
     text: 'How often do you worry about making your mortgage or rent payment?',
     sub: 'Financial stress is a real indicator — be honest with yourself.',
     options: [
-      { icon: '😌', label: 'Never — it\'s automatic', sub: 'No financial anxiety', value: 0 },
+      { icon: '😌', label: "Never — it's automatic", sub: 'No financial anxiety', value: 0 },
       { icon: '🙂', label: 'Rarely — occasional thought', sub: 'Generally comfortable', value: 1 },
       { icon: '😐', label: 'Sometimes — it crosses my mind', sub: 'Some financial pressure', value: 2 },
       { icon: '😟', label: 'Often — it stresses me out', sub: 'Significant financial pressure', value: 3 },
-      { icon: '😰', label: 'Constantly — it\'s always on my mind', sub: 'Housing is dominating your life', value: 4 },
+      { icon: '😰', label: "Constantly — it's always on my mind", sub: 'Housing is dominating your life', value: 4 },
     ]
   },
   {
-    id: 'lifestyle',
-    num: '04',
+    id: 'lifestyle', num: '04',
     text: 'Has your home purchase affected your lifestyle or other financial goals?',
     sub: 'Vacations, restaurants, retirement savings, paying down debt.',
     options: [
@@ -760,8 +260,7 @@ const questions = [
     ]
   },
   {
-    id: 'emergency',
-    num: '05',
+    id: 'emergency', num: '05',
     text: 'If you lost your income tomorrow, how long could you cover your housing payment?',
     sub: 'This measures your financial resilience — the safety net you have.',
     options: [
@@ -782,7 +281,6 @@ function renderQuestion(idx) {
   const q = questions[idx];
   document.getElementById('progressNum').textContent = `Question ${idx + 1} of ${questions.length}`;
   document.getElementById('progressFill').style.width = `${((idx + 1) / questions.length) * 100}%`;
-
   document.getElementById('quiz').innerHTML = `
     <div class="q-card">
       <div class="q-header">
@@ -795,18 +293,15 @@ function renderQuestion(idx) {
           ${q.options.map((o, i) => `
             <button class="opt-btn ${answers[q.id] === i ? 'selected' : ''}" onclick="selectOpt('${q.id}', ${i}, ${o.value})">
               <span class="opt-icon">${o.icon}</span>
-              <div>
-                <div class="opt-label">${o.label}</div>
-                ${o.sub ? `<div class="opt-sub">${o.sub}</div>` : ''}
-              </div>
+              <div><div class="opt-label">${o.label}</div>${o.sub ? `<div class="opt-sub">${o.sub}</div>` : ''}</div>
             </button>
           `).join('')}
         </div>
       </div>
       <div class="q-nav">
-        <button class="btn-back ${idx > 0 ? 'show' : ''}" onclick="goBack()">← Back</button>
+        <button class="btn-back ${idx > 0 ? 'show' : ''}" onclick="goBack()">Back</button>
         <button class="btn-next ${answers[q.id] !== undefined ? 'show' : ''}" id="btnNext" onclick="goNext()">
-          ${idx === questions.length - 1 ? 'SEE MY RESULT →' : 'NEXT QUESTION →'}
+          ${idx === questions.length - 1 ? 'SEE MY RESULT' : 'NEXT QUESTION'}
         </button>
       </div>
     </div>
@@ -825,7 +320,7 @@ function goNext() {
   if (currentQ < questions.length - 1) {
     currentQ++;
     renderQuestion(currentQ);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('quiz').scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else {
     showResults();
   }
@@ -835,7 +330,7 @@ function goBack() {
   if (currentQ > 0) {
     currentQ--;
     renderQuestion(currentQ);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('quiz').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
@@ -843,83 +338,62 @@ function showResults() {
   document.getElementById('quiz').style.display = 'none';
   document.getElementById('progressWrap').style.display = 'none';
 
-  // Calculate score
-  totalScore = questions.reduce((sum, q, i) => {
+  totalScore = questions.reduce((sum, q) => {
     const optIdx = answers[q.id];
     return sum + (optIdx !== undefined ? q.options[optIdx].value : 0);
   }, 0);
 
-  const maxScore = questions.length * 4; // 20
-  const pct = Math.round((totalScore / maxScore) * 100);
-
-  // Determine result
   let resultClass, resultIcon, resultBadge, resultTitle, resultLine, bankerNote, actions;
 
   if (totalScore <= 3) {
-    resultClass = 'r-wealth';
-    resultIcon = '🏆';
-    resultBadge = 'Building Wealth';
-    resultTitle = 'YOU\'RE THRIVING';
-    resultLine = 'Your home fits your financial life. You\'re using housing as a wealth-building tool, not letting it drain you.';
-    bankerNote = `A score like yours is rare — most homeowners I see are stretched. You've either bought within your means or significantly grown your income. Keep your emergency fund above 6 months and consider whether refinancing makes sense if rates have dropped since you bought. You're in the position to make your equity work for you.`;
+    resultClass = 'r-wealth'; resultIcon = '🏆'; resultBadge = 'Building Wealth'; resultTitle = "YOU'RE THRIVING";
+    resultLine = "Your home fits your financial life. You're using housing as a wealth-building tool, not letting it drain you.";
+    bankerNote = "A score like yours is rare. You've either bought within your means or significantly grown your income. Keep your emergency fund above 6 months and consider whether refinancing makes sense if rates have dropped since you bought.";
     actions = [
       { label: 'Optimize your equity', desc: 'Explore whether a cash-out refinance or HELOC could fund investments with a higher return than your mortgage rate.' },
       { label: 'Review your rate', desc: 'If you bought when rates were higher, check if refinancing saves you money.' },
-      { label: 'Protect what you\'ve built', desc: 'Make sure your estate documents and insurance are current.' },
+      { label: "Protect what you've built", desc: 'Make sure your estate documents and insurance are current.' },
     ];
   } else if (totalScore <= 8) {
-    resultClass = 'r-comfortable';
-    resultIcon = '✅';
-    resultBadge = 'Comfortable';
-    resultTitle = 'YOU\'RE STABLE';
-    resultLine = 'Your housing costs are manageable. A few areas to watch, but you\'re not in danger.';
-    bankerNote = `You're in the majority of financially healthy homeowners — not thriving, not struggling, but stable. The key question is whether you're building equity fast enough. At your income-to-housing ratio, you should be able to save. If you're not, look carefully at where the money is going. Small improvements in DTI now compound significantly over time.`;
+    resultClass = 'r-comfortable'; resultIcon = '✅'; resultBadge = 'Comfortable'; resultTitle = "YOU'RE STABLE";
+    resultLine = "Your housing costs are manageable. A few areas to watch, but you're not in danger.";
+    bankerNote = "You're in the majority of financially healthy homeowners — not thriving, not struggling, but stable. Small improvements in DTI now compound significantly over time.";
     actions = [
       { label: 'Build your emergency fund', desc: 'Aim for 6 months of housing costs in cash. This is your most important financial buffer.' },
       { label: 'Check your DTI ratio', desc: 'Use our Bank Approval Simulator to see how a lender would rate your profile today.' },
       { label: 'Track housing as % of income', desc: 'If your income grows but housing costs stay fixed, your position improves automatically.' },
     ];
   } else if (totalScore <= 14) {
-    resultClass = 'r-stretched';
-    resultIcon = '⚠️';
-    resultBadge = 'Stretched';
-    resultTitle = 'YOU\'RE STRETCHED';
-    resultLine = 'Your home is costing more than it should. Not a crisis yet — but the warning signs are there.';
-    bankerNote = `I've seen this pattern hundreds of times. You bought the right home at the wrong price, or your circumstances changed after purchase. The danger zone here is when an unexpected expense — a car repair, a medical bill, a job change — pushes you from stretched to crisis. Your priority: build a 3-month cash buffer before anything else. Then look seriously at whether refinancing or restructuring debt could free up monthly cash flow.`;
+    resultClass = 'r-stretched'; resultIcon = '⚠️'; resultBadge = 'Stretched'; resultTitle = "YOU'RE STRETCHED";
+    resultLine = "Your home is costing more than it should. Not a crisis yet — but the warning signs are there.";
+    bankerNote = "The danger zone is when an unexpected expense pushes you from stretched to crisis. Your priority: build a 3-month cash buffer before anything else. Then look seriously at whether refinancing could free up monthly cash flow.";
     actions = [
       { label: 'Build a 3-month cash buffer immediately', desc: 'This is your most urgent priority. Even $200/month diverted to savings changes everything.' },
       { label: 'Explore refinancing', desc: 'If rates have dropped since you bought, refinancing could reduce your payment by $200-500/month.' },
       { label: 'Audit your other debts', desc: 'Car payments and credit cards are often the hidden contributors to a stretched budget.' },
     ];
   } else {
-    resultClass = 'r-housepoor';
-    resultIcon = '🚨';
-    resultBadge = 'House Poor';
-    resultTitle = 'YOU\'RE HOUSE POOR';
-    resultLine = 'Your home is consuming your financial life. This is serious — and it\'s fixable, but you need to act now.';
-    bankerNote = `This is the hardest conversation to have, and I've had it many times. Being house poor isn't a character flaw — it's often the result of buying at the peak, income changes, or simply underestimating the true cost of homeownership. The path forward requires honest decisions: Can you refinance to lower payments? Can you rent out a room? Is the home actually the right long-term asset for you? I've seen people in your exact situation turn it around completely within 18 months with focused action.`;
+    resultClass = 'r-housepoor'; resultIcon = '🚨'; resultBadge = 'House Poor'; resultTitle = "YOU'RE HOUSE POOR";
+    resultLine = "Your home is consuming your financial life. This is serious — and it's fixable, but you need to act now.";
+    bankerNote = "Being house poor is often the result of buying at the peak, income changes, or simply underestimating the true cost of homeownership. I've seen people in your exact situation turn it around completely within 18 months with focused action.";
     actions = [
-      { label: 'Get a full mortgage audit now', desc: 'Make sure you\'re not being overcharged on your current loan. Errors are more common than you think.' },
+      { label: 'Get a full mortgage audit now', desc: "Make sure you're not being overcharged on your current loan. Errors are more common than you think." },
       { label: 'Explore all refinancing options', desc: 'Even 0.5% rate reduction can save $200-400/month. Run the numbers seriously.' },
-      { label: 'Consider your options honestly', desc: 'Selling, renting, or restructuring may be better than slow financial suffocation. Get the full picture first.' },
+      { label: 'Consider your options honestly', desc: 'Selling, renting, or restructuring may be better than slow financial suffocation.' },
     ];
   }
 
-  // Scores for display
   const housingPctScore = questions[0].options[answers['housing_pct']]?.value || 0;
   const savingsScore = questions[1].options[answers['savings']]?.value || 0;
   const stressScore = questions[2].options[answers['stress']]?.value || 0;
   const emergencyScore = questions[4].options[answers['emergency']]?.value || 0;
 
   const scoreBoxes = [
-    { label: 'Housing Cost', value: ['Healthy', 'Moderate', 'Elevated', 'High', 'Critical'][housingPctScore], pct: housingPctScore * 25, color: ['#00e676','#f0c040','#ff6d00','#ff1744','#ff1744'][housingPctScore] },
-    { label: 'Savings Rate', value: ['Excellent', 'Good', 'Tight', 'Minimal', 'Negative'][savingsScore], pct: savingsScore * 25, color: ['#00e676','#f0c040','#ff6d00','#ff1744','#ff1744'][savingsScore] },
-    { label: 'Financial Stress', value: ['None', 'Low', 'Moderate', 'High', 'Severe'][stressScore], pct: stressScore * 25, color: ['#00e676','#f0c040','#ff6d00','#ff1744','#ff1744'][stressScore] },
-    { label: 'Emergency Fund', value: ['Strong', 'Good', 'Adequate', 'Weak', 'Critical'][emergencyScore], pct: emergencyScore * 25, color: ['#00e676','#f0c040','#ff6d00','#ff1744','#ff1744'][emergencyScore] },
+    { label: 'Housing Cost', value: ['Healthy','Moderate','Elevated','High','Critical'][housingPctScore], pct: housingPctScore * 25, color: ['#00e676','#f0c040','#ff6d00','#ff1744','#ff1744'][housingPctScore] },
+    { label: 'Savings Rate', value: ['Excellent','Good','Tight','Minimal','Negative'][savingsScore], pct: savingsScore * 25, color: ['#00e676','#f0c040','#ff6d00','#ff1744','#ff1744'][savingsScore] },
+    { label: 'Financial Stress', value: ['None','Low','Moderate','High','Severe'][stressScore], pct: stressScore * 25, color: ['#00e676','#f0c040','#ff6d00','#ff1744','#ff1744'][stressScore] },
+    { label: 'Emergency Fund', value: ['Strong','Good','Adequate','Weak','Critical'][emergencyScore], pct: emergencyScore * 25, color: ['#00e676','#f0c040','#ff6d00','#ff1744','#ff1744'][emergencyScore] },
   ];
-
-  const ctaLink = totalScore >= 9 ? 'mortgage-auditor.html' : 'mortgage-calculator.html';
-  const ctaText = totalScore >= 9 ? '🔍 Run My Mortgage Audit' : '💰 Calculate My Options';
 
   document.getElementById('results').innerHTML = `
     <div class="result-hero ${resultClass}">
@@ -928,96 +402,59 @@ function showResults() {
       <div class="result-title">${resultTitle}</div>
       <div class="result-line">${resultLine}</div>
     </div>
-
     <div class="score-grid">
-      ${scoreBoxes.map(s => `
-        <div class="score-box">
-          <div class="score-box-label">${s.label}</div>
-          <div class="score-box-value" style="color:${s.color}">${s.value}</div>
-          <div class="score-box-bar"><div class="score-box-fill" style="background:${s.color};width:0%" data-w="${s.pct}"></div></div>
-        </div>
-      `).join('')}
+      ${scoreBoxes.map(s => `<div class="score-box"><div class="score-box-label">${s.label}</div><div class="score-box-value" style="color:${s.color}">${s.value}</div><div class="score-box-bar"><div class="score-box-fill" style="background:${s.color};width:0%" data-w="${s.pct}"></div></div></div>`).join('')}
     </div>
-
-    <div class="banker-note">
-      <div class="bn-icon">🏦</div>
-      <div>
-        <div class="bn-label">23-Year Banker's Take</div>
-        <div class="bn-text">${bankerNote}</div>
-      </div>
-    </div>
-
+    <div class="banker-note"><div class="bn-icon">🏦</div><div><div class="bn-label">23-Year Banker's Take</div><div class="bn-text">${bankerNote}</div></div></div>
     <div class="action-card">
-      <div class="action-title">🎯 Your Action Plan</div>
-      ${actions.map((a, i) => `
-        <div class="action-item">
-          <div class="action-num">0${i+1}</div>
-          <div>
-            <div class="action-label">${a.label}</div>
-            <div class="action-desc">${a.desc}</div>
-          </div>
-        </div>
-      `).join('')}
+      <div class="action-title">Your Action Plan</div>
+      ${actions.map((a, i) => `<div class="action-item"><div class="action-num">0${i+1}</div><div><div class="action-label">${a.label}</div><div class="action-desc">${a.desc}</div></div></div>`).join('')}
     </div>
-
     <div class="cta-block">
       <div class="cta-title">Take the next step — it's free</div>
       <div class="cta-sub">Get a complete picture of where you stand before making any major financial decision.</div>
       <div class="cta-btns">
-        <a href="${ctaLink}" class="cta-primary">${ctaText}</a>
-        <a href="https://www.dpbolvw.net/click-101700650-17144681" target="_blank" rel="noopener sponsored" class="cta-secondary">💸 Explore Funding Options</a>
+        <a href="mortgage-calculator.html" class="cta-primary">Calculate My Options</a>
+        <a href="https://www.dpbolvw.net/click-101700650-17144681" target="_blank" rel="noopener sponsored" class="cta-secondary">Explore Funding Options</a>
       </div>
     </div>
-
     <div class="share-block">
       <div class="share-title">Share your result — 1 in 4 Americans is house poor. Is someone you know?</div>
       <div class="share-btns">
-        <button class="share-btn share-x" onclick="shareX('${resultTitle}', '${resultBadge}')">𝕏 Share on X</button>
-        <button class="share-btn share-copy" onclick="copyLink()">📋 Copy Link</button>
+        <button class="share-btn share-x" onclick="shareX('${resultTitle}','${resultBadge}')">Share on X</button>
+        <button class="share-btn share-copy" onclick="copyLink()">Copy Link</button>
       </div>
     </div>
-
     <div class="affiliate-block">
-      <div class="aff-text">
-        <div class="aff-label">Sponsored</div>
-        <div class="aff-title">Need legal documents for your home?</div>
-        <div class="aff-sub">Purchase agreements, dispute letters, and more — in minutes.</div>
-      </div>
-      <a href="https://www.tkqlhce.com/click-101700650-16996011" target="_blank" rel="noopener sponsored" class="aff-btn">📄 LawDepot →</a>
-      <div class="aff-disclosure">Sponsored. Commission may be earned. <a href="affiliate-disclosure.html" style="color:inherit;">Disclosure →</a></div>
+      <div class="aff-text"><div class="aff-label">Sponsored</div><div class="aff-title">Need legal documents for your home?</div><div class="aff-sub">Purchase agreements, dispute letters, and more — in minutes.</div></div>
+      <a href="https://www.tkqlhce.com/click-101700650-16996011" target="_blank" rel="noopener sponsored" class="aff-btn">LawDepot</a>
+      <div class="aff-disclosure">Sponsored. Commission may be earned. <a href="affiliate-disclosure.html" style="color:inherit;">Disclosure</a></div>
     </div>
-
-    <button class="restart-btn" onclick="restart()">↺ Take the Quiz Again</button>
+    <button class="restart-btn" onclick="restart()">Take the Quiz Again</button>
   `;
 
   const el = document.getElementById('results');
   el.classList.add('show');
   el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  setTimeout(() => {
-    document.querySelectorAll('.score-box-fill').forEach(b => b.style.width = b.dataset.w + '%');
-  }, 200);
-
+  setTimeout(() => { document.querySelectorAll('.score-box-fill').forEach(b => b.style.width = b.dataset.w + '%'); }, 200);
   gtag('event', 'house_poor_quiz_complete', { result: resultBadge, score: totalScore });
 }
 
 function shareX(title, badge) {
-  const text = `I just found out I'm "${badge}" when it comes to housing costs 🏠\n\nAre YOU house poor? Find out in 60 seconds (no sign-up needed) 👇\nhttps://financeratecalc.com/are-you-house-poor.html\n\n#HousePoor #PersonalFinance #Mortgage`;
+  const text = `I just found out I'm "${badge}" when it comes to housing costs\n\nAre YOU house poor? Find out in 60 seconds\nhttps://financeratecalc.com/are-you-house-poor.html\n\n#HousePoor #PersonalFinance`;
   window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
 }
 
 function copyLink() {
   navigator.clipboard.writeText('https://financeratecalc.com/are-you-house-poor.html').then(() => {
     const btn = document.querySelector('.share-copy');
-    btn.textContent = '✓ Copied!';
-    setTimeout(() => btn.textContent = '📋 Copy Link', 2000);
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy Link', 2000);
   });
 }
 
 function restart() {
-  currentQ = 0;
-  answers = {};
-  totalScore = 0;
+  currentQ = 0; answers = {}; totalScore = 0;
   document.getElementById('quiz').style.display = 'block';
   document.getElementById('progressWrap').style.display = 'block';
   document.getElementById('results').classList.remove('show');
