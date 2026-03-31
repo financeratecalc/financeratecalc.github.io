@@ -1,8 +1,393 @@
----
-layout: null
-title: About Us | FinanceRateCalc
-permalink: /about/
----
-url: "https://financeratecalc.com"
-plugins:
-  - jekyll-sitemap
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us | FinanceRateCalc — Built by a Licensed Banking Professional</title>
+  <meta name="description" content="FinanceRateCalc was built by Ziya Y., a licensed banking professional with 23 years of experience, to give everyday people access to the same tools banks use internally."/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8VGHR8XH4C"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-8VGHR8XH4C');
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --paper: #f8f6f1;
+      --ink: #1a1a18;
+      --ink-light: #4a4a45;
+      --ink-faint: #8a8a82;
+      --rule: #d4d0c8;
+      --accent: #2c5f2e;
+      --accent-light: #e8f0e8;
+      --gold: #b8860b;
+      --gold-light: #fdf8e8;
+    }
+    body { font-family: 'Outfit', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.7; }
+    nav { background: var(--ink); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; }
+    .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--paper); text-decoration: none; }
+    .nav-links { display: flex; gap: 0.25rem; list-style: none; flex-wrap: wrap; }
+    .nav-links a { color: #c8c4bc; text-decoration: none; font-size: 0.78rem; padding: 0.35rem 0.6rem; border-radius: 3px; transition: color 0.2s; text-transform: uppercase; letter-spacing: 0.03em; }
+    .nav-links a:hover, .nav-links a.active { color: var(--paper); background: rgba(255,255,255,0.1); }
+
+    /* HERO */
+    .hero {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 4rem 2rem 3.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px);
+    }
+    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: #8a8a82; margin-bottom: 0.75rem; position: relative; }
+    .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 600; margin-bottom: 1rem; line-height: 1.15; position: relative; }
+    .hero-sub { font-size: 1rem; color: #c8c4bc; font-weight: 300; max-width: 560px; margin: 0 auto; line-height: 1.7; position: relative; }
+
+    .content-wrap { max-width: 820px; margin: 0 auto; padding: 3.5rem 1.5rem 5rem; }
+
+    /* FOUNDER CARD */
+    .founder-card {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 3rem;
+    }
+    @media (max-width: 600px) { .founder-card { grid-template-columns: 1fr; } }
+    .founder-avatar {
+      width: 80px; height: 80px;
+      background: var(--ink);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--paper);
+      flex-shrink: 0;
+    }
+    .founder-name { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .founder-title { font-size: 0.82rem; color: var(--ink-faint); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 1rem; }
+    .founder-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .badge-green { background: var(--accent-light); color: var(--accent); }
+    .badge-gold { background: var(--gold-light); color: var(--gold); }
+    .founder-bio { font-size: 0.92rem; color: var(--ink-light); line-height: 1.7; }
+
+    /* STATS ROW */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 3rem;
+    }
+    @media (max-width: 600px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    .stat-item {
+      background: #fff;
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+    }
+    .stat-num { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 700; color: var(--ink); line-height: 1; margin-bottom: 0.35rem; }
+    .stat-label { font-size: 0.72rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* SECTIONS */
+    .section-label {
+      font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--ink-faint); margin-bottom: 1.25rem; font-weight: 500;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+    h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; }
+    p { font-size: 0.95rem; color: var(--ink-light); margin-bottom: 1rem; line-height: 1.7; }
+
+    /* MISSION BOX */
+    .mission-box {
+      background: var(--ink);
+      color: var(--paper);
+      border-radius: 8px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .mission-box::before {
+      content: '"';
+      position: absolute;
+      top: -0.5rem;
+      left: 1.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 8rem;
+      color: rgba(255,255,255,0.05);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .mission-box p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-style: italic;
+      color: #e8e4dc;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .mission-box .attribution {
+      font-size: 0.8rem;
+      color: #8a8a82;
+      font-style: normal;
+      font-family: 'Outfit', sans-serif;
+      margin: 0;
+    }
+
+    /* TOOLS GRID */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    @media (max-width: 600px) { .tools-grid { grid-template-columns: 1fr; } }
+    .tool-item {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 1.25rem;
+      text-decoration: none;
+      color: var(--ink);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .tool-item:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(44,95,46,0.1); }
+    .tool-emoji { font-size: 1.3rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .tool-item-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.2rem; }
+    .tool-item-desc { font-size: 0.78rem; color: var(--ink-faint); line-height: 1.5; }
+
+    /* DISCLAIMER */
+    .disclaimer-box {
+      background: var(--gold-light);
+      border: 1px solid #d4c080;
+      border-left: 4px solid var(--gold);
+      border-radius: 0 6px 6px 0;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .disclaimer-box-label { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; font-weight: 600; }
+    .disclaimer-box p { font-size: 0.85rem; color: var(--ink-light); margin: 0; line-height: 1.6; }
+
+    .section-divider { border: none; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+
+    footer { background: var(--ink); color: #8a8a82; padding: 2rem; text-align: center; font-size: 0.8rem; }
+    footer a { color: #c8c4bc; text-decoration: none; }
+    footer a:hover { color: var(--paper); }
+    .footer-links { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">FinanceRateCalc</a>
+  <ul class="nav-links">
+    <li><a href="mortgage-calculator.html">🏠 Mortgage</a></li>
+    <li><a href="loan-comparator.html">⚖️ Comparator</a></li>
+    <li><a href="bank-approval-simulator.html">🏦 Simulator</a></li>
+    <li><a href="debt-consolidation-calculator.html">💳 Debt</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <p class="hero-eyebrow">Our Story</p>
+  <h1>Built by a Banker.<br/>For Everyone Else.</h1>
+  <p class="hero-sub">After 23 years inside the banking system, I built the tools I always wished my clients had access to — free, unbiased, and built on real banking logic.</p>
+</div>
+
+<div class="content-wrap">
+
+  <!-- FOUNDER -->
+  <p class="section-label">The Person Behind the Tools</p>
+  <div class="founder-card">
+    <div class="founder-avatar">Z</div>
+    <div>
+      <div class="founder-name">Ziya Y.</div>
+      <div class="founder-title">Founder · Licensed Banking Professional</div>
+      <div class="founder-badges">
+        <span class="badge badge-green">✓ 23 Years in Banking</span>
+        <span class="badge badge-gold">✓ Capital Markets Licensed (SPK)</span>
+        <span class="badge badge-green">✓ Economics & Finance, Anadolu University</span>
+      </div>
+      <p class="founder-bio">
+        I spent over two decades working inside banks — reviewing mortgage applications, analyzing loan risk, and watching clients make expensive mistakes that could have been avoided with better information.
+        <br/><br/>
+        The problem wasn't that people were uninformed. It was that the tools banks use internally were never made available to the public. Clients would walk in having done mental math on their mortgage, only to be shocked by the real numbers.
+        <br/><br/>
+        I built FinanceRateCalc to change that. Every calculator on this site is based on the same logic and formulas used by real banking professionals — not simplified guesses, not marketing fluff. Just honest numbers.
+      </p>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-num">23</div>
+      <div class="stat-label">Years in Banking</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">7+</div>
+      <div class="stat-label">Free Tools</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">37K+</div>
+      <div class="stat-label">Monthly Readers</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Free, Always</div>
+    </div>
+  </div>
+
+  <!-- MISSION -->
+  <p class="section-label">Our Mission</p>
+  <div class="mission-box">
+    <p>Banks have always had an information advantage over their customers. My goal is simple: close that gap. Every person deserves to walk into a bank already knowing their numbers.</p>
+    <p class="attribution">— Ziya Y., Founder of FinanceRateCalc</p>
+  </div>
+
+  <!-- WHY -->
+  <p class="section-label">Why FinanceRateCalc</p>
+  <h2>Real Banking Logic. Zero Cost.</h2>
+  <p>Most financial calculators online are built by marketing teams. They're designed to look helpful while steering you toward a product. Our tools are different — they're built on the same amortization formulas, DTI ratios, and risk models that bank credit analysts actually use.</p>
+  <p>We don't hide the hard numbers. If your mortgage payment is going to take up 42% of your income, we'll tell you that — and explain what it means — before you walk into a lender's office.</p>
+
+  <hr class="section-divider"/>
+
+  <!-- TOOLS -->
+  <p class="section-label">Our Tools</p>
+  <div class="tools-grid">
+    <a href="mortgage-calculator.html" class="tool-item">
+      <span class="tool-emoji">🏠</span>
+      <div>
+        <div class="tool-item-name">Mortgage Calculator</div>
+        <div class="tool-item-desc">Monthly payment, amortization schedule, total interest breakdown with charts.</div>
+      </div>
+    </a>
+    <a href="bank-approval-simulator.html" class="tool-item">
+      <span class="tool-emoji">🏦</span>
+      <div>
+        <div class="tool-item-name">Bank Approval Simulator</div>
+        <div class="tool-item-desc">See how a bank credit analyst would evaluate your application — before you apply.</div>
+      </div>
+    </a>
+    <a href="debt-consolidation-calculator.html" class="tool-item">
+      <span class="tool-emoji">💳</span>
+      <div>
+        <div class="tool-item-name">Debt Consolidation Calculator</div>
+        <div class="tool-item-desc">See exactly how much you save by combining your debts into one monthly payment.</div>
+      </div>
+    </a>
+    <a href="loan-comparator.html" class="tool-item">
+      <span class="tool-emoji">⚖️</span>
+      <div>
+        <div class="tool-item-name">Loan Offer Comparator</div>
+        <div class="tool-item-desc">Compare up to 3 loan offers side by side. Find the truly cheapest option.</div>
+      </div>
+    </a>
+    <a href="loan-offer-analyzer.html" class="tool-item">
+      <span class="tool-emoji">🔍</span>
+      <div>
+        <div class="tool-item-name">Loan Offer Analyzer</div>
+        <div class="tool-item-desc">Decode any loan offer. Understand the real APR, hidden fees, and true cost.</div>
+      </div>
+    </a>
+    <a href="financial-twin.html" class="tool-item">
+      <span class="tool-emoji">🏡</span>
+      <div>
+        <div class="tool-item-name">Buy vs Rent Calculator</div>
+        <div class="tool-item-desc">The honest answer to one of the biggest financial decisions of your life.</div>
+      </div>
+    </a>
+    <a href="compound-interest-calculator.html" class="tool-item">
+      <span class="tool-emoji">📈</span>
+      <div>
+        <div class="tool-item-name">Compound Interest Calculator</div>
+        <div class="tool-item-desc">See the real power of compound growth over time.</div>
+      </div>
+    </a>
+    <a href="business-loan-calculator.html" class="tool-item">
+      <span class="tool-emoji">💼</span>
+      <div>
+        <div class="tool-item-name">Business Loan Calculator</div>
+        <div class="tool-item-desc">Evaluate business financing options with professional-grade analysis.</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <p class="section-label">Financial Disclaimer</p>
+  <div class="disclaimer-box">
+    <div class="disclaimer-box-label">Important Notice</div>
+    <p>All tools and content on FinanceRateCalc.com are provided for <strong>educational and informational purposes only</strong>. Nothing on this site constitutes financial, investment, legal, or tax advice. Calculator results are mathematical estimates and do not account for all variables a lender would consider. Always consult a qualified financial advisor before making significant financial decisions. FinanceRateCalc.com is not a bank, lender, or financial institution.</p>
+  </div>
+
+  <!-- CONTACT -->
+  <hr class="section-divider"/>
+  <p class="section-label">Contact</p>
+  <h2>Get in Touch</h2>
+  <p>Have a question about one of our tools, a suggestion for a new calculator, or want to discuss a partnership? We'd love to hear from you.</p>
+  <p>📧 <a href="mailto:contact@financeratecalc.com" style="color:var(--accent);">contact@financeratecalc.com</a></p>
+
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms-of-service.html">Terms of Service</a>
+    <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+  </div>
+  <p>© 2026 FinanceRateCalc.com · For informational purposes only · Not financial advice</p>
+</footer>
+<!-- Sky Blue Corner Banner -->
+<div id="skybluePopup" style="display:none;position:fixed;bottom:20px;right:20px;z-index:9999;max-width:300px;width:calc(100% - 40px);background:#fff;border:1px solid rgba(184,134,11,0.4);border-radius:12px;padding:16px 18px;box-shadow:0 8px 32px rgba(0,0,0,0.15);animation:slideUp 0.3s ease;">
+  <style>@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}</style>
+  <button onclick="closeSkyblue()" style="position:absolute;top:8px;right:10px;background:none;border:none;color:#8a8a82;font-size:18px;cursor:pointer;line-height:1;">×</button>
+  <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#b8860b;margin-bottom:6px;">Banker's Tip</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:#1a1a18;line-height:1.3;margin-bottom:10px;">Better credit means better loan terms. Fix yours today.</div>
+  <a href="https://financeratecalc.com/go/credit-repair" target="_blank" rel="sponsored" style="display:block;text-align:center;background:#b8860b;color:#fff;padding:10px 16px;border-radius:7px;font-weight:700;font-size:13px;text-decoration:none;margin-bottom:6px;">Fix My Credit with Sky Blue →</a>
+  <div style="font-size:10px;color:#8a8a82;text-align:center;">Sponsored</div>
+</div>
+<script>
+  setTimeout(function() { document.getElementById('skybluePopup').style.display = 'block'; }, 15000);
+  function closeSkyblue() { document.getElementById('skybluePopup').style.display = 'none'; }
+</script>
+</body>
+</html>
