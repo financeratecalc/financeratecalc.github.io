@@ -1,1133 +1,438 @@
 <!DOCTYPE html>
 <html lang="en">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Bank Approval Simulator",
+  "url": "https://financeratecalc.com/bank-approval-simulator.html",
+  "description": "Find out what a bank credit analyst would really think about your loan application before you apply. Free simulator by a licensed banking professional.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": {"@type": "Offer","price": "0","priceCurrency": "USD"}
+}
+</script>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Are You Poor or Rich? Income Percentile Calculator | FinanceRateCalc</title>
-<meta name="description" content="Find out where you rank among all Americans. Enter your salary, age, and city to see what percentile you're in — instantly.">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-13712175066"></script>
+<title>Bank Approval Simulator — What Would a Bank Actually Say About You? | FinanceRateCalc</title>
+<meta name="description" content="Find out what a bank credit analyst would really think about your loan application — before you apply. Free simulator built by a licensed banking professional with 23 years of experience.">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8VGHR8XH4C"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-13712175066');
+  gtag('config', 'G-8VGHR8XH4C');
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@700;800&family=DM+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #080810;
-  --surface: #0f0f1a;
-  --surface2: #161622;
-  --border: rgba(255,255,255,0.06);
-  --border2: rgba(255,255,255,0.12);
-  --text: #f0ede8;
-  --muted: rgba(240,237,232,0.45);
-  --muted2: rgba(240,237,232,0.2);
-  --gold: #f0c040;
-  --gold2: #ffd966;
-  --gold-dim: rgba(240,192,64,0.1);
-  --red: #ff4444;
-  --red-dim: rgba(255,68,68,0.1);
-  --green: #44dd88;
-  --green-dim: rgba(68,221,136,0.1);
-  --blue: #4488ff;
-  --blue-dim: rgba(68,136,255,0.1);
-  --purple: #aa66ff;
+  --bg: #0a0a0f; --surface: #111118; --surface2: #16161f;
+  --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.12);
+  --text: #e8e6e0; --muted: rgba(255,255,255,0.38);
+  --gold: #c9a84c; --gold-dim: rgba(201,168,76,0.15);
+  --green: #3ecf8e; --green-dim: rgba(62,207,142,0.12);
+  --yellow: #f5c842; --yellow-dim: rgba(245,200,66,0.12);
+  --red: #f5524a; --red-dim: rgba(245,82,74,0.12);
+  --white: #ffffff;
 }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events: none; z-index: 1000; opacity: 0.4; }
+header { padding: 0 60px; height: 60px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(10,10,15,0.92); backdrop-filter: blur(12px); z-index: 100; }
+.logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 900; color: var(--white); text-decoration: none; letter-spacing: -0.5px; }
+.logo em { font-style: italic; color: var(--gold); }
+.nav-links { display: flex; gap: 24px; align-items: center; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover { color: var(--gold); }
+.nav-badge { background: var(--gold); color: #0a0a0f; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+@media (max-width: 768px) { header { padding: 0 20px; } .nav-links { display: none; } }
+.disclaimer-bar { background: rgba(201,168,76,0.06); border-bottom: 1px solid rgba(201,168,76,0.15); padding: 8px 60px; text-align: center; font-size: 11.5px; color: rgba(255,255,255,0.3); }
+.disclaimer-bar strong { color: rgba(201,168,76,0.7); }
+@media (max-width: 768px) { .disclaimer-bar { padding: 8px 20px; } }
+.hero { padding: 80px 60px 60px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(201,168,76,0.08) 0%, transparent 70%); pointer-events: none; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--gold); font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; background: var(--gold-dim); padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(201,168,76,0.2); }
+.hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(36px, 5vw, 64px); font-weight: 900; color: var(--white); line-height: 1.05; letter-spacing: -1px; margin-bottom: 20px; }
+.hero h1 em { font-style: italic; color: var(--gold); }
+.hero-desc { color: var(--muted); font-size: 17px; line-height: 1.7; max-width: 560px; margin: 0 auto 32px; font-weight: 300; }
+.hero-tags { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.hero-tag { background: var(--surface); border: 1px solid var(--border2); color: var(--muted); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+@media (max-width: 768px) { .hero { padding: 60px 20px 40px; } }
+.simulator { max-width: 860px; margin: 0 auto; padding: 0 60px 80px; }
+@media (max-width: 768px) { .simulator { padding: 0 20px 60px; } }
+.progress-wrap { margin-bottom: 40px; }
+.progress-steps { display: flex; justify-content: space-between; margin-bottom: 12px; position: relative; }
+.progress-steps::before { content: ''; position: absolute; top: 14px; left: 14px; right: 14px; height: 1px; background: var(--border); }
+.progress-step { display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; z-index: 1; }
+.step-dot { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--border2); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--muted); transition: all 0.3s; }
+.step-dot.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+.step-dot.done { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+.step-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.5px; white-space: nowrap; }
+.progress-step.active .step-label { color: var(--gold); }
+.progress-step.done .step-label { color: var(--green); }
+.q-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; animation: fadeUp 0.4s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.q-header { padding: 28px 36px 24px; border-bottom: 1px solid var(--border); background: var(--surface2); }
+.q-counter { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+.q-text { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--white); line-height: 1.3; letter-spacing: -0.3px; }
+.q-subtext { font-size: 13px; color: var(--muted); margin-top: 6px; font-weight: 300; line-height: 1.5; }
+.q-body { padding: 28px 36px; }
+.options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.options-grid.single { grid-template-columns: 1fr; }
+.options-grid.three { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 600px) { .options-grid, .options-grid.three { grid-template-columns: 1fr; } }
+.option-btn { background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.2s; text-align: left; font-family: 'DM Sans', sans-serif; color: var(--text); display: flex; align-items: center; gap: 12px; }
+.option-btn:hover { border-color: var(--gold); background: var(--gold-dim); }
+.option-btn.selected { border-color: var(--gold); background: var(--gold-dim); }
+.option-icon { font-size: 20px; flex-shrink: 0; }
+.option-label { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.option-sub { font-size: 11px; color: var(--muted); margin-top: 2px; font-weight: 400; }
+.q-input-wrap { position: relative; }
+.q-input { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 16px 20px; font-size: 18px; font-family: 'DM Sans', sans-serif; color: var(--white); outline: none; transition: border-color 0.2s; font-weight: 500; }
+.q-input:focus { border-color: var(--gold); }
+.q-input::placeholder { color: var(--muted); font-weight: 300; font-size: 15px; }
+.q-input-hint { font-size: 12px; color: var(--muted); margin-top: 8px; font-weight: 400; }
+.q-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 36px 28px; border-top: 1px solid var(--border); }
+.btn-back { background: transparent; border: 1.5px solid var(--border); color: var(--muted); padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+.btn-back:hover { border-color: var(--border2); color: var(--text); }
+.btn-next { background: var(--gold); border: none; color: #0a0a0f; padding: 13px 32px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+.btn-next:hover { background: #d4b055; transform: translateY(-1px); }
+.btn-next:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.analyzing-screen { display: none; text-align: center; padding: 80px 20px; }
+.analyzing-screen.visible { display: block; animation: fadeUp 0.4s ease; }
+.analyzing-icon { font-size: 48px; margin-bottom: 24px; animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+.analyzing-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
+.analyzing-sub { font-size: 15px; color: var(--muted); font-weight: 300; }
+.analyzing-bar { width: 200px; height: 3px; background: var(--border); border-radius: 2px; margin: 24px auto 0; overflow: hidden; position: relative; }
+.analyzing-bar::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: var(--gold); animation: slide 1.5s ease-in-out infinite; }
+@keyframes slide { 0% { left: -100%; } 100% { left: 100%; } }
+.results-screen { display: none; }
+.results-screen.visible { display: block; animation: fadeUp 0.5s ease; }
+.verdict-card { border-radius: 20px; padding: 40px; margin-bottom: 20px; position: relative; overflow: hidden; border: 1.5px solid transparent; }
+.verdict-card.approved { background: var(--green-dim); border-color: rgba(62,207,142,0.25); }
+.verdict-card.conditional { background: var(--yellow-dim); border-color: rgba(245,200,66,0.25); }
+.verdict-card.declined { background: var(--red-dim); border-color: rgba(245,82,74,0.25); }
+.verdict-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.verdict-card.approved::before { background: linear-gradient(90deg, #3ecf8e, #52d9a0); }
+.verdict-card.conditional::before { background: linear-gradient(90deg, #f5c842, #fad46a); }
+.verdict-card.declined::before { background: linear-gradient(90deg, #f5524a, #f77068); }
+.verdict-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+.verdict-label { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 8px; }
+.verdict-card.approved .verdict-label { color: var(--green); }
+.verdict-card.conditional .verdict-label { color: var(--yellow); }
+.verdict-card.declined .verdict-label { color: var(--red); }
+.verdict-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--white); line-height: 1.1; letter-spacing: -0.5px; }
+.verdict-emoji { font-size: 48px; }
+.verdict-body { font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.7; font-weight: 300; margin-bottom: 24px; }
+.score-meters { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+@media (max-width: 600px) { .score-meters { grid-template-columns: 1fr; } }
+.score-meter { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+.meter-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.meter-value { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
+.meter-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.meter-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+.meter-fill.green { background: var(--green); }
+.meter-fill.yellow { background: var(--yellow); }
+.meter-fill.red { background: var(--red); }
+.meter-status { font-size: 11px; font-weight: 600; margin-top: 6px; }
+.meter-status.green { color: var(--green); }
+.meter-status.yellow { color: var(--yellow); }
+.meter-status.red { color: var(--red); }
+.banker-notes { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+.banker-notes-title { padding: 16px 24px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 8px; }
+.note-item { display: flex; align-items: flex-start; gap: 14px; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+.note-item:last-child { border-bottom: none; }
+.note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.note-text { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6; font-weight: 400; }
+.note-text strong { color: var(--text); font-weight: 600; }
+.action-steps { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+.action-steps-title { padding: 16px 24px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.action-item { display: flex; align-items: flex-start; gap: 14px; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+.action-item:last-child { border-bottom: none; }
+.action-num { width: 24px; height: 24px; border-radius: 50%; background: var(--gold-dim); border: 1px solid rgba(201,168,76,0.3); color: var(--gold); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.action-text { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+.action-text strong { color: var(--text); font-weight: 600; }
 
-* { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  font-family: 'Barlow', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* Grain */
-body::after {
-  content:'';
-  position:fixed;
-  inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  pointer-events:none;
-  z-index:999;
-}
-
-/* Disclaimer */
-.disclaimer {
-  background: #0d0d1f;
-  border-bottom: 1px solid rgba(99,102,241,0.15);
-  text-align: center;
-  padding: 8px 20px;
-  font-size: 11px;
-  color: rgba(180,185,255,0.5);
-  letter-spacing: 0.3px;
-}
-.disclaimer strong { color: rgba(180,185,255,0.8); }
-
-/* Header */
-header {
-  background: rgba(8,8,16,0.95);
-  border-bottom: 1px solid var(--border);
-  padding: 18px 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(20px);
-}
-.logo {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--text);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-.logo em { color: var(--gold); font-style: normal; }
-nav a {
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 500;
-  margin-left: 28px;
-  transition: color 0.2s;
-}
-nav a:hover, nav a.active { color: var(--gold); }
-@media(max-width:768px){ header{padding:16px 20px;} nav{display:none;} }
-
-/* Hero */
-.hero {
-  text-align: center;
-  padding: 80px 24px 60px;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -100px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(ellipse, rgba(240,192,64,0.06) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.hero-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--gold-dim);
-  border: 1px solid rgba(240,192,64,0.2);
-  color: var(--gold);
-  padding: 6px 18px;
-  border-radius: 20px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  margin-bottom: 28px;
-}
-
-.hero h1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(56px, 10vw, 120px);
-  line-height: 0.9;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-}
-
-.hero h1 .line1 { color: var(--text); display: block; }
-.hero h1 .line2 { 
-  display: block;
-  background: linear-gradient(135deg, var(--gold), var(--gold2), #ff9900);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.hero h1 .line3 { color: var(--text); display: block; }
-
-.hero p {
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.7;
-  max-width: 480px;
-  margin: 0 auto 48px;
-  font-weight: 300;
-}
-
-/* Stats bar */
-.stats-bar {
-  display: flex;
-  justify-content: center;
-  gap: 48px;
-  margin-bottom: 60px;
-  flex-wrap: wrap;
-}
-.stat-item { text-align: center; }
-.stat-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 36px;
-  color: var(--gold);
-  letter-spacing: 1px;
-  display: block;
-}
-.stat-lbl {
-  font-size: 10px;
-  color: var(--muted2);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  font-weight: 600;
-}
-
-/* Main container */
-.container {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 0 24px 100px;
-}
-
-/* Input card */
-.input-card {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 20px;
-  padding: 40px;
-  margin-bottom: 24px;
-  position: relative;
-  overflow: hidden;
-}
-.input-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-
-.card-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--muted2);
-  margin-bottom: 32px;
-}
-
-/* Fields */
-.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
-@media(max-width:600px){ .fields{ grid-template-columns:1fr; } }
-
-.field label {
-  display: block;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
-
-.input-wrap {
-  display: flex;
-  align-items: center;
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: 10px;
-  overflow: hidden;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.input-wrap:focus-within {
-  border-color: rgba(240,192,64,0.4);
-  box-shadow: 0 0 0 3px rgba(240,192,64,0.06);
-}
-
-.pre {
-  padding: 0 14px;
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  color: var(--muted2);
-  background: rgba(255,255,255,0.02);
-  border-right: 1px solid var(--border);
-  height: 48px;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-input[type="number"], select {
-  flex: 1;
-  background: transparent;
-  border: none;
-  padding: 0 16px;
-  height: 48px;
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 15px;
-  font-weight: 500;
-  outline: none;
-  -moz-appearance: textfield;
-  min-width: 0;
-}
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-select {
-  font-family: 'Barlow', sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  color: var(--text);
-}
-select option { background: var(--surface2); color: var(--text); }
-
-/* Age brackets */
-.age-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  margin-top: 4px;
-}
-@media(max-width:480px){ .age-grid{ grid-template-columns: repeat(3,1fr); } }
-
-.age-btn {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--muted);
-  font-family: 'Barlow', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 10px 6px;
-  cursor: pointer;
-  transition: all 0.18s;
-  text-align: center;
-}
-.age-btn:hover { border-color: var(--border2); color: var(--text); }
-.age-btn.selected { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
-
-/* Full-width field */
-.field-full { grid-column: 1 / -1; }
-
-/* CTA Button */
-.cta-btn {
-  width: 100%;
-  padding: 18px;
-  background: linear-gradient(135deg, var(--gold), #e8a800);
-  border: none;
-  border-radius: 12px;
-  color: #080810;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 20px;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: all 0.22s;
-  box-shadow: 0 8px 32px rgba(240,192,64,0.25);
-}
-.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(240,192,64,0.35); }
-.cta-btn:active { transform: translateY(0); }
-
-/* Results */
-#results { display: none; }
-#results.show { display: block; animation: rise 0.5s cubic-bezier(0.16,1,0.3,1); }
-
-@keyframes rise {
-  from { opacity:0; transform:translateY(30px); }
-  to { opacity:1; transform:translateY(0); }
-}
-
-/* Verdict banner */
-.verdict {
-  border-radius: 20px;
-  padding: 48px 40px;
-  text-align: center;
-  margin-bottom: 20px;
-  border: 1px solid;
-  position: relative;
-  overflow: hidden;
-}
-.verdict::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(ellipse, var(--glow), transparent 70%);
-  pointer-events: none;
-}
-
-.verdict-top { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; margin-bottom: 16px; }
-.verdict-pct {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(72px, 15vw, 120px);
-  line-height: 0.9;
-  letter-spacing: 2px;
-  margin-bottom: 12px;
-}
-.verdict-line {
-  font-size: 20px;
-  font-weight: 300;
-  line-height: 1.5;
-  max-width: 380px;
-  margin: 0 auto 8px;
-}
-.verdict-sub { font-size: 13px; opacity: 0.5; font-weight: 300; }
-
-/* Tier colors */
-.tier-top { background: rgba(240,192,64,0.08); border-color: rgba(240,192,64,0.25); --glow: rgba(240,192,64,0.12); }
-.tier-top .verdict-top { color: var(--gold); }
-.tier-top .verdict-pct { color: var(--gold); }
-
-.tier-upper { background: rgba(68,221,136,0.07); border-color: rgba(68,221,136,0.2); --glow: rgba(68,221,136,0.1); }
-.tier-upper .verdict-top { color: var(--green); }
-.tier-upper .verdict-pct { color: var(--green); }
-
-.tier-middle { background: rgba(68,136,255,0.07); border-color: rgba(68,136,255,0.2); --glow: rgba(68,136,255,0.1); }
-.tier-middle .verdict-top { color: var(--blue); }
-.tier-middle .verdict-pct { color: var(--blue); }
-
-.tier-lower { background: rgba(255,68,68,0.07); border-color: rgba(255,68,68,0.2); --glow: rgba(255,68,68,0.1); }
-.tier-lower .verdict-top { color: var(--red); }
-.tier-lower .verdict-pct { color: var(--red); }
-
-/* Stats grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
-}
-@media(max-width:480px){ .stats-grid{ grid-template-columns:1fr 1fr; } }
-
-.stat-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px;
-  transition: border-color 0.2s;
-}
-.stat-box:hover { border-color: var(--border2); }
-.stat-box .sl { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted2); font-weight: 700; margin-bottom: 8px; }
-.stat-box .sv { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: var(--text); }
-.sv-gold { color: var(--gold) !important; }
-.sv-green { color: var(--green) !important; }
-.sv-red { color: var(--red) !important; }
-.sv-blue { color: var(--blue) !important; }
-
-/* Progress bars */
-.progress-section {
-  background: var(--surface);
-  border: 1px solid var(--border);
+/* SKY BLUE CTA — yeşil */
+.skyblue-cta {
+  background: linear-gradient(135deg, rgba(62,207,142,0.1), rgba(62,207,142,0.05));
+  border: 1.5px solid rgba(62,207,142,0.3);
   border-radius: 16px;
   padding: 28px;
   margin-bottom: 20px;
-}
-.progress-title { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted2); margin-bottom: 20px; }
-
-.prog-row { margin-bottom: 16px; }
-.prog-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
-.prog-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
-.prog-fill { height: 100%; border-radius: 3px; transition: width 1.4s cubic-bezier(0.4,0,0.2,1); width: 0; }
-.pf-gold { background: linear-gradient(90deg, #e8a800, var(--gold2)); }
-.pf-green { background: linear-gradient(90deg, #22aa66, var(--green)); }
-.pf-blue { background: linear-gradient(90deg, #2255cc, var(--blue)); }
-.pf-red { background: linear-gradient(90deg, #cc2222, var(--red)); }
-
-/* Banker note */
-.banker-note {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--gold);
-  border-radius: 14px;
-  padding: 24px;
   display: flex;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-.bn-avatar {
-  width: 42px;
-  height: 42px;
-  background: var(--gold-dim);
-  border: 1px solid rgba(240,192,64,0.3);
-  border-radius: 10px;
-  display: flex;
+  gap: 20px;
   align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
 }
-.bn-name { font-weight: 700; color: var(--text); font-size: 13px; margin-bottom: 2px; }
-.bn-cred { font-size: 9px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
-.bn-text { font-size: 13px; color: var(--muted); line-height: 1.8; font-weight: 300; }
-
-/* Action buttons */
-.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-@media(max-width:480px){ .actions{ grid-template-columns:1fr; } }
-
-.action-btn {
-  padding: 14px;
-  border-radius: 10px;
-  font-family: 'Barlow', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.5px;
-  border: none;
-  text-align: center;
-}
-.btn-share {
-  background: #1da1f2;
-  color: #fff;
-}
-.btn-share:hover { background: #0d8de0; transform: translateY(-1px); }
-.btn-reset {
-  background: transparent;
-  border: 1px solid var(--border2) !important;
-  color: var(--muted);
-}
-.btn-reset:hover { border-color: var(--gold) !important; color: var(--gold); }
-
-/* Embed section */
-.embed-section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 24px;
-  margin-bottom: 20px;
-}
-.embed-title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted2);
-  margin-bottom: 14px;
-  display: flex;
+.skyblue-cta::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #3ecf8e, #52d9a0); }
+.skyblue-icon { font-size: 36px; flex-shrink: 0; }
+.skyblue-body { flex: 1; min-width: 200px; }
+.skyblue-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+.skyblue-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 6px; line-height: 1.3; }
+.skyblue-sub { font-size: 13px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+.skyblue-btn {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-}
-.embed-code {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 14px 16px;
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  color: var(--gold);
-  word-break: break-all;
-  margin-bottom: 12px;
-  line-height: 1.6;
-}
-.copy-btn {
-  background: var(--gold-dim);
-  border: 1px solid rgba(240,192,64,0.2);
-  color: var(--gold);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-family: 'Barlow', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.5px;
-}
-.copy-btn:hover { background: rgba(240,192,64,0.2); }
-
-/* Footer */
-footer {
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  padding: 32px 48px;
-  text-align: center;
-}
-.footer-copy {
-  font-size: 12px;
-  color: var(--muted2);
-  line-height: 1.8;
-}
-.footer-copy a { color: var(--muted); text-decoration: none; }
-.footer-copy a:hover { color: var(--gold); }
-
-.ai-story-section {
-  background: linear-gradient(135deg, #0d0d1a 0%, #1a1a2e 100%);
-  border: 1px solid rgba(170,102,255,0.2);
-  border-radius: 14px;
-  padding: 22px;
-  margin-bottom: 20px;
-}
-.ai-story-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-.ai-story-icon {
-  font-size: 24px;
-  flex-shrink: 0;
-}
-.ai-story-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 2px;
-}
-.ai-story-sub {
-  font-size: 12px;
-  color: rgba(255,255,255,0.35);
-}
-.ai-story-btn {
-  margin-left: auto;
-  background: linear-gradient(135deg, #aa66ff, #7744cc);
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  background: var(--green);
+  color: #0a0a0f;
+  padding: 13px 22px;
+  border-radius: 10px;
   font-size: 13px;
   font-weight: 700;
-  cursor: pointer;
+  text-decoration: none;
   transition: all 0.2s;
-  font-family: inherit;
   white-space: nowrap;
+  flex-shrink: 0;
+  font-family: 'DM Sans', sans-serif;
 }
-.ai-story-btn:hover { transform: translateY(-1px); opacity: 0.9; }
-.ai-story-output {
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
-.ai-dots {
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-}
-.ai-dots span {
-  width: 8px; height: 8px;
-  background: #aa66ff;
-  border-radius: 50%;
-  animation: dot-bounce 1.2s infinite;
-}
-.ai-dots span:nth-child(2) { animation-delay: 0.2s; }
-.ai-dots span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes dot-bounce {
-  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
-  40% { transform: translateY(-8px); opacity: 1; }
-}
-.ai-story-text {
-  font-size: 14px;
-  line-height: 1.9;
-  color: rgba(240,237,232,0.8);
-  font-weight: 300;
-}
-.ai-story-text p { margin-bottom: 14px; }
-.ai-story-text p:last-child { margin-bottom: 0; }
-.ai-story-text strong { color: #f0c040; font-weight: 600; }
-.ai-story-actions {
-  margin-top: 18px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+.skyblue-btn:hover { background: #52d9a0; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(62,207,142,0.3); }
+.skyblue-disclosure { font-size: 10px; color: rgba(255,255,255,0.2); width: 100%; margin-top: 8px; }
+.skyblue-disclosure a { color: inherit; text-decoration: underline; }
+
+.affiliate-cta { background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.2); border-radius: 16px; padding: 28px; text-align: center; margin-bottom: 20px; }
+.affiliate-cta-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+.affiliate-cta-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+.affiliate-cta-sub { font-size: 14px; color: var(--muted); margin-bottom: 20px; font-weight: 300; line-height: 1.6; }
+.affiliate-cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.cta-btn-gold { display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: #0a0a0f; padding: 13px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; text-decoration: none; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+.cta-btn-gold:hover { background: #d4b055; transform: translateY(-2px); }
+.cta-btn-outline { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--text); padding: 13px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; border: 1.5px solid var(--border2); transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+.cta-btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+.affiliate-disclosure { font-size: 11px; color: rgba(136,146,164,0.5); margin-top: 14px; }
+.affiliate-disclosure a { color: rgba(136,146,164,0.5); text-decoration: underline; }
+.restart-btn { display: block; width: 100%; background: transparent; border: 1.5px solid var(--border); color: var(--muted); padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; margin-top: 12px; }
+.restart-btn:hover { border-color: var(--border2); color: var(--text); }
+.page-disclaimer { max-width: 860px; margin: 0 auto; padding: 0 60px 60px; }
+.disclaimer-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; font-size: 12px; color: var(--muted); line-height: 1.6; text-align: center; }
+.disclaimer-box strong { color: rgba(255,255,255,0.45); }
+@media (max-width: 768px) { .page-disclaimer { padding: 0 20px 40px; } }
+footer { background: var(--surface); border-top: 1px solid var(--border); padding: 32px 60px; display: flex; align-items: center; justify-content: space-between; }
+@media (max-width: 768px) { footer { padding: 24px 20px; flex-direction: column; gap: 14px; text-align: center; } }
+.footer-logo { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--white); }
+.footer-logo em { font-style: italic; color: var(--gold); }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a { color: var(--muted); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+.footer-links a:hover { color: var(--gold); }
+.footer-copy { font-size: 12px; color: rgba(255,255,255,0.2); }
 </style>
 </head>
 <body>
-
-<div class="disclaimer">
-  <strong>Educational Use Only</strong> — Results are estimates based on US Census data. Not financial advice.
-</div>
-
 <header>
-  <div class="logo">Finance<em>RateCalc</em></div>
-  <nav>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <div class="nav-links">
     <a href="index.html">Home</a>
-    <a href="mortgage-calculator.html">Mortgage</a>
-    <a href="viral-tools.html">Power Tools</a>
-    <a href="are-you-rich.html" class="active">Rich or Poor?</a>
-  </nav>
-</header>
-
-<div class="hero">
-  <div class="hero-tag">🔥 Most Shared Tool · 2026</div>
-  <h1>
-    <span class="line1">Are You</span>
-    <span class="line2">Poor or Rich?</span>
-    <span class="line3">Find Out Now.</span>
-  </h1>
-  <p>Enter your salary, age, and city. See exactly where you rank among all Americans — and what it means for your financial future.</p>
-
-  <div class="stats-bar">
-    <div class="stat-item">
-      <span class="stat-num">330M</span>
-      <span class="stat-lbl">Americans Ranked</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num">50+</span>
-      <span class="stat-lbl">Cities Covered</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num">Free</span>
-      <span class="stat-lbl">No Sign-Up</span>
-    </div>
-  </div>
-</div>
-
-<div class="container">
-  <div class="input-card">
-    <div class="card-label">📊 Your Information</div>
-
-    <div class="fields">
-      <div class="field">
-        <label>Annual Salary</label>
-        <div class="input-wrap">
-          <span class="pre">$</span>
-          <input type="number" id="salary" placeholder="75000" min="0" max="10000000">
-        </div>
-      </div>
-
-      <div class="field">
-        <label>City / Metro Area</label>
-        <div class="input-wrap">
-          <select id="city">
-            <option value="national">🇺🇸 National Average</option>
-            <optgroup label="Top Metro Areas">
-              <option value="new-york">New York, NY</option>
-              <option value="los-angeles">Los Angeles, CA</option>
-              <option value="chicago">Chicago, IL</option>
-              <option value="houston">Houston, TX</option>
-              <option value="phoenix">Phoenix, AZ</option>
-              <option value="philadelphia">Philadelphia, PA</option>
-              <option value="san-antonio">San Antonio, TX</option>
-              <option value="san-diego">San Diego, CA</option>
-              <option value="dallas">Dallas, TX</option>
-              <option value="san-jose">San Jose, CA</option>
-              <option value="austin">Austin, TX</option>
-              <option value="jacksonville">Jacksonville, FL</option>
-              <option value="fort-worth">Fort Worth, TX</option>
-              <option value="columbus">Columbus, OH</option>
-              <option value="charlotte">Charlotte, NC</option>
-              <option value="indianapolis">Indianapolis, IN</option>
-              <option value="san-francisco">San Francisco, CA</option>
-              <option value="seattle">Seattle, WA</option>
-              <option value="denver">Denver, CO</option>
-              <option value="miami">Miami, FL</option>
-              <option value="nashville">Nashville, TN</option>
-              <option value="atlanta">Atlanta, GA</option>
-              <option value="boston">Boston, MA</option>
-              <option value="portland">Portland, OR</option>
-              <option value="las-vegas">Las Vegas, NV</option>
-            </optgroup>
-          </select>
-        </div>
-      </div>
-
-      <div class="field field-full">
-        <label>Age Group</label>
-        <div class="age-grid">
-          <button class="age-btn" data-age="18-24" onclick="selectAge(this)">18–24</button>
-          <button class="age-btn" data-age="25-34" onclick="selectAge(this)">25–34</button>
-          <button class="age-btn selected" data-age="35-44" onclick="selectAge(this)">35–44</button>
-          <button class="age-btn" data-age="45-54" onclick="selectAge(this)">45–54</button>
-          <button class="age-btn" data-age="55-64" onclick="selectAge(this)">55–64</button>
-        </div>
-      </div>
-    </div>
-
-    <button class="cta-btn" onclick="calculate()">FIND OUT WHERE I RANK →</button>
-  </div>
-
-  <div id="results">
-    <!-- Filled by JS -->
-  </div>
-</div>
-
-<footer>
-  <div class="footer-copy">
-    © 2026 FinanceRateCalc.com — All rights reserved.<br>
-    <small>Educational use only · Not financial advice · Data based on US Census Bureau &amp; BLS statistics</small><br><br>
-    <a href="index.html">Home</a> · 
-    <a href="mortgage-calculator.html">Mortgage Calculator</a> · 
-    <a href="viral-tools.html">Power Tools</a> · 
-    <a href="financial-twin.html">Financial Twin</a> · 
+    <a href="financial-twin.html">Buy vs Rent</a>
     <a href="loan-offer-analyzer.html">Loan Analyzer</a>
+    <a href="bank-approval-simulator.html" style="color:var(--gold);">Bank Simulator</a>
+    <span class="nav-badge">Licensed Pro</span>
   </div>
-</footer>
-
-<script>
-// US Income percentile data by city (median household income 2024 estimates)
-const cityData = {
-  'national':      { median: 74580, p25: 38000, p75: 118000, p90: 175000, p10: 22000, name: 'the US' },
-  'new-york':      { median: 72000, p25: 36000, p75: 120000, p90: 185000, p10: 20000, name: 'New York' },
-  'los-angeles':   { median: 71000, p25: 35000, p75: 115000, p90: 180000, p10: 19000, name: 'Los Angeles' },
-  'chicago':       { median: 68000, p25: 34000, p75: 110000, p90: 165000, p10: 18000, name: 'Chicago' },
-  'houston':       { median: 65000, p25: 32000, p75: 105000, p90: 155000, p10: 17000, name: 'Houston' },
-  'phoenix':       { median: 62000, p25: 31000, p75: 100000, p90: 148000, p10: 16500, name: 'Phoenix' },
-  'philadelphia':  { median: 63000, p25: 31500, p75: 101000, p90: 150000, p10: 16000, name: 'Philadelphia' },
-  'san-antonio':   { median: 58000, p25: 29000, p75: 93000, p90: 138000, p10: 15500, name: 'San Antonio' },
-  'san-diego':     { median: 82000, p25: 41000, p75: 132000, p90: 198000, p10: 22000, name: 'San Diego' },
-  'dallas':        { median: 65000, p25: 32500, p75: 104000, p90: 155000, p10: 17000, name: 'Dallas' },
-  'san-jose':      { median: 118000, p25: 59000, p75: 185000, p90: 280000, p10: 32000, name: 'San Jose' },
-  'austin':        { median: 78000, p25: 39000, p75: 124000, p90: 186000, p10: 21000, name: 'Austin' },
-  'jacksonville':  { median: 58000, p25: 29000, p75: 92000, p90: 136000, p10: 15000, name: 'Jacksonville' },
-  'fort-worth':    { median: 63000, p25: 31500, p75: 100000, p90: 148000, p10: 16500, name: 'Fort Worth' },
-  'columbus':      { median: 60000, p25: 30000, p75: 96000, p90: 142000, p10: 16000, name: 'Columbus' },
-  'charlotte':     { median: 65000, p25: 32500, p75: 104000, p90: 154000, p10: 17000, name: 'Charlotte' },
-  'indianapolis':  { median: 58000, p25: 29000, p75: 93000, p90: 138000, p10: 15500, name: 'Indianapolis' },
-  'san-francisco': { median: 112000, p25: 56000, p75: 175000, p90: 265000, p10: 30000, name: 'San Francisco' },
-  'seattle':       { median: 96000, p25: 48000, p75: 152000, p90: 228000, p10: 26000, name: 'Seattle' },
-  'denver':        { median: 80000, p25: 40000, p75: 127000, p90: 190000, p10: 21500, name: 'Denver' },
-  'miami':         { median: 58000, p25: 29000, p75: 93000, p90: 140000, p10: 15000, name: 'Miami' },
-  'nashville':     { median: 67000, p25: 33500, p75: 107000, p90: 158000, p10: 17500, name: 'Nashville' },
-  'atlanta':       { median: 66000, p25: 33000, p75: 105000, p90: 156000, p10: 17000, name: 'Atlanta' },
-  'boston':        { median: 88000, p25: 44000, p75: 140000, p90: 210000, p10: 24000, name: 'Boston' },
-  'portland':      { median: 76000, p25: 38000, p75: 121000, p90: 182000, p10: 20500, name: 'Portland' },
-  'las-vegas':     { median: 60000, p25: 30000, p75: 96000, p90: 142000, p10: 16000, name: 'Las Vegas' },
-};
-
-// Age income multipliers (relative to median)
-const ageMultipliers = {
-  '18-24': 0.52,
-  '25-34': 0.85,
-  '35-44': 1.12,
-  '45-54': 1.18,
-  '55-64': 1.08,
-};
-
-let selectedAge = '35-44';
-
-function selectAge(btn) {
-  document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedAge = btn.dataset.age;
-}
-
-function getPercentile(salary, city, age) {
-  const data = cityData[city] || cityData['national'];
-  const ageMult = ageMultipliers[age] || 1;
-  
-  // Adjusted benchmarks for age
-  const adjMedian = data.median * ageMult;
-  const adjP25 = data.p25 * ageMult;
-  const adjP75 = data.p75 * ageMult;
-  const adjP90 = data.p90 * ageMult;
-  const adjP10 = data.p10 * ageMult;
-
-  // Interpolate percentile
-  let percentile;
-  if (salary <= adjP10) {
-    percentile = Math.max(1, (salary / adjP10) * 10);
-  } else if (salary <= adjP25) {
-    percentile = 10 + ((salary - adjP10) / (adjP25 - adjP10)) * 15;
-  } else if (salary <= adjMedian) {
-    percentile = 25 + ((salary - adjP25) / (adjMedian - adjP25)) * 25;
-  } else if (salary <= adjP75) {
-    percentile = 50 + ((salary - adjMedian) / (adjP75 - adjMedian)) * 25;
-  } else if (salary <= adjP90) {
-    percentile = 75 + ((salary - adjP75) / (adjP90 - adjP75)) * 15;
-  } else {
-    percentile = 90 + Math.min(9.5, ((salary - adjP90) / adjP90) * 20);
-  }
-
-  return {
-    percentile: Math.round(percentile),
-    adjMedian,
-    adjP25,
-    adjP75,
-    adjP90,
-    adjP10,
-    cityName: data.name
-  };
-}
-
-function getTier(pct) {
-  if (pct >= 80) return { cls: 'tier-top', label: '🏆 TOP EARNER', color: 'gold' };
-  if (pct >= 60) return { cls: 'tier-upper', label: '📈 ABOVE AVERAGE', color: 'green' };
-  if (pct >= 40) return { cls: 'tier-middle', label: '📊 MIDDLE CLASS', color: 'blue' };
-  return { cls: 'tier-lower', label: '⚠️ BELOW AVERAGE', color: 'red' };
-}
-
-function fmt(n) {
-  return '$' + Math.round(n).toLocaleString('en-US');
-}
-
-function getBankerNote(pct, salary, cityName, age) {
-  if (pct >= 90) return `You're in the top ${100-pct}% in ${cityName} for the ${age} age group. From a banking perspective, your income profile is excellent — most lenders would classify you as low-risk. You likely qualify for premium mortgage rates and high credit limits. The key now is wealth accumulation strategy, not income.`;
-  if (pct >= 75) return `Strong position. In ${cityName}, you're outperforming ${pct}% of your peers. Banks will generally view you favorably for loans. Your debt-to-income ratio matters more at this level — if you keep monthly debts under 36% of gross income, most premium financial products are within reach.`;
-  if (pct >= 50) return `You're in the solid middle — above the median in ${cityName}. Lenders consider this bankable. You can access standard mortgage products, but your rate will depend heavily on credit score and DTI. Focus on eliminating high-interest debt first; it has more impact than increasing income at this stage.`;
-  if (pct >= 35) return `You're slightly below the median for ${cityName} in the ${age} age group. This doesn't mean you can't get loans, but you'll face more scrutiny. Banks will examine your employment stability and credit history closely. Building 6 months of emergency savings first puts you in a much stronger negotiating position.`;
-  return `Your income puts you in a challenging bracket for ${cityName}. Banks will want to see compensating factors: strong credit score (700+), stable employment of 2+ years, and low existing debt. Government-backed loans (FHA, USDA) have more flexible income requirements and may be worth exploring. Don't be discouraged — income is just one factor.`;
-}
-
-function calculate() {
-  const salary = parseFloat(document.getElementById('salary').value);
-  const city = document.getElementById('city').value;
-
-  if (!salary || salary <= 0) {
-    document.getElementById('salary').focus();
-    document.getElementById('salary').style.borderColor = 'var(--red)';
-    setTimeout(() => document.getElementById('salary').style.borderColor = '', 1500);
-    return;
-  }
-
-  const result = getPercentile(salary, city, selectedAge);
-  const tier = getTier(result.percentile);
-  const bankerNote = getBankerNote(result.percentile, salary, result.cityName, selectedAge);
-  const aboveCount = Math.round((result.percentile / 100) * 258000000);
-  const salaryVsMedian = ((salary - result.adjMedian) / result.adjMedian * 100);
-  const toTop10 = result.adjP90 - salary;
-  const annualTax = salary * 0.28;
-  const monthly = salary / 12;
-
-  const html = `
-    <div class="verdict ${tier.cls}">
-      <div class="verdict-top">${tier.label}</div>
-      <div class="verdict-pct">${result.percentile}%</div>
-      <div class="verdict-line">You earn more than <strong>${result.percentile}%</strong> of people in ${result.cityName}</div>
-      <div class="verdict-sub">Age group: ${selectedAge} · ${result.cityName}</div>
+</header>
+<div class="disclaimer-bar">
+  <strong>Educational purposes only — not financial advice.</strong> Results are estimates based on typical lending benchmarks.
+</div>
+<div class="hero">
+  <div class="hero-eyebrow">🏦 Insider Simulator</div>
+  <h1>What Would a Bank<br><em>Actually Say About You?</em></h1>
+  <p class="hero-desc">Before you apply for a loan, find out what a credit analyst would really think — the approval chances, red flags, and exactly what to fix. Built from 23 years inside banking.</p>
+  <div class="hero-tags">
+    <span class="hero-tag">✓ Takes 2 minutes</span>
+    <span class="hero-tag">✓ No sign-up needed</span>
+    <span class="hero-tag">✓ Banker's honest perspective</span>
+    <span class="hero-tag">✓ Free forever</span>
+  </div>
+</div>
+<div class="simulator">
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-steps" id="progressSteps"></div>
+  </div>
+  <div class="q-card" id="questionCard">
+    <div class="q-header">
+      <div class="q-counter" id="qCounter">QUESTION 1 OF 8</div>
+      <div class="q-text" id="qText"></div>
+      <div class="q-subtext" id="qSubtext"></div>
     </div>
-
-    <div class="stats-grid">
-      <div class="stat-box">
-        <div class="sl">Your Salary</div>
-        <div class="sv sv-${tier.color}">${fmt(salary)}</div>
-      </div>
-      <div class="stat-box">
-        <div class="sl">Local Median</div>
-        <div class="sv">${fmt(result.adjMedian)}</div>
-      </div>
-      <div class="stat-box">
-        <div class="sl">vs. Median</div>
-        <div class="sv ${salaryVsMedian >= 0 ? 'sv-green' : 'sv-red'}">${salaryVsMedian >= 0 ? '+' : ''}${salaryVsMedian.toFixed(1)}%</div>
-      </div>
-      <div class="stat-box">
-        <div class="sl">Monthly Take-Home</div>
-        <div class="sv sv-${tier.color}">${fmt(monthly * 0.72)}</div>
-      </div>
-      <div class="stat-box">
-        <div class="sl">People You Earn More Than</div>
-        <div class="sv sv-${tier.color}">${(aboveCount/1000000).toFixed(1)}M</div>
-      </div>
-      <div class="stat-box">
-        <div class="sl">To Reach Top 10%</div>
-        <div class="sv ${toTop10 <= 0 ? 'sv-green' : ''}">${toTop10 <= 0 ? '✓ Already there' : '+' + fmt(toTop10)}</div>
-      </div>
+    <div class="q-body" id="qBody"></div>
+    <div class="q-nav">
+      <button class="btn-back" id="btnBack" onclick="goBack()">← Back</button>
+      <button class="btn-next" id="btnNext" onclick="goNext()" disabled>Continue →</button>
     </div>
-
-    <div class="progress-section">
-      <div class="progress-title">📊 Income Distribution in ${result.cityName}</div>
-      <div class="prog-row">
-        <div class="prog-label"><span>Bottom 10%</span><span>${fmt(result.adjP10)}</span></div>
-        <div class="prog-bar"><div class="prog-fill pf-red" style="width:0" data-w="10"></div></div>
-      </div>
-      <div class="prog-row">
-        <div class="prog-label"><span>Bottom 25%</span><span>${fmt(result.adjP25)}</span></div>
-        <div class="prog-bar"><div class="prog-fill pf-red" style="width:0" data-w="25"></div></div>
-      </div>
-      <div class="prog-row">
-        <div class="prog-label"><span>Median (50%)</span><span>${fmt(result.adjMedian)}</span></div>
-        <div class="prog-bar"><div class="prog-fill pf-blue" style="width:0" data-w="50"></div></div>
-      </div>
-      <div class="prog-row">
-        <div class="prog-label"><span>Top 25%</span><span>${fmt(result.adjP75)}</span></div>
-        <div class="prog-bar"><div class="prog-fill pf-green" style="width:0" data-w="75"></div></div>
-      </div>
-      <div class="prog-row">
-        <div class="prog-label"><span>Top 10%</span><span>${fmt(result.adjP90)}</span></div>
-        <div class="prog-bar"><div class="prog-fill pf-gold" style="width:0" data-w="90"></div></div>
-      </div>
-      <div class="prog-row" style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border)">
-        <div class="prog-label"><span><strong>YOU</strong></span><span><strong>${fmt(salary)}</strong></span></div>
-        <div class="prog-bar" style="height:10px; border-radius:5px;"><div class="prog-fill pf-gold" style="width:0" data-w="${result.percentile}"></div></div>
-      </div>
-    </div>
-
-    <div class="banker-note">
-      <div class="bn-avatar">✦</div>
-      <div>
-        <div class="bn-name">Banking Professional Note</div>
-        <div class="bn-cred">Licensed Banking Pro · 20+ Years Experience</div>
-        <div class="bn-text">${bankerNote}</div>
-      </div>
-    </div>
-
-    <div class="ai-story-section" id="aiStorySection">
-      <div class="ai-story-header">
-        <div class="ai-story-icon">✨</div>
+  </div>
+  <div class="analyzing-screen" id="analyzingScreen">
+    <div class="analyzing-icon">🔍</div>
+    <div class="analyzing-title">Running Credit Analysis...</div>
+    <div class="analyzing-sub">Reviewing your profile against real banking criteria</div>
+    <div class="analyzing-bar"></div>
+  </div>
+  <div class="results-screen" id="resultsScreen">
+    <div class="verdict-card" id="verdictCard">
+      <div class="verdict-top">
         <div>
-          <div class="ai-story-title">Your Personal Financial Story</div>
-          <div class="ai-story-sub">AI-generated just for you — based on your exact numbers</div>
+          <div class="verdict-label" id="verdictLabel"></div>
+          <div class="verdict-title" id="verdictTitle"></div>
         </div>
-        <button class="ai-story-btn" onclick="generateStory(${result.percentile}, ${salary}, '${result.cityName}', '${selectedAge}')">
-          Generate My Story →
-        </button>
+        <div class="verdict-emoji" id="verdictEmoji"></div>
       </div>
-      <div class="ai-story-output" id="aiStoryOutput" style="display:none;">
-        <div class="ai-story-loading" id="aiStoryLoading">
-          <div class="ai-dots"><span></span><span></span><span></span></div>
-          <div style="font-size:13px;color:var(--muted);margin-top:8px;">Writing your story...</div>
-        </div>
-        <div class="ai-story-text" id="aiStoryText" style="display:none;"></div>
-        <div class="ai-story-actions" id="aiStoryActions" style="display:none;">
-          <button class="action-btn btn-share" onclick="shareStory()">Share My Story on X</button>
-          <button class="action-btn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);" onclick="generateStory(${result.percentile}, ${salary}, '${result.cityName}', '${selectedAge}')">↺ Regenerate</button>
-        </div>
+      <div class="verdict-body" id="verdictBody"></div>
+    </div>
+    <div class="score-meters" id="scoreMeters"></div>
+    <div class="banker-notes" id="bankerNotes">
+      <div class="banker-notes-title">🏦 What the Credit Analyst Sees</div>
+      <div id="notesList"></div>
+    </div>
+    <div class="action-steps" id="actionSteps">
+      <div class="action-steps-title">📋 Your Action Plan</div>
+      <div id="actionList"></div>
+    </div>
+
+    <!-- SKY BLUE CTA — YEŞİL -->
+    <div class="skyblue-cta">
+      <div class="skyblue-icon">📈</div>
+      <div class="skyblue-body">
+        <div class="skyblue-label">Credit Repair · Recommended</div>
+        <div class="skyblue-title">Low Credit Score Holding You Back?</div>
+        <div class="skyblue-sub">Sky Blue Credit has helped hundreds of thousands improve their score. You only pay after they deliver results. Since 1989.</div>
       </div>
+      <a href="https://skyblue.ltroute.com/click.track?CID=139993&AFID=569709"
+         target="_blank" rel="noopener sponsored"
+         class="skyblue-btn">
+        📈 Fix My Credit Score →
+      </a>
+      <div class="skyblue-disclosure">Sponsored. Commission may be earned. <a href="affiliate-disclosure.html">Disclosure →</a></div>
     </div>
 
-    <div class="actions">
-      <button class="action-btn btn-share" onclick="shareResult(${result.percentile}, '${result.cityName}')">
-        Share My Result
-      </button>
-      <button class="action-btn btn-reset" onclick="resetForm()">
-        ↺ Calculate Again
-      </button>
+    <div class="affiliate-cta">
+      <div class="affiliate-cta-label">Sponsored · Take the Next Step</div>
+      <div class="affiliate-cta-title">You've seen your profile — now act on it</div>
+      <div class="affiliate-cta-sub">Get your legal documents ready and explore funding options before you apply.</div>
+      <div class="affiliate-cta-buttons">
+        <a href="https://www.dpbolvw.net/click-101700650-17144681" target="_blank" rel="noopener sponsored" class="cta-btn-gold">💸 Explore Funding Options →</a>
+        <a href="https://www.tkqlhce.com/click-101700650-16996011" target="_blank" rel="noopener sponsored" class="cta-btn-outline">📄 Get Legal Docs — LawDepot</a>
+      </div>
+      <div class="affiliate-disclosure">Sponsored. We may earn a commission at no cost to you. <a href="affiliate-disclosure.html">See disclosure →</a></div>
     </div>
-
-    <div class="embed-section">
-      <div class="embed-title">📎 Embed this calculator on your website</div>
-      <div class="embed-code">&lt;iframe src="https://financeratecalc.com/are-you-rich.html" width="100%" height="600" frameborder="0"&gt;&lt;/iframe&gt;</div>
-      <button class="copy-btn" onclick="copyEmbed()">📋 Copy Embed Code</button>
-    </div>
-  `;
-
-  const resultsEl = document.getElementById('results');
-  resultsEl.innerHTML = html;
-  resultsEl.classList.add('show');
-  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  // Animate progress bars
-  setTimeout(() => {
-    document.querySelectorAll('.prog-fill').forEach(bar => {
-      bar.style.width = bar.dataset.w + '%';
-    });
-  }, 100);
+    <button class="restart-btn" onclick="restart()">↺ Start Over</button>
+  </div>
+</div>
+<div class="page-disclaimer">
+  <div class="disclaimer-box">
+    <strong>⚠️ Educational Purposes Only — Not Financial Advice.</strong> This simulator provides general estimates based on typical US lending benchmarks and is for educational use only.
+  </div>
+</div>
+<footer>
+  <div class="footer-logo">Finance<em>Rate</em>Calc</div>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="financial-twin.html">Buy vs Rent</a>
+    <a href="loan-offer-analyzer.html">Loan Analyzer</a>
+    <a href="mortgage-calculator.html">Mortgage</a>
+  </div>
+  <div class="footer-copy">© 2026 FinanceRateCalc · Educational Use Only</div>
+</footer>
+<script>
+const questions = [
+  { id: 'loanType', text: 'What type of loan are you applying for?', sub: 'Each loan type has different approval criteria at most banks.', type: 'options', options: [{ icon: '🏠', label: 'Mortgage', sub: 'Home purchase or refinance', value: 'mortgage' },{ icon: '🚗', label: 'Auto Loan', sub: 'New or used vehicle', value: 'auto' },{ icon: '👤', label: 'Personal Loan', sub: 'Unsecured personal credit', value: 'personal' },{ icon: '💼', label: 'Business Loan', sub: 'For your business', value: 'business' }] },
+  { id: 'creditScore', text: 'What is your credit score range?', sub: 'This is the single biggest factor in any loan decision.', type: 'options', options: [{ icon: '🏆', label: 'Excellent', sub: '750 or above', value: 800 },{ icon: '✅', label: 'Good', sub: '700 – 749', value: 725 },{ icon: '📊', label: 'Fair', sub: '650 – 699', value: 675 },{ icon: '⚠️', label: 'Poor', sub: '600 – 649', value: 625 },{ icon: '🚨', label: 'Bad', sub: 'Below 600', value: 560 },{ icon: '❓', label: "Don't know", sub: "I haven't checked", value: 640 }] },
+  { id: 'annualIncome', text: "What is your gross annual income?", sub: 'Before taxes. Include all income sources.', type: 'input', inputType: 'number', placeholder: 'e.g. 75000', hint: 'Enter your total yearly income before taxes' },
+  { id: 'monthlyDebts', text: 'What are your total monthly debt payments?', sub: 'Include all loans, credit cards, student loans, car payments.', type: 'input', inputType: 'number', placeholder: 'e.g. 800', hint: 'Monthly minimums on all existing debts' },
+  { id: 'loanAmount', text: 'How much are you looking to borrow?', sub: 'Enter the total loan amount you need.', type: 'input', inputType: 'number', placeholder: 'e.g. 350000', hint: 'The total amount you want to borrow' },
+  { id: 'employmentStatus', text: 'What is your employment situation?', sub: 'Banks heavily weight income stability when making lending decisions.', type: 'options', options: [{ icon: '💼', label: 'Employed (2+ years)', sub: 'Same employer, stable', value: 'stable' },{ icon: '📅', label: 'Employed (under 2 years)', sub: 'Newer position', value: 'newer' },{ icon: '🏢', label: 'Self-employed', sub: 'Business owner / freelancer', value: 'self' },{ icon: '🔄', label: 'Recently changed jobs', sub: 'Within last 6 months', value: 'recent' },{ icon: '📋', label: 'Contract / Part-time', sub: 'Non-permanent employment', value: 'contract' }] },
+  { id: 'downPayment', text: 'How much do you have available for a down payment?', sub: 'More down payment = lower risk for the bank = better terms for you.', type: 'options', options: [{ icon: '💰', label: '20% or more', sub: 'Avoids PMI on mortgages', value: 20 },{ icon: '✅', label: '10% – 19%', sub: 'Solid position', value: 15 },{ icon: '📊', label: '5% – 9%', sub: 'Minimum for most loans', value: 7 },{ icon: '⚠️', label: 'Less than 5%', sub: 'May limit options', value: 3 },{ icon: '❌', label: 'Nothing / N/A', sub: 'No down payment available', value: 0 }] },
+  { id: 'bankruptcyOrDefaults', text: 'Any history of bankruptcy, foreclosure, or loan defaults?', sub: 'These appear on your credit report and affect decisions significantly.', type: 'options', options: [{ icon: '✅', label: 'None', sub: 'Clean history', value: 'none' },{ icon: '📅', label: 'Over 7 years ago', sub: 'May no longer appear on report', value: 'old' },{ icon: '⚠️', label: '3 – 7 years ago', sub: 'Still visible, improving', value: 'medium' },{ icon: '🚨', label: 'Within last 3 years', sub: 'Significant impact on approval', value: 'recent' }] }
+];
+let currentQ = 0, answers = {};
+function hasAnswer(qId) { return answers[qId] !== undefined && answers[qId] !== null && answers[qId] !== ''; }
+function initProgress() {
+  document.getElementById('progressSteps').innerHTML = questions.map((q, i) => `<div class="progress-step" id="step-${i}"><div class="step-dot" id="dot-${i}">${i+1}</div><div class="step-label">${['Loan','Credit','Income','Debts','Amount','Employment','Down Pmt','History'][i]}</div></div>`).join('');
+  updateProgress();
 }
-
-function shareResult(pct, city) {
-  const text = `I just found out I earn more than ${pct}% of people in ${city}! 🎯\n\nFind out where YOU rank 👇\nhttps://financeratecalc.com/are-you-rich.html\n\n#PersonalFinance #IncomePercentile`;
-  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
-}
-
-function resetForm() {
-  document.getElementById('results').classList.remove('show');
-  document.getElementById('salary').value = '';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function copyEmbed() {
-  const code = '<iframe src="https://financeratecalc.com/are-you-rich.html" width="100%" height="600" frameborder="0"></iframe>';
-  navigator.clipboard.writeText(code).then(() => {
-    const btn = document.querySelector('.copy-btn');
-    btn.textContent = '✓ Copied!';
-    btn.style.background = 'rgba(68,221,136,0.15)';
-    btn.style.borderColor = 'rgba(68,221,136,0.3)';
-    btn.style.color = 'var(--green)';
-    setTimeout(() => {
-      btn.textContent = '📋 Copy Embed Code';
-      btn.style.background = '';
-      btn.style.borderColor = '';
-      btn.style.color = '';
-    }, 2000);
+function updateProgress() {
+  questions.forEach((_, i) => {
+    const step = document.getElementById(`step-${i}`), dot = document.getElementById(`dot-${i}`);
+    step.className = 'progress-step'; dot.className = 'step-dot';
+    if (i < currentQ) { step.classList.add('done'); dot.classList.add('done'); dot.textContent = '✓'; }
+    else if (i === currentQ) { step.classList.add('active'); dot.classList.add('active'); dot.textContent = i+1; }
+    else { dot.textContent = i+1; }
   });
 }
-
-let currentStoryText = '';
-
-function generateStory(percentile, salary, city, ageGroup) {
-  const output = document.getElementById('aiStoryOutput');
-  const loading = document.getElementById('aiStoryLoading');
-  const storyText = document.getElementById('aiStoryText');
-  const storyActions = document.getElementById('aiStoryActions');
-
-  output.style.display = 'block';
-  loading.style.display = 'block';
-  storyText.style.display = 'none';
-  storyActions.style.display = 'none';
-
-  // Simulate loading for effect
-  setTimeout(() => {
-    const story = buildStory(percentile, salary, city, ageGroup);
-    currentStoryText = story.plain;
-    loading.style.display = 'none';
-    storyText.innerHTML = story.html;
-    storyText.style.display = 'block';
-    storyActions.style.display = 'flex';
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'ai_story_generated', { event_category: 'engagement', event_label: city });
-    }
-  }, 1800);
-}
-
-function buildStory(percentile, salary, city, ageGroup) {
-  const fmtSalary = '$' + salary.toLocaleString();
-  const isTop = percentile >= 75;
-  const isMiddle = percentile >= 40 && percentile < 75;
-  const isLower = percentile < 40;
-
-  // Age context
-  const ageContexts = {
-    '18-24': { phase: 'early career', horizon: '30+ years', power: 'time is your biggest asset right now' },
-    '25-34': { phase: 'career-building', horizon: '25-30 years', power: 'compounding works hardest in this decade' },
-    '35-44': { phase: 'peak earning', horizon: '20 years', power: 'this is typically when wealth accelerates' },
-    '45-54': { phase: 'wealth consolidation', horizon: '10-15 years', power: 'focus shifts from growth to protection' },
-    '55-64': { phase: 'pre-retirement', horizon: '5-10 years', power: 'catch-up contributions are now available to you' },
-    '65+':   { phase: 'retirement', horizon: 'now', power: 'capital preservation becomes priority' }
-  };
-  const age = ageContexts[ageGroup] || ageContexts['35-44'];
-
-  // Percentile framing
-  let p1, p2, p3;
-
-  if (isTop) {
-    const aboveCount = Math.round((percentile / 100) * 258000000).toLocaleString();
-    p1 = `Earning <strong>${fmtSalary}</strong> puts you in the top <strong>${100 - percentile}%</strong> in ${city} — ahead of roughly <strong>${aboveCount} people</strong> in your area. In the ${age.phase} phase of your career, that's a meaningful position. Most people at your income level still feel financially stretched, which tells you that income alone isn't the variable — what happens to it afterward is.`;
-    p2 = `The single highest-leverage move you can make in the next 12 months: <strong>automate 20% of your take-home</strong> into index funds or a high-yield savings account before you can spend it. At your salary, that's roughly <strong>$${Math.round(salary * 0.2 / 12).toLocaleString()}/month</strong> working for you without requiring willpower. In ${city}'s cost environment, this is the difference between your income feeling generous and feeling tight in 5 years.`;
-    p3 = `You're in a strong position — but ${age.power}. The people who look back at this moment with satisfaction are the ones who treated their income as a tool, not a ceiling. What would your financial life look like if you treated the next 12 months as the year you actually locked in the foundation?`;
-  } else if (isMiddle) {
-    p1 = `At <strong>${fmtSalary}</strong> in ${city}, you're in the <strong>${percentile}th percentile</strong> — solidly middle ground, which is exactly where most people are, and where most people stay. That's not a criticism; it's an observation. The ${age.phase} years are when the gap between people who build real wealth and those who don't starts becoming visible. You're right at that inflection point.`;
-    p2 = `The most concrete thing you can do in the next 12 months: <strong>reduce your biggest fixed expense by 10%</strong>. For most people at your income level in ${city}, that's housing or a car payment. Redirecting even <strong>$${Math.round(salary * 0.08 / 12).toLocaleString()}/month</strong> into appreciating assets compounds dramatically over ${age.horizon}. It sounds small. Over 10 years, it isn't.`;
-    p3 = `${age.power.charAt(0).toUpperCase() + age.power.slice(1)}. The difference between your current percentile and the top 25% often isn't a raise — it's what happens to the money after it arrives. What's the one financial habit that, if you built it this year, would change the trajectory?`;
+function renderQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('qCounter').textContent = `QUESTION ${currentQ+1} OF ${questions.length}`;
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('qSubtext').textContent = q.sub || '';
+  document.getElementById('btnBack').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+  document.getElementById('btnNext').disabled = !hasAnswer(q.id);
+  const body = document.getElementById('qBody');
+  if (q.type === 'options') {
+    const cols = q.options.length === 3 ? 'three' : q.options.length <= 2 ? 'single' : '';
+    body.innerHTML = `<div class="options-grid ${cols}">${q.options.map((o,idx) => `<button class="option-btn ${hasAnswer(q.id)&&answers[q.id]===o.value?'selected':''}" onclick="selectOption('${q.id}',${idx},this)"><span class="option-icon">${o.icon}</span><div><div class="option-label">${o.label}</div>${o.sub?`<div class="option-sub">${o.sub}</div>`:''}</div></button>`).join('')}</div>`;
   } else {
-    p1 = `<strong>${fmtSalary}</strong> in ${city} puts you in the <strong>${percentile}th percentile</strong> right now — and I want to be honest with you about what that means, because honest is more useful than encouraging. You're in a position where every financial decision carries more weight than it would at a higher income. That's not permanent, but it requires treating it seriously.`;
-    p2 = `The most important move in the next 12 months isn't investment strategy — it's <strong>building a $${Math.round(Math.max(1000, salary * 0.05)).toLocaleString()} emergency fund</strong> before anything else. At your income level in ${city}, the absence of a buffer is the single biggest risk. Without it, every unexpected expense becomes debt, and debt at this stage compounds in the wrong direction. This one step changes your financial posture entirely.`;
-    p3 = `${age.power.charAt(0).toUpperCase() + age.power.slice(1)}. The percentile number today is just a starting point — it has almost no predictive power over where you end up. What matters is the next decision, and the one after that. What's the one thing you've been putting off that, if you did it this month, would actually move the needle?`;
+    body.innerHTML = `<div class="q-input-wrap"><input type="${q.inputType}" class="q-input" id="qInputField" placeholder="${q.placeholder}" value="${answers[q.id]!==undefined?answers[q.id]:''}" oninput="handleInput('${q.id}',this.value)" onkeydown="if(event.key==='Enter')goNext()"><div class="q-input-hint">${q.hint||''}</div></div>`;
+    setTimeout(() => document.getElementById('qInputField')?.focus(), 50);
   }
-
-  const html = `<p>${p1}</p><p>${p2}</p><p>${p3}</p>`;
-  const plain = [p1, p2, p3].map(p => p.replace(/<[^>]+>/g, '')).join(' ');
-  return { html, plain };
+  updateProgress();
 }
-
-function shareStory() {
-  const text = currentStoryText.replace(/<[^>]+>/g, '').substring(0, 200);
-  const url = 'https://financeratecalc.com/are-you-rich.html';
-  const tweet = `My personal financial story from an AI banker:\n\n"${text}..."\n\nGet yours: ${url}`;
-  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(tweet), '_blank');
+function selectOption(qId, idx, el) {
+  answers[qId] = questions.find(q=>q.id===qId).options[idx].value;
+  document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('btnNext').disabled = false;
 }
-
+function handleInput(qId, value) {
+  if (value===''||value===null) { answers[qId]=undefined; document.getElementById('btnNext').disabled=true; }
+  else { const num=parseFloat(value); if(!isNaN(num)&&num>=0){answers[qId]=num;document.getElementById('btnNext').disabled=false;}else{answers[qId]=undefined;document.getElementById('btnNext').disabled=true;} }
+}
+function goNext() {
+  if (!hasAnswer(questions[currentQ].id)) return;
+  if (currentQ < questions.length-1) { currentQ++; document.getElementById('questionCard').style.animation='none'; setTimeout(()=>{document.getElementById('questionCard').style.animation='fadeUp 0.3s ease';renderQuestion();},10); }
+  else { showAnalyzing(); }
+}
+function goBack() { if(currentQ>0){currentQ--;renderQuestion();} }
+function showAnalyzing() {
+  document.getElementById('questionCard').style.display='none';
+  document.getElementById('progressWrap').style.display='none';
+  const a=document.getElementById('analyzingScreen'); a.style.display='block'; a.classList.add('visible');
+  setTimeout(showResults, 2800);
+}
+function showResults() {
+  document.getElementById('analyzingScreen').style.display='none';
+  document.getElementById('resultsScreen').classList.add('visible');
+  calculateAndRender();
+}
+function calculateAndRender() {
+  const a=answers, income=a.annualIncome||0, monthlyIncome=income/12, monthlyDebts=a.monthlyDebts||0, loanAmount=a.loanAmount||0, creditScore=a.creditScore||640, downPct=a.downPayment!==undefined?a.downPayment:0, employment=a.employmentStatus, history=a.bankruptcyOrDefaults, loanType=a.loanType;
+  const estRate=0.07/12, estTerm=loanType==='mortgage'?360:loanType==='auto'?60:36;
+  const estPayment=loanAmount*(estRate*Math.pow(1+estRate,estTerm))/(Math.pow(1+estRate,estTerm)-1);
+  const dti=monthlyIncome>0?((monthlyDebts+estPayment)/monthlyIncome)*100:100;
+  let score=100, notes=[], actions=[], creditStatus, creditPct, dtiStatus, dtiPct, empStatus, empPct, dpStatus, dpPct;
+  if(creditScore>=750){creditStatus='green';creditPct=95;}else if(creditScore>=700){creditStatus='green';creditPct=80;}else if(creditScore>=650){creditStatus='yellow';creditPct=55;score-=15;}else if(creditScore>=600){creditStatus='red';creditPct=30;score-=30;notes.push({icon:'🚨',text:`<strong>Credit score is a major concern.</strong> Most conventional lenders require 620+.`});actions.push(`<strong>Priority 1:</strong> Pay down credit card balances below 30% utilization.`);}else{creditStatus='red';creditPct=10;score-=50;notes.push({icon:'🚨',text:`<strong>Credit score below 600 is a significant barrier.</strong> Rebuilding credit takes 6-12 months.`});}
+  if(dti<=36){dtiStatus='green';dtiPct=90;notes.push({icon:'✅',text:`<strong>DTI of ${dti.toFixed(0)}% is strong.</strong> Banks want under 43%.`});}else if(dti<=43){dtiStatus='yellow';dtiPct=60;score-=10;notes.push({icon:'⚠️',text:`<strong>DTI of ${dti.toFixed(0)}% is acceptable but tight.</strong>`});}else if(dti<=50){dtiStatus='yellow';dtiPct=35;score-=20;notes.push({icon:'⚠️',text:`<strong>DTI of ${dti.toFixed(0)}% is above the 43% threshold.</strong>`});actions.push(`<strong>Reduce DTI:</strong> Pay off your highest monthly payment debt first.`);}else{dtiStatus='red';dtiPct=10;score-=35;notes.push({icon:'🚨',text:`<strong>DTI of ${dti.toFixed(0)}% is very high.</strong> Most banks will decline.`});actions.push(`<strong>Critical:</strong> Aggressively pay down debt before applying.`);}
+  if(employment==='stable'){empStatus='green';empPct=95;notes.push({icon:'✅',text:`<strong>2+ years at same employer is ideal.</strong>`});}else if(employment==='newer'){empStatus='yellow';empPct=65;score-=8;notes.push({icon:'⚠️',text:`<strong>Under 2 years may raise questions.</strong>`});}else if(employment==='self'){empStatus='yellow';empPct=55;score-=12;notes.push({icon:'⚠️',text:`<strong>Self-employment requires 2 years of tax returns.</strong>`});actions.push(`<strong>If self-employed:</strong> Have 2 years of complete tax returns ready.`);}else if(employment==='recent'){empStatus='red';empPct=30;score-=20;notes.push({icon:'🚨',text:`<strong>Very recent job change is a red flag.</strong>`});actions.push(`<strong>Wait 6 months:</strong> Stay in current job before applying.`);}else{empStatus='yellow';empPct=45;score-=15;notes.push({icon:'⚠️',text:`<strong>Contract/part-time complicates approval.</strong>`});}
+  if(downPct>=20){dpStatus='green';dpPct=100;notes.push({icon:'✅',text:`<strong>20%+ down payment is excellent.</strong>`});}else if(downPct>=10){dpStatus='green';dpPct=70;notes.push({icon:'✅',text:`<strong>${downPct}% down is solid.</strong>`});}else if(downPct>=5){dpStatus='yellow';dpPct=45;score-=8;notes.push({icon:'⚠️',text:`<strong>${downPct}% down is minimal. You'll likely pay PMI.</strong>`});}else if(downPct>0){dpStatus='red';dpPct=20;score-=15;notes.push({icon:'⚠️',text:`<strong>Less than 5% limits your options.</strong>`});}else{dpStatus='red';dpPct=5;score-=20;notes.push({icon:'🚨',text:`<strong>No down payment is a major obstacle.</strong>`});actions.push(`<strong>Save for down payment:</strong> Even 3-5% dramatically improves options.`);}
+  if(history==='recent'){score-=40;notes.push({icon:'🚨',text:`<strong>Recent bankruptcy is the hardest obstacle.</strong>`});actions.push(`<strong>Rebuild:</strong> Get a secured credit card, pay it monthly, and wait.`);}else if(history==='medium'){score-=20;notes.push({icon:'⚠️',text:`<strong>Bankruptcy 3-7 years ago still appears on report.</strong>`});}else if(history==='old'){score-=5;notes.push({icon:'📅',text:`<strong>History over 7 years may no longer appear.</strong> Check to confirm.`});}
+  score=Math.max(0,Math.min(100,score));
+  let verdictClass,verdictLabel,verdictTitle,verdictEmoji,verdictBody;
+  if(score>=75){verdictClass='approved';verdictLabel='✓ Strong Application';verdictTitle="You're in a good position to apply.";verdictEmoji='✅';verdictBody=`Based on your profile, a bank credit analyst would likely view this as a viable application. Getting pre-qualified with 2-3 lenders before choosing is always smart.`;}
+  else if(score>=50){verdictClass='conditional';verdictLabel='⚠ Conditional Position';verdictTitle='Possible, but with significant conditions.';verdictEmoji='⚠️';verdictBody=`Your application has real strengths but also factors that will cause hesitation. Addressing the issues in your action plan before applying could make a meaningful difference.`;}
+  else{verdictClass='declined';verdictLabel='✗ High Decline Risk';verdictTitle='Most banks would decline at this stage.';verdictEmoji='🚫';verdictBody=`Based on your current profile, a credit analyst would likely recommend declining. This doesn't mean you can't get a loan — it means now is not the ideal time.`;}
+  if(actions.length===0){actions.push(`<strong>Get pre-qualified:</strong> Apply to 2-3 lenders within a 14-day window.`);actions.push(`<strong>Compare offers:</strong> Even 0.25% rate difference saves thousands over time.`);}
+  const vc=document.getElementById('verdictCard'); vc.className=`verdict-card ${verdictClass}`;
+  document.getElementById('verdictLabel').textContent=verdictLabel;
+  document.getElementById('verdictTitle').textContent=verdictTitle;
+  document.getElementById('verdictEmoji').textContent=verdictEmoji;
+  document.getElementById('verdictBody').textContent=verdictBody;
+  document.getElementById('scoreMeters').innerHTML=[{label:'Credit Score',value:creditScore>=750?'Excellent':creditScore>=700?'Good':creditScore>=650?'Fair':'Poor',pct:creditPct,status:creditStatus},{label:'Debt-to-Income',value:dti.toFixed(0)+'%',pct:Math.max(0,100-dtiPct),status:dtiStatus},{label:'Employment',value:employment==='stable'?'Strong':employment==='self'?'Self-Emp.':employment==='recent'?'Recent Change':'Variable',pct:empPct,status:empStatus},{label:'Down Payment',value:downPct+'%',pct:dpPct,status:dpStatus}].map(m=>`<div class="score-meter"><div class="meter-label">${m.label}</div><div class="meter-value">${m.value}</div><div class="meter-bar"><div class="meter-fill ${m.status}" style="width:0%" id="mf-${m.label.replace(/[\s-]/g,'')}"></div></div><div class="meter-status ${m.status}">${m.status==='green'?'✓ Strong':m.status==='yellow'?'~ Moderate':'✗ Weak'}</div></div>`).join('');
+  setTimeout(()=>{[{id:'CreditScore',pct:creditPct},{id:'DebttoIncome',pct:Math.max(0,100-dtiPct)},{id:'Employment',pct:empPct},{id:'DownPayment',pct:dpPct}].forEach(m=>{const el=document.getElementById(`mf-${m.id}`);if(el)el.style.width=m.pct+'%';});},100);
+  document.getElementById('notesList').innerHTML=notes.map(n=>`<div class="note-item"><div class="note-icon">${n.icon}</div><div class="note-text">${n.text}</div></div>`).join('');
+  document.getElementById('actionList').innerHTML=actions.map((a,i)=>`<div class="action-item"><div class="action-num">${i+1}</div><div class="action-text">${a}</div></div>`).join('');
+}
+function restart(){currentQ=0;answers={};document.getElementById('questionCard').style.display='block';document.getElementById('progressWrap').style.display='block';document.getElementById('resultsScreen').classList.remove('visible');renderQuestion();}
+initProgress();renderQuestion();
 </script>
-  <div style="background:linear-gradient(135deg,rgba(184,134,11,0.06),rgba(26,58,92,0.06));border:1px solid rgba(184,134,11,0.2);border-radius:16px;padding:24px 28px;margin:20px 0;">
-  <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
-    <div style="font-size:32px;flex-shrink:0;">💳</div>
-    <div style="flex:1;min-width:200px;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8a8070;margin-bottom:6px;">Credit Score · Repair</div>
-      <div style="font-size:16px;font-weight:700;color:#2c2a26;margin-bottom:6px;">Low Credit Score Holding You Back?</div>
-      <div style="font-size:13px;color:#8a8070;line-height:1.6;">Sky Blue Credit has helped hundreds of thousands improve their score. You only pay after they deliver results.</div>
-    </div>
-    <a href="https://skyblue.ltroute.com/click.track?CID=139993&AFID=569709" target="_blank" rel="noopener sponsored"
-       style="display:inline-flex;align-items:center;gap:8px;background:#1a3a5c;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;white-space:nowrap;">
-      📈 Check My Eligibility →
-    </a>
-  </div>
-  <div style="font-size:10px;color:rgba(0,0,0,0.25);margin-top:10px;">Sponsored. Commission may be earned. <a href="affiliate-disclosure.html" style="color:inherit;">Disclosure →</a></div>
-</div>
 </body>
 </html>
