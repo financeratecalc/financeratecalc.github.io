@@ -343,12 +343,15 @@ function selectCity(i) {
   calculate();
 }
 
-function fmt(n) {
-  const c = CITIES[activeCity];
-  const sym = c ? c.currency : '$';
-  const abs = Math.round(Math.abs(n));
-  // JPY, THB, IDR vb. büyük sayılar — virgüllü göster ama "k/M" kısaltma yapmadan
-  return sym + abs.toLocaleString();
+function updatePrefixes(symbol) {
+  document.querySelectorAll('.field-input .prefix').forEach(el => {
+    el.textContent = symbol;
+  });
+  const padMap = {'$':26,'£':26,'€':26,'¥':26,'₺':26,'Fr':34,'S$':32,'A$':32,'C$':32,'HK$':42,'AED':46,'SAR':46,'฿':26};
+  const pad = padMap[symbol] || Math.max(26, symbol.length * 10 + 16);
+  document.querySelectorAll('.field-input input:not(.no-prefix)').forEach(inp => {
+    inp.style.paddingLeft = pad + 'px';
+  });
 }
 let chartInstance=null;
 let chartData=null;
