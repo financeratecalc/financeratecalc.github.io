@@ -7,7 +7,7 @@
 <meta http-equiv="X-XSS-Protection" content="1; mode=block">
 <link rel="icon" type="image/png" href="assets/favicon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<link rel="canonical" href="https://financeratecalc.com/mortgage-crisis-map.html">
+<link rel="canonical" href="https://financeratecalc.com/mortgage-crisis-assessment.html">
   <title>Mortgage Crisis Assessment | Am I About to Lose My Home? | FinanceRateCalc</title>
   <meta name="description" content="Answer 5 quick questions to find out exactly where you stand — and what to do next. Free assessment by a licensed banking professional with 23 years of experience."/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -29,69 +29,176 @@
       --red: #8b1a1a; --red-light: #fdf0f0;
     }
     body { font-family: 'Outfit', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.7; min-height: 100vh; }
+
     nav { background: var(--ink); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; }
     .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--paper); text-decoration: none; }
     .nav-links { display: flex; gap: 0.25rem; list-style: none; flex-wrap: wrap; }
     .nav-links a { color: #c8c4bc; text-decoration: none; font-size: 0.78rem; padding: 0.35rem 0.6rem; border-radius: 3px; transition: color 0.2s; text-transform: uppercase; letter-spacing: 0.03em; }
     .nav-links a:hover { color: var(--paper); background: rgba(255,255,255,0.1); }
-    .hero { background: var(--ink); color: var(--paper); padding: 3.5rem 2rem 3rem; text-align: center; position: relative; overflow: hidden; }
-    .hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px); }
+
+    /* HERO */
+    .hero {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 3.5rem 2rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px);
+    }
     .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: #8a8a82; margin-bottom: 0.75rem; position: relative; }
     .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 4.5vw, 2.8rem); font-weight: 600; margin-bottom: 0.75rem; line-height: 1.2; position: relative; }
     .hero-sub { font-size: 0.95rem; color: #c8c4bc; font-weight: 300; max-width: 520px; margin: 0 auto; line-height: 1.7; position: relative; }
+
+    /* MAIN */
     .main-wrap { max-width: 680px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+
+    /* PROGRESS */
     .progress-wrap { margin-bottom: 2rem; }
     .progress-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
     .progress-label { font-size: 0.78rem; color: var(--ink-faint); }
     .progress-count { font-size: 0.78rem; font-weight: 600; color: var(--ink); }
     .progress-bar-bg { height: 4px; background: var(--rule); border-radius: 2px; overflow: hidden; }
     .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
-    .question-card { background: #fff; border: 1px solid var(--rule); border-radius: 10px; padding: 2rem; margin-bottom: 1.5rem; animation: fadeIn 0.3s ease; }
+
+    /* QUESTION CARD */
+    .question-card {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      animation: fadeIn 0.3s ease;
+    }
     @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
     .q-number { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.5rem; }
     .q-text { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; margin-bottom: 1.5rem; line-height: 1.3; color: var(--ink); }
+
     .options { display: flex; flex-direction: column; gap: 0.6rem; }
-    .option-btn { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1.1rem; border: 1.5px solid var(--rule); border-radius: 7px; background: var(--paper); cursor: pointer; font-family: 'Outfit', sans-serif; font-size: 0.92rem; color: var(--ink-light); text-align: left; transition: all 0.15s; width: 100%; }
+    .option-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1.1rem;
+      border: 1.5px solid var(--rule);
+      border-radius: 7px;
+      background: var(--paper);
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.92rem;
+      color: var(--ink-light);
+      text-align: left;
+      transition: all 0.15s;
+      width: 100%;
+    }
     .option-btn:hover { border-color: var(--accent); background: var(--accent-light); color: var(--ink); }
     .option-btn.selected { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 500; }
     .option-icon { font-size: 1.1rem; flex-shrink: 0; }
+
     .nav-btns { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
     .btn-back { background: none; border: 1px solid var(--rule); color: var(--ink-faint); padding: 0.65rem 1.25rem; border-radius: 5px; cursor: pointer; font-family: 'Outfit', sans-serif; font-size: 0.85rem; transition: all 0.2s; }
     .btn-back:hover { border-color: var(--ink); color: var(--ink); }
     .btn-next { background: var(--accent); color: white; border: none; padding: 0.65rem 1.5rem; border-radius: 5px; cursor: pointer; font-family: 'Outfit', sans-serif; font-size: 0.88rem; font-weight: 600; transition: background 0.2s; opacity: 0.4; pointer-events: none; }
     .btn-next.active { opacity: 1; pointer-events: all; }
     .btn-next:hover { background: #1e4220; }
+
+    /* RESULTS */
     #results { display: none; animation: fadeIn 0.4s ease; }
-    .result-header { border-radius: 10px; padding: 2.5rem; text-align: center; margin-bottom: 1.5rem; position: relative; overflow: hidden; }
+
+    .result-header {
+      border-radius: 10px;
+      padding: 2.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
     .result-header.green { background: var(--green-light); border: 2px solid #a0d0a8; }
     .result-header.yellow { background: var(--yellow-light); border: 2px solid #e0c060; }
     .result-header.red { background: var(--red-light); border: 2px solid #d09090; }
-    .traffic-light { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 0 0 8px rgba(255,255,255,0.5); }
+
+    .traffic-light {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 0 0 8px rgba(255,255,255,0.5);
+    }
     .traffic-light.green { background: #2d9e45; }
     .traffic-light.yellow { background: #e6a817; }
     .traffic-light.red { background: #c0392b; animation: redPulse 2s ease-in-out infinite; }
     @keyframes redPulse { 0%,100% { box-shadow: 0 0 0 8px rgba(192,57,43,0.2); } 50% { box-shadow: 0 0 0 16px rgba(192,57,43,0.1); } }
+
     .result-status { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem; }
     .result-status.green { color: var(--green); }
     .result-status.yellow { color: var(--yellow); }
     .result-status.red { color: var(--red); }
+
     .result-title { font-family: 'Cormorant Garamond', serif; font-size: 1.7rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--ink); }
     .result-sub { font-size: 0.9rem; color: var(--ink-light); max-width: 460px; margin: 0 auto; line-height: 1.6; }
+
+    /* ACTION STEPS */
     .steps-wrap { margin-bottom: 1.5rem; }
-    .step-item { display: flex; gap: 1rem; padding: 1.1rem 1.25rem; background: #fff; border: 1px solid var(--rule); border-radius: 7px; margin-bottom: 0.6rem; align-items: flex-start; }
-    .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: white; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .step-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1.1rem 1.25rem;
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 7px;
+      margin-bottom: 0.6rem;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
     .step-num.green { background: var(--green); }
     .step-num.yellow { background: var(--yellow); }
     .step-num.red { background: var(--red); }
     .step-text { font-size: 0.88rem; color: var(--ink-light); line-height: 1.6; }
     .step-text strong { color: var(--ink); }
-    .cta-box { border-radius: 8px; padding: 1.75rem; margin-bottom: 1.5rem; text-align: center; }
+
+    /* CTA BOX */
+    .cta-box {
+      border-radius: 8px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
     .cta-box.green { background: linear-gradient(135deg, #0f2f12, #1a4520); border: 1px solid rgba(45,158,69,0.3); }
     .cta-box.yellow { background: linear-gradient(135deg, #2a1f08, #3a2c10); border: 1px solid rgba(230,168,23,0.3); }
     .cta-box.red { background: linear-gradient(135deg, #2a0808, #3a1010); border: 1px solid rgba(192,57,43,0.3); }
+
     .cta-box h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--paper); margin-bottom: 0.4rem; }
     .cta-box p { font-size: 0.82rem; color: #9a9a92; margin-bottom: 1.25rem; line-height: 1.5; }
-    .cta-btn { display: inline-block; padding: 0.8rem 2rem; border-radius: 5px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; }
+    .cta-btn {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      border-radius: 5px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
     .cta-btn.green { background: #2d9e45; color: white; }
     .cta-btn.green:hover { background: #248a3a; }
     .cta-btn.yellow { background: #e6a817; color: white; }
@@ -99,17 +206,21 @@
     .cta-btn.red { background: #c0392b; color: white; box-shadow: 0 4px 16px rgba(192,57,43,0.3); }
     .cta-btn.red:hover { background: #a93224; }
     .cta-disclaimer { font-size: 0.68rem; color: #4a4a42; margin-top: 0.75rem; }
+
+    /* BANKER NOTE */
     .banker-note { background: var(--gold-light); border: 1px solid #d4c080; border-left: 4px solid var(--gold); border-radius: 0 6px 6px 0; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
     .banker-note-label { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; font-weight: 600; }
     .banker-note p { font-size: 0.85rem; color: var(--ink-light); margin: 0; line-height: 1.6; }
+
     .restart-btn { width: 100%; padding: 0.75rem; background: none; border: 1px solid var(--rule); border-radius: 6px; font-family: 'Outfit', sans-serif; font-size: 0.85rem; color: var(--ink-faint); cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; }
     .restart-btn:hover { border-color: var(--ink); color: var(--ink); }
+
     footer { background: var(--ink); color: #8a8a82; padding: 2rem; text-align: center; font-size: 0.8rem; margin-top: 3rem; }
     footer a { color: #c8c4bc; text-decoration: none; }
     .footer-links { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
   </style>
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://financeratecalc.com/mortgage-crisis-map.html">
+<meta property="og:url" content="https://financeratecalc.com/mortgage-crisis-assessment.html">
 <meta property="og:title" content="Mortgage Crisis Assessment | Am I About to Lose My Home? | FinanceRateCalc">
 <meta property="og:description" content="Answer 5 quick questions to find out exactly where you stand — and what to do next. Free assessment by a licensed banking professional with 23 years of experience.">
 <meta property="og:site_name" content="FinanceRateCalc">
@@ -133,6 +244,8 @@
 </div>
 
 <div class="main-wrap">
+
+  <!-- QUIZ -->
   <div id="quiz">
     <div class="progress-wrap">
       <div class="progress-top">
@@ -143,9 +256,13 @@
         <div class="progress-bar-fill" id="progressFill" style="width:20%"></div>
       </div>
     </div>
+
     <div class="question-card" id="questionCard"></div>
   </div>
+
+  <!-- RESULTS -->
   <div id="results"></div>
+
 </div>
 
 <footer>
@@ -161,14 +278,56 @@
 
 <script>
 const questions = [
-  { text: "How many mortgage payments have you missed in the last 12 months?", options: [ { icon: "✅", text: "None — I'm current on all payments", score: 0 }, { icon: "⚠️", text: "1 payment missed", score: 2 }, { icon: "🚨", text: "2 payments missed", score: 4 }, { icon: "🔴", text: "3 or more payments missed", score: 6 } ] },
-  { text: "Is your home currently worth more than what you owe on your mortgage?", options: [ { icon: "✅", text: "Yes — I have significant equity (20%+)", score: 0 }, { icon: "⚠️", text: "Yes, but barely (less than 10% equity)", score: 2 }, { icon: "🚨", text: "About the same — I'm close to break-even", score: 3 }, { icon: "🔴", text: "No — I owe more than it's worth (underwater)", score: 5 } ] },
-  { text: "What is your current employment situation?", options: [ { icon: "✅", text: "Employed full-time, income is stable", score: 0 }, { icon: "⚠️", text: "Recently changed jobs or income reduced", score: 2 }, { icon: "🚨", text: "Part-time or freelance, income is inconsistent", score: 3 }, { icon: "🔴", text: "Currently unemployed or laid off", score: 5 } ] },
-  { text: "What percentage of your monthly income goes toward debt payments?", options: [ { icon: "✅", text: "Under 30% — comfortably manageable", score: 0 }, { icon: "⚠️", text: "30–40% — tight but manageable", score: 2 }, { icon: "🚨", text: "40–50% — very stretched", score: 4 }, { icon: "🔴", text: "Over 50% — struggling to keep up", score: 6 } ] },
-  { text: "Have you received any official notices from your lender about your mortgage?", options: [ { icon: "✅", text: "No notices at all", score: 0 }, { icon: "⚠️", text: "Late payment reminders only", score: 1 }, { icon: "🚨", text: "A formal Notice of Default or demand letter", score: 5 }, { icon: "🔴", text: "Foreclosure proceedings have already started", score: 8 } ] }
+  {
+    text: "How many mortgage payments have you missed in the last 12 months?",
+    options: [
+      { icon: "✅", text: "None — I'm current on all payments", score: 0 },
+      { icon: "⚠️", text: "1 payment missed", score: 2 },
+      { icon: "🚨", text: "2 payments missed", score: 4 },
+      { icon: "🔴", text: "3 or more payments missed", score: 6 }
+    ]
+  },
+  {
+    text: "Is your home currently worth more than what you owe on your mortgage?",
+    options: [
+      { icon: "✅", text: "Yes — I have significant equity (20%+)", score: 0 },
+      { icon: "⚠️", text: "Yes, but barely (less than 10% equity)", score: 2 },
+      { icon: "🚨", text: "About the same — I'm close to break-even", score: 3 },
+      { icon: "🔴", text: "No — I owe more than it's worth (underwater)", score: 5 }
+    ]
+  },
+  {
+    text: "What is your current employment situation?",
+    options: [
+      { icon: "✅", text: "Employed full-time, income is stable", score: 0 },
+      { icon: "⚠️", text: "Recently changed jobs or income reduced", score: 2 },
+      { icon: "🚨", text: "Part-time or freelance, income is inconsistent", score: 3 },
+      { icon: "🔴", text: "Currently unemployed or laid off", score: 5 }
+    ]
+  },
+  {
+    text: "What percentage of your monthly income goes toward debt payments (mortgage + car + credit cards)?",
+    options: [
+      { icon: "✅", text: "Under 30% — comfortably manageable", score: 0 },
+      { icon: "⚠️", text: "30–40% — tight but manageable", score: 2 },
+      { icon: "🚨", text: "40–50% — very stretched", score: 4 },
+      { icon: "🔴", text: "Over 50% — struggling to keep up", score: 6 }
+    ]
+  },
+  {
+    text: "Have you received any official notices from your lender about your mortgage?",
+    options: [
+      { icon: "✅", text: "No notices at all", score: 0 },
+      { icon: "⚠️", text: "Late payment reminders only", score: 1 },
+      { icon: "🚨", text: "A formal Notice of Default or demand letter", score: 5 },
+      { icon: "🔴", text: "Foreclosure proceedings have already started", score: 8 }
+    ]
+  }
 ];
 
-let current = 0, scores = [], selected = null;
+let current = 0;
+let scores = [];
+let selected = null;
 
 function renderQuestion() {
   const q = questions[current];
@@ -176,14 +335,25 @@ function renderQuestion() {
   const pct = ((current + 1) / questions.length) * 100;
   document.getElementById('progressFill').style.width = pct + '%';
   document.getElementById('progressCount').textContent = `Question ${current + 1} of ${questions.length}`;
+
   document.getElementById('questionCard').innerHTML = `
     <div class="q-number">Question ${current + 1}</div>
     <div class="q-text">${q.text}</div>
-    <div class="options">${q.options.map((opt, i) => `<button class="option-btn" onclick="selectOption(${i}, ${opt.score}, this)"><span class="option-icon">${opt.icon}</span>${opt.text}</button>`).join('')}</div>
+    <div class="options">
+      ${q.options.map((opt, i) => `
+        <button class="option-btn" onclick="selectOption(${i}, ${opt.score}, this)">
+          <span class="option-icon">${opt.icon}</span>
+          ${opt.text}
+        </button>
+      `).join('')}
+    </div>
     <div class="nav-btns">
       ${current > 0 ? `<button class="btn-back" onclick="goBack()">← Back</button>` : `<div></div>`}
-      <button class="btn-next" id="btnNext" onclick="nextQuestion()">${current < questions.length - 1 ? 'Next →' : 'See My Results →'}</button>
-    </div>`;
+      <button class="btn-next" id="btnNext" onclick="nextQuestion()">
+        ${current < questions.length - 1 ? 'Next →' : 'See My Results →'}
+      </button>
+    </div>
+  `;
 }
 
 function selectOption(idx, score, btn) {
@@ -196,26 +366,103 @@ function selectOption(idx, score, btn) {
 function nextQuestion() {
   if (selected === null) return;
   scores[current] = selected;
-  if (current < questions.length - 1) { current++; renderQuestion(); } else { showResults(); }
+  if (current < questions.length - 1) {
+    current++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
 }
 
-function goBack() { if (current > 0) { current--; renderQuestion(); } }
+function goBack() {
+  if (current > 0) {
+    current--;
+    renderQuestion();
+  }
+}
 
 function showResults() {
   const total = scores.reduce((a, b) => a + b, 0);
   document.getElementById('quiz').style.display = 'none';
+
   let level, config;
+
   if (total <= 4) {
     level = 'green';
-    config = { emoji: '🟢', status: "🟢 Green — You're In Control", title: 'Your Home Is Not at Immediate Risk', sub: "Based on your answers, you're in a stable position. The key now is to stay that way.", steps: [{ text: '<strong>Check your mortgage rate.</strong> With rates near 6%, this may be a good time to review refinancing options.' }, { text: '<strong>Build 3–6 months of emergency savings.</strong> Your best insurance against future disruption.' }, { text: '<strong>Review your debt load.</strong> Consolidating now at a lower rate saves significantly.' }, { text: '<strong>Run your numbers.</strong> Use our Mortgage Calculator to see what a refinance would save you.' }], cta: { title: "You're stable — now optimize.", desc: "Check if you qualify for a lower rate. Takes 2 minutes.", btnText: '🔍 Check My Mortgage Rate →', btnLink: 'mortgage-calculator.html', disclaimer: '*Link to our free mortgage calculator.' }, bankerNote: "In 23 years of banking, the clients who stayed financially secure took action when things were good — not when they were bad." };
+    config = {
+      emoji: '🟢',
+      status: '🟢 Green — You\'re In Control',
+      title: 'Your Home Is Not at Immediate Risk',
+      sub: 'Based on your answers, you\'re in a stable position. The key now is to stay that way — and potentially improve your financial position before rates or circumstances change.',
+      steps: [
+        { text: '<strong>Check your mortgage rate.</strong> With rates near 6%, this may be a good time to review refinancing options — especially if you\'re above 7%.' },
+        { text: '<strong>Build 3–6 months of emergency savings.</strong> This is your best insurance against future job loss or income disruption.' },
+        { text: '<strong>Review your debt load.</strong> If credit card balances are creeping up, consolidating now at a lower rate saves you significantly.' },
+        { text: '<strong>Run your numbers.</strong> Use our Mortgage Calculator to see what a refinance would save you monthly.' }
+      ],
+      cta: {
+        title: 'You\'re stable — now optimize.',
+        desc: 'Check if you qualify for a lower rate. Takes 2 minutes and won\'t affect your credit score.',
+        btnText: '🔍 Check My Mortgage Rate →',
+        btnLink: 'https://financeratecalc.com/mortgage-calculator.html',
+        disclaimer: '*Link to our free mortgage calculator. No personal data collected.'
+      },
+      bankerNote: 'In 23 years of banking, the clients who stayed financially secure were the ones who took action when things were good — not when they were bad. You have time and options. Use them.'
+    };
   } else if (total <= 12) {
     level = 'yellow';
-    config = { emoji: '🟡', status: '🟡 Yellow — Warning Signs Present', title: 'Your Situation Needs Attention Now', sub: "You're not in immediate danger, but warning signals are present. Acting now gives you the most options.", steps: [{ text: '<strong>Call your lender today.</strong> Ask about forbearance or loan modification programs.' }, { text: '<strong>Calculate your DTI ratio.</strong> Use our Bank Approval Simulator to see how lenders view you.' }, { text: '<strong>Explore debt consolidation.</strong> Consolidating can free up $200–500/month immediately.' }, { text: '<strong>Review your budget ruthlessly.</strong> Identify every non-essential expense.' }], cta: { title: 'Free up cash flow now.', desc: 'See how much you could save monthly by consolidating your high-interest debt.', btnText: '💳 Calculate My Debt Savings →', btnLink: 'debt-consolidation-calculator.html', disclaimer: '*Link to our free debt consolidation calculator.' }, bankerNote: "Yellow is the most important zone — because most people ignore it. By the time they're in red, their options have dropped from 8 to 2." };
+    config = {
+      emoji: '🟡',
+      status: '🟡 Yellow — Warning Signs Present',
+      title: 'Your Situation Needs Attention Now',
+      sub: 'You\'re not in immediate danger of foreclosure, but some warning signals are present. Acting now — before things escalate — gives you the most options.',
+      steps: [
+        { text: '<strong>Call your lender today.</strong> Before you miss another payment, contact your servicer and ask about forbearance or loan modification programs. They prefer this to foreclosure.' },
+        { text: '<strong>Calculate your exact debt-to-income ratio.</strong> Use our Bank Approval Simulator to see how lenders view your profile right now.' },
+        { text: '<strong>Explore debt consolidation.</strong> If high-interest debt is straining your cash flow, consolidating into one lower payment can free up $200–500/month immediately.' },
+        { text: '<strong>Review your monthly budget ruthlessly.</strong> Identify every non-essential expense. In a yellow situation, cash flow is everything.' }
+      ],
+      cta: {
+        title: 'Free up cash flow now.',
+        desc: 'See how much you could save monthly by consolidating your high-interest debt into one payment.',
+        btnText: '💳 Calculate My Debt Savings →',
+        btnLink: 'https://financeratecalc.com/debt-consolidation-calculator.html',
+        disclaimer: '*Link to our free debt consolidation calculator. No personal data collected.'
+      },
+      bankerNote: 'Yellow is the most important zone — because most people ignore it. By the time they\'re in red, their options have dropped from 8 to 2. I\'ve seen people turn yellow situations around completely with one phone call to their lender. Make that call.'
+    };
   } else {
     level = 'red';
-    config = { emoji: '🔴', status: '🔴 Red — Immediate Action Required', title: 'Your Home Is at Serious Risk', sub: "Based on your answers, you are at significant risk of foreclosure. Act within the next 30 days.", steps: [{ text: '<strong>Contact your mortgage servicer immediately.</strong> Ask about forbearance, loan modification, short sale options.' }, { text: '<strong>Contact a HUD-approved housing counselor — free.</strong> Call 1-800-569-4287 or visit hud.gov.' }, { text: "<strong>Understand your state's foreclosure timeline.</strong> Most states give 90–120 days from first missed payment." }, { text: '<strong>Do NOT ignore any legal notices.</strong> Every letter is time-sensitive.' }, { text: '<strong>Consult a foreclosure attorney.</strong> Many offer free initial consultations.' }], cta: { title: '⚠️ Every day matters now.', desc: 'Understand your full financial picture and what options remain.', btnText: '🏦 Check My Approval Profile →', btnLink: 'bank-approval-simulator.html', disclaimer: '*Free tool. Not a substitute for professional legal advice.' }, bankerNote: "I've sat across the desk from families in exactly this situation. The ones who saved their homes acted fast and asked for help." };
+    config = {
+      emoji: '🔴',
+      status: '🔴 Red — Immediate Action Required',
+      title: 'Your Home Is at Serious Risk',
+      sub: 'Based on your answers, you are at significant risk of foreclosure. This is serious — but you still have options. Act within the next 30 days.',
+      steps: [
+        { text: '<strong>Contact your mortgage servicer immediately.</strong> Ask specifically about: Forbearance agreements, Loan modification (HAMP), Short sale options, Deed-in-lieu of foreclosure. Do this before missing another payment if possible.' },
+        { text: '<strong>Contact a HUD-approved housing counselor — free of charge.</strong> Call 1-800-569-4287 or visit hud.gov. These counselors negotiate with lenders on your behalf, at no cost to you.' },
+        { text: '<strong>Understand your state\'s foreclosure timeline.</strong> Most states give you 90–120 days from first missed payment before a foreclosure sale. Know your deadline.' },
+        { text: '<strong>Do NOT ignore any legal notices.</strong> Every letter from your lender or a court is time-sensitive. Missing a response deadline can eliminate your remaining options.' },
+        { text: '<strong>Consult a foreclosure attorney.</strong> Many offer free initial consultations. In some cases, a qualified attorney can delay proceedings by months.' }
+      ],
+      cta: {
+        title: '⚠️ Every day matters now.',
+        desc: 'The fastest way to understand your full financial picture — and what options remain — is to run your numbers right now.',
+        btnText: '🏦 Check My Approval Profile →',
+        btnLink: 'https://financeratecalc.com/bank-approval-simulator.html',
+        disclaimer: '*Free tool. No personal data collected. Not a substitute for professional legal advice.'
+      },
+      bankerNote: 'I\'ve sat across the desk from families in exactly this situation. The ones who saved their homes acted fast and asked for help. The ones who lost them waited, hoping the problem would resolve itself. Please — make the calls. Use the free resources. You have more options than you think right now.'
+    };
   }
-  const stepsHTML = config.steps.map((s, i) => `<div class="step-item"><div class="step-num ${level}">${i + 1}</div><div class="step-text">${s.text}</div></div>`).join('');
+
+  const stepsHTML = config.steps.map((s, i) => `
+    <div class="step-item">
+      <div class="step-num ${level}">${i + 1}</div>
+      <div class="step-text">${s.text}</div>
+    </div>
+  `).join('');
+
   document.getElementById('results').style.display = 'block';
   document.getElementById('results').innerHTML = `
     <div class="result-header ${level}">
@@ -224,24 +471,41 @@ function showResults() {
       <div class="result-title">${config.title}</div>
       <p class="result-sub">${config.sub}</p>
     </div>
-    <p style="font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1.25rem;">Your Action Plan</p>
+
+    <p style="font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1.25rem;display:flex;align-items:center;gap:0.75rem;">
+      Your Action Plan
+      <span style="flex:1;height:1px;background:var(--rule);display:inline-block;"></span>
+    </p>
+
     <div class="steps-wrap">${stepsHTML}</div>
+
     <div class="cta-box ${level}">
       <h3>${config.cta.title}</h3>
       <p>${config.cta.desc}</p>
       <a href="${config.cta.btnLink}" class="cta-btn ${level}">${config.cta.btnText}</a>
       <div class="cta-disclaimer">${config.cta.disclaimer}</div>
     </div>
+
     <div class="banker-note">
-      <div class="banker-note-label">📋 A Note from a Senior Banker & Founder of FinanceRateCalc</div>
+      <div class="banker-note-label">📋 A Note from Ziya Y. — Senior Banker & Founder of FinanceRateCalc</div>
       <p>${config.bankerNote}</p>
     </div>
-    <button class="restart-btn" onclick="restart()">↩ Retake the Assessment</button>`;
+
+    <button class="restart-btn" onclick="restart()">↩ Retake the Assessment</button>
+  `;
+
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  gtag('event', 'crisis_assessment_complete', {
+    result_level: level,
+    total_score: total
+  });
 }
 
 function restart() {
-  current = 0; scores = []; selected = null;
+  current = 0;
+  scores = [];
+  selected = null;
   document.getElementById('quiz').style.display = 'block';
   document.getElementById('results').style.display = 'none';
   document.getElementById('results').innerHTML = '';
@@ -250,30 +514,6 @@ function restart() {
 }
 
 renderQuestion();
-
-// Sky Blue Popup
-setTimeout(function() {
-  document.getElementById('skybluePopup').style.display = 'flex';
-}, 12000);
-
-function closeSkyblue() {
-  document.getElementById('skybluePopup').style.display = 'none';
-}
 </script>
-
-<!-- Sky Blue Credit Popup -->
-<div id="skybluePopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:linear-gradient(135deg,#1a1a18,#2a2a20);border:1px solid rgba(184,134,11,0.4);border-radius:16px;max-width:420px;width:100%;padding:36px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
-    <button onclick="closeSkyblue()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:22px;cursor:pointer;line-height:1;">×</button>
-    <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#b8860b;margin-bottom:12px;">Banker's Tip</div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#f8f6f1;line-height:1.3;margin-bottom:12px;">A Bad Credit Score Can <span style="color:#b8860b;">Block Your Options</span> When You Need Them Most</div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:20px;">In a crisis, your credit score determines what help is available to you. Sky Blue can clean up your report fast — so you have more doors open when it matters.</div>
-    <a href="https://financeratecalc.com/go/credit-repair" target="_blank" rel="sponsored" style="display:block;text-align:center;background:#b8860b;color:#fff;padding:14px 24px;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:10px;" onmouseover="this.style.background='#d4a820'" onmouseout="this.style.background='#b8860b'">
-      Fix My Credit with Sky Blue →
-    </a>
-    <div style="font-size:11px;color:rgba(255,255,255,0.18);text-align:center;">Sponsored · We may earn a commission at no cost to you</div>
-  </div>
-</div>
-
 </body>
 </html>
