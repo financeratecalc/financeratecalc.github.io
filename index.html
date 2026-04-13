@@ -66,19 +66,29 @@
   .nav-dropdown-btn svg { width: 10px; height: 10px; transition: transform 0.2s; }
   .nav-dropdown.open .nav-dropdown-btn svg { transform: rotate(180deg); }
   .nav-dropdown-menu {
-    display: none;
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
     background: #1e1e1c;
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 8px;
-    padding: 0.5rem;
+    padding: 0;
     min-width: 220px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     z-index: 200;
+    transition: opacity 0.15s ease;
   }
-  .nav-dropdown.open .nav-dropdown-menu { display: block; animation: dropDown 0.15s ease; }
+  .nav-dropdown.open .nav-dropdown-menu {
+    visibility: visible;
+    opacity: 1;
+    height: auto;
+    padding: 0.5rem;
+    animation: dropDown 0.15s ease;
+  }
   @keyframes dropDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
   .nav-dropdown-menu a {
     display: flex; align-items: center; gap: 0.6rem;
@@ -95,19 +105,21 @@
   .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
   .hamburger span { width: 24px; height: 2px; background: rgba(255,255,255,0.7); border-radius: 2px; transition: all 0.3s; display: block; }
   .mobile-menu {
-    display: none;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
     position: fixed;
     top: 64px; left: 0; right: 0;
     background: #1a1a18;
     border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding: 16px 20px;
+    padding: 0 20px;
     z-index: 99;
     flex-direction: column;
     gap: 2px;
     max-height: calc(100vh - 64px);
     overflow-y: auto;
   }
-  .mobile-menu.open { display: flex; animation: dropDown 0.2s ease; }
+  .mobile-menu.open { visibility: visible; height: auto; padding: 16px 20px; display: flex; }
   .mobile-menu a {
     color: rgba(255,255,255,0.7);
     text-decoration: none;
@@ -232,6 +244,7 @@
 <noscript>
 <style>.nav-dropdown-menu{display:block!important;position:static!important;}</style>
 </noscript>
+<meta property="og:image" content="https://financeratecalc.com/assets/og-image.png">
 </head>
 <body>
 
