@@ -253,6 +253,188 @@ footer { background:var(--navy); padding:32px 60px; text-align:center; }
   </div>
 
   <!-- TABLE -->
+
+  <!-- US MAP -->
+  <div class="section-title" style="margin-top:0;">Salary Required by State</div>
+  <p class="section-sub">Hover over any state to see the required salary. Red = six figures required.</p>
+
+  <div id="map-container" style="background:var(--white);border:1px solid var(--border);padding:24px;margin-bottom:32px;">
+    <div id="map-tooltip" style="display:none;position:fixed;background:#0a1f5c;color:#fff;padding:10px 16px;border-radius:6px;font-size:13px;pointer-events:none;z-index:1000;box-shadow:0 4px 20px rgba(0,0,0,0.3);"></div>
+    <svg id="us-map" viewBox="0 0 960 600" style="width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg">
+    </svg>
+    <div style="display:flex;gap:24px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);">
+        <div style="width:16px;height:16px;background:#c0392b;border-radius:2px;"></div> Six figures required ($100K+)
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);">
+        <div style="width:16px;height:16px;background:#e67e22;border-radius:2px;"></div> $70K–$100K
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);">
+        <div style="width:16px;height:16px;background:#f1c40f;border-radius:2px;"></div> $50K–$70K
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);">
+        <div style="width:16px;height:16px;background:#27ae60;border-radius:2px;"></div> Under $50K
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // State salary data
+  const stateSalaries = {
+    AL:39600,AK:67320,AZ:71280,AR:36630,CA:154320,CO:106920,CT:75240,DE:67320,
+    FL:75240,GA:57420,HI:162230,ID:76230,IL:51480,IN:43560,IA:41580,KS:41580,
+    KY:39600,LA:37620,ME:69300,MD:77220,MA:114840,MI:45540,MN:63360,MS:34650,
+    MO:43560,MT:75240,NE:45540,NV:75240,NH:81180,NJ:102960,NM:55440,NY:95040,
+    NC:59400,ND:47520,OH:41580,OK:37620,OR:85140,PA:49500,RI:83160,SC:55440,
+    SD:49500,TN:57420,TX:61380,UT:83160,VT:69300,VA:73260,WA:110880,WV:28710,
+    WI:49500,WY:63360
+  };
+
+  const stateNames = {
+    AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',
+    CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',
+    HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',
+    KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',
+    MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',
+    NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',
+    NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',
+    OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',
+    SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',
+    VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming'
+  };
+
+  function getColor(salary) {
+    if (salary >= 100000) return '#c0392b';
+    if (salary >= 70000) return '#e67e22';
+    if (salary >= 50000) return '#f1c40f';
+    return '#27ae60';
+  }
+
+  function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+
+  // US State paths (simplified D3 mercator paths)
+  const statePaths = {
+    AL: "M 555 353 L 555 403 L 568 403 L 570 360 L 567 350 Z",
+    AK: "M 140 460 L 180 455 L 195 470 L 185 485 L 155 490 L 135 475 Z",
+    AZ: "M 230 310 L 230 390 L 295 390 L 310 370 L 295 305 Z",
+    AR: "M 510 325 L 510 365 L 560 365 L 565 325 L 540 320 Z",
+    CA: "M 145 240 L 155 330 L 210 355 L 225 310 L 205 235 L 175 210 Z",
+    CO: "M 300 270 L 300 320 L 390 320 L 390 270 Z",
+    CT: "M 695 215 L 695 230 L 715 230 L 715 215 Z",
+    DE: "M 680 240 L 680 265 L 690 265 L 692 240 Z",
+    FL: "M 555 403 L 545 450 L 590 475 L 615 450 L 605 415 L 575 405 Z",
+    GA: "M 575 355 L 568 403 L 610 408 L 618 375 L 610 350 Z",
+    HI: "M 280 510 L 290 505 L 295 515 L 285 520 Z",
+    ID: "M 215 155 L 210 230 L 250 230 L 265 200 L 260 155 Z",
+    IL: "M 530 255 L 525 315 L 555 318 L 560 258 Z",
+    IN: "M 555 255 L 552 305 L 580 308 L 582 258 Z",
+    IA: "M 460 235 L 458 270 L 525 270 L 527 238 Z",
+    KS: "M 390 295 L 390 330 L 475 330 L 475 295 Z",
+    KY: "M 560 300 L 555 325 L 625 325 L 630 305 L 610 298 Z",
+    LA: "M 500 380 L 498 415 L 540 420 L 555 403 L 545 378 Z",
+    ME: "M 720 145 L 715 185 L 740 188 L 748 155 Z",
+    MD: "M 655 268 L 652 285 L 690 285 L 692 268 Z",
+    MA: "M 700 200 L 698 215 L 730 218 L 735 203 Z",
+    MI: "M 560 195 L 558 240 L 595 242 L 600 198 Z",
+    MN: "M 450 155 L 448 235 L 505 238 L 508 158 Z",
+    MS: "M 530 355 L 528 405 L 558 408 L 562 358 Z",
+    MO: "M 475 290 L 472 335 L 545 338 L 548 293 Z",
+    MT: "M 230 145 L 228 205 L 348 208 L 350 148 Z",
+    NE: "M 390 255 L 388 295 L 475 298 L 477 258 Z",
+    NV: "M 195 230 L 193 315 L 240 325 L 258 275 L 248 232 Z",
+    NH: "M 700 170 L 698 200 L 715 202 L 717 172 Z",
+    NJ: "M 672 232 L 670 258 L 688 260 L 690 235 Z",
+    NM: "M 295 310 L 293 390 L 370 393 L 372 313 Z",
+    NY: "M 635 185 L 630 230 L 695 233 L 700 192 Z",
+    NC: "M 613 315 L 608 345 L 688 350 L 693 322 Z",
+    ND: "M 350 150 L 348 200 L 450 203 L 452 153 Z",
+    OH: "M 590 240 L 585 290 L 635 293 L 638 243 Z",
+    OK: "M 390 330 L 388 368 L 510 372 L 512 333 Z",
+    OR: "M 155 175 L 153 240 L 215 243 L 218 178 Z",
+    PA: "M 625 228 L 620 262 L 672 265 L 675 232 Z",
+    RI: "M 718 210 L 716 225 L 728 227 L 730 212 Z",
+    SC: "M 613 335 L 608 368 L 650 375 L 658 342 Z",
+    SD: "M 350 200 L 348 250 L 450 253 L 452 203 Z",
+    TN: "M 555 318 L 550 345 L 648 350 L 652 322 Z",
+    TX: "M 370 330 L 368 450 L 500 455 L 515 415 L 512 333 Z",
+    UT: "M 248 245 L 245 315 L 300 318 L 303 248 Z",
+    VT: "M 690 168 L 688 200 L 703 202 L 705 170 Z",
+    VA: "M 628 278 L 623 310 L 690 315 L 695 282 Z",
+    WA: "M 155 135 L 153 178 L 218 180 L 220 138 Z",
+    WV: "M 625 262 L 620 295 L 660 298 L 665 265 Z",
+    WI: "M 500 175 L 497 240 L 545 243 L 548 178 Z",
+    WY: "M 300 210 L 298 270 L 395 273 L 397 213 Z"
+  };
+
+  const svg = document.getElementById('us-map');
+  const tooltip = document.getElementById('map-tooltip');
+
+  Object.entries(statePaths).forEach(([abbr, path]) => {
+    const salary = stateSalaries[abbr];
+    if (!salary) return;
+
+    const el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    el.setAttribute('d', path);
+    el.setAttribute('fill', getColor(salary));
+    el.setAttribute('stroke', '#ffffff');
+    el.setAttribute('stroke-width', '1.5');
+    el.style.cursor = 'pointer';
+    el.style.transition = 'opacity 0.15s';
+
+    // State label
+    const bbox_match = path.match(/M ([\d.]+) ([\d.]+)/);
+    if (bbox_match) {
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      const nums = path.match(/([\d.]+) ([\d.]+)/g);
+      let sumX = 0, sumY = 0, count = 0;
+      nums.forEach(n => {
+        const [x, y] = n.split(' ').map(Number);
+        sumX += x; sumY += y; count++;
+      });
+      text.setAttribute('x', sumX/count);
+      text.setAttribute('y', sumY/count + 4);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('font-size', '8');
+      text.setAttribute('font-family', 'Geist, sans-serif');
+      text.setAttribute('fill', salary >= 50000 ? '#fff' : '#0a1f5c');
+      text.setAttribute('pointer-events', 'none');
+      text.textContent = abbr;
+      svg.appendChild(text);
+    }
+
+    el.addEventListener('mouseenter', (e) => {
+      el.style.opacity = '0.8';
+      tooltip.style.display = 'block';
+      tooltip.innerHTML = \`<strong>\${stateNames[abbr]}</strong><br>Required salary: <strong>\${fmt(salary)}</strong><br>Median home: see table below\`;
+    });
+
+    el.addEventListener('mousemove', (e) => {
+      tooltip.style.left = (e.clientX + 12) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+    });
+
+    el.addEventListener('mouseleave', () => {
+      el.style.opacity = '1';
+      tooltip.style.display = 'none';
+    });
+
+    el.addEventListener('click', () => {
+      const sel = document.getElementById('stateSelect');
+      if (sel) {
+        for (let opt of sel.options) {
+          if (stateNames[abbr] && opt.text === stateNames[abbr]) {
+            sel.value = opt.value;
+            document.getElementById('salary').scrollIntoView({behavior:'smooth'});
+            break;
+          }
+        }
+      }
+    });
+
+    svg.appendChild(el);
+  });
+  </script>
+
   <div class="section-title">All 50 States Ranked</div>
   <p class="section-sub">Based on median home prices, 20% down payment, 7.1% rate, and 28% housing ratio. Sorted by required salary.</p>
 
