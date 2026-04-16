@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Time Machine — What If You Bought in 2015? | FinanceRateCalc</title>
+<meta name="description" content="See exactly what would have happened if you bought a home in 2015, 2018, 2020, or 2022. Real historical prices and rates. How much did you gain or miss?">
+<link rel="canonical" href="https://financeratecalc.com/mortgage-time-machine.html">
+<meta property="og:title" content="Mortgage Time Machine — What If You Bought Back Then?">
+<meta property="og:description" content="Real historical home prices and mortgage rates. See what buying in any year would have cost — and what it's worth today.">
+<meta property="og:url" content="https://financeratecalc.com/mortgage-time-machine.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mortgage Time Machine — What If You Bought Back Then?">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0a0e1a;
+  --navy: #0a1f5c;
+  --gold: #c8a44a;
+  --red: #c0392b;
+  --green: #27ae60;
+  --white: #ffffff;
+  --cream: #f8f6f0;
+  --border: #dde0ee;
+  --muted: #6677aa;
+  --light: #f0f4ff;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Geist',sans-serif; background:var(--cream); color:var(--ink); }
+
+header { background:var(--navy); padding:0 60px; height:64px; display:flex; align-items:center; justify-content:space-between; }
+.logo { font-family:'Fraunces',serif; font-size:20px; font-weight:900; color:var(--white); text-decoration:none; }
+.logo em { font-style:italic; color:var(--gold); }
+nav a { color:rgba(255,255,255,0.6); text-decoration:none; font-size:13px; margin-left:20px; }
+
+.hero { background:var(--navy); padding:60px 60px 50px; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; right:-80px; top:-80px; width:400px; height:400px; border-radius:50%; background:radial-gradient(circle, rgba(200,164,74,0.1) 0%, transparent 70%); }
+.hero-inner { max-width:900px; margin:0 auto; }
+.tag { font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+h1 { font-family:'Fraunces',serif; font-size:clamp(36px,5vw,64px); font-weight:900; color:var(--white); line-height:1.05; letter-spacing:-0.02em; margin-bottom:16px; }
+h1 em { font-style:italic; color:var(--gold); }
+.hero-desc { font-size:16px; color:rgba(255,255,255,0.6); max-width:560px; font-weight:300; }
+
+.main { max-width:900px; margin:0 auto; padding:48px 60px 80px; }
+
+/* MACHINE */
+.machine { background:var(--white); border:1px solid var(--border); border-top:5px solid var(--navy); padding:36px; margin-bottom:40px; }
+.machine-title { font-family:'Fraunces',serif; font-size:24px; font-weight:700; color:var(--navy); margin-bottom:24px; }
+
+.input-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:24px; }
+.input-group label { display:block; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; font-weight:500; }
+.input-group select, .input-group input {
+  width:100%; padding:11px 14px; border:1px solid var(--border);
+  font-family:'Geist',sans-serif; font-size:15px; background:var(--cream); color:var(--ink);
+  border-radius:4px;
+}
+.input-group select:focus, .input-group input:focus { outline:none; border-color:var(--navy); }
+
+.calc-btn { width:100%; padding:15px; background:var(--navy); color:var(--white); font-family:'Geist',sans-serif; font-size:15px; font-weight:600; border:none; cursor:pointer; letter-spacing:0.05em; border-radius:4px; transition:background 0.2s; }
+.calc-btn:hover { background:#0d2470; }
+
+/* RESULT */
+.result { display:none; margin-top:28px; }
+
+.result-header { text-align:center; padding:28px; background:var(--navy); color:var(--white); margin-bottom:20px; border-radius:4px; }
+.result-year { font-size:12px; letter-spacing:0.15em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:6px; }
+.result-title { font-family:'Fraunces',serif; font-size:28px; font-weight:900; color:var(--gold); }
+
+.cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+.card { background:var(--light); border:1px solid var(--border); padding:20px 24px; border-radius:4px; }
+.card.then { border-left:4px solid var(--muted); }
+.card.now { border-left:4px solid var(--green); }
+.card.gain { border-left:4px solid var(--gold); background:#fffbeb; }
+.card.pain { border-left:4px solid var(--red); background:#fff0ee; }
+.card-label { font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.card-value { font-family:'Fraunces',serif; font-size:32px; font-weight:900; color:var(--navy); line-height:1; }
+.card-value.green { color:var(--green); }
+.card-value.red { color:var(--red); }
+.card-value.gold { color:#b8860b; }
+.card-sub { font-size:13px; color:var(--muted); margin-top:6px; }
+
+.breakdown { background:var(--white); border:1px solid var(--border); padding:20px 24px; border-radius:4px; margin-bottom:20px; }
+.breakdown-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:14px; }
+.breakdown-row:last-child { border-bottom:none; font-weight:600; }
+.breakdown-label { color:var(--muted); }
+.breakdown-val { font-weight:500; }
+
+.share-card { background:var(--navy); color:var(--white); padding:24px 28px; border-radius:4px; text-align:center; }
+.share-text { font-family:'Fraunces',serif; font-size:20px; color:var(--gold); margin-bottom:12px; line-height:1.4; }
+.share-sub { font-size:13px; color:rgba(255,255,255,0.6); margin-bottom:16px; }
+.share-btn { display:inline-block; padding:10px 28px; background:var(--gold); color:var(--navy); font-weight:700; font-size:14px; text-decoration:none; border-radius:4px; cursor:pointer; border:none; font-family:'Geist',sans-serif; }
+
+/* TIMELINE */
+.timeline { margin-bottom:40px; }
+.timeline-title { font-family:'Fraunces',serif; font-size:24px; font-weight:700; color:var(--navy); margin-bottom:20px; }
+.tl-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+.tl-item { background:var(--white); border:1px solid var(--border); padding:16px 12px; text-align:center; cursor:pointer; transition:all 0.2s; border-radius:4px; }
+.tl-item:hover { border-color:var(--navy); transform:translateY(-2px); }
+.tl-item.active { border-color:var(--gold); background:#fffbeb; }
+.tl-year { font-family:'Fraunces',serif; font-size:22px; font-weight:900; color:var(--navy); }
+.tl-rate { font-size:12px; color:var(--muted); margin-top:2px; }
+.tl-price { font-size:13px; font-weight:600; color:var(--green); margin-top:4px; }
+
+footer { background:var(--navy); padding:28px 60px; text-align:center; }
+.footer-logo { font-family:'Fraunces',serif; font-size:18px; color:var(--white); font-weight:700; }
+.footer-logo em { color:var(--gold); font-style:italic; }
+.footer-copy { font-size:12px; color:rgba(255,255,255,0.3); margin-top:6px; }
+
+@media(max-width:768px) {
+  header { padding:0 20px; }
+  .hero { padding:40px 20px; }
+  .main { padding:30px 20px 60px; }
+  .input-grid { grid-template-columns:1fr; }
+  .cards { grid-template-columns:1fr; }
+  .tl-grid { grid-template-columns:repeat(3,1fr); }
+  footer { padding:24px 20px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <nav>
+    <a href="mortgage-calculator.html">Mortgage</a>
+    <a href="financial-twin.html">Buy vs Rent</a>
+    <a href="salary-by-state.html">By State</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="tag">⏳ Historical Data · Real Prices & Rates</div>
+    <h1>Mortgage<br><em>Time Machine</em></h1>
+    <p class="hero-desc">What if you bought in 2015? 2019? Right before rates spiked? See the real numbers — what it cost then, what it's worth now, and exactly how much you gained or missed.</p>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- TIMELINE -->
+  <div class="timeline">
+    <div class="timeline-title">Pick a Year</div>
+    <div class="tl-grid">
+      <div class="tl-item" onclick="setYear(2015,3.85,289000,this)">
+        <div class="tl-year">2015</div>
+        <div class="tl-rate">Rate: 3.85%</div>
+        <div class="tl-price">Median: $289K</div>
+      </div>
+      <div class="tl-item" onclick="setYear(2017,4.03,323000,this)">
+        <div class="tl-year">2017</div>
+        <div class="tl-rate">Rate: 4.03%</div>
+        <div class="tl-price">Median: $323K</div>
+      </div>
+      <div class="tl-item" onclick="setYear(2019,3.94,313000,this)">
+        <div class="tl-year">2019</div>
+        <div class="tl-rate">Rate: 3.94%</div>
+        <div class="tl-price">Median: $313K</div>
+      </div>
+      <div class="tl-item" onclick="setYear(2021,2.96,369800,this)">
+        <div class="tl-year">2021</div>
+        <div class="tl-rate">Rate: 2.96%</div>
+        <div class="tl-price">Median: $370K</div>
+      </div>
+      <div class="tl-item" onclick="setYear(2022,5.34,454900,this)">
+        <div class="tl-year">2022</div>
+        <div class="tl-rate">Rate: 5.34%</div>
+        <div class="tl-price">Median: $455K</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MACHINE -->
+  <div class="machine">
+    <div class="machine-title">Calculate Your Scenario</div>
+    <div class="input-grid">
+      <div class="input-group">
+        <label>Year You Would Have Bought</label>
+        <select id="buyYear">
+          <option value="2015,3.85,289000">2015 — 3.85% · $289K median</option>
+          <option value="2016,3.65,304000">2016 — 3.65% · $304K median</option>
+          <option value="2017,4.03,323000">2017 — 4.03% · $323K median</option>
+          <option value="2018,4.54,331000">2018 — 4.54% · $331K median</option>
+          <option value="2019,3.94,313000">2019 — 3.94% · $313K median</option>
+          <option value="2020,3.11,336900">2020 — 3.11% · $337K median</option>
+          <option value="2021,2.96,369800">2021 — 2.96% · $370K median</option>
+          <option value="2022,5.34,454900">2022 — 5.34% · $455K median</option>
+          <option value="2023,6.81,431000">2023 — 6.81% · $431K median</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Home Price Then ($)</label>
+        <input type="number" id="thenPrice" value="289000" placeholder="289000">
+      </div>
+      <div class="input-group">
+        <label>Down Payment (%)</label>
+        <select id="downPct">
+          <option value="20">20%</option>
+          <option value="10">10%</option>
+          <option value="5">5%</option>
+          <option value="3">3%</option>
+        </select>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Show Me What Would Have Happened →</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <!-- CTA -->
+  <div style="background:var(--navy);padding:32px;text-align:center;border-radius:4px;">
+    <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--white);margin-bottom:8px;">Ready to run today's numbers?</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:20px;">See exactly what buying right now would cost you.</div>
+    <a href="mortgage-calculator.html" style="display:inline-block;padding:13px 32px;background:var(--gold);color:var(--navy);text-decoration:none;font-weight:700;font-size:14px;border-radius:4px;">Open Mortgage Calculator →</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-logo">Finance<em>Rate</em>Calc</div>
+  <div class="footer-copy">© 2026 FinanceRateCalc · Historical data sourced from NAR, Freddie Mac · Educational use only</div>
+</footer>
+
+<script>
+// Current median home price (2026)
+const CURRENT_PRICE = 420000;
+const CURRENT_RATE = 7.1;
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+function fmtPct(n) { return n.toFixed(1) + '%'; }
+
+function setYear(year, rate, price, el) {
+  document.querySelectorAll('.tl-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  const sel = document.getElementById('buyYear');
+  for (let opt of sel.options) {
+    if (opt.value.startsWith(year + ',')) { sel.value = opt.value; break; }
+  }
+  document.getElementById('thenPrice').value = price;
+}
+
+function monthlyPayment(principal, annualRate, years) {
+  const r = annualRate / 100 / 12;
+  const n = years * 12;
+  return principal * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+}
+
+function calculate() {
+  const sel = document.getElementById('buyYear').value.split(',');
+  const year = parseInt(sel[0]);
+  const thenRate = parseFloat(sel[1]);
+  const thenPrice = parseFloat(document.getElementById('thenPrice').value) || parseFloat(sel[2]);
+  const downPct = parseFloat(document.getElementById('downPct').value) / 100;
+
+  const yearsOwned = 2026 - year;
+  const downPayment = thenPrice * downPct;
+  const thenLoan = thenPrice * (1 - downPct);
+  const thenMonthly = monthlyPayment(thenLoan, thenRate, 30);
+
+  // Appreciation: avg 4.5%/yr nationally
+  const appreciation = 0.045;
+  const todayValue = thenPrice * Math.pow(1 + appreciation, yearsOwned);
+
+  // Equity built: down payment + principal paid
+  const totalPaid = thenMonthly * yearsOwned * 12;
+  const r = thenRate/100/12;
+  const n = 30*12;
+  const remainingMonths = n - yearsOwned*12;
+  const remainingBalance = thenLoan * Math.pow(1+r, yearsOwned*12) - thenMonthly * (Math.pow(1+r, yearsOwned*12)-1)/r;
+  const equityBuilt = todayValue - Math.max(0, remainingBalance);
+
+  // What today's buyer pays
+  const todayLoan = CURRENT_PRICE * (1 - downPct);
+  const todayMonthly = monthlyPayment(todayLoan, CURRENT_RATE, 30);
+  const monthlySavings = todayMonthly - thenMonthly;
+  const totalInterestThen = thenMonthly * 360 - thenLoan;
+  const totalInterestNow = todayMonthly * 360 - todayLoan;
+
+  const gainVsRenting = equityBuilt - downPayment;
+
+  const r2 = document.getElementById('result');
+  r2.style.display = 'block';
+
+  const gainColor = gainVsRenting >= 0 ? 'green' : 'red';
+  const savingsColor = monthlySavings >= 0 ? 'green' : 'red';
+
+  r2.innerHTML = `
+    <div class="result-header">
+      <div class="result-year">If you bought in ${year}</div>
+      <div class="result-title">Here's your full picture 👇</div>
+    </div>
+
+    <div class="cards">
+      <div class="card then">
+        <div class="card-label">Your monthly payment then</div>
+        <div class="card-value">${fmt(thenMonthly)}<span style="font-size:16px;font-weight:400;">/mo</span></div>
+        <div class="card-sub">${year} · ${fmtPct(thenRate)} rate · ${fmt(thenLoan)} loan</div>
+      </div>
+      <div class="card now">
+        <div class="card-label">Today's buyer pays</div>
+        <div class="card-value" style="color:var(--red)">${fmt(todayMonthly)}<span style="font-size:16px;font-weight:400;">/mo</span></div>
+        <div class="card-sub">2026 · ${fmtPct(CURRENT_RATE)} rate · ${fmt(todayLoan)} loan</div>
+      </div>
+      <div class="card gain">
+        <div class="card-label">Your home's value today</div>
+        <div class="card-value gold">${fmt(Math.round(todayValue))}</div>
+        <div class="card-sub">Was ${fmt(thenPrice)} · +${fmtPct((todayValue/thenPrice-1)*100)} appreciation</div>
+      </div>
+      <div class="card" style="border-left:4px solid ${gainVsRenting >= 0 ? 'var(--green)' : 'var(--red)'}">
+        <div class="card-label">Total equity built</div>
+        <div class="card-value ${gainColor}">${fmt(Math.round(equityBuilt))}</div>
+        <div class="card-sub">Net gain vs renting: ${gainVsRenting >= 0 ? '+' : ''}${fmt(Math.round(gainVsRenting))}</div>
+      </div>
+    </div>
+
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="breakdown-label">Down payment you put in</span><span class="breakdown-val">${fmt(downPayment)}</span></div>
+      <div class="breakdown-row"><span class="breakdown-label">Total mortgage payments made</span><span class="breakdown-val">${fmt(Math.round(totalPaid))}</span></div>
+      <div class="breakdown-row"><span class="breakdown-label">Remaining balance today</span><span class="breakdown-val">${fmt(Math.round(Math.max(0,remainingBalance)))}</span></div>
+      <div class="breakdown-row"><span class="breakdown-label">Home value today (est.)</span><span class="breakdown-val" style="color:var(--green)">${fmt(Math.round(todayValue))}</span></div>
+      <div class="breakdown-row"><span class="breakdown-label">Monthly savings vs buying today</span><span class="breakdown-val" style="color:${monthlySavings>=0?'var(--green)':'var(--red)'}">${monthlySavings>=0?'+':''}${fmt(Math.round(monthlySavings))}/mo</span></div>
+      <div class="breakdown-row"><span class="breakdown-label">Interest savings vs buying today (30yr)</span><span class="breakdown-val" style="color:var(--green)">+${fmt(Math.round(totalInterestNow-totalInterestThen))}</span></div>
+    </div>
+
+    <div class="share-card">
+      <div class="share-text">
+        "If I bought in ${year}, my home would be worth ${fmt(Math.round(todayValue))} today.<br>
+        I'd be paying ${fmt(Math.round(thenMonthly))}/mo instead of ${fmt(Math.round(todayMonthly))}/mo."
+      </div>
+      <div class="share-sub">Share this with someone still on the fence about buying</div>
+      <button class="share-btn" onclick="copyShare(${year}, ${Math.round(todayValue)}, ${Math.round(thenMonthly)}, ${Math.round(todayMonthly)})">📋 Copy & Share</button>
+    </div>
+  `;
+  r2.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function copyShare(year, value, then, now) {
+  const text = `If I bought in ${year}, my home would be worth $${value.toLocaleString()} today. I'd be paying $${then.toLocaleString()}/mo instead of $${now.toLocaleString()}/mo. The cost of waiting: $${(now-then).toLocaleString()}/mo more — every month.\n\nCalculate yours: financeratecalc.com/mortgage-time-machine.html`;
+  navigator.clipboard.writeText(text).then(() => alert('Copied! Paste it anywhere 🚀'));
+}
+
+// Pre-fill on year click
+document.getElementById('buyYear').addEventListener('change', function() {
+  const parts = this.value.split(',');
+  document.getElementById('thenPrice').value = parts[2];
+});
+</script>
+</body>
+</html>
