@@ -231,6 +231,15 @@
   .tool-card:nth-child(7) { animation-delay: 0.6s; }
   .tool-card:nth-child(8) { animation-delay: 0.7s; }
   .tool-card:nth-child(9) { animation-delay: 0.8s; }
+
+  @keyframes flipCoin {
+    0%   { transform: rotateY(0deg); }
+    40%  { transform: rotateY(0deg); }
+    50%  { transform: rotateY(90deg); }
+    60%  { transform: rotateY(180deg); }
+    90%  { transform: rotateY(180deg); }
+    100% { transform: rotateY(360deg); }
+  }
 </style>
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://financeratecalc.com/">
@@ -315,7 +324,15 @@
   <span class="featured-banner-badge">🆕 New</span>
   <span class="featured-banner-text"><strong>11 states now require $100K+</strong> to buy a home. <a href="salary-by-state.html" style="color:#f0c040;font-weight:600;">See all 50 states →</a></span>
   <span style="color:rgba(255,255,255,0.2);font-size:18px;">|</span>
-  <span class="featured-banner-text">620 vs 740 score = <strong>$47,000 difference.</strong> <a href="credit-repair.html" style="color:#ff9b9b;font-weight:600;">Fix my credit →</a></span>
+  <span class="featured-banner-text" style="display:flex;align-items:center;gap:10px;">
+    <span style="display:inline-block;width:40px;height:40px;perspective:200px;cursor:pointer;" title="Your credit score matters">
+      <span id="score-coin" style="display:block;width:40px;height:40px;position:relative;transform-style:preserve-3d;animation:flipCoin 3s infinite;border-radius:50%;">
+        <span style="position:absolute;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#e74c3c,#c0392b);display:flex;align-items:center;justify-content:center;backface-visibility:hidden;font-size:11px;font-weight:800;color:#fff;letter-spacing:-0.5px;">620</span>
+        <span style="position:absolute;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#27ae60,#1e8449);display:flex;align-items:center;justify-content:center;backface-visibility:hidden;transform:rotateY(180deg);font-size:11px;font-weight:800;color:#fff;letter-spacing:-0.5px;">740</span>
+      </span>
+    </span>
+    <span>Score matters: <strong>$47,000 difference</strong> over 30 years. <a href="credit-repair.html" style="color:#ff9b9b;font-weight:600;">Fix it →</a></span>
+  </span>
 </div>
 
 <div style="background:#1c1c2e;padding:9px 60px;text-align:center;font-size:11.5px;color:rgba(255,255,255,0.38);border-bottom:1px solid rgba(255,255,255,0.06);">
@@ -678,6 +695,37 @@
     const b = document.getElementById('hamburger');
     if (!m.contains(e.target) && !b.contains(e.target)) m.classList.remove('open');
   });
+</script>
+
+<script>
+// Animated counter
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  if (!target || el.dataset.animated) return;
+  el.dataset.animated = '1';
+  const duration = 1800;
+  const start = performance.now();
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const val = Math.round(target * ease);
+    el.textContent = val >= 1000 ? (val/1000).toFixed(1).replace('.0','') + 'K' : val;
+    if (progress < 1) requestAnimationFrame(update);
+    else el.textContent = target >= 1000 ? (target/1000).toFixed(1).replace('.0','') + 'K' : target;
+  }
+  requestAnimationFrame(update);
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('[data-target]').forEach(animateCounter);
+    }
+  });
+}, {threshold: 0.3});
+
+document.querySelectorAll('.hero-stats').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
