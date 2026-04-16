@@ -317,7 +317,7 @@
   <span class="featured-banner-text"><strong>11 states now require $100K+</strong> to buy a home. <a href="salary-by-state.html" style="color:#f0c040;font-weight:600;">See all 50 states →</a></span>
   <span style="color:rgba(255,255,255,0.2);font-size:18px;">|</span>
   <span class="featured-banner-text" style="display:flex;align-items:center;gap:10px;">
-    <span id="score-badge" style="display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:#e74c3c;font-size:12px;font-weight:800;color:#fff;transition:all 0.4s;flex-shrink:0;">620</span>
+    <span id="score-badge" style="display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:#e74c3c;font-size:12px;font-weight:800;color:#fff;transition:transform 0.3s ease,background 0.3s ease;flex-shrink:0;">620</span>
     <span>Score matters: <strong>$47,000 difference</strong> over 30 years. <a href="credit-repair.html" style="color:#ff9b9b;font-weight:600;">Fix it →</a></span>
   </span>
 </div>
@@ -715,25 +715,22 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.hero-stats').forEach(el => observer.observe(el));
 </script>
 
+
+
 <script>
-// Score badge flip animation
 (function() {
   const badge = document.getElementById('score-badge');
   if (!badge) return;
-  const states = [
-    {score:'620', bg:'#e74c3c', scale:'1'},
-    {score:'640', bg:'#e67e22', scale:'1.05'},
-    {score:'680', bg:'#f39c12', scale:'1.1'},
-    {score:'720', bg:'#27ae60', scale:'1.15'},
-    {score:'740', bg:'#1e8449', scale:'1.2'},
-  ];
-  let i = 0;
+  let show620 = true;
   setInterval(() => {
-    i = (i + 1) % states.length;
-    badge.style.background = states[i].bg;
-    badge.style.transform = 'scale(' + states[i].scale + ')';
-    badge.textContent = states[i].score;
-  }, 800);
+    badge.style.transform = 'scale(0)';
+    setTimeout(() => {
+      show620 = !show620;
+      badge.textContent = show620 ? '620' : '740';
+      badge.style.background = show620 ? '#e74c3c' : '#27ae60';
+      badge.style.transform = 'scale(1)';
+    }, 300);
+  }, 2000);
 })();
 </script>
 </body>
