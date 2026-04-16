@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salary Needed to Buy a Home in Every State (2026) | FinanceRateCalc</title>
+<meta name="description" content="See exactly what salary you need to afford a home in all 50 states. Based on current median home prices and today's mortgage rates. Free calculator included.">
+<link rel="canonical" href="https://financeratecalc.com/salary-by-state.html">
+<meta property="og:title" content="Salary Needed to Buy a Home in Every State (2026)">
+<meta property="og:description" content="11 states now require a six-figure salary to afford a home. See your state's number and what you can actually afford.">
+<meta property="og:url" content="https://financeratecalc.com/salary-by-state.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Salary Needed to Buy a Home in Every State (2026)">
+<meta name="twitter:description" content="11 states now require a six-figure salary to afford a home. See your state's number.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0a0e1a;
+  --navy: #0a1f5c;
+  --red: #c0392b;
+  --gold: #c8a44a;
+  --white: #ffffff;
+  --cream: #f8f6f0;
+  --border: #dde0ee;
+  --muted: #6677aa;
+  --light: #f0f4ff;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Geist',sans-serif; background:var(--cream); color:var(--ink); line-height:1.6; }
+
+header { background:var(--navy); padding:0 60px; height:64px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+.logo { font-family:'Fraunces',serif; font-size:20px; font-weight:900; color:var(--white); text-decoration:none; }
+.logo em { font-style:italic; color:var(--gold); }
+nav a { color:rgba(255,255,255,0.6); text-decoration:none; font-size:13px; margin-left:20px; }
+nav a:hover { color:var(--gold); }
+
+.hero { background:var(--navy); padding:60px 60px 50px; border-bottom:4px solid var(--red); }
+.hero-inner { max-width:900px; margin:0 auto; }
+.tag { font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; font-weight:500; }
+h1 { font-family:'Fraunces',serif; font-size:clamp(32px,5vw,56px); font-weight:900; color:var(--white); line-height:1.1; letter-spacing:-0.02em; margin-bottom:16px; }
+h1 em { font-style:italic; color:var(--gold); }
+.hero-desc { font-size:16px; color:rgba(255,255,255,0.6); max-width:600px; font-weight:300; }
+
+.stats-bar { background:var(--white); border-bottom:1px solid var(--border); }
+.stats-inner { max-width:900px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr); }
+.stat { padding:24px 20px; text-align:center; border-right:1px solid var(--border); }
+.stat:last-child { border-right:none; }
+.stat-num { font-family:'Fraunces',serif; font-size:32px; font-weight:900; color:var(--navy); display:block; }
+.stat-num.red { color:var(--red); }
+.stat-num.gold { color:var(--gold); }
+.stat-label { font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
+
+.main { max-width:900px; margin:0 auto; padding:40px 60px 80px; }
+
+.calculator-box { background:var(--white); border:1px solid var(--border); border-top:4px solid var(--navy); padding:32px; margin-bottom:40px; }
+.calc-title { font-family:'Fraunces',serif; font-size:22px; font-weight:700; color:var(--navy); margin-bottom:20px; }
+.calc-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+.input-group label { display:block; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.input-group input, .input-group select { width:100%; padding:10px 14px; border:1px solid var(--border); font-family:'Geist',sans-serif; font-size:15px; background:var(--cream); color:var(--ink); }
+.calc-btn { width:100%; padding:14px; background:var(--navy); color:var(--white); font-family:'Geist',sans-serif; font-size:15px; font-weight:600; border:none; cursor:pointer; letter-spacing:0.05em; }
+.calc-btn:hover { background:#0d2470; }
+.calc-result { display:none; margin-top:20px; background:var(--light); padding:20px 24px; border-left:4px solid var(--navy); }
+.result-salary { font-family:'Fraunces',serif; font-size:40px; font-weight:900; color:var(--navy); }
+.result-label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px; }
+.result-breakdown { margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:13px; }
+.rb-item { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border); }
+.rb-label { color:var(--muted); }
+.rb-val { font-weight:500; }
+
+.section-title { font-family:'Fraunces',serif; font-size:28px; font-weight:700; color:var(--navy); margin-bottom:8px; }
+.section-sub { font-size:14px; color:var(--muted); margin-bottom:24px; }
+
+.filter-row { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+.filter-btn { padding:7px 16px; font-size:13px; font-family:'Geist',sans-serif; border:1px solid var(--border); background:var(--white); color:var(--muted); cursor:pointer; transition:all 0.15s; }
+.filter-btn.active, .filter-btn:hover { background:var(--navy); color:var(--white); border-color:var(--navy); }
+
+.search-box { width:100%; padding:10px 16px; border:1px solid var(--border); font-family:'Geist',sans-serif; font-size:14px; margin-bottom:20px; background:var(--white); }
+
+table { width:100%; border-collapse:collapse; background:var(--white); }
+thead { background:var(--navy); }
+thead th { padding:12px 16px; text-align:left; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.7); font-weight:500; cursor:pointer; white-space:nowrap; }
+thead th:hover { color:var(--gold); }
+tbody tr { border-bottom:1px solid var(--border); transition:background 0.1s; }
+tbody tr:hover { background:var(--light); }
+td { padding:12px 16px; font-size:14px; }
+td:first-child { font-weight:500; }
+.rank { color:var(--muted); font-size:12px; }
+.salary-cell { font-family:'Fraunces',serif; font-weight:700; font-size:16px; }
+.six-fig { color:var(--red); }
+.affordable { color:#27ae60; }
+.badge { display:inline-block; font-size:10px; padding:2px 8px; letter-spacing:0.08em; text-transform:uppercase; font-weight:500; }
+.badge-hard { background:#fff0ee; color:var(--red); border:1px solid #ffcccc; }
+.badge-ok { background:#f0fff4; color:#27ae60; border:1px solid #c6f6d5; }
+.badge-mid { background:#fffbeb; color:#b7791f; border:1px solid #fbd38d; }
+
+.insight-box { background:var(--navy); color:var(--white); padding:32px 36px; margin:40px 0; }
+.insight-box h3 { font-family:'Fraunces',serif; font-size:22px; font-weight:700; margin-bottom:16px; color:var(--gold); }
+.insight-list { list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.insight-list li { font-size:14px; color:rgba(255,255,255,0.75); padding-left:18px; position:relative; line-height:1.6; }
+.insight-list li::before { content:'→'; position:absolute; left:0; color:var(--gold); }
+
+.note { font-size:12px; color:var(--muted); margin-top:16px; line-height:1.7; padding:16px; background:var(--white); border:1px solid var(--border); }
+
+footer { background:var(--navy); padding:32px 60px; text-align:center; }
+.footer-logo { font-family:'Fraunces',serif; font-size:18px; color:var(--white); font-weight:700; margin-bottom:8px; }
+.footer-logo em { color:var(--gold); font-style:italic; }
+.footer-copy { font-size:12px; color:rgba(255,255,255,0.3); }
+
+@media(max-width:768px) {
+  header { padding:0 20px; }
+  .hero { padding:40px 20px; }
+  .stats-inner { grid-template-columns:1fr 1fr; }
+  .main { padding:30px 20px 60px; }
+  .calc-grid { grid-template-columns:1fr; }
+  .insight-list { grid-template-columns:1fr; }
+  table { font-size:13px; }
+  td,thead th { padding:10px 12px; }
+  footer { padding:24px 20px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <nav>
+    <a href="mortgage-calculator.html">Mortgage</a>
+    <a href="financial-twin.html">Buy vs Rent</a>
+    <a href="are-you-house-poor.html">House Poor?</a>
+    <a href="credit-repair.html">Credit</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="tag">2026 Data · All 50 States</div>
+    <h1>What Salary Do You Need<br>to Buy a Home in <em>Your State?</em></h1>
+    <p class="hero-desc">11 states now require a six-figure income just to afford a median-priced home with 20% down. See every state — and calculate your real number.</p>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat">
+      <span class="stat-num red">11</span>
+      <span class="stat-label">Six-Figure States</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">$162K</span>
+      <span class="stat-label">Highest (Hawaii)</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num gold">$35K</span>
+      <span class="stat-label">Lowest (W. Virginia)</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">$74K</span>
+      <span class="stat-label">US Median Income</span>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- CALCULATOR -->
+  <div class="calculator-box">
+    <div class="calc-title">Calculate Your Real Number</div>
+    <div class="calc-grid">
+      <div class="input-group">
+        <label>Your Annual Salary</label>
+        <input type="number" id="salary" placeholder="75000" value="">
+      </div>
+      <div class="input-group">
+        <label>Select Your State</label>
+        <select id="stateSelect">
+          <option value="">— Choose a state —</option>
+          <option value="HI" data-price="820000">Hawaii</option>
+          <option value="CA" data-price="780000">California</option>
+          <option value="MA" data-price="580000">Massachusetts</option>
+          <option value="WA" data-price="560000">Washington</option>
+          <option value="NJ" data-price="520000">New Jersey</option>
+          <option value="CO" data-price="540000">Colorado</option>
+          <option value="NY" data-price="480000">New York</option>
+          <option value="OR" data-price="430000">Oregon</option>
+          <option value="UT" data-price="420000">Utah</option>
+          <option value="NH" data-price="410000">New Hampshire</option>
+          <option value="ID" data-price="385000">Idaho</option>
+          <option value="MT" data-price="380000">Montana</option>
+          <option value="AZ" data-price="360000">Arizona</option>
+          <option value="NV" data-price="380000">Nevada</option>
+          <option value="RI" data-price="420000">Rhode Island</option>
+          <option value="FL" data-price="380000">Florida</option>
+          <option value="TX" data-price="310000">Texas</option>
+          <option value="MN" data-price="320000">Minnesota</option>
+          <option value="VA" data-price="370000">Virginia</option>
+          <option value="MD" data-price="390000">Maryland</option>
+          <option value="VT" data-price="350000">Vermont</option>
+          <option value="CT" data-price="380000">Connecticut</option>
+          <option value="DE" data-price="340000">Delaware</option>
+          <option value="NC" data-price="300000">North Carolina</option>
+          <option value="GA" data-price="290000">Georgia</option>
+          <option value="SC" data-price="280000">South Carolina</option>
+          <option value="TN" data-price="290000">Tennessee</option>
+          <option value="WY" data-price="320000">Wyoming</option>
+          <option value="ME" data-price="350000">Maine</option>
+          <option value="AK" data-price="340000">Alaska</option>
+          <option value="NM" data-price="280000">New Mexico</option>
+          <option value="PA" data-price="250000">Pennsylvania</option>
+          <option value="MI" data-price="230000">Michigan</option>
+          <option value="IL" data-price="260000">Illinois</option>
+          <option value="WI" data-price="250000">Wisconsin</option>
+          <option value="IN" data-price="220000">Indiana</option>
+          <option value="MO" data-price="220000">Missouri</option>
+          <option value="KS" data-price="210000">Kansas</option>
+          <option value="NE" data-price="230000">Nebraska</option>
+          <option value="ND" data-price="240000">North Dakota</option>
+          <option value="SD" data-price="250000">South Dakota</option>
+          <option value="IA" data-price="210000">Iowa</option>
+          <option value="OH" data-price="210000">Ohio</option>
+          <option value="KY" data-price="200000">Kentucky</option>
+          <option value="AL" data-price="200000">Alabama</option>
+          <option value="AR" data-price="185000">Arkansas</option>
+          <option value="LA" data-price="190000">Louisiana</option>
+          <option value="MS" data-price="175000">Mississippi</option>
+          <option value="OK" data-price="190000">Oklahoma</option>
+          <option value="WV" data-price="145000">West Virginia</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Down Payment</label>
+        <select id="downPct">
+          <option value="20">20% down</option>
+          <option value="10">10% down</option>
+          <option value="5">5% down</option>
+          <option value="3">3% down (FHA)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Interest Rate (%)</label>
+        <input type="number" id="rate" value="7.1" step="0.1">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate My Number →</button>
+    <div class="calc-result" id="calcResult">
+      <div class="result-label">Minimum Salary Required</div>
+      <div class="result-salary" id="reqSalary">$0</div>
+      <div id="comparison" style="margin-top:8px;font-size:14px;"></div>
+      <div class="result-breakdown" id="breakdown"></div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="section-title">All 50 States Ranked</div>
+  <p class="section-sub">Based on median home prices, 20% down payment, 7.1% rate, and 28% housing ratio. Sorted by required salary.</p>
+
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="filterTable('all',this)">All States</button>
+    <button class="filter-btn" onclick="filterTable('six',this)">Six-Figure Required</button>
+    <button class="filter-btn" onclick="filterTable('affordable',this)">Under $60K</button>
+    <button class="filter-btn" onclick="filterTable('mid',this)">$60K–$100K</button>
+  </div>
+  <input type="text" class="search-box" placeholder="Search state..." oninput="searchTable(this.value)">
+
+  <table id="stateTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">#</th>
+        <th onclick="sortTable(1)">State ↕</th>
+        <th onclick="sortTable(2)">Median Home Price ↕</th>
+        <th onclick="sortTable(3)">Monthly Payment ↕</th>
+        <th onclick="sortTable(4)">Salary Required ↕</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <div class="note">
+    <strong>Methodology:</strong> Based on 20% down payment, 7.1% 30-year fixed rate, and the 28% gross income housing rule. Monthly payment includes principal & interest only. Property taxes, HOA, insurance, and PMI are not included — add $500–$900/mo for a more realistic all-in number. Median home prices sourced from Zillow/NAR 2025–2026 data.
+  </div>
+
+  <!-- INSIGHTS -->
+  <div class="insight-box">
+    <h3>What This Data Really Means</h3>
+    <ul class="insight-list">
+      <li>The US median household income is $74K — in 11 states, this isn't enough to buy the median home</li>
+      <li>With 10% down instead of 20%, the required salary jumps ~12% across the board</li>
+      <li>Remote work migration has pushed Idaho, Montana, and Nevada into six-figure territory</li>
+      <li>The gap between Hawaii (#1, $162K) and West Virginia (#50, $35K) is $127,000 in required salary</li>
+      <li>28% is the bank's rule — your real comfortable number is closer to 25% to leave breathing room</li>
+      <li>Every 1% rate increase adds roughly $120-160/mo on a $300K loan — and $15-20K in required salary</li>
+    </ul>
+  </div>
+
+  <!-- CTA -->
+  <div style="text-align:center;padding:40px 0 20px;">
+    <p style="font-size:15px;color:var(--muted);margin-bottom:16px;">See your exact monthly payment at any price, rate, and down payment</p>
+    <a href="mortgage-calculator.html" style="display:inline-block;padding:14px 36px;background:var(--navy);color:var(--white);text-decoration:none;font-weight:600;font-size:15px;letter-spacing:0.05em;">Open Mortgage Calculator →</a>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-logo">Finance<em>Rate</em>Calc</div>
+  <div class="footer-copy">© 2026 FinanceRateCalc · Free · No Sign-Up · Educational Use Only</div>
+</footer>
+
+<script>
+const states = [
+  {rank:1, name:"Hawaii", price:820000, salary:162230},
+  {rank:2, name:"California", price:780000, salary:154320},
+  {rank:3, name:"Massachusetts", price:580000, salary:114840},
+  {rank:4, name:"Washington", price:560000, salary:110880},
+  {rank:5, name:"New Jersey", price:520000, salary:102960},
+  {rank:6, name:"Colorado", price:540000, salary:106920},
+  {rank:7, name:"New York", price:480000, salary:95040},
+  {rank:8, name:"Oregon", price:430000, salary:85140},
+  {rank:9, name:"Utah", price:420000, salary:83160},
+  {rank:10, name:"New Hampshire", price:410000, salary:81180},
+  {rank:11, name:"Idaho", price:385000, salary:76230},
+  {rank:12, name:"Montana", price:380000, salary:75240},
+  {rank:13, name:"Nevada", price:380000, salary:75240},
+  {rank:14, name:"Maryland", price:390000, salary:77220},
+  {rank:15, name:"Connecticut", price:380000, salary:75240},
+  {rank:16, name:"Rhode Island", price:420000, salary:83160},
+  {rank:17, name:"Florida", price:380000, salary:75240},
+  {rank:18, name:"Virginia", price:370000, salary:73260},
+  {rank:19, name:"Vermont", price:350000, salary:69300},
+  {rank:20, name:"Maine", price:350000, salary:69300},
+  {rank:21, name:"Arizona", price:360000, salary:71280},
+  {rank:22, name:"Delaware", price:340000, salary:67320},
+  {rank:23, name:"Alaska", price:340000, salary:67320},
+  {rank:24, name:"Wyoming", price:320000, salary:63360},
+  {rank:25, name:"Minnesota", price:320000, salary:63360},
+  {rank:26, name:"Texas", price:310000, salary:61380},
+  {rank:27, name:"North Carolina", price:300000, salary:59400},
+  {rank:28, name:"Georgia", price:290000, salary:57420},
+  {rank:29, name:"Tennessee", price:290000, salary:57420},
+  {rank:30, name:"South Carolina", price:280000, salary:55440},
+  {rank:31, name:"New Mexico", price:280000, salary:55440},
+  {rank:32, name:"Illinois", price:260000, salary:51480},
+  {rank:33, name:"Pennsylvania", price:250000, salary:49500},
+  {rank:34, name:"Wisconsin", price:250000, salary:49500},
+  {rank:35, name:"South Dakota", price:250000, salary:49500},
+  {rank:36, name:"North Dakota", price:240000, salary:47520},
+  {rank:37, name:"Nebraska", price:230000, salary:45540},
+  {rank:38, name:"Michigan", price:230000, salary:45540},
+  {rank:39, name:"Indiana", price:220000, salary:43560},
+  {rank:40, name:"Missouri", price:220000, salary:43560},
+  {rank:41, name:"Kansas", price:210000, salary:41580},
+  {rank:42, name:"Iowa", price:210000, salary:41580},
+  {rank:43, name:"Ohio", price:210000, salary:41580},
+  {rank:44, name:"Oklahoma", price:190000, salary:37620},
+  {rank:45, name:"Kentucky", price:200000, salary:39600},
+  {rank:46, name:"Alabama", price:200000, salary:39600},
+  {rank:47, name:"Louisiana", price:190000, salary:37620},
+  {rank:48, name:"Arkansas", price:185000, salary:36630},
+  {rank:49, name:"Mississippi", price:175000, salary:34650},
+  {rank:50, name:"West Virginia", price:145000, salary:28710},
+];
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+
+function renderTable(data) {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  data.forEach(s => {
+    const loan = s.price * 0.8;
+    const r = 7.1/100/12;
+    const n = 360;
+    const pmt = Math.round(loan * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1));
+    const isSix = s.salary >= 100000;
+    const isAffordable = s.salary < 60000;
+    const badge = isSix
+      ? '<span class="badge badge-hard">6-Figure Required</span>'
+      : isAffordable
+        ? '<span class="badge badge-ok">Affordable</span>'
+        : '<span class="badge badge-mid">Moderate</span>';
+    const salaryClass = isSix ? 'salary-cell six-fig' : isAffordable ? 'salary-cell affordable' : 'salary-cell';
+    tbody.innerHTML += `<tr data-salary="${s.salary}" data-name="${s.name.toLowerCase()}">
+      <td class="rank">${s.rank}</td>
+      <td>${s.name}</td>
+      <td>${fmt(s.price)}</td>
+      <td>${fmt(pmt)}/mo</td>
+      <td class="${salaryClass}">${fmt(s.salary)}</td>
+      <td>${badge}</td>
+    </tr>`;
+  });
+}
+
+renderTable(states);
+
+function filterTable(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  let filtered = states;
+  if (type === 'six') filtered = states.filter(s => s.salary >= 100000);
+  else if (type === 'affordable') filtered = states.filter(s => s.salary < 60000);
+  else if (type === 'mid') filtered = states.filter(s => s.salary >= 60000 && s.salary < 100000);
+  renderTable(filtered);
+}
+
+function searchTable(val) {
+  const rows = document.querySelectorAll('#tableBody tr');
+  rows.forEach(row => {
+    row.style.display = row.dataset.name.includes(val.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function calculate() {
+  const salary = parseFloat(document.getElementById('salary').value) || 0;
+  const sel = document.getElementById('stateSelect');
+  const price = parseFloat(sel.selectedOptions[0]?.dataset.price) || 0;
+  const down = parseFloat(document.getElementById('downPct').value) / 100;
+  const rate = parseFloat(document.getElementById('rate').value) / 100 / 12;
+  const n = 360;
+
+  if (!price) { alert('Please select a state'); return; }
+
+  const loan = price * (1 - down);
+  const pmt = Math.round(loan * rate * Math.pow(1+rate,n) / (Math.pow(1+rate,n)-1));
+  const reqSalary = Math.round((pmt / 0.28) * 12);
+  const annualPmt = pmt * 12;
+
+  const result = document.getElementById('calcResult');
+  result.style.display = 'block';
+  document.getElementById('reqSalary').textContent = fmt(reqSalary);
+
+  const comp = document.getElementById('comparison');
+  if (salary > 0) {
+    const diff = salary - reqSalary;
+    if (diff >= 0) {
+      comp.innerHTML = `<span style="color:#27ae60">✓ Your salary of ${fmt(salary)} qualifies — you have ${fmt(diff)} above the minimum.</span>`;
+    } else {
+      comp.innerHTML = `<span style="color:var(--red)">✗ You need ${fmt(Math.abs(diff))} more annually to qualify comfortably.</span>`;
+    }
+  } else {
+    comp.innerHTML = '';
+  }
+
+  document.getElementById('breakdown').innerHTML = `
+    <div class="rb-item"><span class="rb-label">Home Price</span><span class="rb-val">${fmt(price)}</span></div>
+    <div class="rb-item"><span class="rb-label">Down Payment (${document.getElementById('downPct').value}%)</span><span class="rb-val">${fmt(price*down)}</span></div>
+    <div class="rb-item"><span class="rb-label">Loan Amount</span><span class="rb-val">${fmt(loan)}</span></div>
+    <div class="rb-item"><span class="rb-label">Monthly P&I</span><span class="rb-val">${fmt(pmt)}</span></div>
+    <div class="rb-item"><span class="rb-label">Annual Housing Cost</span><span class="rb-val">${fmt(annualPmt)}</span></div>
+    <div class="rb-item"><span class="rb-label">Required Salary (28% rule)</span><span class="rb-val" style="color:var(--navy);font-weight:700">${fmt(reqSalary)}</span></div>
+  `;
+}
+</script>
+</body>
+</html>
