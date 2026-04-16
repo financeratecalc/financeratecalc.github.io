@@ -234,7 +234,7 @@ footer { background:var(--navy); padding:28px 60px; text-align:center; }
 const CURRENT_PRICE = 420000;
 const CURRENT_RATE = 7.1;
 
-function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
 function fmtPct(n) { return n.toFixed(1) + '%'; }
 
 function setYear(year, rate, price, el) {
@@ -343,7 +343,7 @@ function calculate() {
 }
 
 function copyShare(year, value, then, now) {
-  const text = `If I bought in ${year}, my home would be worth $${value.toLocaleString()} today. I'd be paying $${then.toLocaleString()}/mo instead of $${now.toLocaleString()}/mo. The cost of waiting: $${(now-then).toLocaleString()}/mo more — every month.\n\nCalculate yours: financeratecalc.com/mortgage-time-machine.html`;
+  const text = `If I bought in ${year}, my home would be worth $${value.toLocaleString('en-US')} today. I'd be paying $${then.toLocaleString('en-US')}/mo instead of $${now.toLocaleString('en-US')}/mo. The cost of waiting: $${(now-then).toLocaleString('en-US')}/mo more — every month.\n\nCalculate yours: financeratecalc.com/mortgage-time-machine.html`;
   navigator.clipboard.writeText(text).then(() => alert('Copied! Paste it anywhere 🚀'));
 }
 
