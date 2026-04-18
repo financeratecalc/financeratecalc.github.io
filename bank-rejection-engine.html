@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Did My Mortgage Get Denied? Bank Rejection Reverse Engine | FinanceRateCalc</title>
+<meta name="description" content="Find out EXACTLY why a bank would reject your mortgage application — before you apply. Built by a licensed banker with 23 years experience. Get your personalized action plan.">
+<link rel="canonical" href="https://financeratecalc.com/bank-rejection-engine.html">
+<meta property="og:title" content="Why Did My Mortgage Get Denied? — Reverse Engine by a Licensed Banker">
+<meta property="og:description" content="Banks never tell you the real reason. A 23-year banker reveals it — and shows exactly how to fix it.">
+<meta property="og:url" content="https://financeratecalc.com/bank-rejection-engine.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#0a0e1a; --navy:#0a1f5c; --gold:#c8a44a; --red:#c0392b;
+  --green:#27ae60; --yellow:#f39c12; --white:#fff; --cream:#f8f6f0; 
+  --border:#dde0ee; --muted:#6677aa; --light:#f0f4ff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6;}
+
+header{background:var(--navy);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+nav a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;margin-left:20px;}
+
+.hero{background:var(--navy);padding:60px 60px 50px;border-bottom:4px solid var(--red);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;right:-100px;top:-100px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(192,57,43,0.15) 0%,transparent 70%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.tag{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--red);margin-bottom:12px;font-weight:500;}
+h1{font-family:'Fraunces',serif;font-size:clamp(36px,5vw,64px);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-0.02em;margin-bottom:16px;}
+h1 em{font-style:italic;color:var(--red);}
+.hero-desc{font-size:16px;color:rgba(255,255,255,0.6);max-width:600px;font-weight:300;line-height:1.7;}
+
+.trust-row{display:flex;gap:24px;margin-top:28px;flex-wrap:wrap;}
+.trust-item{font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:6px;}
+
+.main{max-width:900px;margin:0 auto;padding:40px 60px 80px;}
+
+/* ENGINE */
+.engine{background:#fff;border:1px solid var(--border);border-top:5px solid var(--navy);padding:36px;margin-bottom:32px;border-radius:4px;}
+.engine-title{font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+.engine-sub{font-size:14px;color:var(--muted);margin-bottom:28px;}
+
+.form-section{margin-bottom:24px;}
+.form-section h3{font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-weight:600;padding-bottom:8px;border-bottom:1px solid var(--border);}
+
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.input-group label{display:block;font-size:12px;color:var(--ink);margin-bottom:6px;font-weight:500;}
+.input-group input,.input-group select{width:100%;padding:11px 14px;border:1px solid var(--border);font-family:'Geist',sans-serif;font-size:14px;background:var(--cream);color:var(--ink);border-radius:4px;}
+.input-group input:focus,.input-group select:focus{outline:none;border-color:var(--navy);}
+.input-help{font-size:11px;color:var(--muted);margin-top:4px;}
+
+.calc-btn{width:100%;padding:16px;background:var(--navy);color:#fff;font-family:'Geist',sans-serif;font-size:15px;font-weight:600;border:none;cursor:pointer;letter-spacing:0.05em;border-radius:4px;margin-top:8px;}
+.calc-btn:hover{background:#0d2470;}
+
+/* RESULTS */
+.result{display:none;margin-top:32px;}
+
+.verdict-box{padding:28px 32px;border-radius:4px;margin-bottom:24px;text-align:center;}
+.verdict-box.approved{background:#f0f8f0;border:2px solid var(--green);}
+.verdict-box.conditional{background:#fff8e1;border:2px solid var(--yellow);}
+.verdict-box.denied{background:#fff0ee;border:2px solid var(--red);}
+.verdict-label{font-size:12px;letter-spacing:0.15em;text-transform:uppercase;font-weight:600;margin-bottom:8px;}
+.verdict-label.approved{color:var(--green);}
+.verdict-label.conditional{color:#b7791f;}
+.verdict-label.denied{color:var(--red);}
+.verdict-title{font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:var(--navy);margin-bottom:8px;}
+.verdict-desc{font-size:15px;color:var(--muted);}
+
+.bank-results{display:grid;gap:12px;margin-bottom:24px;}
+.bank-card{background:#fff;border:1px solid var(--border);padding:20px 24px;border-radius:4px;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;}
+.bank-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.bank-icon.approved{background:#f0f8f0;color:var(--green);}
+.bank-icon.conditional{background:#fff8e1;color:#b7791f;}
+.bank-icon.denied{background:#fff0ee;color:var(--red);}
+.bank-info{min-width:0;}
+.bank-name{font-weight:600;font-size:15px;color:var(--ink);margin-bottom:2px;}
+.bank-reason{font-size:13px;color:var(--muted);line-height:1.5;}
+.bank-status{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;padding:6px 12px;border-radius:20px;white-space:nowrap;}
+.bank-status.approved{background:#f0f8f0;color:var(--green);}
+.bank-status.conditional{background:#fff8e1;color:#b7791f;}
+.bank-status.denied{background:#fff0ee;color:var(--red);}
+
+.section-title{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:16px;margin-top:32px;}
+
+.factor-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+.factor{background:#fff;border:1px solid var(--border);padding:16px 20px;border-radius:4px;}
+.factor-label{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-weight:600;}
+.factor-value{font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:var(--navy);margin-bottom:4px;line-height:1;}
+.factor-value.green{color:var(--green);}
+.factor-value.yellow{color:#b7791f;}
+.factor-value.red{color:var(--red);}
+.factor-note{font-size:12px;color:var(--muted);}
+
+.action-plan{background:var(--navy);color:#fff;padding:28px 32px;border-radius:4px;margin-bottom:24px;}
+.ap-title{font-family:'Fraunces',serif;font-size:20px;color:var(--gold);margin-bottom:14px;}
+.ap-steps{list-style:none;}
+.ap-steps li{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);font-size:14px;color:rgba(255,255,255,0.85);line-height:1.6;}
+.ap-steps li:last-child{border-bottom:none;}
+.ap-num{width:28px;height:28px;background:var(--gold);color:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
+
+.cta-stack{display:grid;gap:12px;margin-top:24px;}
+.cta-box{background:#fff;border:1px solid var(--border);padding:20px 24px;border-radius:4px;display:flex;gap:16px;align-items:center;}
+.cta-box.red{border-left:4px solid var(--red);}
+.cta-box.green{border-left:4px solid var(--green);}
+.cta-box.navy{border-left:4px solid var(--navy);}
+.cta-icon{font-size:24px;flex-shrink:0;}
+.cta-text{flex:1;}
+.cta-text-title{font-weight:600;color:var(--ink);margin-bottom:2px;font-size:14px;}
+.cta-text-desc{font-size:12px;color:var(--muted);}
+.cta-btn{padding:10px 20px;background:var(--navy);color:#fff;text-decoration:none;font-weight:600;font-size:13px;border-radius:4px;white-space:nowrap;}
+
+footer{background:var(--navy);padding:28px 60px;text-align:center;}
+.footer-logo{font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;}
+.footer-logo em{color:var(--gold);font-style:italic;}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;}
+
+@media(max-width:768px){
+  header{padding:0 20px;}
+  .hero{padding:40px 20px;}
+  .main{padding:30px 20px 60px;}
+  .engine{padding:24px;}
+  .input-grid{grid-template-columns:1fr;}
+  .factor-grid{grid-template-columns:1fr;}
+  .bank-card{grid-template-columns:auto 1fr;}
+  .bank-status{grid-column:1/-1;text-align:center;}
+  .cta-box{flex-direction:column;align-items:stretch;text-align:center;}
+  .cta-btn{text-align:center;}
+  footer{padding:24px 20px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <nav>
+    <a href="mortgage-calculator.html">Mortgage</a>
+    <a href="credit-repair.html">Credit</a>
+    <a href="salary-by-state.html">By State</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="tag">🔍 Reverse-Engineered by a Licensed Banker · 23 Years</div>
+    <h1>Why Did My Mortgage<br>Get <em>Denied?</em></h1>
+    <p class="hero-desc">Banks never tell you the real reason. After 23 years on the inside, I built this tool to show you exactly why you'd be approved, conditionally approved, or denied — before you apply. Get your personalized action plan.</p>
+    <div class="trust-row">
+      <div class="trust-item">🏦 Built by licensed banker</div>
+      <div class="trust-item">🔒 No data stored</div>
+      <div class="trust-item">✓ Free forever</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="engine">
+    <div class="engine-title">The Bank Rejection Engine</div>
+    <div class="engine-sub">Fill out the form below. We'll show you how 5 different lender types would score your application, the real reasons they'd approve or deny you, and exactly what to do about it.</div>
+
+    <div class="form-section">
+      <h3>Income</h3>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>Annual gross income ($)</label>
+          <input type="number" id="income" value="75000" placeholder="75000">
+        </div>
+        <div class="input-group">
+          <label>Employment type</label>
+          <select id="empType">
+            <option value="w2">W-2 employee (2+ years)</option>
+            <option value="w2-new">W-2 employee (under 2 years)</option>
+            <option value="self">Self-employed (2+ years)</option>
+            <option value="self-new">Self-employed (under 2 years)</option>
+            <option value="contract">1099 contractor</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Credit</h3>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>Credit score</label>
+          <input type="number" id="score" value="720" placeholder="720" min="300" max="850">
+          <div class="input-help">FICO score range: 300–850</div>
+        </div>
+        <div class="input-group">
+          <label>Recent late payments (last 12mo)</label>
+          <select id="lates">
+            <option value="0">None</option>
+            <option value="1">1 late payment</option>
+            <option value="2">2-3 late payments</option>
+            <option value="4">4+ late payments</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Debts</h3>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>Monthly debt payments ($)</label>
+          <input type="number" id="debt" value="600" placeholder="600">
+          <div class="input-help">Car, student loans, credit card minimums</div>
+        </div>
+        <div class="input-group">
+          <label>Credit card utilization (%)</label>
+          <input type="number" id="util" value="25" placeholder="25" min="0" max="100">
+          <div class="input-help">Balance ÷ limit across all cards</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>The Home</h3>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>Home price ($)</label>
+          <input type="number" id="price" value="380000" placeholder="380000">
+        </div>
+        <div class="input-group">
+          <label>Down payment ($)</label>
+          <input type="number" id="down" value="38000" placeholder="38000">
+          <div class="input-help">10% = $38K, 20% = $76K on $380K home</div>
+        </div>
+      </div>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>Months of reserves in savings</label>
+          <select id="reserves">
+            <option value="0">Less than 1 month</option>
+            <option value="1">1-2 months</option>
+            <option value="3">3-5 months</option>
+            <option value="6">6+ months</option>
+          </select>
+          <div class="input-help">Cash available after down payment + closing</div>
+        </div>
+        <div class="input-group">
+          <label>Loan type</label>
+          <select id="loanType">
+            <option value="conv">Conventional</option>
+            <option value="fha">FHA</option>
+            <option value="va">VA</option>
+            <option value="jumbo">Jumbo</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="analyze()">🔍 Analyze My Application →</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-logo">Finance<em>Rate</em>Calc</div>
+  <div class="footer-copy">© 2026 FinanceRateCalc · Bank Rejection Engine · Educational use only · Not an actual credit decision</div>
+</footer>
+
+<script>
+const RATE = 7.1;
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+function pct(n) { return n.toFixed(1) + '%'; }
+
+function monthlyPmt(principal, annualRate, years) {
+  const r = annualRate / 100 / 12, n = years * 12;
+  return principal * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+}
+
+function analyze() {
+  const income = parseFloat(document.getElementById('income').value) || 0;
+  const empType = document.getElementById('empType').value;
+  const score = parseInt(document.getElementById('score').value) || 0;
+  const lates = parseInt(document.getElementById('lates').value) || 0;
+  const debt = parseFloat(document.getElementById('debt').value) || 0;
+  const util = parseFloat(document.getElementById('util').value) || 0;
+  const price = parseFloat(document.getElementById('price').value) || 0;
+  const down = parseFloat(document.getElementById('down').value) || 0;
+  const reserves = parseInt(document.getElementById('reserves').value) || 0;
+  const loanType = document.getElementById('loanType').value;
+
+  const loan = price - down;
+  const monthlyIncome = income / 12;
+  const downPct = (down / price) * 100;
+  const ltv = (loan / price) * 100;
+  
+  // Estimate PITI (principal, interest, tax, insurance)
+  const pi = monthlyPmt(loan, RATE, 30);
+  const taxInsurance = price * 0.015 / 12; // rough: 1.5% combined
+  const pmi = downPct < 20 ? loan * 0.006 / 12 : 0;
+  const piti = pi + taxInsurance + pmi;
+  
+  const frontEnd = (piti / monthlyIncome) * 100;
+  const backEnd = ((piti + debt) / monthlyIncome) * 100;
+
+  // Score each bank
+  const banks = [
+    {
+      name: 'Major National Bank (Wells Fargo, Chase, BofA)',
+      strict: true,
+      minScore: 680,
+      maxDTI: 43,
+      maxFront: 31,
+      minReserves: 2,
+    },
+    {
+      name: 'Credit Union',
+      strict: false,
+      minScore: 640,
+      maxDTI: 45,
+      maxFront: 33,
+      minReserves: 1,
+    },
+    {
+      name: 'Online Lender (Rocket, Better, LoanDepot)',
+      strict: false,
+      minScore: 620,
+      maxDTI: 50,
+      maxFront: 35,
+      minReserves: 0,
+    },
+    {
+      name: 'FHA-Approved Lender',
+      strict: false,
+      minScore: 580,
+      maxDTI: 57,
+      maxFront: 46,
+      minReserves: 0,
+    },
+    {
+      name: 'Portfolio / Niche Lender',
+      strict: false,
+      minScore: 600,
+      maxDTI: 55,
+      maxFront: 45,
+      minReserves: 0,
+    },
+  ];
+
+  const bankResults = banks.map(b => {
+    const issues = [];
+    let status = 'approved';
+    
+    if (score < b.minScore) {
+      issues.push(`Credit score ${score} is below their ${b.minScore} minimum`);
+      status = 'denied';
+    } else if (score < b.minScore + 40) {
+      issues.push(`Credit score ${score} qualifies but rate will be higher`);
+      if (status === 'approved') status = 'conditional';
+    }
+    
+    if (backEnd > b.maxDTI) {
+      issues.push(`Back-end DTI ${backEnd.toFixed(1)}% exceeds their ${b.maxDTI}% cap`);
+      status = 'denied';
+    } else if (backEnd > b.maxDTI - 5) {
+      issues.push(`Back-end DTI ${backEnd.toFixed(1)}% is tight (max ${b.maxDTI}%)`);
+      if (status === 'approved') status = 'conditional';
+    }
+    
+    if (frontEnd > b.maxFront) {
+      issues.push(`Housing ratio ${frontEnd.toFixed(1)}% exceeds their ${b.maxFront}% cap`);
+      if (status !== 'denied') status = 'conditional';
+    }
+    
+    if (reserves < b.minReserves) {
+      issues.push(`Needs ${b.minReserves}+ months reserves (you have ${reserves})`);
+      if (status === 'approved') status = 'conditional';
+    }
+    
+    if (lates >= 2) {
+      issues.push(`${lates}+ late payments in last 12 months is a red flag`);
+      if (b.strict) status = 'denied';
+      else if (status === 'approved') status = 'conditional';
+    }
+    
+    if (empType === 'self-new' || empType === 'w2-new') {
+      issues.push(`Employment under 2 years requires additional scrutiny`);
+      if (b.strict && status === 'approved') status = 'conditional';
+    }
+    
+    if (downPct < 5 && loanType === 'conv') {
+      issues.push(`${downPct.toFixed(0)}% down is below ${b.name.includes('FHA') ? '3.5%' : '5%'} minimum for this loan type`);
+      status = 'denied';
+    }
+    
+    if (util > 50) {
+      issues.push(`Credit utilization ${util}% will drop your score during underwriting`);
+      if (status === 'approved') status = 'conditional';
+    }
+    
+    if (issues.length === 0) issues.push(`Strong application — meets all criteria`);
+    
+    return {name: b.name, status, issues: issues.slice(0,2).join('. ')};
+  });
+
+  // Overall verdict
+  const approvedCount = bankResults.filter(b => b.status === 'approved').length;
+  const conditionalCount = bankResults.filter(b => b.status === 'conditional').length;
+  
+  let overallStatus, overallTitle, overallDesc;
+  if (approvedCount >= 3) {
+    overallStatus = 'approved';
+    overallTitle = 'You Will Be Approved';
+    overallDesc = `${approvedCount} of 5 lender types approve your application as-is. Shop around for the best rate.`;
+  } else if (approvedCount + conditionalCount >= 3) {
+    overallStatus = 'conditional';
+    overallTitle = 'Approval Is Possible — With Adjustments';
+    overallDesc = `Most lenders will want to see improvements before approving. Follow the action plan below.`;
+  } else {
+    overallStatus = 'denied';
+    overallTitle = 'Most Banks Will Deny You';
+    overallDesc = `Your application has critical issues that need fixing before applying. Action plan below.`;
+  }
+
+  // Build action plan
+  const actions = [];
+  if (score < 680) actions.push(`Raise your credit score above 680 — each 20-point jump unlocks a lower rate tier. Sky Blue Credit can help.`);
+  if (backEnd > 43) {
+    const targetDebt = Math.max(0, (monthlyIncome * 0.43) - piti);
+    actions.push(`Reduce monthly debts to ${fmt(targetDebt)} or less (currently ${fmt(debt)}). This gets you under the 43% DTI cap.`);
+  }
+  if (frontEnd > 31) actions.push(`Housing cost is ${frontEnd.toFixed(1)}% of income — target 28-31%. Either lower home price or increase down payment.`);
+  if (downPct < 20) actions.push(`Save for 20% down to avoid PMI ($${Math.round(pmi)}/mo) and get better rates. Current: ${downPct.toFixed(1)}%.`);
+  if (reserves < 2) actions.push(`Build 2-6 months of cash reserves after closing. Most lenders require this.`);
+  if (util > 30) actions.push(`Pay down credit cards below 30% utilization before applying. This can boost your score 20-40 points fast.`);
+  if (lates >= 1) actions.push(`Wait until late payments are 12+ months old before applying. Major lenders penalize recent delinquencies.`);
+  if (empType.includes('new')) actions.push(`Wait until you have 2 years at your job/in self-employment. Or find a lender that uses 1-year rule.`);
+  
+  if (actions.length === 0) actions.push(`You're in great shape — shop at least 3 lenders and compare rates. Every 0.25% = ~$50/mo on a $300K loan.`);
+
+  // Render
+  const r = document.getElementById('result');
+  r.style.display = 'block';
+  r.innerHTML = `
+    <div class="verdict-box ${overallStatus}">
+      <div class="verdict-label ${overallStatus}">Overall Verdict</div>
+      <div class="verdict-title">${overallTitle}</div>
+      <div class="verdict-desc">${overallDesc}</div>
+    </div>
+
+    <div class="section-title">Your Key Numbers</div>
+    <div class="factor-grid">
+      <div class="factor">
+        <div class="factor-label">Credit Score</div>
+        <div class="factor-value ${score>=740?'green':score>=680?'yellow':'red'}">${score}</div>
+        <div class="factor-note">${score>=740?'Excellent — best rates':score>=680?'Good — qualifies':score>=620?'Fair — limited options':'Poor — major obstacle'}</div>
+      </div>
+      <div class="factor">
+        <div class="factor-label">Back-End DTI</div>
+        <div class="factor-value ${backEnd<=36?'green':backEnd<=43?'yellow':'red'}">${backEnd.toFixed(1)}%</div>
+        <div class="factor-note">${backEnd<=36?'Strong':backEnd<=43?'Acceptable':backEnd<=50?'High — limited lenders':'Exceeds most lender caps'}</div>
+      </div>
+      <div class="factor">
+        <div class="factor-label">Housing Ratio</div>
+        <div class="factor-value ${frontEnd<=28?'green':frontEnd<=31?'yellow':'red'}">${frontEnd.toFixed(1)}%</div>
+        <div class="factor-note">Target 28-31% of gross income</div>
+      </div>
+      <div class="factor">
+        <div class="factor-label">Down Payment</div>
+        <div class="factor-value ${downPct>=20?'green':downPct>=10?'yellow':'red'}">${downPct.toFixed(1)}%</div>
+        <div class="factor-note">${downPct>=20?'No PMI required':downPct>=10?'PMI ~$'+Math.round(pmi)+'/mo':'High PMI cost'}</div>
+      </div>
+      <div class="factor">
+        <div class="factor-label">Est. Monthly Payment</div>
+        <div class="factor-value">${fmt(piti)}</div>
+        <div class="factor-note">PITI (all-in) at ${RATE}% rate</div>
+      </div>
+      <div class="factor">
+        <div class="factor-label">Reserves</div>
+        <div class="factor-value ${reserves>=3?'green':reserves>=1?'yellow':'red'}">${reserves}mo</div>
+        <div class="factor-note">${reserves>=3?'Strong':reserves>=1?'Minimum acceptable':'Below lender requirements'}</div>
+      </div>
+    </div>
+
+    <div class="section-title">How Each Lender Type Sees You</div>
+    <div class="bank-results">
+      ${bankResults.map(b => `
+        <div class="bank-card">
+          <div class="bank-icon ${b.status}">${b.status==='approved'?'✓':b.status==='conditional'?'!':'✗'}</div>
+          <div class="bank-info">
+            <div class="bank-name">${b.name}</div>
+            <div class="bank-reason">${b.issues}</div>
+          </div>
+          <div class="bank-status ${b.status}">${b.status==='approved'?'Approved':b.status==='conditional'?'Conditional':'Denied'}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="action-plan">
+      <div class="ap-title">🎯 Your Personalized Action Plan</div>
+      <ol class="ap-steps">
+        ${actions.map((a,i) => `<li><span class="ap-num">${i+1}</span><span>${a}</span></li>`).join('')}
+      </ol>
+    </div>
+
+    <div class="cta-stack">
+      ${score < 720 ? `
+      <div class="cta-box red">
+        <div class="cta-icon">🛡️</div>
+        <div class="cta-text">
+          <div class="cta-text-title">Fix Your Credit Score First</div>
+          <div class="cta-text-desc">Sky Blue Credit can help you raise your score — we recommend them to our clients.</div>
+        </div>
+        <a href="https://www.skyblue.org/?pap=1006366&coupon=frc20" target="_blank" rel="sponsored" class="cta-btn" style="background:#c0392b;">Start Now →</a>
+      </div>` : ''}
+      
+      <div class="cta-box navy">
+        <div class="cta-icon">🏠</div>
+        <div class="cta-text">
+          <div class="cta-text-title">Calculate Your Real Monthly Payment</div>
+          <div class="cta-text-desc">See the all-in cost including taxes, insurance, and PMI.</div>
+        </div>
+        <a href="mortgage-calculator.html" class="cta-btn">Open Calculator →</a>
+      </div>
+
+      ${reserves < 2 ? `
+      <div class="cta-box green">
+        <div class="cta-icon">💰</div>
+        <div class="cta-text">
+          <div class="cta-text-title">Build Your Reserves Faster</div>
+          <div class="cta-text-desc">Use our compound interest calculator to plan your savings timeline.</div>
+        </div>
+        <a href="compound-interest-calculator.html" class="cta-btn">See the Math →</a>
+      </div>` : ''}
+    </div>
+  `;
+  r.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// Auto-update down payment suggestion based on price
+document.getElementById('price').addEventListener('input', function() {
+  const p = parseFloat(this.value) || 0;
+  const d = document.getElementById('down');
+  if (!d.dataset.touched) {
+    d.value = Math.round(p * 0.1);
+  }
+});
+document.getElementById('down').addEventListener('input', function() {
+  this.dataset.touched = '1';
+});
+</script>
+</body>
+</html>
