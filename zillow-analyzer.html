@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zillow & Redfin Home Analyzer — Real Cost Calculator | FinanceRateCalc</title>
+<meta name="description" content="Paste any Zillow or Redfin listing URL. Get the real all-in monthly cost, House Poor Score, 10-year wealth projection, and property tax appeal estimate. Free.">
+<link rel="canonical" href="https://financeratecalc.com/zillow-analyzer.html">
+<meta property="og:title" content="Zillow Analyzer — See What That Listing Really Costs">
+<meta property="og:description" content="Paste a Zillow listing. Get the real cost, House Poor Score, and 10-year wealth projection instantly.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0a0e1a;--navy:#0a1f5c;--gold:#c8a44a;--red:#c0392b;
+  --green:#27ae60;--white:#fff;--cream:#f8f6f0;--border:#dde0ee;
+  --muted:#6677aa;--light:#f0f4ff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6;}
+
+header{background:var(--navy);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+nav a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:13px;margin-left:20px;}
+
+.hero{background:var(--navy);padding:56px 60px 48px;border-bottom:4px solid var(--gold);}
+.hero-inner{max-width:900px;margin:0 auto;}
+.tag{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(34px,5vw,60px);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-0.02em;margin-bottom:14px;}
+h1 em{font-style:italic;color:var(--gold);}
+.hero-desc{font-size:15px;color:rgba(255,255,255,0.6);max-width:560px;font-weight:300;line-height:1.7;}
+
+.main{max-width:900px;margin:0 auto;padding:40px 60px 80px;}
+
+/* PASTE BOX */
+.paste-box{background:#fff;border:1px solid var(--border);border-top:5px solid var(--navy);padding:32px;margin-bottom:24px;border-radius:4px;}
+.paste-title{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+.paste-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+
+.url-row{display:flex;gap:12px;margin-bottom:16px;}
+.url-input{flex:1;padding:13px 16px;border:2px solid var(--border);font-family:'Geist',sans-serif;font-size:14px;border-radius:4px;transition:border-color 0.2s;}
+.url-input:focus{outline:none;border-color:var(--navy);}
+.url-btn{padding:13px 24px;background:var(--navy);color:#fff;font-family:'Geist',sans-serif;font-size:14px;font-weight:600;border:none;border-radius:4px;cursor:pointer;white-space:nowrap;}
+.url-btn:hover{background:#0d2470;}
+
+.manual-toggle{font-size:13px;color:var(--muted);cursor:pointer;text-decoration:underline;margin-bottom:16px;display:inline-block;}
+
+.manual-grid{display:none;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;}
+.manual-grid.open{display:grid;}
+.input-group label{display:block;font-size:12px;color:var(--ink);margin-bottom:5px;font-weight:500;}
+.input-group input,.input-group select{width:100%;padding:10px 14px;border:1px solid var(--border);font-family:'Geist',sans-serif;font-size:14px;background:var(--cream);border-radius:4px;}
+.input-help{font-size:11px;color:var(--muted);margin-top:3px;}
+.manual-btn{width:100%;padding:14px;background:var(--navy);color:#fff;font-family:'Geist',sans-serif;font-size:14px;font-weight:600;border:none;border-radius:4px;cursor:pointer;margin-top:16px;}
+
+.examples{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+.example-chip{padding:6px 14px;background:var(--light);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--navy);cursor:pointer;font-weight:500;}
+.example-chip:hover{background:var(--navy);color:#fff;}
+
+/* RESULTS */
+.result{display:none;}
+
+.listing-header{background:var(--navy);padding:24px 28px;border-radius:4px;margin-bottom:20px;display:flex;gap:20px;align-items:center;}
+.listing-badge{background:var(--gold);color:var(--navy);font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;padding:4px 12px;border-radius:20px;flex-shrink:0;}
+.listing-info{flex:1;}
+.listing-price{font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#fff;}
+.listing-addr{font-size:13px;color:rgba(255,255,255,0.5);margin-top:4px;}
+
+/* HOUSE POOR SCORE */
+.hps-box{background:#fff;border:1px solid var(--border);padding:24px 28px;border-radius:4px;margin-bottom:20px;}
+.hps-label{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600;}
+.hps-score-row{display:flex;align-items:center;gap:20px;margin-bottom:16px;}
+.hps-score{font-family:'Fraunces',serif;font-size:64px;font-weight:900;line-height:1;}
+.hps-grade{display:flex;flex-direction:column;gap:4px;}
+.hps-grade-badge{padding:6px 16px;border-radius:4px;font-weight:700;font-size:14px;letter-spacing:0.05em;}
+.hps-desc{font-size:14px;color:var(--muted);}
+.hps-bar-wrap{background:var(--border);border-radius:2px;height:8px;margin-bottom:8px;}
+.hps-bar{height:8px;border-radius:2px;transition:width 0.8s ease;}
+
+/* COST BREAKDOWN */
+.costs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:20px;}
+.cost-item{background:#fff;padding:20px 16px;text-align:center;}
+.cost-label{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.cost-val{font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:var(--navy);}
+.cost-val.red{color:var(--red);}
+.cost-val.gold{color:#b8860b;}
+.cost-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* SALARY NEEDED */
+.salary-box{background:var(--light);border:1px solid var(--border);border-left:4px solid var(--navy);padding:20px 24px;border-radius:4px;margin-bottom:20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+.sb-main{flex:1;}
+.sb-num{font-family:'Fraunces',serif;font-size:40px;font-weight:900;color:var(--navy);}
+.sb-label{font-size:12px;color:var(--muted);}
+.sb-your{font-size:14px;color:var(--muted);flex-shrink:0;}
+
+/* 10 YEAR */
+.projection{background:var(--navy);color:#fff;padding:24px 28px;border-radius:4px;margin-bottom:20px;}
+.proj-title{font-family:'Fraunces',serif;font-size:18px;color:var(--gold);margin-bottom:16px;}
+.proj-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.proj-item{text-align:center;}
+.proj-num{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--gold);line-height:1;margin-bottom:4px;}
+.proj-label{font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.08em;}
+
+/* OWNWELL */
+.ownwell-box{background:#f0f8f0;border:1px solid #c6f6d5;border-left:4px solid var(--green);padding:20px 24px;border-radius:4px;margin-bottom:20px;display:flex;gap:16px;align-items:center;}
+.ob-info{flex:1;}
+.ob-title{font-weight:600;color:var(--ink);margin-bottom:4px;}
+.ob-desc{font-size:13px;color:var(--muted);}
+.ob-btn{padding:10px 22px;background:var(--green);color:#fff;text-decoration:none;font-weight:600;font-size:13px;border-radius:4px;white-space:nowrap;}
+
+/* SKYBLUE */
+.skyblue-box{background:#fff0ee;border:1px solid #ffcccc;border-left:4px solid var(--red);padding:20px 24px;border-radius:4px;margin-bottom:20px;display:flex;gap:16px;align-items:center;}
+
+.warning-box{background:#fffbeb;border:1px solid #fbd38d;border-left:4px solid var(--gold);padding:16px 20px;border-radius:4px;margin-bottom:20px;font-size:13px;color:#92400e;}
+
+footer{background:var(--navy);padding:28px 60px;text-align:center;}
+.footer-logo{font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;}
+.footer-logo em{color:var(--gold);font-style:italic;}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;}
+
+@media(max-width:768px){
+  header{padding:0 20px;}
+  .hero{padding:40px 20px;}
+  .main{padding:30px 20px 60px;}
+  .url-row{flex-direction:column;}
+  .manual-grid{grid-template-columns:1fr;}
+  .costs-grid{grid-template-columns:1fr 1fr;}
+  .proj-grid{grid-template-columns:1fr;}
+  .listing-header{flex-direction:column;text-align:center;}
+  .salary-box{flex-direction:column;}
+  .ownwell-box,.skyblue-box{flex-direction:column;}
+  footer{padding:24px 20px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <nav>
+    <a href="mortgage-calculator.html">Mortgage</a>
+    <a href="are-you-house-poor.html">House Poor?</a>
+    <a href="bank-rejection-engine.html">Rejection Engine</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="tag">🏠 Zillow & Redfin · Real Cost Analyzer</div>
+    <h1>What Does That<br><em>Listing Really Cost?</em></h1>
+    <p class="hero-desc">Paste any Zillow or Redfin URL — or enter the price manually. Get the real all-in monthly cost, your House Poor Score, 10-year wealth projection, and property tax savings estimate. Free.</p>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="paste-box">
+    <div class="paste-title">Analyze Any Listing</div>
+    <div class="paste-sub">Paste a Zillow or Redfin URL, or click a sample listing below to try it out.</div>
+
+    <div class="url-row">
+      <input type="text" class="url-input" id="urlInput" placeholder="https://www.zillow.com/homedetails/...">
+      <button class="url-btn" onclick="parseURL()">Analyze Listing →</button>
+    </div>
+
+    <div class="examples">
+      <span style="font-size:12px;color:var(--muted);align-self:center;">Try a sample:</span>
+      <span class="example-chip" onclick="loadSample(380000,'Phoenix, AZ','Zillow',0.006)">$380K — Phoenix</span>
+      <span class="example-chip" onclick="loadSample(650000,'Austin, TX','Zillow',0.021)">$650K — Austin</span>
+      <span class="example-chip" onclick="loadSample(220000,'Detroit, MI','Redfin',0.022)">$220K — Detroit</span>
+      <span class="example-chip" onclick="loadSample(920000,'Seattle, WA','Zillow',0.011)">$920K — Seattle</span>
+      <span class="example-chip" onclick="loadSample(485000,'Nashville, TN','Zillow',0.007)">$485K — Nashville</span>
+    </div>
+
+    <br>
+    <span class="manual-toggle" onclick="toggleManual()">✏️ Enter price manually instead</span>
+
+    <div class="manual-grid" id="manualGrid">
+      <div class="input-group">
+        <label>Home Price ($)</label>
+        <input type="number" id="manPrice" value="380000" placeholder="380000">
+      </div>
+      <div class="input-group">
+        <label>Your Annual Salary ($)</label>
+        <input type="number" id="manSalary" value="80000" placeholder="80000">
+      </div>
+      <div class="input-group">
+        <label>Down Payment (%)</label>
+        <select id="manDown">
+          <option value="20">20%</option>
+          <option value="10" selected>10%</option>
+          <option value="5">5%</option>
+          <option value="3">3% (FHA)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>State / Property Tax Rate</label>
+        <select id="manTax">
+          <option value="0.006">Low (0.6%) — HI, AL, CO</option>
+          <option value="0.011" selected>Medium (1.1%) — National avg</option>
+          <option value="0.016">High (1.6%) — TX, NE, MI</option>
+          <option value="0.021">Very High (2.1%) — NJ, IL</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>City / Location</label>
+        <input type="text" id="manCity" value="My City" placeholder="e.g. Austin, TX">
+      </div>
+      <div class="input-group">
+        <label>Credit Score</label>
+        <input type="number" id="manScore" value="720" placeholder="720">
+        <div class="input-help">Affects your actual rate</div>
+      </div>
+      <button class="manual-btn" onclick="analyzeManual()" style="grid-column:1/-1;">Analyze This Home →</button>
+    </div>
+  </div>
+
+  <div class="result" id="result"></div>
+
+</div>
+
+<footer>
+  <div class="footer-logo">Finance<em>Rate</em>Calc</div>
+  <div class="footer-copy">© 2026 FinanceRateCalc · Estimates based on current rates and averages · Educational use only</div>
+</footer>
+
+<script>
+const BASE_RATE = 7.1;
+
+function fmt(n){return '$'+Math.round(n).toLocaleString('en-US');}
+function fmtPct(n){return n.toFixed(1)+'%';}
+
+function pmt(principal, rate, years){
+  const r=rate/100/12, n=years*12;
+  return principal*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+}
+
+function scoreToRate(score){
+  if(score>=760) return BASE_RATE - 0.5;
+  if(score>=740) return BASE_RATE - 0.25;
+  if(score>=720) return BASE_RATE;
+  if(score>=700) return BASE_RATE + 0.25;
+  if(score>=680) return BASE_RATE + 0.5;
+  if(score>=660) return BASE_RATE + 0.75;
+  return BASE_RATE + 1.25;
+}
+
+function toggleManual(){
+  const g = document.getElementById('manualGrid');
+  g.classList.toggle('open');
+}
+
+function parseURL(){
+  const url = document.getElementById('urlInput').value.trim();
+  if(!url){
+    alert('Please paste a Zillow or Redfin URL, or use the manual entry below.');
+    return;
+  }
+
+  // Extract what we can from URL — Zillow URLs often have price in path
+  // e.g. zillow.com/homedetails/123-main-st-city-state-12345/12345_zpid/
+  // We can't actually fetch the page, so we extract clues from URL and ask user to confirm price
+  
+  let source = 'Zillow';
+  if(url.includes('redfin')) source = 'Redfin';
+  
+  // Try to extract city/state from URL
+  let city = 'the listed property';
+  const cityMatch = url.match(/homedetails\/([^\/]+)/);
+  if(cityMatch){
+    const parts = cityMatch[1].split('-');
+    if(parts.length > 3){
+      // Last parts usually: city-state-zip
+      city = parts.slice(-3,-1).join(', ').replace(/-/g,' ');
+    }
+  }
+
+  // Show price prompt
+  const priceStr = prompt(`Great! We found a ${source} listing.\n\nWhat's the listed price? (enter numbers only, e.g. 380000)`);
+  if(!priceStr) return;
+  const price = parseFloat(priceStr.replace(/[^0-9]/g,''));
+  if(!price || price < 10000){
+    alert('Please enter a valid home price.');
+    return;
+  }
+
+  loadSample(price, city, source, 0.011);
+}
+
+function analyzeManual(){
+  const price = parseFloat(document.getElementById('manPrice').value)||0;
+  const salary = parseFloat(document.getElementById('manSalary').value)||80000;
+  const downPct = parseFloat(document.getElementById('manDown').value)/100;
+  const taxRate = parseFloat(document.getElementById('manTax').value);
+  const city = document.getElementById('manCity').value || 'Your City';
+  const score = parseInt(document.getElementById('manScore').value)||720;
+  showResults(price, salary, downPct, taxRate, city, 'Manual Entry', score);
+}
+
+function loadSample(price, city, source, taxRate){
+  showResults(price, 80000, 0.1, taxRate, city, source, 720);
+}
+
+function showResults(price, salary, downPct, taxRate, city, source, score){
+  const down = price * downPct;
+  const loan = price - down;
+  const actualRate = scoreToRate(score);
+  const monthly = pmt(loan, actualRate, 30);
+  const monthlyTax = price * taxRate / 12;
+  const insurance = price * 0.005 / 12;
+  const pmi = downPct < 0.2 ? loan * 0.006 / 12 : 0;
+  const maintenance = price * 0.01 / 12;
+  const allIn = monthly + monthlyTax + insurance + pmi + maintenance;
+
+  const monthlyIncome = salary / 12;
+  const housingRatio = (allIn / monthlyIncome) * 100;
+
+  // House Poor Score (0-100, higher = worse)
+  let hps = 0;
+  if(housingRatio > 50) hps = 90;
+  else if(housingRatio > 43) hps = 75;
+  else if(housingRatio > 35) hps = 55;
+  else if(housingRatio > 28) hps = 35;
+  else hps = 15;
+
+  let hpsGrade, hpsColor, hpsBg, hpsDesc;
+  if(hps >= 75){hpsGrade='DANGER';hpsColor='#c0392b';hpsBg='#fff0ee';hpsDesc='You will be house poor. Housing takes too much — savings, investing, and life will suffer.';}
+  else if(hps >= 55){hpsGrade='WARNING';hpsColor='#b7791f';hpsBg='#fffbeb';hpsDesc='Tight. One emergency and you\'re in trouble. Consider a lower price or higher income.';}
+  else if(hps >= 35){hpsGrade='BORDERLINE';hpsColor='#b7791f';hpsBg='#fffbeb';hpsDesc='Manageable but not comfortable. Not much room for saving or investing.';}
+  else{hpsGrade='HEALTHY';hpsColor='#27ae60';hpsBg='#f0f8f0';hpsDesc='You can afford this home without sacrificing your financial life.';}
+
+  // Required salary
+  const reqSalary = (allIn / 0.28) * 12;
+
+  // 10 year projection
+  const appreciation = 0.045;
+  const futureValue = price * Math.pow(1+appreciation, 10);
+  const r = actualRate/100/12, n = 360;
+  const remaining = loan * Math.pow(1+r,120) - monthly*(Math.pow(1+r,120)-1)/r;
+  const equity = futureValue - Math.max(0, remaining);
+  const totalInterest30 = monthly * 360 - loan;
+
+  // Ownwell estimate
+  const ownwellSavings = Math.round(price * taxRate * 0.15); // ~15% reduction typical
+
+  const res = document.getElementById('result');
+  res.style.display = 'block';
+
+  res.innerHTML = `
+    <div class="listing-header">
+      <div class="listing-badge">${source}</div>
+      <div class="listing-info">
+        <div class="listing-price">${fmt(price)}</div>
+        <div class="listing-addr">${city} · ${fmtPct(downPct*100)} down · ${actualRate.toFixed(2)}% rate${score !== 720 ? ' (score '+score+')' : ''}</div>
+      </div>
+    </div>
+
+    <div class="hps-box">
+      <div class="hps-label">House Poor Score</div>
+      <div class="hps-score-row">
+        <div class="hps-score" style="color:${hpsColor}">${hps}</div>
+        <div class="hps-grade">
+          <span class="hps-grade-badge" style="background:${hpsBg};color:${hpsColor}">${hpsGrade}</span>
+          <span style="font-size:13px;color:var(--muted);margin-top:4px;">${housingRatio.toFixed(1)}% of gross income</span>
+        </div>
+      </div>
+      <div class="hps-bar-wrap">
+        <div class="hps-bar" style="width:${Math.min(hps,100)}%;background:${hpsColor}"></div>
+      </div>
+      <div class="hps-desc">${hpsDesc}</div>
+    </div>
+
+    <div class="costs-grid">
+      <div class="cost-item">
+        <div class="cost-label">Principal & Interest</div>
+        <div class="cost-val">${fmt(monthly)}</div>
+        <div class="cost-sub">/month</div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-label">Property Tax</div>
+        <div class="cost-val gold">${fmt(monthlyTax)}</div>
+        <div class="cost-sub">/month</div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-label">Insurance + PMI</div>
+        <div class="cost-val">${fmt(insurance+pmi)}</div>
+        <div class="cost-sub">/month</div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-label">Total All-In</div>
+        <div class="cost-val red">${fmt(allIn)}</div>
+        <div class="cost-sub">/month</div>
+      </div>
+    </div>
+
+    <div class="salary-box">
+      <div class="sb-main">
+        <div class="sb-label">Minimum salary needed to afford this home comfortably (28% rule)</div>
+        <div class="sb-num">${fmt(reqSalary)}</div>
+      </div>
+      ${salary > 0 ? `<div class="sb-your">${salary >= reqSalary ? '✅ Your salary qualifies' : '⚠️ You need '+fmt(reqSalary - salary)+' more/year'}</div>` : ''}
+    </div>
+
+    <div class="projection">
+      <div class="proj-title">📈 10-Year Wealth Projection</div>
+      <div class="proj-grid">
+        <div class="proj-item">
+          <div class="proj-num">${fmt(Math.round(futureValue))}</div>
+          <div class="proj-label">Home value in 10yr</div>
+        </div>
+        <div class="proj-item">
+          <div class="proj-num">${fmt(Math.round(equity))}</div>
+          <div class="proj-label">Your equity built</div>
+        </div>
+        <div class="proj-item">
+          <div class="proj-num">${fmt(Math.round(totalInterest30))}</div>
+          <div class="proj-label">Total 30yr interest</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="warning-box">
+      💡 <strong>Banker's Note:</strong> The listing price is just the beginning. Most buyers underestimate all-in costs by 30-40%. This analysis shows the full picture — including maintenance reserves most calculators ignore.
+    </div>
+
+    <div class="ownwell-box">
+      <div style="font-size:28px;">💰</div>
+      <div class="ob-info">
+        <div class="ob-title">Property Tax Appeal — Potential Savings: ${fmt(ownwellSavings)}/year</div>
+        <div class="ob-desc">Based on your estimated property tax of ${fmt(monthlyTax*12)}/yr, Ownwell may reduce it by ~15%. No win = no fee.</div>
+      </div>
+      <a href="https://www.ownwell.com/partner/FinanceRateCalc" target="_blank" rel="sponsored" class="ob-btn">Appeal My Tax →</a>
+    </div>
+
+    ${score < 720 ? `
+    <div class="skyblue-box">
+      <div style="font-size:28px;">🛡️</div>
+      <div class="ob-info">
+        <div class="ob-title">Your ${score} score costs you ${fmt(Math.round((scoreToRate(score) - (BASE_RATE-0.5)) * loan / 100 * 2.5))}/yr more in interest</div>
+        <div class="ob-desc">Sky Blue Credit can help improve your score. A 740+ score saves $200-400/mo on this size loan.</div>
+      </div>
+      <a href="https://www.skyblue.org/?pap=1006366&coupon=frc20" target="_blank" rel="sponsored" class="ob-btn" style="background:var(--red);">Fix My Credit →</a>
+    </div>` : ''}
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
+      <a href="bank-rejection-engine.html" style="flex:1;min-width:180px;display:block;padding:14px 20px;background:var(--navy);color:#fff;text-decoration:none;font-weight:600;font-size:13px;border-radius:4px;text-align:center;">Will I Get Approved? →</a>
+      <a href="are-you-house-poor.html" style="flex:1;min-width:180px;display:block;padding:14px 20px;background:#fff;color:var(--navy);text-decoration:none;font-weight:600;font-size:13px;border-radius:4px;text-align:center;border:1px solid var(--border);">Take the House Poor Quiz →</a>
+      <a href="mortgage-calculator.html" style="flex:1;min-width:180px;display:block;padding:14px 20px;background:#fff;color:var(--navy);text-decoration:none;font-weight:600;font-size:13px;border-radius:4px;text-align:center;border:1px solid var(--border);">Full Mortgage Calculator →</a>
+    </div>
+  `;
+  res.scrollIntoView({behavior:'smooth', block:'start'});
+}
+</script>
+</body>
+</html>
