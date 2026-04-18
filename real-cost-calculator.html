@@ -159,9 +159,23 @@ footer{background:var(--navy);padding:28px 60px;text-align:center;}
     <div class="paste-title">Paste Any Listing — See the Real Numbers</div>
     <div class="paste-sub">Paste a Zillow or Redfin URL, or click a sample listing below to try it out.</div>
 
-    <div class="url-row">
-      <input type="text" class="url-input" id="urlInput" placeholder="https://www.zillow.com/homedetails/...">
-      <button class="url-btn" onclick="parseURL()">Analyze Listing →</button>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:12px;margin-bottom:8px;">
+      <input type="text" class="url-input" id="urlInput" placeholder="https://www.zillow.com/homedetails/..." oninput="extractCity()">
+      <button class="url-btn" onclick="parseURL()">Analyze →</button>
+    </div>
+    <div id="url-preview" style="display:none;background:var(--light);border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:12px;">
+      <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Detected from URL</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end;">
+        <div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Location</div>
+          <div id="detected-city" style="font-weight:600;color:var(--navy);font-size:15px;">—</div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Listing Price ($) <span style="color:var(--red);">*</span></div>
+          <input type="number" id="urlPrice" placeholder="e.g. 380000" style="width:100%;padding:8px 12px;border:2px solid var(--navy);font-family:'Geist',sans-serif;font-size:14px;border-radius:4px;background:#fff;">
+        </div>
+      </div>
+      <button onclick="analyzeFromURL()" style="width:100%;margin-top:12px;padding:12px;background:var(--navy);color:#fff;font-family:'Geist',sans-serif;font-size:14px;font-weight:600;border:none;border-radius:4px;cursor:pointer;">See the Real Numbers →</button>
     </div>
 
     <div class="examples">
@@ -251,41 +265,86 @@ function toggleManual(){
   g.classList.toggle('open');
 }
 
+function extractCity() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url || (!url.includes('zillow') && !url.includes('redfin'))) {
+    document.getElementById('url-preview').style.display = 'none';
+    return;
+  }
+  
+  let source = url.includes('redfin') ? 'Redfin' : 'Zillow';
+  let city = '';
+  
+  // Zillow: /homedetails/123-main-st-billings-mt-59101/
+  const zMatch = url.match(/homedetails\/([^\/]+)/);
+  if (zMatch) {
+    const parts = zMatch[1].split('-').filter(p => !/^\d+$/.test(p));
+    // Remove street number and common words, get last 2-3 meaningful parts
+    const meaningful = parts.filter(p => p.length > 1);
+    if (meaningful.length >= 2) {
+      const state = meaningful[meaningful.length-1].toUpperCase();
+      const cityParts = meaningful.slice(-3, -1);
+      city = cityParts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ') + ', ' + state;
+    }
+  }
+  
+  // Redfin: /city/state/zip/street
+  const rMatch = url.match(/redfin\.com\/([A-Z]{2})\/([^\/]+)\//);
+  if (rMatch) {
+    city = rMatch[2].replace(/-/g, ' ').replace(/\w/g, l => l.toUpperCase()) + ', ' + rMatch[1];
+  }
+
+  if (city) {
+    document.getElementById('detected-city').textContent = city + ' · ' + source;
+    document.getElementById('url-preview').style.display = 'block';
+  }
+}
+
 function parseURL(){
   const url = document.getElementById('urlInput').value.trim();
   if(!url){
-    alert('Please paste a Zillow or Redfin URL, or use the manual entry below.');
+    document.getElementById('manualGrid').classList.add('open');
     return;
   }
-
-  // Extract what we can from URL — Zillow URLs often have price in path
-  // e.g. zillow.com/homedetails/123-main-st-city-state-12345/12345_zpid/
-  // We can't actually fetch the page, so we extract clues from URL and ask user to confirm price
-  
-  let source = 'Zillow';
-  if(url.includes('redfin')) source = 'Redfin';
-  
-  // Try to extract city/state from URL
-  let city = 'the listed property';
-  const cityMatch = url.match(/homedetails\/([^\/]+)/);
-  if(cityMatch){
-    const parts = cityMatch[1].split('-');
-    if(parts.length > 3){
-      // Last parts usually: city-state-zip
-      city = parts.slice(-3,-1).join(', ').replace(/-/g,' ');
-    }
+  extractCity();
+  const preview = document.getElementById('url-preview');
+  if (preview.style.display !== 'none') {
+    // Show the price input
+    document.getElementById('urlPrice').focus();
+  } else {
+    document.getElementById('manualGrid').classList.add('open');
   }
+}
 
-  // Show price prompt
-  const priceStr = prompt(`Great! We found a ${source} listing.\n\nWhat's the listed price? (enter numbers only, e.g. 380000)`);
-  if(!priceStr) return;
-  const price = parseFloat(priceStr.replace(/[^0-9]/g,''));
-  if(!price || price < 10000){
-    alert('Please enter a valid home price.');
+function analyzeFromURL() {
+  const url = document.getElementById('urlInput').value.trim();
+  const price = parseFloat(document.getElementById('urlPrice').value) || 0;
+  if (!price || price < 10000) {
+    document.getElementById('urlPrice').style.borderColor = '#c0392b';
+    document.getElementById('urlPrice').placeholder = 'Enter the listing price!';
+    document.getElementById('urlPrice').focus();
     return;
   }
-
-  loadSample(price, city, source, 0.011);
+  
+  let source = url.includes('redfin') ? 'Redfin' : 'Zillow';
+  const cityEl = document.getElementById('detected-city').textContent.split(' · ')[0];
+  
+  // Detect state tax rate from city
+  const stateTaxMap = {
+    'NJ': 0.021, 'IL': 0.022, 'TX': 0.021, 'NE': 0.016, 'MI': 0.022,
+    'WI': 0.016, 'OH': 0.016, 'PA': 0.015, 'IA': 0.015, 'KS': 0.014,
+    'NY': 0.016, 'CT': 0.014, 'NH': 0.018, 'VT': 0.017, 'MA': 0.012,
+    'CA': 0.011, 'FL': 0.018, 'GA': 0.011, 'AZ': 0.016, 'WA': 0.011,
+    'OR': 0.009, 'CO': 0.006, 'HI': 0.006, 'AL': 0.004, 'MT': 0.008
+  };
+  
+  let taxRate = 0.011; // default national avg
+  const stateMatch = cityEl.match(/,\s*([A-Z]{2})$/);
+  if (stateMatch && stateTaxMap[stateMatch[1]]) {
+    taxRate = stateTaxMap[stateMatch[1]];
+  }
+  
+  showResults(price, 80000, 0.1, taxRate, cityEl, source, 720);
 }
 
 function analyzeManual(){
