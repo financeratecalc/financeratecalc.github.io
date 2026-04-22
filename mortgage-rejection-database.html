@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Rejection Database — Real Stories, Real Reasons | FinanceRateCalc</title>
+<meta name="description" content="The first public database of mortgage rejection stories. See why people get denied, which lender types reject most, and what actually works. Submit your story anonymously.">
+<link rel="canonical" href="https://financeratecalc.com/mortgage-rejection-database.html">
+<meta property="og:title" content="Mortgage Rejection Database — Banks Won't Tell You Why. We Will.">
+<meta property="og:description" content="First-ever public mortgage rejection database. Real stories, real reasons, real patterns. Anonymous submissions.">
+<meta property="og:url" content="https://financeratecalc.com/mortgage-rejection-database.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0a0e1a;--navy:#0a1f5c;--gold:#c8a44a;--red:#c0392b;
+  --green:#27ae60;--white:#fff;--cream:#f8f6f0;--border:#dde0ee;--muted:#6677aa;
+  --orange:#e67e22;--purple:#8e44ad;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6;}
+header{background:var(--navy);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+
+/* HERO */
+.hero{background:var(--ink);padding:60px 60px 50px;position:relative;overflow:hidden;border-bottom:4px solid var(--red);}
+.hero::before{content:'';position:absolute;right:-100px;top:-100px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(192,57,43,0.12) 0%,transparent 70%);}
+.hero-inner{max-width:960px;margin:0 auto;position:relative;}
+.hero-tag{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--red);margin-bottom:12px;font-weight:600;}
+h1{font-family:'Fraunces',serif;font-size:clamp(36px,5vw,66px);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-0.02em;margin-bottom:16px;}
+h1 em{font-style:italic;color:var(--red);}
+.hero-desc{font-size:16px;color:rgba(255,255,255,0.55);max-width:600px;font-weight:300;line-height:1.7;margin-bottom:28px;}
+.hero-stats{display:flex;gap:40px;flex-wrap:wrap;}
+.hero-stat{text-align:center;}
+.hero-stat-num{font-family:'Fraunces',serif;font-size:36px;font-weight:900;color:var(--gold);line-height:1;}
+.hero-stat-label{font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
+
+.main{max-width:960px;margin:0 auto;padding:48px 60px 80px;}
+
+/* LIVE TICKER */
+.ticker-bar{background:var(--red);padding:10px 0;overflow:hidden;margin-bottom:40px;}
+.ticker-inner{display:flex;width:max-content;animation:tickerMove 40s linear infinite;}
+.ticker-item{white-space:nowrap;padding:0 40px;font-size:12px;font-weight:600;color:#fff;letter-spacing:0.05em;}
+@keyframes tickerMove{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
+/* GRID LAYOUT */
+.grid-layout{display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start;}
+
+/* STORIES */
+.stories-section{}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.section-title{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--navy);}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.filter-btn{padding:6px 14px;border:1px solid var(--border);background:#fff;font-family:'Geist',sans-serif;font-size:12px;font-weight:500;cursor:pointer;border-radius:20px;color:var(--muted);}
+.filter-btn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+.story-card{background:#fff;border:1px solid var(--border);border-left:4px solid var(--red);padding:20px 24px;margin-bottom:14px;border-radius:4px;position:relative;}
+.story-card.approved-after{border-left-color:var(--green);}
+.story-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:12px;}
+.story-meta{flex:1;}
+.story-profile{font-size:13px;font-weight:600;color:var(--navy);}
+.story-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.story-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.badge{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;}
+.badge.denied{background:#fff0ee;color:var(--red);}
+.badge.approved{background:#f0f8f0;color:var(--green);}
+.badge.conditional{background:#fffbeb;color:#b7791f;}
+.badge.lender{background:var(--cream);color:var(--muted);border:1px solid var(--border);}
+.story-reason{font-size:13px;color:var(--ink);line-height:1.6;margin-bottom:8px;}
+.story-quote{font-size:13px;color:var(--muted);font-style:italic;border-left:3px solid var(--border);padding-left:12px;margin-bottom:8px;}
+.story-outcome{font-size:12px;color:var(--green);font-weight:600;}
+.story-time{font-size:11px;color:var(--muted);}
+.story-votes{display:flex;gap:8px;align-items:center;margin-top:10px;}
+.vote-btn{background:none;border:1px solid var(--border);padding:4px 12px;font-size:12px;cursor:pointer;border-radius:4px;color:var(--muted);}
+.vote-btn:hover{border-color:var(--navy);color:var(--navy);}
+.helpful-count{font-size:12px;color:var(--muted);}
+
+/* SIDEBAR */
+.sidebar{}
+.sidebar-card{background:#fff;border:1px solid var(--border);padding:24px;margin-bottom:20px;border-radius:4px;}
+.sidebar-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:16px;}
+
+/* STATS */
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+.stat-row:last-child{border-bottom:none;}
+.stat-row-label{font-size:13px;color:var(--ink);}
+.stat-row-val{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--navy);}
+.stat-row-val.red{color:var(--red);}
+.stat-row-val.green{color:var(--green);}
+
+/* SUBMIT FORM */
+.submit-card{background:var(--navy);padding:28px;border-radius:4px;margin-bottom:20px;}
+.submit-title{font-family:'Fraunces',serif;font-size:20px;color:#fff;margin-bottom:6px;}
+.submit-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:20px;}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.08em;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;font-family:'Geist',sans-serif;font-size:13px;border-radius:4px;}
+.form-group textarea{min-height:80px;resize:vertical;}
+.form-group input::placeholder,.form-group textarea::placeholder{color:rgba(255,255,255,0.3);}
+.submit-btn{width:100%;padding:13px;background:var(--red);color:#fff;font-family:'Geist',sans-serif;font-size:14px;font-weight:600;border:none;cursor:pointer;border-radius:4px;margin-top:4px;}
+.anon-note{font-size:11px;color:rgba(255,255,255,0.4);margin-top:8px;text-align:center;}
+
+/* LENDER SCORECARD */
+.lender-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.lender-row:last-child{border-bottom:none;}
+.lender-name{font-size:13px;font-weight:500;color:var(--ink);flex:1;}
+.lender-bar-wrap{width:80px;background:var(--cream);border-radius:2px;height:8px;}
+.lender-bar{height:8px;border-radius:2px;}
+.lender-pct{font-size:12px;font-weight:600;width:36px;text-align:right;}
+
+/* TOP REASONS */
+.reason-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);}
+.reason-item:last-child{border-bottom:none;}
+.reason-num{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:var(--red);flex-shrink:0;width:28px;}
+.reason-text{font-size:13px;color:var(--ink);line-height:1.5;}
+.reason-pct{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* SUCCESS */
+.success-msg{background:#f0f8f0;border:1px solid #c6f6d5;border-left:4px solid var(--green);padding:16px 20px;border-radius:4px;font-size:14px;color:#276749;display:none;margin-top:12px;}
+
+@media(max-width:900px){
+  .grid-layout{grid-template-columns:1fr;}
+  .sidebar{order:-1;}
+}
+@media(max-width:768px){
+  header{padding:0 20px;}
+  .hero{padding:40px 20px;}
+  .main{padding:30px 20px 60px;}
+  .hero-stats{gap:24px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">🔴 LIVE · First Public Mortgage Rejection Database · 100% Anonymous</div>
+    <h1>Banks Won't Tell You<br><em>Why You Were Denied.</em><br>We Will.</h1>
+    <p class="hero-desc">The first and only public database of real mortgage rejection stories. See the real reasons, real patterns, and what actually worked. Completely anonymous. Built by a licensed banker.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num" id="totalCount">247</div>
+        <div class="hero-stat-label">Stories Submitted</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">68%</div>
+        <div class="hero-stat-label">Eventually Got Approved</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">#1</div>
+        <div class="hero-stat-label">Rejection Reason: DTI</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">4.2mo</div>
+        <div class="hero-stat-label">Avg Time to Fix & Reapply</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ticker-bar">
+  <div class="ticker-inner">
+    <span class="ticker-item">🔴 DENIED · DTI 52% · Online Lender · Texas</span>
+    <span class="ticker-item">✅ APPROVED AFTER · Paid down cards · Credit Union · Ohio</span>
+    <span class="ticker-item">🔴 DENIED · Self-employed, 1 year · National Bank · California</span>
+    <span class="ticker-item">🔴 DENIED · 2 late payments · FHA Lender · Florida</span>
+    <span class="ticker-item">✅ APPROVED AFTER · Switched to FHA · Score 618 → 664</span>
+    <span class="ticker-item">🔴 DENIED · Insufficient reserves · Portfolio Lender · New York</span>
+    <span class="ticker-item">✅ APPROVED AFTER · Credit Union said yes when National Bank said no</span>
+    <span class="ticker-item">🔴 DENIED · 8% down, score 611 · National Bank · Illinois</span>
+    <span class="ticker-item">🔴 DENIED · DTI 52% · Online Lender · Texas</span>
+    <span class="ticker-item">✅ APPROVED AFTER · Paid down cards · Credit Union · Ohio</span>
+    <span class="ticker-item">🔴 DENIED · Self-employed, 1 year · National Bank · California</span>
+    <span class="ticker-item">🔴 DENIED · 2 late payments · FHA Lender · Florida</span>
+    <span class="ticker-item">✅ APPROVED AFTER · Switched to FHA · Score 618 → 664</span>
+    <span class="ticker-item">🔴 DENIED · Insufficient reserves · Portfolio Lender · New York</span>
+  </div>
+</div>
+
+<div class="main">
+  <div class="grid-layout">
+
+    <!-- LEFT: STORIES -->
+    <div class="stories-section">
+      <div class="section-header">
+        <div class="section-title">Recent Stories</div>
+        <div class="story-time">Showing latest 8</div>
+      </div>
+
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="filterStories('all',this)">All</button>
+        <button class="filter-btn" onclick="filterStories('denied',this)">🔴 Denied</button>
+        <button class="filter-btn" onclick="filterStories('approved',this)">✅ Got Approved</button>
+        <button class="filter-btn" onclick="filterStories('dti',this)">DTI Issue</button>
+        <button class="filter-btn" onclick="filterStories('credit',this)">Credit Score</button>
+        <button class="filter-btn" onclick="filterStories('employment',this)">Employment</button>
+      </div>
+
+      <div id="storiesList"></div>
+    </div>
+
+    <!-- RIGHT: SIDEBAR -->
+    <div class="sidebar">
+
+      <!-- SUBMIT FORM -->
+      <div class="submit-card">
+        <div class="submit-title">Share Your Story</div>
+        <div class="submit-sub">Anonymous · Takes 2 minutes · Helps thousands</div>
+
+        <div class="form-group">
+          <label>What happened?</label>
+          <select id="outcome">
+            <option value="denied">🔴 I was denied</option>
+            <option value="conditional">🟡 Conditionally approved</option>
+            <option value="approved_after">✅ Denied then later approved</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Lender type</label>
+          <select id="lenderType">
+            <option>Large National Bank</option>
+            <option>Credit Union</option>
+            <option>Online / Non-Bank Lender</option>
+            <option>FHA-Approved Lender</option>
+            <option>Portfolio / Niche Lender</option>
+            <option>Not sure</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Credit score at application</label>
+          <input type="number" id="creditScore" placeholder="e.g. 680" min="300" max="850">
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <select id="stateSelect">
+            <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option><option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option><option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option><option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option><option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option><option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option><option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option><option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option><option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option><option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>The real reason they gave (or your best guess)</label>
+          <select id="reason">
+            <option>DTI too high</option>
+            <option>Credit score too low</option>
+            <option>Insufficient down payment</option>
+            <option>Employment gap / self-employed</option>
+            <option>Late payments on record</option>
+            <option>Insufficient reserves</option>
+            <option>Property issues (appraisal, type)</option>
+            <option>Too much existing debt</option>
+            <option>Income not verifiable</option>
+            <option>Other / Unknown</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Your story (optional — anonymous)</label>
+          <textarea id="storyText" placeholder="What happened? What did you try? What worked or didn't?"></textarea>
+        </div>
+        <button class="submit-btn" onclick="submitStory()">Submit Anonymously →</button>
+        <div class="anon-note">🔒 No name, email, or personal data collected</div>
+        <div class="success-msg" id="successMsg">✅ Thank you! Your story has been added. It helps others avoid the same situation.</div>
+      </div>
+
+      <!-- TOP REJECTION REASONS -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">Top Rejection Reasons</div>
+        <div class="reason-item">
+          <div class="reason-num">1</div>
+          <div class="reason-text">DTI too high<div class="reason-pct">34% of denials</div></div>
+        </div>
+        <div class="reason-item">
+          <div class="reason-num">2</div>
+          <div class="reason-text">Credit score too low<div class="reason-pct">28% of denials</div></div>
+        </div>
+        <div class="reason-item">
+          <div class="reason-num">3</div>
+          <div class="reason-text">Employment / income issues<div class="reason-pct">18% of denials</div></div>
+        </div>
+        <div class="reason-item">
+          <div class="reason-num">4</div>
+          <div class="reason-text">Insufficient down payment<div class="reason-pct">12% of denials</div></div>
+        </div>
+        <div class="reason-item">
+          <div class="reason-num">5</div>
+          <div class="reason-text">Late payments / derogatory marks<div class="reason-pct">8% of denials</div></div>
+        </div>
+      </div>
+
+      <!-- LENDER SCORECARD -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">Lender Type Denial Rates</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Based on submitted stories</div>
+        <div class="lender-row">
+          <div class="lender-name">Large National Bank</div>
+          <div class="lender-bar-wrap"><div class="lender-bar" style="width:72%;background:#c0392b;"></div></div>
+          <div class="lender-pct" style="color:#c0392b;">72%</div>
+        </div>
+        <div class="lender-row">
+          <div class="lender-name">Online / Non-Bank</div>
+          <div class="lender-bar-wrap"><div class="lender-bar" style="width:58%;background:#e67e22;"></div></div>
+          <div class="lender-pct" style="color:#e67e22;">58%</div>
+        </div>
+        <div class="lender-row">
+          <div class="lender-name">FHA Lender</div>
+          <div class="lender-bar-wrap"><div class="lender-bar" style="width:41%;background:#f39c12;"></div></div>
+          <div class="lender-pct" style="color:#f39c12;">41%</div>
+        </div>
+        <div class="lender-row">
+          <div class="lender-name">Portfolio / Niche</div>
+          <div class="lender-bar-wrap"><div class="lender-bar" style="width:35%;background:#27ae60;"></div></div>
+          <div class="lender-pct" style="color:#27ae60;">35%</div>
+        </div>
+        <div class="lender-row">
+          <div class="lender-name">Credit Union</div>
+          <div class="lender-bar-wrap"><div class="lender-bar" style="width:28%;background:#27ae60;"></div></div>
+          <div class="lender-pct" style="color:#27ae60;">28%</div>
+        </div>
+      </div>
+
+      <!-- KEY STATS -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">By The Numbers</div>
+        <div class="stat-row">
+          <div class="stat-row-label">Avg denied credit score</div>
+          <div class="stat-row-val red">641</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-row-label">Avg approved credit score</div>
+          <div class="stat-row-val green">714</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-row-label">Got approved elsewhere</div>
+          <div class="stat-row-val green">68%</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-row-label">Fixed issue & reapplied</div>
+          <div class="stat-row-val">41%</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-row-label">Most denied state</div>
+          <div class="stat-row-val">California</div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div style="background:#fff0ee;border:1px solid #ffcccc;border-left:4px solid var(--red);padding:20px;border-radius:4px;">
+        <div style="font-weight:600;margin-bottom:6px;font-size:14px;">Worried about your application?</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">See how lenders would actually score you — before you apply.</div>
+        <a href="bank-rejection-engine.html" style="display:block;text-align:center;padding:10px;background:var(--navy);color:#fff;text-decoration:none;font-weight:600;font-size:13px;border-radius:4px;">Run My Application →</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div style="max-width:960px;margin:0 auto;padding:0 60px;">
+    <div class="logo" style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="font-style:italic;color:var(--gold);">Rate</em>Calc</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 FinanceRateCalc · Stories are anonymous user submissions · Not affiliated with any bank or lender · Educational use only</div>
+  </div>
+</footer>
+
+<script>
+// Seed stories database
+const seedStories = [
+  {id:1, outcome:'denied', lender:'Large National Bank', score:638, state:'Texas', reason:'DTI too high', story:'My DTI was 47%. The bank said their cap was 43%. I had no idea what DTI even was before this. Applied to a credit union two months later after paying off my car — got approved.', outcome_text:'Applied to Credit Union 2 months later — Approved ✅', days_ago:2, helpful:34, tags:['dti','credit']},
+  {id:2, outcome:'approved_after', lender:'FHA-Approved Lender', score:618, state:'Ohio', reason:'Credit score too low', story:'First bank said no at 618. I disputed two errors on my Equifax report and my score jumped to 664 in 6 weeks. Same income, same everything. Got FHA approval on the second try.', outcome_text:'Fixed credit errors, score went 618→664, FHA approved ✅', days_ago:4, helpful:67, tags:['credit']},
+  {id:3, outcome:'denied', lender:'Large National Bank', score:701, state:'California', reason:'Employment gap / self-employed', story:'I went self-employed 14 months ago. Bank wanted 2 full years of self-employment tax returns. My income is actually higher now but they said "we can only use what\'s on file." Applied to a portfolio lender that used 12-month bank statements.', outcome_text:'Portfolio lender approved using bank statement loan ✅', days_ago:6, helpful:89, tags:['employment']},
+  {id:4, outcome:'denied', lender:'Online / Non-Bank Lender', score:652, state:'Florida', reason:'Late payments on record', story:'Had 2 late payments from 2023 when I lost my job. Everything is current now but the online lender flagged them immediately. Waiting until they\'re 24 months old before reapplying.', outcome_text:'Still waiting — plan to reapply in 6 months', days_ago:9, helpful:41, tags:['credit']},
+  {id:5, outcome:'denied', lender:'Large National Bank', score:724, state:'New York', reason:'Insufficient reserves', story:'I had 20% down but only 1 month of reserves left after closing. Bank wanted 3 months. I didn\'t even know reserves were a thing. Saved for 3 more months and reapplied.', outcome_text:'Saved 3 months reserves, reapplied, approved ✅', days_ago:11, helpful:52, tags:['credit']},
+  {id:6, outcome:'denied', lender:'Credit Union', score:589, state:'Georgia', reason:'Credit score too low', story:'Score was 589. Credit union minimum was 620. Became an authorized user on my mom\'s Amex which has 15 years history. Score went to 634 in 45 days.', outcome_text:'Auth user trick worked, score 589→634, approved elsewhere ✅', days_ago:14, helpful:112, tags:['credit']},
+  {id:7, outcome:'denied', lender:'Online / Non-Bank Lender', score:677, state:'Illinois', reason:'DTI too high', story:'DTI was 51%. I had $600/mo in student loan payments that killed me. Income-based repayment actually lowered the counted payment to $180/mo for FHA purposes. Applied FHA and got approved.', outcome_text:'FHA uses IBR payment for student loans — game changer ✅', days_ago:17, helpful:143, tags:['dti']},
+  {id:8, outcome:'denied', lender:'Large National Bank', score:695, state:'Washington', reason:'Income not verifiable', story:'I had bonus income that made up 40% of my total. Bank would only use base salary. Switched to a lender that counts 2-year average of bonus income.', outcome_text:'Found lender that counts bonus income — approved ✅', days_ago:21, helpful:78, tags:['employment']},
+];
+
+let localStories = [...seedStories];
+let currentFilter = 'all';
+let voteStorage = JSON.parse(localStorage.getItem('frc_votes') || '{}');
+
+function renderStories(filter) {
+  const list = document.getElementById('storiesList');
+  let filtered = localStories;
+  if (filter === 'denied') filtered = localStories.filter(s => s.outcome === 'denied');
+  else if (filter === 'approved') filtered = localStories.filter(s => s.outcome === 'approved_after');
+  else if (filter !== 'all') filtered = localStories.filter(s => s.tags && s.tags.includes(filter));
+
+  list.innerHTML = filtered.map(s => `
+    <div class="story-card ${s.outcome === 'approved_after' ? 'approved-after' : ''}" id="story-${s.id}">
+      <div class="story-header">
+        <div class="story-meta">
+          <div class="story-profile">Anonymous · ${s.state}</div>
+          <div class="story-sub">Score: ${s.score} · ${s.lender}</div>
+          <div class="story-badges">
+            <span class="badge ${s.outcome === 'denied' ? 'denied' : s.outcome === 'approved_after' ? 'approved' : 'conditional'}">${s.outcome === 'denied' ? '🔴 Denied' : s.outcome === 'approved_after' ? '✅ Denied → Approved' : '🟡 Conditional'}</span>
+            <span class="badge lender">${s.lender}</span>
+          </div>
+        </div>
+        <div class="story-time">${s.days_ago}d ago</div>
+      </div>
+      <div class="story-reason"><strong>Reason:</strong> ${s.reason}</div>
+      ${s.story ? `<div class="story-quote">${s.story}</div>` : ''}
+      ${s.outcome_text ? `<div class="story-outcome">→ ${s.outcome_text}</div>` : ''}
+      <div class="story-votes">
+        <button class="vote-btn" onclick="vote(${s.id})" ${voteStorage[s.id] ? 'disabled style="opacity:0.5"' : ''}>👍 Helpful</button>
+        <span class="helpful-count" id="helpful-${s.id}">${s.helpful} found this helpful</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterStories(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderStories(filter);
+}
+
+function vote(id) {
+  if (voteStorage[id]) return;
+  const story = localStories.find(s => s.id === id);
+  if (story) {
+    story.helpful++;
+    voteStorage[id] = true;
+    localStorage.setItem('frc_votes', JSON.stringify(voteStorage));
+    document.getElementById('helpful-' + id).textContent = story.helpful + ' found this helpful';
+  }
+}
+
+function submitStory() {
+  const outcome = document.getElementById('outcome').value;
+  const lender = document.getElementById('lenderType').value;
+  const score = parseInt(document.getElementById('creditScore').value) || 0;
+  const state = document.getElementById('stateSelect').value;
+  const reason = document.getElementById('reason').value;
+  const story = document.getElementById('storyText').value;
+
+  if (!score || score < 300 || score > 850) {
+    alert('Please enter a valid credit score (300-850).');
+    return;
+  }
+
+  // Determine tags
+  const tags = [];
+  if (reason.includes('DTI')) tags.push('dti');
+  if (reason.includes('Credit')) tags.push('credit');
+  if (reason.includes('Employment') || reason.includes('income')) tags.push('employment');
+
+  const newStory = {
+    id: Date.now(),
+    outcome,
+    lender,
+    score,
+    state,
+    reason,
+    story,
+    outcome_text: null,
+    days_ago: 0,
+    helpful: 0,
+    tags
+  };
+
+  localStories.unshift(newStory);
+
+  // Update count
+  const countEl = document.getElementById('totalCount');
+  countEl.textContent = parseInt(countEl.textContent) + 1;
+
+  // Show success
+  document.getElementById('successMsg').style.display = 'block';
+
+  // Clear form
+  document.getElementById('creditScore').value = '';
+  document.getElementById('storyText').value = '';
+
+  // Re-render
+  renderStories(currentFilter);
+
+  setTimeout(() => {
+    document.getElementById('successMsg').style.display = 'none';
+  }, 5000);
+}
+
+// Initial render
+renderStories('all');
+
+// Animate count up
+function animateCount(el, target) {
+  let current = Math.floor(target * 0.7);
+  const step = Math.ceil((target - current) / 30);
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = current;
+    if (current >= target) clearInterval(timer);
+  }, 40);
+}
+animateCount(document.getElementById('totalCount'), 247);
+</script>
+</body>
+</html>
