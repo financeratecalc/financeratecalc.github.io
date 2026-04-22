@@ -141,6 +141,14 @@ h1 em{font-style:italic;color:var(--red);}
   .main{padding:30px 20px 60px;}
   .hero-stats{gap:24px;}
 }
+
+.custom-select{position:relative;user-select:none;}
+.cs-selected{background:#1a1a2e;border:1px solid rgba(255,255,255,0.15);color:#fff;padding:10px 32px 10px 12px;border-radius:4px;cursor:pointer;font-size:13px;position:relative;}
+.cs-selected::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);font-size:11px;}
+.cs-options{display:none;position:absolute;top:100%;left:0;right:0;background:#1a1a2e;border:1px solid rgba(255,255,255,0.15);border-top:none;border-radius:0 0 4px 4px;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+.cs-options.open{display:block;}
+.cs-option{padding:9px 12px;font-size:13px;color:rgba(255,255,255,0.75);cursor:pointer;}
+.cs-option:hover{background:rgba(255,255,255,0.08);color:#fff;}
 </style>
 </head>
 <body>
@@ -226,22 +234,30 @@ h1 em{font-style:italic;color:var(--red);}
 
         <div class="form-group">
           <label>What happened?</label>
-          <select id="outcome">
-            <option value="denied">🔴 I was denied</option>
-            <option value="conditional">🟡 Conditionally approved</option>
-            <option value="approved_after">✅ Denied then later approved</option>
-          </select>
+          <div class="custom-select" id="outcomeSelect">
+            <div class="cs-selected" onclick="toggleCS('outcomeSelect')">🔴 I was denied</div>
+            <div class="cs-options">
+              <div class="cs-option" data-val="denied" onclick="selectCS('outcomeSelect','denied','🔴 I was denied')">🔴 I was denied</div>
+              <div class="cs-option" data-val="conditional" onclick="selectCS('outcomeSelect','conditional','🟡 Conditionally approved')">🟡 Conditionally approved</div>
+              <div class="cs-option" data-val="approved_after" onclick="selectCS('outcomeSelect','approved_after','✅ Denied then later approved')">✅ Denied then later approved</div>
+            </div>
+            <input type="hidden" id="outcome" value="denied">
+          </div>
         </div>
         <div class="form-group">
           <label>Lender type</label>
-          <select id="lenderType">
-            <option>Large National Bank</option>
-            <option>Credit Union</option>
-            <option>Online / Non-Bank Lender</option>
-            <option>FHA-Approved Lender</option>
-            <option>Portfolio / Niche Lender</option>
-            <option>Not sure</option>
-          </select>
+          <div class="custom-select" id="lenderSelect">
+            <div class="cs-selected" onclick="toggleCS('lenderSelect')">Large National Bank</div>
+            <div class="cs-options">
+              <div class="cs-option" onclick="selectCS('lenderSelect','Large National Bank','Large National Bank')">Large National Bank</div>
+              <div class="cs-option" onclick="selectCS('lenderSelect','Credit Union','Credit Union')">Credit Union</div>
+              <div class="cs-option" onclick="selectCS('lenderSelect','Online / Non-Bank Lender','Online / Non-Bank Lender')">Online / Non-Bank Lender</div>
+              <div class="cs-option" onclick="selectCS('lenderSelect','FHA-Approved Lender','FHA-Approved Lender')">FHA-Approved Lender</div>
+              <div class="cs-option" onclick="selectCS('lenderSelect','Portfolio / Niche Lender','Portfolio / Niche Lender')">Portfolio / Niche Lender</div>
+              <div class="cs-option" onclick="selectCS('lenderSelect','Not sure','Not sure')">Not sure</div>
+            </div>
+            <input type="hidden" id="lenderType" value="Large National Bank">
+          </div>
         </div>
         <div class="form-group">
           <label>Credit score at application</label>
@@ -249,24 +265,81 @@ h1 em{font-style:italic;color:var(--red);}
         </div>
         <div class="form-group">
           <label>State</label>
-          <select id="stateSelect">
-            <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option><option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option><option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option><option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option><option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option><option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option><option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option><option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option><option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option><option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option>
-          </select>
+          <div class="custom-select" id="stateSelect">
+            <div class="cs-selected" onclick="toggleCS('stateSelect')">Select your state</div>
+            <div class="cs-options" style="max-height:160px;overflow-y:auto;">
+              <div class="cs-option" onclick="selectCS('stateSelect','Alabama','Alabama')">Alabama</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Alaska','Alaska')">Alaska</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Arizona','Arizona')">Arizona</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Arkansas','Arkansas')">Arkansas</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','California','California')">California</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Colorado','Colorado')">Colorado</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Connecticut','Connecticut')">Connecticut</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Delaware','Delaware')">Delaware</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Florida','Florida')">Florida</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Georgia','Georgia')">Georgia</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Hawaii','Hawaii')">Hawaii</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Idaho','Idaho')">Idaho</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Illinois','Illinois')">Illinois</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Indiana','Indiana')">Indiana</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Iowa','Iowa')">Iowa</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Kansas','Kansas')">Kansas</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Kentucky','Kentucky')">Kentucky</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Louisiana','Louisiana')">Louisiana</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Maine','Maine')">Maine</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Maryland','Maryland')">Maryland</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Massachusetts','Massachusetts')">Massachusetts</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Michigan','Michigan')">Michigan</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Minnesota','Minnesota')">Minnesota</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Mississippi','Mississippi')">Mississippi</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Missouri','Missouri')">Missouri</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Montana','Montana')">Montana</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Nebraska','Nebraska')">Nebraska</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Nevada','Nevada')">Nevada</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','New Hampshire','New Hampshire')">New Hampshire</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','New Jersey','New Jersey')">New Jersey</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','New Mexico','New Mexico')">New Mexico</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','New York','New York')">New York</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','North Carolina','North Carolina')">North Carolina</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','North Dakota','North Dakota')">North Dakota</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Ohio','Ohio')">Ohio</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Oklahoma','Oklahoma')">Oklahoma</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Oregon','Oregon')">Oregon</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Pennsylvania','Pennsylvania')">Pennsylvania</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Rhode Island','Rhode Island')">Rhode Island</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','South Carolina','South Carolina')">South Carolina</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','South Dakota','South Dakota')">South Dakota</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Tennessee','Tennessee')">Tennessee</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Texas','Texas')">Texas</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Utah','Utah')">Utah</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Vermont','Vermont')">Vermont</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Virginia','Virginia')">Virginia</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Washington','Washington')">Washington</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','West Virginia','West Virginia')">West Virginia</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Wisconsin','Wisconsin')">Wisconsin</div>
+              <div class="cs-option" onclick="selectCS('stateSelect','Wyoming','Wyoming')">Wyoming</div>
+            </div>
+            <input type="hidden" id="stateSelectVal" value="">
+          </div>
         </div>
         <div class="form-group">
           <label>The real reason they gave (or your best guess)</label>
-          <select id="reason">
-            <option>DTI too high</option>
-            <option>Credit score too low</option>
-            <option>Insufficient down payment</option>
-            <option>Employment gap / self-employed</option>
-            <option>Late payments on record</option>
-            <option>Insufficient reserves</option>
-            <option>Property issues (appraisal, type)</option>
-            <option>Too much existing debt</option>
-            <option>Income not verifiable</option>
-            <option>Other / Unknown</option>
-          </select>
+          <div class="custom-select" id="reasonSelect">
+            <div class="cs-selected" onclick="toggleCS('reasonSelect')">DTI too high</div>
+            <div class="cs-options">
+              <div class="cs-option" onclick="selectCS('reasonSelect','DTI too high','DTI too high')">DTI too high</div>
+              <div class="cs-option" onclick="selectCS('reasonSelect','Credit score too low','Credit score too low')">Credit score too low</div>
+              <div class="cs-option" onclick="selectCS('reasonSelect','Insufficient down payment','Insufficient down payment')">Insufficient down payment</div>
+              <div class="cs-option" onclick="selectCS('reasonSelect','Employment gap / self-employed','Employment gap / self-employed')">Employment gap / self-employed</div>
+              <div class="cs-option" onclick="selectCS('reasonSelect','Late payments on record','Late payments on record')">Late payments on record</div>
+              <div class="cs-option" onclick="selectCS('reasonSelect','Insufficient reserves','Insufficient reserves')">Insufficient reserves</div>
+              <div class="cs-option" onclick="selectCS('reasonSelect','Property issues (appraisal, type)','Property issues (appraisal, type)')">Property issues (appraisal, type)</div>
+              <div class="cs-option" onclick="selectCS('reasonSelect','Too much existing debt','Too much existing debt')">Too much existing debt</div>
+              <div class="cs-option" onclick="selectCS('reasonSelect','Income not verifiable','Income not verifiable')">Income not verifiable</div>
+              <div class="cs-option" onclick="selectCS('reasonSelect','Other / Unknown','Other / Unknown')">Other / Unknown</div>
+            </div>
+            <input type="hidden" id="reason" value="DTI too high">
+          </div>
         </div>
         <div class="form-group">
           <label>Your story (optional — anonymous)</label>
@@ -443,11 +516,11 @@ function vote(id) {
 }
 
 function submitStory() {
-  const outcome = document.getElementById('outcome').value;
-  const lender = document.getElementById('lenderType').value;
+  const outcome = document.querySelector('#outcomeSelect input').value || 'denied';
+  const lender = document.querySelector('#lenderSelect input').value || 'Large National Bank';
   const score = parseInt(document.getElementById('creditScore').value) || 0;
-  const state = document.getElementById('stateSelect').value;
-  const reason = document.getElementById('reason').value;
+  const state = document.querySelector('#stateSelect input').value || 'Unknown';
+  const reason = document.querySelector('#reasonSelect input').value || 'DTI too high';
   const story = document.getElementById('storyText').value;
 
   if (!score || score < 300 || score > 850) {
@@ -510,6 +583,25 @@ function animateCount(el, target) {
   }, 40);
 }
 animateCount(document.getElementById('totalCount'), 247);
+
+function toggleCS(id) {
+  document.querySelectorAll('.cs-options.open').forEach(el => {
+    if (el.closest('.custom-select').id !== id) el.classList.remove('open');
+  });
+  document.querySelector('#'+id+' .cs-options').classList.toggle('open');
+}
+function selectCS(id, val, label) {
+  document.querySelector('#'+id+' .cs-selected').textContent = label;
+  const hidden = document.querySelector('#'+id+' input[type=hidden]');
+  if (hidden) hidden.value = val;
+  document.querySelector('#'+id+' .cs-options').classList.remove('open');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.custom-select')) {
+    document.querySelectorAll('.cs-options.open').forEach(el => el.classList.remove('open'));
+  }
+});
+
 </script>
 
 <!-- Sky Blue Credit Popup -->
