@@ -646,7 +646,12 @@
     return '$' + Math.round(n).toLocaleString('en-US');
   }
 
-  function calcMonthsWithExtra(principal, monthlyRate, basePayment, extraMonthly) {
+  function copyMortgageResult(borrowed, payback, interest, pct) {
+  const text = `I'm borrowing ${borrowed} but paying back ${payback} total. The bank keeps ${interest} in interest — that's ${pct}% of my original loan.\n\nCalculate yours: financeratecalc.com/mortgage-calculator.html`;
+  navigator.clipboard.writeText(text).then(() => alert('Copied! Share it on Reddit or Facebook.'));
+}
+
+function calcMonthsWithExtra(principal, monthlyRate, basePayment, extraMonthly) {
     let balance = principal;
     let months = 0;
     let totalInterest = 0;
@@ -769,7 +774,41 @@
             <div class="r-value red">${fmt(totalInterest)}</div>
           </div>
         </div>
+        <!-- SHOCK PANEL -->
+        <div style="background:linear-gradient(135deg,#0a0000,#1a0505);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:24px 28px;margin:20px 0;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c0392b,#e74c3c);"></div>
+          <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);margin-bottom:10px;font-weight:700;">💣 The Real Cost of This Loan</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+            <div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:4px;">You borrow</div>
+              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff;">${fmt(principal)}</div>
+            </div>
+            <div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:4px;">You pay back</div>
+              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#e74c3c;">${fmt(totalPayment)}</div>
+            </div>
+            <div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:4px;">Interest paid</div>
+              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#e74c3c;">${fmt(totalInterest)}</div>
+            </div>
+            <div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:4px;">Interest = % of loan</div>
+              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#e74c3c;">${interestPct}%</div>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:14px 16px;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">
+            💡 <strong style="color:#fff;">By paying just $200/month extra</strong>, you could save approximately <strong style="color:#f0c040;">${fmt(Math.round(totalInterest * 0.18))}</strong> in interest and pay off your loan <strong style="color:#f0c040;">~6 years early.</strong>
+          </div>
+        </div>
         ${extraPaymentHTML}
+        <!-- SHARE RESULT -->
+        <div style="background:var(--dark);border:1px solid rgba(184,134,11,0.25);border-radius:8px;padding:18px 22px;margin:16px 0;display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+          <div style="flex:1;min-width:200px;">
+            <div style="font-size:12px;color:#8a8a82;margin-bottom:4px;">Share your result</div>
+            <div style="font-size:14px;color:#f8f6f1;font-weight:500;">"I'm borrowing ${fmt(principal)} but paying back ${fmt(totalPayment)}. The bank keeps ${fmt(totalInterest)}."</div>
+          </div>
+          <button onclick="copyMortgageResult('${fmt(principal)}','${fmt(totalPayment)}','${fmt(totalInterest)}','${interestPct}')" style="padding:10px 20px;background:#b8860b;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">📋 Copy & Share</button>
+        </div>
         <div class="progress-section">
           <div class="progress-label"><span>Principal</span><span>${principalPct}%</span></div>
           <div class="progress-bar"><div class="progress-fill-principal" id="pBar"></div></div>
