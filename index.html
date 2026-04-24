@@ -266,63 +266,36 @@
 }
 
 .tool-card { position: relative; }
-
-
-
-.flip-card { perspective: 1000px; }
-.flip-card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 220px;
-  transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
-  transform-style: preserve-3d;
-}
-.flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
-.flip-front, .flip-back {
+.tool-preview {
+  display: none;
   position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  border-radius: 12px;
-  padding: 28px;
-}
-.flip-front { background: var(--white); }
-.flip-back {
+  top: 100%;
+  left: 0; right: 0;
   background: var(--navy);
-  transform: rotateY(180deg);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 8px;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 14px 16px;
+  z-index: 999;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  animation: slideDown 0.2s ease;
+  margin-top: 6px;
 }
-.flip-back-title {
-  font-family: 'Fraunces', serif;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--gold);
-  margin-bottom: 4px;
+@keyframes slideDown {
+  from { opacity:0; transform:translateY(-8px); }
+  to   { opacity:1; transform:translateY(0); }
 }
-.flip-back-stat {
-  font-size: 13px;
-  color: rgba(255,255,255,0.75);
-  padding: 5px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* JS controlled */
+.tool-preview-stat {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: rgba(255,255,255,0.75);
+  padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
 }
-.flip-back-btn {
-  display: block;
-  margin-top: 12px;
-  padding: 10px 16px;
-  background: var(--gold);
-  color: var(--navy);
-  font-weight: 700;
-  font-size: 13px;
-  text-align: center;
-  border-radius: 6px;
-  text-decoration: none;
+.tool-preview-stat:last-of-type { border-bottom: none; margin-bottom: 10px; }
+.tool-preview-btn {
+  display: block; width: 100%; padding: 8px;
+  background: var(--gold); color: var(--navy);
+  font-weight: 700; font-size: 12px; text-align: center;
+  border-radius: 4px; text-decoration: none;
 }
 
 </style>
@@ -593,119 +566,77 @@
     </a>
 
     <!-- ROW 4: 3-COLUMN NORMAL TOOLS -->
-    <div class="flip-card tool-card" style="--card-color:#b8860b;" onclick="window.location='mortgage-calculator.html'">
-      <div class="flip-card-inner">
-        <div class="flip-front">
+    <a href="mortgage-calculator.html" class="tool-card" style="--card-color:#b8860b;--icon-bg:rgba(184,134,11,0.1)">
       <div class="tool-icon">🏠</div>
       <div class="tool-label">Most Used</div>
       <div class="tool-name">Mortgage Calculator</div>
       <div class="tool-desc">Real P&I + taxes + insurance + PMI. Not just the payment — the full picture.</div>
       <div class="tool-features"><span class="tool-feature">PITI</span><span class="tool-feature">Amortization</span><span class="tool-feature">PMI</span></div>
-      <div class="tool-link">Calculate →</div><div class="tool-preview-stat">👉 ✓ Full amortization schedule</div>
+      <div class="tool-link">Calculate →</div>
+<div class="tool-preview"><div class="tool-preview-stat">👉 ✓ P&I + tax + insurance + PMI</div>
+<div class="tool-preview-stat">👉 ✓ Full amortization schedule</div>
 <div class="tool-preview-stat">👉 ✓ Extra payment simulator</div><a href="mortgage-calculator.html" class="tool-preview-btn">Open Calculator →</a></div>
-        </div>
-        <div class="flip-back">
-          <div class="flip-back-title">Mortgage Calculator</div>
-          <div class="flip-back-stat">✓ P&I + tax + insurance + PMI</div><div class="flip-back-stat">✓ Full amortization table</div><div class="flip-back-stat">✓ Extra payment simulator</div><div class="flip-back-stat">✓ Shock: real total cost</div>
-          <a href="mortgage-calculator.html" class="flip-back-btn" onclick="event.stopPropagation()">Open Calculator →</a>
-        </div>
-      </div>
-    </div>
+    </a>
 
-    <div class="flip-card tool-card" style="--card-color:#cc0000;" onclick="window.location='are-you-house-poor.html'">
-      <div class="flip-card-inner">
-        <div class="flip-front">
+    <a href="are-you-house-poor.html" class="tool-card" style="--card-color:#cc0000;--icon-bg:rgba(204,0,0,0.08)">
       <div class="tool-icon">🏚️</div>
       <div class="tool-label">🔥 Viral Quiz</div>
       <div class="tool-name">Are You House Poor?</div>
       <div class="tool-desc">1 in 4 Americans is house poor. Are you one of them? Find out in 60 seconds.</div>
       <div class="tool-features"><span class="tool-feature">60 Seconds</span><span class="tool-feature">Score</span><span class="tool-feature">Action Plan</span></div>
-      <div class="tool-link">Take the Quiz →</div><div class="tool-preview-stat">👉 ✓ House Poor Score</div>
+      <div class="tool-link">Take the Quiz →</div>
+<div class="tool-preview"><div class="tool-preview-stat">👉 ✓ 60-second quiz</div>
+<div class="tool-preview-stat">👉 ✓ House Poor Score</div>
 <div class="tool-preview-stat">👉 ✓ Step-by-step fix plan</div><a href="are-you-house-poor.html" class="tool-preview-btn">Take the Quiz →</a></div>
-        </div>
-        <div class="flip-back">
-          <div class="flip-back-title">Are You House Poor?</div>
-          <div class="flip-back-stat">✓ 60-second quiz</div><div class="flip-back-stat">✓ House Poor Score</div><div class="flip-back-stat">✓ 1 in 4 Americans qualify</div><div class="flip-back-stat">✓ Step-by-step fix plan</div>
-          <a href="are-you-house-poor.html" class="flip-back-btn" onclick="event.stopPropagation()">Take the Quiz →</a>
-        </div>
-      </div>
-    </div>
+    </a>
 
-    <div class="flip-card tool-card" style="--card-color:#c0392b;" onclick="window.location='salary-by-state.html'">
-      <div class="flip-card-inner">
-        <div class="flip-front">
+    <a href="salary-by-state.html" class="tool-card" style="--card-color:#c0392b;--icon-bg:rgba(192,57,43,0.08)">
       <div class="tool-icon">🗺️</div>
       <div class="tool-label">All 50 States</div>
       <div class="tool-name">Salary by State</div>
       <div class="tool-desc">What salary do you need to buy a home in your state? 11 states now require $100K+.</div>
       <div class="tool-features"><span class="tool-feature">All 50 States</span><span class="tool-feature">Interactive Map</span><span class="tool-feature">2026 Data</span></div>
-      <div class="tool-link">See Your State →</div><div class="tool-preview-stat">👉 ✓ Interactive D3 map</div>
+      <div class="tool-link">See Your State →</div>
+<div class="tool-preview"><div class="tool-preview-stat">👉 ✓ All 50 states covered</div>
+<div class="tool-preview-stat">👉 ✓ Interactive D3 map</div>
 <div class="tool-preview-stat">👉 ✓ 11 states need $100K+</div><a href="salary-by-state.html" class="tool-preview-btn">See Your State →</a></div>
-        </div>
-        <div class="flip-back">
-          <div class="flip-back-title">Salary by State</div>
-          <div class="flip-back-stat">✓ All 50 states covered</div><div class="flip-back-stat">✓ Interactive D3 map</div><div class="flip-back-stat">✓ 11 states need $100K+</div><div class="flip-back-stat">✓ 2026 real data</div>
-          <a href="salary-by-state.html" class="flip-back-btn" onclick="event.stopPropagation()">See Your State →</a>
-        </div>
-      </div>
-    </div>
+    </a>
 
-    <div class="flip-card tool-card" style="--card-color:#c8a44a;" onclick="window.location='mortgage-time-machine.html'">
-      <div class="flip-card-inner">
-        <div class="flip-front">
+    <a href="mortgage-time-machine.html" class="tool-card" style="--card-color:#c8a44a;--icon-bg:rgba(200,164,74,0.08)">
       <div class="tool-icon">⏳</div>
       <div class="tool-label">Historical Data</div>
       <div class="tool-name">Mortgage Time Machine</div>
       <div class="tool-desc">What if you bought in 2015? 2019? See real historical prices and how much you gained or missed.</div>
       <div class="tool-features"><span class="tool-feature">2015–2023</span><span class="tool-feature">Real Rates</span><span class="tool-feature">Share Card</span></div>
-      <div class="tool-link">Travel Back →</div><div class="tool-preview-stat">👉 ✓ Real historical prices & rates</div>
+      <div class="tool-link">Travel Back →</div>
+<div class="tool-preview"><div class="tool-preview-stat">👉 ✓ What if you bought in 2015?</div>
+<div class="tool-preview-stat">👉 ✓ Real historical prices & rates</div>
 <div class="tool-preview-stat">👉 ✓ Shareable result card</div><a href="mortgage-time-machine.html" class="tool-preview-btn">Travel Back →</a></div>
-        </div>
-        <div class="flip-back">
-          <div class="flip-back-title">Time Machine</div>
-          <div class="flip-back-stat">✓ What if you bought in 2015?</div><div class="flip-back-stat">✓ Real historical prices</div><div class="flip-back-stat">✓ Monthly payment diff</div><div class="flip-back-stat">✓ Shareable result card</div>
-          <a href="mortgage-time-machine.html" class="flip-back-btn" onclick="event.stopPropagation()">Travel Back →</a>
-        </div>
-      </div>
-    </div>
+    </a>
 
-    <div class="flip-card tool-card" style="--card-color:#27ae60;" onclick="window.location='zip-code-wealth-gap.html'">
-      <div class="flip-card-inner">
-        <div class="flip-front">
+    <a href="zip-code-wealth-gap.html" class="tool-card" style="--card-color:#27ae60;--icon-bg:rgba(39,174,96,0.08)">
       <div class="tool-icon">📍</div>
       <div class="tool-label">City Comparison</div>
       <div class="tool-name">Zip Code Wealth Gap</div>
       <div class="tool-desc">Same $80K salary. Austin vs Detroit. The 30-year wealth difference can exceed $500K.</div>
       <div class="tool-features"><span class="tool-feature">20+ Cities</span><span class="tool-feature">30-Year</span><span class="tool-feature">Share Card</span></div>
-      <div class="tool-link">See the Gap →</div><div class="tool-preview-stat">👉 ✓ 30-year wealth projection</div>
+      <div class="tool-link">See the Gap →</div>
+<div class="tool-preview"><div class="tool-preview-stat">👉 ✓ Same salary, different city</div>
+<div class="tool-preview-stat">👉 ✓ 30-year wealth projection</div>
 <div class="tool-preview-stat">👉 ✓ Austin vs Detroit gap</div><a href="zip-code-wealth-gap.html" class="tool-preview-btn">See the Gap →</a></div>
-        </div>
-        <div class="flip-back">
-          <div class="flip-back-title">Wealth Gap</div>
-          <div class="flip-back-stat">✓ Same salary, 2 cities</div><div class="flip-back-stat">✓ 30-year wealth gap</div><div class="flip-back-stat">✓ Austin vs Detroit: $500K+</div><div class="flip-back-stat">✓ Share card</div>
-          <a href="zip-code-wealth-gap.html" class="flip-back-btn" onclick="event.stopPropagation()">See the Gap →</a>
-        </div>
-      </div>
-    </div>
+    </a>
 
-    <div class="flip-card tool-card" style="--card-color:#4a6741;" onclick="window.location='compound-interest-calculator.html'">
-      <div class="flip-card-inner">
-        <div class="flip-front">
+    <a href="compound-interest-calculator.html" class="tool-card" style="--card-color:#4a6741;--icon-bg:rgba(74,103,65,0.08)">
       <div class="tool-icon">📈</div>
       <div class="tool-label">18 Countries</div>
       <div class="tool-name">Compound Interest</div>
       <div class="tool-desc">Watch your money multiply year by year. Real savings rates from 18 countries.</div>
       <div class="tool-features"><span class="tool-feature">18 Countries</span><span class="tool-feature">Growth Curve</span><span class="tool-feature">Milestones</span></div>
-      <div class="tool-link">See the Growth →</div><div class="tool-preview-stat">👉 ✓ Year-by-year growth chart</div>
+      <div class="tool-link">See the Growth →</div>
+<div class="tool-preview"><div class="tool-preview-stat">👉 ✓ 18 countries, real rates</div>
+<div class="tool-preview-stat">👉 ✓ Year-by-year growth chart</div>
 <div class="tool-preview-stat">👉 ✓ Milestone tracker</div><a href="compound-interest-calculator.html" class="tool-preview-btn">See the Growth →</a></div>
-        </div>
-        <div class="flip-back">
-          <div class="flip-back-title">Compound Interest</div>
-          <div class="flip-back-stat">✓ 18 countries, real rates</div><div class="flip-back-stat">✓ Year-by-year growth</div><div class="flip-back-stat">✓ Milestone tracker</div><div class="flip-back-stat">✓ Country comparison</div>
-          <a href="compound-interest-calculator.html" class="flip-back-btn" onclick="event.stopPropagation()">See the Growth →</a>
-        </div>
-      </div>
-    </div>
+    </a>
 
     <a href="loan-offer-analyzer.html" class="tool-card" style="--card-color:#8b2a2a;--icon-bg:rgba(139,42,42,0.08)">
       <div class="tool-icon">🔎</div>
@@ -964,5 +895,18 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 
+<script>
+document.querySelectorAll('.tool-card').forEach(card => {
+  const preview = card.querySelector('.tool-preview');
+  if (!preview) return;
+  
+  card.addEventListener('mouseenter', () => {
+    preview.style.display = 'block';
+  });
+  card.addEventListener('mouseleave', () => {
+    preview.style.display = 'none';
+  });
+});
+</script>
 </body>
 </html>
