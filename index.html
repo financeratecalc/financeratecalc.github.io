@@ -163,7 +163,7 @@
   .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
   .section-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
   .section-title { font-family: 'Fraunces', serif; font-size: clamp(28px, 4vw, 40px); font-weight: 900; color: var(--ink); letter-spacing: -0.5px; line-height: 1.1; }
-  .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; position: relative; }
   .tool-card-featured { grid-column: 1 / -1; }
   @media (max-width: 900px) { .tools-grid { grid-template-columns: 1fr; } }
   .tool-card { 
@@ -265,19 +265,19 @@
 .tool-preview {
   display: none;
   position: absolute;
-  bottom: 100%;
+  top: 100%;
   left: 0; right: 0;
   background: var(--navy);
   border: 1px solid var(--gold);
   border-radius: 8px;
   padding: 14px 16px;
-  z-index: 50;
-  box-shadow: 0 -8px 32px rgba(0,0,0,0.2);
-  animation: slideUp 0.2s ease;
-  margin-bottom: 6px;
+  z-index: 999;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  animation: slideDown 0.2s ease;
+  margin-top: 6px;
 }
-@keyframes slideUp {
-  from { opacity:0; transform:translateY(8px); }
+@keyframes slideDown {
+  from { opacity:0; transform:translateY(-8px); }
   to   { opacity:1; transform:translateY(0); }
 }
 .tool-card:hover .tool-preview { display: block; }
