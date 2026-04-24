@@ -370,6 +370,18 @@
     <h1>Your Home. Your Debt. Your Numbers.</h1>
 <h2 style="font-size:clamp(18px,2.5vw,26px);font-weight:600;margin-top:12px;margin-bottom:8px;">Free Financial Calculators</h2>
     <p class="hero-desc">Free tools built by a banker — so you make the right call before it's too late. Calculate, compare, and protect what you've worked for.</p>
+    <!-- LOSS COUNTER -->
+    <div style="background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);border-radius:8px;padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);margin-bottom:4px;font-weight:600;">⏱ Every month you wait to buy</div>
+        <div style="display:flex;align-items:baseline;gap:8px;">
+          <span style="font-family:'Fraunces',serif;font-size:clamp(28px,4vw,42px);font-weight:900;color:#ff6b6b;" id="lossCounter">$0</span>
+          <span style="font-size:14px;color:rgba(255,255,255,0.5);">in home equity and appreciation — gone.</span>
+        </div>
+      </div>
+      <a href="cost-of-waiting.html" style="padding:10px 20px;background:#c0392b;color:#fff;text-decoration:none;font-weight:600;font-size:13px;border-radius:6px;white-space:nowrap;flex-shrink:0;">See My Real Cost →</a>
+    </div>
+
     <div class="hero-stats">
       <div class="stat"><div class="s-num" id="cnt-1">0</div><div class="s-label">Years of Banking</div></div>
       <div class="stat"><div class="s-num" id="cnt-2">0</div><div class="s-label">Monthly Users</div></div>
@@ -788,6 +800,42 @@ document.addEventListener('DOMContentLoaded', () => {
       badge.style.transform = 'scale(1)';
     }, 300);
   }, 2000);
+})();
+</script>
+
+<script>
+// Loss Counter — national avg home appreciates ~$1,400/mo
+(function() {
+  const monthlyLoss = 1433; // ~$420K home × 4.1% annual / 12
+  const dailyLoss = monthlyLoss / 30;
+  const hourlyLoss = dailyLoss / 24;
+  const el = document.getElementById('lossCounter');
+  if (!el) return;
+  
+  let startTime = Date.now();
+  let displayed = 0;
+  
+  // Start at a random point in the month so it doesn't always start at 0
+  const dayOfMonth = new Date().getDate();
+  const startVal = Math.round(dailyLoss * dayOfMonth);
+  displayed = startVal;
+  
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+  
+  el.textContent = fmt(displayed);
+  
+  // Increment every 7 seconds by $1
+  setInterval(function() {
+    displayed += (hourlyLoss / 514); // ticks ~every 7sec
+    el.textContent = fmt(displayed);
+    // Pulse effect
+    el.style.transform = 'scale(1.05)';
+    setTimeout(() => el.style.transform = 'scale(1)', 200);
+  }, 7000);
+  
+  el.style.transition = 'transform 0.2s ease';
 })();
 </script>
 </body>
