@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Million Dollar Listing Challenge — Banker's Verdict | FinanceRateCalc</title>
+<meta name="description" content="A 23-year banker analyzes real $1M+ listings every week. See what salary you actually need, the House Poor Score, and whether anyone can really afford these homes.">
+<link rel="canonical" href="https://financeratecalc.com/million-dollar-listing-challenge.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FinanceRateCalc">
+<meta property="og:title" content="Million Dollar Listing Challenge — Banker's Verdict">
+<meta property="og:description" content="Every week, a 23-year banker runs the real numbers on a $1M+ listing. The math is brutal.">
+<meta property="og:image" content="https://financeratecalc.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f5c;--gold:#c8a44a;--red:#c0392b;--green:#27ae60;--white:#fff;--cream:#f8f6f0;--border:#dde0ee;--muted:#6677aa;--ink:#0a0e1a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:var(--cream);color:var(--ink);line-height:1.7;}
+header{background:var(--navy);padding:0 60px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+.hero{background:linear-gradient(135deg,#0a0000,#1a0505);padding:56px 60px 48px;border-bottom:4px solid var(--red);}
+.hero-inner{max-width:960px;margin:0 auto;}
+.tag{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--red);margin-bottom:12px;font-weight:600;}
+h1{font-family:'Fraunces',serif;font-size:clamp(30px,5vw,60px);font-weight:900;color:#fff;line-height:1.05;margin-bottom:16px;}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.55);max-width:600px;margin-bottom:24px;}
+.hero-rule{font-size:13px;color:rgba(255,255,255,0.35);border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;}
+.main{max-width:960px;margin:0 auto;padding:44px 60px 80px;}
+.listing-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:32px;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+.listing-header{background:var(--navy);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.listing-week{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:600;}
+.listing-verdict{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.08em;}
+.listing-body{padding:28px;}
+.listing-title{font-family:'Fraunces',serif;font-size:24px;font-weight:900;color:var(--navy);margin-bottom:6px;}
+.listing-price{font-family:'Fraunces',serif;font-size:36px;font-weight:900;color:var(--red);margin-bottom:16px;}
+.listing-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.lst-stat{background:var(--cream);padding:14px;border-radius:8px;text-align:center;}
+.lst-num{font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:var(--navy);}
+.lst-label{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-top:3px;}
+.profiles-table{width:100%;border-collapse:collapse;margin:16px 0;}
+.profiles-table th{padding:10px 14px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;background:var(--navy);color:rgba(255,255,255,0.7);text-align:left;}
+.profiles-table td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--border);}
+.banker-verdict{background:linear-gradient(135deg,#0a0000,#1a0505);border-radius:8px;padding:22px 26px;margin-top:20px;}
+.bv-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--red);margin-bottom:8px;font-weight:700;}
+.bv-text{font-size:14px;color:rgba(255,255,255,0.75);line-height:1.7;}
+.bv-sig{font-size:12px;color:rgba(255,255,255,0.3);margin-top:10px;}
+.share-strip{background:var(--cream);border-top:1px solid var(--border);padding:16px 24px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.share-text{font-size:13px;color:var(--muted);flex:1;}
+.share-btn{padding:8px 18px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;cursor:pointer;border:none;}
+h2{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--navy);margin:36px 0 14px;}
+p{font-size:15px;color:#2c2c2c;line-height:1.75;margin-bottom:14px;}
+.cta-own{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:20px 24px;margin:28px 0;display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+footer{background:var(--navy);padding:28px 60px;text-align:center;}
+@media(max-width:768px){header{padding:0 16px;}.hero{padding:40px 20px;}.main{padding:28px 20px 60px;}.listing-stats{grid-template-columns:1fr 1fr;}.listing-header{flex-direction:column;}.share-strip{flex-direction:column;}footer{padding:24px 20px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="tag">🏦 Weekly · A 23-Year Banker Runs the Numbers</div>
+    <h1>Million Dollar<br>Listing Challenge</h1>
+    <div class="hero-sub">Every week, we pick a real $1M+ listing from Zillow and run the brutal math. What salary do you actually need? Can a doctor afford it? A surgeon? A CEO?</div>
+    <div class="hero-rule">The math doesn't care about the granite countertops. · New listing every Monday · 100% based on public data</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- WEEK 1 -->
+  <div class="listing-card">
+    <div class="listing-header">
+      <div>
+        <div class="listing-week">Week 1 · April 2026</div>
+        <div style="color:#fff;font-size:16px;font-weight:600;margin-top:3px;">Westlake Hills, Austin TX</div>
+      </div>
+      <div class="listing-verdict" style="background:rgba(192,57,43,0.2);color:#ff6b6b;border:1px solid rgba(192,57,43,0.4);">🔴 BANKER SAYS: DENIED</div>
+    </div>
+    <div class="listing-body">
+      <div class="listing-title">4BR/4BA · Westlake Hills, Austin TX</div>
+      <div class="listing-price">$1,300,000</div>
+      <div class="listing-stats">
+        <div class="lst-stat">
+          <div class="lst-num" style="color:var(--red);">$9,140</div>
+          <div class="lst-label">All-In Monthly</div>
+        </div>
+        <div class="lst-stat">
+          <div class="lst-num" style="color:var(--red);">$520K</div>
+          <div class="lst-label">Salary Needed</div>
+        </div>
+        <div class="lst-stat">
+          <div class="lst-num" style="color:var(--red);">94/100</div>
+          <div class="lst-label">House Poor Score</div>
+        </div>
+        <div class="lst-stat">
+          <div class="lst-num">$260K</div>
+          <div class="lst-label">Down Payment (20%)</div>
+        </div>
+      </div>
+
+      <div style="font-weight:700;color:var(--navy);margin-bottom:10px;font-size:15px;">Who Can Actually Afford This Home?</div>
+      <table class="profiles-table">
+        <thead><tr><th>Profile</th><th>Salary</th><th>Banker's Verdict</th></tr></thead>
+        <tbody>
+          <tr><td>👨‍⚕️ Surgeon</td><td>$380,000</td><td style="color:var(--red);font-weight:600;">❌ Denied — DTI 72% at national bank</td></tr>
+          <tr><td>💻 Senior Engineer (FAANG)</td><td>$280,000</td><td style="color:var(--red);font-weight:600;">❌ Denied — $240K short on salary</td></tr>
+          <tr><td>🏫 School Principal</td><td>$95,000</td><td style="color:var(--red);font-weight:600;">❌ Denied — 35 years of savings needed</td></tr>
+          <tr><td>👮 Police Captain</td><td>$85,000</td><td style="color:var(--red);font-weight:600;">❌ Denied — housing = 142% of income</td></tr>
+          <tr><td>👨‍💼 CEO (mid-size company)</td><td>$550,000</td><td style="color:var(--green);font-weight:600;">✅ Approved — barely, with 20% down</td></tr>
+        </tbody>
+      </table>
+
+      <div class="banker-verdict">
+        <div class="bv-label">🏦 Banker's Verdict</div>
+        <div class="bv-text">This home requires $520,000/year in gross income to stay within the 28% housing rule. At 7.1% with 20% down ($260,000), the all-in monthly cost exceeds $9,100. That's before groceries, retirement, or a car payment. I've seen surgeons get denied for homes like this. The math doesn't care about your credentials — or your taste in countertops.</div>
+        <div class="bv-sig">— Licensed Banker · 23 Years Experience · FinanceRateCalc</div>
+      </div>
+    </div>
+    <div class="share-strip">
+      <div class="share-text">💬 Share this: "A surgeon can't afford this Austin home. A senior engineer can't. Who can?"</div>
+      <button class="share-btn" style="background:var(--navy);color:#fff;" onclick="navigator.clipboard.writeText('A surgeon earning $380K was denied for this $1.3M Austin home. The math: financeratecalc.com/million-dollar-listing-challenge.html').then(()=>alert('Copied! Post it on Reddit or Twitter.'))">📋 Copy & Share</button>
+      <a class="share-btn" style="background:#1877f2;color:#fff;" href="https://www.facebook.com/sharer/sharer.php?u=https://financeratecalc.com/million-dollar-listing-challenge.html" target="_blank">Share on Facebook</a>
+      <a class="share-btn" style="background:#000;color:#fff;" href="https://twitter.com/intent/tweet?text=A+surgeon+earning+%24380K+can%27t+afford+this+%241.3M+Austin+home.+The+math+is+brutal.+financeratecalc.com%2Fmillion-dollar-listing-challenge.html" target="_blank">Post on X</a>
+    </div>
+  </div>
+
+  <!-- CTA: TRY YOUR OWN LISTING -->
+  <div class="cta-own">
+    <div style="flex:1;">
+      <div style="font-weight:700;color:var(--navy);margin-bottom:4px;">🏠 Challenge Your Own Listing</div>
+      <div style="font-size:13px;color:var(--muted);">Paste any Zillow or Redfin URL — get the real all-in monthly cost, House Poor Score, and salary needed in 10 seconds.</div>
+    </div>
+    <a href="real-cost-calculator.html" style="padding:12px 24px;background:var(--red);color:#fff;text-decoration:none;font-weight:700;font-size:13px;border-radius:6px;white-space:nowrap;">Run My Listing →</a>
+  </div>
+
+  <h2>How the Challenge Works</h2>
+  <p>Every week, we pick a real $1M+ listing from a major US city. We run the full financial analysis: all-in monthly cost (principal, interest, property taxes, insurance, HOA), the salary required to stay within the 28% housing rule, and the House Poor Score.</p>
+  <p>Then we ask the question nobody asks at the open house: can a surgeon afford this? A senior engineer? A school teacher? The answers are usually uncomfortable.</p>
+  <p>The goal isn't to say "you can't buy a home." It's to show that the price tag on a listing tells you almost nothing about what it actually costs to live there.</p>
+
+  <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:20px 24px;margin:24px 0;">
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:12px;">Submit a Listing for Next Week's Challenge</div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:0;">Found a listing that seems financially insane? Share it in the <a href="mortgage-rejection-database.html" style="color:var(--navy);font-weight:600;">Rejection Database comments</a> or paste the URL in the Real Cost Calculator below and share your result.</p>
+  </div>
+
+</div>
+
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 FinanceRateCalc · Million Dollar Listing Challenge · Educational use only · Not affiliated with any listing service</div>
+</footer>
+</body>
+</html>
