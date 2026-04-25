@@ -735,6 +735,37 @@ Consult a licensed professional before making financial decisions.
   }, 500);
 }
 
+
+function showSimilarStories(reason, outcome) {
+  const similar = allStories.filter(s => 
+    (s.reason === reason || s.outcome === outcome) && s !== currentStory
+  ).slice(0, 3);
+  
+  const box = document.getElementById('similar-box');
+  if (!box || similar.length === 0) return;
+  
+  box.innerHTML = `
+    <div style="background:linear-gradient(135deg,#0a0800,#1a1200);border:1px solid rgba(200,164,74,0.3);border-radius:8px;padding:20px 24px;margin:20px 0;">
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#c8a44a;margin-bottom:12px;font-weight:700;">
+        👥 People With Similar Stories
+      </div>
+      ${similar.map(s => `
+        <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:12px 14px;margin-bottom:10px;border-left:3px solid rgba(200,164,74,0.4);">
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:4px;">${s.profile} · ${s.lender} · ${s.state}</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.8);">${s.reason}</div>
+          <div style="font-size:12px;color:${s.outcome === 'approved_after' ? '#6bffb8' : '#ff6b6b'};margin-top:4px;">
+            ${s.outcome === 'approved_after' ? '✅ Later approved' : s.outcome === 'conditional' ? '🟡 Conditional' : '🔴 Still denied'}
+          </div>
+        </div>
+      `).join('')}
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:8px;">
+        Showing ${similar.length} similar ${reason} cases · <a href="#submit" style="color:#c8a44a;text-decoration:none;">Add your story →</a>
+      </div>
+    </div>
+  `;
+  box.style.display = 'block';
+}
+
 </script>
 
 <!-- Sky Blue Credit Popup -->
