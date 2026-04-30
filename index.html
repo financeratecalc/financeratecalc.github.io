@@ -905,13 +905,12 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <script>
-// Live Loss Counter — $412K home × 6% annual = $24,720/yr = $0.784/sec
+// Live Loss Counter — $412K home × 6% annual = $0.784/sec
 (function() {
-  const perSecond = 412000 * 0.06 / 365 / 24 / 3600; // ~$0.784/sec
-  const el = document.getElementById('lossCounter');
+  var perSecond = 412000 * 0.06 / 365 / 24 / 3600;
+  var el = document.getElementById('lossCounter');
   if (!el) return;
-  
-  const startTime = Date.now();
+  var startTime = Date.now();
   
   function fmt(n) {
     if (n < 1) return '$' + n.toFixed(2);
@@ -919,17 +918,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return '$' + Math.round(n).toLocaleString('en-US');
   }
   
-  el.textContent = fmt(displayed);
-  
-  // Increment every 7 seconds by $1
   function tick() {
     var elapsed = (Date.now() - startTime) / 1000;
-    var current = elapsed * perSecond;
-    el.textContent = fmt(current);
+    el.textContent = fmt(elapsed * perSecond);
     requestAnimationFrame(tick);
   }
   
-  el.style.transition = 'color 0.3s ease';
   requestAnimationFrame(tick);
 })();
 </script>
