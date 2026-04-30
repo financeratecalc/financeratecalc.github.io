@@ -508,6 +508,44 @@ function analyze() {
   
   if (actions.length === 0) actions.push(`You're in great shape — shop at least 3 lenders and compare rates. Every 0.25% = ~$50/mo on a $300K loan.`);
 
+  // Best Lender Recommendation
+  let bestLender = '';
+  let bestReason = '';
+  let bestIcon = '';
+  let bestColor = '';
+
+  if (score >= 740 && backEnd <= 36 && downPct >= 20 && reserves >= 3) {
+    bestLender = 'Large National Bank or Credit Union';
+    bestReason = 'Your profile is strong — you qualify for the best rates at any lender. Get quotes from at least 3 to compare.';
+    bestIcon = '🏆';
+    bestColor = '#27ae60';
+  } else if (score >= 680 && backEnd <= 43 && downPct >= 5) {
+    bestLender = 'Credit Union';
+    bestReason = 'Credit unions allow up to 47% DTI vs 43% at national banks, and are more flexible with borderline scores. Your profile fits their sweet spot.';
+    bestIcon = '✅';
+    bestColor = '#27ae60';
+  } else if (score >= 580 && backEnd <= 57) {
+    bestLender = 'FHA-Approved Lender';
+    bestReason = 'FHA accepts scores as low as 580, DTI up to 57%, and only requires 3.5% down. This is your best path to approval.';
+    bestIcon = '🏠';
+    bestColor = '#2563eb';
+  } else if (empType && (empType.includes('self') || empType.includes('contract'))) {
+    bestLender = 'Portfolio Lender';
+    bestReason = 'Portfolio lenders keep loans in-house and can approve based on bank statements rather than tax returns — ideal for self-employed borrowers.';
+    bestIcon = '💼';
+    bestColor = '#b7791f';
+  } else if (score < 580) {
+    bestLender = 'Credit Repair First, Then FHA';
+    bestReason = 'Your score needs to reach 580 before any lender can approve you. Focus on credit repair for 90 days, then apply FHA.';
+    bestIcon = '🛠️';
+    bestColor = '#c0392b';
+  } else {
+    bestLender = 'Online Non-Bank Lender';
+    bestReason = 'Online lenders typically allow 50% DTI and have more flexible guidelines than traditional banks for borderline profiles.';
+    bestIcon = '💻';
+    bestColor = '#6677aa';
+  }
+
   // Render
   const r = document.getElementById('result');
   r.style.display = 'block';
