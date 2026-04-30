@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rate Grief Engine — What Your Old Rate Has Cost You | FinanceRateCalc</title>
+<meta name="description" content="You signed at 7.2% in 2023. Today's rate is 6.1%. Calculate exactly what that difference has cost you in money, time, and life.">
+<link rel="canonical" href="https://financeratecalc.com/rate-grief-engine.html">
+<meta property="og:title" content="Rate Grief Engine — What Your Old Rate Has Cost You">
+<meta property="og:description" content="You signed at 7.2%. Rates dropped. Calculate what you've lost — and whether refinancing makes sense.">
+<meta property="og:image" content="https://financeratecalc.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c8a44a;--red:#c0392b;--green:#27ae60;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:#06080f;color:#fff;line-height:1.7;}
+header{background:rgba(6,8,15,0.95);padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+.hero{padding:80px 60px 48px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(192,57,43,0.1) 0%,transparent 70%);}
+.hero-tag{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(192,57,43,0.8);margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,64px);font-weight:900;line-height:1.05;margin-bottom:14px;}
+h1 em{font-style:italic;color:#ff6b6b;}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.4);max-width:540px;margin:0 auto;}
+.form-wrap{max-width:620px;margin:0 auto;padding:40px 60px 60px;}
+.form-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:32px;}
+.form-title{font-size:12px;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:20px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;color:rgba(255,255,255,0.4);font-weight:600;letter-spacing:0.05em;margin-bottom:5px;}
+.field input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 14px;color:#fff;font-size:15px;outline:none;transition:border 0.2s;}
+.field input:focus{border-color:#ff6b6b;}
+.field input::placeholder{color:rgba(255,255,255,0.18);}
+.field-hint{font-size:11px;color:rgba(255,255,255,0.2);margin-top:3px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.calc-btn{width:100%;padding:16px;background:linear-gradient(135deg,#8b0000,#c0392b);color:#fff;font-size:15px;font-weight:900;border:none;border-radius:10px;cursor:pointer;margin-top:8px;transition:transform 0.2s,box-shadow 0.2s;letter-spacing:0.03em;}
+.calc-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(192,57,43,0.4);}
+
+/* RESULTS */
+#results{display:none;max-width:720px;margin:0 auto;padding:0 60px 80px;}
+.grief-hero{text-align:center;margin-bottom:36px;padding:40px;background:linear-gradient(135deg,rgba(192,57,43,0.1),rgba(192,57,43,0.03));border:1px solid rgba(192,57,43,0.3);border-radius:16px;}
+.grief-label{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(192,57,43,0.7);font-weight:700;margin-bottom:8px;}
+.grief-amount{font-family:'Fraunces',serif;font-size:clamp(48px,8vw,88px);font-weight:900;color:#ff6b6b;line-height:1;margin-bottom:6px;}
+.grief-sub{font-size:15px;color:rgba(255,255,255,0.4);}
+
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.stat-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;text-align:center;}
+.stat-val{font-family:'Fraunces',serif;font-size:26px;font-weight:900;margin-bottom:3px;}
+.stat-lbl{font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.08em;}
+
+.section{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:22px 26px;margin-bottom:18px;}
+.section-title{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+.row-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px;}
+.row-item:last-child{border-bottom:none;}
+.ri-label{color:rgba(255,255,255,0.4);}
+.ri-val{font-weight:600;}
+
+.refi-box{background:linear-gradient(135deg,rgba(39,174,96,0.1),rgba(39,174,96,0.04));border:1px solid rgba(39,174,96,0.3);border-radius:12px;padding:24px 26px;margin-bottom:18px;}
+.refi-title{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(39,174,96,0.8);font-weight:700;margin-bottom:12px;}
+.refi-verdict{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:8px;}
+.refi-desc{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;}
+
+.share-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin-bottom:18px;text-align:center;}
+.share-text-el{font-size:13px;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.04);border-radius:8px;padding:12px;margin-bottom:12px;line-height:1.6;font-family:monospace;text-align:left;}
+.share-btn{padding:9px 20px;background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;margin:4px;}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:6px;}
+.cta-a{padding:14px 28px;background:var(--gold);color:#0a0e1a;font-weight:700;font-size:14px;border-radius:8px;text-decoration:none;}
+.cta-b{padding:14px 28px;background:rgba(255,255,255,0.07);color:#fff;font-weight:700;font-size:14px;border-radius:8px;text-decoration:none;border:1px solid rgba(255,255,255,0.15);}
+.disclaimer{font-size:11px;color:rgba(255,255,255,0.18);text-align:center;margin-top:20px;line-height:1.6;}
+footer{background:rgba(0,0,0,0.4);padding:24px 60px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+@media(max-width:768px){header{padding:0 16px;}.hero{padding:60px 20px 36px;}.form-wrap{padding:24px 20px 40px;}.row2{grid-template-columns:1fr;}#results{padding:0 20px 60px;}.stat-grid{grid-template-columns:1fr 1fr;}footer{padding:20px;}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+
+<div class="hero">
+  <div class="hero-tag">😔 Rate Grief Engine</div>
+  <h1>You signed at <em>7.2%.</em><br>Rates dropped.<br>Here's what it cost you.</h1>
+  <p class="hero-sub">Not just in dollars — in years of your life, vacations, and how much earlier you could have retired.</p>
+</div>
+
+<div class="form-wrap">
+  <div class="form-card">
+    <div class="form-title">Your Rate Situation</div>
+    <div class="row2">
+      <div class="field">
+        <label>Your Rate When You Signed (%)</label>
+        <input type="number" id="signedRate" placeholder="7.2" step="0.05">
+        <div class="field-hint">The rate on your original mortgage</div>
+      </div>
+      <div class="field">
+        <label>Today's Best Rate (%)</label>
+        <input type="number" id="todayRate" placeholder="6.3" step="0.05">
+        <div class="field-hint">Current market rate you could get</div>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Original Loan Amount ($)</label>
+        <input type="number" id="loanAmount" placeholder="380000">
+      </div>
+      <div class="field">
+        <label>Year You Signed</label>
+        <input type="number" id="signedYear" placeholder="2023" min="2000" max="2025">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Loan Term (Years)</label>
+        <input type="number" id="loanTerm" placeholder="30" min="10" max="30">
+      </div>
+      <div class="field">
+        <label>Estimated Closing Cost to Refi ($)</label>
+        <input type="number" id="closingCost" placeholder="6000">
+        <div class="field-hint">Typically 2-3% of loan balance</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Annual Income ($)</label>
+      <input type="number" id="income" placeholder="85000">
+      <div class="field-hint">Used to calculate life impact</div>
+    </div>
+    <button class="calc-btn" onclick="calcGrief()">💀 Calculate My Rate Grief</button>
+  </div>
+</div>
+
+<div id="results">
+  <div class="grief-hero">
+    <div class="grief-label">Total Rate Grief — Over Remaining Loan Life</div>
+    <div class="grief-amount" id="totalGrief">$0</div>
+    <div class="grief-sub" id="griefSub">—</div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-val" id="monthlyGrief" style="color:#ff6b6b;">—</div>
+      <div class="stat-lbl">Monthly Overpayment</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="lifeYears" style="color:#ff6b6b;">—</div>
+      <div class="stat-lbl">Years of Your Life</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" id="alreadyLost" style="color:#ff6b6b;">—</div>
+      <div class="stat-lbl">Already Lost Since Signing</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title" style="color:rgba(192,57,43,0.7);">💸 The Full Grief Breakdown</div>
+    <div class="row-item"><span class="ri-label">Signed rate</span><span class="ri-val" id="bdSignedRate" style="color:#ff6b6b;">—</span></div>
+    <div class="row-item"><span class="ri-label">Today's best rate</span><span class="ri-val" id="bdTodayRate" style="color:#6bffb8;">—</span></div>
+    <div class="row-item"><span class="ri-label">Rate difference</span><span class="ri-val" id="bdDiff">—</span></div>
+    <div class="row-item"><span class="ri-label">Monthly payment (your rate)</span><span class="ri-val" id="bdMonthlyA">—</span></div>
+    <div class="row-item"><span class="ri-label">Monthly payment (today's rate)</span><span class="ri-val" id="bdMonthlyB">—</span></div>
+    <div class="row-item"><span class="ri-label">Monthly grief</span><span class="ri-val" id="bdMonthlyGrief" style="color:#ff6b6b;">—</span></div>
+    <div class="row-item"><span class="ri-label">Total grief remaining</span><span class="ri-val" id="bdTotalGrief" style="color:#ff6b6b;font-size:16px;">—</span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title" style="color:rgba(200,164,74,0.7);">🌍 What This Money Could Have Been</div>
+    <div class="row-item"><span class="ri-label">✈️ Round-trip flights to Europe</span><span class="ri-val" id="wiFlights" style="color:var(--gold);">—</span></div>
+    <div class="row-item"><span class="ri-label">🎓 Years of college tuition</span><span class="ri-val" id="wiCollege" style="color:var(--gold);">—</span></div>
+    <div class="row-item"><span class="ri-label">🌴 Family vacations at $5K each</span><span class="ri-val" id="wiVacations" style="color:var(--gold);">—</span></div>
+    <div class="row-item"><span class="ri-label">📈 Invested at 7% by retirement</span><span class="ri-val" id="wiInvested" style="color:var(--gold);">—</span></div>
+  </div>
+
+  <div class="refi-box">
+    <div class="refi-title">🔄 Should You Refinance?</div>
+    <div class="refi-verdict" id="refiVerdict">—</div>
+    <div class="refi-desc" id="refiDesc">—</div>
+  </div>
+
+  <div class="share-box">
+    <div class="share-text-el" id="shareText">—</div>
+    <button class="share-btn" onclick="copyShare()">📋 Copy & Share</button>
+    <button class="share-btn" onclick="tweetShare()">🐦 Tweet My Grief</button>
+  </div>
+
+  <div class="cta-row">
+    <a href="bank-rejection-engine.html" class="cta-a">See What Rate I Can Get Now →</a>
+    <a href="bank-loyalty-penalty.html" class="cta-b">Bank Loyalty Penalty Score</a>
+  </div>
+
+  <p class="disclaimer">Not financial advice. Refinancing involves closing costs and resets your loan term — always calculate the full break-even point before deciding. Educational use only. FinanceRateCalc.com</p>
+</div>
+
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:#c8a44a;font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 FinanceRateCalc · Rate Grief Engine · Educational use only</div>
+</footer>
+
+<script>
+function fmt(n){return '$'+Math.round(Math.abs(n)).toLocaleString('en-US');}
+
+function calcGrief(){
+  var signedRate=parseFloat(document.getElementById('signedRate').value);
+  var todayRate=parseFloat(document.getElementById('todayRate').value);
+  var loanAmount=parseFloat(document.getElementById('loanAmount').value);
+  var signedYear=parseInt(document.getElementById('signedYear').value)||2023;
+  var loanTerm=parseInt(document.getElementById('loanTerm').value)||30;
+  var closingCost=parseFloat(document.getElementById('closingCost').value)||6000;
+  var income=parseFloat(document.getElementById('income').value)||85000;
+
+  if(!signedRate||!todayRate||!loanAmount){alert('Please fill in all required fields.');return;}
+  if(signedRate<=todayRate){alert('Your signed rate is already at or below today\'s rate. No grief here!');return;}
+
+  var yearsElapsed=2026-signedYear;
+  var yearsRemaining=loanTerm-yearsElapsed;
+  if(yearsRemaining<=0){alert('Your loan would be paid off by now based on these dates.');return;}
+
+  var nTotal=loanTerm*12;
+  var nElapsed=yearsElapsed*12;
+  var nRemaining=yearsRemaining*12;
+
+  // Original monthly payment
+  var rA=signedRate/100/12;
+  var mA=loanAmount*rA*Math.pow(1+rA,nTotal)/(Math.pow(1+rA,nTotal)-1);
+
+  // Current balance
+  var balance=loanAmount;
+  for(var i=0;i<nElapsed;i++){
+    var interest=balance*rA;
+    balance-=(mA-interest);
+  }
+  balance=Math.max(0,balance);
+
+  // Today's rate payment on remaining balance
+  var rB=todayRate/100/12;
+  var mB=balance*rB*Math.pow(1+rB,nRemaining)/(Math.pow(1+rB,nRemaining)-1);
+
+  var monthlyGrief=mA-mB;
+  var annualGrief=monthlyGrief*12;
+  var totalGrief=monthlyGrief*nRemaining;
+  var alreadyLost=monthlyGrief*nElapsed;
+  var lifeYears=(totalGrief/income).toFixed(1);
+  var diff=(signedRate-todayRate).toFixed(2);
+
+  // Refi analysis
+  var breakEvenMonths=Math.ceil(closingCost/monthlyGrief);
+  var breakEvenYears=(breakEvenMonths/12).toFixed(1);
+  var refiVerdict,refiDesc,refiColor;
+  if(breakEvenMonths<=24){
+    refiVerdict='✅ Refinance Makes Strong Sense';
+    refiDesc='Break-even in '+breakEvenMonths+' months ('+breakEvenYears+' years). With '+yearsRemaining+' years left on your loan, you save '+fmt(totalGrief-closingCost)+' net after closing costs. This is a clear win.';
+    refiColor='#6bffb8';
+  } else if(breakEvenMonths<=60){
+    refiVerdict='⚠️ Refinance Worth Considering';
+    refiDesc='Break-even in '+breakEvenMonths+' months ('+breakEvenYears+' years). If you plan to stay in the home past '+breakEvenYears+' years, refinancing saves you money. If you might move sooner, the math doesn\'t work.';
+    refiColor='#f0c040';
+  } else {
+    refiVerdict='❌ Refinance May Not Make Sense';
+    refiDesc='Break-even takes '+breakEvenYears+' years. High closing costs relative to the monthly savings mean refinancing only pays off if you stay very long-term. Worth getting quotes to see if you can reduce closing costs.';
+    refiColor='#ff6b6b';
+  }
+
+  // Update DOM
+  document.getElementById('totalGrief').textContent=fmt(totalGrief);
+  document.getElementById('griefSub').textContent='Your '+diff+'% rate difference costs you '+fmt(monthlyGrief)+' every month — '+fmt(totalGrief)+' over the remaining '+yearsRemaining+' years.';
+  document.getElementById('monthlyGrief').textContent=fmt(monthlyGrief)+'/mo';
+  document.getElementById('lifeYears').textContent=lifeYears+' yrs';
+  document.getElementById('alreadyLost').textContent=fmt(alreadyLost);
+  document.getElementById('bdSignedRate').textContent=signedRate+'%';
+  document.getElementById('bdTodayRate').textContent=todayRate+'%';
+  document.getElementById('bdDiff').textContent=diff+'%';
+  document.getElementById('bdMonthlyA').textContent=fmt(mA)+'/mo';
+  document.getElementById('bdMonthlyB').textContent=fmt(mB)+'/mo';
+  document.getElementById('bdMonthlyGrief').textContent=fmt(monthlyGrief)+'/mo extra';
+  document.getElementById('bdTotalGrief').textContent=fmt(totalGrief);
+  document.getElementById('wiFlights').textContent=Math.round(totalGrief/800).toLocaleString()+' flights';
+  document.getElementById('wiCollege').textContent=Math.round(totalGrief/12000)+' years';
+  document.getElementById('wiVacations').textContent=Math.round(totalGrief/5000)+' vacations';
+  document.getElementById('wiInvested').textContent=fmt(Math.round(annualGrief*((Math.pow(1.07,yearsRemaining)-1)/0.07)));
+  document.getElementById('refiVerdict').textContent=refiVerdict;
+  document.getElementById('refiVerdict').style.color=refiColor;
+  document.getElementById('refiDesc').textContent=refiDesc;
+
+  var shareStr='Rate Grief Engine Results:\nI signed at '+signedRate+'% in '+signedYear+'. Today\'s rate: '+todayRate+'%.\nThis '+diff+'% difference costs me '+fmt(monthlyGrief)+'/month.\nTotal remaining grief: '+fmt(totalGrief)+'.\nThat\'s '+lifeYears+' years of my working life.\n\nCalculate yours: financeratecalc.com/rate-grief-engine.html';
+  document.getElementById('shareText').textContent=shareStr;
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+function copyShare(){navigator.clipboard.writeText(document.getElementById('shareText').textContent).then(function(){alert('Copied!');});}
+function tweetShare(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.getElementById('shareText').textContent),'_blank');}
+</script>
+</body>
+</html>
