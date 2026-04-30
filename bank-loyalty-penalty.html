@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bank Loyalty Penalty Score™ — How Much Did Staying Cost You? | FinanceRateCalc</title>
+<meta name="description" content="Calculate your Bank Loyalty Penalty Score. How much extra did you pay by staying with your current lender instead of shopping for a better rate? The number might shock you.">
+<link rel="canonical" href="https://financeratecalc.com/bank-loyalty-penalty.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Bank Loyalty Penalty Score™ — What Loyalty Cost You">
+<meta property="og:description" content="The average borrower who didn't shop rates paid $47,000 more over 30 years. What's your penalty?">
+<meta property="og:image" content="https://financeratecalc.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f5c;--gold:#c8a44a;--red:#c0392b;--green:#27ae60;--cream:#f8f6f0;--border:#dde0ee;--muted:#6677aa;--ink:#0a0e1a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:#06080f;color:#fff;line-height:1.7;}
+header{background:rgba(6,8,15,0.95);padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+
+.hero{padding:80px 60px 60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(192,57,43,0.12) 0%,transparent 70%);}
+.hero-tag{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(192,57,43,0.9);margin-bottom:16px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(36px,6vw,68px);font-weight:900;line-height:1.05;margin-bottom:16px;color:#fff;}
+h1 span{color:#ff6b6b;}
+.hero-sub{font-size:17px;color:rgba(255,255,255,0.45);max-width:580px;margin:0 auto 32px;}
+.stat-row{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-bottom:48px;}
+.stat-item{text-align:center;}
+.stat-num{font-family:'Fraunces',serif;font-size:36px;font-weight:900;color:#ff6b6b;}
+.stat-label{font-size:12px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;}
+
+.form-wrap{max-width:640px;margin:0 auto;padding:0 60px 60px;}
+.form-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:32px;}
+.form-title{font-size:13px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:20px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;color:rgba(255,255,255,0.45);font-weight:600;letter-spacing:0.05em;margin-bottom:6px;}
+.field input{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:11px 14px;color:#fff;font-size:15px;outline:none;transition:border 0.2s;}
+.field input:focus{border-color:#ff6b6b;}
+.field input::placeholder{color:rgba(255,255,255,0.2);}
+.field-hint{font-size:11px;color:rgba(255,255,255,0.25);margin-top:4px;}
+.calc-btn{width:100%;padding:16px;background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;font-size:16px;font-weight:900;border:none;border-radius:10px;cursor:pointer;margin-top:8px;transition:transform 0.2s,box-shadow 0.2s;letter-spacing:0.03em;}
+.calc-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(192,57,43,0.4);}
+
+/* RESULTS */
+#results{display:none;max-width:760px;margin:0 auto;padding:0 60px 80px;}
+
+.penalty-hero{text-align:center;margin-bottom:40px;}
+.penalty-label{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:8px;}
+.penalty-amount{font-family:'Fraunces',serif;font-size:clamp(48px,8vw,96px);font-weight:900;color:#ff6b6b;line-height:1;margin-bottom:8px;}
+.penalty-desc{font-size:16px;color:rgba(255,255,255,0.5);max-width:500px;margin:0 auto;}
+
+.grade-row{display:flex;justify-content:center;gap:20px;margin:32px 0;flex-wrap:wrap;}
+.grade-box{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px 24px;text-align:center;min-width:120px;}
+.grade-num{font-family:'Fraunces',serif;font-size:32px;font-weight:900;margin-bottom:4px;}
+.grade-label{font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;}
+
+.breakdown{background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.3);border-radius:12px;padding:24px;margin-bottom:24px;}
+.breakdown-title{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.7);font-weight:700;margin-bottom:16px;}
+.bd-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;}
+.bd-row:last-child{border-bottom:none;font-weight:700;font-size:15px;}
+.bd-label{color:rgba(255,255,255,0.45);}
+.bd-value{color:#ff6b6b;}
+
+.what-if{background:rgba(39,174,96,0.08);border:1px solid rgba(39,174,96,0.3);border-radius:12px;padding:24px;margin-bottom:24px;}
+.what-if-title{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(39,174,96,0.7);font-weight:700;margin-bottom:16px;}
+.wi-item{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.wi-item:last-child{border-bottom:none;}
+.wi-icon{font-size:22px;flex-shrink:0;}
+.wi-text{font-size:14px;color:rgba(255,255,255,0.6);}
+.wi-highlight{color:#6bffb8;font-weight:700;}
+
+.share-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:24px;margin-bottom:24px;text-align:center;}
+.share-title{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:12px;}
+.share-text{font-size:14px;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.04);border-radius:8px;padding:12px 16px;margin-bottom:12px;line-height:1.6;font-family:monospace;}
+.share-btn{padding:10px 24px;background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.2);border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;margin:4px;}
+.share-btn:hover{background:rgba(255,255,255,0.14);}
+
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+.cta-primary{padding:14px 28px;background:var(--gold);color:#0a0e1a;font-weight:700;font-size:14px;border-radius:8px;text-decoration:none;}
+.cta-secondary{padding:14px 28px;background:rgba(255,255,255,0.08);color:#fff;font-weight:700;font-size:14px;border-radius:8px;text-decoration:none;border:1px solid rgba(255,255,255,0.15);}
+.disclaimer{font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:24px;line-height:1.6;}
+
+footer{background:rgba(0,0,0,0.4);padding:28px 60px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+@media(max-width:768px){header{padding:0 16px;}.hero{padding:60px 20px 40px;}.form-wrap{padding:0 20px 40px;}.stat-row{gap:20px;}#results{padding:0 20px 60px;}footer{padding:24px 20px;}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+
+<div class="hero">
+  <div class="hero-tag">💸 Bank Loyalty Penalty Score™</div>
+  <h1>Your bank charges you<br>for <span>staying loyal.</span></h1>
+  <p class="hero-sub">The average borrower who doesn't shop rates pays $47,000 more over 30 years. What's your penalty?</p>
+  <div class="stat-row">
+    <div class="stat-item"><div class="stat-num">$47K</div><div class="stat-label">Avg loyalty penalty</div></div>
+    <div class="stat-item"><div class="stat-num">0.8%</div><div class="stat-label">Avg rate gap</div></div>
+    <div class="stat-item"><div class="stat-num">6.3</div><div class="stat-label">Years of extra work</div></div>
+  </div>
+</div>
+
+<div class="form-wrap">
+  <div class="form-card">
+    <div class="form-title">Calculate Your Penalty</div>
+    <div class="field">
+      <label>Your Current Mortgage Rate (%)</label>
+      <input type="number" id="yourRate" placeholder="7.1" step="0.05" value="">
+      <div class="field-hint">The rate you're actually paying right now</div>
+    </div>
+    <div class="field">
+      <label>Best Rate Available Today (%)</label>
+      <input type="number" id="bestRate" placeholder="6.3" step="0.05" value="">
+      <div class="field-hint">Check Bankrate or ask 2-3 lenders for a quote</div>
+    </div>
+    <div class="field">
+      <label>Remaining Loan Balance ($)</label>
+      <input type="number" id="balance" placeholder="320000" value="">
+      <div class="field-hint">Current outstanding mortgage balance</div>
+    </div>
+    <div class="field">
+      <label>Years Remaining on Loan</label>
+      <input type="number" id="yearsLeft" placeholder="25" min="1" max="30" value="">
+    </div>
+    <div class="field">
+      <label>Your Annual Income ($)</label>
+      <input type="number" id="income" placeholder="85000" value="">
+      <div class="field-hint">Used to calculate years of your life spent on the penalty</div>
+    </div>
+    <button class="calc-btn" onclick="calcPenalty()">⚡ Calculate My Penalty</button>
+  </div>
+</div>
+
+<div id="results">
+
+  <div class="penalty-hero">
+    <div class="penalty-label">Your Bank Loyalty Penalty™</div>
+    <div class="penalty-amount" id="penaltyAmount">$0</div>
+    <div class="penalty-desc" id="penaltyDesc">—</div>
+  </div>
+
+  <div class="grade-row">
+    <div class="grade-box">
+      <div class="grade-num" id="gradeScore" style="color:#ff6b6b;">—</div>
+      <div class="grade-label">Penalty Score</div>
+    </div>
+    <div class="grade-box">
+      <div class="grade-num" id="gradeLetterEl" style="color:#ff6b6b;">—</div>
+      <div class="grade-label">Grade</div>
+    </div>
+    <div class="grade-box">
+      <div class="grade-num" id="lifeYears" style="color:#ff6b6b;">—</div>
+      <div class="grade-label">Years of Your Life</div>
+    </div>
+    <div class="grade-box">
+      <div class="grade-num" id="monthlyCost" style="color:#ff6b6b;">—</div>
+      <div class="grade-label">Monthly Overpayment</div>
+    </div>
+  </div>
+
+  <div class="breakdown">
+    <div class="breakdown-title">💸 Your Penalty Breakdown</div>
+    <div class="bd-row"><span class="bd-label">Monthly overpayment</span><span class="bd-value" id="bdMonthly">—</span></div>
+    <div class="bd-row"><span class="bd-label">Annual penalty</span><span class="bd-value" id="bdAnnual">—</span></div>
+    <div class="bd-row"><span class="bd-label">Already paid (loyalty tax)</span><span class="bd-value" id="bdAlready">—</span></div>
+    <div class="bd-row"><span class="bd-label">Still left to pay</span><span class="bd-value" id="bdRemaining">—</span></div>
+    <div class="bd-row"><span class="bd-label">Total loyalty penalty</span><span class="bd-value" id="bdTotal">—</span></div>
+  </div>
+
+  <div class="what-if">
+    <div class="what-if-title">🌍 What You Could Do With This Money Instead</div>
+    <div class="wi-item"><span class="wi-icon">✈️</span><div class="wi-text">That's <span class="wi-highlight" id="wiFlights">—</span> round-trip flights to Europe ($800 each)</div></div>
+    <div class="wi-item"><span class="wi-icon">🎓</span><div class="wi-text"><span class="wi-highlight" id="wiCollege">—</span> years of in-state university tuition ($12K/yr)</div></div>
+    <div class="wi-item"><span class="wi-icon">🌴</span><div class="wi-text"><span class="wi-highlight" id="wiVacations">—</span> family vacations at $5,000 each</div></div>
+    <div class="wi-item"><span class="wi-icon">📈</span><div class="wi-text">Invested at 7% return: <span class="wi-highlight" id="wiInvested">—</span> by retirement</div></div>
+    <div class="wi-item"><span class="wi-icon">⏰</span><div class="wi-text"><span class="wi-highlight" id="wiRetire">—</span> years earlier retirement (at $70K/yr spending)</div></div>
+  </div>
+
+  <div class="share-card">
+    <div class="share-title">Share your penalty score</div>
+    <div class="share-text" id="shareText">—</div>
+    <button class="share-btn" onclick="copyShare()">📋 Copy & Share</button>
+    <button class="share-btn" onclick="tweetShare()">🐦 Tweet This</button>
+  </div>
+
+  <div class="cta-row">
+    <a href="bank-rejection-engine.html" class="cta-primary">See What Rate You Actually Qualify For →</a>
+    <a href="mortgage-calculator.html" class="cta-secondary">Full Mortgage Calculator</a>
+  </div>
+
+  <p class="disclaimer">Not financial advice. Calculations based on standard amortization formulas using the rate difference provided. Actual savings from refinancing depend on closing costs, credit score, and lender terms. Educational use only. FinanceRateCalc.com</p>
+</div>
+
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:#c8a44a;font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 FinanceRateCalc · Bank Loyalty Penalty Score™ · Educational use only</div>
+</footer>
+
+<script>
+function fmt(n) { return '$' + Math.round(Math.abs(n)).toLocaleString('en-US'); }
+
+function calcPenalty() {
+  var yourRate = parseFloat(document.getElementById('yourRate').value);
+  var bestRate = parseFloat(document.getElementById('bestRate').value);
+  var balance = parseFloat(document.getElementById('balance').value);
+  var yearsLeft = parseFloat(document.getElementById('yearsLeft').value);
+  var income = parseFloat(document.getElementById('income').value) || 70000;
+
+  if (!yourRate || !bestRate || !balance || !yearsLeft) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  if (yourRate <= bestRate) {
+    alert('Your rate is already at or below the best available rate. You have no loyalty penalty!');
+    return;
+  }
+
+  var n = yearsLeft * 12;
+  var rA = yourRate / 100 / 12;
+  var rB = bestRate / 100 / 12;
+
+  var mA = balance * rA * Math.pow(1+rA,n) / (Math.pow(1+rA,n) - 1);
+  var mB = balance * rB * Math.pow(1+rB,n) / (Math.pow(1+rB,n) - 1);
+
+  var monthlyPenalty = mA - mB;
+  var annualPenalty = monthlyPenalty * 12;
+  var totalPenalty = (mA - mB) * n;
+  var rateDiff = yourRate - bestRate;
+
+  // Assume loan started same length ago (rough estimate for "already paid")
+  var assumedOriginal = yearsLeft + 5; // guess
+  var alreadyPaid = monthlyPenalty * 12 * 5;
+
+  // Penalty score 0-100
+  var penaltyScore = Math.min(100, Math.round((rateDiff / 2) * 100));
+  var gradeLetter = penaltyScore >= 80 ? 'F' : penaltyScore >= 60 ? 'D' : penaltyScore >= 40 ? 'C' : penaltyScore >= 20 ? 'B' : 'A';
+  var gradeColor = penaltyScore >= 60 ? '#ff6b6b' : penaltyScore >= 30 ? '#f0c040' : '#6bffb8';
+
+  var lifeYears = (totalPenalty / income).toFixed(1);
+
+  // What if
+  var flights = Math.round(totalPenalty / 800);
+  var college = Math.round(totalPenalty / 12000);
+  var vacations = Math.round(totalPenalty / 5000);
+  var invested = Math.round(annualPenalty * ((Math.pow(1.07, yearsLeft) - 1) / 0.07));
+  var retireYears = (totalPenalty / 70000).toFixed(1);
+
+  // Update DOM
+  document.getElementById('penaltyAmount').textContent = fmt(totalPenalty);
+  document.getElementById('penaltyDesc').textContent = 
+    'By staying with your current rate instead of refinancing to ' + bestRate + '%, you are paying ' + 
+    fmt(monthlyPenalty) + ' more every single month — ' + fmt(totalPenalty) + ' more over the remaining ' + yearsLeft + ' years of your loan.';
+
+  document.getElementById('gradeScore').textContent = penaltyScore;
+  document.getElementById('gradeScore').style.color = gradeColor;
+  document.getElementById('gradeLetterEl').textContent = gradeLetter;
+  document.getElementById('gradeLetterEl').style.color = gradeColor;
+  document.getElementById('lifeYears').textContent = lifeYears + ' yrs';
+  document.getElementById('monthlyCost').textContent = fmt(monthlyPenalty);
+
+  document.getElementById('bdMonthly').textContent = fmt(monthlyPenalty) + '/mo';
+  document.getElementById('bdAnnual').textContent = fmt(annualPenalty) + '/yr';
+  document.getElementById('bdAlready').textContent = '~' + fmt(alreadyPaid) + ' (est.)';
+  document.getElementById('bdRemaining').textContent = fmt(totalPenalty - alreadyPaid);
+  document.getElementById('bdTotal').textContent = fmt(totalPenalty);
+
+  document.getElementById('wiFlights').textContent = flights.toLocaleString();
+  document.getElementById('wiCollege').textContent = college;
+  document.getElementById('wiVacations').textContent = vacations;
+  document.getElementById('wiInvested').textContent = fmt(invested);
+  document.getElementById('wiRetire').textContent = retireYears;
+
+  var shareStr = 'My Bank Loyalty Penalty Score: ' + penaltyScore + '/100 (Grade: ' + gradeLetter + ')\n' +
+    'Staying with my current rate is costing me ' + fmt(totalPenalty) + ' over ' + yearsLeft + ' years.\n' +
+    'That\'s ' + lifeYears + ' years of my working life.\n' +
+    'Calculate yours: financeratecalc.com/bank-loyalty-penalty.html';
+  document.getElementById('shareText').textContent = shareStr;
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyShare() {
+  var text = document.getElementById('shareText').textContent;
+  navigator.clipboard.writeText(text).then(function() { alert('Copied!'); });
+}
+
+function tweetShare() {
+  var text = document.getElementById('shareText').textContent;
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+}
+</script>
+</body>
+</html>
