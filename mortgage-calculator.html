@@ -737,6 +737,35 @@ function calcMonthsWithExtra(principal, monthlyRate, basePayment, extraMonthly) 
     const interestPct = (totalInterest / totalPayment * 100).toFixed(1);
     const downPct = (downPayment / homePrice * 100).toFixed(1);
 
+    // Life Translator
+    var medianSalary = 70000;
+    var lifeYears = (totalInterest / medianSalary).toFixed(1);
+    var vacations = Math.round(totalInterest / 5000);
+    var dinners = Math.round(totalInterest / 80).toLocaleString('en-US');
+    var lowerRateVal = (annualRate - 0.5) / 100 / 12;
+    var lowerMonthly = principal * (lowerRateVal * Math.pow(1+lowerRateVal, n)) / (Math.pow(1+lowerRateVal, n) - 1);
+    var lowerTotal = lowerMonthly * n;
+    var rateDropSavings = fmt(Math.round(totalInterest - (lowerTotal - principal)));
+
+    // Historical position
+    var ratePosition, rateContext;
+    if (annualRate <= 3.5) {
+      ratePosition = '🟢 Exceptional — Top 5% Historically';
+      rateContext = 'Rates this low only occurred 2020-2021. Historically rare.';
+    } else if (annualRate <= 5.0) {
+      ratePosition = '🟢 Very Good — Better Than 70% of History';
+      rateContext = 'Better than the 30-year average. A solid rate.';
+    } else if (annualRate <= 6.5) {
+      ratePosition = '🟡 Average — Near the 30-Year Historical Mean';
+      rateContext = 'Historically normal. Not great, not terrible.';
+    } else if (annualRate <= 7.5) {
+      ratePosition = '🔴 Above Average — Expensive 25% of History';
+      rateContext = 'Shopping multiple lenders is critical at this rate.';
+    } else {
+      ratePosition = '🔴 High — Top 10% Most Expensive in Modern History';
+      rateContext = 'Rates above 8% were common in the 1990s but rare since.';
+    }
+
     // Extra payment calculations
     let extraPaymentHTML = '';
     if (extraPayment > 0) {
@@ -902,9 +931,9 @@ function calcMonthsWithExtra(principal, monthlyRate, basePayment, extraMonthly) 
               <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:2px;">2010s avg</div>
               <div style="font-size:16px;font-weight:700;color:#6bffb8;">4.1%</div>
             </div>
-            <div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:6px;text-align:center; ${annualRate <= 6.3 ? 'border:2px solid #27ae60;' : 'border:2px solid #c0392b;'}">
+            <div style="background:rgba(255,255,255,0.08);padding:10px;border-radius:6px;text-align:center;border:2px solid #c8a44a;">
               <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:2px;">Your rate</div>
-              <div style="font-size:16px;font-weight:700;color:#fff;">${annualRate}%</div>
+              <div style="font-size:16px;font-weight:700;color:#c8a44a;">${annualRate}%</div>
             </div>
           </div>
         </div>
