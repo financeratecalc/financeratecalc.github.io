@@ -408,16 +408,16 @@
     <div class="hero-eyebrow">Free Tools · Licensed Banking Professional · 23 Years Experience</div>
     <h1>Your Home. Your Debt. Your Numbers.</h1>
     <p class="hero-desc">Free tools built by a banker — so you make the right call before it's too late. Calculate, compare, and protect what you've worked for.</p>
-    <!-- LOSS COUNTER -->
-    <div style="background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);border-radius:8px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-      <div style="flex:1;min-width:200px;">
-        <div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);margin-bottom:4px;font-weight:600;">⏱ Every month you wait to buy</div>
-        <div style="display:flex;align-items:baseline;gap:8px;">
-          <span style="font-family:'Fraunces',serif;font-size:clamp(28px,4vw,42px);font-weight:900;color:#ff6b6b;" id="lossCounter">$0</span>
-          <span style="font-size:14px;color:rgba(255,255,255,0.5);">in home equity and appreciation — gone.</span>
+    <!-- LIVE LOSS COUNTER -->
+    <div style="background:rgba(192,57,43,0.12);border:2px solid rgba(192,57,43,0.5);border-radius:10px;padding:16px 20px;margin-bottom:16px;">
+      <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(192,57,43,0.8);margin-bottom:6px;font-weight:700;">⏱ LIVE — Since you opened this page, the avg U.S. home price increased by:</div>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="flex:1;">
+          <span style="font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:900;color:#ff6b6b;" id="lossCounter">$0.00</span>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;">National median home: $412,000 · Annual appreciation: ~6% · That's <strong style="color:#ff6b6b;">$0.78 per second</strong></div>
         </div>
+        <a href="american-dream-calculator.html" style="padding:10px 20px;background:#c0392b;color:#fff;text-decoration:none;font-weight:700;font-size:13px;border-radius:6px;white-space:nowrap;">See the Gap →</a>
       </div>
-      <a href="cost-of-waiting.html" style="padding:10px 20px;background:#c0392b;color:#fff;text-decoration:none;font-weight:600;font-size:13px;border-radius:6px;white-space:nowrap;flex-shrink:0;">See My Real Cost →</a>
     </div>
 
     <div class="hero-stats">
@@ -905,38 +905,32 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <script>
-// Loss Counter — national avg home appreciates ~$1,400/mo
+// Live Loss Counter — $412K home × 6% annual = $24,720/yr = $0.784/sec
 (function() {
-  const monthlyLoss = 1433; // ~$420K home × 4.1% annual / 12
-  const dailyLoss = monthlyLoss / 30;
-  const hourlyLoss = dailyLoss / 24;
+  const perSecond = 412000 * 0.06 / 365 / 24 / 3600; // ~$0.784/sec
   const el = document.getElementById('lossCounter');
   if (!el) return;
   
-  let startTime = Date.now();
-  let displayed = 0;
-  
-  // Start at a random point in the month so it doesn't always start at 0
-  const dayOfMonth = new Date().getDate();
-  const startVal = Math.round(dailyLoss * dayOfMonth);
-  displayed = startVal;
+  const startTime = Date.now();
   
   function fmt(n) {
+    if (n < 1) return '$' + n.toFixed(2);
+    if (n < 100) return '$' + n.toFixed(1);
     return '$' + Math.round(n).toLocaleString('en-US');
   }
   
   el.textContent = fmt(displayed);
   
   // Increment every 7 seconds by $1
-  setInterval(function() {
-    displayed += (hourlyLoss / 514); // ticks ~every 7sec
-    el.textContent = fmt(displayed);
-    // Pulse effect
-    el.style.transform = 'scale(1.05)';
-    setTimeout(() => el.style.transform = 'scale(1)', 200);
-  }, 7000);
+  function tick() {
+    var elapsed = (Date.now() - startTime) / 1000;
+    var current = elapsed * perSecond;
+    el.textContent = fmt(current);
+    requestAnimationFrame(tick);
+  }
   
-  el.style.transition = 'transform 0.2s ease';
+  el.style.transition = 'color 0.3s ease';
+  requestAnimationFrame(tick);
 })();
 </script>
 
