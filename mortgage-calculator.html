@@ -851,6 +851,64 @@ function calcMonthsWithExtra(principal, monthlyRate, basePayment, extraMonthly) 
           </div>
         </div>
         ${extraPaymentHTML}
+
+        <!-- LIFE TRANSLATOR -->
+        <div style="background:linear-gradient(135deg,#0a0a2a,#0d0d3a);border:1px solid rgba(200,164,74,0.4);border-radius:8px;padding:24px 28px;margin:20px 0;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c8a44a,#f0d060);"></div>
+          <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.9);margin-bottom:12px;font-weight:700;">⏳ Life Translator — What This Loan Really Costs</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+            <div style="background:rgba(255,255,255,0.05);border-radius:6px;padding:14px;text-align:center;">
+              <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.08em;">Years Working for the Bank</div>
+              <div style="font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#c8a44a;">${lifeYears}</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.3);">of your working life</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:6px;padding:14px;text-align:center;">
+              <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.08em;">Vacation Budgets Lost</div>
+              <div style="font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#ff6b6b;">${vacations}</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.3);">at $5,000/trip</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:6px;padding:14px;text-align:center;">
+              <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.08em;">Dinners Out Lost</div>
+              <div style="font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#ff6b6b;">${dinners}</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.3);">at $80/dinner</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:6px;padding:14px;text-align:center;">
+              <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.08em;">Rate Drop Savings</div>
+              <div style="font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#6bffb8;">${rateDropSavings}</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.3);">if rate was 0.5% lower</div>
+            </div>
+          </div>
+          <div style="background:rgba(200,164,74,0.08);border-radius:6px;padding:14px 16px;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6;">
+            📌 <strong style="color:#c8a44a;">Bottom line:</strong> You're not just paying ${fmt(totalInterest)} in interest. You're paying <strong style="color:#fff;">${lifeYears} years of your working life</strong> to the bank — assuming a $70K median salary.
+          </div>
+        </div>
+
+        <!-- HISTORICAL POSITION -->
+        <div style="background:linear-gradient(135deg,#001a0a,#002a10);border:1px solid rgba(39,174,96,0.4);border-radius:8px;padding:22px 26px;margin:20px 0;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#27ae60,#6bffb8);"></div>
+          <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(39,174,96,0.9);margin-bottom:10px;font-weight:700;">📊 Historical Rate Position — How Good Is Your Rate?</div>
+          <div style="font-size:28px;font-weight:900;color:#fff;margin-bottom:6px;">${ratePosition}</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:14px;">${rateContext}</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+            <div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:6px;text-align:center;">
+              <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:2px;">1990s avg</div>
+              <div style="font-size:16px;font-weight:700;color:#ff6b6b;">8.1%</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:6px;text-align:center;">
+              <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:2px;">2000s avg</div>
+              <div style="font-size:16px;font-weight:700;color:#b7791f;">6.3%</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:6px;text-align:center;">
+              <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:2px;">2010s avg</div>
+              <div style="font-size:16px;font-weight:700;color:#6bffb8;">4.1%</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:6px;text-align:center; ${annualRate <= 6.3 ? 'border:2px solid #27ae60;' : 'border:2px solid #c0392b;'}">
+              <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:2px;">Your rate</div>
+              <div style="font-size:16px;font-weight:700;color:#fff;">${annualRate}%</div>
+            </div>
+          </div>
+        </div>
+
         <!-- SHARE RESULT -->
         <div style="background:var(--dark);border:1px solid rgba(184,134,11,0.25);border-radius:8px;padding:18px 22px;margin:16px 0;display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
           <div style="flex:1;min-width:200px;">
