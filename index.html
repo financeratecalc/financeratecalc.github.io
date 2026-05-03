@@ -70,41 +70,30 @@
   .nav-dropdown-btn:hover { color: var(--gold-light); }
   .nav-dropdown-btn svg { width: 10px; height: 10px; transition: transform 0.2s; }
   .nav-dropdown.open .nav-dropdown-btn svg { transform: rotate(180deg); }
+  /* MEGA MENU */
   .nav-dropdown-menu {
-    visibility: hidden;
-    opacity: 0;
-    height: 0;
-    overflow: hidden;
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    background: #1e1e1c;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    padding: 0;
-    min-width: 220px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    z-index: 200;
-    transition: opacity 0.15s ease;
+    visibility: hidden; opacity: 0; pointer-events: none;
+    position: absolute; top: calc(100% + 4px); right: 0;
+    background: #18181a; border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; width: 700px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5); z-index: 200;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    transform: translateY(-6px);
   }
-  .nav-dropdown.open .nav-dropdown-menu {
-    visibility: visible;
-    opacity: 1;
-    height: auto;
-    padding: 0.5rem;
-    animation: dropDown 0.15s ease;
+  .nav-dropdown:hover .nav-dropdown-menu {
+    visibility: visible; opacity: 1; pointer-events: auto; transform: translateY(0);
   }
-  @keyframes dropDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-  .nav-dropdown-menu a {
-    display: flex; align-items: center; gap: 0.6rem;
-    padding: 0.55rem 0.75rem; border-radius: 5px;
-    color: rgba(255,255,255,0.65); text-decoration: none;
-    font-size: 13px; font-weight: 400;
-    transition: background 0.15s, color 0.15s;
-    white-space: nowrap;
-  }
+  .mega-menu-inner { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 20px; }
+  .mega-col { padding: 0 16px; }
+  .mega-col:not(:last-child) { border-right: 1px solid rgba(255,255,255,0.06); }
+  .mega-col-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .nav-dropdown-menu a { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 6px; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 12.5px; font-weight: 400; transition: background 0.15s, color 0.15s; }
   .nav-dropdown-menu a:hover { background: rgba(255,255,255,0.07); color: var(--gold-light); }
-  .nav-dropdown-menu .menu-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 0.4rem 0; }
+  .mega-footer-bar { background: rgba(255,255,255,0.03); border-top: 1px solid rgba(255,255,255,0.06); padding: 12px 20px; border-radius: 0 0 12px 12px; display: flex; align-items: center; justify-content: space-between; }
+  .mega-footer-bar span { font-size: 11px; color: rgba(255,255,255,0.3); }
+  .mega-footer-bar a { font-size: 12px !important; color: rgba(255,255,255,0.6) !important; padding: 6px 14px !important; background: rgba(255,255,255,0.06) !important; border-radius: 20px !important; font-weight: 600 !important; }
+  .mega-footer-bar a:hover { color: var(--gold-light) !important; background: rgba(255,255,255,0.1) !important; }
+  @media (max-width: 768px) { .nav-dropdown-menu { width: 100%; right: -20px; } .mega-menu-inner { grid-template-columns: 1fr; } .mega-col { border-right: none !important; padding-bottom: 12px; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.06); } }
   .nav-badge { background: var(--gold); color: var(--ink); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
   /* Hamburger */
   .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
@@ -329,37 +318,58 @@
         </svg>
       </button>
       <div class="nav-dropdown-menu">
-        <a href="mortgage-calculator.html">🏠 Mortgage Calculator</a>
-        <a href="equity-protector.html">💰 Equity Protector</a>
-        <a href="debt-consolidation-calculator.html">💳 Debt Consolidation</a>
-        <a href="loan-comparator.html">⚖️ Loan Comparator</a>
-        <a href="loan-offer-analyzer.html">🔍 Loan Analyzer</a>
-        <a href="mortgage-auditor.html">🤖 AI Mortgage Auditor</a>
-        <a href="mortgage-crisis-map.html">🚨 Crisis Assessment</a>
-        <a href="foreclosure-clock.html">⏱️ Foreclosure Clock</a>
-        <div class="menu-divider"></div>
-        <a href="savings-calculator.html">🏦 Savings & CD Rates</a>
-        <a href="financial-twin.html">🏡 Buy vs Rent</a>
-        <a href="compound-interest-calculator.html">📈 Compound Interest</a>
-        <a href="business-loan-calculator.html">💼 Business Loan</a>
-        <div class="menu-divider"></div>
-        <a href="mortgage-glossary.html">📖 Mortgage Glossary</a>
-        <a href="faq.html">❓ Mortgage FAQ</a>
-        <a href="are-you-house-poor.html">🏚️ Are You House Poor?</a>
-        <a href="real-cost-calculator.html">🏠 Real Cost Calculator</a>
-        <a href="blog-banks-dont-want-you-to-know.html">🏦 Insider Blog</a>
-        <a href="bank-rejection-engine.html">🔍 Bank Rejection Engine</a>
-        <a href="mortgage-rejection-map.html">🗺️ Rejection Map</a>
-        <a href="mortgage-rejection-database.html">📊 Rejection Database</a>
-        <a href="american-dream-calculator.html">🏠 American Dream Calc</a>
-        <a href="mortgage-time-machine.html">⏳ Time Machine</a>
-        <a href="zip-code-wealth-gap.html">📍 Zip Code Wealth Gap</a>
-        <a href="salary-by-state.html">🗺️ Salary by State</a>
-        <a href="can-two-salaries-buy-this-house.html">💑 Two Salaries Calculator</a>
-        <div class="menu-divider"></div>
-        <a href="credit-cards.html">💳 Credit Cards <span style="font-size:10px;background:rgba(184,134,11,0.2);color:#d4a820;padding:1px 6px;border-radius:10px;margin-left:4px;">Soon</span></a>
-        <div class="menu-divider"></div>
-        <a href="credit-repair.html">🛡️ Fix Your Credit <span style="font-size:10px;background:rgba(229,57,53,0.2);color:#ff6b6b;padding:1px 6px;border-radius:10px;margin-left:4px;">Sky Blue</span></a>
+        <div class="mega-menu-inner">
+          <div class="mega-col">
+            <div class="mega-col-title">🏠 Home Buying</div>
+            <a href="mortgage-calculator.html">🏠 Mortgage Calculator</a>
+            <a href="real-cost-calculator.html">💰 Real Cost Calculator</a>
+            <a href="financial-twin.html">🏡 Buy vs Rent</a>
+            <a href="are-you-house-poor.html">🏚️ Are You House Poor?</a>
+            <a href="can-two-salaries-buy-this-house.html">💑 Two Salaries</a>
+            <a href="american-dream-calculator.html">🌟 American Dream Calc</a>
+            <a href="salary-by-state.html">🗺️ Salary by State</a>
+            <a href="cost-of-waiting.html">⏰ Cost of Waiting</a>
+            <a href="mortgage-time-machine.html">⏳ Time Machine</a>
+            <a href="zip-code-wealth-gap.html">📍 Zip Code Wealth Gap</a>
+          </div>
+          <div class="mega-col">
+            <div class="mega-col-title">🔍 Rejection & Repair</div>
+            <a href="bank-rejection-engine.html">🔥 Bank Rejection Engine</a>
+            <a href="mortgage-rejection-database.html">📊 Rejection Database</a>
+            <a href="mortgage-rejection-map.html">🗺️ Rejection Map</a>
+            <a href="mortgage-auditor.html">🤖 AI Mortgage Auditor</a>
+            <a href="mortgage-crisis-map.html">🚨 Crisis Assessment</a>
+            <a href="foreclosure-clock.html">⏱️ Foreclosure Clock</a>
+            <a href="credit-repair.html">🛡️ Fix Credit <span style="font-size:10px;background:rgba(229,57,53,0.2);color:#ff6b6b;padding:1px 5px;border-radius:6px;">Sky Blue</span></a>
+            <div style="height:1px;background:rgba(255,255,255,0.06);margin:8px 0;"></div>
+            <div class="mega-col-title">📈 Planning</div>
+            <a href="loan-offer-analyzer.html">🔍 Loan Analyzer</a>
+            <a href="loan-comparator.html">⚖️ Loan Comparator</a>
+            <a href="debt-consolidation-calculator.html">💳 Debt Consolidation</a>
+            <a href="parallel-life-simulator.html">🌐 Parallel Life</a>
+            <a href="rate-grief-engine.html">😔 Rate Grief Engine</a>
+          </div>
+          <div class="mega-col">
+            <div class="mega-col-title">💼 More Tools</div>
+            <a href="compound-interest-calculator.html">📈 Compound Interest</a>
+            <a href="business-loan-calculator.html">💼 Business Loan</a>
+            <a href="savings-calculator.html">🏦 Savings & CD Rates</a>
+            <a href="bank-loyalty-penalty.html">💸 Bank Loyalty Penalty</a>
+            <a href="million-dollar-listing-challenge.html">🔴 Million $ Challenge</a>
+            <a href="frc-affordability-index.html">📊 Affordability Index</a>
+            <a href="equity-protector.html">💰 Equity Protector</a>
+            <div style="height:1px;background:rgba(255,255,255,0.06);margin:8px 0;"></div>
+            <div class="mega-col-title">📚 Resources</div>
+            <a href="mortgage-glossary.html">📖 Mortgage Glossary</a>
+            <a href="faq.html">❓ Mortgage FAQ</a>
+            <a href="blog-banks-dont-want-you-to-know.html">🏦 Insider Blog</a>
+            <a href="about.html">👤 About Us</a>
+          </div>
+        </div>
+        <div class="mega-footer-bar">
+          <span>🏆 World-first tools · Free forever · No sign-up</span>
+          <a href="https://chromewebstore.google.com/detail/mortgage-calculator-by-fi/jbmifambbepjmamkjhpapckjobfchlod" target="_blank">🧩 Add to Chrome — Free</a>
+        </div>
       </div>
     </div>
     <span class="nav-badge">Licensed Pro</span>
@@ -834,36 +844,59 @@
 @keyframes tickerAnim { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }
 </style>
 
-<footer>
-  <div class="footer-logo">Finance<em>Rate</em>Calc</div>
-  <div class="footer-links">
-    <a href="index.html">Home</a>
-    <a href="financial-twin.html">Buy vs Rent</a>
-    <a href="loan-comparator.html">Loan Comparator</a>
-    <a href="debt-consolidation-calculator.html">Debt Consolidation</a>
-    <a href="loan-offer-analyzer.html">Loan Analyzer</a>
-    <a href="mortgage-calculator.html">Mortgage</a>
-    <a href="business-loan-calculator.html">Business Loan</a>
-    <a href="compound-interest-calculator.html">Compound Interest</a>
-    <a href="mortgage-glossary.html">Glossary</a>
-    <a href="faq.html">FAQ</a>
-    <a href="credit-repair.html">Fix Your Credit</a>
+<footer style="background:var(--ink);padding:0;text-align:left;">
+  <div style="max-width:1200px;margin:0 auto;padding:56px 60px 36px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;">
+    <div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:14px;">Finance<em style="font-style:italic;color:#d4a017;">Rate</em>Calc</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7;max-width:260px;font-weight:300;">Free financial tools built by a licensed banker with 23 years of experience. No sign-up. No ads. No BS.</p>
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <a href="https://twitter.com/FinanceRateCalc" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:rgba(255,255,255,0.07);border-radius:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="rgba(255,255,255,0.5)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="https://www.facebook.com/Financeratecalc" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:rgba(255,255,255,0.07);border-radius:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="rgba(255,255,255,0.5)"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+        <a href="https://chromewebstore.google.com/detail/mortgage-calculator-by-fi/jbmifambbepjmamkjhpapckjobfchlod" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:0 14px;height:36px;background:rgba(68,221,136,0.12);border:1px solid rgba(68,221,136,0.3);border-radius:8px;color:#6bffb8;font-size:12px;font-weight:600;text-decoration:none;">🧩 Chrome</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#b8860b;margin-bottom:16px;">Calculators</div>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <a href="mortgage-calculator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Mortgage Calculator</a>
+        <a href="financial-twin.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Buy vs Rent</a>
+        <a href="compound-interest-calculator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Compound Interest</a>
+        <a href="business-loan-calculator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Business Loan</a>
+        <a href="loan-comparator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Loan Comparator</a>
+        <a href="debt-consolidation-calculator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Debt Consolidation</a>
+        <a href="savings-calculator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Savings & CD Rates</a>
+        <a href="salary-by-state.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Salary by State</a>
+        <a href="american-dream-calculator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">American Dream</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#b8860b;margin-bottom:16px;">Company</div>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <a href="about.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">About Us</a>
+        <a href="blog-banks-dont-want-you-to-know.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Insider Blog</a>
+        <a href="faq.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">FAQ</a>
+        <a href="mortgage-glossary.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Mortgage Glossary</a>
+        <a href="frc-affordability-index.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Affordability Index</a>
+        <a href="million-dollar-listing-challenge.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Million $ Challenge</a>
+        <a href="bank-rejection-engine.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Bank Rejection Engine</a>
+        <a href="credit-repair.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Fix Your Credit</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#b8860b;margin-bottom:16px;">Legal</div>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <a href="privacy-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Privacy Policy</a>
+        <a href="terms-of-service.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Terms of Service</a>
+        <a href="affiliate-disclosure.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Affiliate Disclosure</a>
+        <a href="#" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Do Not Sell My Info</a>
+      </div>
+      <div style="margin-top:20px;padding:12px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+        <div style="font-size:10px;color:rgba(255,255,255,0.25);line-height:1.6;">Educational use only. Not financial advice. Always consult a licensed professional.</div>
+      </div>
+    </div>
   </div>
-  <div class="footer-links" style="margin-top:1rem; border-top:1px solid rgba(255,255,255,0.08); padding-top:1rem;">
-    <a href="privacy-policy.html">Privacy Policy</a>
-    <a href="terms-of-service.html">Terms of Service</a>
-    <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
-    <a href="about.html">About Us</a>
-    <a href="https://twitter.com/FinanceRateCalc" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.4);display:inline-flex;align-items:center;gap:5px;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      @FinanceRateCalc
-    </a>
-    <a href="https://www.facebook.com/Financeratecalc" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.4);display:inline-flex;align-items:center;gap:5px;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-      Facebook
-    </a>
-  </div>
-  <div class="footer-copy">© 2026 FinanceRateCalc · Educational Use Only · Not Financial Advice</div>
+  <div style="border-top:1px solid rgba(255,255,255,0.07);padding:18px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div style="font-size:12px;color:rgba(255,255,255,0.25);">© 2026 FinanceRateCalc · Educational Use Only · Not Financial Advice</div>
 
   <div style="max-width:1100px;margin:16px auto 0;padding:16px 60px 0;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:rgba(255,255,255,0.18);line-height:2;">
     <strong style="color:rgba(255,255,255,0.5);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Salary Guides:</strong>
