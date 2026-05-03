@@ -460,134 +460,209 @@
 
 
 <!-- ANIMATED EXTENSION DEMO -->
-<div style="background:linear-gradient(180deg,#0a1f5c 0%,#050810 100%);padding:60px 60px;text-align:center;">
-  <div style="max-width:900px;margin:0 auto;">
-    <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.8);font-weight:700;margin-bottom:10px;">⚡ See It In Action</div>
-    <div style="font-family:'Fraunces',serif;font-size:clamp(24px,3vw,36px);font-weight:900;color:#fff;margin-bottom:8px;">Opens automatically on every Zillow listing</div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:48px;">No clicking. No setup. Just open a listing — instantly see HOT or COLD.</div>
+<div style="background:linear-gradient(180deg,#050810 0%,#0a0f20 100%);padding:80px 40px;overflow:hidden;position:relative;">
+  
+  <!-- Background grid -->
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;"></div>
+  
+  <div style="max-width:1000px;margin:0 auto;position:relative;">
+    
+    <div style="text-align:center;margin-bottom:56px;">
+      <div style="display:inline-block;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.3);padding:6px 16px;border-radius:20px;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#c8a44a;font-weight:700;margin-bottom:16px;">⚡ Live Demo</div>
+      <div style="font-family:'Fraunces',serif;font-size:clamp(28px,4vw,48px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:12px;">Every Zillow listing.<br>Instant verdict.</div>
+      <div style="font-size:15px;color:rgba(255,255,255,0.45);max-width:480px;margin:0 auto;">No setup. No clicks. Just open any listing and the FRC score appears automatically.</div>
+    </div>
 
-    <!-- ANIMATED HOUSE DEMO -->
-    <div style="display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;">
       
-      <!-- House SVG -->
-      <div style="position:relative;">
-        <svg id="demoHouse" width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 30px rgba(107,255,184,0.2));">
-          <!-- House body -->
-          <rect id="houseBody" x="30" y="90" width="140" height="90" rx="4" fill="#1a2a4a" stroke="#2a4a8a" stroke-width="2"/>
-          <!-- Roof -->
-          <polygon id="houseRoof" points="15,95 100,20 185,95" fill="#0d1f5c" stroke="#1a3a8a" stroke-width="2"/>
-          <!-- Door -->
-          <rect x="80" y="135" width="40" height="45" rx="3" fill="#0a1628"/>
-          <circle cx="116" cy="160" r="3" fill="#c8a44a"/>
-          <!-- Windows -->
-          <rect id="winLeft" x="38" y="105" width="35" height="28" rx="3" fill="#1a3a6a" stroke="#2a5a9a" stroke-width="1.5"/>
-          <rect id="winRight" x="127" y="105" width="35" height="28" rx="3" fill="#1a3a6a" stroke="#2a5a9a" stroke-width="1.5"/>
-          <!-- Window cross lines -->
-          <line x1="55" y1="105" x2="55" y2="133" stroke="#2a5a9a" stroke-width="1"/>
-          <line x1="38" y1="119" x2="73" y2="119" stroke="#2a5a9a" stroke-width="1"/>
-          <line x1="144" y1="105" x2="144" y2="133" stroke="#2a5a9a" stroke-width="1"/>
-          <line x1="127" y1="119" x2="162" y2="119" stroke="#2a5a9a" stroke-width="1"/>
-          <!-- Chimney -->
-          <rect x="130" y="30" width="20" height="35" rx="2" fill="#0d1f5c" stroke="#1a3a8a" stroke-width="1.5"/>
-          <!-- Score badge -->
-          <g id="scoreBadge" style="opacity:0;transform:scale(0.5);transform-origin:100px 100px;transition:all 0.5s ease;">
-            <circle cx="155" cy="45" r="22" fill="#4b5563" stroke="#6b7280" stroke-width="2"/>
-            <text x="155" y="40" text-anchor="middle" font-family="serif" font-size="10" font-weight="900" fill="white">❄️</text>
-            <text id="scoreText" x="155" y="55" text-anchor="middle" font-family="serif" font-size="9" font-weight="700" fill="white">COLD</text>
-          </g>
-        </svg>
-        <!-- Pulse ring -->
-        <div id="pulseRing" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;border-radius:50%;border:2px solid rgba(107,255,184,0.3);animation:pulseOut 2s ease-out 2s infinite;pointer-events:none;"></div>
+      <!-- LEFT: Animated House -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:24px;">
+        <div style="position:relative;width:220px;height:220px;">
+          <svg id="demoHouse" width="220" height="220" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect id="houseBody" x="25" y="88" width="150" height="95" rx="4" fill="#1a2a4a"/>
+            <polygon id="houseRoof" points="10,93 100,18 190,93" fill="#0d1f5c"/>
+            <rect id="houseDoor" x="76" y="133" width="48" height="50" rx="4" fill="#0a1628"/>
+            <circle cx="118" cy="160" r="3.5" fill="#c8a44a"/>
+            <rect id="winL" x="33" y="103" width="38" height="30" rx="3" fill="#1a3a6a"/>
+            <rect id="winR" x="129" y="103" width="38" height="30" rx="3" fill="#1a3a6a"/>
+            <line x1="52" y1="103" x2="52" y2="133" stroke="#2a5a9a" stroke-width="1.5"/>
+            <line x1="33" y1="118" x2="71" y2="118" stroke="#2a5a9a" stroke-width="1.5"/>
+            <line x1="148" y1="103" x2="148" y2="133" stroke="#2a5a9a" stroke-width="1.5"/>
+            <line x1="129" y1="118" x2="167" y2="118" stroke="#2a5a9a" stroke-width="1.5"/>
+            <rect x="128" y="28" width="22" height="38" rx="2" fill="#0d1f5c"/>
+            <!-- FRC Badge on house -->
+            <g id="houseBadge">
+              <rect x="120" y="18" width="68" height="40" rx="8" fill="#0a1628" stroke-width="2"/>
+              <rect id="houseBadgeBg" x="120" y="18" width="68" height="40" rx="8" fill="rgba(75,85,99,0.9)" stroke="#6b7280" stroke-width="1.5"/>
+              <text id="houseEmoji" x="154" y="34" text-anchor="middle" font-size="11" fill="white">❄️</text>
+              <text id="houseLabel" x="154" y="50" text-anchor="middle" font-family="serif" font-size="10" font-weight="900" fill="white">COLD</text>
+            </g>
+          </svg>
+          <!-- Glow ring -->
+          <div id="houseGlow" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:220px;height:220px;border-radius:50%;border:2px solid rgba(107,255,184,0.2);animation:pulseRing 3s ease-out infinite;pointer-events:none;"></div>
+        </div>
+
+        <!-- Score display -->
+        <div id="scoreDisplay" style="background:rgba(75,85,99,0.15);border:2px solid rgba(107,255,184,0.4);border-radius:12px;padding:16px 24px;text-align:center;min-width:220px;transition:all 0.5s;">
+          <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;">FRC Buyer Demand Score</div>
+          <div id="scoreBig" style="font-family:'Fraunces',serif;font-size:36px;font-weight:900;color:#9ca3af;line-height:1;">❄️ COLD</div>
+          <div id="scoreNum" style="font-size:20px;font-weight:700;color:#9ca3af;margin-top:2px;">23/100</div>
+          <div id="scoreSub" style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;">94 days · 3 price cuts</div>
+        </div>
       </div>
 
-      <!-- Score cards cycling -->
+      <!-- RIGHT: Score cards -->
       <div style="display:flex;flex-direction:column;gap:12px;">
-        <div id="card1" class="score-card" style="background:rgba(192,57,43,0.15);border:2px solid rgba(192,57,43,0.5);border-radius:10px;padding:14px 20px;text-align:left;opacity:0.3;transition:all 0.5s;min-width:180px;">
-          <div style="font-size:18px;margin-bottom:2px;">🔥 HOT · 92/100</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.5);">4 days · 0 price cuts</div>
-          <div style="font-size:11px;color:#ff6b6b;margin-top:4px;">Come in strong →</div>
+        
+        <div id="card1" style="background:rgba(192,57,43,0.08);border:1.5px solid rgba(192,57,43,0.25);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.4s;opacity:0.45;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:28px;">🔥</span>
+            <div style="flex:1;">
+              <div style="font-size:16px;font-weight:900;color:#ff6b6b;margin-bottom:2px;">HOT · 85-100</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.55);">4 days · 0 price cuts</div>
+              <div style="font-size:11px;color:#ff9999;margin-top:4px;font-weight:600;">High demand — come in strong →</div>
+            </div>
+          </div>
         </div>
-        <div id="card2" class="score-card" style="background:rgba(183,121,31,0.15);border:2px solid rgba(183,121,31,0.5);border-radius:10px;padding:14px 20px;text-align:left;opacity:0.3;transition:all 0.5s;min-width:180px;">
-          <div style="font-size:18px;margin-bottom:2px;">🟡 WARM · 68/100</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.5);">21 days · 1 price cut</div>
-          <div style="font-size:11px;color:#f0c040;margin-top:4px;">Some room to negotiate →</div>
+
+        <div id="card2" style="background:rgba(183,121,31,0.08);border:1.5px solid rgba(183,121,31,0.25);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.4s;opacity:0.45;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:28px;">🟡</span>
+            <div style="flex:1;">
+              <div style="font-size:16px;font-weight:900;color:#f0c040;margin-bottom:2px;">WARM · 65-84</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.55);">21 days · 1 price cut</div>
+              <div style="font-size:11px;color:#f5d060;margin-top:4px;font-weight:600;">Some room to negotiate →</div>
+            </div>
+          </div>
         </div>
-        <div id="card3" class="score-card" style="background:rgba(37,99,235,0.15);border:2px solid rgba(37,99,235,0.5);border-radius:10px;padding:14px 20px;text-align:left;opacity:0.3;transition:all 0.5s;min-width:180px;">
-          <div style="font-size:18px;margin-bottom:2px;">🔵 COOLING · 45/100</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.5);">47 days · 2 price cuts</div>
-          <div style="font-size:11px;color:#60a5fa;margin-top:4px;">You have leverage →</div>
+
+        <div id="card3" style="background:rgba(37,99,235,0.08);border:1.5px solid rgba(37,99,235,0.25);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.4s;opacity:0.45;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:28px;">🔵</span>
+            <div style="flex:1;">
+              <div style="font-size:16px;font-weight:900;color:#60a5fa;margin-bottom:2px;">COOLING · 40-64</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.55);">47 days · 2 price cuts</div>
+              <div style="font-size:11px;color:#93c5fd;margin-top:4px;font-weight:600;">Market slowing — leverage is yours →</div>
+            </div>
+          </div>
         </div>
-        <div id="card4" class="score-card" style="background:rgba(75,85,99,0.15);border:2px solid rgba(107,255,184,0.6);border-radius:10px;padding:14px 20px;text-align:left;opacity:1;transition:all 0.5s;min-width:180px;box-shadow:0 0 20px rgba(107,255,184,0.15);">
-          <div style="font-size:18px;margin-bottom:2px;">❄️ COLD · 23/100</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.5);">94 days · 3 price cuts</div>
-          <div style="font-size:11px;color:#6bffb8;margin-top:4px;">Negotiate hard →</div>
+
+        <div id="card4" style="background:rgba(75,85,99,0.15);border:2px solid rgba(107,255,184,0.5);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.4s;opacity:1;box-shadow:0 0 24px rgba(107,255,184,0.1);">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:28px;">❄️</span>
+            <div style="flex:1;">
+              <div style="font-size:16px;font-weight:900;color:#e2e8f0;margin-bottom:2px;">COLD · 0-39</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.55);">94 days · 3 price cuts</div>
+              <div style="font-size:11px;color:#6bffb8;margin-top:4px;font-weight:600;">Low demand — negotiate hard →</div>
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
 
-    <a href="https://chromewebstore.google.com/detail/mortgage-calculator-by-fi/jbmifambbepjmamkjhpapckjobfchlod" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,#0d2a0d,#1a4a1a);border:2px solid rgba(68,221,136,0.6);color:#6bffb8;padding:14px 28px;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none;margin-top:36px;box-shadow:0 0 24px rgba(68,221,136,0.15);">
-      🧩 Add to Chrome — Free · Works on Zillow, Redfin & Realtor.com →
-    </a>
+    <!-- CTA -->
+    <div style="text-align:center;margin-top:48px;">
+      <a href="https://chromewebstore.google.com/detail/mortgage-calculator-by-fi/jbmifambbepjmamkjhpapckjobfchlod" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0d2a0d,#1a4a1a);border:2px solid rgba(68,221,136,0.6);color:#6bffb8;padding:16px 32px;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;box-shadow:0 0 32px rgba(68,221,136,0.15);">
+        <span style="font-size:22px;">🧩</span>
+        <div style="text-align:left;">
+          <div>Add to Chrome — Free</div>
+          <div style="font-size:11px;opacity:0.6;font-weight:400;">Works on Zillow · Redfin · Realtor.com</div>
+        </div>
+        <span style="font-size:20px;">→</span>
+      </a>
+    </div>
+
   </div>
 </div>
 
 <style>
-@keyframes pulseOut {
-  0% { transform:translate(-50%,-50%) scale(0.8); opacity:0.6; }
-  100% { transform:translate(-50%,-50%) scale(1.6); opacity:0; }
-}
-@keyframes houseGlow {
-  0%,100% { filter:drop-shadow(0 0 20px rgba(75,85,99,0.3)); }
-  50% { filter:drop-shadow(0 0 40px rgba(107,255,184,0.4)); }
+@keyframes pulseRing {
+  0% { transform:translate(-50%,-50%) scale(0.9); opacity:0.5; }
+  100% { transform:translate(-50%,-50%) scale(1.5); opacity:0; }
 }
 </style>
 
 <script>
 (function() {
-  var scores = [
-    { id:'card1', color:'rgba(192,57,43,0.15)', border:'rgba(192,57,43,0.5)', bodyFill:'#3a0a0a', roofFill:'#2a0505', winFill:'#5a1a1a', badge:'rgba(192,57,43,0.9)', text:'HOT', icon:'🔥', glow:'rgba(192,57,43,0.4)' },
-    { id:'card2', color:'rgba(183,121,31,0.15)', border:'rgba(183,121,31,0.5)', bodyFill:'#2a1a0a', roofFill:'#1a1005', winFill:'#4a3a1a', badge:'rgba(183,121,31,0.9)', text:'WARM', icon:'🟡', glow:'rgba(183,121,31,0.3)' },
-    { id:'card3', color:'rgba(37,99,235,0.15)', border:'rgba(37,99,235,0.5)', bodyFill:'#0a1a3a', roofFill:'#050d2a', winFill:'#1a2a5a', badge:'rgba(37,99,235,0.9)', text:'COOL', icon:'🔵', glow:'rgba(37,99,235,0.3)' },
-    { id:'card4', color:'rgba(75,85,99,0.15)', border:'rgba(107,255,184,0.6)', bodyFill:'#1a2a4a', roofFill:'#0d1f5c', winFill:'#1a3a6a', badge:'rgba(75,85,99,0.9)', text:'COLD', icon:'❄️', glow:'rgba(107,255,184,0.2)' }
+  var states = [
+    { card:'card1', emoji:'🔥', label:'HOT', score:'92/100', sub:'4 days · 0 price cuts', 
+      cardColor:'rgba(192,57,43,0.2)', cardBorder:'rgba(192,57,43,0.7)', cardShadow:'rgba(192,57,43,0.2)',
+      scoreColor:'#ff6b6b', bodyFill:'#3a0a0a', roofFill:'#2a0505', winFill:'#6a2020',
+      badgeFill:'rgba(192,57,43,0.9)', badgeBorder:'#c0392b', glowColor:'rgba(192,57,43,0.3)' },
+    { card:'card2', emoji:'🟡', label:'WARM', score:'68/100', sub:'21 days · 1 price cut',
+      cardColor:'rgba(183,121,31,0.2)', cardBorder:'rgba(183,121,31,0.7)', cardShadow:'rgba(183,121,31,0.2)',
+      scoreColor:'#f0c040', bodyFill:'#2a1a05', roofFill:'#1a1005', winFill:'#4a3010',
+      badgeFill:'rgba(183,121,31,0.9)', badgeBorder:'#b7791f', glowColor:'rgba(183,121,31,0.3)' },
+    { card:'card3', emoji:'🔵', label:'COOLING', score:'45/100', sub:'47 days · 2 price cuts',
+      cardColor:'rgba(37,99,235,0.2)', cardBorder:'rgba(37,99,235,0.7)', cardShadow:'rgba(37,99,235,0.2)',
+      scoreColor:'#60a5fa', bodyFill:'#0a1a3a', roofFill:'#05102a', winFill:'#1a2a5a',
+      badgeFill:'rgba(37,99,235,0.9)', badgeBorder:'#2563eb', glowColor:'rgba(37,99,235,0.3)' },
+    { card:'card4', emoji:'❄️', label:'COLD', score:'23/100', sub:'94 days · 3 price cuts',
+      cardColor:'rgba(75,85,99,0.15)', cardBorder:'rgba(107,255,184,0.5)', cardShadow:'rgba(107,255,184,0.15)',
+      scoreColor:'#e2e8f0', bodyFill:'#1a2a4a', roofFill:'#0d1f5c', winFill:'#1a3a6a',
+      badgeFill:'rgba(75,85,99,0.9)', badgeBorder:'#6b7280', glowColor:'rgba(107,255,184,0.2)' }
   ];
-  
+
   var current = 3;
-  
+
   function activate(idx) {
-    scores.forEach(function(s, i) {
-      var card = document.getElementById(s.id);
-      if (!card) return;
-      card.style.opacity = i === idx ? '1' : '0.25';
-      card.style.border = i === idx ? '2px solid ' + s.border : '1px solid rgba(255,255,255,0.08)';
-      card.style.boxShadow = i === idx ? '0 0 20px ' + s.glow : 'none';
-    });
+    var s = states[idx];
     
-    var sc = scores[idx];
+    // Cards
+    states.forEach(function(st, i) {
+      var card = document.getElementById(st.card);
+      if (!card) return;
+      if (i === idx) {
+        card.style.opacity = '1';
+        card.style.background = st.cardColor;
+        card.style.border = '2px solid ' + st.cardBorder;
+        card.style.boxShadow = '0 0 24px ' + st.cardShadow;
+        card.style.transform = 'translateX(6px)';
+      } else {
+        card.style.opacity = '0.35';
+        card.style.border = '1.5px solid rgba(255,255,255,0.08)';
+        card.style.boxShadow = 'none';
+        card.style.transform = 'translateX(0)';
+      }
+    });
+
+    // House colors
     var body = document.getElementById('houseBody');
     var roof = document.getElementById('houseRoof');
-    var wL = document.getElementById('winLeft');
-    var wR = document.getElementById('winRight');
-    var badge = document.getElementById('scoreBadge');
-    var scoreText = document.getElementById('scoreText');
-    var house = document.getElementById('demoHouse');
-    
-    if (body) body.setAttribute('fill', sc.bodyFill);
-    if (roof) roof.setAttribute('fill', sc.roofFill);
-    if (wL) wL.setAttribute('fill', sc.winFill);
-    if (wR) wR.setAttribute('fill', sc.winFill);
-    if (badge) { badge.style.opacity = '1'; badge.style.transform = 'scale(1)'; }
-    if (scoreText) scoreText.textContent = sc.text;
-    if (house) house.style.filter = 'drop-shadow(0 0 30px ' + sc.glow + ')';
-    
+    var wL = document.getElementById('winL');
+    var wR = document.getElementById('winR');
+    var badge = document.getElementById('houseBadgeBg');
+    var emoji = document.getElementById('houseEmoji');
+    var label = document.getElementById('houseLabel');
+    var glow = document.getElementById('houseGlow');
+    var display = document.getElementById('scoreDisplay');
+    var scoreBig = document.getElementById('scoreBig');
+    var scoreNum = document.getElementById('scoreNum');
+    var scoreSub = document.getElementById('scoreSub');
+
+    if (body) body.setAttribute('fill', s.bodyFill);
+    if (roof) roof.setAttribute('fill', s.roofFill);
+    if (wL) wL.setAttribute('fill', s.winFill);
+    if (wR) wR.setAttribute('fill', s.winFill);
+    if (badge) { badge.setAttribute('fill', s.badgeFill); badge.setAttribute('stroke', s.badgeBorder); }
+    if (emoji) emoji.textContent = s.emoji;
+    if (label) label.textContent = s.label;
+    if (glow) glow.style.borderColor = s.glowColor;
+    if (display) { display.style.borderColor = s.cardBorder; display.style.background = s.cardColor; }
+    if (scoreBig) { scoreBig.style.color = s.scoreColor; scoreBig.textContent = s.emoji + ' ' + s.label; }
+    if (scoreNum) { scoreNum.style.color = s.scoreColor; scoreNum.textContent = s.score; }
+    if (scoreSub) scoreSub.textContent = s.sub;
+
     current = idx;
   }
-  
+
   setTimeout(function() {
     activate(3);
     setInterval(function() {
       activate((current - 1 + 4) % 4);
-    }, 2500);
-  }, 800);
+    }, 2800);
+  }, 600);
 })();
 </script>
 
