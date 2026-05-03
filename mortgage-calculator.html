@@ -735,6 +735,7 @@ function calcMonthsWithExtra(principal, monthlyRate, basePayment, extraMonthly) 
   }
 
   function calculate() {
+    var creditImpactHTML = '';
     const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
     const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
     const annualRate = parseFloat(document.getElementById('interestRate').value) || 0;
@@ -845,6 +846,39 @@ function calcMonthsWithExtra(principal, monthlyRate, basePayment, extraMonthly) 
           '</tr>';
       }
     }
+    // Credit Score Impact
+    var creditScoreVal = parseInt(document.getElementById('creditScore').value) || 0;
+    if (creditScoreVal && creditScoreVal < 740) {
+      var rateDiff = creditScoreVal >= 720 ? 0.25 : creditScoreVal >= 700 ? 0.5 : creditScoreVal >= 680 ? 0.75 : creditScoreVal >= 660 ? 1.0 : creditScoreVal >= 640 ? 1.25 : creditScoreVal >= 620 ? 1.5 : creditScoreVal >= 600 ? 2.0 : 2.5;
+      var poorRateVal = (annualRate + rateDiff) / 100 / 12;
+      var poorMonthly = principal * (poorRateVal * Math.pow(1+poorRateVal,n)) / (Math.pow(1+poorRateVal,n)-1);
+      var poorTotal = poorMonthly * n;
+      var creditCostDiff = Math.round(poorTotal - totalPayment);
+      var monthlyDiff = Math.round(poorMonthly - monthly);
+      creditImpactHTML = '<div style="background:linear-gradient(135deg,#1a0000,#2a0505);border:1px solid rgba(192,57,43,0.4);border-radius:8px;padding:18px 22px;margin:16px 0;">' +
+        '<div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:10px;">💳 Credit Score Impact — ' + creditScoreVal + '+ Score</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">' +
+          '<div style="background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);padding:12px;border-radius:6px;text-align:center;">' +
+            '<div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px;">With 740+ Score</div>' +
+            '<div style="font-family:serif;font-size:20px;font-weight:900;color:#6bffb8;">' + fmt(monthly) + '/mo</div>' +
+            '<div style="font-size:10px;color:rgba(255,255,255,0.3);">at ' + annualRate + '%</div>' +
+          '</div>' +
+          '<div style="background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);padding:12px;border-radius:6px;text-align:center;">' +
+            '<div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px;">With ' + creditScoreVal + ' Score</div>' +
+            '<div style="font-family:serif;font-size:20px;font-weight:900;color:#ff6b6b;">' + fmt(poorMonthly) + '/mo</div>' +
+            '<div style="font-size:10px;color:rgba(255,255,255,0.3);">at ' + (annualRate + rateDiff).toFixed(2) + '% (est.)</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="background:rgba(0,0,0,0.3);border-radius:6px;padding:12px;text-align:center;margin-bottom:12px;">' +
+          '<div style="font-size:13px;color:rgba(255,255,255,0.6);">Your credit score costs you an estimated</div>' +
+          '<div style="font-family:serif;font-size:30px;font-weight:900;color:#ff6b6b;">' + fmt(creditCostDiff) + '</div>' +
+          '<div style="font-size:12px;color:rgba(255,255,255,0.4);">over 30 years · ' + fmt(monthlyDiff) + '/month more</div>' +
+        '</div>' +
+        '<a href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=CALC_CREDIT_FRC" target="_blank" rel="sponsored" style="display:block;text-align:center;background:#c0392b;color:#fff;padding:11px 20px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;">🛡️ Fix My Score — Sky Blue Credit #ad</a>' +
+        '<div style="font-size:10px;color:rgba(255,255,255,0.25);text-align:center;margin-top:6px;">Not financial advice · Rate impact is an estimate</div>' +
+      '</div>';
+    }
+
     document.getElementById('resultsArea').innerHTML = `
       <div class="results-content">
         <div class="result-main">
