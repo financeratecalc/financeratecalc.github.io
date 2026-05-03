@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The $150,000 Financial Personality Test — What Type of Borrower Are You? | FRC</title>
+<meta name="description" content="5 questions. Banks use behavior patterns to predict your loan performance. Find out what type of borrower you are — and whether a bank would love or fear your application.">
+<link rel="canonical" href="https://financeratecalc.com/financial-personality-test.html">
+<meta property="og:title" content="The $150,000 Financial Personality Test">
+<meta property="og:description" content="5 questions. Find out what type of borrower banks secretly classify you as.">
+<meta property="og:image" content="https://financeratecalc.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f5c;--gold:#c8a44a;--red:#c0392b;--green:#27ae60;--cream:#f8f6f0;--border:#dde0ee;--muted:#6677aa;--ink:#0a0e1a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:#050810;color:#fff;min-height:100vh;line-height:1.7;}
+header{background:rgba(5,8,16,0.95);padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+
+.hero{padding:80px 40px 60px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(200,164,74,0.08) 0%,transparent 60%);}
+.hero-tag{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(36px,6vw,64px);font-weight:900;line-height:1.05;margin-bottom:14px;}
+h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.45);max-width:560px;margin:0 auto 40px;}
+.hero-note{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:8px 16px;border-radius:20px;font-size:12px;color:rgba(255,255,255,0.5);}
+
+/* Progress */
+.progress-wrap{max-width:600px;margin:0 auto;padding:0 40px;}
+.progress-bar-bg{background:rgba(255,255,255,0.08);border-radius:4px;height:4px;margin-bottom:12px;}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),#f0d060);border-radius:4px;transition:width 0.5s ease;}
+.progress-text{font-size:12px;color:rgba(255,255,255,0.35);text-align:right;}
+
+/* Quiz */
+.quiz-wrap{max-width:640px;margin:0 auto;padding:40px 40px 80px;}
+.question-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:36px;margin-bottom:24px;animation:fadeUp 0.4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.q-num{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:12px;}
+.q-text{font-family:'Fraunces',serif;font-size:clamp(20px,3vw,26px);font-weight:700;color:#fff;margin-bottom:8px;line-height:1.3;}
+.q-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:24px;}
+.options{display:flex;flex-direction:column;gap:10px;}
+.option{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 18px;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(255,255,255,0.8);}
+.option:hover{background:rgba(200,164,74,0.08);border-color:rgba(200,164,74,0.4);color:#fff;}
+.option.selected{background:rgba(200,164,74,0.12);border-color:var(--gold);color:#fff;}
+.option-icon{font-size:20px;flex-shrink:0;}
+
+/* Results */
+.result-wrap{display:none;max-width:680px;margin:0 auto;padding:20px 40px 80px;animation:fadeUp 0.5s ease;}
+.personality-hero{text-align:center;padding:40px 20px;margin-bottom:32px;}
+.personality-icon{font-size:80px;margin-bottom:16px;display:block;}
+.personality-name{font-family:'Fraunces',serif;font-size:48px;font-weight:900;margin-bottom:8px;}
+.personality-tag{display:inline-block;padding:6px 18px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+.personality-desc{font-size:16px;color:rgba(255,255,255,0.6);max-width:480px;margin:0 auto;line-height:1.7;}
+
+.bank-verdict{border-radius:12px;padding:24px 28px;margin-bottom:20px;}
+.bank-verdict-title{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;font-weight:700;margin-bottom:10px;}
+.bank-verdict-text{font-size:15px;color:rgba(255,255,255,0.7);line-height:1.7;}
+
+.action-box{background:linear-gradient(135deg,#0a1500,#1a3010);border:2px solid rgba(39,174,96,0.5);border-radius:12px;padding:28px 32px;margin-bottom:20px;text-align:center;}
+.action-box-alt{background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.4);border-radius:12px;padding:28px 32px;margin-bottom:20px;text-align:center;}
+
+.share-result{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;margin-bottom:20px;text-align:center;}
+.share-text-el{font-size:13px;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.04);border-radius:8px;padding:12px;margin-bottom:12px;line-height:1.6;text-align:left;font-family:monospace;}
+.share-btn{padding:10px 20px;background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;margin:4px;}
+
+.restart-btn{display:block;text-align:center;color:rgba(255,255,255,0.3);font-size:13px;cursor:pointer;margin-top:16px;text-decoration:underline;}
+
+footer{background:rgba(0,0,0,0.4);padding:24px 60px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+@media(max-width:768px){header{padding:0 16px;}.hero{padding:60px 20px 40px;}.quiz-wrap,.result-wrap,.progress-wrap{padding-left:20px;padding-right:20px;}footer{padding:20px;}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+
+<div class="hero">
+  <div class="hero-tag">🧠 World First · Financial Psychology</div>
+  <h1>The <em>$150,000</em><br>Personality Test</h1>
+  <p class="hero-sub">5 questions. Banks use behavior patterns to predict your loan performance. Find out what type of borrower they secretly classify you as.</p>
+  <div class="hero-note">⏱ 90 seconds · No sign-up · Based on real bank behavioral models</div>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar" style="width:0%"></div></div>
+  <div class="progress-text" id="progressText">Question 1 of 5</div>
+</div>
+
+<div class="quiz-wrap" id="quizWrap">
+  <div class="question-card" id="questionCard">
+    <!-- Injected by JS -->
+  </div>
+</div>
+
+<div class="result-wrap" id="resultWrap">
+  <!-- Injected by JS -->
+</div>
+
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 FinanceRateCalc · Educational use only · Not financial advice</div>
+</footer>
+
+<script>
+var questions = [
+  {
+    num: 1,
+    text: "When you make a big financial decision, what do you usually do first?",
+    sub: "Be honest — banks see your behavior, not your intentions.",
+    options: [
+      { icon: "📊", text: "Spreadsheet everything. I need the full picture before I move.", score: { q: 4, r: 0, b: 0, t: 0 } },
+      { icon: "🤝", text: "Ask someone I trust — friend, family, advisor.", score: { q: 2, r: 1, b: 1, t: 0 } },
+      { icon: "🌊", text: "Go with my gut. If it feels right, it probably is.", score: { q: 0, r: 0, b: 2, t: 2 } },
+      { icon: "⏳", text: "Overthink it for weeks, then decide in a rush.", score: { q: 0, r: 2, b: 0, t: 2 } }
+    ]
+  },
+  {
+    num: 2,
+    text: "How do you handle your credit card every month?",
+    sub: "This is one of the first things banks actually look at.",
+    options: [
+      { icon: "✅", text: "Full balance, every month. Always.", score: { q: 4, r: 0, b: 0, t: 0 } },
+      { icon: "🔄", text: "Minimum payment, sometimes more.", score: { q: 0, r: 1, b: 2, t: 1 } },
+      { icon: "📅", text: "I pay when I remember — usually on time.", score: { q: 1, r: 2, b: 1, t: 0 } },
+      { icon: "😬", text: "Honestly? It's complicated right now.", score: { q: 0, r: 0, b: 1, t: 3 } }
+    ]
+  },
+  {
+    num: 3,
+    text: "Your car breaks down and it'll cost $2,000 to fix. What do you do?",
+    sub: "Emergency fund behavior predicts mortgage reliability.",
+    options: [
+      { icon: "💰", text: "Pay from savings. That's what it's there for.", score: { q: 4, r: 0, b: 0, t: 0 } },
+      { icon: "💳", text: "Put it on a card and pay it off next month.", score: { q: 2, r: 1, b: 1, t: 0 } },
+      { icon: "📲", text: "Apply for a small loan or payment plan.", score: { q: 0, r: 1, b: 2, t: 1 } },
+      { icon: "😰", text: "Panic. I don't have $2,000 liquid right now.", score: { q: 0, r: 0, b: 1, t: 3 } }
+    ]
+  },
+  {
+    num: 4,
+    text: "How long have you been at your current job?",
+    sub: "Employment stability is the #2 factor in mortgage approval.",
+    options: [
+      { icon: "🏆", text: "3+ years. Same employer, consistent income.", score: { q: 4, r: 1, b: 0, t: 0 } },
+      { icon: "📈", text: "1-3 years. Different company but upward trajectory.", score: { q: 2, r: 2, b: 0, t: 0 } },
+      { icon: "🔄", text: "Under a year. I'm in a transition period.", score: { q: 0, r: 1, b: 2, t: 1 } },
+      { icon: "💼", text: "Self-employed or freelance.", score: { q: 1, r: 0, b: 1, t: 2 } }
+    ]
+  },
+  {
+    num: 5,
+    text: "On vacation, how do you handle spending?",
+    sub: "Discretionary spending patterns reveal your relationship with money.",
+    options: [
+      { icon: "📋", text: "I set a budget before I leave and stick to it.", score: { q: 4, r: 0, b: 0, t: 0 } },
+      { icon: "🧭", text: "I have a rough budget but I'm flexible.", score: { q: 2, r: 2, b: 0, t: 0 } },
+      { icon: "🎉", text: "I enjoy it while I'm there — I'll deal with it after.", score: { q: 0, r: 1, b: 1, t: 2 } },
+      { icon: "🏠", text: "I barely take vacations — saving for bigger goals.", score: { q: 3, r: 0, b: 1, t: 0 } }
+    ]
+  }
+];
+
+var personalities = {
+  qualifier: {
+    icon: '🦁',
+    name: 'The Qualifier',
+    tag: 'Banks love you',
+    tagBg: 'rgba(39,174,96,0.2)',
+    tagColor: '#6bffb8',
+    nameColor: '#6bffb8',
+    desc: "Your financial behavior signals stability, reliability, and low risk. Banks compete for borrowers like you. You likely qualify at the best rates with the least friction.",
+    bankVerdict: {
+      bg: 'rgba(39,174,96,0.08)',
+      border: 'rgba(39,174,96,0.3)',
+      titleColor: 'rgba(39,174,96,0.8)',
+      title: "✅ Bank's Internal Assessment",
+      text: "Profile: Low risk. Consistent payment history, stable income, strong reserves. Likely qualifies for prime rates. Flag for relationship banking — this customer is worth keeping."
+    },
+    action: {
+      type: 'positive',
+      title: 'You\'re Already in Good Shape',
+      desc: 'Your profile suggests you\'re close to qualifying for the best rates. The next step is shopping multiple lenders — every 0.25% matters.',
+      cta: 'See Which Lender Fits Your Profile →',
+      link: 'bank-rejection-engine.html',
+      color: 'green'
+    }
+  },
+  borderline: {
+    icon: '🦊',
+    name: 'The Borderline',
+    tag: 'You\'re close — but risky',
+    tagBg: 'rgba(183,121,31,0.2)',
+    tagColor: '#f0c040',
+    nameColor: '#f0c040',
+    desc: "You have good instincts but inconsistent execution. Banks see potential but also red flags. You might qualify — but at higher rates, or with stricter conditions.",
+    bankVerdict: {
+      bg: 'rgba(183,121,31,0.08)',
+      border: 'rgba(183,121,31,0.3)',
+      titleColor: 'rgba(183,121,31,0.8)',
+      title: "⚠️ Bank's Internal Assessment",
+      text: "Profile: Moderate risk. Inconsistent behavioral signals — capable but unpredictable. May qualify at standard rates. Requires manual review. Consider requesting compensating factors."
+    },
+    action: {
+      type: 'warning',
+      title: 'A Few Tweaks Could Save You Thousands',
+      desc: 'Small improvements to your credit profile could move you from borderline to qualified — and drop your rate significantly.',
+      cta: 'Fix My Credit Profile — Sky Blue Credit →',
+      link: 'https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=PERSONALITY_BORDERLINE_FRC',
+      color: 'gold',
+      external: true,
+      ad: true
+    }
+  },
+  rebuilder: {
+    icon: '🐢',
+    name: 'The Rebuilder',
+    tag: 'You\'re working on it',
+    tagBg: 'rgba(37,99,235,0.2)',
+    tagColor: '#60a5fa',
+    nameColor: '#60a5fa',
+    desc: "Your financial story has some chapters you'd rather rewrite. The good news: banks care more about trajectory than history. You can rebuild — and faster than you think.",
+    bankVerdict: {
+      bg: 'rgba(37,99,235,0.08)',
+      border: 'rgba(37,99,235,0.3)',
+      titleColor: 'rgba(37,99,235,0.8)',
+      title: "🔵 Bank's Internal Assessment",
+      text: "Profile: Elevated risk. History of financial stress indicators. Unlikely to qualify at national banks at current rates. Recommend FHA or credit union pathway. Credit repair could change this assessment within 6-9 months."
+    },
+    action: {
+      type: 'repair',
+      title: '90 Days Could Change Everything',
+      desc: 'The Rebuilder profile qualifies for Sky Blue\'s core service — disputing negative items and optimizing your report for mortgage approval.',
+      cta: 'Start Rebuilding — Sky Blue Credit →',
+      link: 'https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=PERSONALITY_REBUILDER_FRC',
+      color: 'blue',
+      external: true,
+      ad: true
+    }
+  },
+  transformer: {
+    icon: '🦋',
+    name: 'The Transformer',
+    tag: 'Big change is coming',
+    tagBg: 'rgba(192,57,43,0.2)',
+    tagColor: '#ff9b9b',
+    nameColor: '#ff9b9b',
+    desc: "You're in transition — income, credit, or life situation is shifting. Banks are risk-averse with uncertainty. But transformation is real, and the right strategy now sets you up for approval later.",
+    bankVerdict: {
+      bg: 'rgba(192,57,43,0.08)',
+      border: 'rgba(192,57,43,0.3)',
+      titleColor: 'rgba(192,57,43,0.8)',
+      title: "🔴 Bank's Internal Assessment",
+      text: "Profile: High risk — multiple instability signals. Recommend decline at this time. Borrower may qualify in 12-18 months with credit stabilization and income documentation. Monitor for re-application."
+    },
+    action: {
+      type: 'urgent',
+      title: 'The Right Moves Now = Approval Later',
+      desc: 'Transformers who address their credit profile early get approved 2x faster. Sky Blue specializes in exactly this transition period.',
+      cta: 'Get My Transformation Plan — Sky Blue →',
+      link: 'https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=PERSONALITY_TRANSFORMER_FRC',
+      color: 'red',
+      external: true,
+      ad: true
+    }
+  }
+};
+
+var scores = { q: 0, r: 0, b: 0, t: 0 };
+var currentQ = 0;
+
+function renderQuestion() {
+  var q = questions[currentQ];
+  var pct = (currentQ / questions.length) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = 'Question ' + (currentQ + 1) + ' of ' + questions.length;
+
+  var card = document.getElementById('questionCard');
+  card.innerHTML = '<div class="q-num">Question ' + q.num + ' / ' + questions.length + '</div>' +
+    '<div class="q-text">' + q.text + '</div>' +
+    '<div class="q-sub">' + q.sub + '</div>' +
+    '<div class="options">' +
+    q.options.map(function(o, i) {
+      return '<div class="option" onclick="selectOption(' + i + ')">' +
+        '<span class="option-icon">' + o.icon + '</span>' +
+        '<span>' + o.text + '</span></div>';
+    }).join('') +
+    '</div>';
+}
+
+function selectOption(idx) {
+  var q = questions[currentQ];
+  var s = q.options[idx].score;
+  scores.q += s.q;
+  scores.r += s.r;
+  scores.b += s.b;
+  scores.t += s.t;
+
+  // Visual feedback
+  var opts = document.querySelectorAll('.option');
+  opts[idx].classList.add('selected');
+
+  setTimeout(function() {
+    currentQ++;
+    if (currentQ < questions.length) {
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }, 400);
+}
+
+function getPersonality() {
+  var max = Math.max(scores.q, scores.r, scores.b, scores.t);
+  if (scores.q === max) return 'qualifier';
+  if (scores.b === max) return 'borderline';
+  if (scores.r === max) return 'rebuilder';
+  return 'transformer';
+}
+
+function showResult() {
+  document.getElementById('progressBar').style.width = '100%';
+  document.getElementById('progressText').textContent = 'Complete!';
+  document.getElementById('quizWrap').style.display = 'none';
+
+  var type = getPersonality();
+  var p = personalities[type];
+  var r = document.getElementById('resultWrap');
+  r.style.display = 'block';
+
+  var actionHTML = '';
+  if (p.action.color === 'green') {
+    actionHTML = '<div class="action-box">' +
+      '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(39,174,96,0.8);font-weight:700;margin-bottom:10px;">🎯 Your Next Step</div>' +
+      '<div style="font-family:\'Fraunces\',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;">' + p.action.title + '</div>' +
+      '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:16px;">' + p.action.desc + '</div>' +
+      '<a href="' + p.action.link + '" style="display:inline-block;background:#27ae60;color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">' + p.action.cta + '</a>' +
+      '</div>';
+  } else {
+    var btnColor = p.action.color === 'red' ? '#c0392b' : p.action.color === 'blue' ? '#2563eb' : '#b7791f';
+    actionHTML = '<div class="action-box-alt">' +
+      '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:10px;">🎯 Your Next Step</div>' +
+      '<div style="font-family:\'Fraunces\',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;">' + p.action.title + '</div>' +
+      '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:16px;">' + p.action.desc + '</div>' +
+      '<a href="' + p.action.link + '" ' + (p.action.external ? 'target="_blank" rel="sponsored"' : '') + ' style="display:inline-block;background:' + btnColor + ';color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">' + p.action.cta + '</a>' +
+      (p.action.ad ? '<div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:8px;">#ad · Not financial advice</div>' : '') +
+      '</div>';
+  }
+
+  var shareStr = 'I just took the $150,000 Financial Personality Test.\n\nI\'m a ' + p.icon + ' ' + p.name + ' — "' + p.tag + '"\n\n' + p.desc.substring(0, 100) + '...\n\nFind out what type of borrower you are:\nfinanceratecalc.com/financial-personality-test.html';
+
+  r.innerHTML = '<div class="personality-hero">' +
+    '<span class="personality-icon">' + p.icon + '</span>' +
+    '<div class="personality-name" style="color:' + p.nameColor + ';">' + p.name + '</div>' +
+    '<span class="personality-tag" style="background:' + p.tagBg + ';color:' + p.tagColor + ';">' + p.tag + '</span>' +
+    '<div class="personality-desc">' + p.desc + '</div>' +
+    '</div>' +
+    '<div class="bank-verdict" style="background:' + p.bankVerdict.bg + ';border:1px solid ' + p.bankVerdict.border + ';">' +
+    '<div class="bank-verdict-title" style="color:' + p.bankVerdict.titleColor + ';">' + p.bankVerdict.title + '</div>' +
+    '<div class="bank-verdict-text">' + p.bankVerdict.text + '</div>' +
+    '</div>' +
+    actionHTML +
+    '<div class="share-result">' +
+    '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:10px;">Share your result</div>' +
+    '<div class="share-text-el" id="shareText">' + shareStr + '</div>' +
+    '<button class="share-btn" onclick="copyShare()">📋 Copy</button>' +
+    '<button class="share-btn" onclick="tweetShare()">🐦 Tweet My Type</button>' +
+    '</div>' +
+    '<div class="restart-btn" onclick="restartQuiz()">↩ Take the test again</div>';
+}
+
+function copyShare() {
+  navigator.clipboard.writeText(document.getElementById('shareText').textContent).then(function() { alert('Copied!'); });
+}
+function tweetShare() {
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.getElementById('shareText').textContent), '_blank');
+}
+function restartQuiz() {
+  scores = { q:0, r:0, b:0, t:0 };
+  currentQ = 0;
+  document.getElementById('resultWrap').style.display = 'none';
+  document.getElementById('quizWrap').style.display = 'block';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
