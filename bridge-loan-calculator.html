@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bridge Loan Calculator — Sell Your Home & Buy Another | FRC</title>
+<meta name="description" content="Selling your home and buying another? Calculate your bridge loan need, equity gap, monthly cost, and how long your current home will take to sell based on market conditions.">
+<link rel="canonical" href="https://financeratecalc.com/bridge-loan-calculator.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f5c;--gold:#c8a44a;--gold-light:#f0d060;--red:#c0392b;--green:#27ae60;--border:#dde0ee;--muted:#6677aa;--cream:#f8f6f0;--ink:#0a0e1a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:var(--cream);color:var(--ink);line-height:1.7;}
+header{background:var(--navy);padding:0 60px;height:64px;display:flex;align-items:center;gap:32px;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+.hero{background:linear-gradient(135deg,#0a1f5c 0%,#0d2a6e 100%);padding:64px 60px 56px;border-bottom:4px solid var(--gold);}
+.hero-inner{max-width:900px;margin:0 auto;}
+.tag{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,56px);font-weight:900;color:#fff;line-height:1.05;margin-bottom:12px;letter-spacing:-1px;}
+h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.5);max-width:560px;}
+.main{max-width:900px;margin:0 auto;padding:48px 60px 80px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:28px 32px;}
+.card-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border);}
+.field{margin-bottom:18px;}
+label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.input-wrap{position:relative;}
+.prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:600;color:var(--muted);}
+input[type=number],select{width:100%;padding:11px 14px 11px 26px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-family:'Geist',sans-serif;color:var(--ink);background:#fff;outline:none;transition:border-color 0.2s;}
+select{padding-left:14px;}
+input[type=number]:focus,select:focus{border-color:var(--navy);}
+.slider-row{display:flex;align-items:center;gap:10px;margin-top:6px;}
+input[type=range]{flex:1;accent-color:var(--navy);}
+.slider-val{font-size:13px;font-weight:700;color:var(--navy);min-width:40px;text-align:right;}
+.calc-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--navy),#0d2d6e);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;font-family:'Geist',sans-serif;letter-spacing:0.02em;transition:opacity 0.2s;}
+.calc-btn:hover{opacity:0.9;}
+
+/* Results */
+.results{display:none;}
+.results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.result-stat{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;}
+.result-num{font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:var(--navy);line-height:1;}
+.result-label{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-top:5px;}
+.timeline{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px 28px;margin-bottom:20px;}
+.timeline-title{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--navy);margin-bottom:16px;}
+.timeline-row{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--border);}
+.timeline-row:last-child{border-bottom:none;}
+.timeline-days{font-family:'Fraunces',serif;font-size:20px;font-weight:900;min-width:60px;}
+.timeline-label{font-size:13px;color:var(--muted);}
+.timeline-cost{font-size:14px;font-weight:700;margin-left:auto;}
+.shock{background:linear-gradient(135deg,#0a0000,#1a0505);border:1px solid rgba(192,57,43,0.3);border-radius:10px;padding:20px 24px;margin-bottom:20px;}
+.shock-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;}
+.shock-row:last-child{border-bottom:none;font-weight:700;font-size:15px;}
+.shock-key{color:rgba(255,255,255,0.45);}
+.shock-val{color:#fff;}
+.shock-val.red{color:#ff6b6b;}
+.demand-box{border-radius:10px;padding:16px 20px;margin-bottom:20px;}
+.cta-box{background:linear-gradient(135deg,#0a1500,#1a3010);border:2px solid rgba(39,174,96,0.4);border-radius:10px;padding:22px 26px;margin-bottom:16px;text-align:center;}
+.cta-skyblue{background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.4);border-radius:10px;padding:22px 26px;margin-bottom:16px;text-align:center;}
+.btn-green{display:inline-block;background:#27ae60;color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;}
+.btn-red{display:inline-block;background:#c0392b;color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--navy);margin:28px 0 12px;}
+p{font-size:15px;color:#2c2c2c;line-height:1.75;margin-bottom:12px;}
+footer{background:var(--navy);padding:32px 60px;text-align:center;margin-top:40px;}
+@media(max-width:768px){header{padding:0 16px;}.hero{padding:40px 20px;}.main{padding:28px 16px 60px;}.two-col{grid-template-columns:1fr;}.results-grid{grid-template-columns:1fr 1fr;}footer{padding:24px 16px;}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="tag">🏠→🏡 Bridge Loan Calculator · World First</div>
+    <h1>Sell Your Home.<br>Buy <em>Another</em>.<br>Know the Real Cost.</h1>
+    <p class="hero-sub">How much bridge financing do you need? How long will your home take to sell? What does the gap cost you every day?</p>
+  </div>
+</div>
+
+<div class="main">
+  <div class="two-col">
+    <!-- INPUT -->
+    <div class="card">
+      <div class="card-title">🏠 Your Current Home</div>
+      <div class="field">
+        <label>Current Home Value</label>
+        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="currentVal" value="400000" min="50000" max="5000000" step="5000"></div>
+      </div>
+      <div class="field">
+        <label>Remaining Mortgage Balance</label>
+        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="mortgage" value="250000" min="0" max="5000000" step="5000"></div>
+      </div>
+      <div class="field">
+        <label>Market Condition</label>
+        <select id="market">
+          <option value="hot">🔥 HOT — High demand, sells fast</option>
+          <option value="warm">🟡 WARM — Normal market</option>
+          <option value="cooling" selected>🔵 COOLING — Slower market</option>
+          <option value="cold">❄️ COLD — Low demand, takes time</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Asking Price Strategy</label>
+        <select id="strategy">
+          <option value="aggressive">Price aggressively (below market)</option>
+          <option value="market" selected>At market value</option>
+          <option value="high">Above market (testing the waters)</option>
+        </select>
+      </div>
+
+      <div class="card-title" style="margin-top:24px;">🏡 New Home</div>
+      <div class="field">
+        <label>New Home Price</label>
+        <div class="input-wrap"><span class="prefix">$</span><input type="number" id="newPrice" value="600000" min="50000" max="5000000" step="5000"></div>
+      </div>
+      <div class="field">
+        <label>Bridge Loan Rate (est.)</label>
+        <div class="slider-row">
+          <input type="range" id="bridgeRate" min="7" max="12" step="0.25" value="9.5" oninput="document.getElementById('bridgeRateVal').textContent=this.value+'%'">
+          <span class="slider-val" id="bridgeRateVal">9.5%</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Credit Score Range</label>
+        <select id="cscore">
+          <option value="760">760+ Excellent</option>
+          <option value="720" selected>720-759 Good</option>
+          <option value="680">680-719 Fair</option>
+          <option value="640">640-679 Poor</option>
+          <option value="620">620-639 Very Poor</option>
+        </select>
+      </div>
+
+      <button class="calc-btn" onclick="calculate()">Calculate My Bridge Loan →</button>
+    </div>
+
+    <!-- EXPLAINER -->
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">What is a Bridge Loan?</div>
+        <p style="font-size:14px;color:#555;margin:0;">A bridge loan is short-term financing that covers the gap between buying your new home and selling your current one. It uses your existing home's equity as collateral — letting you buy before you sell.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">FRC Market Speed Estimates</div>
+        <div style="font-size:13px;color:#555;line-height:2;">
+          <div>🔥 <strong>HOT market:</strong> 7-21 days</div>
+          <div>🟡 <strong>WARM market:</strong> 21-45 days</div>
+          <div>🔵 <strong>COOLING market:</strong> 45-90 days</div>
+          <div>❄️ <strong>COLD market:</strong> 90-180 days</div>
+          <div style="margin-top:10px;font-size:11px;color:#aaa;">Based on FRC Buyer Demand data from 4,590 listings analyzed by our users.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+    <h2>Your Bridge Loan Analysis</h2>
+
+    <div class="results-grid" id="statsGrid"></div>
+    <div id="demandBox"></div>
+    <div class="timeline" id="timelineBox"></div>
+    <div class="shock" id="shockBox"></div>
+    <div id="ctaBox"></div>
+  </div>
+
+  <!-- EXPLAINER -->
+  <h2>How Bridge Loans Work</h2>
+  <p>When you find your dream home before selling your current one, you face a timing gap. A bridge loan covers that gap — letting you close on the new home immediately while your old home is still on the market.</p>
+  <p>Bridge loans typically run 6-12 months at rates 1.5-3% above conventional mortgage rates. The loan is secured by your existing home's equity. Once your old home sells, you pay off the bridge loan from the proceeds.</p>
+  <p>The key risk: if your old home takes longer to sell than expected, the bridge loan costs compound. In a COLD market, a 180-day bridge period on a $150K loan could cost $7,000-12,000 in interest alone.</p>
+
+  <h2>Related Tools</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+    <a href="mortgage-calculator.html" style="padding:12px 16px;background:#fff;border:1px solid var(--border);border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;color:var(--navy);">New Mortgage Calculator →</a>
+    <a href="real-cost-calculator.html" style="padding:12px 16px;background:#fff;border:1px solid var(--border);border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;color:var(--navy);">Real Cost Calculator →</a>
+    <a href="bank-rejection-engine.html" style="padding:12px 16px;background:#fff;border:1px solid var(--border);border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;color:var(--navy);">Qualify for Bridge Loan →</a>
+    <a href="financial-twin.html" style="padding:12px 16px;background:#fff;border:1px solid var(--border);border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;color:var(--navy);">Buy vs Rent Calculator →</a>
+  </div>
+</div>
+
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:20px;color:#fff;font-weight:900;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:8px;">© 2026 FinanceRateCalc · Educational use only · Not financial advice</div>
+</footer>
+
+<script>
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
+
+function calculate(){
+  var currentVal = parseInt(document.getElementById('currentVal').value)||0;
+  var mortgage = parseInt(document.getElementById('mortgage').value)||0;
+  var newPrice = parseInt(document.getElementById('newPrice').value)||0;
+  var market = document.getElementById('market').value;
+  var strategy = document.getElementById('strategy').value;
+  var bridgeRate = parseFloat(document.getElementById('bridgeRate').value);
+  var cscore = parseInt(document.getElementById('cscore').value);
+
+  var equity = currentVal - mortgage;
+  var bridgeNeed = Math.max(0, newPrice - equity);
+  var dailyCost = bridgeNeed * (bridgeRate/100/365);
+
+  // Market speed estimates
+  var speeds = {
+    hot:   {min:7,  mid:14,  max:30,  label:'🔥 HOT',  color:'#c0392b', bg:'rgba(192,57,43,0.08)', border:'rgba(192,57,43,0.3)'},
+    warm:  {min:21, mid:35,  max:60,  label:'🟡 WARM', color:'#b7791f', bg:'rgba(183,121,31,0.08)', border:'rgba(183,121,31,0.3)'},
+    cooling:{min:45,mid:70,  max:100, label:'🔵 COOLING',color:'#2563eb',bg:'rgba(37,99,235,0.08)', border:'rgba(37,99,235,0.3)'},
+    cold:  {min:90, mid:135, max:180, label:'❄️ COLD', color:'#4b5563', bg:'rgba(75,85,99,0.08)',  border:'rgba(75,85,99,0.4)'}
+  };
+
+  var stratMod = {aggressive:-0.3, market:0, high:0.4};
+  var sp = speeds[market];
+  var mod = stratMod[strategy];
+  var estDays = Math.round(sp.mid * (1 + mod));
+  var minDays = Math.round(sp.min * (1 + mod));
+  var maxDays = Math.round(sp.max * (1 + mod));
+
+  var cost30  = Math.round(dailyCost * 30);
+  var costEst = Math.round(dailyCost * estDays);
+  var costMax = Math.round(dailyCost * maxDays);
+
+  // Credit score rate impact
+  var rateBonus = cscore >= 740 ? 0 : cscore >= 680 ? 0.5 : cscore >= 640 ? 1.0 : 1.5;
+  var actualRate = bridgeRate + rateBonus;
+  var actualDaily = bridgeNeed * (actualRate/100/365);
+  var actualCostEst = Math.round(actualDaily * estDays);
+
+  // Stats
+  document.getElementById('statsGrid').innerHTML =
+    stat(fmt(equity), 'Your Equity') +
+    stat(fmt(bridgeNeed), 'Bridge Loan Need') +
+    stat(fmt(Math.round(dailyCost)), 'Daily Interest Cost') +
+    stat(estDays+' days', 'Est. Days to Sell') +
+    stat(fmt(costEst), 'Est. Bridge Cost') +
+    stat(fmt(costMax), 'Worst Case Cost');
+
+  // Demand box
+  document.getElementById('demandBox').innerHTML =
+    '<div style="background:'+sp.bg+';border:1.5px solid '+sp.border+';border-radius:10px;padding:16px 20px;margin-bottom:20px;">' +
+    '<div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:'+sp.color+';font-weight:700;margin-bottom:6px;">'+sp.label+' Market — FRC Demand Assessment</div>' +
+    '<div style="font-size:14px;color:#333;">In a '+sp.label.replace(/[^\w\s]/gi,'')+' market, homes in your price range typically sell in <strong>'+minDays+'-'+maxDays+' days</strong>. Your pricing strategy adjusts this estimate.</div>' +
+    '</div>';
+
+  // Timeline
+  document.getElementById('timelineBox').innerHTML =
+    '<div class="timeline-title">📅 Bridge Loan Cost by Sale Timeline</div>' +
+    timelineRow('Best case: '+minDays+' days', fmt(Math.round(dailyCost*minDays)), '#27ae60') +
+    timelineRow('Expected: '+estDays+' days', fmt(costEst), '#b7791f') +
+    timelineRow('Worst case: '+maxDays+' days', fmt(costMax), '#c0392b') +
+    timelineRow('If it takes 6 months', fmt(Math.round(dailyCost*180)), '#c0392b');
+
+  // Shock box
+  document.getElementById('shockBox').innerHTML =
+    '<div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:10px;">💣 Full Financial Picture</div>' +
+    shockRow('Current home equity', fmt(equity)) +
+    shockRow('Bridge loan needed', fmt(bridgeNeed)) +
+    shockRow('Bridge rate (est.)', actualRate.toFixed(2)+'%') +
+    shockRow('New mortgage payment', fmt(Math.round(newPrice*0.8*(6.3/100/12)*Math.pow(1+6.3/100/12,360)/(Math.pow(1+6.3/100/12,360)-1)))) +
+    shockRow('Bridge interest per month', fmt(Math.round(actualDaily*30)), true) +
+    shockRow('Total bridge cost (expected)', fmt(actualCostEst), true);
+
+  // CTA
+  var ctaHTML = '';
+  if(cscore < 720){
+    ctaHTML += '<div class="cta-skyblue">' +
+      '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:8px;">💳 Your Credit Score is Raising Your Bridge Rate</div>' +
+      '<div style="font-size:14px;color:rgba(255,255,255,0.65);margin-bottom:14px;">A '+cscore+' score adds ~'+rateBonus+'% to your bridge loan rate — costing you '+fmt(actualCostEst - costEst)+' extra over the bridge period.</div>' +
+      '<a href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=BRIDGE_LOAN_FRC" target="_blank" rel="sponsored" class="btn-red">🛡️ Fix My Score — Sky Blue Credit #ad</a>' +
+      '<div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;">Not financial advice · Individual results vary</div>' +
+      '</div>';
+  }
+  ctaHTML += '<div class="cta-box">' +
+    '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(39,174,96,0.8);font-weight:700;margin-bottom:8px;">🏠 Ready to Move Forward?</div>' +
+    '<div style="font-size:14px;color:rgba(255,255,255,0.65);margin-bottom:14px;">Calculate your new mortgage payment and see if you qualify before you apply.</div>' +
+    '<a href="bank-rejection-engine.html" class="btn-green">Check My Approval Odds →</a>' +
+    '</div>';
+  document.getElementById('ctaBox').innerHTML = ctaHTML;
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+function stat(n,l){return '<div class="result-stat"><div class="result-num">'+n+'</div><div class="result-label">'+l+'</div></div>';}
+function timelineRow(l,c,color){return '<div class="timeline-row"><div class="timeline-days" style="color:'+color+';">'+l.split(':')[0]+'</div><div class="timeline-label">'+l.split(':')[1]+'</div><div class="timeline-cost" style="color:'+color+';">'+c+'</div></div>';}
+function shockRow(k,v,red){return '<div class="shock-row"><span class="shock-key">'+k+'</span><span class="shock-val'+(red?' red':'')+'">'+v+'</span></div>';}
+</script>
+</body>
+</html>
