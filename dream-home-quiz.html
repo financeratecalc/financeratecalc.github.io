@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dream Home Quiz — Find Your Perfect Home & What It Costs | FRC</title>
+<meta name="description" content="7 questions. Find your dream home profile — location, style, size, features — and see exactly what it costs, which cities fit your budget, and what salary you need.">
+<link rel="canonical" href="https://financeratecalc.com/dream-home-quiz.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f5c;--gold:#c8a44a;--gold-light:#f0d060;--red:#c0392b;--green:#27ae60;--border:#dde0ee;--muted:#6677aa;--cream:#f8f6f0;--ink:#0a0e1a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:#050810;color:#fff;min-height:100vh;}
+header{background:rgba(5,8,16,0.95);padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+.hero{padding:72px 40px 56px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(200,164,74,0.1) 0%,transparent 60%);}
+.hero-tag{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(36px,6vw,64px);font-weight:900;line-height:1.05;margin-bottom:14px;letter-spacing:-1px;}
+h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.45);max-width:520px;margin:0 auto 32px;}
+
+/* Progress */
+.progress-wrap{max-width:640px;margin:0 auto;padding:0 40px;}
+.progress-bg{background:rgba(255,255,255,0.07);border-radius:4px;height:4px;margin-bottom:8px;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:4px;transition:width 0.5s ease;}
+.progress-text{font-size:11px;color:rgba(255,255,255,0.3);text-align:right;}
+
+/* Quiz */
+.quiz-wrap{max-width:680px;margin:0 auto;padding:36px 40px 80px;}
+.q-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:36px;animation:fadeUp 0.4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.q-num{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:12px;}
+.q-text{font-family:'Fraunces',serif;font-size:clamp(22px,3.5vw,30px);font-weight:700;color:#fff;margin-bottom:6px;line-height:1.2;}
+.q-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:24px;}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.opt{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px 18px;cursor:pointer;transition:all 0.25s;text-align:left;}
+.opt:hover{background:rgba(200,164,74,0.08);border-color:rgba(200,164,74,0.5);transform:translateY(-2px);}
+.opt.selected{background:rgba(200,164,74,0.12);border-color:var(--gold);box-shadow:0 0 16px rgba(200,164,74,0.1);}
+.opt-icon{font-size:24px;display:block;margin-bottom:8px;}
+.opt-label{font-size:14px;font-weight:600;color:#fff;display:block;margin-bottom:2px;}
+.opt-sub{font-size:11px;color:rgba(255,255,255,0.4);}
+
+/* Results */
+.result-wrap{display:none;max-width:720px;margin:0 auto;padding:20px 40px 80px;animation:fadeUp 0.5s ease;}
+.dream-card{background:linear-gradient(135deg,#0a0f20,#0d1530);border:2px solid rgba(200,164,74,0.4);border-radius:16px;padding:32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.dream-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light),var(--gold));}
+.dream-title{font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#fff;margin-bottom:6px;}
+.dream-subtitle{font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:20px;}
+.dream-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.dream-tag{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(200,164,74,0.12);border:1px solid rgba(200,164,74,0.3);color:var(--gold);}
+.price-range{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;}
+.price-box{background:rgba(255,255,255,0.05);border-radius:8px;padding:14px;text-align:center;}
+.price-num{font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:var(--gold);}
+.price-label{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.4);margin-top:4px;}
+.cities{margin-bottom:20px;}
+.cities-title{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:700;margin-bottom:10px;}
+.city-list{display:flex;flex-direction:column;gap:8px;}
+.city-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.04);border-radius:8px;padding:10px 14px;font-size:13px;}
+.city-name{font-weight:600;color:#fff;}
+.city-price{color:var(--gold);font-weight:700;}
+.city-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;}
+
+.gap-box{background:linear-gradient(135deg,#0a0000,#1a0505);border:1px solid rgba(192,57,43,0.3);border-radius:10px;padding:20px 24px;margin-bottom:20px;}
+.gap-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center;}
+.gap-num{font-family:'Fraunces',serif;font-size:24px;font-weight:900;line-height:1;}
+.gap-label{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-top:4px;}
+
+.skyblue-box{background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.5);border-radius:12px;padding:24px 28px;margin-bottom:20px;text-align:center;}
+.green-box{background:linear-gradient(135deg,#0a1500,#1a3010);border:2px solid rgba(39,174,96,0.4);border-radius:12px;padding:22px 26px;margin-bottom:20px;text-align:center;}
+.share-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;margin-bottom:20px;text-align:center;}
+.share-preview{font-size:13px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.03);border-radius:8px;padding:12px;margin-bottom:12px;text-align:left;font-family:monospace;line-height:1.6;}
+.share-btn{padding:9px 18px;background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;margin:3px;}
+.restart{display:block;text-align:center;color:rgba(255,255,255,0.3);font-size:13px;cursor:pointer;margin-top:16px;text-decoration:underline;}
+footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+@media(max-width:640px){header{padding:0 16px;}.hero{padding:52px 20px 40px;}.quiz-wrap,.result-wrap,.progress-wrap{padding-left:20px;padding-right:20px;}.opts{grid-template-columns:1fr;}.price-range,.gap-grid{grid-template-columns:1fr 1fr;}.dream-card{padding:22px;}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+
+<div class="hero">
+  <div class="hero-tag">🏡 Dream Home Finder · World First</div>
+  <h1>What Does Your<br><em>Dream Home</em> Cost?</h1>
+  <p class="hero-sub">7 questions. Get your personalized dream home profile — real cities, real prices, and exactly what you need to get there.</p>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-bg"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="progress-text" id="progressText">Question 1 of 7</div>
+</div>
+
+<div class="quiz-wrap" id="quizWrap">
+  <div class="q-card" id="qCard"></div>
+</div>
+
+<div class="result-wrap" id="resultWrap"></div>
+
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 · Educational use only · Not financial advice</div>
+</footer>
+
+<script>
+var questions = [
+  {
+    num:1, text:"Where do you want to live?", sub:"This shapes everything — price, lifestyle, and your timeline.",
+    opts:[
+      {icon:"🏖️", label:"Beachfront / Coastal", sub:"Ocean or lake views", key:"loc", val:"beachfront"},
+      {icon:"🏔️", label:"Mountain / Nature", sub:"Peaceful, away from the city", key:"loc", val:"mountain"},
+      {icon:"🏙️", label:"City / Urban", sub:"Close to work and culture", key:"loc", val:"city"},
+      {icon:"🏘️", label:"Suburban", sub:"Good schools, quiet streets", key:"loc", val:"suburban"}
+    ]
+  },
+  {
+    num:2, text:"What type of home?", sub:"Your lifestyle determines the right structure.",
+    opts:[
+      {icon:"🏡", label:"Single Family Home", sub:"Yard, privacy, no shared walls", key:"type", val:"single-family"},
+      {icon:"🏢", label:"Condo / Apartment", sub:"Low maintenance, amenities", key:"type", val:"condo"},
+      {icon:"🏘️", label:"Townhouse", sub:"Best of both worlds", key:"type", val:"townhouse"},
+      {icon:"🏠", label:"Duplex", sub:"Live in one, rent the other", key:"type", val:"duplex"}
+    ]
+  },
+  {
+    num:3, text:"How many bedrooms?", sub:"Think about 10 years from now, not just today.",
+    opts:[
+      {icon:"🛏️", label:"2 Bedrooms", sub:"Just right for 1-2 people", key:"beds", val:"2br"},
+      {icon:"🛏️🛏️", label:"3 Bedrooms", sub:"Room to grow", key:"beds", val:"3br"},
+      {icon:"🛏️🛏️🛏️", label:"4 Bedrooms", sub:"Family or home office", key:"beds", val:"4br"},
+      {icon:"🏰", label:"5+ Bedrooms", sub:"Space for everyone", key:"beds", val:"5br"}
+    ]
+  },
+  {
+    num:4, text:"Must-have features?", sub:"Pick the one you absolutely cannot live without.",
+    opts:[
+      {icon:"🏊", label:"Pool / Outdoor Space", sub:"Entertainment and lifestyle", key:"feature", val:"pool"},
+      {icon:"🚗", label:"Garage (2+ cars)", sub:"Storage and protection", key:"feature", val:"garage"},
+      {icon:"🎓", label:"Top School District", sub:"Critical for families", key:"feature", val:"school"},
+      {icon:"🏗️", label:"No HOA", sub:"Total freedom", key:"feature", val:"no-hoa"}
+    ]
+  },
+  {
+    num:5, text:"What's your current salary?", sub:"We'll show the gap honestly — no sugarcoating.",
+    opts:[
+      {icon:"💼", label:"Under $60K", sub:"Building toward the dream", key:"salary", val:50},
+      {icon:"💼💼", label:"$60K - $100K", sub:"Mid-range buying power", key:"salary", val:80},
+      {icon:"💼💼💼", label:"$100K - $150K", sub:"Strong position", key:"salary", val:125},
+      {icon:"💰", label:"$150K+", sub:"Most markets are open", key:"salary", val:175}
+    ]
+  },
+  {
+    num:6, text:"What's your credit score range?", sub:"This affects your rate — and your timeline.",
+    opts:[
+      {icon:"⭐⭐⭐⭐⭐", label:"720+ (Good to Excellent)", sub:"Best rates available", key:"credit", val:740},
+      {icon:"⭐⭐⭐⭐", label:"680-719 (Fair)", sub:"Conventional loan eligible", key:"credit", val:700},
+      {icon:"⭐⭐⭐", label:"640-679 (Below Average)", sub:"FHA pathway", key:"credit", val:660},
+      {icon:"⭐⭐", label:"Below 640 (Rebuilding)", sub:"Needs work first", key:"credit", val:620}
+    ]
+  },
+  {
+    num:7, text:"When do you want to buy?", sub:"Urgency changes the strategy completely.",
+    opts:[
+      {icon:"🚀", label:"ASAP — Within 6 months", sub:"Let's move fast", key:"timeline", val:"asap"},
+      {icon:"📅", label:"1-2 Years", sub:"Building savings now", key:"timeline", val:"1-2yr"},
+      {icon:"🎯", label:"3-5 Years", sub:"Planning ahead", key:"timeline", val:"3-5yr"},
+      {icon:"💭", label:"Just exploring", sub:"No pressure yet", key:"timeline", val:"exploring"}
+    ]
+  }
+];
+
+var answers = {};
+var current = 0;
+
+function render(){
+  var q = questions[current];
+  var pct = (current/questions.length)*100;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressText').textContent = 'Question '+(current+1)+' of '+questions.length;
+  var card = document.getElementById('qCard');
+  card.innerHTML = '<div class="q-num">Question '+(current+1)+' / '+questions.length+'</div>'+
+    '<div class="q-text">'+q.text+'</div>'+
+    '<div class="q-sub">'+q.sub+'</div>'+
+    '<div class="opts">'+
+    q.opts.map(function(o,i){
+      return '<div class="opt" onclick="pick('+i+')">'+
+        '<span class="opt-icon">'+o.icon+'</span>'+
+        '<span class="opt-label">'+o.label+'</span>'+
+        '<span class="opt-sub">'+o.sub+'</span></div>';
+    }).join('')+'</div>';
+}
+
+function pick(idx){
+  var q = questions[current];
+  var o = q.opts[idx];
+  answers[o.key] = o.val;
+  var opts = document.querySelectorAll('.opt');
+  opts[idx].classList.add('selected');
+  setTimeout(function(){
+    current++;
+    if(current < questions.length) render();
+    else showResult();
+  },400);
+}
+
+// Dream home database
+var dreamData = {
+  beachfront:{
+    label:"Beachfront / Coastal",
+    emoji:"🏖️",
+    cities:{
+      "single-family":{
+        "3br":[
+          {city:"Corpus Christi, TX", price:"$320K-$480K", tag:"Best Value", tagColor:"#27ae60"},
+          {city:"Virginia Beach, VA", price:"$420K-$620K", tag:"Popular", tagColor:"#b7791f"},
+          {city:"Clearwater, FL", price:"$480K-$720K", tag:"Hot Market", tagColor:"#c0392b"}
+        ],
+        "4br":[
+          {city:"Gulf Shores, AL", price:"$420K-$580K", tag:"Best Value", tagColor:"#27ae60"},
+          {city:"Myrtle Beach, SC", price:"$380K-$540K", tag:"Growing Fast", tagColor:"#b7791f"},
+          {city:"Pensacola, FL", price:"$440K-$660K", tag:"Popular", tagColor:"#c0392b"}
+        ]
+      },
+      "condo":{
+        "2br":[
+          {city:"St. Pete Beach, FL", price:"$280K-$420K", tag:"Best Value", tagColor:"#27ae60"},
+          {city:"Biloxi, MS", price:"$220K-$360K", tag:"Affordable", tagColor:"#27ae60"},
+          {city:"Ocean City, MD", price:"$320K-$480K", tag:"Popular", tagColor:"#b7791f"}
+        ],
+        "3br":[
+          {city:"Daytona Beach, FL", price:"$300K-$460K", tag:"Best Value", tagColor:"#27ae60"},
+          {city:"Myrtle Beach, SC", price:"$340K-$500K", tag:"Growing", tagColor:"#b7791f"},
+          {city:"Galveston, TX", price:"$280K-$440K", tag:"Affordable", tagColor:"#27ae60"}
+        ]
+      }
+    },
+    priceRange:{low:"$280K",mid:"$450K",high:"$750K+"},
+    salaryNeeded:{low:"$70K",mid:"$110K",high:"$185K"}
+  },
+  mountain:{
+    label:"Mountain / Nature",
+    emoji:"🏔️",
+    cities:{
+      "single-family":{
+        "3br":[
+          {city:"Asheville, NC", price:"$380K-$540K", tag:"Popular", tagColor:"#b7791f"},
+          {city:"Boise, ID", price:"$420K-$600K", tag:"Fast Growing", tagColor:"#c0392b"},
+          {city:"Flagstaff, AZ", price:"$460K-$680K", tag:"Premium Views", tagColor:"#2563eb"}
+        ],
+        "4br":[
+          {city:"Missoula, MT", price:"$440K-$620K", tag:"Underrated", tagColor:"#27ae60"},
+          {city:"Roanoke, VA", price:"$320K-$480K", tag:"Best Value", tagColor:"#27ae60"},
+          {city:"Bend, OR", price:"$580K-$820K", tag:"Premium", tagColor:"#c0392b"}
+        ]
+      },
+      "condo":{
+        "2br":[
+          {city:"Park City, UT", price:"$480K-$720K", tag:"Ski Resort", tagColor:"#2563eb"},
+          {city:"Chattanooga, TN", price:"$240K-$380K", tag:"Best Value", tagColor:"#27ae60"},
+          {city:"Asheville, NC", price:"$320K-$480K", tag:"Popular", tagColor:"#b7791f"}
+        ],
+        "3br":[
+          {city:"Boise, ID", price:"$360K-$520K", tag:"Growing", tagColor:"#b7791f"},
+          {city:"Spokane, WA", price:"$280K-$420K", tag:"Affordable", tagColor:"#27ae60"},
+          {city:"Colorado Springs, CO", price:"$380K-$560K", tag:"Military Hub", tagColor:"#2563eb"}
+        ]
+      }
+    },
+    priceRange:{low:"$240K",mid:"$480K",high:"$820K+"},
+    salaryNeeded:{low:"$60K",mid:"$115K",high:"$200K"}
+  },
+  city:{
+    label:"City / Urban",
+    emoji:"🏙️",
+    cities:{
+      "condo":{
+        "2br":[
+          {city:"Nashville, TN", price:"$380K-$560K", tag:"Hot Market", tagColor:"#c0392b"},
+          {city:"Charlotte, NC", price:"$340K-$500K", tag:"Growing Fast", tagColor:"#b7791f"},
+          {city:"Austin, TX", price:"$440K-$660K", tag:"Tech Hub", tagColor:"#2563eb"}
+        ],
+        "3br":[
+          {city:"Columbus, OH", price:"$280K-$420K", tag:"Best Value", tagColor:"#27ae60"},
+          {city:"Indianapolis, IN", price:"$260K-$400K", tag:"Affordable", tagColor:"#27ae60"},
+          {city:"Raleigh, NC", price:"$380K-$560K", tag:"Tech Jobs", tagColor:"#2563eb"}
+        ]
+      },
+      "single-family":{
+        "3br":[
+          {city:"Jacksonville, FL", price:"$320K-$480K", tag:"Best Value", tagColor:"#27ae60"},
+          {city:"Memphis, TN", price:"$240K-$380K", tag:"Most Affordable", tagColor:"#27ae60"},
+          {city:"Louisville, KY", price:"$280K-$420K", tag:"Underrated", tagColor:"#27ae60"}
+        ],
+        "4br":[
+          {city:"Atlanta, GA", price:"$380K-$580K", tag:"Hot Market", tagColor:"#c0392b"},
+          {city:"Dallas, TX", price:"$420K-$640K", tag:"Job Growth", tagColor:"#b7791f"},
+          {city:"Phoenix, AZ", price:"$440K-$660K", tag:"Sun Belt", tagColor:"#2563eb"}
+        ]
+      }
+    },
+    priceRange:{low:"$240K",mid:"$420K",high:"$700K+"},
+    salaryNeeded:{low:"$60K",mid:"$100K",high:"$175K"}
+  },
+  suburban:{
+    label:"Suburban",
+    emoji:"🏘️",
+    cities:{
+      "single-family":{
+        "3br":[
+          {city:"Frisco, TX", price:"$480K-$680K", tag:"Top Schools", tagColor:"#2563eb"},
+          {city:"Carmel, IN", price:"$380K-$560K", tag:"Best Value", tagColor:"#27ae60"},
+          {city:"Naperville, IL", price:"$420K-$640K", tag:"Top Rated", tagColor:"#2563eb"}
+        ],
+        "4br":[
+          {city:"Alpharetta, GA", price:"$520K-$760K", tag:"Tech Suburb", tagColor:"#2563eb"},
+          {city:"Sugar Land, TX", price:"$440K-$660K", tag:"Growing", tagColor:"#b7791f"},
+          {city:"Overland Park, KS", price:"$360K-$540K", tag:"Best Value", tagColor:"#27ae60"}
+        ]
+      },
+      "townhouse":{
+        "3br":[
+          {city:"Woodbury, MN", price:"$340K-$500K", tag:"Top Schools", tagColor:"#2563eb"},
+          {city:"Cary, NC", price:"$380K-$560K", tag:"Growing", tagColor:"#b7791f"},
+          {city:"Olathe, KS", price:"$300K-$460K", tag:"Best Value", tagColor:"#27ae60"}
+        ],
+        "4br":[
+          {city:"Gilbert, AZ", price:"$480K-$700K", tag:"Family Friendly", tagColor:"#27ae60"},
+          {city:"McKinney, TX", price:"$440K-$660K", tag:"Fast Growing", tagColor:"#c0392b"},
+          {city:"Fishers, IN", price:"$360K-$540K", tag:"Underrated", tagColor:"#27ae60"}
+        ]
+      }
+    },
+    priceRange:{low:"$300K",mid:"$500K",high:"$780K+"},
+    salaryNeeded:{low:"$75K",mid:"$125K",high:"$195K"}
+  }
+};
+
+function getMidPrice(data, loc, type, beds){
+  try{
+    var t = type === 'duplex' ? 'single-family' : type;
+    var b = beds === '5br' ? '4br' : beds === '2br' ? '3br' : beds;
+    var cities = data[loc].cities[t];
+    if(!cities) cities = data[loc].cities[Object.keys(data[loc].cities)[0]];
+    var cityList = cities[b];
+    if(!cityList) cityList = cities[Object.keys(cities)[0]];
+    var priceStr = cityList[1].price;
+    var nums = priceStr.match(/\$(\d+)K/g);
+    if(nums && nums.length >= 2){
+      var low = parseInt(nums[0].replace(/\$|K/g,''))*1000;
+      var high = parseInt(nums[1].replace(/\$|K/g,''))*1000;
+      return Math.round((low+high)/2);
+    }
+    return 450000;
+  }catch(e){return 450000;}
+}
+
+function showResult(){
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('progressText').textContent = 'Complete!';
+  document.getElementById('quizWrap').style.display = 'none';
+
+  var loc = answers.loc || 'suburban';
+  var type = answers.type || 'single-family';
+  var beds = answers.beds || '3br';
+  var feature = answers.feature || 'garage';
+  var salary = answers.salary || 80;
+  var credit = answers.credit || 700;
+  var timeline = answers.timeline || '1-2yr';
+
+  var data = dreamData[loc];
+  var midPrice = getMidPrice(dreamData, loc, type, beds);
+  var salaryNeeded = Math.round(midPrice * 0.0028 * 12 / 1000);
+  var gap = Math.max(0, salaryNeeded - salary);
+  var yearsNeeded = gap > 0 ? Math.round(gap / 15) : 0;
+
+  // Rate by credit
+  var rate = credit >= 740 ? 6.1 : credit >= 700 ? 6.4 : credit >= 660 ? 6.9 : 7.5;
+  var mo = Math.round(midPrice*0.8*(rate/100/12)*Math.pow(1+rate/100/12,360)/(Math.pow(1+rate/100/12,360)-1));
+  var mo740 = Math.round(midPrice*0.8*(6.1/100/12)*Math.pow(1+6.1/100/12,360)/(Math.pow(1+6.1/100/12,360)-1));
+  var creditSavings = (mo - mo740) * 360;
+
+  // Get cities
+  var cityType = (type === 'duplex') ? 'single-family' : type;
+  var cityBed = (beds === '5br') ? '4br' : (beds === '2br') ? '3br' : beds;
+  var cityData = data.cities[cityType] || data.cities[Object.keys(data.cities)[0]];
+  var cities = cityData[cityBed] || cityData[Object.keys(cityData)[0]];
+
+  var featureEmoji = {pool:"🏊", garage:"🚗", school:"🎓", "no-hoa":"🏗️"}[feature] || "⭐";
+  var featureLabel = {pool:"Pool & Outdoor Space", garage:"2+ Car Garage", school:"Top School District", "no-hoa":"No HOA"}[feature] || feature;
+  var timelineLabel = {asap:"ASAP (6 months)", "1-2yr":"1-2 Years", "3-5yr":"3-5 Years", exploring:"Just Exploring"}[timeline] || timeline;
+  var bedsLabel = {_2br:"2 Bedrooms", _3br:"3 Bedrooms", _4br:"4 Bedrooms", _5br:"5+ Bedrooms"}['_'+beds] || beds;
+  var typeLabel = {"single-family":"Single Family", condo:"Condo", townhouse:"Townhouse", duplex:"Duplex"}[type] || type;
+
+  var shareText = 'My dream home profile:\n\n'+data.emoji+' '+data.label+'\n🏠 '+typeLabel+' · '+bedsLabel+'\n'+featureEmoji+' '+featureLabel+'\n💰 Price range: '+data.priceRange.mid+'\n📅 Timeline: '+timelineLabel+'\n\nFind your dream home cost:\nfinanceratecalc.com/dream-home-quiz.html';
+
+  var skyblueHTML = '';
+  if(credit < 720){
+    skyblueHTML = '<div class="skyblue-box">'+
+      '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:8px;">💳 Your Credit Score is Delaying Your Dream</div>'+
+      '<div style="font-family:\'Fraunces\',serif;font-size:28px;font-weight:900;color:#ff6b6b;margin-bottom:6px;">$'+Math.round(creditSavings).toLocaleString()+' more</div>'+
+      '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:16px;">vs a 740 score on the same home over 30 years. Improving your score is the fastest path to your dream home.</div>'+
+      '<a href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=DREAM_QUIZ_'+loc.toUpperCase()+'_FRC" target="_blank" rel="sponsored" style="display:inline-block;background:#c0392b;color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">🛡️ Fix My Score — Sky Blue Credit #ad</a>'+
+      '<div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:8px;">Not financial advice · Individual results vary</div>'+
+      '</div>';
+  }
+
+  var r = document.getElementById('resultWrap');
+  r.style.display = 'block';
+  r.innerHTML =
+    '<div class="dream-card">'+
+      '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:10px;">🏡 Your Dream Home Profile</div>'+
+      '<div class="dream-title">'+data.emoji+' '+data.label+'</div>'+
+      '<div class="dream-subtitle">'+typeLabel+' · '+bedsLabel+' · '+featureLabel+'</div>'+
+      '<div class="dream-tags">'+
+        '<span class="dream-tag">'+data.emoji+' '+data.label+'</span>'+
+        '<span class="dream-tag">🏠 '+typeLabel+'</span>'+
+        '<span class="dream-tag">🛏️ '+bedsLabel+'</span>'+
+        '<span class="dream-tag">'+featureEmoji+' '+featureLabel+'</span>'+
+        '<span class="dream-tag">📅 '+timelineLabel+'</span>'+
+      '</div>'+
+      '<div class="price-range">'+
+        '<div class="price-box"><div class="price-num">'+data.priceRange.low+'</div><div class="price-label">Budget Option</div></div>'+
+        '<div class="price-box" style="border:1px solid rgba(200,164,74,0.3);"><div class="price-num">'+data.priceRange.mid+'</div><div class="price-label">Sweet Spot</div></div>'+
+        '<div class="price-box"><div class="price-num">'+data.priceRange.high+'</div><div class="price-label">Premium</div></div>'+
+      '</div>'+
+      '<div class="cities">'+
+        '<div class="cities-title">Best Cities For Your Profile</div>'+
+        '<div class="city-list">'+
+        cities.map(function(c){
+          return '<div class="city-row"><span class="city-name">'+c.city+'</span><span class="city-price">'+c.price+'</span><span class="city-tag" style="background:'+c.tagColor+'20;color:'+c.tagColor+';border:1px solid '+c.tagColor+'40;">'+c.tag+'</span></div>';
+        }).join('')+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+
+    '<div class="gap-box">'+
+      '<div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:14px;">📊 Your Gap Analysis</div>'+
+      '<div class="gap-grid">'+
+        '<div><div class="gap-num" style="color:#6bffb8;">$'+salary+'K</div><div class="gap-label">Your Salary</div></div>'+
+        '<div><div class="gap-num" style="color:var(--gold);">$'+salaryNeeded+'K</div><div class="gap-label">Salary Needed</div></div>'+
+        '<div><div class="gap-num" style="color:'+(gap>0?'#ff6b6b':'#6bffb8')+';">'+(gap>0?'$'+gap+'K short':'✅ Qualified')+'</div><div class="gap-label">'+(gap>0?yearsNeeded+' yrs to close':'You qualify now')+'</div></div>'+
+      '</div>'+
+      '<div style="margin-top:14px;font-size:13px;color:rgba(255,255,255,0.5);border-top:1px solid rgba(255,255,255,0.08);padding-top:12px;">'+
+        'Est. monthly payment at '+rate+'%: <strong style="color:#fff;">$'+mo.toLocaleString()+'/mo</strong> · '+
+        (credit < 720 ? 'At 740+ score: <strong style="color:#6bffb8;">$'+mo740.toLocaleString()+'/mo</strong>' : '✅ You\'re getting near-best rates')+
+      '</div>'+
+    '</div>'+
+
+    skyblueHTML+
+
+    '<div class="green-box">'+
+      '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(39,174,96,0.8);font-weight:700;margin-bottom:8px;">🎯 Your Next Step</div>'+
+      '<div style="font-size:15px;color:rgba(255,255,255,0.7);margin-bottom:14px;">See exactly what you qualify for right now — and which lender type fits your profile.</div>'+
+      '<a href="bank-rejection-engine.html" style="display:inline-block;background:#27ae60;color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">Check My Approval Odds →</a>'+
+    '</div>'+
+
+    '<div class="share-box">'+
+      '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:10px;">Share your dream home profile</div>'+
+      '<div class="share-preview" id="sharePreview">'+shareText+'</div>'+
+      '<button class="share-btn" onclick="doCopy()">📋 Copy</button>'+
+      '<button class="share-btn" onclick="doTweet()">🐦 Tweet</button>'+
+    '</div>'+
+    '<div class="restart" onclick="restartQuiz()">↩ Take the quiz again</div>';
+}
+
+function doCopy(){navigator.clipboard.writeText(document.getElementById('sharePreview').textContent).then(function(){alert('Copied!');});}
+function doTweet(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.getElementById('sharePreview').textContent),'_blank');}
+function restartQuiz(){
+  answers={};current=0;
+  document.getElementById('resultWrap').style.display='none';
+  document.getElementById('quizWrap').style.display='block';
+  render();
+}
+render();
+</script>
+</body>
+</html>
