@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Many Days Until You Own a Home? | FinanceRateCalc</title>
+<meta name="description" content="Save $10/day or $50/day — how many days until you own a home? See exactly how your daily savings translates to a down payment, which home you can buy, and what's slowing you down.">
+<link rel="canonical" href="https://financeratecalc.com/days-to-homeownership.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<meta property="og:title" content="How Many Days Until You Own a Home?">
+<meta property="og:description" content="Save $10/day or $50/day — see exactly how many days stand between you and your own home.">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f5c;--gold:#c8a44a;--gold-light:#f0d060;--red:#c0392b;--green:#27ae60;--border:#dde0ee;--muted:#6677aa;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:#050810;color:#fff;min-height:100vh;line-height:1.7;}
+header{background:rgba(5,8,16,0.95);padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+.hero{padding:72px 40px 56px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(200,164,74,0.08) 0%,transparent 60%);}
+.tag{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(36px,6vw,68px);font-weight:900;line-height:1.0;margin-bottom:14px;letter-spacing:-2px;}
+h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.4);max-width:500px;margin:0 auto 40px;}
+
+/* Calculator */
+.calc-wrap{max-width:640px;margin:0 auto;padding:0 40px 60px;}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:32px;margin-bottom:20px;}
+.field{margin-bottom:22px;}
+label{display:block;font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.input-row{display:flex;align-items:center;gap:12px;}
+.prefix{font-size:18px;font-weight:700;color:var(--gold);}
+input[type=number]{flex:1;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:14px 18px;font-size:20px;font-weight:700;color:#fff;font-family:'Fraunces',serif;outline:none;transition:border-color 0.2s;}
+input[type=number]:focus{border-color:var(--gold);}
+.slider-wrap{margin-top:10px;}
+input[type=range]{width:100%;accent-color:var(--gold);cursor:pointer;}
+.slider-labels{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px;}
+.quick-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.quick-btn{padding:6px 14px;background:rgba(200,164,74,0.08);border:1px solid rgba(200,164,74,0.25);border-radius:6px;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;transition:all 0.2s;}
+.quick-btn:hover{background:rgba(200,164,74,0.18);border-color:var(--gold);}
+.calc-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0e1a;border:none;border-radius:10px;font-size:16px;font-weight:900;cursor:pointer;font-family:'Fraunces',serif;letter-spacing:0.02em;transition:opacity 0.2s;margin-top:4px;}
+.calc-btn:hover{opacity:0.9;}
+
+/* Results */
+.results{display:none;}
+.countdown{text-align:center;background:linear-gradient(135deg,#0a0f20,#0d1530);border:2px solid rgba(200,164,74,0.4);border-radius:16px;padding:40px 32px;margin-bottom:20px;position:relative;overflow:hidden;}
+.countdown::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light),var(--gold));}
+.countdown-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.6);margin-bottom:12px;}
+.countdown-num{font-family:'Fraunces',serif;font-size:clamp(60px,12vw,100px);font-weight:900;color:var(--gold-light);line-height:1;margin-bottom:8px;}
+.countdown-unit{font-size:18px;color:rgba(255,255,255,0.5);margin-bottom:16px;}
+.countdown-date{font-size:14px;color:rgba(255,255,255,0.4);}
+
+.scenarios{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;}
+.scenario{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px;text-align:center;transition:all 0.3s;}
+.scenario.active{border-color:var(--gold);background:rgba(200,164,74,0.08);}
+.scenario-amount{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:var(--gold);}
+.scenario-days{font-size:24px;font-weight:900;color:#fff;margin:4px 0;}
+.scenario-label{font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;}
+
+.breakdown{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:20px 24px;margin-bottom:20px;}
+.breakdown-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;}
+.breakdown-row:last-child{border-bottom:none;font-weight:700;font-size:15px;}
+.bkey{color:rgba(255,255,255,0.45);}
+.bval{color:#fff;}
+.bval.gold{color:var(--gold);}
+.bval.red{color:#ff6b6b;}
+.bval.green{color:#6bffb8;}
+
+.accelerator{background:linear-gradient(135deg,#0a1500,#1a3010);border:1px solid rgba(39,174,96,0.3);border-radius:10px;padding:20px 24px;margin-bottom:20px;}
+.acc-title{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(39,174,96,0.8);font-weight:700;margin-bottom:12px;}
+.acc-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;}
+.acc-row:last-child{border-bottom:none;}
+.acc-key{color:rgba(255,255,255,0.5);}
+.acc-val{color:#6bffb8;font-weight:700;}
+
+.skyblue-box{background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.5);border-radius:12px;padding:24px 28px;margin-bottom:20px;text-align:center;}
+
+.share-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;margin-bottom:20px;text-align:center;}
+.share-preview{font-size:12px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.03);border-radius:8px;padding:12px;margin-bottom:12px;text-align:left;font-family:monospace;line-height:1.7;}
+.share-btn{padding:9px 18px;background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;margin:3px;}
+
+footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+@media(max-width:640px){header{padding:0 16px;}.hero{padding:52px 20px 40px;}.calc-wrap{padding:0 20px 60px;}.scenarios{grid-template-columns:1fr;}.countdown-num{font-size:72px;}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+
+<div class="hero">
+  <div class="tag">⏳ The Question Nobody Asks</div>
+  <h1>How Many <em>Days</em><br>Until You Own<br>a Home?</h1>
+  <p class="hero-sub">Not years. Not vague timelines. Exact days — based on what you save every single day.</p>
+</div>
+
+<div class="calc-wrap">
+  <div class="card">
+    <div class="field">
+      <label>How much can you save per day?</label>
+      <div class="input-row">
+        <span class="prefix">$</span>
+        <input type="number" id="dailySave" value="20" min="1" max="500">
+        <span style="font-size:14px;color:rgba(255,255,255,0.4);">/ day</span>
+      </div>
+      <input type="range" id="dailySlider" min="1" max="200" value="20" oninput="document.getElementById('dailySave').value=this.value" style="width:100%;accent-color:var(--gold);margin-top:10px;">
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="setDaily(5)">$5/day</button>
+        <button class="quick-btn" onclick="setDaily(10)">$10/day</button>
+        <button class="quick-btn" onclick="setDaily(20)">$20/day</button>
+        <button class="quick-btn" onclick="setDaily(50)">$50/day</button>
+        <button class="quick-btn" onclick="setDaily(100)">$100/day</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Target home price</label>
+      <div class="input-row">
+        <span class="prefix">$</span>
+        <input type="number" id="homePrice" value="400000" min="50000" max="5000000" step="10000">
+      </div>
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="setPrice(250000)">$250K</button>
+        <button class="quick-btn" onclick="setPrice(350000)">$350K</button>
+        <button class="quick-btn" onclick="setPrice(500000)">$500K</button>
+        <button class="quick-btn" onclick="setPrice(750000)">$750K</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Down payment target</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px;">
+        <button id="dp35" onclick="setDP(3.5)" style="padding:10px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:8px;color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;cursor:pointer;">3.5% FHA</button>
+        <button id="dp10" onclick="setDP(10)" style="padding:10px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:8px;color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;cursor:pointer;">10%</button>
+        <button id="dp20" onclick="setDP(20)" style="padding:10px;background:rgba(200,164,74,0.12);border:1.5px solid var(--gold);border-radius:8px;color:var(--gold);font-size:13px;font-weight:600;cursor:pointer;">20% ✓</button>
+      </div>
+      <input type="hidden" id="dpPct" value="20">
+    </div>
+
+    <div class="field">
+      <label>Current savings (optional)</label>
+      <div class="input-row">
+        <span class="prefix">$</span>
+        <input type="number" id="currentSavings" value="0" min="0" max="5000000" step="1000">
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">Calculate My Days →</button>
+  </div>
+
+  <div class="results" id="results">
+    <div class="countdown">
+      <div class="countdown-label">Days until you own a home</div>
+      <div class="countdown-num" id="daysNum">0</div>
+      <div class="countdown-unit" id="yearsText"></div>
+      <div class="countdown-date" id="targetDate"></div>
+    </div>
+
+    <div class="scenarios" id="scenariosGrid"></div>
+
+    <div class="breakdown" id="breakdownBox"></div>
+
+    <div class="accelerator" id="acceleratorBox"></div>
+
+    <div class="skyblue-box" id="skyblueBox"></div>
+
+    <div class="share-card">
+      <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:10px;">Share your countdown</div>
+      <div class="share-preview" id="shareText"></div>
+      <button class="share-btn" onclick="doCopy()">📋 Copy</button>
+      <button class="share-btn" onclick="doTweet()">🐦 Tweet</button>
+    </div>
+
+    <div style="text-align:center;margin-top:8px;">
+      <a href="mortgage-calculator.html" style="display:inline-block;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);padding:12px 24px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;margin:4px;">Calculate My Payment →</a>
+      <a href="bank-rejection-engine.html" style="display:inline-block;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);padding:12px 24px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;margin:4px;">Check My Approval Odds →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 FinanceRateCalc · Educational use only · Not financial advice</div>
+</footer>
+
+<script>
+var dpPct = 20;
+
+function setDaily(v){ document.getElementById('dailySave').value=v; document.getElementById('dailySlider').value=v; }
+function setPrice(v){ document.getElementById('homePrice').value=v; }
+function setDP(v){
+  dpPct=v;
+  document.getElementById('dpPct').value=v;
+  ['dp35','dp10','dp20'].forEach(function(id){
+    var el = document.getElementById(id);
+    el.style.background='rgba(255,255,255,0.04)';
+    el.style.borderColor='rgba(255,255,255,0.1)';
+    el.style.color='rgba(255,255,255,0.6)';
+  });
+  var active = v===3.5?'dp35':v===10?'dp10':'dp20';
+  document.getElementById(active).style.background='rgba(200,164,74,0.12)';
+  document.getElementById(active).style.borderColor='var(--gold)';
+  document.getElementById(active).style.color='var(--gold)';
+}
+
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
+
+function calculate(){
+  var daily = parseFloat(document.getElementById('dailySave').value)||20;
+  var price = parseFloat(document.getElementById('homePrice').value)||400000;
+  var dp = dpPct/100;
+  var current = parseFloat(document.getElementById('currentSavings').value)||0;
+  
+  var target = price * dp;
+  var needed = Math.max(0, target - current);
+  var days = needed > 0 ? Math.ceil(needed / daily) : 0;
+  var years = (days/365).toFixed(1);
+  
+  // Target date
+  var targetDate = new Date();
+  targetDate.setDate(targetDate.getDate() + days);
+  var dateStr = targetDate.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+  // Scenarios
+  var scenarios = [
+    {amount: Math.max(1,daily*0.5), label:'Half pace'},
+    {amount: daily, label:'Your pace'},
+    {amount: daily*2, label:'Double pace'}
+  ];
+
+  // Update countdown
+  document.getElementById('daysNum').textContent = days.toLocaleString();
+  document.getElementById('yearsText').textContent = years+' years · '+Math.floor(days/30)+' months';
+  document.getElementById('targetDate').textContent = 'Target date: '+dateStr;
+
+  // Scenarios grid
+  document.getElementById('scenariosGrid').innerHTML = scenarios.map(function(s,i){
+    var d = Math.ceil(needed/s.amount);
+    var y = (d/365).toFixed(1);
+    return '<div class="scenario'+(i===1?' active':'')+'">'+
+      '<div class="scenario-amount">'+fmt(s.amount)+'/day</div>'+
+      '<div class="scenario-days">'+d.toLocaleString()+'</div>'+
+      '<div class="scenario-label">days · '+y+' yrs</div>'+
+      '</div>';
+  }).join('');
+
+  // Breakdown
+  var monthly = daily*30;
+  var annual = daily*365;
+  document.getElementById('breakdownBox').innerHTML =
+    '<div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:10px;">📊 Your Numbers</div>'+
+    row('Target home price', fmt(price))+
+    row('Down payment needed ('+dpPct+'%)', fmt(target))+
+    row('Current savings', fmt(current))+
+    row('Still needed', fmt(needed), 'red')+
+    row('Daily savings', fmt(daily)+'/day')+
+    row('Monthly savings', fmt(monthly)+'/mo')+
+    row('Annual savings', fmt(annual)+'/yr')+
+    row('Days to goal', days.toLocaleString()+' days', 'gold')+
+    row('Target date', dateStr, 'gold');
+
+  // Accelerators
+  var creditSaving = price*0.8*(7.5-6.1)/100/12*360;
+  document.getElementById('acceleratorBox').innerHTML =
+    '<div class="acc-title">⚡ Ways to Get There Faster</div>'+
+    accRow('Save $10 more per day', '-'+(Math.ceil(needed/(daily+10))-days).toLocaleString()+' days faster')+
+    accRow('Improve credit score (620→740)', fmt(Math.round(creditSaving))+' saved over 30yr')+
+    accRow('Use FHA (3.5% down instead of 20%)', Math.ceil((price*0.035-current)/daily).toLocaleString()+' days to FHA ready')+
+    accRow('Find a co-borrower', 'Cut timeline in half');
+
+  // Sky Blue
+  document.getElementById('skyblueBox').innerHTML =
+    '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:10px;">💳 Your Credit Score Is Part of This Equation</div>'+
+    '<div style="font-family:\'Fraunces\',serif;font-size:28px;font-weight:900;color:#ff6b6b;margin-bottom:6px;">'+fmt(Math.round(creditSaving))+'</div>'+
+    '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:16px;">620 vs 740 credit score difference on a '+fmt(price)+' home over 30 years.<br>A better score = lower payment = you reach your goal faster.</div>'+
+    '<a href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=DAYS_TO_HOME_FRC" target="_blank" rel="sponsored" style="display:inline-block;background:#c0392b;color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">🛡️ Fix My Score — Sky Blue Credit #ad</a>'+
+    '<div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:8px;">Not financial advice · Individual results vary</div>';
+
+  // Share text
+  var shareStr = 'I just calculated exactly how many days until I own a home.\n\n🏠 Target: '+fmt(price)+'\n💰 Saving: '+fmt(daily)+'/day\n⏳ Days to go: '+days.toLocaleString()+' days ('+years+' years)\n📅 Target date: '+dateStr+'\n\nHow many days until YOUR home?\nfinanceratecalc.com/days-to-homeownership.html';
+  document.getElementById('shareText').textContent = shareStr;
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+function row(k,v,cls){return '<div class="breakdown-row"><span class="bkey">'+k+'</span><span class="bval'+(cls?' '+cls:'')+'">'+v+'</span></div>';}
+function accRow(k,v){return '<div class="acc-row"><span class="acc-key">'+k+'</span><span class="acc-val">'+v+'</span></div>';}
+function doCopy(){navigator.clipboard.writeText(document.getElementById('shareText').textContent).then(function(){alert('Copied!');});}
+function doTweet(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.getElementById('shareText').textContent),'_blank');}
+</script>
+</body>
+</html>
