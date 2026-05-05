@@ -169,6 +169,12 @@ footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px 
       <button class="share-btn" onclick="doTweet()">🐦 Tweet</button>
     </div>
 
+    <!-- SAVINGS HACKS -->
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:24px 28px;margin-bottom:20px;" id="hacksBox" style="display:none;">
+      <div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:16px;">💡 Real Life Savings Hacks — How Much Faster?</div>
+      <div id="hacksGrid"></div>
+    </div>
+
     <div style="text-align:center;margin-top:8px;">
       <a href="mortgage-calculator.html" style="display:inline-block;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);padding:12px 24px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;margin:4px;">Calculate My Payment →</a>
       <a href="bank-rejection-engine.html" style="display:inline-block;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);padding:12px 24px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;margin:4px;">Check My Approval Odds →</a>
@@ -295,6 +301,33 @@ function calculate(){
 
   document.getElementById('results').style.display = 'block';
   document.getElementById('results').scrollIntoView({behavior:'smooth'});
+
+  // Savings hacks
+  var hacks = [
+    {icon:'🚲', label:'Bike to work (save $200/mo)', daily:6.67},
+    {icon:'🥪', label:'Brown bag lunch (save $150/mo)', daily:5},
+    {icon:'📱', label:'Cancel 3 subscriptions (save $50/mo)', daily:1.67},
+    {icon:'☕', label:'Make coffee at home (save $80/mo)', daily:2.67},
+    {icon:'🍕', label:'Cook dinner 3x more per week (save $120/mo)', daily:4},
+    {icon:'🎬', label:'Drop one streaming service (save $15/mo)', daily:0.5},
+    {icon:'🚗', label:'One fewer Uber per week (save $60/mo)', daily:2},
+    {icon:'🏋️', label:'Cancel gym, run outside (save $50/mo)', daily:1.67},
+  ];
+
+  var hacksHTML = '';
+  hacks.forEach(function(h) {
+    var newDaily = daily + h.daily;
+    var newDays = Math.ceil(needed / newDaily);
+    var saved = days - newDays;
+    hacksHTML += '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;">' +
+      '<span style="color:rgba(255,255,255,0.6);">' + h.icon + ' ' + h.label + '</span>' +
+      '<span style="color:#6bffb8;font-weight:700;">-' + saved.toLocaleString() + ' days faster</span>' +
+      '</div>';
+  });
+
+  var hacksBox = document.getElementById('hacksBox');
+  document.getElementById('hacksGrid').innerHTML = hacksHTML;
+  hacksBox.style.display = 'block';
 }
 
 function row(k,v,cls){return '<div class="breakdown-row"><span class="bkey">'+k+'</span><span class="bval'+(cls?' '+cls:'')+'">'+v+'</span></div>';}
