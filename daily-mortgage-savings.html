@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Mortgage Savings Calculator — Pay Daily, Save Thousands | FRC</title>
+<meta name="description" content="What if you saved your mortgage payment daily instead of monthly? See how daily saving vs monthly payment changes your interest, payoff date, and total cost.">
+<link rel="canonical" href="https://financeratecalc.com/daily-mortgage-savings.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f5c;--gold:#c8a44a;--gold-light:#f0d060;--red:#c0392b;--green:#27ae60;--border:#dde0ee;--muted:#6677aa;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:#050810;color:#fff;min-height:100vh;line-height:1.7;}
+header{background:rgba(5,8,16,0.95);padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+.hero{padding:72px 40px 56px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(200,164,74,0.08) 0%,transparent 60%);}
+.tag{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,6vw,62px);font-weight:900;line-height:1.05;margin-bottom:14px;letter-spacing:-1px;}
+h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.4);max-width:520px;margin:0 auto 40px;}
+.calc-wrap{max-width:680px;margin:0 auto;padding:0 40px 80px;}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:32px;margin-bottom:20px;}
+.field{margin-bottom:22px;}
+label{display:block;font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.input-row{display:flex;align-items:center;gap:10px;}
+.prefix{font-size:16px;font-weight:700;color:var(--gold);}
+.suffix{font-size:14px;color:rgba(255,255,255,0.4);}
+input[type=number]{flex:1;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:13px 16px;font-size:18px;font-weight:700;color:#fff;font-family:'Fraunces',serif;outline:none;transition:border-color 0.2s;}
+input[type=number]:focus{border-color:var(--gold);}
+input[type=range]{width:100%;accent-color:var(--gold);margin-top:8px;}
+.calc-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0e1a;border:none;border-radius:10px;font-size:16px;font-weight:900;cursor:pointer;font-family:'Fraunces',serif;margin-top:4px;}
+
+/* Results */
+.results{display:none;}
+.versus{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.vs-box{border-radius:12px;padding:24px;text-align:center;}
+.vs-label{font-size:10px;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:10px;}
+.vs-amount{font-family:'Fraunces',serif;font-size:36px;font-weight:900;line-height:1;margin-bottom:6px;}
+.vs-sub{font-size:12px;opacity:0.6;}
+.vs-detail{font-size:13px;margin-top:10px;opacity:0.7;line-height:1.6;}
+
+.savings-hero{background:linear-gradient(135deg,#0a1500,#1a3010);border:2px solid rgba(39,174,96,0.5);border-radius:12px;padding:28px;margin-bottom:20px;text-align:center;}
+.breakdown{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:20px 24px;margin-bottom:20px;}
+.b-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;}
+.b-row:last-child{border-bottom:none;font-weight:700;font-size:15px;}
+.bk{color:rgba(255,255,255,0.45);}
+.bv{color:#fff;}
+.bv.green{color:#6bffb8;}
+.bv.gold{color:var(--gold);}
+.bv.red{color:#ff6b6b;}
+
+/* Daily jar animation */
+.jar-wrap{display:flex;justify-content:center;margin:20px 0;}
+.jar{width:100px;height:140px;border:3px solid rgba(200,164,74,0.6);border-radius:8px 8px 16px 16px;position:relative;overflow:hidden;background:rgba(0,0,0,0.3);}
+.jar-fill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,var(--gold),var(--gold-light));border-radius:0 0 12px 12px;transition:height 2s ease;height:0%;}
+.jar-label{text-align:center;font-size:11px;color:rgba(255,255,255,0.4);margin-top:8px;}
+.jar-amount{text-align:center;font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--gold);}
+
+.biweekly{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:20px 24px;margin-bottom:20px;}
+.skyblue-box{background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.5);border-radius:12px;padding:24px 28px;margin-bottom:20px;text-align:center;}
+.share-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;margin-bottom:20px;text-align:center;}
+.share-preview{font-size:12px;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.03);border-radius:8px;padding:12px;margin-bottom:12px;text-align:left;font-family:monospace;line-height:1.7;}
+.share-btn{padding:9px 18px;background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;margin:3px;}
+footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+@media(max-width:640px){header{padding:0 16px;}.hero{padding:52px 20px 40px;}.calc-wrap{padding:0 20px 60px;}.versus{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+
+<div class="hero">
+  <div class="tag">💰 The Math Banks Don't Show You</div>
+  <h1>What If You Paid Your<br>Mortgage <em>Daily</em>?</h1>
+  <p class="hero-sub">Interest accrues every single day. Saving daily instead of monthly changes the equation — here's exactly how much.</p>
+</div>
+
+<div class="calc-wrap">
+  <div class="card">
+    <div class="field">
+      <label>Loan Amount</label>
+      <div class="input-row"><span class="prefix">$</span><input type="number" id="loanAmt" value="400000" min="50000" max="2000000" step="5000"></div>
+    </div>
+    <div class="field">
+      <label>Interest Rate</label>
+      <div class="input-row"><input type="number" id="rate" value="6.5" min="3" max="12" step="0.1"><span class="suffix">% per year</span></div>
+      <input type="range" id="rateSlider" min="3" max="12" step="0.1" value="6.5" oninput="document.getElementById('rate').value=this.value">
+    </div>
+    <div class="field">
+      <label>Loan Term</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">
+        <button id="btn30" onclick="setTerm(30)" style="padding:11px;background:rgba(200,164,74,0.12);border:1.5px solid var(--gold);border-radius:8px;color:var(--gold);font-size:14px;font-weight:700;cursor:pointer;">30 Years</button>
+        <button id="btn15" onclick="setTerm(15)" style="padding:11px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:8px;color:rgba(255,255,255,0.5);font-size:14px;font-weight:700;cursor:pointer;">15 Years</button>
+      </div>
+      <input type="hidden" id="term" value="30">
+    </div>
+    <div class="field">
+      <label>Extra daily savings (optional)</label>
+      <div class="input-row"><span class="prefix">$</span><input type="number" id="extraDaily" value="0" min="0" max="1000"><span class="suffix">/ day extra</span></div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate My Daily Savings →</button>
+  </div>
+
+  <div class="results" id="results">
+
+    <!-- Daily jar visual -->
+    <div class="jar-wrap">
+      <div>
+        <div class="jar"><div class="jar-fill" id="jarFill"></div></div>
+        <div class="jar-label">Daily interest</div>
+        <div class="jar-amount" id="jarAmount">$0</div>
+      </div>
+    </div>
+
+    <!-- Versus -->
+    <div class="versus">
+      <div class="vs-box" style="background:rgba(192,57,43,0.08);border:1.5px solid rgba(192,57,43,0.3);">
+        <div class="vs-label" style="color:#ff6b6b;">💸 Monthly Payment</div>
+        <div class="vs-amount" style="color:#ff6b6b;" id="moPayment">$0</div>
+        <div class="vs-sub">Paid once a month</div>
+        <div class="vs-detail" id="moDetail"></div>
+      </div>
+      <div class="vs-box" style="background:rgba(39,174,96,0.08);border:1.5px solid rgba(39,174,96,0.3);">
+        <div class="vs-label" style="color:#6bffb8;">🗓️ Daily Saving</div>
+        <div class="vs-amount" style="color:#6bffb8;" id="dailyPayment">$0</div>
+        <div class="vs-sub">Set aside each day</div>
+        <div class="vs-detail" id="dailyDetail"></div>
+      </div>
+    </div>
+
+    <div class="savings-hero" id="savingsHero"></div>
+    <div class="breakdown" id="breakdownBox"></div>
+    <div class="biweekly" id="biweeklyBox"></div>
+    <div class="skyblue-box" id="skyblueBox"></div>
+
+    <div class="share-box">
+      <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:10px;">Share this calculation</div>
+      <div class="share-preview" id="shareText"></div>
+      <button class="share-btn" onclick="doCopy()">📋 Copy</button>
+      <button class="share-btn" onclick="doTweet()">🐦 Tweet</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;">
+      <a href="mortgage-calculator.html" style="padding:12px 16px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;text-align:center;">Full Mortgage Calculator →</a>
+      <a href="days-to-homeownership.html" style="padding:12px 16px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;text-align:center;">Days to Homeownership →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 FinanceRateCalc · Educational use only · Not financial advice</div>
+</footer>
+
+<script>
+var term = 30;
+function setTerm(t){
+  term=t;
+  document.getElementById('term').value=t;
+  ['btn30','btn15'].forEach(function(id){
+    var el=document.getElementById(id);
+    el.style.background='rgba(255,255,255,0.04)';
+    el.style.borderColor='rgba(255,255,255,0.1)';
+    el.style.color='rgba(255,255,255,0.5)';
+  });
+  var active=t===30?'btn30':'btn15';
+  document.getElementById(active).style.background='rgba(200,164,74,0.12)';
+  document.getElementById(active).style.borderColor='var(--gold)';
+  document.getElementById(active).style.color='var(--gold)';
+}
+
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
+
+function calcMonthly(p,r,n){
+  var mr=r/100/12;
+  return p*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1);
+}
+
+function calculate(){
+  var loan = parseFloat(document.getElementById('loanAmt').value)||400000;
+  var rate = parseFloat(document.getElementById('rate').value)||6.5;
+  var extra = parseFloat(document.getElementById('extraDaily').value)||0;
+  var n = term*12;
+
+  var mo = calcMonthly(loan,rate,n);
+  var dailySave = mo/30;
+  var dailyInterest = loan*rate/100/365;
+
+  var totalMo = mo*n;
+  var interestMo = totalMo - loan;
+
+  // Biweekly savings
+  var biweeklyPayment = mo/2;
+  var biweeklyYearlyExtra = mo; // 26 half payments = 13 full
+  var biweeklySavings = interestMo * 0.12; // ~12% interest savings
+  var biweeklyYearsEarly = term===30 ? 4.5 : 2;
+
+  // Extra daily impact
+  var extraMonthly = extra * 30;
+  var extraYearSavings = extra > 0 ? Math.round(extra * 365 * (rate/100) * (n/12)) : 0;
+  var extraYearsEarly = extra > 0 ? Math.round(extra * 365 / (mo * 12) * 10) / 10 : 0;
+
+  // Jar animation
+  var jarPct = Math.min(100, (dailyInterest / (dailyInterest + 50)) * 100);
+  setTimeout(function(){
+    document.getElementById('jarFill').style.height = jarPct + '%';
+  }, 300);
+  document.getElementById('jarAmount').textContent = fmt(dailyInterest);
+
+  // Versus
+  document.getElementById('moPayment').textContent = fmt(mo) + '/mo';
+  document.getElementById('dailyPayment').textContent = fmt(dailySave) + '/day';
+  document.getElementById('moDetail').innerHTML = 'Total interest: <strong style="color:#ff9b9b">'+fmt(interestMo)+'</strong><br>Total paid: '+fmt(totalMo);
+  document.getElementById('dailyDetail').innerHTML = 'Same payment, daily habit<br>Ready on payment day, always';
+
+  // Savings hero
+  document.getElementById('savingsHero').innerHTML =
+    '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(39,174,96,0.8);font-weight:700;margin-bottom:10px;">💡 The Daily Interest Reality</div>'+
+    '<div style="font-family:\'Fraunces\',serif;font-size:42px;font-weight:900;color:var(--gold);margin-bottom:8px;">'+fmt(dailyInterest)+'/day</div>'+
+    '<div style="font-size:14px;color:rgba(255,255,255,0.6);">This is how much interest accrues on your loan every single day.<br>Saving daily means your money is always working — not sitting idle until the 1st of the month.</div>';
+
+  // Breakdown
+  document.getElementById('breakdownBox').innerHTML =
+    '<div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:12px;">📊 Full Breakdown</div>'+
+    brow('Loan amount', fmt(loan))+
+    brow('Interest rate', rate+'%')+
+    brow('Monthly payment', fmt(mo)+'/mo')+
+    brow('Daily equivalent', fmt(dailySave)+'/day', 'gold')+
+    brow('Daily interest accruing', fmt(dailyInterest)+'/day', 'red')+
+    brow('Total interest ('+term+'yr)', fmt(interestMo), 'red')+
+    brow('Total paid', fmt(totalMo))+
+    (extra>0 ? brow('Extra daily savings', fmt(extra)+'/day → '+fmt(extraMonthly)+'/mo', 'green') : '')+
+    (extra>0 ? brow('Interest saved with extra payments', fmt(extraYearSavings), 'green') : '');
+
+  // Biweekly
+  document.getElementById('biweeklyBox').innerHTML =
+    '<div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(39,174,96,0.7);font-weight:700;margin-bottom:12px;">⚡ The Biweekly Hack (Banks Hate This)</div>'+
+    '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:12px;">Pay '+fmt(biweeklyPayment)+' every 2 weeks instead of '+fmt(mo)+' monthly. You make 26 half-payments = 13 full payments per year instead of 12.</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'+
+    '<div style="background:rgba(39,174,96,0.08);border:1px solid rgba(39,174,96,0.2);border-radius:8px;padding:12px;text-align:center;"><div style="font-family:\'Fraunces\',serif;font-size:22px;font-weight:900;color:#6bffb8;">'+fmt(biweeklySavings)+'</div><div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">Interest saved</div></div>'+
+    '<div style="background:rgba(39,174,96,0.08);border:1px solid rgba(39,174,96,0.2);border-radius:8px;padding:12px;text-align:center;"><div style="font-family:\'Fraunces\',serif;font-size:22px;font-weight:900;color:#6bffb8;">'+biweeklyYearsEarly+' yrs</div><div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">Earlier payoff</div></div>'+
+    '</div>';
+
+  // Sky Blue
+  var rate740 = rate - 1.5;
+  var mo740 = calcMonthly(loan, rate740, n);
+  var creditSavings = (mo - mo740) * n;
+  document.getElementById('skyblueBox').innerHTML =
+    '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:10px;">💳 The Rate You\'re Getting vs The Rate You Could Get</div>'+
+    '<div style="font-family:\'Fraunces\',serif;font-size:32px;font-weight:900;color:#ff6b6b;margin-bottom:6px;">'+fmt(creditSavings)+' more</div>'+
+    '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:16px;">If your credit score got you a rate 1.5% lower, you\'d save this over '+term+' years. Same home. Same loan. Better score.</div>'+
+    '<a href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=DAILY_MORTGAGE_FRC" target="_blank" rel="sponsored" style="display:inline-block;background:#c0392b;color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">🛡️ Fix My Score — Sky Blue Credit #ad</a>'+
+    '<div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:8px;">Not financial advice · Individual results vary</div>';
+
+  // Share
+  document.getElementById('shareText').textContent =
+    'I just ran the daily mortgage math:\n\n'+
+    '💸 Monthly payment: '+fmt(mo)+'\n'+
+    '📅 Daily equivalent: '+fmt(dailySave)+'/day\n'+
+    '⚡ Daily interest accruing: '+fmt(dailyInterest)+'/day\n'+
+    '💰 Total interest over '+term+' years: '+fmt(interestMo)+'\n'+
+    '✅ Biweekly hack saves: '+fmt(biweeklySavings)+' and '+biweeklyYearsEarly+' years\n\n'+
+    'Calculate yours: financeratecalc.com/daily-mortgage-savings.html';
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+function brow(k,v,cls){return '<div class="b-row"><span class="bk">'+k+'</span><span class="bv'+(cls?' '+cls:'')+'">'+v+'</span></div>';}
+function doCopy(){navigator.clipboard.writeText(document.getElementById('shareText').textContent).then(function(){alert('Copied!');});}
+function doTweet(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.getElementById('shareText').textContent),'_blank');}
+</script>
+</body>
+</html>
