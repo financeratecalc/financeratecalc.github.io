@@ -1222,5 +1222,29 @@ document.getElementById('sb-popup').addEventListener('click', function(e) {
 });
 </script>
 
+
+<!-- CREDIT SCORE SHOCK CARD -->
+<div id="shockCard" style="display:none;position:fixed;bottom:20px;right:20px;z-index:9999;max-width:320px;background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.6);border-radius:12px;padding:20px 24px;box-shadow:0 8px 32px rgba(0,0,0,0.4);">
+  <div style="position:absolute;top:10px;right:12px;cursor:pointer;color:rgba(255,255,255,0.4);font-size:18px;" onclick="document.getElementById('shockCard').style.display='none'">×</div>
+  <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:8px;">⚠️ Hidden Cost Alert</div>
+  <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:#ff6b6b;margin-bottom:6px;" id="shockAmount">$47,000</div>
+  <div style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:14px;" id="shockText">extra you'll pay if your credit score is below 680 on this loan.</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:14px;">Sky Blue averages <strong style="color:#fff;">67 point improvement</strong> in 4 months. Start today → buy by <strong style="color:#6bffb8;" id="shockDate">September</strong>.</div>
+  <a href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=SHOCK_CARD_FRC" target="_blank" rel="sponsored" style="display:block;background:#c0392b;color:#fff;padding:11px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;text-align:center;">Fix My Score Now #ad</a>
+  <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;text-align:center;">Not financial advice · Results vary</div>
+</div>
+
+<script>
+// Show shock card after calculation
+var _origCalc = window.calculate;
+function showShockCard(loanAmt) {
+  var savings = Math.round(loanAmt * 0.8 * (7.5-6.1)/100/12*360);
+  document.getElementById('shockAmount').textContent = '$' + savings.toLocaleString();
+  document.getElementById('shockText').textContent = 'extra you\'ll pay if your credit score is below 680 on this $' + Math.round(loanAmt).toLocaleString() + ' loan.';
+  var d = new Date(); d.setMonth(d.getMonth()+4);
+  document.getElementById('shockDate').textContent = d.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  setTimeout(function(){ document.getElementById('shockCard').style.display='block'; }, 3000);
+}
+</script>
 </body>
 </html>
