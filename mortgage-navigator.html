@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Navigator — Your Personalized Route to Homeownership | FRC</title>
+<meta name="description" content="Enter your ZIP code and financial profile. Get your personalized mortgage route — which lender type fits you, what to fix first, and local market conditions.">
+<link rel="canonical" href="https://financeratecalc.com/mortgage-navigator.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<meta property="og:title" content="Mortgage Navigator — The Waze of Home Buying">
+<meta property="og:description" content="Your personalized route to homeownership. ZIP code + financial profile = your fastest path to approval.">
+<meta property="og:image" content="https://financeratecalc.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f5c;--gold:#c8a44a;--gold-light:#f0d060;--red:#c0392b;--green:#27ae60;--border:#dde0ee;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:#050810;color:#fff;min-height:100vh;line-height:1.7;overflow-x:hidden;}
+header{background:rgba(5,8,16,0.95);padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+
+/* Hero */
+.hero{padding:72px 40px 56px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(200,164,74,0.08) 0%,transparent 60%);}
+.tag{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(36px,6vw,66px);font-weight:900;line-height:1.0;margin-bottom:14px;letter-spacing:-2px;}
+h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.4);max-width:520px;margin:0 auto 40px;}
+
+/* Form */
+.form-wrap{max-width:680px;margin:0 auto;padding:0 40px 80px;}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:32px;margin-bottom:16px;}
+.card-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.field{margin-bottom:18px;}
+label{display:block;font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px;}
+input,select{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:12px 16px;font-size:15px;color:#fff;font-family:'Geist',sans-serif;outline:none;transition:border-color 0.2s;}
+input::placeholder{color:rgba(255,255,255,0.25);}
+input:focus,select:focus{border-color:var(--gold);}
+select option{background:#0a0e1a;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.go-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0e1a;border:none;border-radius:10px;font-size:16px;font-weight:900;cursor:pointer;font-family:'Fraunces',serif;margin-top:8px;transition:opacity 0.2s;}
+.go-btn:hover{opacity:0.9;}
+
+/* Results */
+.results{display:none;}
+
+/* Location card */
+.location-card{background:linear-gradient(135deg,#0a0f20,#0d1530);border:2px solid rgba(200,164,74,0.3);border-radius:14px;padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden;}
+.location-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light));}
+.location-name{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:#fff;margin-bottom:4px;}
+.location-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px;}
+.location-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.ls{background:rgba(255,255,255,0.05);border-radius:8px;padding:12px;text-align:center;}
+.ls-n{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:var(--gold);}
+.ls-l{font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-top:3px;}
+
+/* Route */
+.route-title{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:#fff;margin:24px 0 16px;display:flex;align-items:center;gap:10px;}
+.step{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px 24px;margin-bottom:12px;display:flex;gap:16px;align-items:flex-start;transition:border-color 0.2s;}
+.step:hover{border-color:rgba(200,164,74,0.3);}
+.step-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0;margin-top:2px;}
+.step-content{}
+.step-title{font-weight:700;color:#fff;font-size:15px;margin-bottom:4px;}
+.step-desc{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;}
+.step-time{font-size:11px;font-weight:700;margin-top:6px;padding:3px 8px;border-radius:10px;display:inline-block;}
+
+/* Lender types */
+.lender-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.lender-card{border-radius:10px;padding:18px;border:1.5px solid;}
+.lender-title{font-weight:700;font-size:14px;margin-bottom:6px;}
+.lender-match{font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;margin-bottom:8px;display:inline-block;}
+.lender-desc{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;}
+
+/* Warnings */
+.warning-box{border-radius:10px;padding:18px 22px;margin-bottom:14px;border-left:4px solid;}
+.warn-title{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+.warn-text{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6;}
+
+/* CFPB finder */
+.finder-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:22px 26px;margin-bottom:16px;}
+
+/* Sky Blue */
+.skyblue{background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.5);border-radius:12px;padding:22px;margin-bottom:14px;text-align:center;}
+.share-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;margin-bottom:14px;text-align:center;}
+.sbtn{padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'Geist',sans-serif;margin:4px;}
+
+footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+@media(max-width:640px){header{padding:0 16px;}.hero{padding:52px 20px 40px;}.form-wrap{padding:0 20px 60px;}.two-col{grid-template-columns:1fr;}.location-stats{grid-template-columns:1fr 1fr;}.lender-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+
+<div class="hero">
+  <div class="tag">🗺️ Mortgage Navigator · World First</div>
+  <h1>The <em>Waze</em> of<br>Home Buying</h1>
+  <p class="hero-sub">Enter your ZIP code and financial profile. Get your personalized route to approval — with local market conditions, lender type matching, and step-by-step directions.</p>
+</div>
+
+<div class="form-wrap">
+  <div class="card">
+    <div class="card-title">📍 Your Location & Target</div>
+    <div class="two-col">
+      <div class="field">
+        <label>ZIP Code</label>
+        <input type="text" id="zip" placeholder="e.g. 78701" maxlength="5">
+      </div>
+      <div class="field">
+        <label>Target Home Price</label>
+        <select id="price">
+          <option value="200000">Under $250K</option>
+          <option value="325000" selected>$250K–$400K</option>
+          <option value="500000">$400K–$600K</option>
+          <option value="750000">$600K–$900K</option>
+          <option value="1100000">$900K+</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Purpose</label>
+      <select id="purpose">
+        <option value="purchase">First home purchase</option>
+        <option value="upgrade">Upgrading / moving up</option>
+        <option value="refi">Refinancing existing mortgage</option>
+        <option value="investment">Investment property</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💰 Your Financial Profile</div>
+    <div class="two-col">
+      <div class="field">
+        <label>Credit Score Range</label>
+        <select id="score">
+          <option value="550">Below 580 — Poor</option>
+          <option value="600">580–619 — Very Fair</option>
+          <option value="650">620–679 — Fair</option>
+          <option value="700" selected>680–719 — Good</option>
+          <option value="740">720–759 — Very Good</option>
+          <option value="780">760+ — Excellent</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Annual Income</label>
+        <select id="income">
+          <option value="42000">Under $50K</option>
+          <option value="65000" selected>$50K–$80K</option>
+          <option value="100000">$80K–$120K</option>
+          <option value="160000">$120K–$200K</option>
+          <option value="250000">$200K+</option>
+        </select>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="field">
+        <label>Monthly Debt Payments</label>
+        <select id="debt">
+          <option value="150">Under $200/mo</option>
+          <option value="350" selected>$200–$500/mo</option>
+          <option value="750">$500–$1,000/mo</option>
+          <option value="1300">Over $1,000/mo</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Down Payment Available</label>
+        <select id="dp">
+          <option value="0">0–3% (VA/USDA)</option>
+          <option value="3.5">3.5% FHA minimum</option>
+          <option value="7" selected>5–10%</option>
+          <option value="20">20%+</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Employment Status</label>
+      <select id="emp">
+        <option value="strong">W-2 employee, 2+ years</option>
+        <option value="mid">W-2 employee, under 2 years</option>
+        <option value="self">Self-employed</option>
+        <option value="new">Started new job recently</option>
+      </select>
+    </div>
+    <button class="go-btn" onclick="navigate()">🗺️ Plot My Mortgage Route →</button>
+  </div>
+
+  <div class="results" id="results"></div>
+</div>
+
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 · Educational use only · Not financial advice · Not affiliated with any lender</div>
+</footer>
+
+<script>
+// ZIP code database — state, city, market data
+var zipData = {
+  // Texas
+  '78701':['Austin','TX',524000,'COLD',8.1,'hot-cooling'],
+  '75201':['Dallas','TX',412000,'COLD',7.0,'cooling'],
+  '77001':['Houston','TX',338000,'COOLING',7.1,'cooling'],
+  '78201':['San Antonio','TX',298000,'COLD',7.0,'cold'],
+  // Florida
+  '33101':['Miami','FL',618000,'COOLING',8.1,'hot'],
+  '32801':['Orlando','FL',385000,'COOLING',7.2,'warm'],
+  '33601':['Tampa','FL',398000,'COOLING',7.1,'warm'],
+  '32201':['Jacksonville','FL',312000,'COOLING',7.0,'warm'],
+  // Georgia
+  '30301':['Atlanta','GA',395000,'COOLING',7.0,'warm'],
+  // North Carolina
+  '28201':['Charlotte','NC',378000,'WARM',6.9,'warm'],
+  '27601':['Raleigh','NC',412000,'WARM',6.9,'warm'],
+  // Tennessee
+  '37201':['Nashville','TN',445000,'COOLING',7.0,'warm'],
+  // Colorado
+  '80201':['Denver','CO',568000,'COOLING',7.1,'cooling'],
+  // Arizona
+  '85001':['Phoenix','AZ',445000,'COLD',7.0,'cold'],
+  // Nevada
+  '89101':['Las Vegas','NV',418000,'COLD',7.1,'cold'],
+  // Washington
+  '98101':['Seattle','WA',698000,'COOLING',7.2,'cooling'],
+  // California
+  '90001':['Los Angeles','CA',985000,'COLD',7.4,'cold'],
+  '94101':['San Francisco','CA',1100000,'COLD',7.3,'cold'],
+  '92101':['San Diego','CA',895000,'COOLING',7.3,'cooling'],
+  // New York
+  '10001':['New York','NY',785000,'COOLING',7.3,'cooling'],
+  // Massachusetts
+  '02101':['Boston','MA',698000,'WARM',7.2,'warm'],
+  // Illinois
+  '60601':['Chicago','IL',338000,'COOLING',7.0,'cooling'],
+  // Ohio
+  '43201':['Columbus','OH',285000,'WARM',6.8,'warm'],
+  // Michigan
+  '48201':['Detroit','MI',185000,'COLD',6.7,'cold'],
+  // Indiana
+  '46201':['Indianapolis','IN',267000,'WARM',6.8,'warm'],
+  // Missouri
+  '64101':['Kansas City','MO',275000,'WARM',6.8,'warm'],
+  '63101':['St. Louis','MO',245000,'WARM',6.8,'warm'],
+  // Minnesota
+  '55401':['Minneapolis','MN',358000,'WARM',6.9,'warm'],
+  // Oklahoma
+  '73101':['Oklahoma City','OK',198000,'COLD',6.8,'cold'],
+  // Virginia
+  '23201':['Richmond','VA',358000,'WARM',6.9,'warm'],
+  '22201':['Arlington','VA',598000,'WARM',7.0,'warm'],
+  // Washington DC
+  '20001':['Washington','DC',628000,'WARM',7.1,'warm'],
+};
+
+var demandColors = {
+  'HOT':'#c0392b','WARM':'#b7791f','COOLING':'#2563eb','COLD':'#4b5563'
+};
+var demandEmoji = {'HOT':'🔥','WARM':'🟡','COOLING':'🔵','COLD':'❄️'};
+
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
+function moPay(p,r){var mr=r/100/12,n=360;return p*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1);}
+
+function getMarketData(zip){
+  // Try exact match first
+  if(zipData[zip]) return zipData[zip];
+  // Try prefix match
+  var prefix = zip.substring(0,3);
+  for(var z in zipData){
+    if(z.startsWith(prefix)) return zipData[z];
+  }
+  // Default
+  return ['Your Area','US',350000,'COOLING',7.0,'warm'];
+}
+
+function navigate(){
+  var zip = document.getElementById('zip').value.trim();
+  var price = parseFloat(document.getElementById('price').value);
+  var score = parseInt(document.getElementById('score').value);
+  var income = parseFloat(document.getElementById('income').value);
+  var debt = parseFloat(document.getElementById('debt').value);
+  var dp = parseFloat(document.getElementById('dp').value);
+  var emp = document.getElementById('emp').value;
+  var purpose = document.getElementById('purpose').value;
+
+  if(!zip || zip.length < 5){alert('Please enter a valid ZIP code');return;}
+
+  var market = getMarketData(zip);
+  var city=market[0], state=market[1], medPrice=market[2], demand=market[3], rate=market[4];
+
+  var moInc = income/12;
+  var moPITI = moPay(price*0.8, rate) + (dp<20?price*0.8*0.007/12:0) + price*0.011/12 + 150;
+  var backDTI = (moPITI+debt)/moInc;
+  var frontDTI = moPITI/moInc;
+  var creditSavings = Math.round(price*0.8*(7.5-6.1)/100/12*360);
+
+  // Determine lender type match
+  var lenders = [];
+  var primaryRoute, routeColor, routeIcon;
+
+  if(score>=720 && backDTI<=0.43 && emp==='strong'){
+    primaryRoute='conventional'; routeColor='#27ae60'; routeIcon='🟢';
+    lenders=[
+      {type:'Conventional Lender',match:'Best Match',matchColor:'#27ae60',bg:'rgba(39,174,96,0.06)',border:'rgba(39,174,96,0.3)',desc:'Your profile exceeds conventional requirements. These lenders will compete for your business. Get at least 3 quotes.'},
+      {type:'Credit Union',match:'Also Good',matchColor:'#b7791f',bg:'rgba(183,121,31,0.06)',border:'rgba(183,121,31,0.2)',desc:'Credit unions often beat bank rates by 0.25-0.5%. Worth including in your quote shopping.'},
+    ];
+  } else if(score>=640 && backDTI<=0.43){
+    primaryRoute='creditunion'; routeColor='#b7791f'; routeIcon='🟡';
+    lenders=[
+      {type:'Credit Union',match:'Best Match',matchColor:'#27ae60',bg:'rgba(39,174,96,0.06)',border:'rgba(39,174,96,0.3)',desc:'Credit unions approve at 30% higher rates than national banks for profiles like yours. Their DTI ceiling (47%) and score flexibility work in your favor.'},
+      {type:'Conventional Lender',match:'Borderline',matchColor:'#b7791f',bg:'rgba(183,121,31,0.06)',border:'rgba(183,121,31,0.2)',desc:'Some conventional lenders will approve you, but expect rate premiums. Apply to both simultaneously.'},
+      {type:'FHA Lender',match:'Backup',matchColor:'#2563eb',bg:'rgba(37,99,235,0.06)',border:'rgba(37,99,235,0.2)',desc:'FHA remains an option if conventional falls through. Note the ongoing MIP cost.'},
+    ];
+  } else if(score>=580 && backDTI<=0.57){
+    primaryRoute='fha'; routeColor='#2563eb'; routeIcon='🔵';
+    lenders=[
+      {type:'FHA Lender',match:'Best Match',matchColor:'#27ae60',bg:'rgba(39,174,96,0.06)',border:'rgba(39,174,96,0.3)',desc:'FHA is designed for your profile. 57% back-end DTI limit (vs 43% conventional), 580 minimum score, and 3.5% down.'},
+      {type:'Credit Union',match:'Worth Trying',matchColor:'#b7791f',bg:'rgba(183,121,31,0.06)',border:'rgba(183,121,31,0.2)',desc:'Some credit unions have FHA programs with better rates. Ask specifically about their FHA offerings.'},
+    ];
+  } else {
+    primaryRoute='repair'; routeColor='#c0392b'; routeIcon='🔴';
+    lenders=[
+      {type:'No Lender Yet',match:'Repair First',matchColor:'#c0392b',bg:'rgba(192,57,43,0.06)',border:'rgba(192,57,43,0.3)',desc:'Applying now would result in denial and damage your score further with hard inquiries. Follow the route below first.'},
+    ];
+  }
+
+  // Build route steps
+  var steps=[];
+  var timeline=0;
+
+  if(score<580){
+    steps.push({n:1,color:'#c0392b',title:'Credit Score: Emergency Repair',desc:'Your score is below most FHA minimums. Focus exclusively on score improvement before anything else. Target: 580+ in 90 days.',time:'0–90 days',timeColor:'rgba(192,57,43,0.2)'});
+    timeline+=90;
+  } else if(score<640){
+    steps.push({n:1,color:'#ff9944',title:'Credit Score: Targeted Improvement',desc:'Pay all cards to below 10% utilization this month. Dispute any errors. Consider Sky Blue Credit for professional dispute assistance. Target: 640+ in 60 days.',time:'0–60 days',timeColor:'rgba(255,153,68,0.2)'});
+    timeline+=60;
+  } else if(score<680){
+    steps.push({n:1,color:'#b7791f',title:'Credit Score: Minor Optimization',desc:'You qualify for FHA now, but improving to 680+ unlocks conventional lending. One focused month: utilization below 10%, no new applications.',time:'30–60 days',timeColor:'rgba(183,121,31,0.2)'});
+    timeline+=30;
+  } else {
+    steps.push({n:1,color:'#27ae60',title:'Credit Score: ✅ Ready',desc:'Your score qualifies for conventional or FHA lending. No action needed here — protect it by making zero new credit applications until closing.',time:'Maintain',timeColor:'rgba(39,174,96,0.2)'});
+  }
+
+  if(backDTI>0.57){
+    steps.push({n:2,color:'#c0392b',title:'DTI: Critical — Reduce Debt First',desc:'Your current debt-to-income ratio ('+Math.round(backDTI*100)+'%) exceeds all standard lending limits. Pay down '+fmt(Math.round((backDTI-0.50)*moInc*12))+' in annual debt before applying.',time:'3–6 months',timeColor:'rgba(192,57,43,0.2)'});
+    timeline+=90;
+  } else if(backDTI>0.43){
+    steps.push({n:2,color:'#b7791f',title:'DTI: Elevated — Target Credit Union or FHA',desc:'Your DTI ('+Math.round(backDTI*100)+'%) blocks conventional lending but fits FHA (57% max) and credit unions (47% max). Route adjusted accordingly.',time:'Apply now',timeColor:'rgba(183,121,31,0.2)'});
+  } else {
+    steps.push({n:2,color:'#27ae60',title:'DTI: ✅ Within Guidelines',desc:'Your DTI ('+Math.round(backDTI*100)+'%) qualifies for conventional lending. Front-end ratio ('+Math.round(frontDTI*100)+'%) on this home: '+(frontDTI<=0.28?'✅ Good':'⚠️ Slightly elevated — consider a lower price point')+'.',time:'Ready',timeColor:'rgba(39,174,96,0.2)'});
+  }
+
+  if(emp==='new'){
+    steps.push({n:3,color:'#c0392b',title:'Employment: Wait 6 Months',desc:'Most lenders require 6+ months at your current employer. Apply after you cross that threshold — applying now risks denial and hard inquiry damage.',time:'Wait',timeColor:'rgba(192,57,43,0.2)'});
+    timeline+=180;
+  } else if(emp==='self'){
+    steps.push({n:3,color:'#b7791f',title:'Employment: Gather 2 Years Tax Returns',desc:'Self-employment requires 2 full years of tax returns. Lenders use the average of your last 2 years\' net income — not gross revenue. Make sure you have these documented.',time:'Document now',timeColor:'rgba(183,121,31,0.2)'});
+  } else if(emp==='mid'){
+    steps.push({n:3,color:'#b7791f',title:'Employment: Letter of Explanation Ready',desc:'Under 2 years employment may trigger questions. Prepare a 1-page letter explaining the continuity of your career. Same field = usually fine.',time:'Prepare docs',timeColor:'rgba(183,121,31,0.2)'});
+  } else {
+    steps.push({n:3,color:'#27ae60',title:'Employment: ✅ Strong History',desc:'2+ years W-2 employment is what every lender wants to see. Your employment documentation is straightforward.',time:'Ready',timeColor:'rgba(39,174,96,0.2)'});
+  }
+
+  if(dp<3.5){
+    steps.push({n:4,color:'#2563eb',title:'Down Payment: VA or USDA Eligibility',desc:'Zero-down programs require eligibility — VA for veterans, USDA for rural areas. Verify your eligibility first. If not eligible, 3.5% FHA minimum applies.',time:'Verify eligibility',timeColor:'rgba(37,99,235,0.2)'});
+  } else if(dp<20){
+    steps.push({n:4,color:'#b7791f',title:'Down Payment: PMI Will Apply',desc:'Below 20% down adds PMI at ~0.5-1%/year on your loan. On '+fmt(price)+', that\'s '+fmt(Math.round(price*0.8*0.007/12))+'/month extra. Factor this into your budget.',time:'Budget for PMI',timeColor:'rgba(183,121,31,0.2)'});
+  } else {
+    steps.push({n:4,color:'#27ae60',title:'Down Payment: ✅ No PMI',desc:'20%+ down eliminates PMI, strengthens your offer, and signals low risk to lenders. This is an excellent position.',time:'Ready',timeColor:'rgba(39,174,96,0.2)'});
+  }
+
+  var estTimeline = timeline===0?'Ready to apply now':
+    timeline<=30?'Apply in ~30 days':
+    timeline<=60?'Apply in ~60 days':
+    timeline<=90?'Apply in ~90 days':'Apply in 4–6 months';
+
+  // Banker warnings based on market
+  var warnings=[];
+  if(demand==='HOT'){
+    warnings.push({color:'#c0392b',title:'🚨 HOT MARKET WARNING','text':'In '+city+', well-priced homes are selling in days. Get fully pre-approved (not just pre-qualified) before you start shopping. Pre-qualification alone will cost you offers.'});
+  } else if(demand==='COLD'){
+    warnings.push({color:'#27ae60',title:'✅ BUYER\'S MARKET ADVANTAGE','text':city+' is showing COLD demand — you have significant negotiating leverage. Ask for seller concessions (closing costs, rate buydowns). Sellers are motivated.'});
+  } else {
+    warnings.push({color:'#b7791f',title:'🟡 BALANCED MARKET','text':city+' is in transition. Some negotiating room exists on most listings, but well-priced homes in good areas still move within 30 days.'});
+  }
+
+  if(purpose==='refi'){
+    warnings.push({color:'#2563eb',title:'⚡ REFINANCE TIMING','text':'Current rates in your area: ~'+rate+'%. The rule of thumb: refinance if you can drop your rate by 1%+ and plan to stay 3+ years to recoup closing costs. Run the break-even math first.'});
+  }
+
+  if(score<720){
+    warnings.push({color:'#c0392b',title:'💳 RATE COST ALERT','text':'At your current score, you\'re paying an estimated '+fmt(creditSavings)+' more than a 740+ borrower over 30 years on this loan. Every point of improvement matters at this price.'});
+  }
+
+  warnings.push({color:'#4b5563',title:'🏦 BANKACIDAN ÖZEL NOT','text':'"Don\'t shop rates over more than 14 days — multiple mortgage inquiries within a 14-day window count as ONE hard pull. Outside that window, each one hurts your score. Time your rate shopping carefully."'});
+
+  // Build HTML
+  var html =
+    // Location card
+    '<div class="location-card">'+
+      '<div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:8px;">📍 ZIP '+zip+' — Your Market</div>'+
+      '<div class="location-name">'+city+', '+state+'</div>'+
+      '<div class="location-sub">FRC Market Analysis · May 2026</div>'+
+      '<div class="location-stats">'+
+        '<div class="ls"><div class="ls-n" style="color:'+demandColors[demand]+';">'+demandEmoji[demand]+' '+demand+'</div><div class="ls-l">Buyer Demand</div></div>'+
+        '<div class="ls"><div class="ls-n">'+fmt(medPrice)+'</div><div class="ls-l">Median Home</div></div>'+
+        '<div class="ls"><div class="ls-n">'+rate+'%</div><div class="ls-l">Est. Rate</div></div>'+
+      '</div>'+
+    '</div>'+
+
+    // Route header
+    '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">'+
+      '<div>'+
+        '<div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:4px;">🗺️ YOUR FASTEST ROUTE</div>'+
+        '<div style="font-family:\'Fraunces\',serif;font-size:20px;font-weight:700;color:#fff;">'+routeIcon+' '+
+          (primaryRoute==='conventional'?'Conventional Lending':primaryRoute==='creditunion'?'Credit Union Route':primaryRoute==='fha'?'FHA Pathway':'Credit Repair First')+
+        '</div>'+
+      '</div>'+
+      '<div style="text-align:right;">'+
+        '<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:2px;">Estimated timeline</div>'+
+        '<div style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:700;color:'+routeColor+';">'+estTimeline+'</div>'+
+      '</div>'+
+    '</div>'+
+
+    // Steps
+    '<div class="route-title">📋 Your Step-by-Step Route</div>'+
+    steps.map(function(s){
+      return '<div class="step">'+
+        '<div class="step-num" style="background:'+s.color+'22;color:'+s.color+';">'+s.n+'</div>'+
+        '<div class="step-content">'+
+          '<div class="step-title">'+s.title+'</div>'+
+          '<div class="step-desc">'+s.desc+'</div>'+
+          '<span class="step-time" style="background:'+s.timeColor+';color:rgba(255,255,255,0.6);">⏱ '+s.time+'</span>'+
+        '</div>'+
+      '</div>';
+    }).join('')+
+
+    // Lender types
+    '<div class="route-title" style="margin-top:28px;">🏦 Best Lender Types for Your Profile</div>'+
+    '<div class="lender-grid">'+
+    lenders.map(function(l){
+      return '<div class="lender-card" style="background:'+l.bg+';border-color:'+l.border+';">'+
+        '<div class="lender-title">'+l.type+'</div>'+
+        '<div class="lender-match" style="background:'+l.matchColor+'22;color:'+l.matchColor+';">'+l.match+'</div>'+
+        '<div class="lender-desc">'+l.desc+'</div>'+
+      '</div>';
+    }).join('')+
+    '</div>'+
+
+    // Warnings
+    '<div class="route-title" style="margin-top:8px;">⚠️ Banker\'s Warnings for Your Route</div>'+
+    warnings.map(function(w){
+      return '<div class="warning-box" style="background:'+w.color+'11;border-color:'+w.color+';">'+
+        '<div class="warn-title" style="color:'+w.color+';">'+w.title+'</div>'+
+        '<div class="warn-text">'+w.text+'</div>'+
+      '</div>';
+    }).join('')+
+
+    // CFPB finder
+    '<div class="finder-box">'+
+      '<div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:10px;">🔍 Find Lenders Near '+city+'</div>'+
+      '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:14px;">The CFPB\'s official lender search tool shows HUD-approved housing counselors and lenders in your area — free, unbiased, no spam.</div>'+
+      '<a href="https://www.consumerfinance.gov/find-a-housing-counselor/?zipcode='+zip+'" target="_blank" rel="noopener" style="display:inline-block;background:rgba(255,255,255,0.08);color:#fff;padding:10px 20px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;margin-right:8px;border:1px solid rgba(255,255,255,0.15);">🏛️ CFPB Lender Finder →</a>'+
+      '<a href="https://www.hud.gov/program_offices/housing/sfh/hcc/hcs.cfm?webListAction=search&searchstate='+state+'" target="_blank" rel="noopener" style="display:inline-block;background:rgba(255,255,255,0.08);color:#fff;padding:10px 20px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,0.15);">🏠 HUD Counselors →</a>'+
+    '</div>'+
+
+    // Sky Blue
+    (score<720?
+    '<div class="skyblue">'+
+      '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:8px;">💳 The Fastest Route Upgrade: Fix Your Score</div>'+
+      '<div style="font-family:\'Fraunces\',serif;font-size:32px;font-weight:900;color:#ff6b6b;margin-bottom:6px;">'+fmt(creditSavings)+'</div>'+
+      '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:14px;">Difference between your current score and 740+ on this loan over 30 years. Improving your score is the single highest-ROI move on your route.</div>'+
+      '<a href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=NAV_'+zip+'_FRC" target="_blank" rel="sponsored" style="display:inline-block;background:#c0392b;color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">🛡️ Fix My Score — Sky Blue Credit #ad</a>'+
+      '<div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;">Not financial advice · Individual results vary</div>'+
+    '</div>':'') +
+
+    // Share
+    '<div class="share-box">'+
+      '<div style="font-size:16px;font-weight:700;margin-bottom:4px;">Share Your Mortgage Route</div>'+
+      '<div style="font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:12px;">Challenge someone to find their route</div>'+
+      '<button class="sbtn" style="background:#1da1f2;color:#fff;" onclick="tweet(\''+city+'\',\''+state+'\',\''+demand+'\',\''+routeIcon+'\')">🐦 Tweet My Route</button>'+
+      '<button class="sbtn" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);" onclick="copyRoute(\''+city+'\',\''+state+'\',\''+demand+'\',\''+routeIcon+'\')">📋 Copy</button>'+
+    '</div>'+
+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">'+
+      '<a href="mortgage-fate.html" style="padding:13px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;color:#fff;text-align:center;">🎲 Find My Mortgage Fate →</a>'+
+      '<a href="mortgage-calculator.html" style="padding:13px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;color:#fff;text-align:center;">Calculate My Payment →</a>'+
+    '</div>';
+
+  document.getElementById('results').innerHTML=html;
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+function tweet(city,state,demand,icon){
+  var t='My Mortgage Route:\n\n'+icon+' Route plotted for '+city+', '+state+'\n📊 Market: '+demand+'\n\nPlot YOUR mortgage route:\nfinanceratecalc.com/mortgage-navigator.html\n\n#MortgageNavigator #HomeBuying';
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(t),'_blank');
+}
+function copyRoute(city,state,demand,icon){
+  var t='My Mortgage Route: '+icon+' '+city+', '+state+' — Market: '+demand+'\nfinanceratecalc.com/mortgage-navigator.html';
+  navigator.clipboard.writeText(t).then(function(){alert('Copied!');});
+}
+</script>
+</body>
+</html>
