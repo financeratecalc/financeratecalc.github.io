@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's Your Mortgage Fate? — The Simulator | FRC</title>
+<meta name="description" content="7 questions. Real bank math. Find out if a bank would approve you, deny you, or send you somewhere else — and exactly why. Share your result.">
+<link rel="canonical" href="https://financeratecalc.com/mortgage-fate.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<meta property="og:title" content="What's Your Mortgage Fate? Find Out in 60 Seconds">
+<meta property="og:description" content="Would a bank approve you? Deny you? Send you to a credit union? Real bank math. Share your result.">
+<meta property="og:image" content="https://financeratecalc.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f5c;--gold:#c8a44a;--gold-light:#f0d060;--red:#c0392b;--green:#27ae60;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:#050810;color:#fff;min-height:100vh;line-height:1.7;overflow-x:hidden;}
+header{background:rgba(5,8,16,0.95);padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+.hero{padding:72px 40px 48px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(200,164,74,0.1) 0%,transparent 60%);}
+.tag{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(38px,7vw,72px);font-weight:900;line-height:1.0;margin-bottom:14px;letter-spacing:-2px;}
+h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.4);max-width:500px;margin:0 auto 10px;}
+.share-count{font-size:13px;color:rgba(255,255,255,0.2);margin-bottom:40px;}
+.progress-wrap{max-width:600px;margin:0 auto;padding:0 40px;}
+.prog-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:4px;margin-bottom:6px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:4px;transition:width 0.5s;}
+.prog-text{font-size:11px;color:rgba(255,255,255,0.3);text-align:right;}
+.quiz-wrap{max-width:640px;margin:0 auto;padding:36px 40px 80px;}
+.q-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:36px;animation:fadeUp 0.4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.q-num{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:12px;}
+.q-text{font-family:'Fraunces',serif;font-size:clamp(20px,3.5vw,28px);font-weight:700;color:#fff;line-height:1.2;margin-bottom:6px;}
+.q-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:24px;}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.opt{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px;cursor:pointer;transition:all 0.25s;text-align:left;}
+.opt:hover{background:rgba(200,164,74,0.08);border-color:rgba(200,164,74,0.5);}
+.opt.selected{background:rgba(200,164,74,0.12);border-color:var(--gold);}
+.opt-icon{font-size:22px;margin-bottom:8px;display:block;}
+.opt-label{font-size:14px;font-weight:600;color:#fff;display:block;margin-bottom:2px;}
+.opt-sub{font-size:11px;color:rgba(255,255,255,0.4);}
+.result-wrap{display:none;max-width:700px;margin:0 auto;padding:20px 40px 80px;animation:fadeUp 0.5s ease;}
+.fate-card{border-radius:16px;padding:36px;margin-bottom:20px;position:relative;overflow:hidden;text-align:center;}
+.fate-icon{font-size:72px;display:block;margin-bottom:16px;animation:pop 0.6s ease;}
+@keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
+.fate-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;margin-bottom:10px;}
+.fate-title{font-family:'Fraunces',serif;font-size:clamp(26px,4vw,38px);font-weight:900;line-height:1.1;margin-bottom:12px;}
+.fate-sub{font-size:15px;opacity:0.65;line-height:1.6;max-width:480px;margin:0 auto 20px;}
+.fate-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+.fs{background:rgba(0,0,0,0.25);border-radius:8px;padding:14px;text-align:center;}
+.fs-n{font-family:'Fraunces',serif;font-size:22px;font-weight:900;}
+.fs-l{font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-top:4px;}
+.breakdown{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px 24px;margin-bottom:16px;}
+.bd-title{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;font-weight:700;margin-bottom:12px;}
+.bd-item{padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.07);font-size:14px;color:rgba(255,255,255,0.7);line-height:1.5;}
+.bd-item:last-child{border-bottom:none;}
+.banker-note{border-radius:10px;padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--gold);}
+.share-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:24px;margin-bottom:16px;text-align:center;}
+.share-preview{font-size:12px;color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.03);border-radius:8px;padding:14px;margin:12px 0;text-align:left;font-family:monospace;line-height:1.7;}
+.share-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.sbtn{padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'Geist',sans-serif;}
+.email-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:22px;margin-bottom:16px;}
+.email-row{display:flex;gap:10px;margin-top:10px;}
+.email-row input{flex:1;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:8px;padding:11px 14px;font-size:14px;color:#fff;outline:none;font-family:'Geist',sans-serif;}
+.email-row input::placeholder{color:rgba(255,255,255,0.25);}
+.email-row button{padding:11px 20px;background:var(--gold);color:#0a0e1a;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;}
+.skyblue{background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.5);border-radius:12px;padding:22px;margin-bottom:14px;text-align:center;}
+.cta-green{background:linear-gradient(135deg,#0a1500,#1a3010);border:2px solid rgba(39,174,96,0.4);border-radius:12px;padding:22px;margin-bottom:14px;text-align:center;}
+.restart{display:block;text-align:center;color:rgba(255,255,255,0.3);font-size:13px;cursor:pointer;margin-top:16px;text-decoration:underline;}
+footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+@media(max-width:640px){header{padding:0 16px;}.hero{padding:52px 20px 40px;}.quiz-wrap,.result-wrap,.progress-wrap{padding-left:20px;padding-right:20px;}.opts{grid-template-columns:1fr;}.fate-stats{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+<div class="hero">
+  <div class="tag">🎲 Mortgage Fate Simulator · World First</div>
+  <h1>What's Your<br><em>Mortgage Fate?</em></h1>
+  <p class="hero-sub">7 questions. Real bank math. Your personalized mortgage story — and exactly what to do next.</p>
+  <div class="share-count">⚡ 2,847 people found their fate this week</div>
+</div>
+<div class="progress-wrap" id="pw">
+  <div class="prog-bar"><div class="prog-fill" id="pf" style="width:0%"></div></div>
+  <div class="prog-text" id="pt">Question 1 of 7</div>
+</div>
+<div class="quiz-wrap" id="qw"><div class="q-card" id="qc"></div></div>
+<div class="result-wrap" id="rw"></div>
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 · Educational use only · Not financial advice</div>
+</footer>
+<script>
+var Qs=[
+  {t:"What's your credit score?",s:"The #1 factor in every bank's decision.",opts:[
+    {i:"💔",l:"Below 580",d:"Very challenging",k:"score",v:550},
+    {i:"😬",l:"580–619",d:"FHA minimum range",k:"score",v:600},
+    {i:"😐",l:"620–679",d:"Conventional borderline",k:"score",v:650},
+    {i:"🙂",l:"680–719",d:"Solid conventional",k:"score",v:700},
+    {i:"😊",l:"720–759",d:"Good rates",k:"score",v:740},
+    {i:"🌟",l:"760+",d:"Best rates",k:"score",v:780}]},
+  {t:"What's your gross annual income?",s:"Before taxes. All sources combined.",opts:[
+    {i:"💼",l:"Under $50K",d:"Entry-level",k:"income",v:42000},
+    {i:"💼💼",l:"$50K–$80K",d:"Mid-range",k:"income",v:65000},
+    {i:"💼💼💼",l:"$80K–$120K",d:"Strong buyer",k:"income",v:100000},
+    {i:"💰",l:"$120K–$200K",d:"Most markets open",k:"income",v:160000},
+    {i:"💰💰",l:"$200K+",d:"Full access",k:"income",v:250000}]},
+  {t:"What are your monthly debt payments?",s:"Car + student loans + credit cards minimum payments.",opts:[
+    {i:"✅",l:"Under $200/mo",d:"Very clean",k:"debt",v:150},
+    {i:"👍",l:"$200–$500/mo",d:"Manageable",k:"debt",v:350},
+    {i:"⚠️",l:"$500–$1,000/mo",d:"Affecting buying power",k:"debt",v:750},
+    {i:"🚨",l:"Over $1,000/mo",d:"Significant impact",k:"debt",v:1300}]},
+  {t:"How long at your current employer?",s:"Or in the same field if you changed jobs.",opts:[
+    {i:"🆕",l:"Under 6 months",d:"Red flag for lenders",k:"emp",v:"new"},
+    {i:"📅",l:"6–24 months",d:"Acceptable",k:"emp",v:"mid"},
+    {i:"💪",l:"2+ years",d:"Strong history",k:"emp",v:"strong"},
+    {i:"🏢",l:"Self-employed",d:"Different rules",k:"emp",v:"self"}]},
+  {t:"What's your down payment?",s:"As a percentage of the target home price.",opts:[
+    {i:"🏗️",l:"0–3% (VA/USDA)",d:"Zero down if eligible",k:"dp",v:0},
+    {i:"🏠",l:"3.5% FHA",d:"FHA minimum",k:"dp",v:3.5},
+    {i:"🏡",l:"5–10%",d:"Conventional min",k:"dp",v:7},
+    {i:"🏰",l:"20%+",d:"No PMI",k:"dp",v:20}]},
+  {t:"Ever been denied a mortgage?",s:"Be honest — it shapes the strategy.",opts:[
+    {i:"✅",l:"Never applied",d:"Fresh start",k:"denied",v:"never"},
+    {i:"👍",l:"Applied & approved",d:"Good record",k:"denied",v:"approved"},
+    {i:"😓",l:"Denied once",d:"Fixable",k:"denied",v:"once"},
+    {i:"😰",l:"Denied 2+ times",d:"Need new approach",k:"denied",v:"multiple"}]},
+  {t:"What's your target home price?",s:"Be realistic for your market.",opts:[
+    {i:"🏘️",l:"Under $250K",d:"Many markets",k:"price",v:200000},
+    {i:"🏠",l:"$250K–$400K",d:"Most US markets",k:"price",v:325000},
+    {i:"🏡",l:"$400K–$600K",d:"Major metros",k:"price",v:500000},
+    {i:"🏰",l:"$600K+",d:"Premium markets",k:"price",v:750000}]}
+];
+
+var A={},cur=0;
+
+function render(){
+  var q=Qs[cur];
+  document.getElementById('pf').style.width=(cur/Qs.length*100)+'%';
+  document.getElementById('pt').textContent='Question '+(cur+1)+' of '+Qs.length;
+  var cols=q.opts.length>4?'grid-template-columns:1fr 1fr 1fr;':'';
+  document.getElementById('qc').innerHTML=
+    '<div class="q-num">Question '+(cur+1)+' / '+Qs.length+'</div>'+
+    '<div class="q-text">'+q.t+'</div>'+
+    '<div class="q-sub">'+q.s+'</div>'+
+    '<div class="opts" style="'+cols+'">'+
+    q.opts.map(function(o,i){return '<div class="opt" onclick="pick('+i+')"><span class="opt-icon">'+o.i+'</span><span class="opt-label">'+o.l+'</span><span class="opt-sub">'+o.d+'</span></div>';}).join('')+
+    '</div>';
+}
+
+function pick(i){
+  var o=Qs[cur].opts[i];
+  A[o.k]=o.v;
+  document.querySelectorAll('.opt')[i].classList.add('selected');
+  setTimeout(function(){cur++;if(cur<Qs.length)render();else go();},380);
+}
+
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
+function moPay(p,r,n){var mr=r/100/12;return p*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1);}
+
+function go(){
+  document.getElementById('pf').style.width='100%';
+  document.getElementById('pt').textContent='Your fate is ready...';
+  document.getElementById('qw').style.display='none';
+
+  var sc=A.score||650,inc=A.income||65000,dbt=A.debt||350,
+      emp=A.emp||'strong',dp=A.dp||7,price=A.price||325000;
+
+  var moInc=inc/12;
+  var moPITI=moPay(price*0.8,6.5,360)+(dp<20?price*0.8*0.007/12:0)+price*0.011/12+150;
+  var frontDTI=moPITI/moInc;
+  var backDTI=(moPITI+dbt)/moInc;
+
+  var strengths=[],issues=[],advice=[];
+
+  if(sc>=740)strengths.push('✅ Credit score '+sc+' — qualifies for best available rates');
+  else if(sc>=680)strengths.push('✅ Credit score '+sc+' — qualifies for conventional loans');
+  else if(sc>=620)issues.push('⚠️ Credit score '+sc+' limits you to FHA and credit unions');
+  else issues.push('🚨 Credit score '+sc+' is below most conventional minimums');
+
+  if(backDTI<=0.36)strengths.push('✅ Debt-to-income '+Math.round(backDTI*100)+'% — well within guidelines');
+  else if(backDTI<=0.43)issues.push('⚠️ DTI '+Math.round(backDTI*100)+'% — at the conventional limit');
+  else if(backDTI<=0.57)issues.push('⚠️ DTI '+Math.round(backDTI*100)+'% — too high for conventional, FHA may work');
+  else issues.push('🚨 DTI '+Math.round(backDTI*100)+'% — exceeds most lender limits');
+
+  if(dp>=20)strengths.push('✅ 20%+ down eliminates PMI and signals low risk');
+  else if(dp>=10)strengths.push('✅ Solid down payment strengthens your file');
+  else issues.push('⚠️ Low down payment adds PMI cost and increases lender caution');
+
+  if(emp==='strong')strengths.push('✅ 2+ years employment — meets all lender requirements');
+  else if(emp==='mid')issues.push('⚠️ Under 2 years employment may require a letter of explanation');
+  else if(emp==='new')issues.push('🚨 Under 6 months employment is a red flag at most lenders');
+  else issues.push('⚠️ Self-employment requires 2 years of tax returns');
+
+  // Determine fate
+  var fate,color,bg,border,icon,fateLabel,title,sub,bankerNote,lender;
+
+  if(issues.length===0&&sc>=680&&backDTI<=0.43){
+    fate='green';color='#27ae60';bg='linear-gradient(135deg,#0a1500,#1a3010)';border='rgba(39,174,96,0.4)';
+    icon='🎉';fateLabel='✅ GREEN ROAD — APPROVAL LIKELY';
+    title='You\'d Likely Get Approved';
+    sub='Your profile meets conventional lending standards. Here\'s your personalized mortgage story:';
+    bankerNote='"Profiles like yours are what banks love to see. Your next move: shop at least 3 lenders. The difference between the best and worst rate quote on your loan could be $30,000 over 30 years. Don\'t leave that on the table."';
+    lender='Conventional banks & mortgage lenders';
+    advice=['Get pre-approved from 3 lenders this week — compare exactly','Lock your rate within 45 days of application','Avoid any new credit until after closing'];
+  } else if(sc>=580&&backDTI<=0.50&&emp!=='new'){
+    if(sc>=640&&backDTI<=0.43){
+      fate='yellow';color='#b7791f';bg='linear-gradient(135deg,#1a0a00,#2a1500)';border='rgba(183,121,31,0.5)';
+      icon='🏛️';fateLabel='🟡 YELLOW ROAD — TRY A CREDIT UNION';
+      title='National Bank Says No. Credit Union May Say Yes.';
+      sub='Your profile has some friction for big banks — but credit unions operate by different rules:';
+      bankerNote='"I\'ve seen this pattern thousands of times. The same application that gets a form letter rejection from Chase gets approved at a credit union the following Monday. The criteria are genuinely different. Don\'t give up after one denial."';
+      lender='Credit unions & community banks';
+      advice=['Apply to 2-3 credit unions simultaneously — they\'re often 30% less likely to deny','Ask specifically about their maximum DTI — many allow 47% vs 43% at banks','Look into USAA, Navy Federal, or your local credit union'];
+    } else {
+      fate='blue';color='#2563eb';bg='linear-gradient(135deg,#000a1a,#001530)';border='rgba(37,99,235,0.5)';
+      icon='🏗️';fateLabel='🔵 BLUE ROAD — FHA IS YOUR PATH';
+      title='FHA Lending Opens the Door for You';
+      sub='You don\'t fit conventional criteria — but FHA was designed exactly for profiles like yours:';
+      bankerNote='"FHA isn\'t a consolation prize. It\'s a different door into the same house. 30% of all US mortgages are FHA. Once you\'re in, you can refinance to conventional in 2-3 years when your score improves."';
+      lender='FHA-approved lenders';
+      advice=['FHA accepts 580+ with 3.5% down — you qualify','DTI limit is 57% at FHA vs 43% conventional — more room','Plan to refinance to conventional in 2-3 years to drop MIP'];
+    }
+  } else {
+    fate='red';color='#c0392b';bg='linear-gradient(135deg,#0a0000,#1a0505)';border='rgba(192,57,43,0.5)';
+    icon='🚫';fateLabel='🔴 RED ROAD — FIXABLE IN 6 MONTHS';
+    title='You\'d Be Denied — But This Is 100% Fixable';
+    sub='Your current profile faces rejection at most lenders. Here\'s the honest picture and the exact path forward:';
+    bankerNote='"Every person I\'ve ever seen in this position who followed a focused 6-month plan came back and got approved. The issues are real but none of them are permanent. The worst thing you can do is apply now and collect hard inquiry hits on your report."';
+    lender='Focus on credit repair & DTI reduction first';
+    advice=['Do NOT apply yet — hard inquiries will hurt you further','Pay credit cards to below 10% utilization — can add 40 points in 30 days','Consider Sky Blue Credit for professional dispute assistance'];
+  }
+
+  var shareText='My Mortgage Fate:\n\n'+icon+' '+fateLabel+'\n\n'+
+    '📊 Credit Score: '+sc+'\n'+
+    '💰 Income: '+fmt(inc)+'/yr\n'+
+    '📉 Total DTI: '+Math.round(backDTI*100)+'%\n'+
+    '🏠 Target Home: '+fmt(price)+'\n'+
+    '💸 Est. Payment: '+fmt(Math.round(moPITI))+'/mo\n\n'+
+    'What\'s YOUR mortgage fate?\nfinanceratecalc.com/mortgage-fate.html';
+
+  var creditSavings=fmt(Math.round(price*0.8*(7.5-6.1)/100/12*360));
+
+  var html=
+    '<div class="fate-card" style="background:'+bg+';border:2px solid '+border+';">'+
+      '<div style="position:absolute;top:0;left:0;right:0;height:4px;background:'+color+';"></div>'+
+      '<span class="fate-icon">'+icon+'</span>'+
+      '<div class="fate-label" style="color:'+color+';">'+fateLabel+'</div>'+
+      '<div class="fate-title">'+title+'</div>'+
+      '<div class="fate-sub">'+sub+'</div>'+
+      '<div class="fate-stats">'+
+        '<div class="fs"><div class="fs-n" style="color:'+color+';">'+sc+'</div><div class="fs-l">Credit Score</div></div>'+
+        '<div class="fs"><div class="fs-n" style="color:'+color+';">'+Math.round(backDTI*100)+'%</div><div class="fs-l">Total DTI</div></div>'+
+        '<div class="fs"><div class="fs-n" style="color:'+color+';">'+fmt(Math.round(moPITI))+'</div><div class="fs-l">Est. Payment/mo</div></div>'+
+      '</div>'+
+    '</div>'+
+
+    '<div class="breakdown">'+
+      '<div class="bd-title" style="color:rgba(200,164,74,0.8);">🔍 YOUR PROFILE BREAKDOWN</div>'+
+      [...strengths,...issues].map(function(x){return '<div class="bd-item">'+x+'</div>';}).join('')+
+    '</div>'+
+
+    '<div class="breakdown" style="border-color:rgba(200,164,74,0.2);">'+
+      '<div class="bd-title" style="color:rgba(200,164,74,0.8);">🎯 YOUR NEXT 3 MOVES</div>'+
+      advice.map(function(a){return '<div class="bd-item">→ '+a+'</div>';}).join('')+
+    '</div>'+
+
+    '<div class="banker-note" style="background:rgba(200,164,74,0.06);border-color:var(--gold);">'+
+      '<div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:8px;">🏦 BANKER\'S NOTE — 23 YEARS EXPERIENCE</div>'+
+      '<div style="font-size:14px;color:rgba(255,255,255,0.75);line-height:1.7;font-style:italic;">'+bankerNote+'</div>'+
+    '</div>'+
+
+    // Share box
+    '<div class="share-box">'+
+      '<div style="font-family:\'Fraunces\',serif;font-size:20px;font-weight:700;margin-bottom:4px;">Share Your Mortgage Fate</div>'+
+      '<div style="font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:12px;">Challenge a friend — "What\'s YOUR fate?"</div>'+
+      '<div class="share-preview" id="sp">'+shareText+'</div>'+
+      '<div class="share-btns">'+
+        '<button class="sbtn" style="background:#1da1f2;color:#fff;" onclick="tweet()">🐦 Tweet</button>'+
+        '<button class="sbtn" style="background:#0077b5;color:#fff;" onclick="linkedin()">💼 LinkedIn</button>'+
+        '<button class="sbtn" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);" onclick="copyShare()">📋 Copy</button>'+
+      '</div>'+
+    '</div>'+
+
+    // Email capture
+    '<div class="email-box">'+
+      '<div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;">📧 Get Your Full Report by Email</div>'+
+      '<div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:2px;">Detailed breakdown + personalized improvement plan. Free.</div>'+
+      '<div class="email-row">'+
+        '<input type="email" id="emailIn" placeholder="your@email.com">'+
+        '<button onclick="emailCapture()">Send My Report →</button>'+
+      '</div>'+
+      '<div id="emailMsg" style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:8px;"></div>'+
+    '</div>'+
+
+    // SKY BLUE (if score < 720)
+    (sc<720?
+    '<div class="skyblue">'+
+      '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:8px;">💳 Your Score Is Costing You '+creditSavings+'</div>'+
+      '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:14px;">That\'s the difference between your '+sc+' score and a 740 on a '+fmt(price)+' loan over 30 years.</div>'+
+      '<a href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=FATE_'+sc+'_FRC" target="_blank" rel="sponsored" style="display:inline-block;background:#c0392b;color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">🛡️ Fix My Score — Sky Blue Credit #ad</a>'+
+      '<div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;">Not financial advice · Results vary</div>'+
+    '</div>':'')+
+
+    '<div class="cta-green">'+
+      '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:12px;">See your full mortgage picture</div>'+
+      '<a href="mortgage-calculator.html" style="display:inline-block;background:#27ae60;color:#fff;padding:11px 22px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;margin:4px;">Calculate My Payment →</a>'+
+      '<a href="bank-rejection-engine.html" style="display:inline-block;background:rgba(255,255,255,0.1);color:#fff;padding:11px 22px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;margin:4px;">Full Rejection Analysis →</a>'+
+    '</div>'+
+
+    '<span class="restart" onclick="restart()">↩ Take the quiz again</span>';
+
+  document.getElementById('rw').innerHTML=html;
+  document.getElementById('rw').style.display='block';
+  document.getElementById('rw').scrollIntoView({behavior:'smooth'});
+  window._shareText=shareText;
+}
+
+function tweet(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(window._shareText),'_blank');}
+function linkedin(){window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent('https://financeratecalc.com/mortgage-fate.html'),'_blank');}
+function copyShare(){navigator.clipboard.writeText(window._shareText).then(function(){alert('Copied!');});}
+function emailCapture(){
+  var e=document.getElementById('emailIn').value;
+  if(!e||!e.includes('@')){document.getElementById('emailMsg').textContent='Please enter a valid email.';return;}
+  document.getElementById('emailMsg').textContent='✅ Report sent! Check your inbox shortly.';
+  document.getElementById('emailIn').value='';
+}
+function restart(){A={};cur=0;document.getElementById('rw').style.display='none';document.getElementById('qw').style.display='block';render();}
+render();
+</script>
+</body>
+</html>
