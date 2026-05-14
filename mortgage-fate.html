@@ -31,6 +31,23 @@ h1 em{font-style:italic;color:var(--gold-light);}
 .prog-text{font-size:11px;color:rgba(255,255,255,0.3);text-align:right;}
 .quiz-wrap{max-width:640px;margin:0 auto;padding:36px 40px 80px;}
 .q-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:36px;animation:fadeUp 0.4s ease;}
+
+/* Dice animation */
+.dice-wrap{text-align:center;padding:32px 0 8px;}
+.dice{font-size:80px;display:inline-block;cursor:pointer;transition:transform 0.1s;user-select:none;}
+.dice.rolling{animation:diceRoll 1.2s ease-out;}
+@keyframes diceRoll{
+  0%{transform:rotate(0deg) scale(1);}
+  15%{transform:rotate(180deg) scale(1.3);}
+  30%{transform:rotate(360deg) scale(0.9);}
+  45%{transform:rotate(540deg) scale(1.2);}
+  60%{transform:rotate(720deg) scale(1);}
+  75%{transform:rotate(810deg) scale(1.1);}
+  90%{transform:rotate(900deg) scale(1);}
+  100%{transform:rotate(960deg) scale(1);}
+}
+.dice-hint{font-size:13px;color:rgba(255,255,255,0.3);margin-top:8px;}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 .q-num{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:12px;}
 .q-text{font-family:'Fraunces',serif;font-size:clamp(20px,3.5vw,28px);font-weight:700;color:#fff;line-height:1.2;margin-bottom:6px;}
@@ -78,6 +95,10 @@ footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px 
 <header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
 <div class="hero">
   <div class="tag">🎲 Mortgage Fate Simulator · World First</div>
+  <div class="dice-wrap">
+    <div class="dice" id="heroD" onclick="rollDice()" title="Roll for your fate!">🎲</div>
+    <div class="dice-hint">Click the die to begin your fate</div>
+  </div>
   <h1>What's Your<br><em>Mortgage Fate?</em></h1>
   <p class="hero-sub">7 questions. Real bank math. Your personalized mortgage story — and exactly what to do next.</p>
   <div class="share-count">⚡ 2,847 people found their fate this week</div>
@@ -93,6 +114,31 @@ footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px 
   <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 · Educational use only · Not financial advice</div>
 </footer>
 <script>
+
+var diceEmoji = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+var rolling = false;
+
+function rollDice(){
+  if(rolling) return;
+  rolling = true;
+  var die = document.getElementById('heroD');
+  die.classList.add('rolling');
+  
+  var i = 0;
+  var interval = setInterval(function(){
+    die.textContent = diceEmoji[Math.floor(Math.random()*6)];
+    i++;
+    if(i > 8){
+      clearInterval(interval);
+      die.textContent = '🎲';
+      die.classList.remove('rolling');
+      rolling = false;
+      // Scroll to quiz
+      document.getElementById('qw').scrollIntoView({behavior:'smooth'});
+    }
+  }, 120);
+}
+
 var Qs=[
   {t:"What's your credit score?",s:"The #1 factor in every bank's decision.",opts:[
     {i:"💔",l:"Below 580",d:"Very challenging",k:"score",v:550},
