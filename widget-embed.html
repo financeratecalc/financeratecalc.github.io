@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:transparent;padding:8px;}
+.w{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08);max-width:460px;width:100%;}
+
+/* Agent bar */
+.ab{background:#0a1f5c;padding:11px 16px;display:flex;align-items:center;gap:10px;}
+.av{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.an{font-size:13px;font-weight:700;color:#fff;line-height:1.2;}
+.at{font-size:10px;color:rgba(255,255,255,0.5);}
+
+/* Demand bar */
+.db{padding:8px 14px;background:#f9fafb;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;}
+.dd{font-size:10px;font-weight:700;padding:3px 9px;border-radius:8px;}
+.di{font-size:10px;color:#9ca3af;}
+
+/* Body */
+.body{padding:16px;}
+.label{display:block;font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;}
+.inp{width:100%;padding:9px 11px;border:1.5px solid #e5e7eb;border-radius:7px;font-size:14px;color:#111;outline:none;transition:border-color 0.2s;font-family:'Geist',sans-serif;}
+.inp:focus{border-color:#0a1f5c;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.field{margin-bottom:10px;}
+.term-row{display:flex;gap:6px;margin-bottom:10px;}
+.term-btn{flex:1;padding:8px;border:1.5px solid #e5e7eb;border-radius:7px;font-size:12px;font-weight:600;color:#6b7280;cursor:pointer;background:#fff;transition:all 0.2s;font-family:'Geist',sans-serif;}
+.term-btn.active{border-color:#0a1f5c;background:#0a1f5c;color:#fff;}
+
+/* Credit slider */
+.slider-wrap{margin-bottom:10px;}
+.slider-labels{display:flex;justify-content:space-between;font-size:9px;color:#9ca3af;margin-top:3px;}
+input[type=range]{width:100%;height:4px;-webkit-appearance:none;background:#e5e7eb;border-radius:4px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#0a1f5c;cursor:pointer;}
+
+.calc-btn{width:100%;padding:11px;background:linear-gradient(135deg,#0a1f5c,#0d2a6e);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Geist',sans-serif;margin-top:2px;}
+
+/* Results */
+.results{display:none;margin-top:12px;}
+.tabs{display:flex;gap:4px;margin-bottom:8px;}
+.tab{flex:1;padding:6px 4px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;text-align:center;color:#6b7280;background:#fff;transition:all 0.2s;font-family:'Geist',sans-serif;}
+.tab.active{border-color:#0a1f5c;background:#0a1f5c;color:#fff;}
+.result-box{background:#f0f4ff;border:1px solid #dde0ee;border-radius:8px;padding:14px;text-align:center;}
+.mo-amount{font-size:30px;font-weight:900;color:#0a1f5c;line-height:1;}
+.mo-label{font-size:10px;color:#6b7280;margin-top:3px;}
+.breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:10px;}
+.bd{background:#fff;border-radius:5px;padding:6px 4px;text-align:center;border:1px solid #e5e7eb;}
+.bd-n{font-size:12px;font-weight:700;color:#0a1f5c;}
+.bd-l{font-size:8px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;}
+.savings{margin-top:8px;padding:7px 10px;background:rgba(39,174,96,0.07);border:1px solid rgba(39,174,96,0.2);border-radius:6px;font-size:11px;color:#16a34a;font-weight:600;text-align:center;}
+
+/* Sky Blue */
+.skyblue{display:none;margin-top:8px;padding:10px 12px;background:linear-gradient(135deg,#1a0000,#2a0505);border:1px solid rgba(192,57,43,0.4);border-radius:8px;}
+.sb-text{font-size:11px;color:rgba(255,255,255,0.65);margin-bottom:6px;line-height:1.5;}
+.sb-btn{display:block;padding:7px 12px;background:#c0392b;color:#fff;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none;text-align:center;}
+
+/* Lead */
+.lead-box{margin-top:10px;padding:12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;}
+.lead-title{font-size:11px;font-weight:700;color:#0a1f5c;margin-bottom:7px;}
+.lead-row{display:flex;gap:6px;}
+.lead-inp{flex:1;padding:7px 10px;border:1.5px solid #e5e7eb;border-radius:6px;font-size:12px;font-family:'Geist',sans-serif;outline:none;}
+.lead-btn{padding:7px 12px;background:#0a1f5c;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Geist',sans-serif;}
+.lead-thanks{display:none;font-size:11px;color:#16a34a;font-weight:600;text-align:center;padding:4px;}
+
+/* Powered */
+.powered{text-align:center;padding:8px;font-size:9px;color:#d1d5db;border-top:1px solid #f3f4f6;}
+.powered a{color:#9ca3af;font-weight:600;text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="w">
+  <!-- Agent bar -->
+  <div class="ab">
+    <div class="av">👤</div>
+    <div>
+      <div class="an" id="agentName">Your Agent</div>
+      <div class="at" id="agentTitle">Licensed Real Estate Agent</div>
+    </div>
+  </div>
+
+  <!-- Demand -->
+  <div class="db">
+    <div>
+      <div style="font-size:9px;color:#9ca3af;margin-bottom:2px;">FRC BUYER DEMAND</div>
+      <div class="dd" id="demandBadge" style="background:rgba(37,99,235,0.1);color:#2563eb;border:1px solid rgba(37,99,235,0.2);">🔵 COOLING — Negotiate</div>
+    </div>
+    <div class="di" id="demandInfo">67 days on market</div>
+  </div>
+
+  <div class="body">
+    <!-- Inputs -->
+    <div class="field">
+      <label class="label">Home Price</label>
+      <input class="inp" type="number" id="price" value="425000" step="5000">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label class="label">Down Payment %</label>
+        <input class="inp" type="number" id="down" value="20" min="0" max="100">
+      </div>
+      <div class="field">
+        <label class="label">Interest Rate %</label>
+        <input class="inp" type="number" id="rate" value="6.5" step="0.1">
+      </div>
+    </div>
+
+    <!-- Loan term -->
+    <label class="label">Loan Term</label>
+    <div class="term-row">
+      <button class="term-btn active" id="t30" onclick="setTerm(30)">30-Year Fixed</button>
+      <button class="term-btn" id="t15" onclick="setTerm(15)">15-Year Fixed</button>
+    </div>
+
+    <!-- Credit score -->
+    <div class="slider-wrap">
+      <label class="label">Credit Score: <span id="scoreLabel">700-739</span></label>
+      <input type="range" id="creditScore" min="0" max="4" value="3" oninput="updateScore()">
+      <div class="slider-labels">
+        <span>580</span><span>620</span><span>660</span><span>700</span><span>740+</span>
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">Calculate 3 Scenarios →</button>
+
+    <!-- Results -->
+    <div class="results" id="results">
+      <div class="tabs">
+        <div class="tab active" onclick="showTab(0)">📉 Best</div>
+        <div class="tab" onclick="showTab(1)">📊 Today</div>
+        <div class="tab" onclick="showTab(2)">📈 Higher</div>
+      </div>
+
+      <div id="sc0" class="result-box">
+        <div class="mo-amount" id="mo0"></div>
+        <div class="mo-label" id="lb0"></div>
+        <div class="breakdown">
+          <div class="bd"><div class="bd-n" id="pi0"></div><div class="bd-l">P&I</div></div>
+          <div class="bd"><div class="bd-n" id="tx0"></div><div class="bd-l">Tax</div></div>
+          <div class="bd"><div class="bd-n" id="in0"></div><div class="bd-l">Ins</div></div>
+          <div class="bd"><div class="bd-n" id="pm0"></div><div class="bd-l">PMI</div></div>
+        </div>
+      </div>
+      <div id="sc1" class="result-box" style="display:none;">
+        <div class="mo-amount" id="mo1"></div>
+        <div class="mo-label" id="lb1"></div>
+        <div class="breakdown">
+          <div class="bd"><div class="bd-n" id="pi1"></div><div class="bd-l">P&I</div></div>
+          <div class="bd"><div class="bd-n" id="tx1"></div><div class="bd-l">Tax</div></div>
+          <div class="bd"><div class="bd-n" id="in1"></div><div class="bd-l">Ins</div></div>
+          <div class="bd"><div class="bd-n" id="pm1"></div><div class="bd-l">PMI</div></div>
+        </div>
+      </div>
+      <div id="sc2" class="result-box" style="display:none;">
+        <div class="mo-amount" id="mo2"></div>
+        <div class="mo-label" id="lb2"></div>
+        <div class="breakdown">
+          <div class="bd"><div class="bd-n" id="pi2"></div><div class="bd-l">P&I</div></div>
+          <div class="bd"><div class="bd-n" id="tx2"></div><div class="bd-l">Tax</div></div>
+          <div class="bd"><div class="bd-n" id="in2"></div><div class="bd-l">Ins</div></div>
+          <div class="bd"><div class="bd-n" id="pm2"></div><div class="bd-l">PMI</div></div>
+        </div>
+      </div>
+
+      <div class="savings" id="savings"></div>
+
+      <!-- Sky Blue -->
+      <div class="skyblue" id="skyblue">
+        <div class="sb-text" id="sbText"></div>
+        <a class="sb-btn" id="sbBtn" href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=WIDGET_FRC" target="_blank" rel="sponsored">🛡️ Fix My Credit Score #ad</a>
+      </div>
+
+      <!-- Lead capture -->
+      <div class="lead-box">
+        <div class="lead-title">📧 Email me this breakdown</div>
+        <div class="lead-row">
+          <input class="lead-inp" type="email" id="leadEmail" placeholder="your@email.com">
+          <button class="lead-btn" onclick="sendLead()">Send →</button>
+        </div>
+        <div class="lead-thanks" id="leadThanks"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="powered">Powered by <a href="https://financeratecalc.com" target="_blank">FinanceRateCalc.com</a> · Free mortgage tools · Not financial advice</div>
+</div>
+
+<script>
+// Get URL params
+var params = new URLSearchParams(window.location.search);
+var agentName = params.get('agent') || 'Your Agent';
+var agentMarket = params.get('market') || '';
+var agentEmail = params.get('email') || '';
+var partnerId = params.get('partner') || '';
+var listingPrice = params.get('price') || '';
+
+document.getElementById('agentName').textContent = agentName;
+if(agentMarket) document.getElementById('agentTitle').textContent = 'Real Estate Agent · '+agentMarket;
+if(listingPrice) document.getElementById('price').value = listingPrice;
+
+// Demand based on market
+var demandMap = {
+  'austin':'COLD','dallas':'COLD','houston':'COOLING','miami':'COOLING',
+  'denver':'COOLING','seattle':'COOLING','phoenix':'COLD','atlanta':'COOLING',
+  'charlotte':'WARM','raleigh':'WARM','nashville':'COOLING','detroit':'COLD',
+  'chicago':'COOLING','boston':'WARM','new york':'COOLING','los angeles':'COLD',
+  'portland':'COLD','las vegas':'COLD','tampa':'COOLING','orlando':'COOLING',
+  'san antonio':'COLD','fort worth':'COLD','columbus':'WARM','indianapolis':'WARM',
+};
+var dStyle = {
+  'HOT':'background:rgba(232,64,64,0.1);color:#e84040;border:1px solid rgba(232,64,64,0.2);',
+  'WARM':'background:rgba(212,160,23,0.1);color:#d4a017;border:1px solid rgba(212,160,23,0.2);',
+  'COOLING':'background:rgba(37,99,235,0.1);color:#2563eb;border:1px solid rgba(37,99,235,0.2);',
+  'COLD':'background:rgba(75,85,99,0.1);color:#4b5563;border:1px solid rgba(75,85,99,0.2);',
+};
+var dText = {'HOT':'🔥 HOT — Move Fast','WARM':'🟡 WARM — Good Timing','COOLING':'🔵 COOLING — Negotiate','COLD':'❄️ COLD — Strong Leverage'};
+var dDays = {'HOT':'avg 8 days on market','WARM':'avg 28 days on market','COOLING':'avg 67 days on market','COLD':'avg 94 days on market'};
+
+var demand = 'COOLING';
+var m = agentMarket.toLowerCase();
+for(var city in demandMap){if(m.includes(city)){demand=demandMap[city];break;}}
+document.getElementById('demandBadge').textContent = dText[demand];
+document.getElementById('demandBadge').style.cssText = 'font-size:10px;font-weight:700;padding:3px 9px;border-radius:8px;'+dStyle[demand];
+document.getElementById('demandInfo').textContent = dDays[demand];
+
+// Score labels
+var scoreLabels = ['Below 580','580-619','620-679','700-739','740+'];
+var scoreRates = [1.0, 0.5, 0.2, 0, -0.3];
+function updateScore(){
+  var v = parseInt(document.getElementById('creditScore').value);
+  document.getElementById('scoreLabel').textContent = scoreLabels[v];
+}
+
+// Term
+var term = 30;
+function setTerm(t){
+  term = t;
+  document.getElementById('t30').classList.toggle('active', t===30);
+  document.getElementById('t15').classList.toggle('active', t===15);
+}
+
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
+function moPay(p,r,n){var mr=r/100/12;return p*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1);}
+
+function calculate(){
+  var price = parseFloat(document.getElementById('price').value)||425000;
+  var down = parseFloat(document.getElementById('down').value)||20;
+  var baseRate = parseFloat(document.getElementById('rate').value)||6.5;
+  var scoreAdj = scoreRates[parseInt(document.getElementById('creditScore').value)];
+  var rate = baseRate + scoreAdj;
+  var loan = price*(1-down/100);
+  var tax = Math.round(price*0.011/12);
+  var ins = 150;
+  var pmi = down < 20 ? Math.round(loan*0.007/12) : 0;
+  var n = term*12;
+
+  var scenarios = [
+    {rate: rate-0.5, label:'Best Rate ('+(rate-0.5).toFixed(1)+'%)'},
+    {rate: rate, label:'Today ('+rate.toFixed(1)+'%)'},
+    {rate: rate+0.5, label:'Higher ('+(rate+0.5).toFixed(1)+'%)'},
+  ];
+
+  scenarios.forEach(function(s,i){
+    var pi = Math.round(moPay(loan,s.rate,n));
+    var tot = pi+tax+ins+pmi;
+    document.getElementById('mo'+i).textContent = fmt(tot)+'/mo';
+    document.getElementById('lb'+i).textContent = s.label+(term===15?' · 15-Year':' · 30-Year');
+    document.getElementById('pi'+i).textContent = fmt(pi);
+    document.getElementById('tx'+i).textContent = fmt(tax);
+    document.getElementById('in'+i).textContent = fmt(ins);
+    document.getElementById('pm'+i).textContent = pmi>0?fmt(pmi):'$0';
+  });
+
+  // Savings
+  var best = Math.round(moPay(loan,rate-0.5,n));
+  var worst = Math.round(moPay(loan,rate+0.5,n));
+  var diff = worst-best;
+  document.getElementById('savings').textContent = '💡 Rate range impact: '+fmt(diff)+'/month · '+fmt(diff*n)+' over '+term+' years';
+
+  // Sky Blue — show if poor/fair credit
+  var scoreVal = parseInt(document.getElementById('creditScore').value);
+  if(scoreVal <= 2){
+    var savings30 = fmt(Math.round(loan*(7.5-6.1)/100/12*360));
+    document.getElementById('sbText').textContent = 'With your current score, you\'re paying an estimated '+savings30+' more than a 740+ borrower over 30 years. Improving your score is the highest-ROI move you can make.';
+    document.getElementById('skyblue').style.display='block';
+  } else {
+    document.getElementById('skyblue').style.display='none';
+  }
+
+  document.getElementById('results').style.display='block';
+}
+
+function showTab(idx){
+  document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('active',i===idx);});
+  ['sc0','sc1','sc2'].forEach(function(id,i){document.getElementById(id).style.display=i===idx?'block':'none';});
+}
+
+function sendLead(){
+  var email = document.getElementById('leadEmail').value;
+  if(!email||!email.includes('@')) return;
+
+  var price = document.getElementById('price').value;
+  var down = document.getElementById('down').value;
+  var rate = document.getElementById('rate').value;
+  var mo = document.getElementById('mo1').textContent;
+
+  // Send to Formspree
+  fetch('https://formspree.io/f/mkoewrgp', {
+    method:'POST',
+    headers:{'Accept':'application/json','Content-Type':'application/json'},
+    body: JSON.stringify({
+      email: email,
+      agent: agentName,
+      agent_email: agentEmail,
+      partner_id: partnerId,
+      market: agentMarket,
+      home_price: '$'+price,
+      down_payment: down+'%',
+      rate: rate+'%',
+      monthly_payment: mo,
+      subject: '🏠 New Mortgage Lead from '+agentName+'\'s Website',
+      message: 'Lead from widget on '+agentName+'\'s site. Home: $'+price+', Down: '+down+'%, Rate: '+rate+'%, Payment: '+mo
+    })
+  });
+
+  document.getElementById('leadEmail').style.display='none';
+  document.querySelector('.lead-btn').style.display='none';
+  document.getElementById('leadThanks').textContent='✅ Sent! '+(agentName.split(' ')[0]||'Your agent')+' will be in touch shortly.';
+  document.getElementById('leadThanks').style.display='block';
+}
+</script>
+</body>
+</html>
