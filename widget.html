@@ -294,11 +294,16 @@ footer{background:#0a1f5c;padding:28px 60px;text-align:center;}
     <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.8);font-weight:700;margin-bottom:12px;">🚀 Get Your Widget</div>
     <div style="font-family:'Fraunces',serif;font-size:30px;font-weight:700;color:#fff;margin-bottom:8px;">Want a Custom-Branded Version?</div>
     <p style="font-size:15px;color:rgba(255,255,255,0.5);max-width:500px;margin:0 auto;">Custom colors, your logo, and lead capture direct to your email. Free for qualifying brokerages.</p>
-    <div class="cta-form">
-      <input class="cta-input" type="email" id="proEmail" placeholder="your@realestate.com">
-      <button class="cta-submit" onclick="proCTA()">Get Custom Widget →</button>
-    </div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:10px;" id="proMsg">No spam. Setup within 24 hours.</div>
+    <form id="widgetForm" action="https://formspree.io/f/mkoewrgp" method="POST" style="max-width:500px;margin:20px auto 0;">
+      <div class="cta-form">
+        <input class="cta-input" type="email" name="email" placeholder="your@realestate.com" required>
+        <input type="hidden" name="subject" value="New Widget Request — FinanceRateCalc">
+        <input type="hidden" name="message" value="A real estate agent requested a custom widget.">
+        <button type="submit" class="cta-submit">Get Custom Widget →</button>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:10px;">No spam. Setup within 24 hours.</div>
+    </form>
+    <div id="formSuccess" style="display:none;font-size:15px;color:#6bffb8;margin-top:16px;font-weight:600;">✅ Got it! We'll send your custom code within 24 hours.</div>
   </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
@@ -421,6 +426,21 @@ function proCTA(){
   document.getElementById('proMsg').textContent='✅ Got it! We\'ll send your custom code within 24 hours.';
   document.getElementById('proEmail').value='';
 }
+
+document.getElementById('widgetForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var form = this;
+  fetch(form.action, {
+    method: 'POST',
+    body: new FormData(form),
+    headers: {'Accept': 'application/json'}
+  }).then(function(r){
+    if(r.ok){
+      form.style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+    }
+  });
+});
 </script>
 </body>
 </html>
