@@ -8,64 +8,100 @@
 <link rel="canonical" href="https://financeratecalc.com/mortgage-map.html">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <meta property="og:title" content="US Mortgage Heat Map 2026 — Click Your State">
-<meta property="og:description" content="Click any state. See median home price, salary needed, FRC demand score, and your fastest path to approval.">
 <meta property="og:image" content="https://financeratecalc.com/og-image.png">
-<meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#0a1f5c;--gold:#c8a44a;--gold-light:#f0d060;}
+:root{
+  --bg:#060a12;
+  --navy:#0a1f5c;
+  --gold:#c8a44a;
+  --gold-light:#f0d060;
+  --hot:#e84040;
+  --warm:#d4a017;
+  --cooling:#2563eb;
+  --cold:#374151;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Geist',sans-serif;background:#050810;color:#fff;min-height:100vh;overflow-x:hidden;}
-header{background:rgba(5,8,16,0.95);padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+body{font-family:'Geist',sans-serif;background:var(--bg);color:#fff;min-height:100vh;overflow-x:hidden;}
+
+header{background:rgba(6,10,18,0.95);padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:200;border-bottom:1px solid rgba(255,255,255,0.06);}
 .logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
 .logo em{font-style:italic;color:var(--gold);}
 
-.hero{padding:56px 40px 32px;text-align:center;}
-.tag{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-weight:700;}
-h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,56px);font-weight:900;line-height:1.05;margin-bottom:10px;letter-spacing:-1px;}
+.hero{padding:48px 40px 24px;text-align:center;position:relative;}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(200,164,74,0.06) 0%,transparent 70%);pointer-events:none;}
+.tag{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-weight:700;opacity:0.8;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:900;line-height:1.0;margin-bottom:8px;letter-spacing:-1.5px;}
 h1 em{font-style:italic;color:var(--gold-light);}
-.hero-sub{font-size:15px;color:rgba(255,255,255,0.4);margin-bottom:8px;}
+.hero-sub{font-size:14px;color:rgba(255,255,255,0.35);margin-bottom:24px;}
 
 /* Legend */
-.legend{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin:16px 0 24px;font-size:12px;}
-.leg{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.5);}
-.leg-dot{width:14px;height:14px;border-radius:3px;}
+.legend{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.leg{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);cursor:default;}
+.leg-dot{width:8px;height:8px;border-radius:50%;}
 
-/* Map container */
-.map-wrap{max-width:960px;margin:0 auto;padding:0 20px;position:relative;}
+/* Map */
+.map-container{position:relative;max-width:1000px;margin:0 auto;padding:0 20px;}
 
-/* State panels */
-svg .state{cursor:pointer;transition:all 0.3s;stroke:#050810;stroke-width:1;}
-svg .state:hover{opacity:0.8;stroke-width:2;stroke:#fff;}
-svg .state.active{stroke:#fff;stroke-width:2.5;filter:drop-shadow(0 0 8px rgba(255,255,255,0.4));}
+svg#usmap{width:100%;height:auto;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.5));}
+
+.state{cursor:pointer;transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1),filter 0.2s;transform-origin:center;transform-box:fill-box;stroke:rgba(6,10,18,0.8);stroke-width:0.8;}
+.state:hover{transform:scale(1.08) translateY(-2px);filter:brightness(1.3) drop-shadow(0 4px 12px rgba(0,0,0,0.6));stroke:#fff;stroke-width:1.5;z-index:10;}
+.state.active{transform:scale(1.1) translateY(-3px);filter:brightness(1.4) drop-shadow(0 6px 20px rgba(255,255,255,0.2));stroke:#fff;stroke-width:2;}
+
+/* Tooltip */
+.tooltip{position:fixed;pointer-events:none;z-index:300;display:none;transform:translate(-50%,-100%);margin-top:-12px;}
+.tooltip-inner{background:rgba(6,10,18,0.96);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:12px 16px;white-space:nowrap;backdrop-filter:blur(10px);box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+.tt-name{font-family:'Fraunces',serif;font-size:16px;font-weight:700;margin-bottom:4px;}
+.tt-stats{display:flex;gap:12px;}
+.tt-stat{text-align:center;}
+.tt-n{font-size:13px;font-weight:700;}
+.tt-l{font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;}
+.tt-demand{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:6px;display:inline-block;}
+.tooltip-arrow{width:12px;height:6px;margin:0 auto;position:relative;}
+.tooltip-arrow::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid rgba(255,255,255,0.15);}
 
 /* Info panel */
-.info-panel{max-width:960px;margin:20px auto;padding:0 20px 80px;}
-.state-card{background:linear-gradient(135deg,#0a0f20,#0d1530);border:2px solid rgba(200,164,74,0.3);border-radius:16px;padding:28px 32px;display:none;animation:slideUp 0.4s ease;}
-.state-card.visible{display:block;}
-@keyframes slideUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.panel-wrap{max-width:1000px;margin:16px auto 0;padding:0 20px 80px;}
+.state-panel{background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:0;overflow:hidden;display:none;animation:panelIn 0.4s cubic-bezier(0.34,1.2,0.64,1);}
+.state-panel.visible{display:block;}
+@keyframes panelIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 
-.state-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;}
-.state-name{font-family:'Fraunces',serif;font-size:36px;font-weight:900;color:#fff;}
-.demand-badge{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;}
+.panel-header{padding:24px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.panel-left{}
+.panel-abbr{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;}
+.panel-name{font-family:'Fraunces',serif;font-size:32px;font-weight:900;line-height:1;}
+.panel-demand{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-top:8px;}
 
-.state-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
-.ss{background:rgba(255,255,255,0.05);border-radius:10px;padding:16px;text-align:center;}
-.ss-n{font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:var(--gold);line-height:1;}
-.ss-l{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-top:5px;}
+.panel-stats{display:grid;grid-template-columns:repeat(4,1fr);padding:20px 28px;gap:0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.ps{text-align:center;padding:12px;position:relative;}
+.ps+.ps::before{content:'';position:absolute;left:0;top:20%;height:60%;width:1px;background:rgba(255,255,255,0.06);}
+.ps-n{font-family:'Fraunces',serif;font-size:22px;font-weight:900;line-height:1;margin-bottom:4px;}
+.ps-l{font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.3);}
 
-.state-verdict{background:rgba(255,255,255,0.04);border-radius:10px;padding:16px 20px;margin-bottom:16px;font-size:14px;color:rgba(255,255,255,0.65);line-height:1.7;}
-.state-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
-.sa{padding:12px 16px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;text-align:center;border:1px solid rgba(255,255,255,0.1);color:#fff;background:rgba(255,255,255,0.06);transition:all 0.2s;}
-.sa:hover{background:rgba(255,255,255,0.12);}
-.sa.primary{background:var(--gold);color:#0a0e1a;border-color:var(--gold);}
+.panel-verdict{padding:20px 28px;font-size:14px;color:rgba(255,255,255,0.6);line-height:1.75;border-bottom:1px solid rgba(255,255,255,0.06);}
 
-.default-msg{text-align:center;padding:40px;color:rgba(255,255,255,0.25);font-size:15px;}
-.default-msg .arrow{font-size:40px;display:block;margin-bottom:10px;animation:bounce 2s ease-in-out infinite;}
-@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.panel-actions{padding:16px 28px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.pa{padding:11px 16px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600;text-align:center;transition:all 0.2s;}
+.pa.primary{background:var(--gold);color:#0a0e1a;}
+.pa.primary:hover{background:var(--gold-light);}
+.pa.secondary{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.1);}
+.pa.secondary:hover{background:rgba(255,255,255,0.1);color:#fff;}
 
-footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
-@media(max-width:768px){header{padding:0 16px;}.state-stats{grid-template-columns:1fr 1fr;}.state-actions{grid-template-columns:1fr;}}
+.default-hint{text-align:center;padding:32px;color:rgba(255,255,255,0.2);font-size:14px;}
+.hint-arrow{font-size:32px;display:block;margin-bottom:8px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+
+footer{background:rgba(0,0,0,0.4);padding:24px;text-align:center;border-top:1px solid rgba(255,255,255,0.05);}
+@media(max-width:768px){
+  header{padding:0 16px;}
+  .hero{padding:36px 20px 20px;}
+  .panel-stats{grid-template-columns:1fr 1fr;}
+  .panel-actions{grid-template-columns:1fr;}
+  .panel-header{padding:18px 20px;}
+  .panel-verdict{padding:16px 20px;}
+  .panel-actions{padding:14px 20px;}
+}
 </style>
 </head>
 <body>
@@ -74,227 +110,285 @@ footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px 
 <div class="hero">
   <div class="tag">🗺️ Interactive Mortgage Heat Map · 2026</div>
   <h1>Click Any State.<br><em>See the Market.</em></h1>
-  <p class="hero-sub">FRC Buyer Demand data from 4,590 listings. Real median prices. Salary requirements. Your fastest path.</p>
+  <p class="hero-sub">FRC Buyer Demand · Median Prices · Salary Required · Real Analysis</p>
 </div>
 
 <div class="legend">
-  <div class="leg"><div class="leg-dot" style="background:#c0392b;"></div> HOT Market</div>
-  <div class="leg"><div class="leg-dot" style="background:#d4a017;"></div> WARM Market</div>
-  <div class="leg"><div class="leg-dot" style="background:#2563eb;"></div> COOLING Market</div>
-  <div class="leg"><div class="leg-dot" style="background:#374151;"></div> COLD Market</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--hot);"></div>🔥 HOT</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--warm);"></div>🟡 WARM</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--cooling);"></div>🔵 COOLING</div>
+  <div class="leg"><div class="leg-dot" style="background:#6b7280;"></div>❄️ COLD</div>
 </div>
 
-<div class="map-wrap">
-<svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" id="usmap">
-<!-- Simplified US State SVG paths -->
-<g id="states">
-<path class="state" id="AL" d="M 580 370 L 600 370 L 605 430 L 590 435 L 575 420 Z" fill="#2563eb" data-state="Alabama"/>
-<path class="state" id="AK" d="M 60 480 L 120 480 L 130 530 L 80 540 L 50 510 Z" fill="#374151" data-state="Alaska"/>
-<path class="state" id="AZ" d="M 170 320 L 230 320 L 235 420 L 185 430 L 165 390 Z" fill="#374151" data-state="Arizona"/>
-<path class="state" id="AR" d="M 545 340 L 590 340 L 590 375 L 545 375 Z" fill="#2563eb" data-state="Arkansas"/>
-<path class="state" id="CA" d="M 80 200 L 130 190 L 155 290 L 145 380 L 100 390 L 70 310 Z" fill="#374151" data-state="California"/>
-<path class="state" id="CO" d="M 275 280 L 370 280 L 370 340 L 275 340 Z" fill="#2563eb" data-state="Colorado"/>
-<path class="state" id="CT" d="M 795 195 L 820 195 L 820 215 L 795 215 Z" fill="#d4a017" data-state="Connecticut"/>
-<path class="state" id="DE" d="M 785 230 L 800 230 L 800 255 L 785 255 Z" fill="#d4a017" data-state="Delaware"/>
-<path class="state" id="FL" d="M 605 400 L 660 390 L 700 430 L 680 480 L 640 490 L 610 460 Z" fill="#2563eb" data-state="Florida"/>
-<path class="state" id="GA" d="M 610 360 L 650 355 L 655 400 L 635 415 L 605 400 Z" fill="#2563eb" data-state="Georgia"/>
-<path class="state" id="HI" d="M 200 530 L 260 530 L 260 560 L 200 560 Z" fill="#374151" data-state="Hawaii"/>
-<path class="state" id="ID" d="M 165 155 L 210 145 L 225 230 L 195 245 L 165 220 Z" fill="#374151" data-state="Idaho"/>
-<path class="state" id="IL" d="M 555 250 L 590 248 L 592 320 L 555 320 Z" fill="#2563eb" data-state="Illinois"/>
-<path class="state" id="IN" d="M 590 250 L 625 250 L 625 315 L 590 315 Z" fill="#d4a017" data-state="Indiana"/>
-<path class="state" id="IA" d="M 490 230 L 555 228 L 555 275 L 490 278 Z" fill="#d4a017" data-state="Iowa"/>
-<path class="state" id="KS" d="M 390 305 L 490 303 L 490 348 L 390 350 Z" fill="#d4a017" data-state="Kansas"/>
-<path class="state" id="KY" d="M 590 315 L 670 310 L 672 345 L 590 348 Z" fill="#374151" data-state="Kentucky"/>
-<path class="state" id="LA" d="M 520 395 L 575 390 L 580 430 L 560 440 L 520 430 Z" fill="#374151" data-state="Louisiana"/>
-<path class="state" id="ME" d="M 840 130 L 870 120 L 880 165 L 850 170 Z" fill="#d4a017" data-state="Maine"/>
-<path class="state" id="MD" d="M 750 255 L 795 248 L 798 272 L 755 278 Z" fill="#d4a017" data-state="Maryland"/>
-<path class="state" id="MA" d="M 810 185 L 855 180 L 858 200 L 810 205 Z" fill="#d4a017" data-state="Massachusetts"/>
-<path class="state" id="MI" d="M 590 175 L 640 160 L 650 215 L 620 230 L 590 220 Z" fill="#d4a017" data-state="Michigan"/>
-<path class="state" id="MN" d="M 460 155 L 520 148 L 525 230 L 460 232 Z" fill="#d4a017" data-state="Minnesota"/>
-<path class="state" id="MS" d="M 555 355 L 590 352 L 592 420 L 558 425 Z" fill="#374151" data-state="Mississippi"/>
-<path class="state" id="MO" d="M 490 300 L 560 298 L 560 360 L 490 362 Z" fill="#d4a017" data-state="Missouri"/>
-<path class="state" id="MT" d="M 200 130 L 345 125 L 348 200 L 202 205 Z" fill="#374151" data-state="Montana"/>
-<path class="state" id="NE" d="M 390 255 L 490 252 L 490 302 L 390 305 Z" fill="#d4a017" data-state="Nebraska"/>
-<path class="state" id="NV" d="M 130 220 L 175 210 L 180 320 L 135 325 Z" fill="#374151" data-state="Nevada"/>
-<path class="state" id="NH" d="M 820 155 L 840 152 L 842 190 L 822 192 Z" fill="#d4a017" data-state="New Hampshire"/>
-<path class="state" id="NJ" d="M 780 215 L 800 212 L 802 248 L 782 250 Z" fill="#d4a017" data-state="New Jersey"/>
-<path class="state" id="NM" d="M 235 330 L 310 328 L 312 415 L 237 418 Z" fill="#374151" data-state="New Mexico"/>
-<path class="state" id="NY" d="M 720 170 L 800 158 L 805 210 L 725 218 Z" fill="#2563eb" data-state="New York"/>
-<path class="state" id="NC" d="M 670 320 L 770 308 L 772 348 L 672 355 Z" fill="#d4a017" data-state="North Carolina"/>
-<path class="state" id="ND" d="M 388 155 L 460 150 L 462 205 L 390 208 Z" fill="#d4a017" data-state="North Dakota"/>
-<path class="state" id="OH" d="M 625 248 L 680 245 L 682 315 L 627 318 Z" fill="#d4a017" data-state="Ohio"/>
-<path class="state" id="OK" d="M 388 348 L 490 345 L 492 392 L 390 395 Z" fill="#374151" data-state="Oklahoma"/>
-<path class="state" id="OR" d="M 100 155 L 170 148 L 172 225 L 102 232 Z" fill="#374151" data-state="Oregon"/>
-<path class="state" id="PA" d="M 690 215 L 770 208 L 772 255 L 692 260 Z" fill="#d4a017" data-state="Pennsylvania"/>
-<path class="state" id="RI" d="M 828 195 L 845 193 L 846 210 L 829 212 Z" fill="#d4a017" data-state="Rhode Island"/>
-<path class="state" id="SC" d="M 660 345 L 715 338 L 718 378 L 662 382 Z" fill="#2563eb" data-state="South Carolina"/>
-<path class="state" id="SD" d="M 388 205 L 462 202 L 464 255 L 390 258 Z" fill="#d4a017" data-state="South Dakota"/>
-<path class="state" id="TN" d="M 560 345 L 672 338 L 673 368 L 562 372 Z" fill="#2563eb" data-state="Tennessee"/>
-<path class="state" id="TX" d="M 312 345 L 490 340 L 495 450 L 400 480 L 320 460 L 308 400 Z" fill="#374151" data-state="Texas"/>
-<path class="state" id="UT" d="M 210 248 L 278 245 L 280 328 L 212 330 Z" fill="#374151" data-state="Utah"/>
-<path class="state" id="VT" d="M 800 155 L 822 152 L 824 190 L 802 192 Z" fill="#374151" data-state="Vermont"/>
-<path class="state" id="VA" d="M 690 290 L 775 278 L 778 315 L 693 322 Z" fill="#d4a017" data-state="Virginia"/>
-<path class="state" id="WA" d="M 102 112 L 175 105 L 178 155 L 104 158 Z" fill="#2563eb" data-state="Washington"/>
-<path class="state" id="WV" d="M 680 268 L 720 262 L 722 308 L 682 312 Z" fill="#d4a017" data-state="West Virginia"/>
-<path class="state" id="WI" d="M 520 175 L 570 170 L 572 240 L 522 244 Z" fill="#d4a017" data-state="Wisconsin"/>
-<path class="state" id="WY" d="M 278 215 L 370 210 L 372 282 L 280 285 Z" fill="#374151" data-state="Wyoming"/>
-</g>
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-inner">
+    <div class="tt-demand" id="tt-demand"></div>
+    <div class="tt-name" id="tt-name"></div>
+    <div class="tt-stats">
+      <div class="tt-stat"><div class="tt-n" id="tt-price"></div><div class="tt-l">Median</div></div>
+      <div class="tt-stat"><div class="tt-n" id="tt-sal"></div><div class="tt-l">Salary Needed</div></div>
+      <div class="tt-stat"><div class="tt-n" id="tt-rate"></div><div class="tt-l">Rate</div></div>
+    </div>
+  </div>
+  <div class="tooltip-arrow"></div>
+</div>
 
+<div class="map-container">
+<svg id="usmap" viewBox="0 0 1000 620" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<!-- US States - Improved paths -->
+<path class="state" id="WA" d="M103,75 L185,65 L192,112 L175,125 L155,118 L105,128 Z" fill="#2563eb"/>
+<path class="state" id="OR" d="M105,128 L175,118 L185,195 L108,205 Z" fill="#374151"/>
+<path class="state" id="CA" d="M108,205 L155,195 L170,285 L160,370 L118,382 L88,308 Z" fill="#374151"/>
+<path class="state" id="ID" d="M175,68 L230,58 L242,165 L215,178 L192,112 Z" fill="#374151"/>
+<path class="state" id="NV" d="M155,195 L215,178 L225,295 L175,310 L138,265 Z" fill="#374151"/>
+<path class="state" id="AZ" d="M175,310 L250,302 L258,408 L195,420 L168,378 Z" fill="#374151"/>
+<path class="state" id="MT" d="M192,60 L355,50 L360,145 L240,155 L230,120 Z" fill="#374151"/>
+<path class="state" id="WY" d="M242,155 L360,145 L368,228 L250,238 Z" fill="#374151"/>
+<path class="state" id="CO" d="M250,238 L368,228 L375,308 L258,318 Z" fill="#2563eb"/>
+<path class="state" id="NM" d="M258,318 L375,308 L382,398 L265,408 Z" fill="#374151"/>
+<path class="state" id="UT" d="M215,178 L290,170 L298,302 L225,295 Z" fill="#374151"/>
+<path class="state" id="ND" d="M360,75 L470,68 L472,148 L362,155 Z" fill="#d4a017"/>
+<path class="state" id="SD" d="M362,155 L472,148 L475,228 L365,235 Z" fill="#d4a017"/>
+<path class="state" id="NE" d="M365,235 L475,228 L480,285 L368,292 Z" fill="#d4a017"/>
+<path class="state" id="KS" d="M368,292 L480,285 L485,348 L372,355 Z" fill="#d4a017"/>
+<path class="state" id="OK" d="M372,355 L485,348 L490,398 L468,408 L375,405 Z" fill="#374151"/>
+<path class="state" id="TX" d="M375,405 L468,408 L510,420 L520,478 L450,510 L378,495 L365,448 Z" fill="#374151"/>
+<path class="state" id="MN" d="M465,68 L538,62 L542,175 L472,178 Z" fill="#d4a017"/>
+<path class="state" id="IA" d="M472,178 L542,175 L548,248 L478,252 Z" fill="#d4a017"/>
+<path class="state" id="MO" d="M478,252 L548,248 L555,318 L560,328 L498,332 L482,308 Z" fill="#d4a017"/>
+<path class="state" id="AR" d="M498,332 L560,328 L565,378 L502,382 Z" fill="#2563eb"/>
+<path class="state" id="LA" d="M502,382 L565,378 L572,418 L548,432 L515,422 Z" fill="#374151"/>
+<path class="state" id="WI" d="M538,62 L592,58 L598,148 L542,155 Z" fill="#d4a017"/>
+<path class="state" id="IL" d="M548,155 L598,148 L605,258 L552,262 Z" fill="#2563eb"/>
+<path class="state" id="MI" d="M598,75 L658,65 L668,148 L615,158 L598,148 Z" fill="#d4a017"/>
+<path class="state" id="IN" d="M605,165 L655,160 L660,258 L608,262 Z" fill="#d4a017"/>
+<path class="state" id="OH" d="M658,162 L715,155 L720,262 L662,268 Z" fill="#d4a017"/>
+<path class="state" id="KY" d="M560,268 L720,255 L722,295 L562,308 Z" fill="#374151"/>
+<path class="state" id="TN" d="M562,308 L722,295 L725,328 L565,342 Z" fill="#2563eb"/>
+<path class="state" id="MS" d="M548,342 L565,342 L572,418 L538,425 L535,378 Z" fill="#374151"/>
+<path class="state" id="AL" d="M565,342 L608,338 L612,422 L572,428 Z" fill="#2563eb"/>
+<path class="state" id="GA" d="M612,338 L668,332 L672,415 L640,428 L615,422 Z" fill="#2563eb"/>
+<path class="state" id="FL" d="M640,415 L702,405 L738,448 L718,492 L678,505 L648,478 Z" fill="#2563eb"/>
+<path class="state" id="SC" d="M668,318 L722,308 L728,355 L672,362 Z" fill="#2563eb"/>
+<path class="state" id="NC" d="M668,295 L795,278 L800,315 L670,328 Z" fill="#d4a017"/>
+<path class="state" id="VA" d="M668,268 L795,255 L798,285 L670,298 Z" fill="#d4a017"/>
+<path class="state" id="WV" d="M715,215 L762,208 L768,268 L718,275 Z" fill="#d4a017"/>
+<path class="state" id="PA" d="M715,175 L802,162 L808,218 L718,228 Z" fill="#d4a017"/>
+<path class="state" id="NY" d="M725,125 L815,112 L820,175 L728,185 Z" fill="#2563eb"/>
+<path class="state" id="MD" d="M768,228 L815,218 L818,252 L772,258 Z" fill="#d4a017"/>
+<path class="state" id="DE" d="M815,225 L835,222 L838,252 L818,255 Z" fill="#d4a017"/>
+<path class="state" id="NJ" d="M808,185 L835,178 L840,228 L812,232 Z" fill="#d4a017"/>
+<path class="state" id="CT" d="M835,158 L862,152 L865,178 L838,182 Z" fill="#d4a017"/>
+<path class="state" id="RI" d="M865,158 L882,155 L884,175 L867,178 Z" fill="#d4a017"/>
+<path class="state" id="MA" d="M838,132 L892,122 L895,158 L840,162 Z" fill="#d4a017"/>
+<path class="state" id="VT" d="M828,98 L848,95 L852,135 L832,138 Z" fill="#374151"/>
+<path class="state" id="NH" d="M848,88 L868,85 L872,138 L852,142 Z" fill="#d4a017"/>
+<path class="state" id="ME" d="M868,68 L908,58 L915,128 L872,135 Z" fill="#d4a017"/>
+<!-- Alaska & Hawaii -->
+<path class="state" id="AK" d="M55,498 L130,492 L140,545 L85,552 L48,528 Z" fill="#374151"/>
+<path class="state" id="HI" d="M185,548 L235,542 L245,568 L192,572 Z" fill="#374151"/>
 <!-- State labels -->
-<g style="font-family:Geist,sans-serif;font-size:8px;fill:rgba(255,255,255,0.7);text-anchor:middle;pointer-events:none;">
-<text x="590" y="405">AL</text><text x="85" y="510">AK</text><text x="197" y="375">AZ</text>
-<text x="567" y="360">AR</text><text x="112" y="295">CA</text><text x="323" y="315">CO</text>
-<text x="807" y="208">CT</text><text x="792" y="245">DE</text><text x="648" y="440">FL</text>
-<text x="630" y="385">GA</text><text x="230" y="548">HI</text><text x="190" y="195">ID</text>
-<text x="572" y="287">IL</text><text x="607" y="285">IN</text><text x="522" y="255">IA</text>
-<text x="440" y="328">KS</text><text x="630" y="332">KY</text><text x="548" y="415">LA</text>
-<text x="858" y="148">ME</text><text x="772" y="265">MD</text><text x="833" y="195">MA</text>
-<text x="618" y="195">MI</text><text x="490" y="192">MN</text><text x="572" y="390">MS</text>
-<text x="525" y="332">MO</text><text x="272" y="165">MT</text><text x="440" y="280">NE</text>
-<text x="152" y="270">NV</text><text x="831" y="172">NH</text><text x="790" y="232">NJ</text>
-<text x="273" y="375">NM</text><text x="760" y="188">NY</text><text x="720" y="335">NC</text>
-<text x="425" y="180">ND</text><text x="653" y="283">OH</text><text x="440" y="370">OK</text>
-<text x="135" y="192">OR</text><text x="730" y="238">PA</text><text x="837" y="203">RI</text>
-<text x="688" y="362">SC</text><text x="425" y="230">SD</text><text x="615" y="357">TN</text>
-<text x="400" y="415">TX</text><text x="244" y="290">UT</text><text x="811" y="172">VT</text>
-<text x="732" y="300">VA</text><text x="140" y="132">WA</text><text x="700" y="288">WV</text>
-<text x="545" y="210">WI</text><text x="325" y="250">WY</text>
+<g style="font-family:Geist,sans-serif;font-weight:600;text-anchor:middle;pointer-events:none;fill:rgba(255,255,255,0.85);">
+<text font-size="7" x="148" y="100">WA</text>
+<text font-size="7" x="147" y="165">OR</text>
+<text font-size="7" x="130" y="295">CA</text>
+<text font-size="7" x="210" y="122">ID</text>
+<text font-size="7" x="185" y="255">NV</text>
+<text font-size="7" x="215" y="365">AZ</text>
+<text font-size="7" x="278" y="100">MT</text>
+<text font-size="7" x="308" y="195">WY</text>
+<text font-size="7" x="315" y="275">CO</text>
+<text font-size="7" x="320" y="358">NM</text>
+<text font-size="7" x="255" y="238">UT</text>
+<text font-size="7" x="415" y="112">ND</text>
+<text font-size="7" x="418" y="192">SD</text>
+<text font-size="7" x="422" y="258">NE</text>
+<text font-size="7" x="425" y="322">KS</text>
+<text font-size="7" x="428" y="378">OK</text>
+<text font-size="7" x="440" y="455">TX</text>
+<text font-size="7" x="505" y="122">MN</text>
+<text font-size="7" x="508" y="215">IA</text>
+<text font-size="7" x="518" y="292">MO</text>
+<text font-size="7" x="532" y="358">AR</text>
+<text font-size="7" x="535" y="408">LA</text>
+<text font-size="7" x="568" y="108">WI</text>
+<text font-size="7" x="575" y="208">IL</text>
+<text font-size="7" x="632" y="112">MI</text>
+<text font-size="7" x="632" y="215">IN</text>
+<text font-size="7" x="688" y="212">OH</text>
+<text font-size="7" x="640" y="282">KY</text>
+<text font-size="7" x="642" y="318">TN</text>
+<text font-size="7" x="552" y="388">MS</text>
+<text font-size="7" x="588" y="382">AL</text>
+<text font-size="7" x="638" y="378">GA</text>
+<text font-size="7" x="678" y="458">FL</text>
+<text font-size="7" x="698" y="338">SC</text>
+<text font-size="7" x="732" y="298">NC</text>
+<text font-size="7" x="730" y="272">VA</text>
+<text font-size="7" x="740" y="240">WV</text>
+<text font-size="7" x="758" y="195">PA</text>
+<text font-size="7" x="770" y="148">NY</text>
+<text font-size="7" x="792" y="242">MD</text>
+<text font-size="7" x="826" y="238">DE</text>
+<text font-size="7" x="822" y="208">NJ</text>
+<text font-size="7" x="850" y="168">CT</text>
+<text font-size="7" x="874" y="165">RI</text>
+<text font-size="7" x="865" y="142">MA</text>
+<text font-size="7" x="840" y="118">VT</text>
+<text font-size="7" x="860" y="108">NH</text>
+<text font-size="7" x="888" y="95">ME</text>
+<text font-size="7" x="92" y="522">AK</text>
+<text font-size="7" x="213" y="558">HI</text>
 </g>
 </svg>
 </div>
 
-<div class="info-panel">
-  <div class="state-card" id="stateCard">
-    <div id="stateContent"></div>
+<div class="panel-wrap">
+  <div class="state-panel" id="statePanel">
+    <div id="panelContent"></div>
   </div>
-  <div class="default-msg" id="defaultMsg">
-    <span class="arrow">👆</span>
-    Click any state to see mortgage market conditions
+  <div class="default-hint" id="defaultHint">
+    <span class="hint-arrow">👆</span>
+    Hover to preview · Click any state for full analysis
   </div>
 </div>
 
-
-  <!-- INTERNAL NAV -->
-  <div style="max-width:860px;margin:0 auto;padding:8px 60px 16px;display:flex;flex-wrap:wrap;gap:6px;">
-    <a href="index.html" style="padding:4px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;">Home</a>
-    <a href="mortgage-calculator.html" style="padding:4px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;">Calculator</a>
-    <a href="bank-rejection-engine.html" style="padding:4px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;">Rejection Engine</a>
-    <a href="credit-score-simulator.html" style="padding:4px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;">Credit Score</a>
-    <a href="mortgage-map.html" style="padding:4px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;">Heat Map</a>
-    <a href="dream-home-quiz.html" style="padding:4px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;">Dream Home</a>
-    <a href="days-to-homeownership.html" style="padding:4px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;">Countdown</a>
-    <a href="tool-map.html" style="padding:4px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;">All Tools</a>
-  </div>
 <footer>
   <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
-  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 · Data: NAR, FRED, Census Bureau · Educational use only</div>
+  <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:6px;">© 2026 · Data: NAR, FRED, Census · Educational use only</div>
 </footer>
 
 <script>
-var stateData = {
-  AL:{name:'Alabama',price:218000,income:54000,tax:1.33,rate:6.8,demand:'COLD',verdict:'Alabama offers some of the best affordability in the Southeast. COLD demand gives buyers strong negotiating leverage. Low property taxes (1.33%) keep the all-in payment manageable.'},
-  AK:{name:'Alaska',price:345000,income:78000,tax:1.04,rate:7.0,demand:'COLD',verdict:'Alaska\'s remote markets are challenged. COLD demand and high logistics costs make it a buyer\'s market, but limited inventory creates its own dynamics.'},
-  AZ:{name:'Arizona',price:412000,income:65000,tax:0.63,rate:6.9,demand:'COLD',verdict:'Arizona peaked hard in 2021-22 and has been correcting since. COLD demand means real negotiating room. Phoenix is still overextended at 6.3× income.'},
-  AR:{name:'Arkansas',price:198000,income:50000,tax:0.63,rate:6.8,demand:'COLD',verdict:'Arkansas is one of the most affordable states in the country. Low prices, low taxes, COLD demand — buyers hold significant leverage here.'},
-  CA:{name:'California',price:785000,income:84000,tax:0.73,rate:7.2,demand:'COOLING',verdict:'California remains extremely stretched at 9.3× median income. COOLING demand signals softening but prices remain far above what most Californians can afford.'},
-  CO:{name:'Colorado',price:545000,income:78000,tax:0.51,rate:7.0,demand:'COOLING',verdict:'Colorado has cooled significantly from its 2022 peak. Denver and Boulder remain expensive at 7.0× income, but COOLING demand is bringing sellers back to earth.'},
-  CT:{name:'Connecticut',price:398000,income:82000,tax:2.14,rate:6.9,demand:'WARM',verdict:'Connecticut is quietly one of the better value propositions in the Northeast. WARM demand, strong salaries, and proximity to NYC make it attractive for remote workers.'},
-  DE:{name:'Delaware',price:358000,income:70000,tax:0.57,rate:6.9,demand:'WARM',verdict:'Delaware\'s low property taxes (0.57%) are a significant advantage. WARM demand means balanced conditions. No sales tax is an additional financial benefit.'},
-  FL:{name:'Florida',price:412000,income:63000,tax:0.98,rate:7.1,demand:'COOLING',verdict:'Florida is cooling after a dramatic post-pandemic surge. Insurance costs have surged 40%+ statewide, adding $300-600/month to all-in costs that most calculators ignore.'},
-  GA:{name:'Georgia',price:328000,income:65000,tax:0.91,rate:6.9,demand:'COOLING',verdict:'Atlanta metro has cooled but remains active. Suburban Georgia offers excellent value — Alpharetta and Marietta show strong fundamentals at more reasonable prices.'},
-  HI:{name:'Hawaii',price:845000,income:88000,tax:0.28,rate:7.2,demand:'COLD',verdict:'Hawaii is the least affordable state at 9.6× income. COLD demand gives buyers leverage, but the fundamental math is extremely challenging for most buyers.'},
-  ID:{name:'Idaho',price:412000,income:62000,tax:0.69,rate:6.9,demand:'COLD',verdict:'Boise exploded in 2020-2022 and has been correcting. COLD demand now. The correction may not be over — inventory is building and sellers are adjusting expectations.'},
-  IL:{name:'Illinois',price:298000,income:68000,tax:2.27,rate:7.0,demand:'COOLING',verdict:'Illinois\'s high property tax (2.27%) significantly increases all-in costs. Chicago proper is cooling; suburban Cook County and collar counties offer better value.'},
-  IN:{name:'Indiana',price:245000,income:60000,tax:0.85,rate:6.8,demand:'WARM',verdict:'Indiana is consistently one of the best-value states. Indianapolis and Carmel offer strong fundamentals — good schools, solid jobs, reasonable prices at 4.1× income.'},
-  IA:{name:'Iowa',price:215000,income:61000,tax:1.57,rate:6.8,demand:'WARM',verdict:'Iowa remains deeply affordable. WARM demand with solid fundamentals. Des Moines in particular shows strong employment growth relative to home prices.'},
-  KS:{name:'Kansas',price:225000,income:60000,tax:1.41,rate:6.8,demand:'WARM',verdict:'Kansas offers Midwest affordability at its best. Overland Park and Wichita provide quality of life at prices that work for median-income buyers.'},
-  KY:{name:'Kentucky',price:215000,income:55000,tax:0.86,rate:6.8,demand:'COLD',verdict:'Kentucky is affordable but income levels are also lower. Louisville offers the best balance of price, amenity, and employment. COLD demand = buyer leverage.'},
-  LA:{name:'Louisiana',price:218000,income:53000,tax:0.55,rate:6.9,demand:'COLD',verdict:'Louisiana has insurance challenges similar to Florida — hurricane risk has driven premiums sky-high in coastal areas. Verify total insurance costs carefully before buying.'},
-  ME:{name:'Maine',price:358000,income:63000,tax:1.36,rate:6.9,demand:'WARM',verdict:'Maine saw massive pandemic demand from remote workers fleeing Boston and NYC. That has moderated. WARM market now with better negotiating room than 2021-22.'},
-  MD:{name:'Maryland',price:398000,income:90000,tax:1.09,rate:6.9,demand:'WARM',verdict:'Maryland benefits from proximity to DC and high federal/contractor salaries. WARM demand reflects continued strong employment. Prince George\'s County offers relative value.'},
-  MA:{name:'Massachusetts',price:598000,income:88000,tax:1.23,rate:7.0,demand:'WARM',verdict:'Massachusetts is expensive but has the salaries to support it. Boston metro remains competitive — WARM demand means it\'s not easy. Western MA offers dramatically better value.'},
-  MI:{name:'Michigan',price:245000,income:61000,tax:1.54,rate:6.8,demand:'COLD',verdict:'Michigan is the best buyer\'s market in the Midwest. Detroit metro at 2.8× income is historically cheap. COLD demand = maximum negotiating leverage. Underrated value play.'},
-  MN:{name:'Minnesota',price:325000,income:74000,tax:1.12,rate:6.9,demand:'WARM',verdict:'Minneapolis-St. Paul offers strong employment, quality of life, and reasonable prices for a major metro. WARM demand — balanced market with modest negotiating room.'},
-  MS:{name:'Mississippi',price:178000,income:46000,tax:0.79,rate:6.8,demand:'COLD',verdict:'Mississippi is the cheapest state in America for housing. But income levels are also the lowest nationally. The math works only if you\'re bringing income from elsewhere.'},
-  MO:{name:'Missouri',price:245000,income:61000,tax:1.01,rate:6.8,demand:'WARM',verdict:'Missouri offers strong Midwest value. Kansas City and St. Louis both show reasonable price-to-income ratios. WARM demand with balanced conditions.'},
-  MT:{name:'Montana',price:412000,income:62000,tax:0.84,rate:7.0,demand:'COLD',verdict:'Montana was dramatically overrun by remote workers 2020-22. Bozeman and Missoula are now COLD — prices correcting from absurd peaks. Still expensive relative to local incomes.'},
-  NE:{name:'Nebraska',price:258000,income:64000,tax:1.73,rate:6.8,demand:'WARM',verdict:'Nebraska is solid Midwest value. Omaha in particular offers strong employment and reasonable prices. WARM demand with good fundamentals.'},
-  NV:{name:'Nevada',price:398000,income:65000,tax:0.84,rate:7.0,demand:'COLD',verdict:'Las Vegas boomed and is now COLD. No state income tax is a benefit. But Las Vegas has no permanent water security — a long-term risk factor most buyers overlook.'},
-  NH:{name:'New Hampshire',price:412000,income:78000,tax:1.93,rate:6.9,demand:'WARM',verdict:'No income tax and no sales tax make NH attractive. High property taxes partially offset this. Manchester and Nashua are popular with Boston remote workers.'},
-  NJ:{name:'New Jersey',price:498000,income:85000,tax:2.47,rate:7.0,demand:'WARM',verdict:'New Jersey has the highest property taxes in America (2.47%). This dramatically increases all-in costs — add $1,000+/month to any mortgage payment for taxes alone.'},
-  NM:{name:'New Mexico',price:285000,income:55000,tax:0.79,rate:6.9,demand:'COLD',verdict:'Albuquerque and Santa Fe offer very different markets. Santa Fe is expensive and lifestyle-driven. Albuquerque is far more accessible for median-income buyers.'},
-  NY:{name:'New York',price:498000,income:75000,tax:1.72,rate:7.1,demand:'COOLING',verdict:'New York City proper is extremely expensive. Upstate NY offers dramatically better value — Buffalo, Rochester, and Syracuse have some of the best price-to-income ratios in the Northeast.'},
-  NC:{name:'North Carolina',price:342000,income:64000,tax:0.84,rate:6.9,demand:'WARM',verdict:'North Carolina is one of the most balanced major-growth states. Charlotte and Raleigh remain active WARM markets. Research Triangle shows strong employment diversity.'},
-  ND:{name:'North Dakota',price:268000,income:68000,tax:0.98,rate:6.8,demand:'WARM',verdict:'North Dakota has strong employment tied to energy and agriculture. Affordable housing relative to income. WARM stable market with little speculation.'},
-  OH:{name:'Ohio',price:245000,income:61000,tax:1.62,rate:6.8,demand:'WARM',verdict:'Ohio consistently ranks among the best-value states. Columbus, Cleveland, and Cincinnati all offer strong employment at reasonable prices. Akron is NAR\'s #1 appreciation market in 2026.'},
-  OK:{name:'Oklahoma',price:198000,income:55000,tax:0.88,rate:6.8,demand:'COLD',verdict:'Oklahoma City is one of the most underrated markets in the country. Sub-$200K median, solid employment, low taxes. COLD demand = real buyer leverage.'},
-  OR:{name:'Oregon',price:468000,income:72000,tax:0.97,rate:7.0,demand:'COLD',verdict:'Portland has been in correction since 2022 — COLD demand, prices falling. No sales tax is a benefit. Eastern Oregon offers dramatically lower prices for rural buyers.'},
-  PA:{name:'Pennsylvania',price:285000,income:67000,tax:1.58,rate:6.9,demand:'WARM',verdict:'Pennsylvania offers strong value outside Philadelphia. Pittsburgh in particular has excellent price-to-income fundamentals. Philadelphia metro WARM but stretched.'},
-  RI:{name:'Rhode Island',price:398000,income:72000,tax:1.63,rate:7.0,demand:'WARM',verdict:'Small state with limited inventory. Providence offers relative value vs Boston but has been appreciating steadily. WARM market with Boston spillover demand.'},
-  SC:{name:'South Carolina',price:298000,income:59000,tax:0.57,rate:6.9,demand:'COOLING',verdict:'South Carolina has very low property taxes (0.57%) — a significant advantage. Charlotte spillover and coastal demand. Myrtle Beach and Greenville growing rapidly.'},
-  SD:{name:'South Dakota',price:285000,income:63000,tax:1.31,rate:6.8,demand:'WARM',verdict:'No income tax makes South Dakota attractive. Sioux Falls offers solid fundamentals. WARM stable market. Popular with remote workers seeking lower cost of living.'},
-  TN:{name:'Tennessee',price:328000,income:62000,tax:0.71,rate:6.9,demand:'COOLING',verdict:'Tennessee has no income tax but Nashville has become very expensive. COOLING market as the pandemic boom unwinds. Memphis and Knoxville offer much better value.'},
-  TX:{name:'Texas',price:312000,income:67000,tax:1.80,rate:7.0,demand:'COLD',verdict:'Texas property taxes (1.80%) are among the highest in the nation — they offset the no-income-tax benefit significantly. Austin is COLD and still correcting. Dallas and Houston more stable.'},
-  UT:{name:'Utah',price:498000,income:74000,tax:0.63,rate:7.0,demand:'COLD',verdict:'Salt Lake City exploded during COVID and remains expensive at 6.7× income. COLD demand now. Low property taxes help. Southern Utah (St. George) continues to attract retirees.'},
-  VT:{name:'Vermont',price:358000,income:67000,tax:1.90,rate:7.0,demand:'COLD',verdict:'Vermont saw huge remote-work demand 2020-22. Now COLD. Scenic but limited employment base and harsh winters. Burlington is most liquid market.'},
-  VA:{name:'Virginia',price:398000,income:80000,tax:0.82,rate:6.9,demand:'WARM',verdict:'Northern Virginia benefits from federal/contractor employment and remains a WARM competitive market. Richmond and Virginia Beach offer better value. Strong overall fundamentals.'},
-  WA:{name:'Washington',price:568000,income:85000,tax:1.03,rate:7.1,demand:'COOLING',verdict:'Seattle remains expensive but is COOLING. No income tax. Tech layoffs have softened demand. Eastern Washington (Spokane) offers dramatically better affordability.'},
-  WV:{name:'West Virginia',price:158000,income:48000,tax:0.59,rate:6.8,demand:'COLD',verdict:'West Virginia is the cheapest state for housing in America. Low income levels make the math complicated. Best for buyers relocating with income from higher-wage states.'},
-  WI:{name:'Wisconsin',price:285000,income:67000,tax:1.85,rate:6.8,demand:'WARM',verdict:'Wisconsin offers solid Midwest value. Milwaukee and Madison both show reasonable fundamentals. WARM stable market with modest property taxes.'},
-  WY:{name:'Wyoming',price:312000,income:65000,tax:0.61,rate:6.9,demand:'COLD',verdict:'Wyoming has no income tax and low property taxes. COLD demand. Jackson Hole is absurdly expensive — rest of state is far more accessible. Growing remote-work destination.'}
+var D={
+  WA:{n:'Washington',p:568000,i:85000,r:7.1,d:'COOLING',tx:1.03,v:'Seattle is expensive but COOLING. Tech layoffs have softened demand. Eastern Washington (Spokane) offers dramatically better affordability at under $300K.'},
+  OR:{n:'Oregon',p:468000,i:72000,r:7.0,d:'COLD',tx:0.97,v:'Portland has been correcting since 2022 — COLD demand, prices falling. No sales tax is a benefit. Eastern Oregon offers dramatically lower prices for rural buyers.'},
+  CA:{n:'California',p:785000,i:84000,r:7.2,d:'COOLING',tx:0.73,v:'Extremely stretched at 9.3× median income. COOLING demand signals softening but prices remain far above what most Californians can afford.'},
+  ID:{n:'Idaho',p:412000,i:62000,r:6.9,d:'COLD',tx:0.69,v:'Boise exploded in 2020-2022 and has been correcting. COLD demand now. The correction may not be over — inventory is building.'},
+  NV:{n:'Nevada',p:398000,i:65000,r:7.0,d:'COLD',tx:0.84,v:'Las Vegas boomed and is now COLD. No state income tax is a benefit. Water scarcity is a long-term risk factor most buyers overlook.'},
+  AZ:{n:'Arizona',p:412000,i:65000,r:6.9,d:'COLD',tx:0.63,v:'Arizona peaked hard in 2021-22 and has been correcting since. COLD demand means real negotiating room. Phoenix still overextended at 6.3× income.'},
+  MT:{n:'Montana',p:412000,i:62000,r:7.0,d:'COLD',tx:0.84,v:'Dramatically overrun by remote workers 2020-22. Bozeman and Missoula are now COLD — prices correcting from absurd peaks.'},
+  WY:{n:'Wyoming',p:312000,i:65000,r:6.9,d:'COLD',tx:0.61,v:'No income tax and low property taxes. COLD demand. Jackson Hole is absurdly expensive — rest of state is far more accessible.'},
+  CO:{n:'Colorado',p:545000,i:78000,r:7.0,d:'COOLING',tx:0.51,v:'Has cooled significantly from its 2022 peak. Denver and Boulder remain expensive at 7.0× income, but COOLING demand is bringing sellers back to earth.'},
+  NM:{n:'New Mexico',p:285000,i:55000,r:6.9,d:'COLD',tx:0.79,v:'Albuquerque and Santa Fe offer very different markets. Albuquerque is far more accessible for median-income buyers. Santa Fe is lifestyle-driven and expensive.'},
+  UT:{n:'Utah',p:498000,i:74000,r:7.0,d:'COLD',tx:0.63,v:'Salt Lake City exploded during COVID and remains expensive at 6.7× income. COLD demand now. Low property taxes help the all-in cost.'},
+  ND:{n:'North Dakota',p:268000,i:68000,r:6.8,d:'WARM',tx:0.98,v:'Strong employment tied to energy and agriculture. Affordable housing relative to income. WARM stable market with little speculation.'},
+  SD:{n:'South Dakota',p:285000,i:63000,r:6.8,d:'WARM',tx:1.31,v:'No income tax makes South Dakota attractive. Sioux Falls offers solid fundamentals. WARM stable market popular with remote workers.'},
+  NE:{n:'Nebraska',p:258000,i:64000,r:6.8,d:'WARM',tx:1.73,v:'Solid Midwest value. Omaha in particular offers strong employment and reasonable prices. WARM demand with good fundamentals.'},
+  KS:{n:'Kansas',p:225000,i:60000,r:6.8,d:'WARM',tx:1.41,v:'Midwest affordability at its best. Overland Park and Wichita provide quality of life at prices that work for median-income buyers.'},
+  OK:{n:'Oklahoma',p:198000,i:55000,r:6.8,d:'COLD',tx:0.88,v:'Oklahoma City is one of the most underrated markets in the country. Sub-$200K median, solid employment, low taxes. COLD demand = real buyer leverage.'},
+  TX:{n:'Texas',p:312000,i:67000,r:7.0,d:'COLD',tx:1.80,v:'Property taxes (1.80%) are among the highest in the nation — offsetting the no-income-tax benefit. Austin is COLD and correcting. Dallas and Houston more stable.'},
+  MN:{n:'Minnesota',p:325000,i:74000,r:6.9,d:'WARM',tx:1.12,v:'Minneapolis-St. Paul offers strong employment, quality of life, and reasonable prices for a major metro. WARM demand — balanced market.'},
+  IA:{n:'Iowa',p:215000,i:61000,r:6.8,d:'WARM',tx:1.57,v:'Remains deeply affordable. WARM demand with solid fundamentals. Des Moines shows strong employment growth relative to home prices.'},
+  MO:{n:'Missouri',p:245000,i:61000,r:6.8,d:'WARM',tx:1.01,v:'Offers strong Midwest value. Kansas City and St. Louis both show reasonable price-to-income ratios. WARM demand with balanced conditions.'},
+  AR:{n:'Arkansas',p:198000,i:50000,r:6.8,d:'COLD',tx:0.63,v:'One of the most affordable states in the country. Low prices, low taxes, COLD demand — buyers hold significant leverage here.'},
+  LA:{n:'Louisiana',p:218000,i:53000,r:6.9,d:'COLD',tx:0.55,v:'Insurance challenges similar to Florida — hurricane risk has driven premiums sky-high in coastal areas. Verify total insurance costs carefully before buying.'},
+  WI:{n:'Wisconsin',p:285000,i:67000,r:6.8,d:'WARM',tx:1.85,v:'Solid Midwest value. Milwaukee and Madison both show reasonable fundamentals. WARM stable market with modest property taxes.'},
+  IL:{n:'Illinois',p:298000,i:68000,r:7.0,d:'COOLING',tx:2.27,v:'High property tax (2.27%) significantly increases all-in costs. Chicago proper is cooling; suburban Cook County and collar counties offer better value.'},
+  MI:{n:'Michigan',p:245000,i:61000,r:6.8,d:'COLD',tx:1.54,v:'Best buyer\'s market in the Midwest. Detroit metro at 2.8× income is historically cheap. COLD demand = maximum negotiating leverage. Most underrated value in America.'},
+  IN:{n:'Indiana',p:245000,i:60000,r:6.8,d:'WARM',tx:0.85,v:'Consistently one of the best-value states. Indianapolis and Carmel offer strong fundamentals — good schools, solid jobs, reasonable prices at 4.1× income.'},
+  OH:{n:'Ohio',p:245000,i:61000,r:6.8,d:'WARM',tx:1.62,v:'Consistently ranks among the best-value states. Columbus, Cleveland, and Cincinnati all offer strong employment at reasonable prices. Akron is NAR\'s #1 appreciation market in 2026.'},
+  KY:{n:'Kentucky',p:215000,i:55000,r:6.8,d:'COLD',tx:0.86,v:'Affordable but income levels are also lower. Louisville offers the best balance of price, amenity, and employment. COLD demand = buyer leverage.'},
+  TN:{n:'Tennessee',p:328000,i:62000,r:6.9,d:'COOLING',tx:0.71,v:'No income tax but Nashville has become very expensive. COOLING market as the pandemic boom unwinds. Memphis and Knoxville offer much better value.'},
+  MS:{n:'Mississippi',p:178000,i:46000,r:6.8,d:'COLD',tx:0.79,v:'Cheapest state in America for housing. Income levels are also the lowest nationally. The math works only if you\'re bringing income from elsewhere.'},
+  AL:{n:'Alabama',p:218000,i:54000,r:6.8,d:'COLD',tx:1.33,v:'Offers some of the best affordability in the Southeast. COLD demand gives buyers strong negotiating leverage. Low property taxes keep the all-in payment manageable.'},
+  GA:{n:'Georgia',p:328000,i:65000,r:6.9,d:'COOLING',tx:0.91,v:'Atlanta metro has cooled but remains active. Suburban Georgia offers excellent value — Alpharetta and Marietta show strong fundamentals at more reasonable prices.'},
+  FL:{n:'Florida',p:412000,i:63000,r:7.1,d:'COOLING',tx:0.98,v:'Cooling after a dramatic post-pandemic surge. Insurance costs have surged 40%+ statewide — adding $300-600/month to all-in costs that most calculators ignore.'},
+  SC:{n:'South Carolina',p:298000,i:59000,r:6.9,d:'COOLING',tx:0.57,v:'Very low property taxes (0.57%) — a significant advantage. Charlotte spillover and coastal demand. Myrtle Beach and Greenville growing rapidly.'},
+  NC:{n:'North Carolina',p:342000,i:64000,r:6.9,d:'WARM',tx:0.84,v:'One of the most balanced major-growth states. Charlotte and Raleigh remain active WARM markets. Research Triangle shows strong employment diversity.'},
+  VA:{n:'Virginia',p:398000,i:80000,r:6.9,d:'WARM',tx:0.82,v:'Northern Virginia benefits from federal/contractor employment and remains a WARM competitive market. Richmond and Virginia Beach offer better value.'},
+  WV:{n:'West Virginia',p:158000,i:48000,r:6.8,d:'COLD',tx:0.59,v:'Cheapest state for housing in America. Low income levels make the math complicated. Best for buyers relocating with income from higher-wage states.'},
+  PA:{n:'Pennsylvania',p:285000,i:67000,r:6.9,d:'WARM',tx:1.58,v:'Offers strong value outside Philadelphia. Pittsburgh in particular has excellent price-to-income fundamentals. Philadelphia metro WARM but stretched.'},
+  NY:{n:'New York',p:498000,i:75000,r:7.1,d:'COOLING',tx:1.72,v:'NYC proper is extremely expensive. Upstate NY offers dramatically better value — Buffalo, Rochester, and Syracuse have some of the best price-to-income ratios in the Northeast.'},
+  MD:{n:'Maryland',p:398000,i:90000,r:6.9,d:'WARM',tx:1.09,v:'Benefits from proximity to DC and high federal/contractor salaries. WARM demand reflects continued strong employment. Prince George\'s County offers relative value.'},
+  DE:{n:'Delaware',p:358000,i:70000,r:6.9,d:'WARM',tx:0.57,v:'Low property taxes (0.57%) are a significant advantage. WARM demand means balanced conditions. No sales tax is an additional financial benefit.'},
+  NJ:{n:'New Jersey',p:498000,i:85000,r:7.0,d:'WARM',tx:2.47,v:'Highest property taxes in America (2.47%). This dramatically increases all-in costs — add $1,000+/month to any mortgage payment for taxes alone. WARM demand driven by NYC proximity.'},
+  CT:{n:'Connecticut',p:398000,i:82000,r:6.9,d:'WARM',tx:2.14,v:'Quietly one of the better value propositions in the Northeast. WARM demand, strong salaries, and proximity to NYC make it attractive for remote workers.'},
+  RI:{n:'Rhode Island',p:398000,i:72000,r:7.0,d:'WARM',tx:1.63,v:'Small state with limited inventory. Providence offers relative value vs Boston but has been appreciating steadily. WARM market with Boston spillover demand.'},
+  MA:{n:'Massachusetts',p:598000,i:88000,r:7.0,d:'WARM',tx:1.23,v:'Expensive but has the salaries to support it. Boston metro remains competitive. Western MA offers dramatically better value at prices $200K+ below Boston suburbs.'},
+  VT:{n:'Vermont',p:358000,i:67000,r:7.0,d:'COLD',tx:1.90,v:'Saw huge remote-work demand 2020-22. Now COLD. Scenic but limited employment base and harsh winters. Burlington is most liquid market.'},
+  NH:{n:'New Hampshire',p:412000,i:78000,r:6.9,d:'WARM',tx:1.93,v:'No income tax and no sales tax make NH attractive. High property taxes partially offset this. Manchester and Nashua popular with Boston remote workers.'},
+  ME:{n:'Maine',p:358000,i:63000,r:6.9,d:'WARM',tx:1.36,v:'Saw massive pandemic demand from remote workers fleeing Boston and NYC. That has moderated. WARM market now with better negotiating room than 2021-22.'},
+  AK:{n:'Alaska',p:345000,i:78000,r:7.0,d:'COLD',tx:1.04,v:'Remote markets are challenged. COLD demand and high logistics costs make it a buyer\'s market, but limited inventory creates its own dynamics. No state income tax.'},
+  HI:{n:'Hawaii',p:845000,i:88000,r:7.2,d:'COLD',tx:0.28,v:'Least affordable state at 9.6× income. COLD demand gives buyers leverage, but the fundamental math is extremely challenging for most buyers.'}
 };
 
-var demandColor={'HOT':'#c0392b','WARM':'#d4a017','COOLING':'#2563eb','COLD':'#374151'};
-var demandEmoji={'HOT':'🔥','WARM':'🟡','COOLING':'🔵','COLD':'❄️'};
+var dColor={HOT:'#e84040',WARM:'#d4a017',COOLING:'#2563eb',COLD:'#6b7280'};
+var dEmoji={HOT:'🔥',WARM:'🟡',COOLING:'🔵',COLD:'❄️'};
 
 function fmt(n){return '$'+Math.round(n).toLocaleString();}
 function moPay(p,r){var mr=r/100/12,n=360;return p*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1);}
+function salNeeded(p,r,tx){
+  var mo=moPay(p*0.8,r)+p*tx/100/12+150;
+  return Math.round(mo/0.28*12/1000);
+}
+
+var tooltip=document.getElementById('tooltip');
+var activeState=null;
 
 document.querySelectorAll('.state').forEach(function(el){
+  var id=el.id;
+  var d=D[id];
+  if(!d) return;
+
+  // Hover — show tooltip
+  el.addEventListener('mousemove',function(e){
+    var sal=salNeeded(d.p,d.r,d.tx);
+    document.getElementById('tt-name').textContent=d.n;
+    document.getElementById('tt-demand').textContent=dEmoji[d.d]+' '+d.d;
+    document.getElementById('tt-demand').style.cssText='background:'+dColor[d.d]+'22;color:'+dColor[d.d]+';border:1px solid '+dColor[d.d]+'44;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:700;margin-bottom:6px;display:inline-block;';
+    document.getElementById('tt-price').textContent=fmt(d.p);
+    document.getElementById('tt-sal').textContent='$'+sal+'K+';
+    document.getElementById('tt-rate').textContent=d.r+'%';
+    tooltip.style.display='block';
+    tooltip.style.left=e.clientX+'px';
+    tooltip.style.top=(e.clientY-10)+'px';
+  });
+
+  el.addEventListener('mouseleave',function(){
+    tooltip.style.display='none';
+  });
+
+  // Click — show panel
   el.addEventListener('click',function(){
-    var id=this.id;
-    var d=stateData[id];
-    if(!d) return;
-
-    // Update active state
-    document.querySelectorAll('.state').forEach(function(s){s.classList.remove('active');});
+    tooltip.style.display='none';
+    if(activeState) activeState.classList.remove('active');
     this.classList.add('active');
+    activeState=this;
 
-    var mo=moPay(d.price*0.8, d.rate);
-    var tax=Math.round(d.price*d.tax/100/12);
-    var total=mo+tax+150;
-    var sal=Math.round(total/0.28*12/1000);
-    var ratio=(d.price/d.income).toFixed(1);
-    var dc=demandColor[d.demand];
+    var sal=salNeeded(d.p,d.r,d.tx);
+    var mo=Math.round(moPay(d.p*0.8,d.r)+d.p*d.tx/100/12+150);
+    var ratio=(d.p/d.i).toFixed(1);
+    var dc=dColor[d.d];
+    var slug=d.n.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z-]/g,'');
 
-    var html=
-      '<div class="state-header">'+
-        '<div>'+
-          '<div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:6px;">'+id+' · 2026 Market Data</div>'+
-          '<div class="state-name">'+d.name+'</div>'+
+    document.getElementById('panelContent').innerHTML=
+      '<div class="panel-header">'+
+        '<div class="panel-left">'+
+          '<div class="panel-abbr">'+id+' · 2026 Market</div>'+
+          '<div class="panel-name">'+d.n+'</div>'+
+          '<div class="panel-demand" style="background:'+dc+'18;color:'+dc+';border:1px solid '+dc+'44;">'+dEmoji[d.d]+' '+d.d+' Market</div>'+
         '</div>'+
-        '<div class="demand-badge" style="background:'+dc+'22;color:'+dc+';border:1px solid '+dc+'44;">'+demandEmoji[d.demand]+' '+d.demand+' Market</div>'+
       '</div>'+
-
-      '<div class="state-stats">'+
-        '<div class="ss"><div class="ss-n">'+fmt(d.price)+'</div><div class="ss-l">Median Home</div></div>'+
-        '<div class="ss"><div class="ss-n">'+fmt(Math.round(total))+'<span style="font-size:14px;">/mo</span></div><div class="ss-l">PITI Payment</div></div>'+
-        '<div class="ss"><div class="ss-n">$'+sal+'K+</div><div class="ss-l">Salary Needed</div></div>'+
-        '<div class="ss"><div class="ss-n">'+ratio+'×</div><div class="ss-l">Price/Income</div></div>'+
+      '<div class="panel-stats">'+
+        '<div class="ps"><div class="ps-n" style="color:'+dc+';">'+fmt(d.p)+'</div><div class="ps-l">Median Home</div></div>'+
+        '<div class="ps"><div class="ps-n" style="color:'+dc+';">'+fmt(mo)+'/mo</div><div class="ps-l">PITI Payment</div></div>'+
+        '<div class="ps"><div class="ps-n" style="color:'+dc+';">$'+sal+'K+</div><div class="ps-l">Salary Needed</div></div>'+
+        '<div class="ps"><div class="ps-n" style="color:'+dc+';">'+ratio+'×</div><div class="ps-l">Price/Income</div></div>'+
       '</div>'+
-
-      '<div class="state-verdict">'+d.verdict+'</div>'+
-
-      '<div class="state-actions">'+
-        '<a href="salary-to-buy-home-in-'+d.name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z-]/g,'')+'.html" class="sa primary">'+d.name+' Full Report →</a>'+
-        '<a href="mortgage-navigator.html" class="sa">Plot My Route →</a>'+
-        '<a href="mortgage-calculator.html" class="sa">Calculate Payment →</a>'+
+      '<div class="panel-verdict">'+d.v+'</div>'+
+      '<div class="panel-actions">'+
+        '<a href="salary-to-buy-home-in-'+slug+'.html" class="pa primary">'+d.n+' Full Report →</a>'+
+        '<a href="mortgage-navigator.html" class="pa secondary">Plot My Route →</a>'+
+        '<a href="mortgage-calculator.html" class="pa secondary">Calculate →</a>'+
       '</div>';
 
-    document.getElementById('stateContent').innerHTML=html;
-    document.getElementById('stateCard').classList.add('visible');
-    document.getElementById('defaultMsg').style.display='none';
-    document.getElementById('stateCard').scrollIntoView({behavior:'smooth',block:'nearest'});
+    document.getElementById('statePanel').classList.add('visible');
+    document.getElementById('defaultHint').style.display='none';
+    document.getElementById('statePanel').scrollIntoView({behavior:'smooth',block:'nearest'});
   });
 });
 </script>
