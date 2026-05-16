@@ -76,7 +76,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <div class="w">
   <!-- Agent bar -->
   <div class="ab">
-    <div class="av">👤</div>
+    <div class="av" id="agentAvatar" style="font-family:'Geist',sans-serif;font-size:13px;font-weight:700;color:#fff;background:linear-gradient(135deg,#c8a44a,#f0d060);">ZY</div>
     <div>
       <div class="an" id="agentName">Your Agent</div>
       <div class="at" id="agentTitle">Licensed Real Estate Agent</div>
@@ -199,6 +199,20 @@ var partnerId = params.get('partner') || '';
 var listingPrice = params.get('price') || '';
 
 document.getElementById('agentName').textContent = agentName;
+// Set initials avatar
+var parts = agentName.trim().split(' ');
+var initials = parts.length >= 2 ? parts[0][0]+parts[parts.length-1][0] : agentName.slice(0,2);
+document.getElementById('agentAvatar').textContent = initials.toUpperCase();
+// Random but consistent color based on name
+var colors = [
+  'linear-gradient(135deg,#c8a44a,#f0d060)',
+  'linear-gradient(135deg,#2563eb,#60a5fa)',
+  'linear-gradient(135deg,#16a34a,#4ade80)',
+  'linear-gradient(135deg,#9333ea,#c084fc)',
+  'linear-gradient(135deg,#e84040,#f87171)',
+];
+var colorIdx = agentName.charCodeAt(0) % colors.length;
+document.getElementById('agentAvatar').style.background = colors[colorIdx];
 if(agentMarket) document.getElementById('agentTitle').textContent = 'Real Estate Agent · '+agentMarket;
 if(listingPrice) document.getElementById('price').value = listingPrice;
 

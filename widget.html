@@ -168,7 +168,7 @@ footer{background:#0a1f5c;padding:28px 60px;text-align:center;}
       <div class="frc-pro">
         <!-- Agent bar -->
         <div class="frc-agent-bar">
-          <div class="frc-agent-avatar">👤</div>
+          <div class="frc-agent-avatar" id="previewAvatar" style="background:linear-gradient(135deg,#9333ea,#c084fc);font-family:'Geist',sans-serif;font-size:14px;font-weight:700;color:#fff;">SJ</div>
           <div>
             <div class="frc-agent-name" id="agentNameDisplay">Sarah Johnson</div>
             <div class="frc-agent-title">Licensed Real Estate Agent · Keller Williams</div>
@@ -399,6 +399,11 @@ function updateDemand(){
 function updatePreview(){
   var name=document.getElementById('agentName').value||'Sarah Johnson';
   document.getElementById('agentNameDisplay').textContent=name;
+  var parts=name.trim().split(' ');
+  var initials=parts.length>=2?parts[0][0]+parts[parts.length-1][0]:name.slice(0,2);
+  document.getElementById('previewAvatar').textContent=initials.toUpperCase();
+  var colors=['linear-gradient(135deg,#c8a44a,#f0d060)','linear-gradient(135deg,#2563eb,#60a5fa)','linear-gradient(135deg,#16a34a,#4ade80)','linear-gradient(135deg,#9333ea,#c084fc)','linear-gradient(135deg,#e84040,#f87171)'];
+  document.getElementById('previewAvatar').style.background=colors[name.charCodeAt(0)%colors.length];
   document.getElementById('leadThanks').textContent='✅ Sent! '+name.split(' ')[0]+' will follow up shortly.';
   updateEmbed();
 }
