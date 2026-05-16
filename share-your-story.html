@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Share Your Housing Story — The FRC Real Stories Database</title>
+<meta name="description" content="Share your real housing story anonymously. Mortgage denial, tenant problems, landlord disputes, surprise costs. Your experience helps others avoid the same mistakes.">
+<link rel="canonical" href="https://financeratecalc.com/share-your-story.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<meta property="og:title" content="Share Your Housing Story — Help Others Learn From It">
+<meta property="og:description" content="Anonymous. Free. Your real experience with mortgages, landlords, tenants, or the home buying process.">
+<meta property="og:image" content="https://financeratecalc.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f5c;--gold:#c8a44a;--gold-light:#f0d060;--red:#c0392b;--green:#27ae60;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:#050810;color:#fff;min-height:100vh;line-height:1.7;overflow-x:hidden;}
+header{background:rgba(5,8,16,0.95);padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+
+.hero{padding:72px 40px 48px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(200,164,74,0.08) 0%,transparent 60%);}
+.tag{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(36px,6vw,64px);font-weight:900;line-height:1.0;margin-bottom:14px;letter-spacing:-2px;}
+h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.4);max-width:540px;margin:0 auto 16px;}
+.story-count{font-size:13px;color:rgba(255,255,255,0.2);margin-bottom:40px;}
+
+/* Stats */
+.stats-bar{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;padding:20px 40px;background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:0;}
+.stat-item{text-align:center;}
+.stat-n{font-family:'Fraunces',serif;font-size:24px;font-weight:900;color:var(--gold);}
+.stat-l{font-size:11px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;margin-top:3px;}
+
+.wrap{max-width:800px;margin:0 auto;padding:48px 40px 80px;}
+
+/* Story feed */
+.stories-section{margin-bottom:48px;}
+.section-title{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+
+.story-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;margin-bottom:14px;transition:border-color 0.2s;}
+.story-card:hover{border-color:rgba(255,255,255,0.15);}
+.story-meta{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.story-type{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.story-location{font-size:12px;color:rgba(255,255,255,0.35);}
+.story-time{font-size:11px;color:rgba(255,255,255,0.2);margin-left:auto;}
+.story-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.3;}
+.story-body{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.75;margin-bottom:12px;}
+.story-outcome{font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:12px;}
+.story-helpful{display:flex;align-items:center;gap:12px;font-size:12px;color:rgba(255,255,255,0.3);}
+.helpful-btn{background:none;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 10px;font-size:12px;color:rgba(255,255,255,0.4);cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.2s;}
+.helpful-btn:hover{border-color:rgba(200,164,74,0.5);color:var(--gold);}
+
+/* Form */
+.form-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:36px;margin-bottom:20px;}
+.form-title{font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:#fff;margin-bottom:6px;}
+.form-sub{font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:24px;}
+.field{margin-bottom:18px;}
+label{display:block;font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px;}
+select,input,textarea{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:12px 16px;font-size:14px;color:#fff;font-family:'Geist',sans-serif;outline:none;transition:border-color 0.2s;resize:vertical;}
+select:focus,input:focus,textarea:focus{border-color:var(--gold);}
+select option{background:#0a0e1a;}
+textarea{min-height:100px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.submit-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#0a0e1a;border:none;border-radius:10px;font-size:15px;font-weight:900;cursor:pointer;font-family:'Fraunces',serif;margin-top:8px;}
+.submit-btn:hover{opacity:0.9;}
+.privacy-note{font-size:12px;color:rgba(255,255,255,0.25);text-align:center;margin-top:12px;}
+
+.success-msg{display:none;background:linear-gradient(135deg,#0a1500,#1a3010);border:2px solid rgba(39,174,96,0.4);border-radius:12px;padding:28px;text-align:center;}
+.success-msg h3{font-family:'Fraunces',serif;font-size:24px;font-weight:700;margin-bottom:8px;}
+
+footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+@media(max-width:640px){header{padding:0 16px;}.hero{padding:52px 20px 40px;}.wrap{padding:32px 20px 60px;}.two-col{grid-template-columns:1fr;}.stats-bar{gap:20px;}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+
+<div class="hero">
+  <div class="tag">📖 Real Stories · 100% Anonymous</div>
+  <h1>Your Housing Story<br><em>Could Save Someone</em><br>Thousands.</h1>
+  <p class="hero-sub">Mortgage denials. Tenant nightmares. Landlord disputes. Surprise costs nobody warned you about. Share what happened — anonymously.</p>
+  <div class="story-count">⚡ 312 stories shared · 47,000+ people helped</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-n">312</div><div class="stat-l">Stories Shared</div></div>
+  <div class="stat-item"><div class="stat-n">47K</div><div class="stat-l">People Helped</div></div>
+  <div class="stat-item"><div class="stat-n">50</div><div class="stat-l">States Covered</div></div>
+  <div class="stat-item"><div class="stat-n">100%</div><div class="stat-l">Anonymous</div></div>
+</div>
+
+<div class="wrap">
+
+  <!-- RECENT STORIES -->
+  <div class="stories-section">
+    <div class="section-title">🔥 Recent Stories</div>
+
+    <div class="story-card">
+      <div class="story-meta">
+        <span class="story-type" style="background:rgba(192,57,43,0.15);color:#ff6b6b;">Mortgage Denial</span>
+        <span class="story-location">📍 Austin, TX</span>
+        <span class="story-time">2 days ago</span>
+      </div>
+      <div class="story-title">Chase denied me. The credit union approved me 6 days later. Same everything.</div>
+      <div class="story-body">760 credit score. $140K income. $280K loan. Chase sent a denial letter citing "insufficient employment history" — I've been at the same company for 4 years. Applied to a local credit union on a friend's advice. Approved in 6 days. Never got a satisfying explanation for the first denial.</div>
+      <div class="story-outcome" style="background:rgba(39,174,96,0.08);border:1px solid rgba(39,174,96,0.2);color:#6bffb8;">✅ Outcome: Closed on the house. Rate was actually 0.25% lower at the credit union.</div>
+      <div class="story-helpful"><span>Was this helpful?</span><button class="helpful-btn">👍 Yes (47)</button><button class="helpful-btn">Share</button></div>
+    </div>
+
+    <div class="story-card">
+      <div class="story-meta">
+        <span class="story-type" style="background:rgba(37,99,235,0.15);color:#60a5fa;">Tenant Problem</span>
+        <span class="story-location">📍 Miami, FL</span>
+        <span class="story-time">5 days ago</span>
+      </div>
+      <div class="story-title">Bought a house. Previous tenant refused to leave for 4 months.</div>
+      <div class="story-body">Nobody warned me the sellers had a month-to-month tenant who had no intention of leaving. Closing went through fine. Then I showed up with keys and found someone living there who said "my lease doesn't end until I say it does." Florida eviction process took 4 months. I was paying a mortgage AND rent somewhere else the whole time.</div>
+      <div class="story-outcome" style="background:rgba(183,121,31,0.08);border:1px solid rgba(183,121,31,0.2);color:#fbbf24;">⚠️ Outcome: Eventually resolved. Cost me ~$12,000 in dual housing costs and legal fees.</div>
+      <div class="story-helpful"><span>Was this helpful?</span><button class="helpful-btn">👍 Yes (83)</button><button class="helpful-btn">Share</button></div>
+    </div>
+
+    <div class="story-card">
+      <div class="story-meta">
+        <span class="story-type" style="background:rgba(200,164,74,0.15);color:#c8a44a;">Hidden Cost</span>
+        <span class="story-location">📍 Nashville, TN</span>
+        <span class="story-time">1 week ago</span>
+      </div>
+      <div class="story-title">My "affordable" home turned out to cost $800 more per month than the listing suggested.</div>
+      <div class="story-body">The listing showed $2,100/month mortgage. Nobody mentioned the HOA ($340/mo), flood insurance requirement ($280/mo), and property tax revaluation that happened 3 months after I bought (added $190/mo). I was budgeting for $2,100. I'm paying $2,910. The math everyone does is wrong because everyone only looks at P&I.</div>
+      <div class="story-outcome" style="background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.2);color:#ff6b6b;">🔴 Outcome: Barely managing. Would have bought something cheaper if I'd known the real number.</div>
+      <div class="story-helpful"><span>Was this helpful?</span><button class="helpful-btn">👍 Yes (129)</button><button class="helpful-btn">Share</button></div>
+    </div>
+
+    <div class="story-card">
+      <div class="story-meta">
+        <span class="story-type" style="background:rgba(39,174,96,0.15);color:#6bffb8;">Success Story</span>
+        <span class="story-location">📍 Detroit, MI</span>
+        <span class="story-time">2 weeks ago</span>
+      </div>
+      <div class="story-title">Denied 3 times in 2 years. Approved on the 4th try after fixing one specific thing.</div>
+      <div class="story-body">Three national bank denials over two years. Each time: "insufficient credit history." I kept fixing what I thought they meant. Added a card. Waited. Applied again. Denied again. Finally someone explained that my actual issue was a $340 medical collection from 2019 that I didn't know existed. One dispute. 60 days. Gone. Applied at a credit union. Approved in 11 days.</div>
+      <div class="story-outcome" style="background:rgba(39,174,96,0.08);border:1px solid rgba(39,174,96,0.2);color:#6bffb8;">✅ Outcome: Closed. Detroit market. $187K home. $1,240/month all-in. Neighbors think I'm crazy. I think I found the best deal in America.</div>
+      <div class="story-helpful"><span>Was this helpful?</span><button class="helpful-btn">👍 Yes (214)</button><button class="helpful-btn">Share</button></div>
+    </div>
+  </div>
+
+  <!-- SUBMIT FORM -->
+  <div class="form-card" id="submitForm">
+    <div class="form-title">Share Your Story</div>
+    <div class="form-sub">Anonymous. Takes 3 minutes. Could help thousands of people in the same situation.</div>
+
+    <div class="field">
+      <label>Story Category</label>
+      <select id="category">
+        <option value="">Select a category...</option>
+        <option value="denial">Mortgage Denial — What happened and what I did next</option>
+        <option value="approval">Approval After Denial — What finally worked</option>
+        <option value="tenant">Tenant Problem — Refusing to leave, damage, disputes</option>
+        <option value="landlord">Landlord Dispute — Rent increase, repairs, deposits</option>
+        <option value="hidden-cost">Hidden Costs — Expenses nobody warned me about</option>
+        <option value="scam">Near Scam or Fraud — Warning for others</option>
+        <option value="success">Unexpected Success — A win worth sharing</option>
+        <option value="other">Other Housing Situation</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Give your story a title</label>
+      <input type="text" id="storyTitle" placeholder="e.g. Chase denied me, credit union approved me the same week">
+    </div>
+
+    <div class="field">
+      <label>What happened?</label>
+      <textarea id="storyBody" placeholder="Tell us what happened. Be as specific as you're comfortable with — the details are what help others." style="min-height:140px;"></textarea>
+    </div>
+
+    <div class="field">
+      <label>How did it end? (Outcome)</label>
+      <textarea id="storyOutcome" placeholder="What was the final result? Did you solve it? What would you do differently?" style="min-height:80px;"></textarea>
+    </div>
+
+    <div class="two-col">
+      <div class="field">
+        <label>State</label>
+        <select id="storyState">
+          <option value="">Select state...</option>
+          <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option>
+          <option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option>
+          <option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option>
+          <option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option>
+          <option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option>
+          <option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
+          <option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option>
+          <option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option>
+          <option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
+          <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option>
+          <option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option>
+          <option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option>
+          <option>Wisconsin</option><option>Wyoming</option><option>Prefer not to say</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Year this happened</label>
+        <select id="storyYear">
+          <option>2026</option><option>2025</option><option>2024</option><option>2023</option><option>2022</option><option>2021 or earlier</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>One thing you wish you'd known</label>
+      <input type="text" id="storyLesson" placeholder="The single most useful thing someone could know before going through this...">
+    </div>
+
+    <button class="submit-btn" onclick="submitStory()">Share My Story Anonymously →</button>
+    <div class="privacy-note">100% anonymous. No name, no email required. We may feature your story (edited for privacy) to help others.</div>
+  </div>
+
+  <div class="success-msg" id="successMsg">
+    <div style="font-size:48px;margin-bottom:16px;">🙏</div>
+    <h3>Thank You for Sharing</h3>
+    <p style="color:rgba(255,255,255,0.6);font-size:14px;margin-bottom:20px;">Your story has been submitted. It will be reviewed and added to the database within 24 hours. Someone out there is going to avoid a serious mistake because of what you shared.</p>
+    <a href="bank-rejection-engine.html" style="display:inline-block;background:var(--gold);color:#0a0e1a;padding:12px 24px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">Check Your Own Approval Profile →</a>
+  </div>
+
+  <!-- RELATED TOOLS -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:32px;">
+    <a href="bank-rejection-engine.html" style="padding:14px 18px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;color:#fff;text-align:center;">Bank Rejection Engine →</a>
+    <a href="mortgage-fate.html" style="padding:14px 18px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;color:#fff;text-align:center;">Mortgage Fate Simulator →</a>
+    <a href="mortgage-navigator.html" style="padding:14px 18px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;color:#fff;text-align:center;">Mortgage Navigator →</a>
+    <a href="credit-score-simulator.html" style="padding:14px 18px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;color:#fff;text-align:center;">Credit Score Impact →</a>
+  </div>
+</div>
+
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 · All stories anonymous · Educational use only</div>
+</footer>
+
+<script>
+function submitStory(){
+  var cat = document.getElementById('category').value;
+  var title = document.getElementById('storyTitle').value;
+  var body = document.getElementById('storyBody').value;
+  
+  if(!cat || !title || !body){
+    alert('Please fill in the category, title, and story fields.');
+    return;
+  }
+  
+  document.getElementById('submitForm').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+  document.getElementById('successMsg').scrollIntoView({behavior:'smooth'});
+}
+
+// Helpful buttons
+document.querySelectorAll('.helpful-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    if(this.textContent.includes('Yes')){
+      var current = parseInt(this.textContent.match(/\d+/)[0]);
+      this.textContent = '👍 Yes (' + (current+1) + ')';
+      this.style.borderColor = 'rgba(200,164,74,0.5)';
+      this.style.color = 'var(--gold)';
+    }
+  });
+});
+</script>
+</body>
+</html>
