@@ -235,6 +235,21 @@ fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json')
         document.getElementById('hint').style.display='none';
         document.getElementById('panel').scrollIntoView({behavior:'smooth',block:'nearest'});
       });
+
+    // State labels
+    svg.selectAll('text')
+      .data(states.features)
+      .enter()
+      .append('text')
+      .attr('transform', function(f){ var c=path.centroid(f); return c?'translate('+c+')':null; })
+      .attr('text-anchor','middle')
+      .attr('dominant-baseline','central')
+      .attr('font-size','7px')
+      .attr('font-family','Geist,sans-serif')
+      .attr('font-weight','700')
+      .attr('fill','rgba(255,255,255,0.85)')
+      .attr('pointer-events','none')
+      .text(function(f){ var d=SD[+f.id]; return d?d.ab:''; });
   })
   .catch(function(e){
     document.getElementById('map-container').innerHTML='<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.4);">Map loading... <a href="mortgage-navigator.html" style="color:var(--gold);">Try Mortgage Navigator instead →</a></div>';
