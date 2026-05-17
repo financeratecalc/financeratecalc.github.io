@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refinance Alert Calculator — When Should I Refinance My Mortgage? | FRC</title>
+<meta name="description" content="Enter your current mortgage rate and see exactly when refinancing makes sense. See your break-even point at every rate level from 7% down to 5%.">
+<link rel="canonical" href="https://financeratecalc.com/refinance-alert-calculator.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<meta property="og:title" content="When Should I Refinance? The Exact Break-Even Calculator">
+<meta property="og:description" content="See exactly what rate triggers your refinance. At 6.5% you save $162/month. At 6.0% you save $270/month. Know your number.">
+<meta property="og:image" content="https://financeratecalc.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://financeratecalc.com/og-image.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f5c;--gold:#c8a44a;--gold-light:#f0d060;--green:#27ae60;--red:#c0392b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:#f8f6f0;color:#0a0e1a;line-height:1.7;overflow-x:hidden;}
+header{background:#0a1f5c;padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+.hero{background:linear-gradient(135deg,#0a1f5c,#0d2a6e);padding:64px 60px;border-bottom:4px solid var(--gold);}
+.hero-inner{max-width:860px;margin:0 auto;}
+h1{font-family:'Fraunces',serif;font-size:clamp(30px,5vw,52px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:12px;}
+h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.5);max-width:580px;}
+.main{max-width:900px;margin:0 auto;padding:48px 60px 100px;}
+
+.input-card{background:#fff;border:1px solid #dde0ee;border-radius:12px;padding:28px 32px;margin-bottom:24px;}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:16px;}
+.input-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:700;color:#6677aa;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;}
+.field input,select{width:100%;background:#f8f6f0;border:1.5px solid #dde0ee;border-radius:8px;padding:11px 14px;font-size:15px;color:#0a0e1a;outline:none;font-family:'Geist',sans-serif;}
+.field input:focus{border-color:var(--navy);}
+.calc-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--navy),#0d2a6e);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Fraunces',serif;margin-top:8px;}
+
+.results{display:none;}
+
+/* Current situation */
+.current-box{background:#fff;border:1px solid #dde0ee;border-radius:12px;padding:24px 28px;margin-bottom:20px;}
+.current-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px;}
+.cs{background:#f8f6f0;border-radius:8px;padding:14px;text-align:center;}
+.cs-n{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:var(--navy);}
+.cs-l{font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:#6677aa;margin-top:4px;}
+
+/* Rate scenarios */
+.scenarios-wrap{margin-bottom:24px;}
+.scenario-row{background:#fff;border:1px solid #dde0ee;border-radius:10px;padding:18px 22px;margin-bottom:10px;display:grid;grid-template-columns:80px 1fr auto;gap:16px;align-items:center;transition:all 0.2s;}
+.scenario-row:hover{border-color:var(--gold);}
+.scenario-row.trigger{border-color:var(--green);border-width:2px;background:rgba(39,174,96,0.03);}
+.scenario-row.best{border-color:var(--green);border-width:2px;background:rgba(39,174,96,0.06);}
+.sr-rate{font-family:'Fraunces',serif;font-size:22px;font-weight:900;}
+.sr-mid{}
+.sr-title{font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px;}
+.sr-desc{font-size:12px;color:#6677aa;line-height:1.5;}
+.sr-right{text-align:right;}
+.sr-savings{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:var(--green);}
+.sr-breakeven{font-size:11px;color:#6677aa;margin-top:3px;}
+
+/* Sniper alert simulation */
+.sniper-box{background:linear-gradient(135deg,#0a0000,#100510);border:2px solid rgba(192,57,43,0.6);border-radius:12px;padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden;}
+.sniper-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),#ff6b6b,var(--red));animation:scan 2s linear infinite;}
+@keyframes scan{0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}}
+.sniper-tag{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;color:rgba(255,100,100,0.8);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.sniper-dot{width:8px;height:8px;border-radius:50%;background:#ff4444;animation:pulse 1s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.sniper-title{font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;}
+.sniper-body{font-size:14px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:16px;}
+.sniper-alert-box{background:rgba(255,68,68,0.1);border:1px solid rgba(255,68,68,0.3);border-radius:8px;padding:14px 18px;font-size:13px;color:#ff6b6b;line-height:1.65;font-family:monospace;}
+
+/* Email capture */
+.email-box{background:#fff;border:1px solid #dde0ee;border-radius:12px;padding:24px 28px;margin-bottom:20px;}
+.email-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.email-inp{flex:1;min-width:200px;padding:11px 14px;border:1.5px solid #dde0ee;border-radius:8px;font-size:14px;font-family:'Geist',sans-serif;outline:none;color:#0a0e1a;}
+.email-inp:focus{border-color:var(--navy);}
+.email-btn{padding:11px 22px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Geist',sans-serif;}
+.email-thanks{display:none;font-size:13px;color:var(--green);font-weight:600;margin-top:8px;}
+
+/* Banker note */
+.banker-note{border-left:4px solid var(--gold);background:rgba(200,164,74,0.06);border-radius:0 8px 8px 0;padding:16px 20px;margin-bottom:20px;}
+
+/* Sky Blue */
+.skyblue{background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.5);border-radius:12px;padding:24px 28px;margin-bottom:20px;text-align:center;}
+
+.faq{background:#fff;border:1px solid #dde0ee;border-radius:8px;padding:16px 20px;margin-bottom:10px;}
+.faq-q{font-weight:700;color:var(--navy);margin-bottom:6px;font-size:14px;}
+.faq-a{font-size:13px;color:#555;line-height:1.7;}
+.related{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
+.rel{padding:12px 16px;background:#fff;border:1px solid #dde0ee;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;color:var(--navy);}
+footer{background:#0a1f5c;padding:24px 60px;text-align:center;}
+@media(max-width:768px){header{padding:0 16px;}.hero{padding:40px 20px;}.main{padding:28px 20px 60px;}.input-grid{grid-template-columns:1fr;}.current-stats{grid-template-columns:1fr 1fr;}.scenario-row{grid-template-columns:60px 1fr;}.sr-right{grid-column:2;}.related{grid-template-columns:1fr;}footer{padding:20px;}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;">🎯 Refinance Alert Calculator · Know Your Number</div>
+    <h1>When Should You<br><em>Refinance?</em></h1>
+    <p class="hero-sub">Enter your current mortgage details. See exactly which rate triggers your refinance, your break-even point, and your 30-year savings at every level.</p>
+  </div>
+</div>
+
+<div class="main">
+  <div class="input-card">
+    <h2>Your Current Mortgage</h2>
+    <div class="input-grid">
+      <div class="field">
+        <label>Current Loan Balance</label>
+        <input type="number" id="balance" value="380000" min="50000" step="5000">
+      </div>
+      <div class="field">
+        <label>Current Interest Rate %</label>
+        <input type="number" id="currentRate" value="7.2" step="0.1" min="1" max="15">
+      </div>
+      <div class="field">
+        <label>Remaining Term (Years)</label>
+        <input type="number" id="remaining" value="28" min="1" max="30">
+      </div>
+      <div class="field">
+        <label>Estimated Closing Costs</label>
+        <input type="number" id="closingCosts" value="8000" step="500">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">🎯 Show My Refinance Triggers →</button>
+  </div>
+
+  <div class="results" id="results">
+
+    <!-- Current situation -->
+    <div class="current-box">
+      <h2>Your Current Situation</h2>
+      <div class="current-stats" id="currentStats"></div>
+    </div>
+
+    <!-- Rate scenarios -->
+    <h2 style="margin-bottom:12px;">📊 Your Refinance Trigger Points</h2>
+    <p style="font-size:14px;color:#555;margin-bottom:16px;">Every row below shows what happens when rates drop to that level. <strong>Green rows</strong> = refinance makes sense.</p>
+    <div class="scenarios-wrap" id="scenariosWrap"></div>
+
+    <!-- Sniper simulation -->
+    <div class="sniper-box">
+      <div class="sniper-tag"><div class="sniper-dot"></div> 🎯 FRC RATE SNIPER — SIMULATION</div>
+      <div class="sniper-title" id="sniperTitle">This is what your alert would look like</div>
+      <div class="sniper-body">Banks won't tell you when to refinance — it costs them money. This is the alert you'd get from a system that actually works for you:</div>
+      <div class="sniper-alert-box" id="sniperAlert"></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:12px;">⚠️ This is a simulation. Bookmark this page and return when rates drop to your trigger rate.</div>
+    </div>
+
+    <!-- Email capture / reminder -->
+    <div class="email-box">
+      <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6677aa;font-weight:700;margin-bottom:8px;">📧 Set a Manual Reminder</div>
+      <h3 style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px;">Don't Miss Your Trigger Rate</h3>
+      <p style="font-size:14px;color:#555;">We'll send you a one-time email reminder with your trigger rate and break-even calculation saved — so you don't have to remember.</p>
+      <div class="email-row">
+        <input class="email-inp" type="email" id="alertEmail" placeholder="your@email.com">
+        <button class="email-btn" onclick="setReminder()">Save My Trigger →</button>
+      </div>
+      <div class="email-thanks" id="emailThanks">✅ Saved! We'll remind you when to check rates. Check Freddie Mac's weekly survey at freddiemac.com/pmms for current rates.</div>
+    </div>
+
+    <!-- Banker note -->
+    <div class="banker-note">
+      <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px;">🏦 Banker's Note — 23 Years Experience</div>
+      <p style="font-size:14px;color:#444;line-height:1.75;">"The 14-day rate shopping rule: multiple mortgage inquiries within 14 days count as ONE hard pull on your credit. So when rates hit your trigger, get 3-5 quotes simultaneously within that window. The difference between lenders can be 0.25-0.5% even at the same market rate — that's thousands of dollars."</p>
+    </div>
+
+    <!-- Sky Blue -->
+    <div class="skyblue">
+      <div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:8px;">💳 Your Credit Score Changes Your Trigger Rate</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.65);margin-bottom:14px;" id="sbText"></div>
+      <a href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=REFI_CALC_FRC" target="_blank" rel="sponsored" style="display:inline-block;background:#c0392b;color:#fff;padding:11px 26px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;">🛡️ Fix My Score — Sky Blue Credit #ad</a>
+      <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:8px;">Not financial advice · Individual results vary</div>
+    </div>
+
+    <!-- FAQ -->
+    <h2 style="margin-bottom:16px;">Frequently Asked Questions</h2>
+    <div class="faq">
+      <div class="faq-q">How much does rates need to drop before refinancing makes sense?</div>
+      <div class="faq-a">The old rule of thumb was "1% drop." The real answer depends on your break-even point: divide your closing costs by your monthly savings. If you'll stay in the home longer than that, refinance. A 0.75% drop with low closing costs can make sense; a 1.5% drop with high costs might not.</div>
+    </div>
+    <div class="faq">
+      <div class="faq-q">How do I track mortgage rates without checking every day?</div>
+      <div class="faq-a">Freddie Mac publishes the Primary Mortgage Market Survey every Thursday at freddiemac.com/pmms — the most reliable weekly benchmark. Set a calendar reminder to check it monthly. When rates approach your trigger number, start getting quotes.</div>
+    </div>
+    <div class="faq">
+      <div class="faq-q">Will refinancing hurt my credit score?</div>
+      <div class="faq-a">Each mortgage application is a hard inquiry — typically -5 to -10 points. However, multiple mortgage inquiries within a 14-day window count as just ONE inquiry (FICO's rate shopping protection). Shop aggressively within that window.</div>
+    </div>
+    <div class="faq">
+      <div class="faq-q">What's the current mortgage rate in 2026?</div>
+      <div class="faq-a">As of May 2026, 30-year fixed rates average approximately 6.4-6.8% depending on credit profile and lender. Check Freddie Mac's weekly survey for the most current benchmark. Your actual rate will vary based on your credit score, LTV ratio, and loan type.</div>
+    </div>
+
+    <div class="related">
+      <a href="mortgage-calculator.html" class="rel">Mortgage Calculator →</a>
+      <a href="payment-frequency-calculator.html" class="rel">Payment Frequency →</a>
+      <a href="rate-grief-engine.html" class="rel">Rate Grief Engine →</a>
+      <a href="credit-score-simulator.html" class="rel">Credit Score Impact →</a>
+    </div>
+
+    <div style="margin-top:16px;padding:12px 16px;background:#f8f6f0;border:1px solid #dde0ee;border-radius:8px;font-size:12px;color:#6677aa;">
+      📋 <strong>Methodology:</strong> Break-even = closing costs ÷ monthly savings. All calculations use standard amortization. Closing costs estimated at user-entered amount. Rate data: Freddie Mac PMMS. Educational use only — not financial advice. Always consult a licensed mortgage professional before refinancing.
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 · Educational use only · Not financial advice</div>
+</footer>
+
+<script>
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
+function moPay(p,r,n){var mr=r/100/12;return p*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1);}
+
+var _balance,_currentRate,_remaining,_closing,_currentMo,_triggerRate;
+
+function calculate(){
+  _balance = parseFloat(document.getElementById('balance').value)||380000;
+  _currentRate = parseFloat(document.getElementById('currentRate').value)||7.2;
+  _remaining = parseInt(document.getElementById('remaining').value)||28;
+  _closing = parseFloat(document.getElementById('closingCosts').value)||8000;
+
+  _currentMo = moPay(_balance, _currentRate, _remaining*12);
+  var currentTotalInterest = _currentMo * _remaining*12 - _balance;
+
+  // Current stats
+  document.getElementById('currentStats').innerHTML =
+    '<div class="cs"><div class="cs-n">'+fmt(_balance)+'</div><div class="cs-l">Balance</div></div>'+
+    '<div class="cs"><div class="cs-n">'+_currentRate+'%</div><div class="cs-l">Current Rate</div></div>'+
+    '<div class="cs"><div class="cs-n">'+fmt(_currentMo)+'/mo</div><div class="cs-l">Monthly Payment</div></div>'+
+    '<div class="cs"><div class="cs-n">'+fmt(currentTotalInterest)+'</div><div class="cs-l">Interest Remaining</div></div>';
+
+  // Rate scenarios
+  var targetRates = [];
+  var r = Math.round((_currentRate - 0.25)*4)/4;
+  while(r >= 5.0){
+    targetRates.push(Math.round(r*10)/10);
+    r -= 0.25;
+  }
+
+  var html = '';
+  _triggerRate = null;
+
+  targetRates.forEach(function(newRate){
+    var newMo = moPay(_balance, newRate, _remaining*12);
+    var moSavings = _currentMo - newMo;
+    var newTotalInterest = newMo * _remaining*12 - _balance;
+    var interestSavings = currentTotalInterest - newTotalInterest - _closing;
+    var breakEvenMonths = moSavings > 0 ? Math.round(_closing/moSavings) : 999;
+    var breakEvenYears = (breakEvenMonths/12).toFixed(1);
+    var rateDrop = (_currentRate - newRate).toFixed(2);
+    var worthIt = breakEvenMonths <= _remaining*12*0.5;
+
+    if(!_triggerRate && worthIt) _triggerRate = newRate;
+
+    var label = newRate === _triggerRate ? '🎯 YOUR TRIGGER' :
+                moSavings > 400 ? '🔥 Excellent' :
+                moSavings > 200 ? '✅ Good' :
+                moSavings > 100 ? '👍 Decent' : '⚠️ Marginal';
+
+    var color = moSavings > 400 ? '#27ae60' : moSavings > 200 ? '#27ae60' : moSavings > 100 ? '#b7791f' : '#6677aa';
+    var rowClass = worthIt && moSavings > 200 ? (newRate===_triggerRate?'scenario-row trigger':'scenario-row best') : 'scenario-row';
+
+    html += '<div class="'+rowClass+'">'+
+      '<div class="sr-rate" style="color:'+color+';">'+newRate+'%</div>'+
+      '<div class="sr-mid">'+
+        '<div class="sr-title">'+label+' · Drop of '+rateDrop+'%</div>'+
+        '<div class="sr-desc">'+
+          'New payment: '+fmt(newMo)+'/mo · '+
+          'Break-even: '+(breakEvenMonths<999?breakEvenYears+' years':'never')+' · '+
+          'Total interest saved: '+fmt(Math.max(0,interestSavings))+
+        '</div>'+
+      '</div>'+
+      '<div class="sr-right">'+
+        '<div class="sr-savings">'+fmt(moSavings)+'/mo</div>'+
+        '<div class="sr-breakeven">'+(worthIt?'✅ Worth it':'⏳ Borderline')+'</div>'+
+      '</div>'+
+    '</div>';
+  });
+
+  document.getElementById('scenariosWrap').innerHTML = html;
+
+  // Sniper simulation
+  var tr = _triggerRate || (_currentRate - 0.75);
+  var trMo = moPay(_balance, tr, _remaining*12);
+  var trSavings = _currentMo - trMo;
+  var trInterest = Math.round(trSavings * _remaining*12 - _closing);
+
+  document.getElementById('sniperTitle').textContent = 'Your trigger rate: '+tr+'% (drop of '+(_currentRate-tr).toFixed(2)+'%)';
+  document.getElementById('sniperAlert').innerHTML =
+    '🎯 REFINANCE ALERT — Your Trigger Rate Reached\n\n'+
+    'Current rate: '+_currentRate+'% → New rate available: '+tr+'%\n'+
+    'Your balance: '+fmt(_balance)+'\n\n'+
+    '✅ Monthly savings: '+fmt(trSavings)+'\n'+
+    '✅ Break-even: '+Math.round(_closing/trSavings)+' months\n'+
+    '✅ 30-year interest savings: '+fmt(trInterest)+'\n\n'+
+    '→ Get quotes from 3+ lenders within 14 days\n'+
+    '→ Rate shopping window: same day to 14 days (counts as 1 hard pull)\n'+
+    '→ Check: freddiemac.com/pmms for current benchmark';
+
+  // Sky Blue
+  document.getElementById('sbText').textContent =
+    'A 740+ credit score vs 680 score gets you ~0.5% better rate on refinance. On '+fmt(_balance)+', that\'s '+fmt(Math.round(_balance*(7.0-6.5)/100/12*_remaining*12))+' in additional savings over your remaining term — on top of whatever you save from refinancing.';
+
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+function setReminder(){
+  var email = document.getElementById('alertEmail').value;
+  if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
+  
+  fetch('https://formspree.io/f/mkoewrgp',{
+    method:'POST',
+    headers:{'Accept':'application/json','Content-Type':'application/json'},
+    body:JSON.stringify({
+      email:email,
+      subject:'Refinance Reminder — '+email,
+      message:'User set refinance alert. Balance: '+fmt(_balance)+', Current rate: '+_currentRate+'%, Trigger rate: '+(_triggerRate||'TBD')+'%, Remaining: '+_remaining+' years',
+      type:'refinance_alert'
+    })
+  });
+  
+  document.getElementById('emailThanks').style.display='block';
+  document.getElementById('alertEmail').value='';
+}
+</script>
+</body>
+</html>
