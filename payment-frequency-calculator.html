@@ -124,6 +124,17 @@ footer{background:#0a1f5c;padding:24px 60px;text-align:center;}
   </div>
 
   <!-- RESULTS -->
+  <!-- Custom frequency - always visible -->
+  <div class="custom-card" style="background:#fff;border:1px solid #dde0ee;border-radius:12px;padding:22px 28px;margin-bottom:24px;">
+    <h3 style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:14px;">🔧 Custom Payment Frequency</h3>
+    <div class="custom-row">
+      <label style="font-weight:600;color:var(--navy);font-size:14px;white-space:nowrap;">Pay every</label>
+      <input class="custom-input" type="number" id="customDays" value="10" min="1" max="90" oninput="calcCustom()">
+      <label style="font-weight:600;color:var(--navy);font-size:14px;white-space:nowrap;">days</label>
+    </div>
+    <div class="custom-result" id="customResult" style="margin-top:12px;font-size:14px;color:#555;line-height:1.6;"></div>
+  </div>
+
   <div class="results" id="results">
 
     <!-- Savings banner -->
@@ -142,16 +153,7 @@ footer{background:#0a1f5c;padding:24px 60px;text-align:center;}
     <!-- Comparison grid -->
     <div class="comparison-grid" id="compGrid"></div>
 
-    <!-- Custom frequency -->
-    <div class="custom-card">
-      <h3 style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:14px;">🔧 Custom Payment Frequency</h3>
-      <div class="custom-row">
-        <label>Pay every</label>
-        <input class="custom-input" type="number" id="customDays" value="10" min="1" max="60" oninput="calcCustom()">
-        <label>days</label>
-        <div class="custom-result" id="customResult"></div>
-      </div>
-    </div>
+
 
     <!-- How it works -->
     <div style="background:#fff;border:1px solid #dde0ee;border-radius:12px;padding:24px 28px;margin-bottom:20px;">
@@ -269,7 +271,12 @@ function calcCustomFreq(principal, annualRate, termYears, days){
   return {payment: payment, totalInterest: totalInterest, yearsToPayoff: count/ppy, paymentsPerYear: ppy};
 }
 
-var _loan, _rate, _term, _monthlyInterest;
+var _loan = 400000, _rate = 6.5, _term = 30, _monthlyInterest = 510178;
+
+// Run custom calc with defaults on page load
+window.addEventListener('load', function(){
+  calcCustom();
+});
 
 function calculate(){
   _loan = parseFloat(document.getElementById('loan').value)||400000;
@@ -323,7 +330,6 @@ function calculate(){
 }
 
 function calcCustom(){
-  if(!_loan) return;
   var days = parseInt(document.getElementById('customDays').value)||10;
   if(days < 1 || days > 365) return;
   
