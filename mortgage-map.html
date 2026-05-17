@@ -90,7 +90,14 @@ footer{background:rgba(0,0,0,0.4);padding:24px;text-align:center;border-top:1px 
   <div class="tt-row"><span class="tt-label">Rate</span><span class="tt-val" id="tt-r"></span></div>
 </div></div>
 
-<div id="map-container"><svg id="map-svg"></svg></div>
+<div id="map-container" style="position:relative;">
+  <div id="map-loading" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:rgba(255,255,255,0.5);font-size:14px;">
+    <div style="font-size:32px;margin-bottom:8px;animation:spin 2s linear infinite;">⟳</div>
+    Loading map data...
+  </div>
+  <svg id="map-svg"></svg>
+</div>
+<style>@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}</style>
 
 <div class="panel-wrap">
   <div class="state-panel" id="panel"><div id="panel-content"></div></div>
@@ -193,9 +200,13 @@ function sal(p,r,tx){return Math.round(mo(p,r,tx)/0.28*12/1000);}
 
 // Load TopoJSON and render
 fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json')
+  .catch(function(){ return fetch('https://unpkg.com/us-atlas@3/states-10m.json'); })
+  .catch(function(){ return fetch('https://raw.githack.com/topojson/us-atlas/master/states-10m.json'); })
   .then(function(r){return r.json();})
   .then(function(us){
     var svg=d3.select('#map-svg');
+    var loading=document.getElementById('map-loading');
+    if(loading) loading.style.display='none';
     var w=document.getElementById('map-container').offsetWidth-40;
     svg.attr('viewBox','0 0 975 610');
 
@@ -285,7 +296,13 @@ fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json')
       .text(function(f){ var d=SD[+f.id]; return d?d.ab:''; });
   })
   .catch(function(e){
-    document.getElementById('map-container').innerHTML='<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.4);">Map loading... <a href="mortgage-navigator.html" style="color:var(--gold);">Try Mortgage Navigator instead →</a></div>';
+    document.getElementById('map-container').innerHTML=
+    '<div style="text-align:center;padding:60px 40px;">'+
+    '<div style="font-size:48px;margin-bottom:16px;">🗺️</div>'+
+    '<div style="font-family:Fraunces,serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:8px;">Map Loading...</div>'+
+    '<div style="font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:20px;">If the map does not appear, try refreshing the page.</div>'+
+    '<a href="mortgage-navigator.html" style="display:inline-block;padding:10px 20px;background:var(--gold);color:#0a0e1a;border-radius:6px;font-weight:700;font-size:13px;text-decoration:none;">Try Mortgage Navigator →</a>'+
+    '</div>';
   });
 </script>
 </body>
