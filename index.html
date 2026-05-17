@@ -8,7 +8,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Geist:wght@300;400;500;600&display=swap">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Geist:wght@300;400;500;600&display=swap">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
 <meta http-equiv="X-XSS-Protection" content="1; mode=block">
@@ -42,8 +42,8 @@
   gtag('js', new Date());
   gtag('config', 'G-ND9P4F3PHT');
 </script>
+
 <style>
-  body{overflow-x:hidden;}
   :root {
     --ink: #0f0e0c;
     --paper: #faf8f4;
@@ -60,86 +60,101 @@
     --white: #ffffff;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Geist', sans-serif; background: var(--paper); color: var(--text); min-height: 100vh; font-size-adjust: 0.5;}
-  header { background: var(--ink); padding: 0 40px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; will-change: transform; }
+  body { font-family: 'Geist', sans-serif; background: var(--paper); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  
+  header { background: var(--ink); padding: 0 40px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10000; }
   .logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 900; color: var(--white); letter-spacing: -0.5px; text-decoration: none; }
   .logo em { font-style: italic; color: var(--gold-light); }
+  
   .nav-links { display: flex; gap: 8px; align-items: center; }
   .nav-links a { color: rgba(255,255,255,0.55); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; padding: 6px 10px; border-radius: 4px; }
   .nav-links a:hover { color: var(--gold-light); }
+  
   .nav-dropdown { position: relative; }
   .nav-dropdown-btn { background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.55); font-size: 13px; font-weight: 500; font-family: inherit; padding: 6px 10px; border-radius: 4px; display: flex; align-items: center; gap: 5px; transition: color 0.2s; letter-spacing: 0.3px; }
   .nav-dropdown-btn:hover { color: var(--gold-light); }
-  .nav-dropdown-btn svg { width: 10px; height: 10px; transition: transform 0.2s; }
+  .nav-dropdown-btn svg { width: 10px; height: 10px; }
+  
   .nav-dropdown-menu {
-    visibility: hidden; opacity: 0; pointer-events: none;
+    display: none;
     position: absolute; top: calc(100% + 4px); right: 0;
     background: #18181a; border: 1px solid rgba(255,255,255,0.1);
     border-radius: 12px; width: 720px;
-    box-shadow: 0 16px 48px rgba(0,0,0,0.5); z-index: 200;
-    transition: opacity 0.18s ease, transform 0.18s ease;
-    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5); z-index: 20000;
   }
-  .nav-dropdown:hover .nav-dropdown-menu { visibility: visible; opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .nav-dropdown.menu-open .nav-dropdown-menu { display: block; }
+  
   .mega-menu-inner { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 20px; }
   .mega-col { padding: 0 16px; }
   .mega-col:not(:last-child) { border-right: 1px solid rgba(255,255,255,0.06); }
   .mega-col-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  
   .nav-dropdown-menu a { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 6px; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 12.5px; font-weight: 400; transition: background 0.15s, color 0.15s; }
   .nav-dropdown-menu a:hover { background: rgba(255,255,255,0.07); color: var(--gold-light); }
+  
   .mega-footer-bar { background: rgba(255,255,255,0.03); border-top: 1px solid rgba(255,255,255,0.06); padding: 12px 20px; border-radius: 0 0 12px 12px; display: flex; align-items: center; justify-content: space-between; }
   .mega-footer-bar span { font-size: 11px; color: rgba(255,255,255,0.3); }
   .nav-badge { background: var(--gold); color: var(--ink); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
+  
   .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
-  .hamburger span { width: 24px; height: 2px; background: rgba(255,255,255,0.7); border-radius: 2px; transition: all 0.3s; display: block; }
-  .mobile-menu {
-    visibility: hidden; height: 0; overflow: hidden; position: fixed; top: 64px; left: 0; right: 0;
-    background: #1a1a18; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 0 20px; z-index: 99;
-    flex-direction: column; gap: 2px; max-height: calc(100vh - 64px); overflow-y: auto;
-  }
-  .mobile-menu.open { visibility: visible; height: auto; padding: 16px 20px; display: flex; }
-  .mobile-menu a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; font-weight: 500; padding: 10px 12px; border-radius: 8px; transition: all 0.2s; }
-  .featured-banner { background: #0a1f5c; padding: 7px 40px; display: flex; align-items: center; justify-content: center; gap: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .hamburger span { width: 24px; height: 2px; background: rgba(255,255,255,0.7); border-radius: 2px; display: block; }
+  
+  .mobile-menu { display: none; position: fixed; top: 60px; left: 0; right: 0; background: #1a1a18; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 16px 20px; z-index: 9999; flex-direction: column; gap: 2px; }
+  .mobile-menu.mobile-open { display: flex; }
+  .mobile-menu a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; font-weight: 500; padding: 10px 12px; border-radius: 8px; }
+  
+  .featured-banner { background: #0a1f5c; padding: 10px 40px; display: flex; align-items: center; justify-content: center; gap: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; text-align: center; }
   .featured-banner-text { color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 400; }
   .featured-banner-text strong { color: #fff; font-weight: 600; }
-  .hero { background: var(--ink); padding: 36px 40px 40px; position: relative; overflow: hidden; }
-  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 60% 0%, rgba(200,164,74,0.1) 0%, transparent 55%), radial-gradient(ellipse at 10% 100%, rgba(26,58,92,0.35) 0%, transparent 50%); }
+  
+  .hero { background: var(--ink); padding: 60px 40px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 60% 0%, rgba(200,164,74,0.1) 0%, transparent 55%), radial-gradient(ellipse at 10% 100%, rgba(26,58,92,0.35) 0%, transparent 50%); pointer-events: none; }
   .hero-inner { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
-  .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--gold-light); font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 20px; opacity:0.8; }
-  .hero h1 { font-family: 'Fraunces', serif; font-size: clamp(32px, 5vw, 58px); font-weight: 900; color: var(--white); line-height: 1.0; letter-spacing: -2px; margin-bottom: 20px; max-width: 700px; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--gold-light); font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 20px; opacity: 0.8; }
+  .hero h1 { font-family: 'Fraunces', serif; font-size: clamp(32px, 5vw, 54px); font-weight: 900; color: var(--white); line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 20px; }
   .hero h1 em { font-style: italic; color: var(--gold-light); }
-  .hero-desc { color: rgba(255,255,255,0.45); font-size: 15px; line-height: 1.65; max-width: 500px; font-weight: 300; margin-bottom: 18px; }
-  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
-  .hero-cta { display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: var(--ink); padding: 14px 26px; border-radius: 8px; font-weight: 700; font-size: 14px; text-decoration: none; font-family:'Fraunces',serif; transition: all 0.2s; }
+  .hero-desc { color: rgba(255,255,255,0.45); font-size: 15px; line-height: 1.65; max-width: 550px; font-weight: 300; margin-bottom: 24px; }
+  
+  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 32px; }
+  .hero-cta { display: inline-flex; align-items: center; gap: 8px; background: var(--gold); color: var(--ink); padding: 14px 26px; border-radius: 8px; font-weight: 700; font-size: 14px; text-decoration: none; font-family: 'Fraunces', serif; transition: transform 0.2s, box-shadow 0.2s; }
   .hero-cta:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(184,134,11,0.35); }
-  .hero-cta-secondary { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); padding: 14px 26px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; border: 1px solid rgba(255,255,255,0.12); transition: all 0.2s; }
-  .hero-stats { display: flex; gap: 32px; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.07); }
-  .stat .s-num { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 900; color: var(--gold-light); line-height: 1; margin-bottom: 3px; }
+  .hero-cta-secondary { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); padding: 14px 26px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; border: 1px solid rgba(255,255,255,0.12); transition: transform 0.2s; }
+  .hero-cta-secondary:hover { transform: translateY(-2px); background: rgba(255,255,255,0.1); }
+  
+  .hero-stats { display: flex; gap: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.07); }
+  .stat .s-num { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 900; color: var(--gold-light); line-height: 1; margin-bottom: 4px; }
   .stat .s-label { font-size: 12px; color: rgba(255,255,255,0.4); font-weight: 500; }
-  .tools-section { max-width: 1280px; margin: 0 auto; padding: 36px 40px 60px; }
-  .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
-  .section-title { font-family: 'Fraunces', serif; font-size: clamp(28px, 4vw, 40px); font-weight: 900; color: var(--ink); letter-spacing: -0.5px; }
-  .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .tool-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 28px; text-decoration: none; color: var(--text); display: block; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); position: relative; overflow: hidden; }
-  .tool-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); }
+  
+  .tools-section { max-width: 1280px; margin: 0 auto; padding: 60px 40px; }
+  .section-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .section-title { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 900; color: var(--ink); letter-spacing: -0.5px; }
+  
+  .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .tool-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 28px; text-decoration: none; color: var(--text); display: block; transition: transform 0.3s, box-shadow 0.3s; position: relative; }
+  .tool-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.08); }
   .tool-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; }
   .tool-name { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
   .tool-desc { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 24px; }
-  .tool-feature { background: var(--cream); padding: 3px 10px; border-radius: 20px; font-size: 11px; color: var(--muted); margin-right: 4px; }
-  .expert-section { background: var(--cream); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 80px 60px; }
+  .tool-feature { background: var(--cream); padding: 4px 10px; border-radius: 20px; font-size: 11px; color: var(--muted); margin-right: 6px; display: inline-block; }
+  
+  .expert-section { background: var(--cream); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 80px 40px; }
   .expert-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr; gap: 48px; align-items: center; }
   .expert-portrait { width: 160px; height: 160px; background: var(--ink); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 64px; font-weight: 900; color: var(--gold-light); position: relative; }
-  .expert-portrait::after { content: '✓ Licensed'; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); background: var(--sage); color: #fff; font-family: 'Geist', sans-serif; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
-  .expert-name { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 900; color: var(--ink); }
-  .expert-title { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+  .expert-portrait::after { content: '✓ Licensed'; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); background: var(--sage); color: #fff; font-family: 'Geist', sans-serif; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .expert-name { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 900; color: var(--ink); margin-bottom: 4px; }
+  .expert-title { font-size: 14px; color: var(--muted); margin-bottom: 20px; font-weight: 500; }
   .expert-bio { font-size: 15px; color: var(--text); line-height: 1.75; margin-bottom: 24px; }
   .credential { background: var(--white); border: 1px solid var(--border); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-right: 6px; display: inline-block; }
-  footer { background: var(--ink); padding: 40px 60px; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
-  .footer-logo { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 900; color: var(--white); }
-  .footer-links a { color: rgba(255,255,255,0.4); text-decoration: none; font-size: 13px; margin: 0 10px; }
-  .footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
+  
+  footer { background: var(--ink); padding: 60px 40px; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
+  .footer-logo { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 900; color: var(--white); }
+  .footer-links a { color: rgba(255,255,255,0.4); text-decoration: none; font-size: 13px; margin: 0 12px; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--gold-light); }
+  .footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); line-height: 1.6; }
+  
   @keyframes coinFlip { 0% { transform: rotateY(0deg); } 50% { transform: rotateY(180deg); } 100% { transform: rotateY(360deg); } }
   @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(184,134,11,0.6); } 70% { box-shadow: 0 0 0 12px rgba(184,134,11,0); } 100% { box-shadow: 0 0 0 0 rgba(184,134,11,0); } }
+  
   #frc-chat-bubble {
     position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px;
     background: #0f0e0c; border: 2px solid #b8860b; border-radius: 50%;
@@ -147,43 +162,4 @@
     display: flex; align-items: center; justify-content: center; font-size: 26px;
     animation: pulseGlow 2s infinite; transition: transform 0.2s ease;
   }
-  #frc-chat-bubble:hover { transform: scale(1.08); }
-  #frc-chat-window {
-    position: fixed; bottom: 96px; right: 24px; width: 370px; height: 480px;
-    background: #ffffff; border: 1px solid #ddd8cc; border-radius: 16px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.2); display: none; flex-direction: column;
-    overflow: hidden; font-family: 'Geist', sans-serif; z-index: 99999;
-    transform: translateY(15px); opacity: 0; transition: transform 0.25s ease, opacity 0.25s ease;
-  }
-  #frc-chat-window.active { display: flex; transform: translateY(0); opacity: 1; }
-  @media (max-width: 768px) { header { padding: 0 20px; } .nav-links { display: none; } .hamburger { display: flex; } .tools-grid { grid-template-columns: 1fr; } }
-</style>
-</head>
-<body>
-
-<header>
-  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
-  <div class="nav-links">
-    <div class="nav-dropdown" id="calcDropdown">
-      <button class="nav-dropdown-btn" onclick="toggleDropdown()">
-        Tools & Resources
-        <svg viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5"/></svg>
-      </button>
-      <div class="nav-dropdown-menu">
-        <div class="mega-menu-inner">
-          <div class="mega-col">
-            <div class="mega-col-title">🏠 Home Buying</div>
-            <a href="mortgage-calculator.html">🏠 Premium Mortgage Auditor</a>
-            <a href="real-cost-calculator.html">💰 Real Cost Calculator</a>
-            <a href="financial-twin.html">🏡 Buy vs Rent Simulator</a>
-            <a href="are-you-house-poor.html">🏚️ Are You House Poor?</a>
-            <a href="can-two-salaries-buy-this-house.html">💑 Two Salaries Calculator</a>
-            <a href="american-dream-calculator.html">🌟 American Dream Calc</a>
-            <a href="salary-by-state.html">🗺️ Salary Needed by State</a>
-            <a href="cost-of-waiting.html">⏰ Cost of Waiting Engine</a>
-            <a href="mortgage-time-machine.html">⏳ Mortgage Time Machine</a>
-            <a href="zip-code-wealth-gap.html">📍 Zip Code Wealth Gap</a>
-          </div>
-          <div class="mega-col">
-            <div class="mega-col-title">🔍 Rejection & Repair</div>
-            <a href="bank-rejection-engine.html">
+  #frc-chat-bubble
