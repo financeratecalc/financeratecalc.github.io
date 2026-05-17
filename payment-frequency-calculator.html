@@ -129,7 +129,12 @@ function moPay(p,r,n){
 
 function simFreq(p,r,t,days){
   var monthly=moPay(p,r,t*12);
-  var payment=monthly*days/30.4375;
+  // Use monthly/2 for bi-weekly so 26 payments = 13 full months (the extra payment effect)
+  // For other frequencies: proportional to days but anchored to create same "extra" ratio
+  var payment=monthly*(days/30.4375);
+  // Special case: 14-day (bi-weekly) = exactly half monthly to ensure 13 payments/year
+  if(days===14) payment=monthly/2;
+  if(days===7) payment=monthly/4;
   var balance=p, interest=0, count=0;
   var dr=r/100/365;
   while(balance>0.01&&count<50000){
