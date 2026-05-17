@@ -211,59 +211,62 @@ footer{background:#0a1f5c;padding:24px 60px;text-align:center;}
 
 <script>
 function fmt(n){return '$'+Math.round(n).toLocaleString();}
-function fmtK(n){return '$'+Math.round(n/1000)+'K';}
 
 function moPay(principal, annualRate, months){
   var r = annualRate/100/12;
   return principal * r * Math.pow(1+r,months) / (Math.pow(1+r,months)-1);
 }
 
-function calcLoan(principal, annualRate, termYears, paymentsPerYear){
-  var r = annualRate/100/paymentsPerYear;
-  var totalPayments = termYears * paymentsPerYear;
-  var payment = principal * r * Math.pow(1+r,totalPayments) / (Math.pow(1+r,totalPayments)-1);
-  var totalPaid = payment * totalPayments;
-  var totalInterest = totalPaid - principal;
-  return {payment: payment, totalPaid: totalPaid, totalInterest: totalInterest, totalPayments: totalPayments, paymentsPerYear: paymentsPerYear};
+function calcMonthly(principal, annualRate, termYears){
+  var months = termYears * 12;
+  var payment = moPay(principal, annualRate, months);
+  return {payment: payment, totalInterest: payment*months-principal, yearsToPayoff: termYears, paymentsPerYear: 12};
 }
 
-function calcFreq(principal, annualRate, termYears, days){
-  // Key insight: bi-weekly (14 days) = half monthly payment = 26 payments = 13 full months/year
-  // Weekly (7 days) = quarter monthly = 52 payments = 13 full months/year
-  // Both save ~same because savings come from extra payment, not frequency alone
+function calcBiWeekly(principal, annualRate, termYears){
   var monthlyPayment = moPay(principal, annualRate, termYears*12);
-  var daysInMonth = 30.4375;
-  var payment = monthlyPayment * days / daysInMonth;
-  
-  var balance = principal;
-  var totalInterest = 0;
-  var payments = 0;
+  var payment = monthlyPayment / 2;
+  var biweeklyRate = annualRate/100/26;
+  var balance = principal, totalInterest = 0, count = 0;
+  while(balance > 0.01 && count < termYears*60){
+    var interest = balance * biweeklyRate;
+    totalInterest += interest;
+    balance = balance + interest - payment;
+    if(balance < 0) balance = 0;
+    count++;
+  }
+  return {payment: payment, totalInterest: totalInterest, yearsToPayoff: count/26, paymentsPerYear: 26};
+}
+
+function calcWeekly(principal, annualRate, termYears){
+  var monthlyPayment = moPay(principal, annualRate, termYears*12);
+  var payment = monthlyPayment / 4;
+  var weeklyRate = annualRate/100/52;
+  var balance = principal, totalInterest = 0, count = 0;
+  while(balance > 0.01 && count < termYears*120){
+    var interest = balance * weeklyRate;
+    totalInterest += interest;
+    balance = balance + interest - payment;
+    if(balance < 0) balance = 0;
+    count++;
+  }
+  return {payment: payment, totalInterest: totalInterest, yearsToPayoff: count/52, paymentsPerYear: 52};
+}
+
+function calcCustomFreq(principal, annualRate, termYears, days){
+  var monthlyPayment = moPay(principal, annualRate, termYears*12);
+  var payment = monthlyPayment * days / (365/12);
   var dailyRate = annualRate/100/365;
-  
-  while(balance > 0.01 && payments < 20000){
+  var balance = principal, totalInterest = 0, count = 0;
+  var ppy = 365/days;
+  while(balance > 0.01 && count < termYears*ppy*2){
     var interest = balance * dailyRate * days;
     totalInterest += interest;
     balance = balance + interest - payment;
     if(balance < 0) balance = 0;
-    payments++;
+    count++;
   }
-  
-  var paymentsPerYear = 365/days;
-  return {
-    payment: payment,
-    totalInterest: totalInterest,
-    yearsToPayoff: payments/paymentsPerYear,
-    totalPayments: payments,
-    paymentsPerYear: paymentsPerYear
-  };
-}
-
-function calcBiWeekly(principal, annualRate, termYears){
-  return calcFreq(principal, annualRate, termYears, 14);
-}
-
-function calcCustomFreq(principal, annualRate, termYears, days){
-  return calcFreq(principal, annualRate, termYears, days);
+  return {payment: payment, totalInterest: totalInterest, yearsToPayoff: count/ppy, paymentsPerYear: ppy};
 }
 
 var _loan, _rate, _term, _monthlyInterest;
@@ -272,78 +275,32 @@ function calculate(){
   _loan = parseFloat(document.getElementById('loan').value)||400000;
   _rate = parseFloat(document.getElementById('rate').value)||6.5;
   _term = parseInt(document.getElementById('term').value)||30;
-  
-  // Use calcFreq for all — consistent daily compounding method
-  var monthlyF = calcFreq(_loan, _rate, _term, 30); // Monthly = every 30 days
-  var biweekly = calcFreq(_loan, _rate, _term, 14); // Bi-weekly = every 14 days
-  var weekly = calcFreq(_loan, _rate, _term, 7);    // Weekly = every 7 days
-  
-  // Also calculate standard monthly for display
-  var monthly = {
-    payment: moPay(_loan, _rate, _term*12),
-    totalInterest: moPay(_loan, _rate, _term*12)*_term*12 - _loan,
-    yearsToPayoff: _term,
-    paymentsPerYear: 12
-  };
-  
+
+  var monthly = calcMonthly(_loan, _rate, _term);
+  var biweekly = calcBiWeekly(_loan, _rate, _term);
+  var weekly = calcWeekly(_loan, _rate, _term);
+
   _monthlyInterest = monthly.totalInterest;
-  
+
   var bwSavings = monthly.totalInterest - biweekly.totalInterest;
   var bwYearsSaved = _term - biweekly.yearsToPayoff;
-  
-  // Savings banner
+
   document.getElementById('totalSavings').textContent = fmt(bwSavings);
   document.getElementById('savingsDesc').textContent = 'saved in interest by switching to bi-weekly vs monthly';
   document.getElementById('yearsSaved').textContent = bwYearsSaved.toFixed(1);
 
-  // Comparison cards
   var scenarios = [
-    {
-      label:'Standard',
-      freq:'Monthly',
-      desc:'12 payments/year',
-      payment: monthly.payment,
-      perLabel: '/month',
-      interest: monthly.totalInterest,
-      years: _term,
-      color:'#6677aa',
-      isBest: false
-    },
-    {
-      label:'Recommended',
-      freq:'Bi-Weekly',
-      desc:'26 payments/year · 1 extra/year',
-      payment: biweekly.payment,
-      perLabel: '/2 weeks',
-      interest: biweekly.totalInterest,
-      years: biweekly.yearsToPayoff,
-      color:'#27ae60',
-      isBest: true,
-      savings: bwSavings,
-      yearsSaved: bwYearsSaved
-    },
-    {
-      label:'Aggressive',
-      freq:'Weekly',
-      desc:'52 payments/year · max frequency',
-      payment: weekly.payment,
-      perLabel: '/week',
-      interest: weekly.totalInterest,
-      years: weekly.yearsToPayoff,
-      color:'#2563eb',
-      isBest: false,
-      savings: monthly.totalInterest - weekly.totalInterest,
-      yearsSaved: _term - weekly.yearsToPayoff
-    }
+    {label:'Standard', freq:'Monthly', desc:'12 payments/year', payment: monthly.payment, perLabel:'/month', interest: monthly.totalInterest, years: _term, color:'#6677aa', isBest:false},
+    {label:'Recommended', freq:'Bi-Weekly', desc:'26 payments/year · 1 extra/year', payment: biweekly.payment, perLabel:'/2 weeks', interest: biweekly.totalInterest, years: biweekly.yearsToPayoff, color:'#27ae60', isBest:true, savings:bwSavings, yearsSaved:bwYearsSaved},
+    {label:'Aggressive', freq:'Weekly', desc:'52 payments/year · max frequency', payment: weekly.payment, perLabel:'/week', interest: weekly.totalInterest, years: weekly.yearsToPayoff, color:'#2563eb', isBest:false, savings:monthly.totalInterest-weekly.totalInterest, yearsSaved:_term-weekly.yearsToPayoff}
   ];
 
   var html = '';
   scenarios.forEach(function(s){
-    var savingsHtml = s.savings ? 
+    var savingsHtml = s.savings ?
       '<div class="comp-savings" style="color:'+s.color+';">'+fmt(s.savings)+' saved</div>'+
-      '<div style="font-size:12px;color:#999;">'+s.yearsSaved.toFixed(1)+' years sooner</div>' : 
+      '<div style="font-size:12px;color:#999;">'+s.yearsSaved.toFixed(1)+' years sooner</div>' :
       '<div style="font-size:13px;color:#999;margin-top:8px;">Baseline</div>';
-    
     html += '<div class="comp-card'+(s.isBest?' best':'')+'">'+
       '<div class="comp-badge" style="color:'+s.color+';">'+s.label+'</div>'+
       '<div class="comp-freq">'+s.freq+'</div>'+
@@ -353,21 +310,15 @@ function calculate(){
       '<div class="comp-divider"></div>'+
       '<div class="comp-stat">Total interest: <strong>'+fmt(s.interest)+'</strong></div>'+
       '<div class="comp-stat">Payoff: <strong>'+s.years.toFixed(1)+' years</strong></div>'+
-      savingsHtml+
-    '</div>';
+      savingsHtml+'</div>';
   });
   document.getElementById('compGrid').innerHTML = html;
 
-  // Sky Blue
   var rateSavings = fmt(Math.round(_loan*(7.5-6.1)/100/12*_term*12));
-  document.getElementById('sbText').textContent = 
-    'Bi-weekly saves you '+fmt(bwSavings)+'. But improving your credit score from 620 to 740 saves an additional '+rateSavings+' in interest on this loan. Combined: you could save over '+fmt(bwSavings+Math.round(_loan*(7.5-6.1)/100/12*_term*12))+'.';
+  document.getElementById('sbText').textContent = 'Bi-weekly saves you '+fmt(bwSavings)+'. But improving your credit score from 620 to 740 saves an additional '+rateSavings+' in interest. Combined: over '+fmt(bwSavings+Math.round(_loan*(7.5-6.1)/100/12*_term*12))+' saved.';
 
   document.getElementById('results').style.display = 'block';
-  
-  // Custom calc
   calcCustom();
-  
   document.getElementById('results').scrollIntoView({behavior:'smooth'});
 }
 
@@ -375,18 +326,16 @@ function calcCustom(){
   if(!_loan) return;
   var days = parseInt(document.getElementById('customDays').value)||10;
   if(days < 1 || days > 365) return;
-  
   var result = calcCustomFreq(_loan, _rate, _term, days);
   var savings = _monthlyInterest - result.totalInterest;
   var yearsSaved = _term - result.yearsToPayoff;
-  var paymentsPerYear = Math.round(365/days);
-  
-  document.getElementById('customResult').innerHTML = 
-    'Every <strong>'+days+' days</strong> = <strong>'+paymentsPerYear+' payments/year</strong> of <strong>'+fmt(result.payment)+'</strong> each → '+
+  var ppy = Math.round(365/days);
+  document.getElementById('customResult').innerHTML =
+    'Every <strong>'+days+' days</strong> = <strong>'+ppy+' payments/year</strong> of <strong>'+fmt(result.payment)+'</strong> → '+
     'Payoff in <strong style="color:var(--navy);">'+result.yearsToPayoff.toFixed(1)+' years</strong> · '+
     '<strong style="color:var(--green);">'+fmt(savings)+' saved</strong> · '+
     '<strong>'+yearsSaved.toFixed(1)+' years</strong> sooner'+
-    (days<=7?' 🔥 Maximum savings mode!':days<=14?' ✅ Highly effective':days<=21?' 👍 Good strategy':'');
+    (days<=7?' 🔥':days<=14?' ✅':days<=21?' 👍':'');
 }
 </script>
 </body>
