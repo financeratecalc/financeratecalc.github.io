@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Payment Frequency Calculator — Bi-Weekly vs Monthly vs Weekly | FRC</title>
+<meta name="description" content="See how paying bi-weekly, weekly, or every 10 days instead of monthly saves you tens of thousands in interest and cuts years off your mortgage. Free calculator.">
+<link rel="canonical" href="https://financeratecalc.com/payment-frequency-calculator.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<meta property="og:title" content="How Much Does Paying Bi-Weekly Save? The Real Math.">
+<meta property="og:description" content="Switch from monthly to bi-weekly payments and save $80,000+ without paying a single extra dollar. See the math.">
+<meta property="og:image" content="https://financeratecalc.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://financeratecalc.com/og-image.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f5c;--gold:#c8a44a;--gold-light:#f0d060;--green:#27ae60;--red:#c0392b;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Geist',sans-serif;background:#f8f6f0;color:#0a0e1a;line-height:1.7;overflow-x:hidden;}
+header{background:#0a1f5c;padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+.hero{background:linear-gradient(135deg,#0a1f5c,#0d2a6e);padding:64px 60px;border-bottom:4px solid var(--gold);}
+.hero-inner{max-width:860px;margin:0 auto;}
+h1{font-family:'Fraunces',serif;font-size:clamp(30px,5vw,52px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:12px;}
+h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.5);max-width:560px;}
+.main{max-width:900px;margin:0 auto;padding:48px 60px 100px;}
+
+/* Inputs */
+.input-card{background:#fff;border:1px solid #dde0ee;border-radius:12px;padding:28px 32px;margin-bottom:24px;}
+.input-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.field label{display:block;font-size:11px;font-weight:700;color:#6677aa;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;}
+.field input{width:100%;background:#f8f6f0;border:1.5px solid #dde0ee;border-radius:8px;padding:11px 14px;font-size:15px;color:#0a0e1a;outline:none;font-family:'Geist',sans-serif;}
+.field input:focus{border-color:var(--navy);}
+.calc-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--navy),#0d2a6e);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Fraunces',serif;margin-top:16px;}
+
+/* Frequency selector */
+.freq-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px;}
+.freq-btn{padding:10px 8px;border-radius:8px;border:1.5px solid #dde0ee;background:#f8f6f0;color:#6677aa;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;}
+.freq-btn:hover{border-color:var(--gold);color:var(--gold);}
+.freq-btn.active{border-color:var(--navy);background:var(--navy);color:#fff;}
+
+/* Results */
+.results{display:none;}
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px;}
+.comp-card{background:#fff;border:1px solid #dde0ee;border-radius:12px;padding:20px;text-align:center;position:relative;overflow:hidden;}
+.comp-card.best{border-color:var(--green);border-width:2px;}
+.comp-card.best::before{content:'BEST';position:absolute;top:0;right:0;background:var(--green);color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:0 10px 0 8px;}
+.comp-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.comp-freq{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.comp-payment{font-size:13px;color:#6677aa;margin-bottom:12px;}
+.comp-mo{font-family:'Fraunces',serif;font-size:28px;font-weight:900;line-height:1;}
+.comp-mo-label{font-size:10px;color:#6677aa;margin-top:3px;}
+.comp-divider{height:1px;background:#f0f0f0;margin:12px 0;}
+.comp-stat{font-size:13px;color:#555;margin-bottom:4px;}
+.comp-stat strong{color:var(--navy);}
+.comp-savings{font-family:'Fraunces',serif;font-size:16px;font-weight:700;margin-top:8px;}
+
+/* Savings banner */
+.savings-banner{background:linear-gradient(135deg,#0a1500,#1a3010);border:2px solid rgba(39,174,96,0.4);border-radius:12px;padding:28px 32px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.sb-left{}
+.sb-tag{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(39,174,96,0.8);font-weight:700;margin-bottom:6px;}
+.sb-amount{font-family:'Fraunces',serif;font-size:48px;font-weight:900;color:#6bffb8;line-height:1;}
+.sb-desc{font-size:14px;color:rgba(255,255,255,0.55);margin-top:4px;}
+.sb-right{text-align:right;}
+.sb-years{font-family:'Fraunces',serif;font-size:36px;font-weight:900;color:#6bffb8;}
+.sb-years-label{font-size:13px;color:rgba(255,255,255,0.5);}
+
+/* Custom frequency */
+.custom-card{background:#fff;border:1px solid #dde0ee;border-radius:12px;padding:24px 28px;margin-bottom:24px;}
+.custom-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.custom-row label{font-size:13px;font-weight:600;color:var(--navy);white-space:nowrap;}
+.custom-input{width:100px;padding:9px 12px;border:1.5px solid #dde0ee;border-radius:8px;font-size:15px;font-family:'Geist',sans-serif;outline:none;color:#0a0e1a;}
+.custom-input:focus{border-color:var(--navy);}
+.custom-result{font-size:14px;color:#555;}
+.custom-result strong{color:var(--navy);font-size:16px;}
+
+/* Sky Blue */
+.skyblue{background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.5);border-radius:12px;padding:24px 28px;margin-bottom:20px;}
+
+/* FAQ */
+.faq{background:#fff;border:1px solid #dde0ee;border-radius:8px;padding:16px 20px;margin-bottom:10px;}
+.faq-q{font-weight:700;color:var(--navy);margin-bottom:6px;font-size:14px;}
+.faq-a{font-size:13px;color:#555;line-height:1.7;}
+
+.related{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
+.rel{padding:12px 16px;background:#fff;border:1px solid #dde0ee;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;color:var(--navy);}
+
+footer{background:#0a1f5c;padding:24px 60px;text-align:center;}
+@media(max-width:768px){header{padding:0 16px;}.hero{padding:40px 20px;}.main{padding:28px 20px 60px;}.input-grid{grid-template-columns:1fr;}.comparison-grid{grid-template-columns:1fr;}.freq-grid{grid-template-columns:repeat(3,1fr);}.related{grid-template-columns:1fr;}footer{padding:20px;}}
+</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;">💰 Payment Frequency Calculator · Real Bank Math</div>
+    <h1>What If You Paid<br><em>More Often?</em></h1>
+    <p class="hero-sub">Switching from monthly to bi-weekly payments can save $80,000+ and cut 5-7 years off your mortgage — without paying a single extra dollar. See the exact math.</p>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- INPUTS -->
+  <div class="input-card">
+    <div class="input-grid">
+      <div class="field">
+        <label>Loan Amount</label>
+        <input type="number" id="loan" value="400000" min="50000" step="5000">
+      </div>
+      <div class="field">
+        <label>Interest Rate %</label>
+        <input type="number" id="rate" value="6.5" step="0.1" min="1">
+      </div>
+      <div class="field">
+        <label>Loan Term (Years)</label>
+        <input type="number" id="term" value="30" min="5" max="30">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate All Scenarios →</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+
+    <!-- Savings banner -->
+    <div class="savings-banner" id="savingsBanner">
+      <div class="sb-left">
+        <div class="sb-tag">💰 Bi-Weekly vs Monthly Savings</div>
+        <div class="sb-amount" id="totalSavings"></div>
+        <div class="sb-desc" id="savingsDesc"></div>
+      </div>
+      <div class="sb-right">
+        <div class="sb-years" id="yearsSaved"></div>
+        <div class="sb-years-label">years saved</div>
+      </div>
+    </div>
+
+    <!-- Comparison grid -->
+    <div class="comparison-grid" id="compGrid"></div>
+
+    <!-- Custom frequency -->
+    <div class="custom-card">
+      <h3 style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:14px;">🔧 Custom Payment Frequency</h3>
+      <div class="custom-row">
+        <label>Pay every</label>
+        <input class="custom-input" type="number" id="customDays" value="10" min="1" max="60" oninput="calcCustom()">
+        <label>days</label>
+        <div class="custom-result" id="customResult"></div>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div style="background:#fff;border:1px solid #dde0ee;border-radius:12px;padding:24px 28px;margin-bottom:20px;">
+      <h3 style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:12px;">📊 Why Bi-Weekly Works</h3>
+      <p style="font-size:14px;color:#555;line-height:1.75;margin-bottom:10px;">There are 52 weeks in a year. Paying bi-weekly means 26 half-payments = <strong>13 full monthly payments</strong> instead of 12. That one extra payment per year goes entirely toward principal — not interest.</p>
+      <p style="font-size:14px;color:#555;line-height:1.75;">The earlier in the loan you make extra principal payments, the more interest you avoid — because interest compounds daily on your remaining balance.</p>
+      <div style="background:#f0f4ff;border-radius:8px;padding:14px 18px;margin-top:12px;font-size:13px;color:#0a1f5c;font-weight:600;">
+        ⚠️ Important: Some banks charge a fee to set up bi-weekly payments or require you to use their program. The alternative: just make one extra principal payment per year — same result, no fees.
+      </div>
+    </div>
+
+    <!-- Sky Blue -->
+    <div class="skyblue" id="skyblueBox">
+      <div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:8px;">💳 Double Your Savings: Fix Your Rate Too</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.65);margin-bottom:14px;" id="sbText"></div>
+      <a href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=FREQ_CALC_FRC" target="_blank" rel="sponsored" style="display:inline-block;background:#c0392b;color:#fff;padding:11px 24px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;">🛡️ Fix My Credit Score — Sky Blue #ad</a>
+      <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:8px;">Not financial advice · Individual results vary</div>
+    </div>
+
+    <!-- FAQ -->
+    <h2 style="font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--navy);margin-bottom:16px;">Frequently Asked Questions</h2>
+
+    <div class="faq">
+      <div class="faq-q">How do I actually set up bi-weekly payments?</div>
+      <div class="faq-a">Call your lender's customer service and ask about "bi-weekly payment setup." Most major lenders (Chase, Wells Fargo, Bank of America) offer this either free or for a small fee. Alternatively, simply make one extra principal payment per year — same mathematical effect, no bank program required.</div>
+    </div>
+    <div class="faq">
+      <div class="faq-q">Is bi-weekly the same as paying half my monthly payment every 2 weeks?</div>
+      <div class="faq-a">Yes — exactly. The trick is that 52 weeks ÷ 2 = 26 payments, not 24. So you end up making 13 full payments per year instead of 12. That one extra payment goes entirely to principal.</div>
+    </div>
+    <div class="faq">
+      <div class="faq-q">Does my bank have to accept bi-weekly payments?</div>
+      <div class="faq-a">Not automatically. Some banks only process payments monthly and will hold your bi-weekly payment until the end of the month. Make sure to confirm with your lender that extra payments are applied directly to principal — and get it in writing.</div>
+    </div>
+    <div class="faq">
+      <div class="faq-q">What's better — bi-weekly payments or refinancing to a lower rate?</div>
+      <div class="faq-a">It depends on your current rate. If rates have dropped more than 1% below your current rate, refinancing usually wins. If rates are similar, bi-weekly payments are free and effective. Ideally, do both.</div>
+    </div>
+
+    <div class="related">
+      <a href="mortgage-calculator.html" class="rel">Full Mortgage Calculator →</a>
+      <a href="daily-mortgage-savings.html" class="rel">Daily Savings Calculator →</a>
+      <a href="credit-score-simulator.html" class="rel">Credit Score Impact →</a>
+      <a href="rate-grief-engine.html" class="rel">Rate Grief Engine →</a>
+    </div>
+
+    <div style="margin-top:16px;padding:12px 16px;background:#f8f6f0;border:1px solid #dde0ee;border-radius:8px;font-size:12px;color:#6677aa;">
+      📋 <strong>Data Sources & Methodology:</strong> Calculations use standard amortization formula. Bi-weekly savings based on 26 payments/year vs 12. Interest accrual calculated daily. All figures are estimates for educational purposes. Consult your lender before changing payment structure. Not financial advice.
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 · Educational use only · Not financial advice</div>
+</footer>
+
+<script>
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
+function fmtK(n){return '$'+Math.round(n/1000)+'K';}
+
+function moPay(principal, annualRate, months){
+  var r = annualRate/100/12;
+  return principal * r * Math.pow(1+r,months) / (Math.pow(1+r,months)-1);
+}
+
+function calcLoan(principal, annualRate, termYears, paymentsPerYear){
+  var r = annualRate/100/paymentsPerYear;
+  var totalPayments = termYears * paymentsPerYear;
+  var payment = principal * r * Math.pow(1+r,totalPayments) / (Math.pow(1+r,totalPayments)-1);
+  var totalPaid = payment * totalPayments;
+  var totalInterest = totalPaid - principal;
+  return {payment: payment, totalPaid: totalPaid, totalInterest: totalInterest, totalPayments: totalPayments, paymentsPerYear: paymentsPerYear};
+}
+
+function calcBiWeekly(principal, annualRate, termYears){
+  // Half monthly payment, 26 times per year
+  var monthlyPayment = moPay(principal, annualRate, termYears*12);
+  var biWeeklyPayment = monthlyPayment / 2;
+  
+  var balance = principal;
+  var totalInterest = 0;
+  var payments = 0;
+  var dailyRate = annualRate/100/365;
+  
+  while(balance > 0.01 && payments < 1000){
+    var interest = balance * dailyRate * 14;
+    totalInterest += interest;
+    balance = balance + interest - biWeeklyPayment;
+    if(balance < 0) balance = 0;
+    payments++;
+  }
+  
+  var yearsActual = payments / 26;
+  return {
+    payment: biWeeklyPayment,
+    totalInterest: totalInterest,
+    yearsToPayoff: yearsActual,
+    totalPayments: payments
+  };
+}
+
+function calcCustomFreq(principal, annualRate, termYears, days){
+  var paymentsPerYear = 365/days;
+  var monthlyPayment = moPay(principal, annualRate, termYears*12);
+  var payment = monthlyPayment * days/30.44;
+  
+  var balance = principal;
+  var totalInterest = 0;
+  var payments = 0;
+  var dailyRate = annualRate/100/365;
+  
+  while(balance > 0.01 && payments < 5000){
+    var interest = balance * dailyRate * days;
+    totalInterest += interest;
+    balance = balance + interest - payment;
+    if(balance < 0) balance = 0;
+    payments++;
+  }
+  
+  return {
+    payment: payment,
+    totalInterest: totalInterest,
+    yearsToPayoff: payments/paymentsPerYear,
+    totalPayments: payments,
+    paymentsPerYear: paymentsPerYear
+  };
+}
+
+var _loan, _rate, _term, _monthlyInterest;
+
+function calculate(){
+  _loan = parseFloat(document.getElementById('loan').value)||400000;
+  _rate = parseFloat(document.getElementById('rate').value)||6.5;
+  _term = parseInt(document.getElementById('term').value)||30;
+  
+  var monthly = calcLoan(_loan, _rate, _term, 12);
+  var biweekly = calcBiWeekly(_loan, _rate, _term);
+  var weekly = calcCustomFreq(_loan, _rate, _term, 7);
+  
+  _monthlyInterest = monthly.totalInterest;
+  
+  var bwSavings = monthly.totalInterest - biweekly.totalInterest;
+  var bwYearsSaved = _term - biweekly.yearsToPayoff;
+  
+  // Savings banner
+  document.getElementById('totalSavings').textContent = fmt(bwSavings);
+  document.getElementById('savingsDesc').textContent = 'saved in interest by switching to bi-weekly vs monthly';
+  document.getElementById('yearsSaved').textContent = bwYearsSaved.toFixed(1);
+
+  // Comparison cards
+  var scenarios = [
+    {
+      label:'Standard',
+      freq:'Monthly',
+      desc:'12 payments/year',
+      payment: monthly.payment,
+      perLabel: '/month',
+      interest: monthly.totalInterest,
+      years: _term,
+      color:'#6677aa',
+      isBest: false
+    },
+    {
+      label:'Recommended',
+      freq:'Bi-Weekly',
+      desc:'26 payments/year (13 full)',
+      payment: monthly.payment/2,
+      perLabel: '/2 weeks',
+      interest: biweekly.totalInterest,
+      years: biweekly.yearsToPayoff,
+      color:'#27ae60',
+      isBest: true,
+      savings: bwSavings,
+      yearsSaved: bwYearsSaved
+    },
+    {
+      label:'Aggressive',
+      freq:'Weekly',
+      desc:'52 payments/year',
+      payment: monthly.payment/4,
+      perLabel: '/week',
+      interest: weekly.totalInterest,
+      years: weekly.yearsToPayoff,
+      color:'#2563eb',
+      isBest: false,
+      savings: monthly.totalInterest - weekly.totalInterest,
+      yearsSaved: _term - weekly.yearsToPayoff
+    }
+  ];
+
+  var html = '';
+  scenarios.forEach(function(s){
+    var savingsHtml = s.savings ? 
+      '<div class="comp-savings" style="color:'+s.color+';">'+fmt(s.savings)+' saved</div>'+
+      '<div style="font-size:12px;color:#999;">'+s.yearsSaved.toFixed(1)+' years sooner</div>' : 
+      '<div style="font-size:13px;color:#999;margin-top:8px;">Baseline</div>';
+    
+    html += '<div class="comp-card'+(s.isBest?' best':'')+'">'+
+      '<div class="comp-badge" style="color:'+s.color+';">'+s.label+'</div>'+
+      '<div class="comp-freq">'+s.freq+'</div>'+
+      '<div class="comp-payment">'+s.desc+'</div>'+
+      '<div class="comp-mo" style="color:'+s.color+';">'+fmt(s.payment)+'</div>'+
+      '<div class="comp-mo-label">'+s.perLabel+'</div>'+
+      '<div class="comp-divider"></div>'+
+      '<div class="comp-stat">Total interest: <strong>'+fmt(s.interest)+'</strong></div>'+
+      '<div class="comp-stat">Payoff: <strong>'+s.years.toFixed(1)+' years</strong></div>'+
+      savingsHtml+
+    '</div>';
+  });
+  document.getElementById('compGrid').innerHTML = html;
+
+  // Sky Blue
+  var rateSavings = fmt(Math.round(_loan*(7.5-6.1)/100/12*_term*12));
+  document.getElementById('sbText').textContent = 
+    'Bi-weekly saves you '+fmt(bwSavings)+'. But improving your credit score from 620 to 740 saves an additional '+rateSavings+' in interest on this loan. Combined: you could save over '+fmt(bwSavings+Math.round(_loan*(7.5-6.1)/100/12*_term*12))+'.';
+
+  document.getElementById('results').style.display = 'block';
+  
+  // Custom calc
+  calcCustom();
+  
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+function calcCustom(){
+  if(!_loan) return;
+  var days = parseInt(document.getElementById('customDays').value)||10;
+  if(days < 1 || days > 365) return;
+  
+  var result = calcCustomFreq(_loan, _rate, _term, days);
+  var savings = _monthlyInterest - result.totalInterest;
+  var yearsSaved = _term - result.yearsToPayoff;
+  var paymentsPerYear = Math.round(365/days);
+  
+  document.getElementById('customResult').innerHTML = 
+    'Every <strong>'+days+' days</strong> = <strong>'+paymentsPerYear+' payments/year</strong> of <strong>'+fmt(result.payment)+'</strong> each → '+
+    'Payoff in <strong style="color:var(--navy);">'+result.yearsToPayoff.toFixed(1)+' years</strong> · '+
+    '<strong style="color:var(--green);">'+fmt(savings)+' saved</strong> · '+
+    '<strong>'+yearsSaved.toFixed(1)+' years</strong> sooner'+
+    (days<=7?' 🔥 Maximum savings mode!':days<=14?' ✅ Highly effective':days<=21?' 👍 Good strategy':'');
+}
+</script>
+</body>
+</html>
