@@ -156,6 +156,35 @@ var SD={
   56:{n:'Wyoming',ab:'WY',p:312000,i:65000,r:6.9,d:'COLD',tx:0.61,v:'No income tax and low property taxes. COLD demand. Jackson Hole is absurdly expensive — rest of state is far more accessible.'}
 };
 
+var BN={
+  TX:"Property tax at 1.80% adds ~$468/mo on median home — most buyers miss this. Austin peaked 2022, still correcting. Dallas-Fort Worth more stable. FHA loans work well under $400K.",
+  CA:"Prop 13 freezes your property tax after purchase — a hidden long-term benefit. Credit unions often beat bank rates by 0.3-0.5%. Score above 740 is critical — rate differences are huge in CA markets.",
+  FL:"Insurance crisis is real — policies can jump from $2K to $8K/year. Always get insurance quotes BEFORE making an offer. Miami and Tampa highest exposure. Orlando more manageable.",
+  NY:"Upstate NY — Buffalo, Rochester, Syracuse — has some of the best price-to-income ratios in the Northeast. NYC co-op approval is stricter than any bank. Know co-op vs condo difference before shopping.",
+  AZ:"Aggressive correction since 2022 peak — real negotiating room in Phoenix right now. HOA fees extremely common — always verify before calculating all-in monthly cost.",
+  CO:"Property assessments reset periodically and can spike dramatically — buyers get surprised. Fort Collins and Colorado Springs offer much better value than Denver or Boulder.",
+  WA:"No income tax but steep Real Estate Excise Tax on sales. Seattle tech layoffs softened demand. Spokane is dramatically more affordable — same state, completely different market.",
+  GA:"Georgia Dream program for first-time buyers is genuinely one of the better state programs — ask lenders specifically about it. Atlanta suburban commute costs matter as much as home price.",
+  NC:"Research Triangle remains one of the most balanced major growth markets in the US. Both Charlotte and Raleigh have real negotiating room after 2021-22 peak moderation.",
+  TN:"Nashville is no longer the value play it was pre-2020. Memphis and Knoxville offer dramatically better price-to-income. Watch for flood zone issues — insurance surprises many buyers.",
+  OH:"Consistently one of the most underrated value markets in America. Columbus seeing genuine momentum. Akron, Cleveland, Cincinnati all offer fundamentals that actually make mathematical sense.",
+  MI:"Detroit metro at 2.8× income is historically cheap — arguably the best pure value in the US right now. The narrative is shifting. Act before this market gets fully discovered.",
+  IL:"Second-highest property taxes at 2.27% — adds $564/month on median home. Factor this into every calculation. Suburban collar counties offer better value than Chicago proper.",
+  NJ:"Highest property taxes in America at 2.47% — adds $1,000+/month. This is not a typo. Only works mathematically if income is genuinely in NYC territory.",
+  MA:"Boston has the salaries to support its prices. Western MA is dramatically more affordable. 15-year fixed increasingly popular given the income levels here.",
+  VA:"Northern Virginia federal/contractor employment creates very stable demand. Richmond and Virginia Beach offer better value than NoVA for budget-conscious buyers.",
+  MN:"Minneapolis-St. Paul has genuinely strong fundamentals — employment diversity, reasonable prices for a major metro. Winters are real but the market is solid.",
+  OR:"Portland has been in genuine correction since 2022 — real buyer leverage. Bend has corrected from absurd 2021-22 peaks. Eastern Oregon dramatically cheaper.",
+  NV:"Las Vegas boomed hard and is now cold. Water scarcity is a long-term risk most buyers don't price in. Henderson and Summerlin more stable than Las Vegas proper.",
+  SC:"One of the lowest property tax rates in the nation at 0.57% — a genuine advantage that compounds. Charlotte spillover has driven Fort Mill and Rock Hill significantly.",
+  WI:"Wisconsin has the highest property taxes of any Midwest state at 1.85% — factor this in. Milwaukee and Madison both offer reasonable value despite the tax burden.",
+  PA:"Pittsburgh has some of the best price-to-income fundamentals in the Northeast. Philadelphia metro is expensive relative to wages. Steel City is genuinely undervalued.",
+  MD:"Prince George's County offers best value relative to Montgomery County for DC commuters. Maryland's mortgage subsidy programs for first-time buyers are actually quite good.",
+  IN:"Indiana is consistently one of the best value states in America. Carmel and Zionsville near Indianapolis offer excellent schools at prices that make sense.",
+  KY:"Louisville offers the best balance of price, employment, and amenity in Kentucky. Strong FHA loan market — many lenders compete aggressively here.",
+  OK:"Oklahoma City is genuinely one of the most underrated markets in the US. Sub-$200K median, solid employment, low taxes. Tulsa is also solid fundamentals.",
+};
+
 var dCol={HOT:'#e84040',WARM:'#d4a017',COOLING:'#2563eb',COLD:'#4b5563'};
 var dEm={HOT:'🔥',WARM:'🟡',COOLING:'🔵',COLD:'❄️'};
 function fmt(n){return '$'+Math.round(n).toLocaleString();}
@@ -226,6 +255,10 @@ fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json')
             '<div class="ps-item"><div class="ps-n" style="color:'+dc+';">'+ratio+'×</div><div class="ps-l">Price/Income</div></div>'+
           '</div>'+
           '<div class="pv">'+d.v+'</div>'+
+      '<div style="background:#f0f4ff;border-left:3px solid #0a1f5c;border-radius:0 8px 8px 0;padding:14px 18px;margin:0 28px 16px;">'+
+        '<div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;color:#0a1f5c;margin-bottom:6px;">🏦 23-Year Banker's Note</div>'+
+        '<div style="font-size:13px;color:#2c3e6b;line-height:1.7;">'+(BN[d.ab]||'Always verify property tax, HOA fees, and insurance before calculating all-in cost — they often add $300-800/month that most estimates miss.')+'</div>'+
+      '</div>'+
           '<div class="pa-grid">'+
             '<a href="salary-to-buy-home-in-'+slug+'.html" class="pa gold">'+d.n+' Full Report →</a>'+
             '<a href="mortgage-navigator.html" class="pa ghost">Plot My Route →</a>'+
