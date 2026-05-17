@@ -273,9 +273,18 @@ function calculate(){
   _rate = parseFloat(document.getElementById('rate').value)||6.5;
   _term = parseInt(document.getElementById('term').value)||30;
   
-  var monthly = calcLoan(_loan, _rate, _term, 12);
-  var biweekly = calcFreq(_loan, _rate, _term, 14);
-  var weekly = calcFreq(_loan, _rate, _term, 7);
+  // Use calcFreq for all — consistent daily compounding method
+  var monthlyF = calcFreq(_loan, _rate, _term, 30); // Monthly = every 30 days
+  var biweekly = calcFreq(_loan, _rate, _term, 14); // Bi-weekly = every 14 days
+  var weekly = calcFreq(_loan, _rate, _term, 7);    // Weekly = every 7 days
+  
+  // Also calculate standard monthly for display
+  var monthly = {
+    payment: moPay(_loan, _rate, _term*12),
+    totalInterest: moPay(_loan, _rate, _term*12)*_term*12 - _loan,
+    yearsToPayoff: _term,
+    paymentsPerYear: 12
+  };
   
   _monthlyInterest = monthly.totalInterest;
   
@@ -303,8 +312,8 @@ function calculate(){
     {
       label:'Recommended',
       freq:'Bi-Weekly',
-      desc:'26 payments/year (13 full)',
-      payment: monthly.payment/2,
+      desc:'26 payments/year · 1 extra/year',
+      payment: biweekly.payment,
       perLabel: '/2 weeks',
       interest: biweekly.totalInterest,
       years: biweekly.yearsToPayoff,
@@ -316,8 +325,8 @@ function calculate(){
     {
       label:'Aggressive',
       freq:'Weekly',
-      desc:'52 payments/year',
-      payment: monthly.payment/4,
+      desc:'52 payments/year · max frequency',
+      payment: weekly.payment,
       perLabel: '/week',
       interest: weekly.totalInterest,
       years: weekly.yearsToPayoff,
