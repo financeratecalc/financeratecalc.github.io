@@ -514,10 +514,10 @@ body{overflow-x:hidden;}
     </div>
     <div class="hero-stats">
       <div class="stat"><div class="s-num" id="cnt-1">0</div><div class="s-label">Years Banking</div></div>
-      <div class="stat"><div class="s-num">32</div><div class="s-label">Free Tools</div></div>
-      <div class="stat"><div class="s-num" style="color:#f0c040;">4.8⭐</div><div class="s-label">Google Rating</div></div>
-      <div class="stat"><div class="s-num">400K+</div><div class="s-label">Quora Views</div></div>
-      <div class="stat"><div class="s-num">50</div><div class="s-label">States Covered</div></div>
+      <div class="stat"><div class="s-num" id="cnt-tools">0</div><div class="s-label">Free Tools</div></div>
+      <div class="stat"><div class="s-num" id="cnt-rating">0</div><div class="s-label">Google Rating</div></div>
+      <div class="stat"><div class="s-num" id="cnt-quora">0</div><div class="s-label">Quora Views</div></div>
+      <div class="stat"><div class="s-num" id="cnt-states">0</div><div class="s-label">States Covered</div></div>
     </div>
     <div class="hero-ctas">
       <a href="mortgage-fate.html" class="hero-cta">🔮 What's My Mortgage Fate? →</a>
@@ -1106,9 +1106,31 @@ function countUp(id, target, suffix, duration) {
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     countUp('cnt-1', 23, '', 1500);
-    countUp('cnt-2', 284, '', 2000);
-    countUp('cnt-3', 4600, '', 2200);
-    countUp('cnt-4', 135, '', 1800);
+    countUp('cnt-tools', 32, '', 1800);
+    // Rating special
+    (function(){
+      var el=document.getElementById('cnt-rating');
+      if(!el) return;
+      var start=0, end=48, dur=2000, step=dur/end;
+      var t=setInterval(function(){
+        start++;
+        el.textContent=(start/10).toFixed(1)+'⭐';
+        el.style.color='#f0c040';
+        if(start>=end) clearInterval(t);
+      }, step);
+    })();
+    // Quora
+    (function(){
+      var el=document.getElementById('cnt-quora');
+      if(!el) return;
+      var start=0, end=400, dur=2500;
+      var t=setInterval(function(){
+        start+=8;
+        el.textContent=start+'K+';
+        if(start>=end){el.textContent='400K+';clearInterval(t);}
+      }, dur/50);
+    })();
+    countUp('cnt-states', 50, '', 2000);
   }, 400);
 });
 </script>
