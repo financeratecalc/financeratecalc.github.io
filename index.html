@@ -1228,5 +1228,77 @@ document.querySelectorAll('.tool-card').forEach(card => {
         <button id="frc-send-btn" style="background: #0f0e0c; color: #ffffff; border: none; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s;">Send</button>
     </div>
 </div>
+  <script>
+document.getElementById('frc-send-btn').addEventListener('click', askTheBanker);
+document.getElementById('frc-chat-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') askTheBanker();
+});
+
+async function askTheBanker() {
+    const inputEl = document.getElementById('frc-chat-input');
+    const msgEl = document.getElementById('frc-chat-messages');
+    const userMessage = inputEl.value.trim();
+    
+    if (!userMessage) return;
+    
+    // 1. Kullanıcının mesajını ekrana yansıt
+    msgEl.innerHTML += `
+        <div style="text-align: right; margin-bottom: 12px;">
+            <div style="display: inline-block; background: #b8860b; color: #ffffff; padding: 10px 14px; border-radius: 8px; font-weight: 500;">
+                ${userMessage}
+            </div>
+        </div>
+    `;
+    
+    // Girdiyi temizle ve ekranı aşağı kaydır
+    inputEl.value = '';
+    msgEl.scrollTop = msgEl.scrollHeight;
+    
+    // 2. Yapay zeka yükleniyor efekti koy
+    const loadingId = 'loading-' + Date.now();
+    msgEl.innerHTML += `
+        <div id="${loadingId}" style="background: #f2ede4; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #ddd8cc; font-style: italic; color: #8a8070;">
+            <strong>Ziya:</strong> Thinking like a banker...
+        </div>
+    `;
+    msgEl.scrollTop = msgEl.scrollHeight;
+    
+    try {
+        // Senin Cloudflare Worker Linkin
+        const response = await fetch('https://frc-banker.ziyetis.workers.dev', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userMessage })
+        });
+        
+        const data = await response.json();
+        
+        // Yükleniyor yazısını kaldır
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
+        
+        // 3. Claude'dan gelen cevabı ekrana jilet gibi yazdır
+        msgEl.innerHTML += `
+            <div style="background: #ffffff; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #ddd8cc; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <strong>Ziya:</strong> ${data.reply}
+            </div>
+        `;
+        
+    } catch (error) {
+        // Hata durumunda yükleniyor yazısını kaldır ve hata mesajı ver
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
+        
+        msgEl.innerHTML += `
+            <div style="background: #8b3a2a; color: #ffffff; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                <strong>Error:</strong> Connections are tight right now. Please try asking again.
+            </div>
+        `;
+    }
+    
+    // Ekranı en alta kaydır
+    msgEl.scrollTop = msgEl.scrollHeight;
+}
+</script>
 </body>
 </html>
