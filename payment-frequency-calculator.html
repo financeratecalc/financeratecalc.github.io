@@ -227,44 +227,20 @@ function calcLoan(principal, annualRate, termYears, paymentsPerYear){
   return {payment: payment, totalPaid: totalPaid, totalInterest: totalInterest, totalPayments: totalPayments, paymentsPerYear: paymentsPerYear};
 }
 
-function calcBiWeekly(principal, annualRate, termYears){
-  // Half monthly payment, 26 times per year
+function calcFreq(principal, annualRate, termYears, days){
+  // Key insight: bi-weekly (14 days) = half monthly payment = 26 payments = 13 full months/year
+  // Weekly (7 days) = quarter monthly = 52 payments = 13 full months/year
+  // Both save ~same because savings come from extra payment, not frequency alone
   var monthlyPayment = moPay(principal, annualRate, termYears*12);
-  var biWeeklyPayment = monthlyPayment / 2;
+  var daysInMonth = 30.4375;
+  var payment = monthlyPayment * days / daysInMonth;
   
   var balance = principal;
   var totalInterest = 0;
   var payments = 0;
   var dailyRate = annualRate/100/365;
   
-  while(balance > 0.01 && payments < 1000){
-    var interest = balance * dailyRate * 14;
-    totalInterest += interest;
-    balance = balance + interest - biWeeklyPayment;
-    if(balance < 0) balance = 0;
-    payments++;
-  }
-  
-  var yearsActual = payments / 26;
-  return {
-    payment: biWeeklyPayment,
-    totalInterest: totalInterest,
-    yearsToPayoff: yearsActual,
-    totalPayments: payments
-  };
-}
-
-function calcCustomFreq(principal, annualRate, termYears, days){
-  var paymentsPerYear = 365/days;
-  var monthlyPayment = moPay(principal, annualRate, termYears*12);
-  var payment = monthlyPayment * days/30.44;
-  
-  var balance = principal;
-  var totalInterest = 0;
-  var payments = 0;
-  var dailyRate = annualRate/100/365;
-  
-  while(balance > 0.01 && payments < 5000){
+  while(balance > 0.01 && payments < 20000){
     var interest = balance * dailyRate * days;
     totalInterest += interest;
     balance = balance + interest - payment;
@@ -272,6 +248,7 @@ function calcCustomFreq(principal, annualRate, termYears, days){
     payments++;
   }
   
+  var paymentsPerYear = 365/days;
   return {
     payment: payment,
     totalInterest: totalInterest,
@@ -279,6 +256,14 @@ function calcCustomFreq(principal, annualRate, termYears, days){
     totalPayments: payments,
     paymentsPerYear: paymentsPerYear
   };
+}
+
+function calcBiWeekly(principal, annualRate, termYears){
+  return calcFreq(principal, annualRate, termYears, 14);
+}
+
+function calcCustomFreq(principal, annualRate, termYears, days){
+  return calcFreq(principal, annualRate, termYears, days);
 }
 
 var _loan, _rate, _term, _monthlyInterest;
@@ -289,8 +274,8 @@ function calculate(){
   _term = parseInt(document.getElementById('term').value)||30;
   
   var monthly = calcLoan(_loan, _rate, _term, 12);
-  var biweekly = calcBiWeekly(_loan, _rate, _term);
-  var weekly = calcCustomFreq(_loan, _rate, _term, 7);
+  var biweekly = calcFreq(_loan, _rate, _term, 14);
+  var weekly = calcFreq(_loan, _rate, _term, 7);
   
   _monthlyInterest = monthly.totalInterest;
   
