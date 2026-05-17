@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRC Banker AI — 23-Year Banking Expert | FinanceRateCalc</title>
+<meta name="description" content="Ask a 23-year banking professional anything about mortgages, credit scores, refinancing, or home buying. Free AI-powered mortgage advisor.">
+<link rel="canonical" href="https://financeratecalc.com/frc-banker-ai.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<meta property="og:title" content="FRC Banker AI — Ask a 23-Year Banking Expert Anything">
+<meta property="og:image" content="https://financeratecalc.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B132B;--gold:#C8A84B;--gold-light:#e8c96a;--white:#fff;--offwhite:#f7f6f3;--border:#e2ddd5;--text:#1a1a2e;--muted:#6677aa;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
+header{background:rgba(11,19,43,0.95);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(10px);}
+.logo{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+.back{font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;display:flex;align-items:center;gap:6px;}
+.back:hover{color:var(--gold);}
+
+.hero{padding:40px 40px 0;text-align:center;background:radial-gradient(ellipse at 50% -20%,rgba(200,168,75,0.08) 0%,transparent 60%);}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.3);border-radius:20px;font-size:11px;font-weight:600;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,48px);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-1px;margin-bottom:10px;}
+h1 em{font-style:italic;color:var(--gold-light);}
+.hero-sub{font-size:15px;color:rgba(255,255,255,0.45);max-width:520px;margin:0 auto 32px;line-height:1.7;}
+
+/* Suggested questions */
+.suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:32px;max-width:800px;margin-left:auto;margin-right:auto;padding:0 40px;}
+.sug{padding:8px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.sug:hover{background:rgba(200,168,75,0.1);border-color:rgba(200,168,75,0.4);color:var(--gold);}
+
+/* Chat */
+.chat-wrap{flex:1;max-width:800px;width:100%;margin:0 auto;padding:0 20px 120px;display:flex;flex-direction:column;gap:16px;}
+.msg{display:flex;gap:12px;animation:fadeUp 0.3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.msg.user{flex-direction:row-reverse;}
+.msg-avatar{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;}
+.msg.ai .msg-avatar{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy);}
+.msg.user .msg-avatar{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);font-size:16px;}
+.msg-content{max-width:80%;}
+.msg-name{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;color:rgba(255,255,255,0.35);}
+.msg.user .msg-name{text-align:right;}
+.msg-bubble{padding:14px 18px;border-radius:14px;font-size:14px;line-height:1.75;}
+.msg.ai .msg-bubble{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.88);}
+.msg.user .msg-bubble{background:rgba(200,168,75,0.15);border:1px solid rgba(200,168,75,0.3);color:#fff;}
+.msg-bubble strong{color:#fff;font-weight:600;}
+.msg-bubble p{margin-bottom:10px;}
+.msg-bubble p:last-child{margin-bottom:0;}
+.msg-bubble ul{padding-left:16px;margin-bottom:8px;}
+.msg-bubble li{margin-bottom:4px;}
+
+/* Typing indicator */
+.typing{display:flex;align-items:center;gap:4px;padding:14px 18px;}
+.typing span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.4);animation:bounce 1.4s ease-in-out infinite;}
+.typing span:nth-child(2){animation-delay:0.2s;}
+.typing span:nth-child(3){animation-delay:0.4s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+
+/* Input */
+.input-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(11,19,43,0.97);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.07);padding:16px 20px;z-index:50;}
+.input-inner{max-width:800px;margin:0 auto;display:flex;gap:10px;align-items:flex-end;}
+.input-box{flex:1;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;font-size:14px;color:#fff;font-family:'Inter',sans-serif;resize:none;outline:none;min-height:48px;max-height:120px;line-height:1.5;transition:border-color 0.2s;}
+.input-box:focus{border-color:rgba(200,168,75,0.5);}
+.input-box::placeholder{color:rgba(255,255,255,0.25);}
+.send-btn{width:48px;height:48px;background:var(--gold);border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;}
+.send-btn:hover{background:var(--gold-light);transform:scale(1.05);}
+.send-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+.send-btn svg{width:18px;height:18px;fill:var(--navy);}
+.disclaimer{text-align:center;font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;}
+
+footer{display:none;}
+@media(max-width:640px){header{padding:0 16px;}.hero{padding:28px 20px 0;}.suggestions{padding:0 16px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="index.html" class="back">← Back to Tools</a>
+</header>
+
+<div class="hero">
+  <div class="hero-badge"><div class="hero-badge-dot"></div>AI-Powered · 23-Year Banking Expert</div>
+  <h1>Ask the <em>Banker.</em></h1>
+  <p class="hero-sub">Real mortgage math. Real market insight. Powered by 23 years of banking experience — ask anything about mortgages, rates, credit, or home buying.</p>
+</div>
+
+<div class="suggestions" id="suggestions">
+  <div class="sug" onclick="askSuggestion(this)">Why was my mortgage denied?</div>
+  <div class="sug" onclick="askSuggestion(this)">What credit score do I need to buy a home?</div>
+  <div class="sug" onclick="askSuggestion(this)">Is it worth refinancing at 6.5%?</div>
+  <div class="sug" onclick="askSuggestion(this)">How much house can I afford on $90K/year?</div>
+  <div class="sug" onclick="askSuggestion(this)">What's the difference between FHA and conventional?</div>
+  <div class="sug" onclick="askSuggestion(this)">Should I pay points to lower my rate?</div>
+  <div class="sug" onclick="askSuggestion(this)">How does bi-weekly mortgage payment work?</div>
+  <div class="sug" onclick="askSuggestion(this)">What hidden costs do buyers miss?</div>
+</div>
+
+<div class="chat-wrap" id="chatWrap">
+  <!-- Messages appear here -->
+</div>
+
+<div class="input-bar">
+  <div class="input-inner">
+    <textarea class="input-box" id="userInput" placeholder="Ask anything about mortgages, rates, credit, or home buying..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+  <div class="disclaimer">Educational purposes only · Not financial advice · Always consult a licensed professional for your specific situation</div>
+</div>
+
+<script>
+var SYSTEM_PROMPT = `You are a 23-year banking professional and the founder of FinanceRateCalc.com — a free mortgage education platform. You speak with the calm authority of someone who has reviewed thousands of mortgage files, seen every lender pattern, and watched people make both brilliant and devastating financial decisions.
+
+Your personality:
+- Direct and honest. You say what others won't.
+- You use real numbers, not vague ranges.
+- You call out common mistakes banks and lenders make.
+- You're on the consumer's side, but you respect the math.
+- Occasionally dry humor, never flippant about money.
+
+Your knowledge:
+- Deep expertise in US mortgage markets, all 50 states
+- Credit scoring systems (FICO, VantageScore), how they're calculated
+- All loan types: conventional, FHA, VA, USDA, jumbo, bridge loans
+- DTI ratios, LTV calculations, PMI, points, APR vs rate
+- State-specific property tax rates, HOA considerations
+- Market conditions by region (HOT/COLD/WARM/COOLING)
+- Lender type differences: national banks vs credit unions vs FHA lenders vs portfolio lenders
+- The 14-day rate shopping rule
+- Bi-weekly payment math and its real savings
+- Refinance break-even calculations
+- Current 2026 rate environment (~6.4-6.8% for 30-year fixed)
+
+Rules:
+- Always end with a disclaimer that you're not a licensed financial advisor and they should consult a professional for their specific situation. Keep it brief.
+- Never make up specific lender names or guarantee approvals.
+- Use specific numbers when you can. "$47,000 more over 30 years" beats "significantly more."
+- Format responses with clear structure when helpful. Use bold for key numbers.
+- If someone seems stressed or distressed about their financial situation, acknowledge that before diving into math.
+- Keep responses focused. Don't write essays. 3-5 paragraphs max unless complexity demands more.
+- You can reference FinanceRateCalc tools when genuinely relevant (mortgage calculator, bank rejection engine, etc.) but don't spam links.`;
+
+var messages = [];
+var isLoading = false;
+
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,120)+'px';
+}
+
+function handleKey(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}
+}
+
+function askSuggestion(el){
+  document.getElementById('userInput').value=el.textContent;
+  document.getElementById('suggestions').style.display='none';
+  sendMessage();
+}
+
+function addMessage(role, content){
+  var wrap=document.getElementById('chatWrap');
+  var div=document.createElement('div');
+  div.className='msg '+role;
+  
+  var avatar=document.createElement('div');
+  avatar.className='msg-avatar';
+  avatar.textContent=role==='ai'?'ZY':'👤';
+  
+  var contentDiv=document.createElement('div');
+  contentDiv.className='msg-content';
+  
+  var name=document.createElement('div');
+  name.className='msg-name';
+  name.textContent=role==='ai'?'Ziya · FRC Banker AI':'You';
+  
+  var bubble=document.createElement('div');
+  bubble.className='msg-bubble';
+  bubble.innerHTML=formatMessage(content);
+  
+  contentDiv.appendChild(name);
+  contentDiv.appendChild(bubble);
+  div.appendChild(avatar);
+  div.appendChild(contentDiv);
+  wrap.appendChild(div);
+  wrap.scrollTop=wrap.scrollHeight;
+  return bubble;
+}
+
+function formatMessage(text){
+  return text
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/\n\n/g,'</p><p>')
+    .replace(/\n/g,'<br>')
+    .replace(/^(.)/,'<p>$1')
+    .replace(/(.)$/,'$1</p>')
+    .replace(/- (.+)/g,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs,'<ul>$1</ul>');
+}
+
+function showTyping(){
+  var wrap=document.getElementById('chatWrap');
+  var div=document.createElement('div');
+  div.className='msg ai';
+  div.id='typingIndicator';
+  var avatar=document.createElement('div');
+  avatar.className='msg-avatar';
+  avatar.textContent='ZY';
+  var content=document.createElement('div');
+  content.className='msg-content';
+  var name=document.createElement('div');
+  name.className='msg-name';
+  name.textContent='Ziya · FRC Banker AI';
+  var bubble=document.createElement('div');
+  bubble.className='msg-bubble';
+  var typing=document.createElement('div');
+  typing.className='typing';
+  typing.innerHTML='<span></span><span></span><span></span>';
+  bubble.appendChild(typing);
+  content.appendChild(name);
+  content.appendChild(bubble);
+  div.appendChild(avatar);
+  div.appendChild(content);
+  wrap.appendChild(div);
+  wrap.scrollTop=wrap.scrollHeight;
+}
+
+function removeTyping(){
+  var t=document.getElementById('typingIndicator');
+  if(t) t.remove();
+}
+
+async function sendMessage(){
+  var input=document.getElementById('userInput');
+  var text=input.value.trim();
+  if(!text||isLoading) return;
+
+  document.getElementById('suggestions').style.display='none';
+  isLoading=true;
+  document.getElementById('sendBtn').disabled=true;
+  input.value='';
+  input.style.height='auto';
+
+  addMessage('user',text);
+  messages.push({role:'user',content:text});
+  showTyping();
+
+  try{
+    var response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:SYSTEM_PROMPT,
+        messages:messages
+      })
+    });
+
+    var data=await response.json();
+    removeTyping();
+
+    if(data.content&&data.content[0]){
+      var reply=data.content[0].text;
+      messages.push({role:'assistant',content:reply});
+      addMessage('ai',reply);
+    } else {
+      addMessage('ai','I ran into an issue processing that. Please try again.');
+    }
+  } catch(err){
+    removeTyping();
+    addMessage('ai','Connection issue. Please refresh and try again.');
+  }
+
+  isLoading=false;
+  document.getElementById('sendBtn').disabled=false;
+  input.focus();
+}
+
+// Welcome message
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    addMessage('ai',"Hello. I'm the FRC Banker AI — built on 23 years of mortgage and banking experience.\n\nAsk me anything: why you were denied, what rate you should be getting, whether refinancing makes sense right now, how much house your income can actually support, or what the bank isn't telling you.\n\nWhat's on your mind?");
+  },400);
+});
+</script>
+</body>
+</html>
