@@ -83,7 +83,7 @@
     transition: opacity 0.18s ease, transform 0.18s ease;
     transform: translateY(-6px);
   }
-  .nav-dropdown:hover .nav-dropdown-menu { visibility: visible; opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .nav-dropdown.open .nav-dropdown-menu { visibility: visible; opacity: 1; pointer-events: auto; transform: translateY(0); }
   .mega-menu-inner { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 20px; }
   .mega-col { padding: 0 16px; }
   .mega-col:not(:last-child) { border-right: 1px solid rgba(255,255,255,0.06); }
@@ -156,12 +156,13 @@
   @keyframes coinFlip { 0% { transform: rotateY(0deg); } 50% { transform: rotateY(180deg); } 100% { transform: rotateY(360deg); } }
   @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(184,134,11,0.6); } 70% { box-shadow: 0 0 0 12px rgba(184,134,11,0); } 100% { box-shadow: 0 0 0 0 rgba(184,134,11,0); } }
 
+  /* CHAT BALONCUĞU VE PENCERESİ */
   #frc-chat-bubble {
     position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px;
     background: #0f0e0c; border: 2px solid #b8860b; border-radius: 50%;
     box-shadow: 0 8px 32px rgba(0,0,0,0.3); cursor: pointer; z-index: 99999;
     display: flex; align-items: center; justify-content: center; font-size: 26px;
-    transition: transform 0.3s ease; animation: pulseGlow 2s infinite;
+    animation: pulseGlow 2s infinite; transition: transform 0.2s ease;
   }
   #frc-chat-bubble:hover { transform: scale(1.08); }
 
@@ -170,7 +171,7 @@
     background: #ffffff; border: 1px solid #ddd8cc; border-radius: 16px;
     box-shadow: 0 12px 40px rgba(0,0,0,0.2); display: none; flex-direction: column;
     overflow: hidden; font-family: 'Geist', sans-serif; z-index: 99999;
-    transform: translateY(20px); opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: translateY(15px); opacity: 0; transition: transform 0.25s ease, opacity 0.25s ease;
   }
   #frc-chat-window.active { display: flex; transform: translateY(0); opacity: 1; }
 
@@ -185,7 +186,7 @@
     <div class="nav-dropdown" id="calcDropdown">
       <button class="nav-dropdown-btn" onclick="toggleDropdown()">
         Tools & Resources
-        <svg viewBox="0 0 10 6" fill="none" xmlns="https://www.w3.org/2000/svg"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5"/></svg>
+        <svg viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5"/></svg>
       </button>
       
       <div class="nav-dropdown-menu">
@@ -234,8 +235,8 @@
         </div>
         <div class="mega-footer-bar">
           <span style="display:flex; align-items:center; gap:6px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C16.2 0 19.9 2.2 22 5.5L11.5 14.5L5.7 6.4C7.2 2.6 11 0 12 0Z" fill="#EA4335"/><path d="M22 5.5C23.3 7.4 24 9.6 24 12C24 18.6 18.6 24 12 24L5.3 12.3L11.5 14.5L22 5.5Z" fill="#FBBC05"/><path d="M12 24C6.5 24 1.8 20.3 0 15.2L5.8 5.2L5.3 12.3L12 24Z" fill="#34A853"/><path d="M12 17.5C15.0376 17.5 17.5 15.0376 17.5 12C17.5 8.96243 15.0376 6.5 12 6.5C8.96243 6.5 6.5 8.96243 6.5 12C6.5 15.0376 8.96243 17.5 12 17.5Z" fill="#4285F4"/></svg>
-            🧩 <strong id="chrome-rating-text">0.0⭐ Chrome Extension</strong>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 0C16.2 0 19.9 2.2 22 5.5L11.5 14.5L5.7 6.4C7.2 2.6 11 0 12 0Z" fill="#EA4335"/><path d="M22 5.5C23.3 7.4 24 9.6 24 12C24 18.6 18.6 24 12 24L5.3 12.3L11.5 14.5L22 5.5Z" fill="#FBBC05"/><path d="M12 24C6.5 24 1.8 20.3 0 15.2L5.8 5.2L5.3 12.3L12 24Z" fill="#34A853"/><path d="M12 17.5C15.0376 17.5 17.5 15.0376 17.5 12C17.5 8.96243 15.0376 6.5 12 6.5C8.96243 6.5 6.5 8.96243 6.5 12C6.5 15.0376 8.96243 17.5 12 17.5Z" fill="#4285F4"/></svg>
+            🧩 <strong id="chrome-rating-text">0.0 Stars Chrome Extension</strong>
           </span>
           <a href="https://chromewebstore.google.com/detail/mortgage-calculator-by-fi/jbmifambbepjmamkjhpapckjobfchlod" target="_blank" rel="noopener" style="font-size:11px; padding:6px 12px; background:#ffffff; color:#0f0e0c; border-radius:4px; font-weight:700; text-decoration:none;">Add to Chrome</a>
         </div>
@@ -296,4 +297,19 @@
   </div>
 </section>
 
-<section class="tools-section
+<section class="tools-section">
+  <div class="section-header">
+    <div>
+      <h2 class="section-title">Proprietary Frameworks</h2>
+    </div>
+  </div>
+  <div class="tools-grid">
+    <a href="bank-rejection-engine.html" class="tool-card">
+      <div class="tool-icon" style="background:rgba(139,58,42,0.1); color:var(--rust);">🔥</div>
+      <h3 class="tool-name">Bank Rejection Engine</h3>
+      <p class="tool-desc">Duplicate real underwriting algorithms. Parse automated debt-to-income limits and profile parameters before traditional hard hits hit your history.</p>
+      <div><span class="tool-feature">DTI Rules</span><span class="tool-feature">Risk Models</span></div>
+    </a>
+    <a href="american-dream-calculator.html" class="tool-card">
+      <div class="tool-icon" style="background:rgba(184,134,11,0.1); color:var(--gold);">🌟</div>
+      <h3
