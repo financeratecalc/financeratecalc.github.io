@@ -199,9 +199,7 @@ function mo(p,r,tx){var mr=r/100/12,n=360;return p*0.8*mr*Math.pow(1+mr,n)/(Math
 function sal(p,r,tx){return Math.round(mo(p,r,tx)/0.28*12/1000);}
 
 // Load TopoJSON and render
-fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json')
-  .catch(function(){ return fetch('https://unpkg.com/us-atlas@3/states-10m.json'); })
-  .catch(function(){ return fetch('https://raw.githack.com/topojson/us-atlas/master/states-10m.json'); })
+fetch('/states-10m.json')
   .then(function(r){return r.json();})
   .then(function(us){
     var svg=d3.select('#map-svg');
