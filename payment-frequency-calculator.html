@@ -326,16 +326,31 @@ function calcCustom(){
   if(!_loan) return;
   var days = parseInt(document.getElementById('customDays').value)||10;
   if(days < 1 || days > 365) return;
-  var result = calcCustomFreq(_loan, _rate, _term, days);
+  
+  var result = calcFreq(_loan, _rate, _term, days);
   var savings = _monthlyInterest - result.totalInterest;
   var yearsSaved = _term - result.yearsToPayoff;
-  var ppy = Math.round(365/days);
-  document.getElementById('customResult').innerHTML =
-    'Every <strong>'+days+' days</strong> = <strong>'+ppy+' payments/year</strong> of <strong>'+fmt(result.payment)+'</strong> → '+
+  var paymentsPerYear = (365/days).toFixed(1);
+  var annualTotal = result.payment * (365/days);
+  var monthlyAnnual = moPay(_loan,_rate,_term*12) * 12;
+  var extraPerYear = annualTotal - monthlyAnnual;
+  
+  var note = '';
+  if(days === 14){
+    note = ' ✅ Same as bi-weekly — 26 payments = 13 months/year.';
+  } else if(days === 7){
+    note = ' ✅ Weekly — 52 payments = 13 months/year.';
+  } else if(Math.abs(extraPerYear) < 200){
+    note = ' ⚠️ Annual total ≈ monthly total. Real savings come from extra payments, not frequency alone.';
+  } else if(extraPerYear > 200){
+    note = ' ✅ '+fmt(extraPerYear)+'/year extra vs monthly.';
+  }
+  
+  document.getElementById('customResult').innerHTML = 
+    'Every <strong>'+days+' days</strong> = <strong>'+paymentsPerYear+' payments/year</strong> of <strong>'+fmt(result.payment)+'</strong> → '+
     'Payoff in <strong style="color:var(--navy);">'+result.yearsToPayoff.toFixed(1)+' years</strong> · '+
-    '<strong style="color:var(--green);">'+fmt(savings)+' saved</strong> · '+
-    '<strong>'+yearsSaved.toFixed(1)+' years</strong> sooner'+
-    (days<=7?' 🔥':days<=14?' ✅':days<=21?' 👍':'');
+    '<strong style="color:'+(savings>5000?'var(--green)':'#b7791f')+';">'+fmt(savings)+' saved</strong> · '+
+    '<strong>'+yearsSaved.toFixed(1)+' years</strong> sooner'+note;
 }
 </script>
 </body>
