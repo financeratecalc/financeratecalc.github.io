@@ -333,7 +333,14 @@ function calcCustom(){
   var days = parseInt(document.getElementById('customDays').value)||10;
   if(days < 1 || days > 365) return;
   
-  var result = calcFreq(_loan, _rate, _term, days);
+  // Use current inputs or defaults
+  var loan = parseFloat(document.getElementById('loan').value)||400000;
+  var rate = parseFloat(document.getElementById('rate').value)||6.5;
+  var term = parseInt(document.getElementById('term').value)||30;
+  var monthlyInt = moPay(loan,rate,term*12)*term*12 - loan;
+  
+  var result = calcFreq(loan, rate, term, days);
+  var _monthlyInterest = monthlyInt;
   var savings = _monthlyInterest - result.totalInterest;
   var yearsSaved = _term - result.yearsToPayoff;
   var paymentsPerYear = (365/days).toFixed(1);
