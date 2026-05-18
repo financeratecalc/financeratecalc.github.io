@@ -130,7 +130,7 @@
         method:'POST',
         headers:{
           'Content-Type':'application/json',
-          'x-api-key':window._AKEY||'',
+          'x-api-key':window._AKEY||'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',
           'anthropic-version':'2023-06-01',
           'anthropic-dangerous-direct-browser-access':'true'
         },
