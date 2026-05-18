@@ -496,7 +496,7 @@ body{overflow-x:hidden;}
       <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(192,57,43,0.8);margin-bottom:6px;font-weight:700;">⏱ LIVE — Since you opened this page, the avg U.S. home price increased by:</div>
       <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
         <div style="flex:1;">
-          <span style="font-family:'Fraunces',serif;font-size:clamp(22px,3vw,36px);font-weight:900;color:#ff6b6b;" id="lossCounter">$0.00</span>
+          <span style="font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:900;color:#ff6b6b;" id="lossCounter">$0.00</span>
           <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;">National median home: $412,000 · Annual appreciation: ~6% · That's <strong style="color:#ff6b6b;">$0.78 per second</strong></div>
         </div>
         <a href="american-dream-calculator.html" style="padding:10px 20px;background:#c0392b;color:#fff;text-decoration:none;font-weight:700;font-size:13px;border-radius:6px;white-space:nowrap;">See the Gap →</a>
@@ -526,19 +526,957 @@ body{overflow-x:hidden;}
 </div>
 
 
-<!-- CHROME EXTENSION -->
-<div style="background:#060a10;padding:48px 40px;border-top:1px solid rgba(255,255,255,0.05);">
-  <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;">
-    <div style="display:flex;align-items:center;gap:20px;">
-      <div style="width:48px;height:48px;background:linear-gradient(135deg,#4285f4,#34a853);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🧩</div>
-      <div>
-        <div style="font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:4px;">Chrome Extension · 4.8★ · Free</div>
-        <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:800;color:#fff;line-height:1.2;">FRC on Every Zillow Listing</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.35);margin-top:4px;">See HOT/COLD demand score on any listing — without leaving Zillow</div>
+<!-- ANIMATED EXTENSION DEMO -->
+<div style="background:linear-gradient(180deg,#050810 0%,#0a0f20 100%);padding:80px 40px;overflow:hidden;position:relative;">
+  
+  <!-- Background grid -->
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;"></div>
+  
+  <div style="max-width:1000px;margin:0 auto;position:relative;">
+    
+    <div style="text-align:center;margin-bottom:56px;">
+      <div style="display:inline-block;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.3);padding:6px 16px;border-radius:20px;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#c8a44a;font-weight:700;margin-bottom:16px;">⚡ Live Demo</div>
+      <div style="font-family:'Fraunces',serif;font-size:clamp(28px,4vw,48px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:12px;">Every Zillow listing.<br>Instant verdict.</div>
+      <div style="font-size:15px;color:rgba(255,255,255,0.45);max-width:480px;margin:0 auto;">No setup. No clicks. Just open any listing and the FRC score appears automatically.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;" class="demo-grid">
+      
+      <!-- LEFT: Animated House -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:24px;">
+        <div style="position:relative;width:220px;height:220px;">
+          <svg id="demoHouse" width="220" height="220" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <rect id="houseBody" x="25" y="88" width="150" height="95" rx="4" fill="#1a2a4a"/>
+            <polygon id="houseRoof" points="10,93 100,18 190,93" fill="#0d1f5c"/>
+            <rect id="houseDoor" x="76" y="133" width="48" height="50" rx="4" fill="#0a1628"/>
+            <circle cx="118" cy="160" r="3.5" fill="#c8a44a"/>
+            <rect id="winL" x="33" y="103" width="38" height="30" rx="3" fill="#1a3a6a"/>
+            <rect id="winR" x="129" y="103" width="38" height="30" rx="3" fill="#1a3a6a"/>
+            <line x1="52" y1="103" x2="52" y2="133" stroke="#2a5a9a" stroke-width="1.5"/>
+            <line x1="33" y1="118" x2="71" y2="118" stroke="#2a5a9a" stroke-width="1.5"/>
+            <line x1="148" y1="103" x2="148" y2="133" stroke="#2a5a9a" stroke-width="1.5"/>
+            <line x1="129" y1="118" x2="167" y2="118" stroke="#2a5a9a" stroke-width="1.5"/>
+            <rect x="128" y="28" width="22" height="38" rx="2" fill="#0d1f5c"/>
+            <!-- FRC Badge on house -->
+            <g id="houseBadge">
+              <rect x="120" y="18" width="68" height="40" rx="8" fill="#0a1628" stroke-width="2"/>
+              <rect id="houseBadgeBg" x="120" y="18" width="68" height="40" rx="8" fill="rgba(75,85,99,0.9)" stroke="#6b7280" stroke-width="1.5"/>
+              <text id="houseEmoji" x="154" y="34" text-anchor="middle" font-size="11" fill="white">❄️</text>
+              <text id="houseLabel" x="154" y="50" text-anchor="middle" font-family="serif" font-size="10" font-weight="900" fill="white">COLD</text>
+            </g>
+          </svg>
+          <!-- Glow ring -->
+          <div id="houseGlow" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:220px;height:220px;border-radius:50%;border:2px solid rgba(107,255,184,0.2);animation:pulseRing 3s ease-out infinite;pointer-events:none;"></div>
+        </div>
+
+        <!-- Score display -->
+        <div id="scoreDisplay" style="background:rgba(75,85,99,0.15);border:2px solid rgba(107,255,184,0.4);border-radius:12px;padding:16px 24px;text-align:center;min-width:220px;transition:all 0.5s;">
+          <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;">FRC Buyer Demand Score</div>
+          <div id="scoreBig" style="font-family:'Fraunces',serif;font-size:36px;font-weight:900;color:#9ca3af;line-height:1;">❄️ COLD</div>
+          <div id="scoreNum" style="font-size:20px;font-weight:700;color:#9ca3af;margin-top:2px;">23/100</div>
+          <div id="scoreSub" style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;">94 days · 3 price cuts</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Score cards -->
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        
+        <div id="card1" style="background:rgba(192,57,43,0.08);border:1.5px solid rgba(192,57,43,0.25);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.4s;opacity:0.45;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:28px;">🔥</span>
+            <div style="flex:1;">
+              <div style="font-size:16px;font-weight:900;color:#ff6b6b;margin-bottom:2px;">HOT · 85-100</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.55);">4 days · 0 price cuts</div>
+              <div style="font-size:11px;color:#ff9999;margin-top:4px;font-weight:600;">High demand — come in strong →</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="card2" style="background:rgba(183,121,31,0.08);border:1.5px solid rgba(183,121,31,0.25);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.4s;opacity:0.45;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:28px;">🟡</span>
+            <div style="flex:1;">
+              <div style="font-size:16px;font-weight:900;color:#f0c040;margin-bottom:2px;">WARM · 65-84</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.55);">21 days · 1 price cut</div>
+              <div style="font-size:11px;color:#f5d060;margin-top:4px;font-weight:600;">Some room to negotiate →</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="card3" style="background:rgba(37,99,235,0.08);border:1.5px solid rgba(37,99,235,0.25);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.4s;opacity:0.45;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:28px;">🔵</span>
+            <div style="flex:1;">
+              <div style="font-size:16px;font-weight:900;color:#60a5fa;margin-bottom:2px;">COOLING · 40-64</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.55);">47 days · 2 price cuts</div>
+              <div style="font-size:11px;color:#93c5fd;margin-top:4px;font-weight:600;">Market slowing — leverage is yours →</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="card4" style="background:rgba(75,85,99,0.15);border:2px solid rgba(107,255,184,0.5);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.4s;opacity:1;box-shadow:0 0 24px rgba(107,255,184,0.1);">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:28px;">❄️</span>
+            <div style="flex:1;">
+              <div style="font-size:16px;font-weight:900;color:#e2e8f0;margin-bottom:2px;">COLD · 0-39</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.55);">94 days · 3 price cuts</div>
+              <div style="font-size:11px;color:#6bffb8;margin-top:4px;font-weight:600;">Low demand — negotiate hard →</div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
-    <a href="https://chromewebstore.google.com/detail/mortgage-calculator-by-fi/jbmifambbepjmamkjhpapckjobfchlod" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:12px 22px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:6px;font-weight:700;font-size:13px;text-decoration:none;transition:all 0.15s;white-space:nowrap;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Add to Chrome — Free →</a>
+
+    <!-- CTA -->
+    <div style="text-align:center;margin-top:48px;">
+      <a href="https://chromewebstore.google.com/detail/mortgage-calculator-by-fi/jbmifambbepjmamkjhpapckjobfchlod" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0d2a0d,#1a4a1a);border:2px solid rgba(68,221,136,0.6);color:#6bffb8;padding:16px 32px;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;box-shadow:0 0 32px rgba(68,221,136,0.15);">
+        <span style="font-size:22px;">🧩</span>
+        <div style="text-align:left;">
+          <div>Add to Chrome — Free</div>
+          <div style="font-size:11px;opacity:0.6;font-weight:400;">Works on Zillow · Redfin · Realtor.com</div>
+        </div>
+        <span style="font-size:20px;">→</span>
+      </a>
+    </div>
+
   </div>
 </div>
 
+<style>
+@keyframes pulseRing {
+  0% { transform:translate(-50%,-50%) scale(0.9); opacity:0.5; }
+  100% { transform:translate(-50%,-50%) scale(1.5); opacity:0; }
+}
+</style>
 
+<script>
+(function() {
+  var states = [
+    { card:'card1', emoji:'🔥', label:'HOT', score:'92/100', sub:'4 days · 0 price cuts', 
+      cardColor:'rgba(192,57,43,0.2)', cardBorder:'rgba(192,57,43,0.7)', cardShadow:'rgba(192,57,43,0.2)',
+      scoreColor:'#ff6b6b', bodyFill:'#3a0a0a', roofFill:'#2a0505', winFill:'#6a2020',
+      badgeFill:'rgba(192,57,43,0.9)', badgeBorder:'#c0392b', glowColor:'rgba(192,57,43,0.3)' },
+    { card:'card2', emoji:'🟡', label:'WARM', score:'68/100', sub:'21 days · 1 price cut',
+      cardColor:'rgba(183,121,31,0.2)', cardBorder:'rgba(183,121,31,0.7)', cardShadow:'rgba(183,121,31,0.2)',
+      scoreColor:'#f0c040', bodyFill:'#2a1a05', roofFill:'#1a1005', winFill:'#4a3010',
+      badgeFill:'rgba(183,121,31,0.9)', badgeBorder:'#b7791f', glowColor:'rgba(183,121,31,0.3)' },
+    { card:'card3', emoji:'🔵', label:'COOLING', score:'45/100', sub:'47 days · 2 price cuts',
+      cardColor:'rgba(37,99,235,0.2)', cardBorder:'rgba(37,99,235,0.7)', cardShadow:'rgba(37,99,235,0.2)',
+      scoreColor:'#60a5fa', bodyFill:'#0a1a3a', roofFill:'#05102a', winFill:'#1a2a5a',
+      badgeFill:'rgba(37,99,235,0.9)', badgeBorder:'#2563eb', glowColor:'rgba(37,99,235,0.3)' },
+    { card:'card4', emoji:'❄️', label:'COLD', score:'23/100', sub:'94 days · 3 price cuts',
+      cardColor:'rgba(75,85,99,0.15)', cardBorder:'rgba(107,255,184,0.5)', cardShadow:'rgba(107,255,184,0.15)',
+      scoreColor:'#e2e8f0', bodyFill:'#1a2a4a', roofFill:'#0d1f5c', winFill:'#1a3a6a',
+      badgeFill:'rgba(75,85,99,0.9)', badgeBorder:'#6b7280', glowColor:'rgba(107,255,184,0.2)' }
+  ];
+
+  var current = 3;
+
+  function activate(idx) {
+    var s = states[idx];
+    
+    // Cards
+    states.forEach(function(st, i) {
+      var card = document.getElementById(st.card);
+      if (!card) return;
+      if (i === idx) {
+        card.style.opacity = '1';
+        card.style.background = st.cardColor;
+        card.style.border = '2px solid ' + st.cardBorder;
+        card.style.boxShadow = '0 0 24px ' + st.cardShadow;
+        card.style.transform = 'translateX(6px)';
+      } else {
+        card.style.opacity = '0.35';
+        card.style.border = '1.5px solid rgba(255,255,255,0.08)';
+        card.style.boxShadow = 'none';
+        card.style.transform = 'translateX(0)';
+      }
+    });
+
+    // House colors
+    var body = document.getElementById('houseBody');
+    var roof = document.getElementById('houseRoof');
+    var wL = document.getElementById('winL');
+    var wR = document.getElementById('winR');
+    var badge = document.getElementById('houseBadgeBg');
+    var emoji = document.getElementById('houseEmoji');
+    var label = document.getElementById('houseLabel');
+    var glow = document.getElementById('houseGlow');
+    var display = document.getElementById('scoreDisplay');
+    var scoreBig = document.getElementById('scoreBig');
+    var scoreNum = document.getElementById('scoreNum');
+    var scoreSub = document.getElementById('scoreSub');
+
+    if (body) body.setAttribute('fill', s.bodyFill);
+    if (roof) roof.setAttribute('fill', s.roofFill);
+    if (wL) wL.setAttribute('fill', s.winFill);
+    if (wR) wR.setAttribute('fill', s.winFill);
+    if (badge) { badge.setAttribute('fill', s.badgeFill); badge.setAttribute('stroke', s.badgeBorder); }
+    if (emoji) emoji.textContent = s.emoji;
+    if (label) label.textContent = s.label;
+    if (glow) glow.style.borderColor = s.glowColor;
+    if (display) { display.style.borderColor = s.cardBorder; display.style.background = s.cardColor; }
+    if (scoreBig) { scoreBig.style.color = s.scoreColor; scoreBig.textContent = s.emoji + ' ' + s.label; }
+    if (scoreNum) { scoreNum.style.color = s.scoreColor; scoreNum.textContent = s.score; }
+    if (scoreSub) scoreSub.textContent = s.sub;
+
+    current = idx;
+  }
+
+  setTimeout(function() {
+    activate(3);
+    setInterval(function() {
+      activate((current - 1 + 4) % 4);
+    }, 2800);
+  }, 600);
+})();
+</script>
+
+<div class="tools-section" id="tools">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">🏆 World-First Tools · Free Forever</div>
+      <div class="section-title">The Tools Banks<br>Wish You Didn't Have</div>
+    </div>
+  </div>
+
+  <div class="tools-grid">
+
+    <!-- ROW 1: 2 MEGA FEATURED (full width each, side by side in 2-col) -->
+    <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="mega-row">
+
+      <a href="mortgage-rejection-database.html" style="background:linear-gradient(135deg,#0d0000 0%,#1a0005 40%,#0a0000 100%);border:1px solid rgba(192,57,43,0.4);border-radius:12px;padding:32px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:all 0.3s;box-shadow:0 4px 24px rgba(192,57,43,0.15);">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#c0392b,#e74c3c,#c8a44a);"></div>
+        <div style="position:absolute;top:16px;right:16px;background:rgba(192,57,43,0.25);border:1px solid rgba(192,57,43,0.5);padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;color:#ff6b6b;letter-spacing:0.1em;">🔴 LIVE</div>
+        <div style="font-size:32px;margin-bottom:14px;">📊</div>
+        <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#ff6b6b;margin-bottom:8px;font-weight:600;">🆕 World's First · Anonymous</div>
+        <div style="font-family:'Fraunces',serif;font-size:24px;font-weight:900;color:#fff;line-height:1.15;margin-bottom:10px;">Mortgage Rejection<br>Database</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;margin-bottom:18px;">Banks won't tell you why you were denied. We built the first public database of real rejection stories — anonymous, real patterns, real solutions.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);padding:10px;border-radius:8px;text-align:center;">
+            <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#ff6b6b;">247</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">Stories</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);padding:10px;border-radius:8px;text-align:center;">
+            <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#c8a44a;">68%</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">Got Approved</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);padding:10px;border-radius:8px;text-align:center;">
+            <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#ff6b6b;">72%</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">Big Bank Deny</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);padding:10px;border-radius:8px;text-align:center;">
+            <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#c8a44a;">4.2mo</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">Fix & Reapply</div>
+          </div>
+        </div>
+        <div style="color:#ff6b6b;font-size:13px;font-weight:600;">See the Database →</div>
+      </a>
+
+      <a href="american-dream-calculator.html" style="background:linear-gradient(135deg,#0a0800 0%,#1a1200 40%,#0a0c00 100%);border:1px solid rgba(200,164,74,0.35);border-radius:12px;padding:32px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:all 0.3s;box-shadow:0 4px 24px rgba(200,164,74,0.12);">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#c8a44a,#f0c040,#c8a44a);"></div>
+        <div style="font-size:32px;margin-bottom:14px;">🏠</div>
+        <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#c8a44a;margin-bottom:8px;font-weight:600;">🔥 Viral · Generational Data · 20 Cities</div>
+        <div style="font-family:'Fraunces',serif;font-size:24px;font-weight:900;color:#fff;line-height:1.15;margin-bottom:10px;">American Dream<br>Calculator</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;margin-bottom:18px;">Your dad bought his house when it cost 2× his salary. You're looking at 6×. See how many years each generation needed to save. The gap will shock you.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);padding:10px;border-radius:8px;text-align:center;">
+            <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#c8a44a;">3.2</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">Boomer Yrs</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);padding:10px;border-radius:8px;text-align:center;">
+            <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#ff6b6b;">18.3</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">Today's Yrs</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);padding:10px;border-radius:8px;text-align:center;">
+            <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#ff6b6b;">5.7×</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">Harder Now</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);padding:10px;border-radius:8px;text-align:center;">
+            <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#c8a44a;">20</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;">Cities</div>
+          </div>
+        </div>
+        <div style="color:#c8a44a;font-size:13px;font-weight:600;">See My Generational Gap →</div>
+      </a>
+
+    </div>
+
+
+    <!-- RATE GRIEF ENGINE -->
+    <a href="daily-mortgage-savings.html" style="background:linear-gradient(135deg,#0a1000,#1a2000);border:1px solid rgba(39,174,96,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;">
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(39,174,96,0.8);margin-bottom:8px;font-weight:700;">💰 Banks Hate This · World First</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">Daily Mortgage Savings</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">Interest accrues every day. See your daily interest cost, biweekly hack, and how saving daily changes everything.</div>
+      <div style="color:rgba(39,174,96,0.8);font-size:13px;font-weight:600;">Calculate My Daily Cost →</div>
+    </a>
+
+    <a href="credit-repair-consultation.html" style="background:linear-gradient(135deg,#1a0000,#2a0505);border:2px solid rgba(192,57,43,0.6);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c0392b,#ff6b6b);"></div>
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);margin-bottom:8px;font-weight:700;">🛡️ Free · 60 Seconds · High Converting</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">Is Your Credit Score Costing You $40,000?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">4 questions. See exactly how much your score is costing you — and when you can fix it.</div>
+      <div style="color:#ff6b6b;font-size:13px;font-weight:600;">Get Free Analysis →</div>
+    </a>
+
+    <a href="credit-score-simulator.html" style="background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;">
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);margin-bottom:8px;font-weight:700;">💳 New · Melis Hanım Önerdi</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">Credit Score Simulator</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">620→680→740 — see exact monthly savings and 30-year cost of each score tier.</div>
+      <div style="color:#ff6b6b;font-size:13px;font-weight:600;">Simulate My Score →</div>
+    </a>
+
+    <a href="days-to-homeownership.html" style="background:linear-gradient(135deg,#0a0005,#1a0010);border:1px solid rgba(200,164,74,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.8);margin-bottom:8px;font-weight:700;">⏳ Viral · Shareable</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">How Many Days Until You Own a Home?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">Not years. Exact days. Save $20/day or $50/day — see your countdown, target date, and what's slowing you down.</div>
+      <div style="color:rgba(200,164,74,0.8);font-size:13px;font-weight:600;">Calculate My Days →</div>
+    </a>
+
+    <a href="share-your-story.html" style="background:linear-gradient(135deg,#0a0a00,#1a1500);border:2px solid rgba(200,164,74,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),#f0d060);"></div>
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.8);margin-bottom:8px;font-weight:700;">📖 312 Stories · 100% Anonymous</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">Share Your Housing Story</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">Mortgage denial, tenant nightmare, hidden costs. Your real experience could save someone thousands.</div>
+      <div style="color:var(--gold);font-size:13px;font-weight:600;">Share Anonymously →</div>
+    </a>
+
+    <a href="mortgage-map.html" style="background:linear-gradient(135deg,#050810,#0a0f20);border:2px solid rgba(200,164,74,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c0392b,#d4a017,#2563eb,#374151);"></div>
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.8);margin-bottom:8px;font-weight:700;">🗺️ Interactive · Click Any State</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">US Mortgage Heat Map</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">Click any state. See median price, salary needed, FRC demand score, and full market analysis.</div>
+      <div style="color:var(--gold);font-size:13px;font-weight:600;">Explore the Map →</div>
+    </a>
+
+    <a href="mortgage-navigator.html" style="background:linear-gradient(135deg,#000a1a,#001530);border:2px solid rgba(37,99,235,0.5);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#2563eb,#60a5fa);"></div>
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(96,165,250,0.8);margin-bottom:8px;font-weight:700;">🗺️ World First · ZIP Code + Profile</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">Mortgage Navigator</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">The Waze of home buying. ZIP code + profile = your personalized route to approval with local market data.</div>
+      <div style="color:#60a5fa;font-size:13px;font-weight:600;">Plot My Route →</div>
+    </a>
+
+    <a href="mortgage-fate.html" style="background:linear-gradient(135deg,#1a0a00,#2a1500);border:2px solid rgba(200,164,74,0.5);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),#f0d060);"></div>
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.8);margin-bottom:8px;font-weight:700;">🎲 World First · Viral · 7 Questions</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">Mortgage Fate Simulator</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">Green Road · Yellow Road · Red Road. Real bank math. Your personalized mortgage story in 60 seconds.</div>
+      <div style="color:var(--gold);font-size:13px;font-weight:600;">Find My Fate →</div>
+    </a>
+
+    <a href="dream-home-quiz.html" style="background:linear-gradient(135deg,#0a1f5c,#0d2a6e);border:1px solid rgba(200,164,74,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.8);margin-bottom:8px;font-weight:700;">🏡 World First · Viral Quiz</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">Dream Home Finder</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">7 questions. Beachfront, mountain, city or suburban? Get your personalized dream home profile with real cities and prices.</div>
+      <div style="color:rgba(200,164,74,0.8);font-size:13px;font-weight:600;">Find My Dream Home →</div>
+    </a>
+
+    <a href="index.html" style="background:linear-gradient(135deg,#1a0000,#2a0505);border:2px solid rgba(192,57,43,0.5);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c0392b,#ff6b6b);"></div>
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);margin-bottom:8px;font-weight:700;">📊 NEW · Every Monday · Issue #001</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">The Great American Housing Verdict</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">Best & worst cities to buy right now. Real data from 4,590 listings. Detroit #1. Austin: wait.</div>
+      <div style="color:#ff6b6b;font-size:13px;font-weight:600;">Read This Week's Verdict →</div>
+    </a>
+
+    <a href="payment-frequency-calculator.html" style="display:block;padding:24px;background:#fff;border-bottom:1px solid #f0ede8;text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='#f9f7f4'" onmouseout="this.style.background='#fff'">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#c8a44a;margin-bottom:6px;">Savings</div>
+            <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:800;color:#0a0e1a;margin-bottom:6px;">Payment Frequency</div>
+            <div style="font-size:13px;color:#6677aa;margin-bottom:10px;">Bi-weekly saves $120K without spending extra.</div>
+            <div style="font-size:11px;font-weight:700;color:#0a1f5c;">See the Math →</div>
+          </a>
+          <a href="refinance-alert-calculator.html" style="display:block;padding:24px;background:#fff;border-bottom:1px solid #f0ede8;text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='#f9f7f4'" onmouseout="this.style.background='#fff'">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#c8a44a;margin-bottom:6px;">Refinance</div>
+            <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:800;color:#0a0e1a;margin-bottom:6px;">Refinance Alert</div>
+            <div style="font-size:13px;color:#6677aa;margin-bottom:10px;">At what rate should you refinance? Banks won't say.</div>
+            <div style="font-size:11px;font-weight:700;color:#0a1f5c;">Find My Trigger →</div>
+          </a>
+          <a href="bridge-loan-calculator.html" style="background:linear-gradient(135deg,#1a1000,#2a1a00);border:1px solid rgba(200,164,74,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.8);margin-bottom:8px;font-weight:700;">🏠→🏡 New · World First</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">Bridge Loan Calculator</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">Selling your home and buying another? Calculate your financing gap, daily interest cost, and how long you can afford to wait.</div>
+      <div style="color:rgba(200,164,74,0.8);font-size:13px;font-weight:600;">Calculate My Bridge Loan →</div>
+    </a>
+
+    <a href="rate-grief-engine.html" style="background:linear-gradient(135deg,#0a0005 0%,#1a0010 100%);border:1px solid rgba(150,50,150,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,100,200,0.8);margin-bottom:8px;font-weight:700;">😔 Rate Grief Engine · New</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">You Signed at 7.2%.<br>Rates Dropped. Now What?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">Calculate exactly what your old rate has cost you — and whether refinancing makes sense right now.</div>
+      <div style="color:rgba(200,100,200,0.8);font-size:13px;font-weight:600;">Calculate My Rate Grief →</div>
+    </a>
+    <!-- FRC AFFORDABILITY INDEX -->
+    <a href="frc-affordability-index.html" style="background:linear-gradient(135deg,#0a0a1a 0%,#0d1530 100%);border:1px solid rgba(100,120,200,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(100,150,255,0.8);margin-bottom:8px;font-weight:700;">📊 Live Data · April 2026</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">FRC Affordability<br>Index</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">290 users. 4,590 home checks. 94% scored COLD. Real data, not estimates.</div>
+      <div style="color:rgba(100,150,255,0.8);font-size:13px;font-weight:600;">See the Data →</div>
+    </a>
+
+    <!-- INSIDER BLOG -->
+    <a href="blog-5-mortgage-mistakes-bankers-see.html" style="background:linear-gradient(135deg,#0a1a0a 0%,#0d2a0d 100%);border:1px solid rgba(39,174,96,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(39,174,96,0.8);margin-bottom:8px;font-weight:700;">📝 Insider · 23 Years Banking</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">5 Mistakes Bankers<br>See Every Day</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">The exact patterns that kill applications — often 30 days before closing. Never published before.</div>
+      <div style="color:rgba(39,174,96,0.8);font-size:13px;font-weight:600;">Read the Insider Guide →</div>
+    </a>
+
+    <!-- NEIGHBORHOOD COSTS -->
+    <a href="neighborhood-beverly-hills-ca.html" style="background:linear-gradient(135deg,#1a0a00 0%,#2a1500 100%);border:1px solid rgba(200,164,74,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.8);margin-bottom:8px;font-weight:700;">🏘️ Neighborhood Real Costs</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">Hidden Costs by<br>Neighborhood</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">Beverly Hills → $18,032/mo. Westlake Hills → $9,512/mo. What Zillow never shows you.</div>
+      <div style="color:rgba(200,164,74,0.8);font-size:13px;font-weight:600;">See Your Neighborhood →</div>
+    </a>
+
+    <!-- BANK LOYALTY PENALTY -->
+    <a href="bank-loyalty-penalty.html" style="grid-column:1/-1;background:linear-gradient(135deg,#0a0000 0%,#1a0505 50%,#0a0000 100%);border:2px solid rgba(192,57,43,0.5);border-radius:12px;padding:28px 32px;text-decoration:none;display:flex;gap:28px;align-items:center;flex-wrap:wrap;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c0392b,#ff6b6b,#c0392b);"></div>
+      <div style="flex:1;min-width:240px;">
+        <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.9);margin-bottom:8px;font-weight:700;">💸 New Tool · Viral</div>
+        <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:8px;">Bank Loyalty<br>Penalty Score™</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.6;margin-bottom:14px;">The average borrower who didn't shop rates paid $47,000 more over 30 years. Calculate exactly how much your loyalty is costing you — and what you could do with that money instead.</div>
+        <div style="color:#ff6b6b;font-size:13px;font-weight:600;">Calculate My Penalty →</div>
+      </div>
+      <div style="text-align:center;min-width:140px;">
+        <div style="font-family:'Fraunces',serif;font-size:64px;font-weight:900;color:#ff6b6b;line-height:1;">F</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;">Grade for loyalty</div>
+      </div>
+    </a>
+    <!-- PARALLEL LIFE SIMULATOR -->
+    <a href="parallel-life-simulator.html" style="grid-column:1/-1;background:linear-gradient(135deg,#050810 0%,#0a0a2a 50%,#050810 100%);border:2px solid rgba(200,164,74,0.5);border-radius:12px;padding:28px 32px;text-decoration:none;display:flex;gap:28px;align-items:center;flex-wrap:wrap;box-shadow:0 4px 24px rgba(200,164,74,0.1);position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c8a44a,#f0d060,#c8a44a);"></div>
+      <div style="flex:1;min-width:240px;">
+        <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.8);margin-bottom:8px;font-weight:700;">🌐 World First · Cinematic Finance</div>
+        <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:8px;">Parallel Life<br>Simulator</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.6;margin-bottom:14px;">NerdWallet shows you interest rates. We show you two parallel lives — the one you're choosing vs the one you could have. Real moments, not just numbers.</div>
+        <div style="color:var(--gold);font-size:13px;font-weight:600;">See Your Two Futures →</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;min-width:220px;">
+        <div style="background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.3);padding:14px;border-radius:8px;text-align:center;">
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:4px;">Life A</div>
+          <div style="font-size:16px;font-weight:900;color:#ff6b6b;">Retire at 65</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);">Current rate</div>
+        </div>
+        <div style="background:rgba(39,174,96,0.15);border:1px solid rgba(39,174,96,0.3);padding:14px;border-radius:8px;text-align:center;">
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:4px;">Life B</div>
+          <div style="font-size:16px;font-weight:900;color:#6bffb8;">Retire at 62</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);">Best rate</div>
+        </div>
+      </div>
+    </a>
+    <!-- MILLION DOLLAR CHALLENGE — FULL WIDTH FEATURED -->
+    <a href="million-dollar-listing-challenge.html" style="grid-column:1/-1;background:linear-gradient(135deg,#0a0000 0%,#1a0000 50%,#0a0000 100%);border:2px solid rgba(192,57,43,0.5);border-radius:12px;padding:28px 32px;text-decoration:none;display:flex;gap:28px;align-items:center;flex-wrap:wrap;box-shadow:0 4px 24px rgba(192,57,43,0.15);transition:all 0.3s;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c0392b,#e74c3c,#c0392b);"></div>
+      <div style="flex:1;min-width:240px;">
+        <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);margin-bottom:8px;font-weight:700;">🔴 NEW · Weekly · A Banker's Verdict</div>
+        <div style="font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:8px;">Million Dollar<br>Listing Challenge</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:14px;">Every week: a real $1M+ listing. The real salary needed. Can a surgeon afford it? A CEO? The math is brutal — and public.</div>
+        <div style="color:#ff6b6b;font-size:13px;font-weight:600;">See This Week's Verdict →</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;min-width:200px;">
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);padding:12px;border-radius:8px;text-align:center;">
+          <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#ff6b6b;">$9,140</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;">Monthly Cost</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);padding:12px;border-radius:8px;text-align:center;">
+          <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#c8a44a;">$520K</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;">Salary Needed</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);padding:12px;border-radius:8px;text-align:center;">
+          <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#ff6b6b;">94/100</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;">House Poor Score</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);padding:12px;border-radius:8px;text-align:center;">
+          <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#ff6b6b;">❌</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;">Surgeon Denied</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- ROW 2: 2 DARK PREMIUM (side by side) -->
+    <a href="bank-rejection-engine.html" style="background:linear-gradient(135deg,#1a0005 0%,#2d0010 50%,#1a0008 100%);border:2px solid rgba(192,57,43,0.5);border-radius:16px;padding:32px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:all 0.25s;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c0392b,#e74c3c);"></div>
+      <div style="font-size:28px;margin-bottom:12px;">🔍</div>
+      <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#ff6b6b;margin-bottom:6px;font-weight:600;">🔥 Most Viral · SEO #1</div>
+      <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:8px;line-height:1.2;">Bank Rejection Engine</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.6;">Why would a bank deny you? Find out before you apply. 5 lender types, personalized action plan.</div>
+      <div style="color:#ff6b6b;font-size:13px;font-weight:600;">Check My Application →</div>
+    </a>
+
+    <a href="real-cost-calculator.html" style="background:linear-gradient(135deg,#00051a 0%,#001030 50%,#000a1a 100%);border:2px solid rgba(10,31,92,0.6);border-radius:16px;padding:32px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:all 0.25s;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#0a1f5c,#c8a44a);"></div>
+      <div style="font-size:28px;margin-bottom:12px;">🏠</div>
+      <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#c8a44a;margin-bottom:6px;font-weight:600;">🆕 Zillow & Redfin</div>
+      <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:8px;line-height:1.2;">Real Cost Calculator</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.6;">Paste any listing URL. Get the real all-in monthly cost, House Poor Score, 10-year projection.</div>
+      <div style="color:#c8a44a;font-size:13px;font-weight:600;">Analyze a Listing →</div>
+    </a>
+
+    <!-- ROW 3: FULL WIDTH FEATURED -->
+    <a href="index.html" class="tool-card tool-card-featured" style="background:linear-gradient(135deg,#2a0808 0%,#3a1010 40%,#1a0808 100%);border:1px solid rgba(192,57,43,0.35);">
+      <div>
+        <div class="tool-label" style="color:#e87070;">🚨 Instant Assessment</div>
+        <div class="tool-name" style="color:#fff;">Is Your Home at Risk?</div>
+        <div class="tool-desc" style="color:rgba(255,255,255,0.55);">Answer 5 questions. Get a Green, Yellow, or Red assessment — and a banker's step-by-step action plan.</div>
+        <div class="tool-features">
+          <span class="tool-feature" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1);">🟢 Safe</span>
+          <span class="tool-feature" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1);">🟡 Warning</span>
+          <span class="tool-feature" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1);">🔴 Act Now</span>
+        </div>
+        <div class="tool-link" style="color:#e87070;">Take the Assessment →</div>
+      </div>
+    </a>
+
+    <a href="financial-twin.html" class="tool-card tool-card-featured">
+      <div>
+        <div class="tool-label">⭐ Most Unique · 25 Cities</div>
+        <div class="tool-name">Should You Buy or Rent?</div>
+        <div class="tool-desc">See your financial future in 10, 20, or 30 years with real inflation, property appreciation, and investment return data.</div>
+        <div class="tool-features">
+          <span class="tool-feature">25 Cities Worldwide</span>
+          <span class="tool-feature">Real Market Data</span>
+          <span class="tool-feature">10/20/30 Year Horizon</span>
+        </div>
+        <div class="tool-link">Try the Calculator</div>
+      </div>
+      <div class="featured-visual">
+        <div class="featured-cities">
+          <span class="featured-city highlight">🇺🇸 New York</span>
+          <span class="featured-city highlight">🇬🇧 London</span>
+          <span class="featured-city">🇩🇪 Berlin</span>
+          <span class="featured-city">🇦🇪 Dubai</span>
+          <span class="featured-city">🇸🇬 Singapore</span>
+          <span class="featured-city">🇹🇷 Istanbul</span>
+          <span class="featured-city">🇦🇺 Sydney</span>
+          <span class="featured-city">+ 18 more</span>
+        </div>
+        <button class="featured-cta-btn" onclick="window.location='financial-twin.html'">Start Free →</button>
+      </div>
+    </a>
+
+    <!-- ROW 4: 3-COLUMN NORMAL TOOLS -->
+    <a href="mortgage-calculator.html" class="tool-card" style="--card-color:#b8860b;--icon-bg:rgba(184,134,11,0.1)">
+      <div class="tool-icon">🏠</div>
+      <div class="tool-label">Most Used</div>
+      <div class="tool-name">Mortgage Calculator</div>
+      <div class="tool-desc">Real P&I + taxes + insurance + PMI. Not just the payment — the full picture.</div>
+      <div class="tool-features"><span class="tool-feature">PITI</span><span class="tool-feature">Amortization</span><span class="tool-feature">PMI</span></div>
+      <div class="tool-link">Calculate →</div>
+<div class="tool-preview"><div class="tool-preview-stat">👉 ✓ P&I + tax + insurance + PMI</div>
+<div class="tool-preview-stat">👉 ✓ Full amortization schedule</div>
+<div class="tool-preview-stat">👉 ✓ Extra payment simulator</div><a href="mortgage-calculator.html" class="tool-preview-btn">Open Calculator →</a></div>
+    </a>
+
+    <a href="are-you-house-poor.html" class="tool-card" style="--card-color:#cc0000;--icon-bg:rgba(204,0,0,0.08)">
+      <div class="tool-icon">🏚️</div>
+      <div class="tool-label">🔥 Viral Quiz</div>
+      <div class="tool-name">Are You House Poor?</div>
+      <div class="tool-desc">1 in 4 Americans is house poor. Are you one of them? Find out in 60 seconds.</div>
+      <div class="tool-features"><span class="tool-feature">60 Seconds</span><span class="tool-feature">Score</span><span class="tool-feature">Action Plan</span></div>
+      <div class="tool-link">Take the Quiz →</div>
+<div class="tool-preview"><div class="tool-preview-stat">👉 ✓ 60-second quiz</div>
+<div class="tool-preview-stat">👉 ✓ House Poor Score</div>
+<div class="tool-preview-stat">👉 ✓ Step-by-step fix plan</div><a href="are-you-house-poor.html" class="tool-preview-btn">Take the Quiz →</a></div>
+    </a>
+
+    <a href="salary-by-state.html" class="tool-card" style="--card-color:#c0392b;--icon-bg:rgba(192,57,43,0.08)">
+      <div class="tool-icon">🗺️</div>
+      <div class="tool-label">All 50 States</div>
+      <div class="tool-name">Salary by State</div>
+      <div class="tool-desc">What salary do you need to buy a home in your state? 11 states now require $100K+.</div>
+      <div class="tool-features"><span class="tool-feature">All 50 States</span><span class="tool-feature">Interactive Map</span><span class="tool-feature">2026 Data</span></div>
+      <div class="tool-link">See Your State →</div>
+<div class="tool-preview"><div class="tool-preview-stat">👉 ✓ All 50 states covered</div>
+<div class="tool-preview-stat">👉 ✓ Interactive D3 map</div>
+<div class="tool-preview-stat">👉 ✓ 11 states need $100K+</div><a href="salary-by-state.html" class="tool-preview-btn">See Your State →</a></div>
+    </a>
+
+    <a href="mortgage-time-machine.html" class="tool-card" style="--card-color:#c8a44a;--icon-bg:rgba(200,164,74,0.08)">
+      <div class="tool-icon">⏳</div>
+      <div class="tool-label">Historical Data</div>
+      <div class="tool-name">Mortgage Time Machine</div>
+      <div class="tool-desc">What if you bought in 2015? 2019? See real historical prices and how much you gained or missed.</div>
+      <div class="tool-features"><span class="tool-feature">2015–2023</span><span class="tool-feature">Real Rates</span><span class="tool-feature">Share Card</span></div>
+      <div class="tool-link">Travel Back →</div>
+<div class="tool-preview"><div class="tool-preview-stat">👉 ✓ What if you bought in 2015?</div>
+<div class="tool-preview-stat">👉 ✓ Real historical prices & rates</div>
+<div class="tool-preview-stat">👉 ✓ Shareable result card</div><a href="mortgage-time-machine.html" class="tool-preview-btn">Travel Back →</a></div>
+    </a>
+
+    <a href="zip-code-wealth-gap.html" class="tool-card" style="--card-color:#27ae60;--icon-bg:rgba(39,174,96,0.08)">
+      <div class="tool-icon">📍</div>
+      <div class="tool-label">City Comparison</div>
+      <div class="tool-name">Zip Code Wealth Gap</div>
+      <div class="tool-desc">Same $80K salary. Austin vs Detroit. The 30-year wealth difference can exceed $500K.</div>
+      <div class="tool-features"><span class="tool-feature">20+ Cities</span><span class="tool-feature">30-Year</span><span class="tool-feature">Share Card</span></div>
+      <div class="tool-link">See the Gap →</div>
+<div class="tool-preview"><div class="tool-preview-stat">👉 ✓ Same salary, different city</div>
+<div class="tool-preview-stat">👉 ✓ 30-year wealth projection</div>
+<div class="tool-preview-stat">👉 ✓ Austin vs Detroit gap</div><a href="zip-code-wealth-gap.html" class="tool-preview-btn">See the Gap →</a></div>
+    </a>
+
+    <a href="compound-interest-calculator.html" class="tool-card" style="--card-color:#4a6741;--icon-bg:rgba(74,103,65,0.08)">
+      <div class="tool-icon">📈</div>
+      <div class="tool-label">18 Countries</div>
+      <div class="tool-name">Compound Interest</div>
+      <div class="tool-desc">Watch your money multiply year by year. Real savings rates from 18 countries.</div>
+      <div class="tool-features"><span class="tool-feature">18 Countries</span><span class="tool-feature">Growth Curve</span><span class="tool-feature">Milestones</span></div>
+      <div class="tool-link">See the Growth →</div>
+<div class="tool-preview"><div class="tool-preview-stat">👉 ✓ 18 countries, real rates</div>
+<div class="tool-preview-stat">👉 ✓ Year-by-year growth chart</div>
+<div class="tool-preview-stat">👉 ✓ Milestone tracker</div><a href="compound-interest-calculator.html" class="tool-preview-btn">See the Growth →</a></div>
+    </a>
+
+    <a href="loan-offer-analyzer.html" class="tool-card" style="--card-color:#8b2a2a;--icon-bg:rgba(139,42,42,0.08)">
+      <div class="tool-icon">🔎</div>
+      <div class="tool-label">Is Your Rate Fair?</div>
+      <div class="tool-name">Loan Offer Analyzer</div>
+      <div class="tool-desc">Is your bank's offer fair? See if you're being overcharged and how much you could save.</div>
+      <div class="tool-features"><span class="tool-feature">Rate Check</span><span class="tool-feature">APR</span><span class="tool-feature">Hidden Fees</span></div>
+      <div class="tool-link">Analyze My Offer →</div>
+    </a>
+
+    <a href="debt-consolidation-calculator.html" class="tool-card" style="--card-color:#8b1a1a;--icon-bg:rgba(139,26,26,0.08)">
+      <div class="tool-icon">💳</div>
+      <div class="tool-label">Debt Strategy</div>
+      <div class="tool-name">Debt Consolidation</div>
+      <div class="tool-desc">Should you consolidate? See your break-even and total savings in seconds.</div>
+      <div class="tool-features"><span class="tool-feature">Break-Even</span><span class="tool-feature">Savings</span><span class="tool-feature">Strategy</span></div>
+      <div class="tool-link">Run the Math →</div>
+    </a>
+
+    <a href="can-two-salaries-buy-this-house.html" class="tool-card" style="--card-color:#ff6699;--icon-bg:rgba(255,102,153,0.08)">
+      <div class="tool-icon">💑</div>
+      <div class="tool-label">Couples Calculator</div>
+      <div class="tool-name">Two Salaries Calculator</div>
+      <div class="tool-desc">Combined income buying power. See if two salaries can afford your target home.</div>
+      <div class="tool-features"><span class="tool-feature">Combined DTI</span><span class="tool-feature">Affordability</span><span class="tool-feature">Scenarios</span></div>
+      <div class="tool-link">Calculate Together →</div>
+    </a>
+
+    <a href="business-loan-calculator.html" class="tool-card" style="--card-color:#1a3a5c;--icon-bg:rgba(26,58,92,0.08)">
+      <div class="tool-icon">💼</div>
+      <div class="tool-label">Business</div>
+      <div class="tool-name">Business Loan Calculator</div>
+      <div class="tool-desc">SBA, term loans, lines of credit. Real payment schedules for your business.</div>
+      <div class="tool-features"><span class="tool-feature">SBA</span><span class="tool-feature">Term Loan</span><span class="tool-feature">LOC</span></div>
+      <div class="tool-link">Calculate →</div>
+    </a>
+
+    <a href="loan-comparator.html" class="tool-card" style="--card-color:#b8860b;--icon-bg:rgba(184,134,11,0.1)">
+      <div class="tool-icon">⚖️</div>
+      <div class="tool-label">Compare Offers</div>
+      <div class="tool-name">Loan Comparator</div>
+      <div class="tool-desc">Compare up to 3 bank offers side by side. Find the true best deal.</div>
+      <div class="tool-features"><span class="tool-feature">3 Offers</span><span class="tool-feature">True Cost</span><span class="tool-feature">APR</span></div>
+      <div class="tool-link">Compare Now →</div>
+    </a>
+
+    <a href="cost-of-waiting.html" class="tool-card" style="--card-color:#8b2a2a;--icon-bg:rgba(139,42,42,0.08)">
+      <div class="tool-icon">⏰</div>
+      <div class="tool-label">Stop Renting</div>
+      <div class="tool-name">Cost of Waiting</div>
+      <div class="tool-desc">Every year you wait costs you. See exactly how much in equity and appreciation you're losing.</div>
+      <div class="tool-features"><span class="tool-feature">Equity Lost</span><span class="tool-feature">Appreciation</span><span class="tool-feature">Real Numbers</span></div>
+      <div class="tool-link">See the Cost →</div>
+    </a>
+
+    <!-- ROW 5: FULL WIDTH CREDIT REPAIR FEATURED -->
+    <a href="credit-repair.html" class="tool-card tool-card-featured" style="background:linear-gradient(135deg,#0d0005 0%,#1a0010 40%,#0a0008 100%);border:1px solid rgba(229,57,53,0.35);">
+      <div>
+        <div class="tool-label">🛡️ Sky Blue Credit · Recommended</div>
+        <div class="tool-name">Fix Your Credit Score</div>
+        <div class="tool-desc">A 620 vs 740 score = $47,000 difference on a $400K mortgage. See how to fix it — and whether Sky Blue Credit can help.</div>
+        <div class="tool-features">
+          <span class="tool-feature">620 vs 740 Analysis</span>
+          <span class="tool-feature">Action Plan</span>
+          <span class="tool-feature">Sky Blue Discount</span>
+        </div>
+        <div class="tool-link">Fix My Credit →</div>
+      </div>
+    </a>
+
+    <!-- Ticker -->
+  <div style="overflow:hidden;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+    <div style="display:flex;width:max-content;animation:tickerAnim 35s linear infinite;">
+      <span style="font-size:11px;letter-spacing:0.15em;color:rgba(255,255,255,0.35);white-space:nowrap;padding-right:60px;">
+        FREE MORTGAGE CALCULATOR &nbsp;·&nbsp; BUY VS RENT · 25 CITIES &nbsp;·&nbsp; SALARY BY STATE · ALL 50 STATES &nbsp;·&nbsp; MORTGAGE TIME MACHINE &nbsp;·&nbsp; ZIP CODE WEALTH GAP &nbsp;·&nbsp; COMPOUND INTEREST &nbsp;·&nbsp; ARE YOU HOUSE POOR? &nbsp;·&nbsp; CHROME EXTENSION FOR ZILLOW &amp; REDFIN &nbsp;·&nbsp; BUILT BY A LICENSED BANKER · 23 YEARS &nbsp;·&nbsp; FREE · NO SIGN-UP · NO ADS &nbsp;·&nbsp;
+      </span>
+      <span style="font-size:11px;letter-spacing:0.15em;color:rgba(255,255,255,0.35);white-space:nowrap;padding-right:60px;">
+        FREE MORTGAGE CALCULATOR &nbsp;·&nbsp; BUY VS RENT · 25 CITIES &nbsp;·&nbsp; SALARY BY STATE · ALL 50 STATES &nbsp;·&nbsp; MORTGAGE TIME MACHINE &nbsp;·&nbsp; ZIP CODE WEALTH GAP &nbsp;·&nbsp; COMPOUND INTEREST &nbsp;·&nbsp; ARE YOU HOUSE POOR? &nbsp;·&nbsp; CHROME EXTENSION FOR ZILLOW &amp; REDFIN &nbsp;·&nbsp; BUILT BY A LICENSED BANKER · 23 YEARS &nbsp;·&nbsp; FREE · NO SIGN-UP · NO ADS &nbsp;·&nbsp;
+      </span>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes tickerAnim { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }
+</style>
+
+<!-- WHY FRC -->
+<div style="background:#fff;padding:80px 40px;border-top:1px solid #f0ede8;">
+  <div style="max-width:1040px;margin:0 auto;">
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;" id="why-frc-grid">
+
+      <!-- Left: heading -->
+      <div>
+        <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#c8a44a;font-weight:700;margin-bottom:16px;">Why FinanceRateCalc</div>
+        <div style="font-family:'Fraunces',serif;font-size:clamp(32px,4vw,52px);font-weight:900;color:#0a0e1a;letter-spacing:-2px;line-height:0.95;margin-bottom:24px;">Built by a<br>banker.<br><em style="font-style:italic;color:#c8a44a;">Not a startup.</em></div>
+        <p style="font-size:15px;color:#6677aa;line-height:1.8;max-width:380px;font-weight:300;">After 23 years reviewing mortgage files, I built the tools I wished existed when I was on the other side of the desk.</p>
+        <div style="margin-top:32px;">
+          <a href="frc-banker-ai.html" style="display:inline-flex;align-items:center;gap:8px;padding:13px 22px;background:#0a1f5c;color:#fff;border-radius:4px;font-weight:700;font-size:13px;text-decoration:none;letter-spacing:0.03em;">Talk to the Banker AI →</a>
+        </div>
+      </div>
+
+      <!-- Right: 3 reasons -->
+      <div style="display:flex;flex-direction:column;gap:0;">
+
+        <div style="padding:28px 0;border-bottom:1px solid #f0ede8;">
+          <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;color:#c8a44a;margin-bottom:10px;">01</div>
+          <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800;color:#0a0e1a;margin-bottom:8px;">We think like a banker, not a salesman.</div>
+          <div style="font-size:14px;color:#6677aa;line-height:1.75;">Every tool shows you what the bank actually sees — DTI ratios, credit tier pricing, lender type differences. Not the polished version they put in the brochure.</div>
+        </div>
+
+        <div style="padding:28px 0;border-bottom:1px solid #f0ede8;">
+          <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;color:#c8a44a;margin-bottom:10px;">02</div>
+          <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800;color:#0a0e1a;margin-bottom:8px;">We know what lenders actually look at.</div>
+          <div style="font-size:14px;color:#6677aa;line-height:1.75;">A 620 score costs $47,000 more over 30 years. A Chase denial says nothing about a credit union. These are the things that matter — and most calculators don't mention them.</div>
+        </div>
+
+        <div style="padding:28px 0;">
+          <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;color:#c8a44a;margin-bottom:10px;">03</div>
+          <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800;color:#0a0e1a;margin-bottom:8px;">100% free. No data harvested. No ads.</div>
+          <div style="font-size:14px;color:#6677aa;line-height:1.75;">No sign-up, no email wall, no affiliate tricks. Just the math. We built this because good financial information shouldn't cost anything.</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+@media(max-width:768px){
+  #why-frc-grid{grid-template-columns:1fr !important;gap:40px !important;}
+}
+</style>
+
+<footer style="background:var(--ink);padding:0;text-align:left;">
+  <div style="max-width:1200px;margin:0 auto;padding:56px 60px 36px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;" class="footer-grid">
+    <div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:14px;">Finance<em style="font-style:italic;color:#d4a017;">Rate</em>Calc</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7;max-width:260px;font-weight:300;">Free financial tools built by a licensed banker with 23 years of experience. No sign-up. No ads. No BS.</p>
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <a href="https://twitter.com/FinanceRateCalc" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:rgba(255,255,255,0.07);border-radius:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="rgba(255,255,255,0.5)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="https://www.facebook.com/Financeratecalc" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:rgba(255,255,255,0.07);border-radius:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="rgba(255,255,255,0.5)"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+        <a href="https://chromewebstore.google.com/detail/mortgage-calculator-by-fi/jbmifambbepjmamkjhpapckjobfchlod" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:0 14px;height:36px;background:rgba(68,221,136,0.12);border:1px solid rgba(68,221,136,0.3);border-radius:8px;color:#6bffb8;font-size:12px;font-weight:600;text-decoration:none;">🧩 Chrome</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#b8860b;margin-bottom:16px;">Calculators</div>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <a href="mortgage-calculator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Mortgage Calculator</a>
+        <a href="financial-twin.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Buy vs Rent</a>
+        <a href="compound-interest-calculator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Compound Interest</a>
+        <a href="business-loan-calculator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Business Loan</a>
+        <a href="loan-comparator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Loan Comparator</a>
+        <a href="debt-consolidation-calculator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Debt Consolidation</a>
+        <a href="savings-calculator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Savings & CD Rates</a>
+        <a href="salary-by-state.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Salary by State</a>
+        <a href="american-dream-calculator.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">American Dream</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#b8860b;margin-bottom:16px;">Company</div>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <a href="manifesto.html" style="color:rgba(255,255,255,0.4);text-decoration:none;font-size:13px;font-weight:500;">Our Story</a>
+        <a href="tool-map.html" style="color:rgba(255,255,255,0.4);text-decoration:none;font-size:13px;">All Tools</a>
+        <a href="about.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">About Us</a>
+        <a href="blog-banks-dont-want-you-to-know.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Insider Blog</a>
+        <a href="faq.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">FAQ</a>
+        <a href="mortgage-glossary.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Mortgage Glossary</a>
+        <a href="frc-affordability-index.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Affordability Index</a>
+        <a href="million-dollar-listing-challenge.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Million $ Challenge</a>
+        <a href="bank-rejection-engine.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Bank Rejection Engine</a>
+        <a href="credit-repair.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Fix Your Credit</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#b8860b;margin-bottom:16px;">Legal</div>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <a href="privacy-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Privacy Policy</a>
+        <a href="terms-of-service.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Terms of Service</a>
+        <a href="affiliate-disclosure.html" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Affiliate Disclosure</a>
+        <a href="#" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;">Do Not Sell My Info</a>
+      </div>
+      <div style="margin-top:20px;padding:12px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+        <div style="font-size:10px;color:rgba(255,255,255,0.25);line-height:1.6;">Educational use only. Not financial advice. Always consult a licensed professional.</div>
+      </div>
+    </div>
+  </div>
+  <div style="border-top:1px solid rgba(255,255,255,0.07);padding:18px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div style="font-size:12px;color:rgba(255,255,255,0.25);">© 2026 FinanceRateCalc · Educational Use Only · Not Financial Advice</div>
+
+  <div style="max-width:1100px;margin:16px auto 0;padding:16px 60px 0;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:rgba(255,255,255,0.18);line-height:2;">
+    <strong style="color:rgba(255,255,255,0.5);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Salary Guides:</strong>
+    <a href="salary-to-afford-200k-house.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">$200K</a>
+    <a href="salary-to-afford-300k-house.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">$300K</a>
+    <a href="salary-to-afford-400k-house.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">$400K</a>
+    <a href="salary-to-afford-500k-house.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">$500K</a>
+    <a href="salary-to-afford-600k-house.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">$600K</a>
+    <a href="salary-to-afford-700k-house.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">$700K</a>
+    <a href="salary-to-afford-800k-house.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">$800K</a>
+    <a href="salary-to-afford-1000k-house.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">$1M</a>
+    &nbsp;·&nbsp;
+    <strong style="color:rgba(255,255,255,0.5);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Cities:</strong>
+    <a href="mortgage-boston-ma.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">Boston</a>
+    <a href="mortgage-detroit-mi.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">Detroit</a>
+    <a href="mortgage-portland-or.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">Portland</a>
+    <a href="mortgage-raleigh-nc.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">Raleigh</a>
+    <a href="mortgage-columbus-oh.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">Columbus</a>
+    <a href="mortgage-boise-id.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">Boise</a>
+    <a href="mortgage-buffalo-ny.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">Buffalo</a>
+    <a href="mortgage-el-paso-tx.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">El Paso</a>
+    <a href="mortgage-allentown-pa.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">Allentown</a>
+    <a href="mortgage-philadelphia-pa.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">Philadelphia</a>
+    <a href="mortgage-grand-rapids-mi.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 6px;">Grand Rapids</a>
+    &nbsp;·&nbsp;
+    <strong style="color:rgba(255,255,255,0.5);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Salary:</strong>
+    <a href="can-i-afford-a-house-on-50k-salary.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">$50K</a>
+    <a href="can-i-afford-a-house-on-75k-salary.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">$75K</a>
+    <a href="can-i-afford-a-house-on-100k-salary.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">$100K</a>
+    <a href="can-i-afford-a-house-on-150k-salary.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">$150K</a>
+    <a href="can-i-afford-a-house-on-200k-salary.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">$200K</a>
+    &nbsp;·&nbsp;
+    <strong style="color:rgba(255,255,255,0.5);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Credit Score:</strong>
+    <a href="can-i-get-mortgage-with-580-credit-score.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">580</a>
+    <a href="can-i-get-mortgage-with-620-credit-score.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">620</a>
+    <a href="can-i-get-mortgage-with-660-credit-score.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">660</a>
+    <a href="can-i-get-mortgage-with-700-credit-score.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">700</a>
+    <a href="can-i-get-mortgage-with-740-credit-score.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">740</a>
+    &nbsp;·&nbsp;
+    <strong style="color:rgba(255,255,255,0.5);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">By Age:</strong>
+    <a href="how-much-house-can-a-25-year-old-afford.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">25yr</a>
+    <a href="how-much-house-can-a-30-year-old-afford.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">30yr</a>
+    <a href="how-much-house-can-a-35-year-old-afford.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">35yr</a>
+    <a href="how-much-house-can-a-40-year-old-afford.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">40yr</a>
+    &nbsp;·&nbsp;
+    <strong style="color:rgba(255,255,255,0.5);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Rates:</strong>
+    <a href="mortgage-400k-at-6-0-percent.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">$400K@6%</a>
+    <a href="mortgage-500k-at-7-0-percent.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">$500K@7%</a>
+    <a href="monthly-payment-on-300k-home.html" style="color:rgba(255,255,255,0.45);text-decoration:none;margin:0 5px;">$300K cost</a>
+  </div>
+</footer>
+
+<script>
+  function toggleDropdown() {
+    const d = document.getElementById('calcDropdown');
+    d.classList.toggle('open');
+  }
+  function toggleMobile() {
+    const m = document.getElementById('mobileMenu');
+    m.classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    const d = document.getElementById('calcDropdown');
+    if (!d.contains(e.target)) d.classList.remove('open');
+    const m = document.getElementById('mobileMenu');
+    const b = document.getElementById('hamburger');
+    if (!m.contains(e.target) && !b.contains(e.target)) m.classList.remove('open');
+  });
+</script>
+
+<script>
+// Animated counters
+function countUp(id, target, suffix, duration) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    const val = Math.round(target * ease);
+    el.textContent = (val >= 1000 ? (val/1000).toFixed(1).replace('.0','') + 'K' : val) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = (target >= 1000 ? (target/1000).toFixed(1).replace('.0','') + 'K' : target) + suffix;
+  }
+  requestAnimationFrame(tick);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    countUp('cnt-1', 23, '', 1500);
+    countUp('cnt-2', 284, '', 2000);
+    countUp('cnt-3', 4600, '', 2200);
+    countUp('cnt-4', 135, '', 1800);
+  }, 400);
+});
+</script>
+
+
+
+<script>
+(function() {
+  const badge = document.getElementById('score-badge');
+  if (!badge) return;
+  let show620 = true;
+  setInterval(() => {
+    badge.style.transform = 'scale(0)';
+    setTimeout(() => {
+      show620 = !show620;
+      badge.textContent = show620 ? '620' : '740';
+      badge.style.background = show620 ? '#e74c3c' : '#27ae60';
+      badge.style.transform = 'scale(1)';
+    }, 300);
+  }, 2000);
+})();
+</script>
+
+<script>
+// Live Loss Counter — $412K home × 6% annual = $0.784/sec
+(function() {
+  var perSecond = 412000 * 0.06 / 365 / 24 / 3600;
+  var el = document.getElementById('lossCounter');
+  if (!el) return;
+  var startTime = Date.now();
+  
+  function fmt(n) {
+    if (n < 1) return '$' + n.toFixed(2);
+    if (n < 100) return '$' + n.toFixed(1);
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+  
+  function tick() {
+    var elapsed = (Date.now() - startTime) / 1000;
+    el.textContent = fmt(elapsed * perSecond);
+    requestAnimationFrame(tick);
+  }
+  
+  requestAnimationFrame(tick);
+})();
+</script>
+
+<script>
+document.querySelectorAll('.tool-card').forEach(card => {
+  const preview = card.querySelector('.tool-preview');
+  if (!preview) return;
+  
+  card.addEventListener('mouseenter', () => {
+    preview.style.display = 'block';
+  });
+  card.addEventListener('mouseleave', () => {
+    preview.style.display = 'none';
+  });
+});
+</script>
+
+<!-- PRODUCTHUNT BADGE -->
+<div style="position:fixed;bottom:20px;left:20px;z-index:9999;">
+  <a href="https://www.producthunt.com/posts/frc-buyer-demand-score-zillow-extension" target="_blank" rel="noopener">
+    <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=frc-buyer-demand-score-zillow-extension&theme=dark" 
+    alt="FRC on Product Hunt" style="width:200px;height:43px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.3);" />
+  </a>
+</div>
+</body>
+</html>
