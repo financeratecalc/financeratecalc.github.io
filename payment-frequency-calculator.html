@@ -107,6 +107,29 @@ footer{background:#0a1f5c;padding:24px;text-align:center;}
       <a href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=FREQ_FRC" target="_blank" rel="sponsored" style="display:inline-block;background:#c0392b;color:#fff;padding:11px 24px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;">🛡️ Fix My Score — Sky Blue #ad</a>
     </div>
 
+    <!-- MY SCENARIO CARD -->
+    <div id="scenarioCard" style="display:none;background:linear-gradient(135deg,#0a1f5c,#0d2a6e);border-radius:14px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c8a44a,#f0d060);"></div>
+      
+      <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:16px;">📊 My Scenario Report</div>
+      
+      <div id="scenarioSummary" style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:20px;"></div>
+      
+      <div id="scenarioInsight" style="background:rgba(255,255,255,0.07);border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:rgba(255,255,255,0.7);line-height:1.7;"></div>
+      
+      <div id="scenarioBest" style="font-size:13px;color:#6bffb8;font-weight:600;margin-bottom:20px;"></div>
+
+      <!-- Share -->
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:10px;">Share your result:</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button onclick="shareTwitter()" style="padding:8px 16px;background:rgba(29,161,242,0.15);border:1px solid rgba(29,161,242,0.3);border-radius:6px;color:#60a5fa;font-size:12px;font-weight:700;cursor:pointer;font-family:'Geist',sans-serif;">𝕏 Tweet My Result</button>
+          <button onclick="copyResult()" style="padding:8px 16px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:rgba(255,255,255,0.6);font-size:12px;font-weight:700;cursor:pointer;font-family:'Geist',sans-serif;" id="copyBtn">📋 Copy</button>
+          <button onclick="shareWhatsApp()" style="padding:8px 16px;background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.25);border-radius:6px;color:#22c55e;font-size:12px;font-weight:700;cursor:pointer;font-family:'Geist',sans-serif;">💬 WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       <a href="mortgage-calculator.html" style="padding:12px;background:#fff;border:1px solid #dde0ee;border-radius:8px;text-decoration:none;color:#0a1f5c;font-weight:600;font-size:13px;text-align:center;">Mortgage Calculator →</a>
       <a href="refinance-alert-calculator.html" style="padding:12px;background:#fff;border:1px solid #dde0ee;border-radius:8px;text-decoration:none;color:#0a1f5c;font-weight:600;font-size:13px;text-align:center;">Refinance Alert →</a>
@@ -187,6 +210,69 @@ function calc(){
   document.getElementById('sky-text').textContent='Bi-weekly saves you '+fmt(bwSave)+'. Improving your credit score from 620 to 740 saves an additional '+fmt(Math.round(G.loan*(7.5-6.1)/100/12*G.term*12))+'. Combined: '+fmt(bwSave+Math.round(G.loan*(7.5-6.1)/100/12*G.term*12))+' saved.';
   document.getElementById('results').style.display='block';
   calcCustom();
+  generateScenarioCard(bwSavings, bwYears, wk);
+}
+
+function generateScenarioCard(bwSavings, bwYears, wk){
+  var loan = G.loan, rate = G.rate, term = G.term;
+  var mo = moPay(loan, rate, term*12);
+  
+  // Determine most impactful lever
+  var rateImpact = Math.round(loan*(rate-5.5)/100/12*term*12);
+  var freqImpact = bwSavings;
+  var bestLever = freqImpact > rateImpact ? 'payment frequency' : 'interest rate';
+  
+  // Best frequency
+  var wkSavings = G.mInt - wk.interest;
+  var bestFreq = wkSavings > bwSavings ? 'Weekly' : 'Bi-Weekly';
+  var bestSavings = Math.max(wkSavings, bwSavings);
+  var bestYears = wkSavings > bwSavings ? (term - wk.years).toFixed(1) : bwYears.toFixed(1);
+
+  // Generate human summary
+  var summary = 'Your '+fmt(loan)+' mortgage at '+rate+'%: switching from monthly to bi-weekly payments saves <strong style="color:#f0d060;">'+fmt(bwSavings)+'</strong> and pays off <strong style="color:#f0d060;">'+bwYears.toFixed(1)+' years early</strong>.';
+  
+  // Insight
+  var insight;
+  if(bwSavings > 80000){
+    insight = '🏆 <strong>High Impact:</strong> Your loan size and rate make bi-weekly payments exceptionally powerful. The most important lever in your scenario is <strong>'+bestLever+'</strong>. If you can only change one thing, change payment frequency.';
+  } else if(bwSavings > 40000){
+    insight = '✅ <strong>Solid Impact:</strong> Bi-weekly payments create meaningful savings in your scenario. Combined with a credit score improvement of 40+ points, you could save an additional '+fmt(Math.round(loan*(rate-(rate-0.5))/100/12*term*12))+'+ in interest.';
+  } else {
+    insight = '📌 <strong>Moderate Impact:</strong> Your loan term or balance limits the frequency benefit. Refinancing when rates drop to '+(rate-0.75).toFixed(2)+'% would have a larger effect than payment frequency alone.';
+  }
+
+  // Best recommendation
+  var best = '🎯 Optimal frequency for your scenario: <strong>'+bestFreq+'</strong> — lowest total cost at '+fmt(bestSavings)+' saved, '+bestYears+' years sooner.';
+
+  document.getElementById('scenarioSummary').innerHTML = summary;
+  document.getElementById('scenarioInsight').innerHTML = insight;
+  document.getElementById('scenarioBest').innerHTML = best;
+  document.getElementById('scenarioCard').style.display = 'block';
+
+  // Store share text
+  window._shareText = 'My mortgage result:\n\n'+
+    fmt(loan)+' loan at '+rate+'% — switching to bi-weekly payments:\n'+
+    '✅ Saves '+fmt(bwSavings)+' in interest\n'+
+    '✅ Pays off '+bwYears.toFixed(1)+' years early\n'+
+    '✅ Best frequency: '+bestFreq+'\n\n'+
+    'Calculate yours free: financeratecalc.com/payment-frequency-calculator.html';
+}
+
+function shareTwitter(){
+  var text = 'My mortgage at '+G.rate+'% — switching to bi-weekly payments saves '+fmt(G.mInt - (moPay(G.loan,G.rate,G.term*12)/2*26*G.term - G.loan))+'+ and pays off years early.\n\nCalculate yours free:';
+  var bwSavings = document.getElementById('b-save') ? document.getElementById('b-save').textContent : '';
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(window._shareText),'_blank');
+}
+
+function copyResult(){
+  navigator.clipboard.writeText(window._shareText).then(function(){
+    document.getElementById('copyBtn').textContent='✅ Copied!';
+    setTimeout(function(){document.getElementById('copyBtn').textContent='📋 Copy';},2000);
+  });
+}
+
+function shareWhatsApp(){
+  window.open('https://wa.me/?text='+encodeURIComponent(window._shareText),'_blank');
 }
 
 function calcCustom(){
