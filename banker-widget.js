@@ -126,20 +126,30 @@
     frcTyping();
 
     try{
-      var res = await fetch('https://frc-api.ziyetis.workers.dev',{
+      var res = await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({system:SYSTEM,messages:msgs})
+        headers:{
+          'Content-Type':'application/json',
+          'x-api-key':window._AKEY||'',
+          'anthropic-version':'2023-06-01',
+          'anthropic-dangerous-direct-browser-access':'true'
+        },
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:600,
+          system:SYSTEM,
+          messages:msgs
+        })
       });
       var data = await res.json();
       var t = document.getElementById('frc-typing');
       if(t) t.remove();
-      if(data.reply){
-        var reply = data.reply;
+      if(data.content&&data.content[0]){
+        var reply = data.content[0].text;
         msgs.push({role:'assistant', content:reply});
         frcAddMsg('a', reply);
       } else {
-        frcAddMsg('a', data.error||'Sorry, I had trouble with that. Try asking again.');
+        frcAddMsg('a',(data.error&&data.error.message)||'Sorry, try again.');
       }
     } catch(e){
       var t2 = document.getElementById('frc-typing');
