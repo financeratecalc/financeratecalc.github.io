@@ -176,6 +176,22 @@ footer{background:#0a1f5c;padding:24px 60px;text-align:center;}
     </div>
 
     <!-- FAQ -->
+    <!-- MY SCENARIO CARD -->
+    <div id="refiScenarioCard" style="display:none;background:linear-gradient(135deg,#0a1f5c,#0d2a6e);border-radius:14px;padding:28px;margin-bottom:24px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c8a44a,#f0d060);"></div>
+      <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:16px;">📊 My Refinance Report</div>
+      <div id="refiSummary" style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:16px;"></div>
+      <div id="refiInsight" style="background:rgba(255,255,255,0.07);border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.7);line-height:1.7;"></div>
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:10px;">Share your trigger rate:</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button onclick="refiShareTwitter()" style="padding:8px 16px;background:rgba(29,161,242,0.15);border:1px solid rgba(29,161,242,0.3);border-radius:6px;color:#60a5fa;font-size:12px;font-weight:700;cursor:pointer;font-family:'Geist',sans-serif;">𝕏 Tweet</button>
+          <button onclick="refiCopy()" id="refiCopyBtn" style="padding:8px 16px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:rgba(255,255,255,0.6);font-size:12px;font-weight:700;cursor:pointer;font-family:'Geist',sans-serif;">📋 Copy</button>
+          <button onclick="refiShareWhatsApp()" style="padding:8px 16px;background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.25);border-radius:6px;color:#22c55e;font-size:12px;font-weight:700;cursor:pointer;font-family:'Geist',sans-serif;">💬 WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
     <h2 style="margin-bottom:16px;">Frequently Asked Questions</h2>
     <div class="faq">
       <div class="faq-q">How much does rates need to drop before refinancing makes sense?</div>
@@ -307,6 +323,7 @@ function calculate(){
     'A 740+ credit score vs 680 score gets you ~0.5% better rate on refinance. On '+fmt(_balance)+', that\'s '+fmt(Math.round(_balance*(7.0-6.5)/100/12*_remaining*12))+' in additional savings over your remaining term — on top of whatever you save from refinancing.';
 
   document.getElementById('results').style.display='block';
+  generateRefiCard();
   document.getElementById('results').scrollIntoView({behavior:'smooth'});
 }
 
@@ -329,6 +346,43 @@ function setReminder(){
   document.getElementById('alertEmail').value='';
 }
 </script>
-<script src="/banker-widget.js"></script>
+<script src="/banker-widget.js">
+function generateRefiCard(){
+  if(!_balance||!_currentRate||!_triggerRate) return;
+  var tr = _triggerRate;
+  var trMo = moPay(_balance, tr, _remaining*12);
+  var savings = _currentMo - trMo;
+  var breakEven = Math.round(_closing/savings);
+  var total30 = Math.round(savings*_remaining*12-_closing);
+
+  var summary = 'Your trigger rate: <strong style="color:#f0d060;">'+(tr)+'%</strong> — a drop of <strong style="color:#f0d060;">'+(_currentRate-tr).toFixed(2)+'%</strong> saves <strong style="color:#f0d060;">'+fmt(savings)+'/month</strong> and breaks even in '+breakEven+' months.';
+  
+  var insight;
+  if(savings > 400){
+    insight = '🏆 <strong>High Impact Refinance:</strong> Your potential savings are substantial. At this rate, refinancing clearly makes mathematical sense — break-even in under '+Math.ceil(breakEven/12)+' years means you come out ahead quickly.';
+  } else if(savings > 200){
+    insight = '✅ <strong>Good Opportunity:</strong> Solid monthly savings. Key question: how long will you stay in the home? If '+Math.ceil(breakEven/12)+' more years or longer, this refinance makes sense.';
+  } else {
+    insight = '📌 <strong>Marginal Benefit:</strong> Monthly savings are modest. Wait for rates to drop further, or improve your credit score by 40+ points to unlock a better rate — potentially saving an additional '+fmt(Math.round(_balance*0.003/12*_remaining*12))+'.';
+  }
+
+  window._refiShareText = 'My refinance numbers:\n\n'+
+    'Current balance: '+fmt(_balance)+' at '+_currentRate+'%\n'+
+    '🎯 Trigger rate: '+tr+'%\n'+
+    '✅ Monthly savings: '+fmt(savings)+'\n'+
+    '✅ Break-even: '+breakEven+' months\n'+
+    '✅ Total savings: '+fmt(total30)+'\n\n'+
+    'Find YOUR trigger rate free:\nfinanceratecalc.com/refinance-alert-calculator.html';
+
+  document.getElementById('refiSummary').innerHTML = summary;
+  document.getElementById('refiInsight').innerHTML = insight;
+  document.getElementById('refiScenarioCard').style.display = 'block';
+  document.getElementById('refiScenarioCard').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function refiShareTwitter(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(window._refiShareText),'_blank');}
+function refiCopy(){navigator.clipboard.writeText(window._refiShareText).then(function(){document.getElementById('refiCopyBtn').textContent='✅ Copied!';setTimeout(function(){document.getElementById('refiCopyBtn').textContent='📋 Copy';},2000);});}
+function refiShareWhatsApp(){window.open('https://wa.me/?text='+encodeURIComponent(window._refiShareText),'_blank');}
+</script>
 </body>
 </html>
