@@ -126,20 +126,10 @@
     frcTyping();
 
     try{
-      var res = await fetch('https://api.anthropic.com/v1/messages',{
+      var res = await fetch('https://frc-banker.ziyetis.workers.dev',{
         method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'x-api-key':'',
-          'anthropic-version':'2023-06-01',
-          'anthropic-dangerous-direct-browser-access':'true'
-        },
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:600,
-          system:SYSTEM,
-          messages:msgs
-        })
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({system:SYSTEM,messages:msgs})
       });
       var data = await res.json();
       var t = document.getElementById('frc-typing');
