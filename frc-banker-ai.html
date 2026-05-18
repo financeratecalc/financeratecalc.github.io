@@ -102,8 +102,7 @@ footer{display:none;}
 </div>
 
 <div class="chat-wrap" id="chatWrap">
-  <!-- Messages appear here -->
-</div>
+  </div>
 
 <div class="input-bar">
   <div class="input-inner">
@@ -116,7 +115,6 @@ footer{display:none;}
 </div>
 
 <script>
-var _AKEY='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';
 var SYSTEM_PROMPT = `You are a 23-year banking professional and the founder of FinanceRateCalc.com — a free mortgage education platform. You speak with the calm authority of someone who has reviewed thousands of mortgage files, seen every lender pattern, and watched people make both brilliant and devastating financial decisions.
 
 Your personality:
@@ -240,62 +238,58 @@ function removeTyping(){
 }
 
 async function sendMessage(){
-  var input=document.getElementById('userInput');
-  var text=input.value.trim();
-  if(!text||isLoading) return;
+  var input = document.getElementById('userInput');
+  var text = input.value.trim();
+  if(!text || isLoading) return;
 
-  document.getElementById('suggestions').style.display='none';
-  isLoading=true;
-  document.getElementById('sendBtn').disabled=true;
-  input.value='';
-  input.style.height='auto';
+  document.getElementById('suggestions').style.display = 'none';
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+  input.value = '';
+  input.style.height = 'auto';
 
-  addMessage('user',text);
-  messages.push({role:'user',content:text});
+  addMessage('user', text);
+  messages.push({role: 'user', content: text});
   showTyping();
 
-  try{
-    var response=await fetch('https://api.financeratecalc.com',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':_AKEY,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
+  try {
+    var response = await fetch('https://api.financeratecalc.com', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
       },
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:800,
-        system:SYSTEM_PROMPT,
-        messages:messages
+      body: JSON.stringify({
+        messages: messages
       })
     });
 
-    var data=await response.json();
+    var data = await response.json();
     removeTyping();
 
-    if(data.content&&data.content[0]){
-      var reply=data.content[0].text;
-      messages.push({role:'assistant',content:reply});
-      addMessage('ai',reply);
+    if (data && data.reply) {
+      var reply = data.reply;
+      messages.push({role: 'assistant', content: reply});
+      addMessage('ai', reply);
+    } else if (data && data.error) {
+      addMessage('ai', data.error);
     } else {
-      addMessage('ai',(data.error&&data.error.message)||'I ran into an issue. Please try again.');
+      addMessage('ai', 'Systems are currently experiencing high traffic. Please try your request again shortly.');
     }
-  } catch(err){
+  } catch(err) {
     removeTyping();
-    addMessage('ai','Connection issue. Please refresh and try again.');
+    addMessage('ai', 'Connection issue. Please refresh and try again.');
   }
 
-  isLoading=false;
-  document.getElementById('sendBtn').disabled=false;
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
   input.focus();
 }
 
 // Welcome message
-window.addEventListener('load',function(){
+window.addEventListener('load', function(){
   setTimeout(function(){
-    addMessage('ai',"Hello. I'm the FRC Banker AI — built on 23 years of mortgage and banking experience.\n\nAsk me anything: why you were denied, what rate you should be getting, whether refinancing makes sense right now, how much house your income can actually support, or what the bank isn't telling you.\n\nWhat's on your mind?");
-  },400);
+    addMessage('ai', "Hello. I'm the FRC Banker AI — built on 23 years of mortgage and banking experience.\n\nAsk me anything: why you were denied, what rate you should be getting, whether refinancing makes sense right now, how much house your income can actually support, or what the bank isn't telling you.\n\nWhat's on your mind?");
+  }, 400);
 });
 </script>
 </body>
