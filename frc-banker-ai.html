@@ -266,12 +266,12 @@ async function sendMessage(){
     var data=await response.json();
     removeTyping();
 
-    if(data.content&&data.content[0]){
-      var reply=data.content[0].text;
+    if(data.reply){
+      var reply=data.reply;
       messages.push({role:'assistant',content:reply});
       addMessage('ai',reply);
     } else {
-      addMessage('ai','I ran into an issue processing that. Please try again.');
+      addMessage('ai',data.error||'I ran into an issue. Please try again.');
     }
   } catch(err){
     removeTyping();

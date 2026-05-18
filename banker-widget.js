@@ -134,12 +134,12 @@
       var data = await res.json();
       var t = document.getElementById('frc-typing');
       if(t) t.remove();
-      if(data.content && data.content[0]){
-        var reply = data.content[0].text;
+      if(data.reply){
+        var reply = data.reply;
         msgs.push({role:'assistant', content:reply});
         frcAddMsg('a', reply);
       } else {
-        frcAddMsg('a','Sorry, I had trouble with that. Try asking again.');
+        frcAddMsg('a', data.error||'Sorry, I had trouble with that. Try asking again.');
       }
     } catch(e){
       var t2 = document.getElementById('frc-typing');
