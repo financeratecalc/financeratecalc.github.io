@@ -22,7 +22,7 @@
     #frc-panel.open { animation:frcSlideIn 0.2s ease-out forwards; }
     #frc-header { padding:14px 16px; background:rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:space-between; }
     #frc-header-left { display:flex; align-items:center; gap:8px; }
-    #frc-av { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,#C8A84B,#f0d060); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#0B132B; }
+    #frc-av { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,#0a1f5c,#162d6e); border:1.5px solid rgba(200,164,74,0.6); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:#c8a44a; font-family:Georgia,serif; }
     #frc-hname { font-size:13px; font-weight:700; color:#fff; }
     #frc-hsub { font-size:10px; color:rgba(255,255,255,0.35); }
     #frc-close { background:none; border:none; color:rgba(255,255,255,0.4); cursor:pointer; font-size:18px; line-height:1; padding:0; }
@@ -34,7 +34,7 @@
     .frc-msg { display:flex; gap:8px; }
     .frc-msg.u { flex-direction:row-reverse; }
     .frc-msg-av { width:24px; height:24px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:800; }
-    .frc-msg.a .frc-msg-av { background:linear-gradient(135deg,#C8A84B,#f0d060); color:#0B132B; }
+    .frc-msg.a .frc-msg-av { background:linear-gradient(135deg,#0a1f5c,#162d6e); border:1px solid rgba(200,164,74,0.5); color:#c8a44a; font-family:Georgia,serif; font-size:12px; font-weight:700; }
     .frc-msg.u .frc-msg-av { background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.6); font-size:12px; }
     .frc-bub { padding:9px 12px; border-radius:10px; font-size:12px; line-height:1.65; max-width:240px; }
     .frc-msg.a .frc-bub { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.85); }
@@ -65,7 +65,7 @@
     <div id="frc-panel">
       <div id="frc-header">
         <div id="frc-header-left">
-          <div id="frc-av">ZY</div>
+          <div id="frc-av">Z</div>
           <div>
             <div id="frc-hname">Zai · FRC Banker AI</div>
             <div id="frc-hsub">Hi, I'm Zai — 23 years of banking in a chat.</div>
@@ -105,7 +105,7 @@
     var box = document.getElementById('frc-msgs');
     var div = document.createElement('div');
     div.className = 'frc-msg ' + role;
-    div.innerHTML = '<div class="frc-msg-av">' + (role==='a'?'👨‍💼':'👤') + '</div>' +
+    div.innerHTML = '<div class="frc-msg-av">' + (role==='a'?'Z':'You') + '</div>' +
       '<div class="frc-bub">' + text.replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>') + '</div>';
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
