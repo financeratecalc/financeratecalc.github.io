@@ -1,4 +1,4 @@
-// FRC Banker AI Widget — loads on every page
+// FRC Banker AI Widget v5 — loads on every page
 (function(){
   if(document.getElementById('frc-widget')) return;
 
