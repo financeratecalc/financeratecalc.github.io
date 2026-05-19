@@ -260,12 +260,18 @@ async function sendMessage(){
   showTyping();
 
   try {
-    var response = await fetch('https://api.financeratecalc.com', {
+    var respons    await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-api-key': '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',
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
         messages: messages
       })
     });
@@ -298,6 +304,28 @@ window.addEventListener('load', function(){
     addMessage('ai', "Hello. I'm the FRC Banker AI — built on 23 years of mortgage and banking experience.\n\nAsk me anything: why you were denied, what rate you should be getting, whether refinancing makes sense right now, how much house your income can actually support, or what the bank isn't telling you.\n\nWhat's on your mind?");
   }, 400);
 });
+
+// Voice input
+var recognition = null;
+var micActive = false;
+function toggleMic(){
+  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
+    alert('Voice input not supported in this browser. Try Chrome.');
+    return;
+  }
+  if(micActive){ recognition.stop(); return; }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.onstart = function(){ micActive=true; document.getElementById('micBtn').textContent='🔴'; document.getElementById('micBtn').style.color='#ff6b6b'; };
+  recognition.onresult = function(e){ 
+    var txt = e.results[0][0].transcript;
+    document.getElementById('userInput').value = txt;
+  };
+  recognition.onend = function(){ micActive=false; document.getElementById('micBtn').textContent='🎤'; document.getElementById('micBtn').style.color='rgba(255,255,255,0.4)'; };
+  recognition.start();
+}
 </script>
 </body>
 </html>
