@@ -193,6 +193,41 @@ function addMessage(role, content){
   
   contentDiv.appendChild(name);
   contentDiv.appendChild(bubble);
+
+  // Action buttons for AI messages
+  if(role==='ai'){
+    var actions=document.createElement('div');
+    actions.style.cssText='display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;';
+
+    var copyBtn=document.createElement('button');
+    copyBtn.innerHTML='📋 Copy';
+    copyBtn.style.cssText='padding:4px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.45);border-radius:5px;font-size:10px;cursor:pointer;font-family:inherit;';
+    copyBtn.onclick=function(){navigator.clipboard.writeText(bubble.innerText);copyBtn.innerHTML='✓ Copied!';setTimeout(function(){copyBtn.innerHTML='📋 Copy';},2000);};
+    actions.appendChild(copyBtn);
+
+    var shareBtn=document.createElement('button');
+    shareBtn.innerHTML='↗ Share';
+    shareBtn.style.cssText='padding:4px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.45);border-radius:5px;font-size:10px;cursor:pointer;font-family:inherit;';
+    shareBtn.onclick=function(){
+      var txt='Zai (FRC Banker AI):\n\n'+bubble.innerText+'\n\nfinanceratecalc.com/frc-banker-ai.html';
+      if(navigator.share){navigator.share({text:txt});}
+      else{navigator.clipboard.writeText(txt);shareBtn.innerHTML='✓ Copied!';setTimeout(function(){shareBtn.innerHTML='↗ Share';},2000);}
+    };
+    actions.appendChild(shareBtn);
+
+    var txt=bubble.innerText.toLowerCase();
+    if(txt.includes('credit')||txt.includes('score')||txt.includes('deny')||txt.includes('denied')||txt.includes('680')||txt.includes('620')||txt.includes('700')){
+      var skyBtn=document.createElement('a');
+      skyBtn.href='https://skyblue.ltroute.com/click.track?CID=139993&AFID=569709';
+      skyBtn.target='_blank';
+      skyBtn.innerHTML='🔵 Fix My Score';
+      skyBtn.style.cssText='padding:4px 10px;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.3);color:#c8a44a;border-radius:5px;font-size:10px;cursor:pointer;text-decoration:none;font-family:inherit;';
+      actions.appendChild(skyBtn);
+    }
+
+    contentDiv.appendChild(actions);
+  }
+
   div.appendChild(avatar);
   div.appendChild(contentDiv);
   wrap.appendChild(div);
