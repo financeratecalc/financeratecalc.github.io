@@ -14,8 +14,10 @@
     #frc-bubble { width:52px; height:52px; background:linear-gradient(135deg,#C8A84B,#f0d060); border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(200,168,75,0.4); transition:transform 0.2s; }
     #frc-bubble:hover { transform:scale(1.08); }
     #frc-bubble svg { width:22px; height:22px; fill:#0B132B; }
-    #frc-dot { position:absolute; top:0; right:0; width:12px; height:12px; background:#22c55e; border-radius:50%; border:2px solid #fff; }
-    #frc-panel { position:absolute; bottom:64px; right:0; width:340px; background:#0B132B; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.5); display:none; flex-direction:column; border:1px solid rgba(255,255,255,0.1); }
+    #frc-dot { position:absolute; top:2px; right:2px; width:10px; height:10px; background:#22c55e; border-radius:50%; border:2px solid #0a1f5c; }
+    #frc-panel { position:absolute; bottom:64px; right:0; width:340px; background:#0B132B; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.5); display:none; flex-direction:column; border:1px solid rgba(255,255,255,0.1); transform-origin:bottom right; }
+    @keyframes frcSlideIn { from{opacity:0;transform:scale(0.85) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
+    #frc-panel.open { animation:frcSlideIn 0.2s ease-out forwards; }
     #frc-header { padding:14px 16px; background:rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:space-between; }
     #frc-header-left { display:flex; align-items:center; gap:8px; }
     #frc-av { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,#C8A84B,#f0d060); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#0B132B; }
@@ -80,7 +82,7 @@
     </div>
     <div id="frc-bubble" onclick="toggleFRC()" title="Chat with Zai · FRC Banker AI">
       <div id="frc-dot"></div>
-      <span style="font-size:22px;line-height:1;">👨‍💼</span>
+      <span id="frc-bubble-z">Z</span>
     </div>
   `;
   document.body.appendChild(widget);
@@ -89,7 +91,8 @@
 
   window.toggleFRC = function(){
     open = !open;
-    document.getElementById('frc-panel').style.display = open ? 'flex' : 'none';
+    var panel=document.getElementById('frc-panel');
+    if(open){panel.style.display='flex';panel.classList.add('open');}else{panel.style.display='none';panel.classList.remove('open');}
     if(open && msgs.length === 0){
       frcAddMsg('a', "Hi, I'm Zai 👨‍💼 — 23 years of banking, condensed into a chat. Ask me anything: why you were denied, what rate you should be getting, or what your bank isn't telling you.");
     }
