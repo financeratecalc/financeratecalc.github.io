@@ -85,14 +85,14 @@ footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px 
     
     <label>Your Current Credit Score</label>
     <div class="score-grid">
-      <div class="score-btn" onclick="selectScore(580)">580</div>
-      <div class="score-btn selected" onclick="selectScore(620)">620</div>
-      <div class="score-btn" onclick="selectScore(640)">640</div>
-      <div class="score-btn" onclick="selectScore(660)">660</div>
-      <div class="score-btn" onclick="selectScore(680)">680</div>
-      <div class="score-btn" onclick="selectScore(700)">700</div>
-      <div class="score-btn" onclick="selectScore(720)">720</div>
-      <div class="score-btn" onclick="selectScore(740)">740+</div>
+      <div class="score-btn" onclick="selectScore(580,this)">580</div>
+      <div class="score-btn selected" onclick="selectScore(620,this)">620</div>
+      <div class="score-btn" onclick="selectScore(640,this)">640</div>
+      <div class="score-btn" onclick="selectScore(660,this)">660</div>
+      <div class="score-btn" onclick="selectScore(680,this)">680</div>
+      <div class="score-btn" onclick="selectScore(700,this)">700</div>
+      <div class="score-btn" onclick="selectScore(720,this)">720</div>
+      <div class="score-btn" onclick="selectScore(740,this)">740+</div>
     </div>
     <input type="hidden" id="currentScore" value="620">
     
@@ -147,11 +147,10 @@ var rates = {580:8.1,620:7.5,640:7.1,660:6.9,680:6.6,700:6.4,720:6.25,740:6.1};
 var labels = {580:"Poor",620:"Very Fair",640:"Fair",660:"Below Avg",680:"Average",700:"Good",720:"Very Good",740:"Excellent"};
 var colors = {580:"#ff4444",620:"#ff6b6b",640:"#ff9944",660:"#ffbb44",680:"#ffdd44",700:"#aadd44",720:"#44cc44",740:"#00ff88"};
 
-function selectScore(s){
+function selectScore(s, el){
   selectedScore=s;
-  document.getElementById("currentScore").value=s;
   document.querySelectorAll(".score-btn").forEach(function(b){b.classList.remove("selected");});
-  event.target.classList.add("selected");
+  if(el) el.classList.add("selected");
 }
 
 function fmt(n){return "$"+Math.round(n).toLocaleString();}
