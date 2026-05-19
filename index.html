@@ -128,11 +128,11 @@ body{overflow-x:hidden;}
   .mobile-menu a:hover { background: rgba(255,255,255,0.07); color: var(--gold-light); }
   .mobile-menu .mob-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 6px 0; }
   @media (max-width: 768px) { header { padding: 0 20px; } .nav-links { display: none; } .hamburger { display: flex; } }
-  .featured-banner { background: #0a1f5c; padding: 5px 40px; display: flex; align-items: center; justify-content: center; gap: 16px; border-bottom: 1px solid rgba(91,63,166,0.4); }
-  .featured-banner-badge { background: rgba(200,164,74,0.2); color: #c8a44a; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
-  .featured-banner-text { color: rgba(255,255,255,0.6); font-size: 11px; font-weight: 400; }
+  .featured-banner { background: linear-gradient(135deg, #1a0533 0%, #2d1b69 50%, #1a0533 100%); padding: 14px 60px; display: flex; align-items: center; justify-content: center; gap: 16px; border-bottom: 1px solid rgba(91,63,166,0.4); }
+  .featured-banner-badge { background: #f0c040; color: #1a0533; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .featured-banner-text { color: rgba(255,255,255,0.85); font-size: 14px; font-weight: 400; }
   .featured-banner-text strong { color: #fff; font-weight: 600; }
-  .featured-banner-cta { color: #c8a44a; font-size: 11px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .featured-banner-cta { background: #5b3fa6; color: #fff; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: 700; text-decoration: none; white-space: nowrap; transition: background 0.2s; border: 1px solid rgba(255,255,255,0.2); }
   .featured-banner-cta:hover { background: #7050c0; }
   @media (max-width: 768px) { .featured-banner { padding: 12px 20px; flex-wrap: wrap; gap: 8px; } .featured-banner-text { font-size: 13px; text-align: center; } }
   .hero { background: var(--ink); padding: 80px 40px 60px; position: relative; overflow: hidden; }
@@ -412,6 +412,7 @@ body{overflow-x:hidden;}
   <button class="hamburger" onclick="toggleMobile()" id="hamburger">
     <span></span><span></span><span></span>
   </button>
+  <a href="for-realtors.html" style="padding:7px 16px;background:#c8a44a;color:#0a0e1a;border-radius:4px;font-size:12px;font-weight:800;text-decoration:none;margin-left:auto;">🏠 For Realtors</a>
 </header></div>
   <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
   <a href="index.html">🏠 Home</a>
@@ -430,17 +431,33 @@ body{overflow-x:hidden;}
   <a href="credit-repair.html">🛡️ Fix Your Credit (Sky Blue)</a>
 </div>
 
-<div class="featured-banner">
-  <span class="featured-banner-text">
-    🔍 <strong style="color:rgba(255,255,255,0.8);">Denied?</strong> Find out why in 60 seconds.
-    <a href="bank-rejection-engine.html" class="featured-banner-cta" style="margin-left:8px;">Check my odds →</a>
+<div class="featured-banner" style="gap:32px;justify-content:center;">
+  <span class="featured-banner-text" style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:18px;">🔍</span>
+    <span><strong style="color:#fff;">Why was my mortgage denied?</strong> Find out in 60 seconds. <a href="bank-rejection-engine.html" style="color:#f0c040;font-weight:600;">Check my odds →</a></span>
   </span>
-  <span style="color:rgba(255,255,255,0.15);margin:0 12px;">·</span>
-  <span class="featured-banner-text">
-    <span id="scoreToggle" style="font-weight:700;color:#c8a44a;">620→740</span> saves <strong style="color:rgba(255,255,255,0.8);">$47,000</strong> over 30 years.
-    <a href="credit-repair.html" class="featured-banner-cta" style="margin-left:8px;">Get there →</a>
+  <span style="color:rgba(255,255,255,0.15);font-size:20px;">|</span>
+  <span class="featured-banner-text" style="display:flex;align-items:center;gap:12px;">
+    <!-- Flipping coin -->
+    <span style="position:relative;width:44px;height:44px;flex-shrink:0;perspective:600px;">
+      <span id="coinFlipper" style="position:absolute;inset:0;transform-style:preserve-3d;animation:coinFlip 3s ease-in-out infinite;">
+        <!-- Front: 620 -->
+        <span style="position:absolute;inset:0;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#c0392b;font-size:11px;font-weight:900;color:#fff;border:2px solid #e74c3c;">620</span>
+        <!-- Back: 740 -->
+        <span style="position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#27ae60;font-size:11px;font-weight:900;color:#fff;border:2px solid #2ecc71;">740</span>
+      </span>
+    </span>
+    <span id="coinText" style="transition:all 0.3s;">620 vs 740 = <strong style="color:#ff9b9b;">$47,000 more</strong> over 30 years. <a href="credit-repair.html" style="color:#ff9b9b;font-weight:600;">Fix it →</a></span>
   </span>
 </div>
+
+<style>
+@keyframes coinFlip {
+  0%,40% { transform: rotateY(0deg); }
+  50%,90% { transform: rotateY(180deg); }
+  100% { transform: rotateY(360deg); }
+}
+</style>
 
 <script>
 (function() {
@@ -463,21 +480,6 @@ body{overflow-x:hidden;}
   <strong style="color:rgba(255,255,255,0.55);">Educational purposes only — not financial advice.</strong> All tools are free and for informational use only.
 </div>
 
-<div style="background:#0a1f5c;padding:6px 40px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.06);">
-  <div style="display:flex;align-items:center;gap:8px;">
-    <div style="position:relative;width:28px;height:28px;flex-shrink:0;perspective:300px;">
-      <div style="position:absolute;inset:0;transform-style:preserve-3d;animation:cSpin 4s ease-in-out infinite;">
-        <div style="position:absolute;inset:0;backface-visibility:hidden;border-radius:50%;background:linear-gradient(135deg,#c0392b,#e74c3c);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:#fff;">620</div>
-        <div style="position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);border-radius:50%;background:linear-gradient(135deg,#27ae60,#2ecc71);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:#fff;">740</div>
-      </div>
-    </div>
-    <span style="font-size:12px;color:rgba(255,255,255,0.5);">Score <strong style="color:#c8a44a;">620→740</strong> saves <strong style="color:#fff;">$47,000</strong></span>
-    <a href="credit-score-simulator.html" style="font-size:11px;font-weight:700;color:#c8a44a;text-decoration:none;">Simulate →</a>
-  </div>
-  <span style="color:rgba(255,255,255,0.1);">|</span>
-  <span style="font-size:12px;color:rgba(255,255,255,0.4);">Denied? <a href="bank-rejection-engine.html" style="color:#c8a44a;font-weight:700;text-decoration:none;">Find out why →</a></span>
-</div>
-<style>@keyframes cSpin{0%,35%{transform:rotateY(0deg);}45%,85%{transform:rotateY(180deg);}95%,100%{transform:rotateY(360deg);}}</style>
 <div class="hero">
   <div class="hero-inner">
     <div class="hero-eyebrow">Free Tools · Licensed Banking Professional · 23 Years Experience</div>
@@ -491,15 +493,17 @@ body{overflow-x:hidden;}
       <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,0.45);"><span style="color:#6bffb8;">✓</span>23 years experience</div>
     </div>
     <!-- LIVE LOSS COUNTER -->
-    <div style="background:#0a0e1a;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;">
-        <div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:8px;font-weight:600;">⏱ Since you opened this page</div>
-        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;">
-          <span style="font-family:'Courier New',monospace;font-size:18px;font-weight:900;color:#ff6b6b;letter-spacing:3px;background:#060a10;padding:3px 7px;border-radius:3px;" id="lossCounter">$0.00</span>
+    <div style="background:rgba(192,57,43,0.12);border:2px solid rgba(192,57,43,0.5);border-radius:10px;padding:16px 20px;margin-bottom:16px;">
+      <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(192,57,43,0.8);margin-bottom:6px;font-weight:700;">⏱ LIVE — Since you opened this page, the avg U.S. home price increased by:</div>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="flex:1;">
+          <span style="font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:900;color:#ff6b6b;" id="lossCounter">$0.00</span>
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;">National median home: $412,000 · Annual appreciation: ~6% · That's <strong style="color:#ff6b6b;">$0.78 per second</strong></div>
         </div>
-        <div style="font-size:10px;color:rgba(255,255,255,0.25);">avg US home price increase · $0.78/sec</div>
-        <a href="american-dream-calculator.html" style="display:inline-block;margin-top:10px;font-size:10px;font-weight:700;color:rgba(200,164,74,0.6);text-decoration:none;letter-spacing:0.1em;">SEE THE GAP →</a>
+        <a href="american-dream-calculator.html" style="padding:10px 20px;background:#c0392b;color:#fff;text-decoration:none;font-weight:700;font-size:13px;border-radius:6px;white-space:nowrap;">See the Gap →</a>
       </div>
     </div>
+
     <div class="hero-stats">
       <div class="stat"><div class="s-num" id="cnt-1">0</div><div class="s-label">Years of Banking</div></div>
       <div class="stat"><div class="s-num" id="cnt-2">0</div><div class="s-label">Monthly Users</div></div>
@@ -878,19 +882,7 @@ body{overflow-x:hidden;}
       <div style="color:#ff6b6b;font-size:13px;font-weight:600;">Read This Week's Verdict →</div>
     </a>
 
-    <a href="payment-frequency-calculator.html" style="display:block;padding:24px;background:#fff;border-bottom:1px solid #f0ede8;text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='#f9f7f4'" onmouseout="this.style.background='#fff'">
-            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#c8a44a;margin-bottom:6px;">Savings</div>
-            <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:800;color:#0a0e1a;margin-bottom:6px;">Payment Frequency</div>
-            <div style="font-size:13px;color:#6677aa;margin-bottom:10px;">Bi-weekly saves $120K without spending extra.</div>
-            <div style="font-size:11px;font-weight:700;color:#0a1f5c;">See the Math →</div>
-          </a>
-          <a href="refinance-alert-calculator.html" style="display:block;padding:24px;background:#fff;border-bottom:1px solid #f0ede8;text-decoration:none;transition:background 0.15s;" onmouseover="this.style.background='#f9f7f4'" onmouseout="this.style.background='#fff'">
-            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#c8a44a;margin-bottom:6px;">Refinance</div>
-            <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:800;color:#0a0e1a;margin-bottom:6px;">Refinance Alert</div>
-            <div style="font-size:13px;color:#6677aa;margin-bottom:10px;">At what rate should you refinance? Banks won't say.</div>
-            <div style="font-size:11px;font-weight:700;color:#0a1f5c;">Find My Trigger →</div>
-          </a>
-          <a href="bridge-loan-calculator.html" style="background:linear-gradient(135deg,#1a1000,#2a1a00);border:1px solid rgba(200,164,74,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
+    <a href="bridge-loan-calculator.html" style="background:linear-gradient(135deg,#1a1000,#2a1a00);border:1px solid rgba(200,164,74,0.4);border-radius:12px;padding:24px 28px;text-decoration:none;display:block;position:relative;overflow:hidden;">
       <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.8);margin-bottom:8px;font-weight:700;">🏠→🏡 New · World First</div>
       <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">Bridge Loan Calculator</div>
       <div style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin-bottom:12px;">Selling your home and buying another? Calculate your financing gap, daily interest cost, and how long you can afford to wait.</div>
@@ -1213,52 +1205,35 @@ body{overflow-x:hidden;}
 
 <!-- WHY FRC -->
 <div style="background:#fff;padding:80px 40px;border-top:1px solid #f0ede8;">
-  <div style="max-width:1040px;margin:0 auto;">
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;" id="why-frc-grid">
-
-      <!-- Left: heading -->
-      <div>
-        <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#c8a44a;font-weight:700;margin-bottom:16px;">Why FinanceRateCalc</div>
-        <div style="font-family:'Fraunces',serif;font-size:clamp(32px,4vw,52px);font-weight:900;color:#0a0e1a;letter-spacing:-2px;line-height:0.95;margin-bottom:24px;">Built by a<br>banker.<br><em style="font-style:italic;color:#c8a44a;">Not a startup.</em></div>
-        <p style="font-size:15px;color:#6677aa;line-height:1.8;max-width:380px;font-weight:300;">After 23 years reviewing mortgage files, I built the tools I wished existed when I was on the other side of the desk.</p>
-        <div style="margin-top:32px;">
-          <a href="frc-banker-ai.html" style="display:inline-flex;align-items:center;gap:8px;padding:13px 22px;background:#0a1f5c;color:#fff;border-radius:4px;font-weight:700;font-size:13px;text-decoration:none;letter-spacing:0.03em;">Talk to the Banker AI →</a>
-        </div>
-      </div>
-
-      <!-- Right: 3 reasons -->
-      <div style="display:flex;flex-direction:column;gap:0;">
-
-        <div style="padding:28px 0;border-bottom:1px solid #f0ede8;">
-          <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;color:#c8a44a;margin-bottom:10px;">01</div>
-          <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800;color:#0a0e1a;margin-bottom:8px;">We think like a banker, not a salesman.</div>
-          <div style="font-size:14px;color:#6677aa;line-height:1.75;">Every tool shows you what the bank actually sees — DTI ratios, credit tier pricing, lender type differences. Not the polished version they put in the brochure.</div>
-        </div>
-
-        <div style="padding:28px 0;border-bottom:1px solid #f0ede8;">
-          <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;color:#c8a44a;margin-bottom:10px;">02</div>
-          <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800;color:#0a0e1a;margin-bottom:8px;">We know what lenders actually look at.</div>
-          <div style="font-size:14px;color:#6677aa;line-height:1.75;">A 620 score costs $47,000 more over 30 years. A Chase denial says nothing about a credit union. These are the things that matter — and most calculators don't mention them.</div>
-        </div>
-
-        <div style="padding:28px 0;">
-          <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;color:#c8a44a;margin-bottom:10px;">03</div>
-          <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800;color:#0a0e1a;margin-bottom:8px;">100% free. No data harvested. No ads.</div>
-          <div style="font-size:14px;color:#6677aa;line-height:1.75;">No sign-up, no email wall, no affiliate tricks. Just the math. We built this because good financial information shouldn't cost anything.</div>
-        </div>
-
+  <div style="max-width:1040px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;">
+    <div>
+      <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:#c8a44a;font-weight:700;margin-bottom:16px;">Why FinanceRateCalc</div>
+      <div style="font-family:'Fraunces',serif;font-size:clamp(32px,4vw,52px);font-weight:900;color:#0a0e1a;letter-spacing:-2px;line-height:0.95;margin-bottom:24px;">Built by a<br>banker.<br><em style="font-style:italic;color:#c8a44a;">Not a startup.</em></div>
+      <p style="font-size:15px;color:#6677aa;line-height:1.8;max-width:380px;font-weight:300;">After 23 years reviewing mortgage files, I built the tools I wished existed when I was on the other side of the desk.</p>
+      <div style="margin-top:32px;">
+        <a href="frc-banker-ai.html" style="display:inline-flex;align-items:center;gap:8px;padding:13px 22px;background:#0a1f5c;color:#fff;border-radius:4px;font-weight:700;font-size:13px;text-decoration:none;">Talk to the Banker AI →</a>
       </div>
     </div>
-
+    <div style="display:flex;flex-direction:column;gap:0;">
+      <div style="padding:28px 0;border-bottom:1px solid #f0ede8;">
+        <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;color:#c8a44a;margin-bottom:10px;">01</div>
+        <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800;color:#0a0e1a;margin-bottom:8px;">We think like a banker, not a salesman.</div>
+        <div style="font-size:14px;color:#6677aa;line-height:1.75;">Every tool shows you what the bank actually sees — DTI ratios, credit tier pricing, lender type differences. Not the polished version they put in the brochure.</div>
+      </div>
+      <div style="padding:28px 0;border-bottom:1px solid #f0ede8;">
+        <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;color:#c8a44a;margin-bottom:10px;">02</div>
+        <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800;color:#0a0e1a;margin-bottom:8px;">We know what lenders actually look at.</div>
+        <div style="font-size:14px;color:#6677aa;line-height:1.75;">A 620 score costs $47,000 more over 30 years. A Chase denial says nothing about a credit union. These are the things that matter — and most calculators don't mention them.</div>
+      </div>
+      <div style="padding:28px 0;">
+        <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;color:#c8a44a;margin-bottom:10px;">03</div>
+        <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:800;color:#0a0e1a;margin-bottom:8px;">100% free. No data harvested. No ads.</div>
+        <div style="font-size:14px;color:#6677aa;line-height:1.75;">No sign-up, no email wall, no affiliate tricks. Just the math. We built this because good financial information shouldn't cost anything.</div>
+      </div>
+    </div>
   </div>
 </div>
-
-<style>
-@media(max-width:768px){
-  #why-frc-grid{grid-template-columns:1fr !important;gap:40px !important;}
-}
-</style>
+<style>@media(max-width:768px){#why-frc-grid{grid-template-columns:1fr !important;gap:40px !important;}}</style>
 
 <footer style="background:var(--ink);padding:0;text-align:left;">
   <div style="max-width:1200px;margin:0 auto;padding:56px 60px 36px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;" class="footer-grid">
