@@ -3,229 +3,215 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Credit Score Simulator — See What 620→680 Saves You | FRC</title>
-<meta name="description" content="Simulate what improving your credit score saves on your mortgage. See exact monthly payment and 30-year savings at 620, 640, 660, 680, 700, 720, 740, 760.">
+<title>Credit Score Simulator — Your Alternative Financial Reality | FRC</title>
+<meta name="description" content="See exactly what a 620 vs 740 credit score costs you on your mortgage. Interactive split-screen simulation powered by Zai AI.">
 <link rel="canonical" href="https://financeratecalc.com/credit-score-simulator.html">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#0a1f5c;--gold:#c8a44a;--red:#c0392b;--green:#27ae60;--border:#dde0ee;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:"Geist",sans-serif;background:#050810;color:#fff;line-height:1.7;overflow-x:hidden;}
-header{background:rgba(5,8,16,0.95);padding:0 60px;height:64px;display:flex;align-items:center;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
-.logo{font-family:"Fraunces",serif;font-size:20px;font-weight:900;color:#fff;text-decoration:none;}
+:root{--navy:#0a1f5c;--gold:#c8a44a;--red:#c0392b;--green:#27ae60;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;min-height:100vh;}
+header{background:rgba(8,9,12,0.95);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(10px);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
 .logo em{font-style:italic;color:var(--gold);}
-.hero{padding:72px 40px 56px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(200,164,74,0.08) 0%,transparent 60%);}
-h1{font-family:"Fraunces",serif;font-size:clamp(34px,6vw,62px);font-weight:900;line-height:1.05;margin-bottom:14px;letter-spacing:-1px;}
-h1 em{font-style:italic;color:#f0d060;}
-.hero-sub{font-size:16px;color:rgba(255,255,255,0.4);max-width:500px;margin:0 auto 40px;}
-.calc-wrap{max-width:680px;margin:0 auto;padding:0 40px 80px;}
-.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:32px;margin-bottom:20px;}
-label{display:block;font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
-.input-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
-.prefix{font-size:16px;font-weight:700;color:var(--gold);}
-input[type=number]{flex:1;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:13px 16px;font-size:18px;font-weight:700;color:#fff;font-family:"Fraunces",serif;outline:none;}
-input[type=number]:focus{border-color:var(--gold);}
-.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
-.score-btn{padding:10px 6px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);font-size:13px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;}
-.score-btn.selected{border-color:var(--gold);background:rgba(200,164,74,0.15);color:var(--gold);}
-.calc-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--gold),#f0d060);color:#0a0e1a;border:none;border-radius:10px;font-size:16px;font-weight:900;cursor:pointer;font-family:"Fraunces",serif;}
-.results{display:none;}
-.score-comparison{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
-.score-card{border-radius:10px;padding:16px;text-align:center;border:1px solid rgba(255,255,255,0.1);}
-.score-card.current{border-color:var(--gold);background:rgba(200,164,74,0.1);}
-.score-val{font-family:"Fraunces",serif;font-size:22px;font-weight:900;}
-.score-label{font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);margin-top:4px;}
-.savings-banner{background:linear-gradient(135deg,#0a1500,#1a3010);border:2px solid rgba(39,174,96,0.4);border-radius:12px;padding:28px;text-align:center;margin-bottom:20px;}
-.skyblue-box{background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.5);border-radius:12px;padding:24px 28px;text-align:center;margin-bottom:20px;}
-footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
-@media(max-width:640px){header{padding:0 16px;}.calc-wrap{padding:0 20px 60px;}.score-grid{grid-template-columns:repeat(4,1fr);}.score-comparison{grid-template-columns:1fr 1fr;}}
+.back{font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;}
+.hero{padding:56px 40px 48px;text-align:center;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,56px);font-weight:900;line-height:0.95;letter-spacing:-2px;margin-bottom:12px;}
+h1 em{font-style:italic;color:var(--gold);}
+.sub{font-size:15px;color:rgba(255,255,255,0.4);margin-bottom:40px;}
+/* INPUTS */
+.calc-box{max-width:600px;margin:0 auto;padding:0 20px;}
+.input-group{margin-bottom:20px;}
+label{display:block;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;}
+.amount-wrap{display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 18px;gap:8px;}
+.amount-wrap:focus-within{border-color:var(--gold);}
+.prefix{font-size:18px;font-weight:700;color:var(--gold);}
+input[type=number]{flex:1;background:none;border:none;outline:none;font-size:20px;font-weight:700;color:#fff;font-family:'Fraunces',serif;}
+input[type=number]::-webkit-inner-spin-button{display:none;}
+.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.score-btn{padding:11px 8px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.45);font-size:13px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+.score-btn:hover{border-color:rgba(200,164,74,0.4);background:rgba(200,164,74,0.08);color:rgba(200,164,74,0.8);}
+.score-btn.active{border-color:var(--gold);background:rgba(200,164,74,0.15);color:var(--gold);}
+.calc-btn{width:100%;margin-top:24px;padding:16px;background:linear-gradient(135deg,var(--gold),#f0d060);color:#08090c;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Fraunces',serif;transition:opacity 0.15s;}
+.calc-btn:hover{opacity:0.9;}
 
-/* Alternative Reality Split */
-.reality-split{display:grid;grid-template-columns:1fr 1fr;gap:3px;border-radius:14px;overflow:hidden;margin-bottom:20px;}
-.reality-now{background:linear-gradient(160deg,#1a0505,#2a0808);padding:28px;position:relative;}
-.reality-future{background:linear-gradient(160deg,#051a0a,#082a12);padding:28px;position:relative;}
-.reality-label{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:6px;}
-.reality-now .reality-label{color:rgba(192,57,43,0.8);}
-.reality-future .reality-label{color:rgba(39,174,96,0.8);}
-.reality-score{font-family:"Fraunces",serif;font-size:52px;font-weight:900;line-height:1;letter-spacing:-2px;margin-bottom:4px;}
-.reality-now .reality-score{color:#ff6b6b;}
-.reality-future .reality-score{color:#6bffb8;}
-.reality-payment{font-family:"Fraunces",serif;font-size:28px;font-weight:900;margin-bottom:4px;}
-.reality-now .reality-payment{color:rgba(255,107,107,0.8);}
-.reality-future .reality-payment{color:rgba(107,255,184,0.8);}
-.reality-detail{font-size:11px;color:rgba(255,255,255,0.35);line-height:1.7;}
-.reality-diff{background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:12px;color:#6bffb8;font-weight:600;}
-.sky-cta-box{background:linear-gradient(135deg,#0d1f0d,#162d16);border:2px solid rgba(200,164,74,0.4);border-radius:14px;padding:28px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden;}
-.sky-cta-box::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c8a44a,#f0d060,#c8a44a);}
-@media(max-width:640px){.reality-split{grid-template-columns:1fr;}}
+/* RESULTS */
+#results{display:none;max-width:900px;margin:40px auto;padding:0 20px 80px;}
+
+/* SPLIT SCREEN */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:3px;border-radius:16px;overflow:hidden;margin-bottom:3px;}
+.split-now{background:linear-gradient(160deg,#1a0305,#2d0508);padding:32px 28px;}
+.split-future{background:linear-gradient(160deg,#031a08,#052d10);padding:32px 28px;}
+.split-tag{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:6px;}
+.split-now .split-tag{color:rgba(255,107,107,0.8);}
+.split-future .split-tag{color:rgba(107,255,184,0.8);}
+.split-score{font-family:'Fraunces',serif;font-size:64px;font-weight:900;line-height:1;letter-spacing:-3px;}
+.split-now .split-score{color:#ff6b6b;}
+.split-future .split-score{color:#6bffb8;}
+.split-rate{font-size:13px;margin:6px 0 16px;opacity:0.4;}
+.split-payment{font-family:'Fraunces',serif;font-size:36px;font-weight:900;letter-spacing:-1px;}
+.split-now .split-payment{color:#ff9b9b;}
+.split-future .split-payment{color:#6bffb8;}
+.split-label{font-size:11px;opacity:0.4;margin-top:4px;}
+.split-diff{margin-top:16px;background:rgba(107,255,184,0.1);border:1px solid rgba(107,255,184,0.2);border-radius:8px;padding:12px 14px;font-size:13px;color:#6bffb8;font-weight:600;line-height:1.6;}
+
+/* ZAI CTA */
+.zai-box{background:linear-gradient(160deg,#0a0d18,#0f1628);border:1.5px solid rgba(200,164,74,0.3);border-radius:16px;padding:32px;text-align:center;position:relative;overflow:hidden;}
+.zai-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.zai-tag{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:14px;}
+.zai-title{font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:10px;line-height:1.2;}
+.zai-text{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:24px;max-width:500px;margin-left:auto;margin-right:auto;}
+.zai-cta{display:inline-block;padding:14px 32px;background:linear-gradient(135deg,var(--gold),#f0d060);color:#08090c;border-radius:8px;font-weight:800;font-size:15px;text-decoration:none;font-family:'Fraunces',serif;}
+.zai-cta:hover{opacity:0.9;}
+.zai-disc{font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;}
+
+/* Score comparison row */
+.score-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:3px;}
+.sc{border-radius:10px;padding:14px;text-align:center;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);}
+.sc.you{border-color:rgba(200,164,74,0.4);background:rgba(200,164,74,0.07);}
+.sc-num{font-family:'Fraunces',serif;font-size:20px;font-weight:900;}
+.sc-pay{font-size:13px;font-weight:600;color:#fff;margin:3px 0;}
+.sc-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.3);}
+.sc-you{font-size:9px;color:var(--gold);font-weight:700;margin-top:4px;}
+
+@media(max-width:768px){
+  header{padding:0 16px;}
+  .hero{padding:40px 16px 32px;}
+  .split{grid-template-columns:1fr;}
+  .score-row{grid-template-columns:1fr 1fr;}
+  .score-grid{grid-template-columns:repeat(4,1fr);}
+}
 </style>
-<meta property="og:title" content="Credit Score Simulator — See What 620→680 Saves You | FRC">
-<meta property="og:description" content="Simulate what improving your credit score saves on your mortgage. See exact monthly payment and 30-year savings at 620, 640, 660, 680, 700, 720, 740, 760.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://financeratecalc.com/credit-score-simulator.html">
-<meta property="og:image" content="https://financeratecalc.com/og-image.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@FinanceRateCalc">
-<meta name="twitter:title" content="Credit Score Simulator — See What 620→680 Saves You | FRC">
-<meta name="twitter:description" content="Simulate what improving your credit score saves on your mortgage. See exact monthly payment and 30-year savings at 620, 640, 660, 680, 700, 720, 740, 760.">
-<meta name="twitter:image" content="https://financeratecalc.com/og-image.png">
 </head>
 <body>
-<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="index.html" class="back">← Back</a>
+</header>
+
 <div class="hero">
-  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:14px;">💳 Credit Score Simulator</div>
-  <h1>What Does Your Score<br><em>Actually Cost You?</em></h1>
-  <p class="hero-sub">Enter your loan amount. See exactly what each credit score tier costs — and what improving saves you.</p>
+  <h1>Your Credit Score.<br>Two <em>Realities.</em></h1>
+  <p class="sub">See exactly what your current score costs you — and what life looks like after fixing it.</p>
 </div>
-<div class="calc-wrap">
-  <div class="card">
+
+<div class="calc-box">
+  <div class="input-group">
     <label>Loan Amount</label>
-    <div class="input-row"><span class="prefix">$</span><input type="number" id="loanAmt" value="400000" min="50000" max="2000000" step="5000"></div>
-    
+    <div class="amount-wrap">
+      <span class="prefix">$</span>
+      <input type="number" id="loanAmt" value="400000" placeholder="400000">
+    </div>
+  </div>
+  <div class="input-group">
     <label>Your Current Credit Score</label>
     <div class="score-grid">
-      <div class="score-btn" onclick="selectScore(580,this)">580</div>
-      <div class="score-btn selected" onclick="selectScore(620,this)">620</div>
-      <div class="score-btn" onclick="selectScore(640,this)">640</div>
-      <div class="score-btn" onclick="selectScore(660,this)">660</div>
-      <div class="score-btn" onclick="selectScore(680,this)">680</div>
-      <div class="score-btn" onclick="selectScore(700,this)">700</div>
-      <div class="score-btn" onclick="selectScore(720,this)">720</div>
-      <div class="score-btn" onclick="selectScore(740,this)">740+</div>
-    </div>
-    <input type="hidden" id="currentScore" value="620">
-    
-    <button class="calc-btn" onclick="calculate()">Show Me What I'm Paying →</button>
-  </div>
-
-  <div class="results" id="results">
-    <div class="score-comparison" id="scoreGrid"></div>
-    <div class="savings-banner" id="savingsBanner"></div>
-    <div id="tipsBox"></div>
-    <div class="skyblue-box" id="skyblueBox"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
-      <a href="mortgage-calculator.html" style="padding:12px 16px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;text-align:center;">Mortgage Calculator →</a>
-      <a href="bank-rejection-engine.html" style="padding:12px 16px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;text-align:center;">Check Approval Odds →</a>
+      <div class="score-btn" onclick="pick(this,580)">580</div>
+      <div class="score-btn active" onclick="pick(this,620)">620</div>
+      <div class="score-btn" onclick="pick(this,640)">640</div>
+      <div class="score-btn" onclick="pick(this,660)">660</div>
+      <div class="score-btn" onclick="pick(this,680)">680</div>
+      <div class="score-btn" onclick="pick(this,700)">700</div>
+      <div class="score-btn" onclick="pick(this,720)">720</div>
+      <div class="score-btn" onclick="pick(this,740)">740+</div>
     </div>
   </div>
+  <button class="calc-btn" onclick="run()">Show Me My Two Realities →</button>
 </div>
 
-  <!-- DATA SOURCES -->
-  <div style="max-width:860px;margin:0 auto;padding:0 60px 16px;">
-    <div style="background:#f8f6f0;border:1px solid #dde0ee;border-radius:8px;padding:14px 18px;font-size:12px;color:#6677aa;line-height:1.6;">
-      <strong style="color:#0a1f5c;">📋 Data Sources:</strong> Rate tiers by score: Freddie Mac PMMS, CFPB mortgage rate data by credit tier. Score improvement timelines: FICO research on credit building. · <a href="about.html" style="color:#0a1f5c;font-weight:600;">Learn more about our methodology →</a>
+<div id="results">
+
+  <!-- SPLIT SCREEN -->
+  <div class="split">
+    <div class="split-now">
+      <div class="split-tag">⚠️ Your Reality Now</div>
+      <div class="split-score" id="sNow">620</div>
+      <div class="split-rate" id="rNow">Rate: ~7.5%</div>
+      <div class="split-payment" id="pNow">$2,800</div>
+      <div class="split-label">Monthly payment</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:8px;" id="tNow">30-yr total: $1,007,000</div>
+    </div>
+    <div class="split-future">
+      <div class="split-tag">✨ Alternative Reality (740)</div>
+      <div class="split-score" style="color:#6bffb8;">740</div>
+      <div class="split-rate" id="rFuture">Rate: ~6.1%</div>
+      <div class="split-payment" id="pFuture">$2,432</div>
+      <div class="split-label">Monthly payment</div>
+      <div class="split-diff" id="diffBox"></div>
     </div>
   </div>
 
-  <!-- WHO THIS IS FOR -->
-  <div style="max-width:860px;margin:0 auto;padding:0 60px 16px;">
-    <div style="background:#fff;border:1px solid #dde0ee;border-radius:10px;padding:20px 24px;">
-      <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#c8a44a;font-weight:700;margin-bottom:14px;">👥 Who This Tool Is For</div>
-      <div style="padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#2c2c2c;font-weight:500;">✅ Anyone with a credit score under 720 who is planning to buy</div><div style="padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#2c2c2c;font-weight:500;">✅ People wondering if fixing their credit is worth delaying a purchase</div><div style="padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px;color:#2c2c2c;font-weight:500;">✅ Buyers who want to understand the real cost of their current score</div>
-    </div>
-  </div>
+  <!-- SCORE ROW -->
+  <div class="score-row" id="scoreRow"></div>
 
-  <!-- LEAD FORM CTA -->
-  <div style="max-width:860px;margin:0 auto;padding:0 60px 24px;">
-    <a href="credit-repair-consultation.html" style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.5);border-radius:10px;padding:18px 24px;text-decoration:none;flex-wrap:wrap;gap:12px;">
-      <div>
-        <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:4px;">Free · 60 Seconds · No Sign-Up</div>
-        <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#fff;">Is Your Credit Score Costing You $40,000+?</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.45);margin-top:2px;">Find out exactly how much — and when you can fix it.</div>
-      </div>
-      <div style="background:#c0392b;color:#fff;padding:10px 20px;border-radius:8px;font-weight:700;font-size:13px;white-space:nowrap;">Get Free Analysis →</div>
-    </a>
-  </div>
-<footer>
-  <div style="font-family:"Fraunces",serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
-  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 · Educational use only · Not financial advice</div>
-</footer>
+  <!-- ZAI CTA -->
+  <div class="zai-box" id="zaiBox"></div>
+
+</div>
+
 <script>
-var selectedScore = 620;
+var sel = 620;
 var rates = {580:8.1,620:7.5,640:7.1,660:6.9,680:6.6,700:6.4,720:6.25,740:6.1};
-var labels = {580:"Poor",620:"Very Fair",640:"Fair",660:"Below Avg",680:"Average",700:"Good",720:"Very Good",740:"Excellent"};
-var colors = {580:"#ff4444",620:"#ff6b6b",640:"#ff9944",660:"#ffbb44",680:"#ffdd44",700:"#aadd44",720:"#44cc44",740:"#00ff88"};
+var labels = {580:'Poor',620:'Very Fair',640:'Fair',660:'Below Avg',680:'Average',700:'Good',720:'Very Good',740:'Excellent'};
+var colors = {580:'#ff4444',620:'#ff6b6b',640:'#ff9944',660:'#ffbb44',680:'#ffdd44',700:'#aadd44',720:'#44cc44',740:'#00ff88'};
 
-function selectScore(s, el){
-  selectedScore=s;
-  document.querySelectorAll(".score-btn").forEach(function(b){b.classList.remove("selected");});
-  if(el) el.classList.add("selected");
+function pick(el, s){
+  sel = s;
+  document.querySelectorAll('.score-btn').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
 }
 
-function fmt(n){return "$"+Math.round(n).toLocaleString();}
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
 
-function mo(p,r,n){var mr=r/100/12;return p*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1);}
+function mo(p,r,n){
+  var mr=r/100/12;
+  return p*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1);
+}
 
-function calculate(){
-  var loan=parseFloat(document.getElementById("loanAmt").value)||400000;
-  var score=selectedScore;
-  var currentRate=rates[score];
-  var bestRate=rates[740];
-  var currentMo=mo(loan,currentRate,360);
-  var bestMo=mo(loan,bestRate,360);
-  var moDiff=currentMo-bestMo;
-  var totalDiff=moDiff*360;
+function run(){
+  var loan = parseFloat(document.getElementById('loanAmt').value)||400000;
+  var score = sel;
+  var rNow = rates[score]||7.5;
+  var r740 = rates[740];
+  var pNow = mo(loan,rNow,360);
+  var p740 = mo(loan,r740,360);
+  var moDiff = Math.round(pNow-p740);
+  var yrDiff = Math.round(moDiff*360);
 
-  var scoreKeys=[580,620,640,660,680,700,720,740];
-  var grid="";
-  scoreKeys.forEach(function(s){
-    var r=rates[s];
-    var m=mo(loan,r,360);
-    var isCurrent=s===score;
-    grid+="<div class='score-card"+(isCurrent?" current":"")+"' style='background:"+colors[s]+"15;border-color:"+colors[s]+"44;'>"+
-      "<div class='score-val' style='color:"+colors[s]+";'>"+s+"</div>"+
-      "<div style='font-size:13px;font-weight:600;color:#fff;margin:4px 0;'>"+fmt(m)+"/mo</div>"+
-      "<div class='score-label'>"+labels[s]+"</div>"+
-      (isCurrent?"<div style='font-size:9px;color:var(--gold);margin-top:4px;font-weight:700;'>← YOU</div>":"")+
-      "</div>";
+  // Fill split
+  document.getElementById('sNow').textContent = score;
+  document.getElementById('rNow').textContent = 'Rate: ~'+rNow.toFixed(1)+'%';
+  document.getElementById('pNow').textContent = fmt(pNow);
+  document.getElementById('tNow').textContent = '30-yr total: '+fmt(pNow*360);
+  document.getElementById('rFuture').textContent = 'Rate: ~'+r740.toFixed(1)+'%';
+  document.getElementById('pFuture').textContent = fmt(p740);
+  document.getElementById('diffBox').innerHTML =
+    'You save <strong>'+fmt(moDiff)+'/mo</strong><br>That\'s <strong>'+fmt(yrDiff)+'</strong> over 30 years';
+
+  // Score row
+  var row = '';
+  [580,640,680,720].forEach(function(s){
+    var r=rates[s];var m=mo(loan,r,360);
+    var isYou=(s===score||(score<600&&s===580)||(score>=600&&score<650&&s===640)||(score>=650&&score<700&&s===680)||(score>=700&&s===720));
+    row += '<div class="sc'+(isYou?' you':'')+'">'+
+      '<div class="sc-num" style="color:'+colors[s]+'">'+s+'</div>'+
+      '<div class="sc-pay">'+fmt(m)+'/mo</div>'+
+      '<div class="sc-lbl">'+labels[s]+'</div>'+
+      (isYou?'<div class="sc-you">← You</div>':'')+
+      '</div>';
   });
-  document.getElementById("scoreGrid").innerHTML=grid;
+  document.getElementById('scoreRow').innerHTML = row;
 
-  // Populate Alternative Reality Split
-  var rNow=currentRate||7.2;
-  var r740=bestRate||6.1;
-  var payNow=Math.round(loan*(rNow/100/12)*Math.pow(1+rNow/100/12,360)/(Math.pow(1+rNow/100/12,360)-1));
-  var pay740=Math.round(loan*(r740/100/12)*Math.pow(1+r740/100/12,360)/(Math.pow(1+r740/100/12,360)-1));
-  var moDiff=payNow-pay740;
-  var yrDiff=Math.round(moDiff*360);
-  document.getElementById("splitScoreNow").textContent=score;
-  document.getElementById("splitPayNow").textContent="$"+payNow.toLocaleString();
-  document.getElementById("splitDetailNow").innerHTML="Rate: ~"+rNow.toFixed(1)+"%<br>30-yr total: $"+Math.round(payNow*360).toLocaleString();
-  document.getElementById("splitScoreFuture").textContent="740";
-  document.getElementById("splitPayFuture").textContent="$"+pay740.toLocaleString();
-  document.getElementById("splitDiff").innerHTML="You save <strong>$"+moDiff.toLocaleString()+"/mo</strong><br>That's <strong>$"+yrDiff.toLocaleString()+"</strong> over 30 years";
-  document.getElementById("realitySplit").style.display="grid";
+  // Zai CTA
+  document.getElementById('zaiBox').innerHTML =
+    '<div class="zai-tag">🏦 Zai\'s Recommendation</div>'+
+    '<div class="zai-title">This alternative reality is real.<br>Sky Blue can get you there.</div>'+
+    '<div class="zai-text">I\'m an AI — I can simulate it, but I can\'t file the dispute letters. Sky Blue Credit is the licensed partner that makes this future real. They\'ve helped thousands of borrowers reach mortgage-ready scores.</div>'+
+    '<a class="zai-cta" href="https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=CREDIT_SIM_'+score+'_FRC" target="_blank" rel="sponsored">Make This Reality Mine → <small style="font-size:10px;opacity:0.6;">#ad</small></a>'+
+    '<div class="zai-disc">Not financial advice · Individual results vary · Affiliate partnership</div>';
 
-  document.getElementById("savingsBanner").innerHTML=
-    "<div style='font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(39,174,96,0.8);font-weight:700;margin-bottom:10px;'>💰 If You Improve to 740</div>"+
-    "<div style='font-family:"Fraunces",serif;font-size:42px;font-weight:900;color:#6bffb8;margin-bottom:6px;'>"+fmt(totalDiff)+"</div>"+
-    "<div style='font-size:14px;color:rgba(255,255,255,0.6);'>saved over 30 years · "+fmt(moDiff)+"/month lower payment</div>";
-
-  var tips="";
-  if(score<680){
-    tips="<div style='background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:20px 24px;margin-bottom:16px;'>"+
-      "<div style='font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:12px;'>⚡ Fastest Ways to Improve from "+score+"</div>"+
-      "<div style='font-size:13px;color:rgba(255,255,255,0.6);line-height:2;'>"+
-      "✅ Pay credit cards to below 10% utilization → +20-40 points in 30 days<br>"+
-      "✅ Dispute errors on your report → +10-30 points per removed item<br>"+
-      "✅ Become authorized user on family member's old account → +15-25 points<br>"+
-      "✅ Don't apply for new credit for 90 days before mortgage application"+
-      "</div></div>";
-  }
-  document.getElementById("tipsBox").innerHTML=tips;
-
-  document.getElementById("skyblueBox").innerHTML=
-    "<div style='font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:10px;'>🛡️ Professional Credit Repair</div>"+
-    "<div style='font-size:28px;font-family:"Fraunces",serif;font-weight:900;color:#ff6b6b;margin-bottom:6px;'>"+fmt(totalDiff)+"</div>"+
-    "<div style='font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:12px;'>🏦 Zai's Recommendation</div>"+
-    "<div style='font-family:Fraunces,serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:10px;'>This alternative reality is real. Sky Blue can get you there.</div>"+
-    "<div style='font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;line-height:1.7;'>I'm an AI — I can simulate it, but I can't file the dispute letters. Sky Blue Credit is the licensed partner that makes this future real. They've done it for thousands of borrowers.</div>"+
-    "<a href='https://www.skyblue.org/?pap=1006366&coupon=frc20&subid=CREDIT_SIM_"+score+"_FRC' target='_blank' rel='sponsored' style='display:inline-block;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#0a0e1a;padding:14px 32px;border-radius:8px;font-weight:800;font-size:15px;text-decoration:none;font-family:Fraunces,serif;'>Make This Reality Mine → #ad</a>"+
-    "<div style='font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;'>Not financial advice · Individual results vary · Affiliate link</div>";
-
-  document.getElementById("results").style.display="block";
-  document.getElementById("results").scrollIntoView({behavior:"smooth"});
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
 }
 </script>
 <script src="/banker-widget.js?v=4"></script>
