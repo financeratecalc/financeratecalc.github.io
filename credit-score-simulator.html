@@ -184,9 +184,8 @@ function calculate(){
   document.getElementById("scoreGrid").innerHTML=grid;
 
   // Populate Alternative Reality Split
-  var rates={580:7.8,600:7.5,620:7.2,640:7.0,660:6.8,680:6.6,700:6.4,720:6.25,740:6.1,760:5.95};
-  var rNow=rates[score]||7.2;
-  var r740=rates[740]||6.1;
+  var rNow=currentRate||7.2;
+  var r740=bestRate||6.1;
   var payNow=Math.round(loan*(rNow/100/12)*Math.pow(1+rNow/100/12,360)/(Math.pow(1+rNow/100/12,360)-1));
   var pay740=Math.round(loan*(r740/100/12)*Math.pow(1+r740/100/12,360)/(Math.pow(1+r740/100/12,360)-1));
   var moDiff=payNow-pay740;
