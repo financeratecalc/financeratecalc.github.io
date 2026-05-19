@@ -4,7 +4,7 @@
 
   var SYSTEM = `You are a 23-year banking professional and founder of FinanceRateCalc.com. You speak with calm authority, use real numbers, and are on the consumer's side. Be direct and concise — 2-3 paragraphs max. Current 2026 rates: ~6.4-6.8% for 30-yr fixed. Always add brief disclaimer at end. Never guarantee approvals or name specific lenders.
 
-When relevant (credit score issues, denial, or approval odds), naturally mention: "Your credit score is the #1 reason for mortgage denial. If your score is under 700, Sky Blue Credit has helped thousands of borrowers improve their approval odds — financeratecalc.com/credit-repair.html" — only when genuinely relevant, not in every message.`;
+When relevant (credit score issues, denial, or approval odds), naturally mention: "Your credit score is the #1 reason for mortgage denial. If your score is under 700, two partners can help: Sky Blue Credit (financeratecalc.com/credit-repair.html) for dispute letters, or SmartCredit's $1 trial for instant scores and a Score Builder" — only when genuinely relevant, not in every message.`;
 
   var msgs = [];
   var loading = false;
@@ -107,10 +107,23 @@ When relevant (credit score issues, denial, or approval odds), naturally mention
     var box = document.getElementById('frc-msgs');
     var div = document.createElement('div');
     div.className = 'frc-msg ' + role;
-    div.innerHTML = '<div class="frc-msg-av">' + (role==='a'?'Z':'You') + '</div>' +
-      '<div class="frc-bub">' + text.replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>') + '</div>';
+    var bub = '<div class="frc-bub">' + text.replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>') + '</div>';
+    div.innerHTML = '<div class="frc-msg-av">' + (role==='a'?'Z':'You') + '</div>' + bub;
+    
+    if(role==='a'){
+      var t = text.toLowerCase();
+      var actions = '<div style="display:flex;gap:5px;margin:4px 0 6px 32px;flex-wrap:wrap;">';
+      actions += '<button onclick="navigator.clipboard.writeText(this.closest(\'.frc-msg\').querySelector(\'.frc-bub\').innerText);this.textContent=\'✓\';setTimeout(()=>this.textContent=\'📋\',1500)" style="padding:3px 8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);border-radius:4px;font-size:9px;cursor:pointer;">📋</button>';
+      if(t.includes('credit')||t.includes('score')||t.includes('deny')||t.includes('denied')){
+        actions += '<a href="https://skyblue.ltroute.com/click.track?CID=139993&AFID=569709" target="_blank" style="padding:3px 8px;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.3);color:#c8a44a;border-radius:4px;font-size:9px;text-decoration:none;">🔵 Sky Blue</a>';
+        actions += '<a href="https://www.tkqlhce.com/click-101700650-16981737" target="_blank" style="padding:3px 8px;background:rgba(26,58,110,0.2);border:1px solid rgba(42,90,174,0.4);color:#60a5fa;border-radius:4px;font-size:9px;text-decoration:none;">🟦 SmartCredit $1</a>';
+      }
+      actions += '</div>';
+      div.innerHTML = '<div class="frc-msg-av">' + (role==='a'?'Z':'You') + '</div><div>' + bub + actions + '</div>';
+    }
+    
     box.appendChild(div);
-    box.scrollTop = box.scrollHeight;
+    box.scrollTo({top:box.scrollHeight,behavior:'smooth'});
   }
 
   function frcTyping(){
