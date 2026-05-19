@@ -63,8 +63,8 @@
         <div id="frc-header-left">
           <div id="frc-av">ZY</div>
           <div>
-            <div id="frc-hname">Ziya · FRC Banker AI</div>
-            <div id="frc-hsub">23 Years Banking · Ask Anything</div>
+            <div id="frc-hname">Zai · FRC Banker AI</div>
+            <div id="frc-hsub">Hi, I'm Zai — 23 years of banking in a chat.</div>
           </div>
         </div>
         <button id="frc-close" onclick="toggleFRC()">×</button>
@@ -78,9 +78,9 @@
       </div>
       <div id="frc-footer">Educational only · Not financial advice · <a href="/frc-banker-ai.html">Full screen →</a></div>
     </div>
-    <div id="frc-bubble" onclick="toggleFRC()">
+    <div id="frc-bubble" onclick="toggleFRC()" title="Chat with Zai · FRC Banker AI">
       <div id="frc-dot"></div>
-      <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+      <span style="font-size:22px;line-height:1;">👨‍💼</span>
     </div>
   `;
   document.body.appendChild(widget);
@@ -91,7 +91,7 @@
     open = !open;
     document.getElementById('frc-panel').style.display = open ? 'flex' : 'none';
     if(open && msgs.length === 0){
-      frcAddMsg('a', "Hello! I'm the FRC Banker AI — 23 years of mortgage and banking experience. Ask me anything: denials, rates, credit scores, refinancing, or what your bank isn't telling you.");
+      frcAddMsg('a', "Hi, I'm Zai 👨‍💼 — 23 years of banking, condensed into a chat. Ask me anything: why you were denied, what rate you should be getting, or what your bank isn't telling you.");
     }
     if(open) setTimeout(function(){ document.getElementById('frc-inp').focus(); }, 100);
   };
@@ -100,7 +100,7 @@
     var box = document.getElementById('frc-msgs');
     var div = document.createElement('div');
     div.className = 'frc-msg ' + role;
-    div.innerHTML = '<div class="frc-msg-av">' + (role==='a'?'ZY':'👤') + '</div>' +
+    div.innerHTML = '<div class="frc-msg-av">' + (role==='a'?'👨‍💼':'👤') + '</div>' +
       '<div class="frc-bub">' + text.replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>') + '</div>';
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
