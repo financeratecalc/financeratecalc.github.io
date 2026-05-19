@@ -11,9 +11,11 @@
   var style = document.createElement('style');
   style.textContent = `
     #frc-widget { position:fixed; bottom:20px; right:20px; z-index:9999; font-family:'Inter',sans-serif; }
-    #frc-bubble { width:52px; height:52px; background:linear-gradient(135deg,#C8A84B,#f0d060); border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(200,168,75,0.4); transition:transform 0.2s; }
-    #frc-bubble:hover { transform:scale(1.08); }
-    #frc-bubble svg { width:22px; height:22px; fill:#0B132B; }
+    @keyframes frcGlow{0%,100%{box-shadow:0 4px 20px rgba(10,31,92,0.6),0 0 0 2px rgba(200,164,74,0.5),0 0 10px rgba(200,164,74,0.15);}50%{box-shadow:0 4px 20px rgba(10,31,92,0.6),0 0 0 2px rgba(240,208,96,1),0 0 28px rgba(200,164,74,0.7);}}
+    @keyframes frcZpulse{0%,100%{color:#c8a44a;text-shadow:none;}50%{color:#f5e070;text-shadow:0 0 14px rgba(200,164,74,0.9);}}
+    #frc-bubble { width:54px; height:54px; background:linear-gradient(135deg,#0a1f5c,#162d6e); border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform 0.2s; animation:frcGlow 2s ease-in-out infinite; }
+    #frc-bubble:hover { transform:scale(1.1); }
+    #frc-bubble-z { font-family:Georgia,serif; font-size:26px; font-weight:700; color:#c8a44a; line-height:1; animation:frcZpulse 2s ease-in-out infinite; }
     #frc-dot { position:absolute; top:2px; right:2px; width:10px; height:10px; background:#22c55e; border-radius:50%; border:2px solid #0a1f5c; }
     #frc-panel { position:absolute; bottom:64px; right:0; width:340px; background:#0B132B; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.5); display:none; flex-direction:column; border:1px solid rgba(255,255,255,0.1); transform-origin:bottom right; }
     @keyframes frcSlideIn { from{opacity:0;transform:scale(0.85) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
