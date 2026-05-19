@@ -96,7 +96,7 @@
     var panel=document.getElementById('frc-panel');
     if(open){panel.style.display='flex';panel.classList.add('open');}else{panel.style.display='none';panel.classList.remove('open');}
     if(open && msgs.length === 0){
-      frcAddMsg('a', "Hi, I'm Zai 👨‍💼 — 23 years of banking, condensed into a chat. Ask me anything: why you were denied, what rate you should be getting, or what your bank isn't telling you.");
+      frcAddMsg('a', "Hi, I'm Zai — 23 years of banking, condensed into a chat. Ask me anything: why you were denied, what rate you should be getting, or what your bank isn't telling you.");
     }
     if(open) setTimeout(function(){ document.getElementById('frc-inp').focus(); }, 100);
   };
@@ -115,7 +115,7 @@
     var box = document.getElementById('frc-msgs');
     var div = document.createElement('div');
     div.className = 'frc-msg a'; div.id = 'frc-typing';
-    div.innerHTML = '<div class="frc-msg-av">ZY</div><div class="frc-bub"><div class="frc-typing"><span></span><span></span><span></span></div></div>';
+    div.innerHTML = '<div class="frc-msg-av" style="background:linear-gradient(135deg,#0a1f5c,#162d6e);border:1px solid rgba(200,164,74,0.5);color:#c8a44a;font-family:Georgia,serif;font-size:12px;font-weight:700;">Z</div><div class="frc-bub"><div class="frc-typing"><span></span><span></span><span></span></div></div>';
     box.appendChild(div); box.scrollTop = box.scrollHeight;
   }
 
