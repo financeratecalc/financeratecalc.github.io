@@ -133,26 +133,16 @@ When relevant (credit score issues, denial, or approval odds), naturally mention
     frcTyping();
 
     try{
-      var res = await fetch('https://api.anthropic.com/v1/messages',{
+      var res = await fetch('https://frc-api.ziyetis.workers.dev',{
         method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'x-api-key':window._AKEY||'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',
-          'anthropic-version':'2023-06-01',
-          'anthropic-dangerous-direct-browser-access':'true'
-        },
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:600,
-          system:SYSTEM,
-          messages:msgs
-        })
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({system:SYSTEM,messages:msgs})
       });
       var data = await res.json();
       var t = document.getElementById('frc-typing');
       if(t) t.remove();
-      if(data.content&&data.content[0]){
-        var reply = data.content[0].text;
+      if(data.reply){
+        var reply = data.reply;
         msgs.push({role:'assistant', content:reply});
         frcAddMsg('a', reply);
       } else {
