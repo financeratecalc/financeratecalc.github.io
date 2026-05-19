@@ -305,6 +305,62 @@ window.addEventListener('load', function(){
   }, 400);
 });
 
+
+// File upload handler
+function handleFile(input){
+  var file = input.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  
+  if(file.type === 'application/pdf'){
+    // For PDF - tell Zai about it
+    addMessage('user', '📎 I uploaded my credit report: ' + file.name);
+    messages.push({role:'user', content:'I just uploaded my credit report PDF: ' + file.name + '. Please ask me to describe what negative items you see, or I can paste key sections.'});
+    sendToZai();
+  } else if(file.type.startsWith('image/')){
+    // For images - convert to base64 and send
+    reader.onload = function(e){
+      var base64 = e.target.result.split(',')[1];
+      addMessage('user', '📎 Uploaded credit report image');
+      // Send as vision message
+      fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': window._AKEY || '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',
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: SYSTEM_PROMPT,
+          messages: [{role:'user', content:[
+            {type:'image', source:{type:'base64', media_type:file.type, data:base64}},
+            {type:'text', text:'This is my credit report. Please analyze it: identify any negative items (late payments, collections, charge-offs), estimate which ones might be disputable, and tell me what fixing them could mean for my mortgage rate.'}
+          ]}]
+        })
+      })
+      .then(function(r){return r.json();})
+      .then(function(data){
+        if(data.content && data.content[0]){
+          var reply = data.content[0].text;
+          messages.push({role:'assistant', content:reply});
+          addMessage('ai', reply);
+        }
+      })
+      .catch(function(){ addMessage('ai', 'Could not analyze the image. Please describe the negative items you see.'); });
+    };
+    reader.readAsDataURL(file);
+  }
+  input.value = '';
+}
+
+function sendToZai(){
+  // Trigger the existing send flow
+  sendMessage();
+}
+
 // Voice input
 var recognition = null;
 var micActive = false;
