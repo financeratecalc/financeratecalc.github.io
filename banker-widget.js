@@ -133,7 +133,7 @@ When relevant (credit score issues, denial, or approval odds), naturally mention
     frcTyping();
 
     try{
-      var res = await fetch('https://frc-api.ziyetis.workers.dev',{
+      var res = await fetch('https://api.financeratecalc.com',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({system:SYSTEM,messages:msgs})
