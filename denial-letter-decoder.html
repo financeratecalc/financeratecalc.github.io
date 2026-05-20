@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Denial Letter Decoder — Zai AI | FRC</title>
+<meta name="description" content="Paste your mortgage denial letter. Zai decodes the real reason you were denied and tells you exactly what to do next.">
+<link rel="canonical" href="https://financeratecalc.com/denial-letter-decoder.html">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;min-height:100vh;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#c8a44a;}
+.back{font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;}
+.hero{padding:56px 40px 40px;text-align:center;max-width:700px;margin:0 auto;}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);border-radius:20px;padding:5px 14px;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ff6b6b;margin-bottom:20px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,54px);font-weight:900;line-height:0.95;letter-spacing:-2px;margin-bottom:14px;}
+h1 em{font-style:italic;color:#c8a44a;}
+.sub{font-size:15px;color:rgba(255,255,255,0.4);line-height:1.7;margin-bottom:40px;}
+.main{max-width:800px;margin:0 auto;padding:0 20px 80px;}
+.input-box{background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+.input-box:focus-within{border-color:rgba(200,164,74,0.4);}
+.input-label{padding:14px 18px 0;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);}
+textarea{width:100%;background:none;border:none;outline:none;padding:12px 18px 16px;font-size:14px;color:rgba(255,255,255,0.85);font-family:'DM Sans',sans-serif;line-height:1.7;resize:vertical;min-height:180px;}
+textarea::placeholder{color:rgba(255,255,255,0.2);}
+.decode-btn{width:100%;padding:16px;background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Fraunces',serif;transition:opacity 0.15s;margin-bottom:32px;}
+.decode-btn:hover{opacity:0.9;}
+.decode-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* Results */
+#results{display:none;}
+.result-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:28px;margin-bottom:16px;position:relative;}
+.result-card.red{border-color:rgba(192,57,43,0.3);background:linear-gradient(160deg,rgba(192,57,43,0.06),rgba(8,9,12,0));}
+.result-card.gold{border-color:rgba(200,164,74,0.3);background:linear-gradient(160deg,rgba(200,164,74,0.06),rgba(8,9,12,0));}
+.result-card.green{border-color:rgba(39,174,96,0.3);background:linear-gradient(160deg,rgba(39,174,96,0.06),rgba(8,9,12,0));}
+.card-tag{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;font-weight:700;margin-bottom:12px;}
+.red .card-tag{color:rgba(255,107,107,0.8);}
+.gold .card-tag{color:rgba(200,164,74,0.8);}
+.green .card-tag{color:rgba(107,255,184,0.8);}
+.card-title{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:10px;}
+.card-body{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.8;}
+.card-body strong{color:#fff;}
+
+/* Affiliate */
+.aff-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+.aff-card{border-radius:10px;padding:16px;text-align:center;}
+.aff-card.sky{background:rgba(10,31,92,0.3);border:1px solid rgba(200,164,74,0.3);}
+.aff-card.smart{background:rgba(26,58,110,0.3);border:1px solid rgba(42,90,174,0.3);}
+.aff-label{font-size:9px;text-transform:uppercase;letter-spacing:0.2em;font-weight:700;margin-bottom:6px;}
+.sky .aff-label{color:rgba(200,164,74,0.7);}
+.smart .aff-label{color:rgba(96,165,250,0.7);}
+.aff-name{font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;}
+.aff-desc{font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:10px;line-height:1.5;}
+.aff-btn{display:block;padding:8px;border-radius:6px;font-weight:800;font-size:12px;text-decoration:none;}
+.sky .aff-btn{background:linear-gradient(135deg,#c8a44a,#f0d060);color:#0a0e1a;}
+.smart .aff-btn{background:linear-gradient(135deg,#1a3a6e,#2a5aae);color:#fff;}
+
+/* Typing */
+.typing{display:flex;align-items:center;gap:6px;padding:20px;color:rgba(255,255,255,0.4);font-size:13px;}
+.dot{width:6px;height:6px;border-radius:50%;background:#c8a44a;animation:bounce 1.4s ease-in-out infinite;}
+.dot:nth-child(2){animation-delay:0.2s;}
+.dot:nth-child(3){animation-delay:0.4s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+
+/* Examples */
+.examples{margin-bottom:32px;}
+.ex-label{font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:10px;}
+.ex-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.ex-chip{padding:7px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:11px;color:rgba(255,255,255,0.45);cursor:pointer;transition:all 0.15s;}
+.ex-chip:hover{border-color:rgba(200,164,74,0.4);color:#c8a44a;}
+
+@media(max-width:640px){
+  header{padding:0 16px;}
+  .hero{padding:40px 16px 32px;}
+  .aff-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="index.html" class="back">← Back</a>
+</header>
+
+<div class="hero">
+  <div class="badge">🔍 World First · Powered by Zai AI</div>
+  <h1>Your Denial Letter.<br><em>Decoded.</em></h1>
+  <p class="sub">Banks write denial letters in legal language designed to confuse you. Paste yours below — Zai reads between the lines and tells you the real reason, and exactly what to do next.</p>
+</div>
+
+<div class="main">
+  <div class="examples">
+    <div class="ex-label">Try an example</div>
+    <div class="ex-chips">
+      <div class="ex-chip" onclick="fillExample('dti')">High debt-to-income</div>
+      <div class="ex-chip" onclick="fillExample('score')">Credit score too low</div>
+      <div class="ex-chip" onclick="fillExample('employment')">Employment history</div>
+      <div class="ex-chip" onclick="fillExample('ltv')">Insufficient down payment</div>
+    </div>
+  </div>
+
+  <div class="input-box">
+    <div class="input-label">Paste your denial letter or describe your situation</div>
+    <textarea id="letterInput" placeholder="Example: 'We regret to inform you that your application for a mortgage loan has been denied. Principal reasons for this decision: Excessive obligations in relation to income. Derogatory credit history. Insufficient collateral...'
+
+Or just describe what happened: 'Chase denied me, said my DTI was too high. I make $95K and want a $380K home.'"></textarea>
+  </div>
+
+  <button class="decode-btn" onclick="decode()" id="decodeBtn">🔍 Decode My Denial — Zai Will Explain Everything</button>
+
+  <div id="results"></div>
+</div>
+
+<script>
+var SYSTEM = `You are Zai — a 23-year banking and mortgage professional. A user is sharing their mortgage denial letter or situation. Your job is to:
+
+1. Identify the REAL reason behind the denial (banks use vague legal language — decode it)
+2. Rate the fixability: Easy (30-60 days), Medium (3-6 months), Hard (6-12 months)
+3. Give a specific action plan — exactly what to do, in what order
+4. Tell them which lender TYPE would likely approve them now vs after fixes
+5. If credit score is a factor, mention that Sky Blue Credit (dispute letters) or SmartCredit ($1 trial for 3-bureau report) can help
+
+Format your response as JSON with these exact fields:
+{
+  "real_reason": "The actual reason in plain English (2-3 sentences)",
+  "bank_translation": "What the bank said vs what they meant",
+  "fixability": "Easy|Medium|Hard",
+  "timeline": "Specific timeframe",
+  "action_steps": ["step 1", "step 2", "step 3", "step 4"],
+  "lender_now": "Which lender type might approve them NOW",
+  "lender_after": "Which lender type will approve after fixes",
+  "credit_factor": true or false,
+  "zai_note": "One powerful closing insight only a 23-year banker would know"
+}
+
+Respond ONLY with valid JSON. No preamble, no explanation outside the JSON.`;
+
+var examples = {
+  dti: "We regret to inform you that your application for a mortgage loan in the amount of $380,000 has been denied. The principal reason(s) for this action: Excessive obligations in relation to income. Your debt-to-income ratio exceeds our maximum guidelines. Sincerely, Chase Home Lending",
+  score: "Dear Applicant, After careful consideration, we are unable to approve your mortgage application. Reasons for adverse action: Credit score below minimum requirements. Derogatory credit history within the past 24 months. We encourage you to obtain a copy of your credit report. Wells Fargo Home Mortgage",
+  employment: "Your application for a home loan has been declined for the following reasons: Insufficient length of employment. Inability to verify income. We are required to provide you with this notice under the Equal Credit Opportunity Act. Bank of America",
+  ltv: "We are unable to approve your loan request of $400,000. Reason: Insufficient collateral — the loan-to-value ratio exceeds our maximum guidelines of 80%. Additional down payment required. First National Bank"
+};
+
+function fillExample(key){
+  document.getElementById('letterInput').value = examples[key];
+}
+
+async function decode(){
+  var letter = document.getElementById('letterInput').value.trim();
+  if(!letter){ alert('Please paste your denial letter or describe your situation.'); return; }
+  
+  var btn = document.getElementById('decodeBtn');
+  btn.disabled = true;
+  btn.textContent = 'Zai is reading your letter...';
+  
+  var results = document.getElementById('results');
+  results.style.display = 'block';
+  results.innerHTML = '<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Zai is decoding your denial letter...</span></div>';
+
+  try {
+    var res = await fetch('https://api.financeratecalc.com', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        system: SYSTEM,
+        messages: [{role: 'user', content: 'Here is my denial letter/situation: ' + letter}]
+      })
+    });
+    
+    var data = await res.json();
+    var reply = data.reply || '';
+    
+    // Parse JSON from reply
+    var d;
+    try {
+      d = JSON.parse(reply);
+    } catch(e) {
+      var match = reply.match(/\{[\s\S]*\}/);
+      if(match) d = JSON.parse(match[0]);
+    }
+    
+    if(!d) throw new Error('Could not parse response');
+    
+    var fixColor = d.fixability === 'Easy' ? 'green' : d.fixability === 'Medium' ? 'gold' : 'red';
+    var fixEmoji = d.fixability === 'Easy' ? '🟢' : d.fixability === 'Medium' ? '🟡' : '🔴';
+
+    var html = '';
+
+    // Real reason card
+    html += '<div class="result-card red">';
+    html += '<div class="card-tag">🔍 The Real Reason</div>';
+    html += '<div class="card-title">What the bank actually meant</div>';
+    html += '<div class="card-body">' + d.real_reason + '</div>';
+    if(d.bank_translation) html += '<div style="margin-top:12px;padding:10px 14px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:12px;color:rgba(255,255,255,0.4);"><strong style="color:rgba(255,107,107,0.8);">Bank said:</strong> Legal jargon &nbsp;→&nbsp; <strong style="color:#6bffb8;">Zai translates:</strong> ' + d.bank_translation + '</div>';
+    html += '</div>';
+
+    // Fixability card
+    html += '<div class="result-card ' + fixColor + '">';
+    html += '<div class="card-tag">' + fixEmoji + ' Fixability — ' + d.fixability + ' · ' + d.timeline + '</div>';
+    html += '<div class="card-title">Your Action Plan</div>';
+    html += '<div class="card-body"><ol style="padding-left:18px;">';
+    d.action_steps.forEach(function(s){ html += '<li style="margin-bottom:8px;">' + s + '</li>'; });
+    html += '</ol></div></div>';
+
+    // Lender card
+    html += '<div class="result-card gold">';
+    html += '<div class="card-tag">🏦 Lender Strategy</div>';
+    html += '<div class="card-title">Where to apply</div>';
+    html += '<div class="card-body">';
+    html += '<div style="margin-bottom:10px;"><strong>Right now:</strong> ' + d.lender_now + '</div>';
+    html += '<div><strong>After fixes:</strong> ' + d.lender_after + '</div>';
+    html += '</div></div>';
+
+    // Zai note
+    if(d.zai_note) {
+      html += '<div style="padding:16px 20px;border-left:3px solid #c8a44a;background:rgba(200,164,74,0.06);border-radius:0 8px 8px 0;margin-bottom:16px;">';
+      html += '<div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.6);margin-bottom:6px;">💡 Zai\'s Insider Note</div>';
+      html += '<div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.7;">' + d.zai_note + '</div>';
+      html += '</div>';
+    }
+
+    // Affiliate section if credit factor
+    if(d.credit_factor) {
+      html += '<div class="result-card gold">';
+      html += '<div class="card-tag">🔵 Fix Your Credit — Two Options</div>';
+      html += '<div class="card-title">Zai\'s recommended partners</div>';
+      html += '<div class="aff-grid">';
+      html += '<div class="aff-card sky"><div class="aff-label">Dispute & Delete</div><div class="aff-name">Sky Blue Credit</div><div class="aff-desc">Professional dispute letters. Collections & late payments removed legally.</div><a class="aff-btn" href="https://skyblue.ltroute.com/click.track?CID=139993&AFID=569709" target="_blank" rel="sponsored">Start Now → #ad</a></div>';
+      html += '<div class="aff-card smart"><div class="aff-label">Monitor & Boost</div><div class="aff-name">SmartCredit</div><div class="aff-desc">3-bureau scores + Score Builder tool. See exactly what to fix first.</div><a class="aff-btn" href="https://www.tkqlhce.com/click-101700650-16981737" target="_blank" rel="sponsored">$1 Trial → #ad</a></div>';
+      html += '</div></div>';
+    }
+
+    // Ask Zai more
+    html += '<div style="text-align:center;padding:20px 0;">';
+    html += '<div style="font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:12px;">Want to go deeper? Ask Zai directly.</div>';
+    html += '<a href="frc-banker-ai.html?q=' + encodeURIComponent('I was denied. ' + letter.substring(0,100)) + '" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,#0a1f5c,#162d6e);border:1px solid rgba(200,164,74,0.3);color:#c8a44a;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;">Talk to Zai in Full →</a>';
+    html += '</div>';
+
+    results.innerHTML = html;
+
+  } catch(err) {
+    results.innerHTML = '<div class="result-card red"><div class="card-tag">Error</div><div class="card-body">Could not decode. Please try again or <a href="frc-banker-ai.html" style="color:#c8a44a;">ask Zai directly</a>.</div></div>';
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🔍 Decode My Denial — Zai Will Explain Everything';
+}
+</script>
+<script src="/banker-widget.js?v=6"></script>
+</body>
+</html>
