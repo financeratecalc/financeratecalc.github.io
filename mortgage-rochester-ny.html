@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Calculator Rochester, NY — Real Monthly Cost | FRC</title>
+<meta name="description" content="Free mortgage calculator for Rochester, NY. See your real monthly payment including taxes, insurance and PMI. Built by a 23-year banking professional.">
+<link rel="canonical" href="https://financeratecalc.com/mortgage-rochester-ny.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#c8a44a;}
+.hero{padding:60px 40px;text-align:center;max-width:800px;margin:0 auto;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;}
+h1 em{font-style:italic;color:#c8a44a;}
+.sub{font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:40px;}
+.calc{max-width:600px;margin:0 auto 60px;padding:0 20px;}
+.row{margin-bottom:18px;}
+label{display:block;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;}
+.inp-wrap{background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:8px;}
+.inp-wrap:focus-within{border-color:#c8a44a;}
+.prefix{color:#c8a44a;font-weight:700;font-size:18px;}
+input{background:none;border:none;outline:none;font-size:20px;font-weight:700;color:#fff;width:100%;font-family:'Fraunces',serif;}
+input::-webkit-inner-spin-button{display:none;}
+.btn{width:100%;padding:16px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;font-family:'Fraunces',serif;}
+.result{display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px;margin-top:20px;}
+.result-main{font-family:'Fraunces',serif;font-size:48px;font-weight:900;color:#c8a44a;text-align:center;margin-bottom:8px;}
+.result-label{text-align:center;font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:24px;}
+.breakdown{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.item{background:rgba(255,255,255,0.04);border-radius:8px;padding:12px;}
+.item-label{font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;}
+.item-value{font-size:15px;font-weight:700;color:#fff;}
+.cta-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+.cta{flex:1;padding:12px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;text-align:center;}
+.cta-zai{background:linear-gradient(135deg,#0a1f5c,#162d6e);color:#c8a44a;border:1px solid rgba(200,164,74,0.3);}
+.cta-sim{background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.1);}
+.info{max-width:800px;margin:0 auto 80px;padding:0 40px;}
+.info h2{font-family:'Fraunces',serif;font-size:28px;font-weight:900;margin-bottom:16px;}
+.info p{font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin-bottom:12px;}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← All Tools</a>
+</header>
+
+<div class="hero">
+  <h1>Mortgage Calculator<br><em>Rochester, NY</em></h1>
+  <p class="sub">Real monthly cost — principal, interest, taxes, insurance and PMI. Built by a 23-year banking professional.</p>
+</div>
+
+<div class="calc">
+  <div class="row">
+    <label>Home Price</label>
+    <div class="inp-wrap"><span class="prefix">$</span><input type="number" id="price" value="215000"></div>
+  </div>
+  <div class="row">
+    <label>Down Payment</label>
+    <div class="inp-wrap"><span class="prefix">$</span><input type="number" id="down" value="43000"></div>
+  </div>
+  <div class="row">
+    <label>Interest Rate (%)</label>
+    <div class="inp-wrap"><input type="number" id="rate" value="6.8" step="0.1"></div>
+  </div>
+  <button class="btn" onclick="calc()">Calculate My Real Payment →</button>
+
+  <div class="result" id="result">
+    <div class="result-main" id="total">$0</div>
+    <div class="result-label">Estimated monthly payment</div>
+    <div class="breakdown">
+      <div class="item"><div class="item-label">Principal & Interest</div><div class="item-value" id="pi">$0</div></div>
+      <div class="item"><div class="item-label">Property Tax/mo</div><div class="item-value" id="tax">$0</div></div>
+      <div class="item"><div class="item-label">Insurance/mo</div><div class="item-value" id="ins">$0</div></div>
+      <div class="item"><div class="item-label">PMI (if &lt;20% down)</div><div class="item-value" id="pmi">$0</div></div>
+    </div>
+    <div class="cta-row">
+      <a href="frc-banker-ai.html" class="cta cta-zai">🏦 Ask Zai — Free AI Banker</a>
+      <a href="credit-score-simulator.html" class="cta cta-sim">📊 Credit Score Impact</a>
+    </div>
+  </div>
+</div>
+
+<div class="info">
+  <h2>Buying a Home in Rochester, NY?</h2>
+  <p>The median home price in Rochester, NY is approximately $215,000. With a 20% down payment at current rates (~6.8%), your principal and interest payment on a 30-year mortgage would be around $1,121/month — before taxes, insurance, and any HOA fees.</p>
+  <p>New York property taxes average 2.72% annually, which adds approximately $487/month on a $215,000 home. Always budget for the full PITI payment, not just the base mortgage.</p>
+  <p>If your credit score is below 700, you could be paying significantly more in interest. Use our <a href="credit-score-simulator.html" style="color:#c8a44a;">Credit Score Simulator</a> to see exactly how much.</p>
+  <p style="font-size:12px;color:rgba(255,255,255,0.25);margin-top:24px;">Educational purposes only. Rates are estimates and vary by lender, credit score, and loan type. Not financial advice.</p>
+</div>
+
+<script>
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
+function calc(){
+  var price=parseFloat(document.getElementById('price').value)||215000;
+  var down=parseFloat(document.getElementById('down').value)||43000;
+  var rate=parseFloat(document.getElementById('rate').value)||6.8;
+  var loan=price-down;
+  var mr=rate/100/12;
+  var pi=loan*mr*Math.pow(1+mr,360)/(Math.pow(1+mr,360)-1);
+  var tax=price*0.027200000000000002/12;
+  var ins=price*0.005/12;
+  var pmi=down/price<0.2?loan*0.008/12:0;
+  var total=pi+tax+ins+pmi;
+  document.getElementById('pi').textContent=fmt(pi);
+  document.getElementById('tax').textContent=fmt(tax);
+  document.getElementById('ins').textContent=fmt(ins);
+  document.getElementById('pmi').textContent=pmi>0?fmt(pmi):'$0 (20%+ down)';
+  document.getElementById('total').textContent=fmt(total);
+  document.getElementById('result').style.display='block';
+  document.getElementById('result').scrollIntoView({behavior:'smooth'});
+}
+</script>
+<script src="/banker-widget.js?v=6"></script>
+</body>
+</html>

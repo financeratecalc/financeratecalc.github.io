@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Should I Refinance at 7.5%? — Free Calculator | FRC</title>
+<meta name="description" content="Should you refinance your mortgage at 7.5%? Use our free calculator to find your break-even point and total savings. Built by a 23-year banking professional.">
+<link rel="canonical" href="https://financeratecalc.com/should-i-refinance-at-7-5-percent.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}.logo em{font-style:italic;color:#c8a44a;}.hero{padding:60px 40px;text-align:center;}.hero h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,48px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;}.hero p{font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:40px;}.calc{max-width:600px;margin:0 auto 60px;padding:0 20px;}.row{margin-bottom:16px;}label{display:block;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;}.inp{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px 16px;font-size:16px;font-weight:700;color:#fff;outline:none;font-family:'Fraunces',serif;}.inp:focus{border-color:#c8a44a;}.btn{width:100%;padding:14px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border:none;border-radius:8px;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;font-family:'Fraunces',serif;}.result{display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;margin-top:16px;text-align:center;}.big{font-family:'Fraunces',serif;font-size:42px;font-weight:900;color:#6bffb8;margin-bottom:6px;}.note{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px;}.ask{display:inline-block;padding:10px 22px;background:linear-gradient(135deg,#0a1f5c,#162d6e);color:#c8a44a;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;border:1px solid rgba(200,164,74,0.3);}</style>
+</head>
+<body>
+<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Back</a></header>
+<div class="hero">
+  <h1>Should I Refinance at 7.5%?</h1>
+  <p>Find your break-even point and total savings in 30 seconds. Free, no sign-up.</p>
+</div>
+<div class="calc">
+  <div class="row"><label>Current Rate (%)</label><input class="inp" type="number" id="curRate" value="7.5" step="0.1"></div>
+  <div class="row"><label>New Rate (%)</label><input class="inp" type="number" id="newRate" value="7.5" step="0.1"></div>
+  <div class="row"><label>Remaining Loan Balance ($)</label><input class="inp" type="number" id="balance" value="350000"></div>
+  <div class="row"><label>Closing Costs ($)</label><input class="inp" type="number" id="costs" value="6000"></div>
+  <button class="btn" onclick="calcRefi()">Calculate My Break-Even →</button>
+  <div class="result" id="result">
+    <div class="big" id="savings">$0</div>
+    <div class="note" id="note"></div>
+    <a href="frc-banker-ai.html" class="ask">🏦 Ask Zai for Full Analysis →</a>
+  </div>
+</div>
+<script>
+function calcRefi(){
+  var cur=parseFloat(document.getElementById('curRate').value)||7.5;
+  var nw=parseFloat(document.getElementById('newRate').value)||7.5;
+  var bal=parseFloat(document.getElementById('balance').value)||350000;
+  var costs=parseFloat(document.getElementById('costs').value)||6000;
+  function mo(b,r){var mr=r/100/12;return b*mr*Math.pow(1+mr,360)/(Math.pow(1+mr,360)-1);}
+  var moCur=mo(bal,cur);var moNew=mo(bal,nw);
+  var moSav=moCur-moNew;
+  var breakEven=moSav>0?Math.ceil(costs/moSav):999;
+  var totalSav=Math.round(moSav*360-costs);
+  document.getElementById('savings').textContent='$'+Math.round(moSav).toLocaleString()+'/mo saved';
+  document.getElementById('note').textContent='Break-even: '+breakEven+' months · 30-yr net savings: $'+Math.max(0,totalSav).toLocaleString();
+  document.getElementById('result').style.display='block';
+}
+</script>
+<script src="/banker-widget.js?v=6"></script>
+</body>
+</html>
