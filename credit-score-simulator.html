@@ -4,237 +4,225 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Credit Score Simulator — Your Alternative Financial Reality | FRC</title>
-<meta name="description" content="See exactly what a 620 vs 740 credit score costs you on your mortgage. Interactive split-screen simulation powered by Zai AI.">
+<meta name="description" content="See exactly what your credit score costs you vs 740. Real dollar difference. Powered by Zai AI.">
 <link rel="canonical" href="https://financeratecalc.com/credit-score-simulator.html">
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-:root{--navy:#0a1f5c;--gold:#c8a44a;--red:#c0392b;--green:#27ae60;}
 body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;min-height:100vh;}
-header{background:rgba(8,9,12,0.95);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(10px);}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
 .logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
-.logo em{font-style:italic;color:var(--gold);}
-.back{font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;}
-.hero{padding:56px 40px 48px;text-align:center;}
-h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,56px);font-weight:900;line-height:0.95;letter-spacing:-2px;margin-bottom:12px;}
-h1 em{font-style:italic;color:var(--gold);}
-.sub{font-size:15px;color:rgba(255,255,255,0.4);margin-bottom:40px;}
-/* INPUTS */
-.calc-box{max-width:600px;margin:0 auto;padding:0 20px;}
-.input-group{margin-bottom:20px;}
-label{display:block;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;}
-.amount-wrap{display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 18px;gap:8px;}
-.amount-wrap:focus-within{border-color:var(--gold);}
-.prefix{font-size:18px;font-weight:700;color:var(--gold);}
-input[type=number]{flex:1;background:none;border:none;outline:none;font-size:20px;font-weight:700;color:#fff;font-family:'Fraunces',serif;}
-input[type=number]::-webkit-inner-spin-button{display:none;}
-.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-.score-btn{padding:11px 8px;border-radius:8px;cursor:pointer;border:1.5px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.45);font-size:13px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
-.score-btn:hover{border-color:rgba(200,164,74,0.4);background:rgba(200,164,74,0.08);color:rgba(200,164,74,0.8);}
-.score-btn.active{border-color:var(--gold);background:rgba(200,164,74,0.15);color:var(--gold);}
-.calc-btn{width:100%;margin-top:24px;padding:16px;background:linear-gradient(135deg,var(--gold),#f0d060);color:#08090c;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Fraunces',serif;transition:opacity 0.15s;}
-.calc-btn:hover{opacity:0.9;}
+.logo em{color:#c8a44a;font-style:italic;}
+.hero{padding:56px 20px 40px;text-align:center;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,6vw,54px);font-weight:900;line-height:0.95;letter-spacing:-2px;margin-bottom:12px;}
+h1 em{color:#c8a44a;font-style:italic;}
+.sub{font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:40px;}
+.wrap{max-width:600px;margin:0 auto;padding:0 20px 80px;}
 
-/* RESULTS */
-#results{display:none;max-width:900px;margin:40px auto;padding:0 20px 80px;}
+/* Loan input */
+.row{margin-bottom:20px;}
+.lbl{display:block;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px;}
+.amt{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 16px;}
+.amt:focus-within{border-color:#c8a44a;}
+.pre{font-size:20px;font-weight:700;color:#c8a44a;}
+.amt input{background:none;border:none;outline:none;font-size:22px;font-weight:700;color:#fff;width:100%;font-family:'Fraunces',serif;}
+.amt input::-webkit-inner-spin-button{display:none;}
 
-/* SPLIT SCREEN */
-.split{display:grid;grid-template-columns:1fr 1fr;gap:3px;border-radius:16px;overflow:hidden;margin-bottom:3px;}
-.split-now{background:linear-gradient(160deg,#1a0305,#2d0508);padding:32px 28px;}
-.split-future{background:linear-gradient(160deg,#031a08,#052d10);padding:32px 28px;}
-.split-tag{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:6px;}
-.split-now .split-tag{color:rgba(255,107,107,0.8);}
-.split-future .split-tag{color:rgba(107,255,184,0.8);}
-.split-score{font-family:'Fraunces',serif;font-size:64px;font-weight:900;line-height:1;letter-spacing:-3px;}
-.split-now .split-score{color:#ff6b6b;}
-.split-future .split-score{color:#6bffb8;}
-.split-rate{font-size:13px;margin:6px 0 16px;opacity:0.4;}
-.split-payment{font-family:'Fraunces',serif;font-size:36px;font-weight:900;letter-spacing:-1px;}
-.split-now .split-payment{color:#ff9b9b;}
-.split-future .split-payment{color:#6bffb8;}
-.split-label{font-size:11px;opacity:0.4;margin-top:4px;}
-.split-diff{margin-top:16px;background:rgba(107,255,184,0.1);border:1px solid rgba(107,255,184,0.2);border-radius:8px;padding:12px 14px;font-size:13px;color:#6bffb8;font-weight:600;line-height:1.6;}
+/* Score grid */
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px;}
+.sbtn{padding:12px 4px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);font-size:14px;font-weight:700;cursor:pointer;text-align:center;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+.sbtn:hover{border-color:#c8a44a;color:#c8a44a;background:rgba(200,164,74,0.08);}
+.sbtn.on{border-color:#c8a44a;background:rgba(200,164,74,0.15);color:#c8a44a;}
 
-/* ZAI CTA */
-.zai-box{background:linear-gradient(160deg,#0a0d18,#0f1628);border:1.5px solid rgba(200,164,74,0.3);border-radius:16px;padding:32px;text-align:center;position:relative;overflow:hidden;}
-.zai-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
-.zai-tag{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:14px;}
-.zai-title{font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:10px;line-height:1.2;}
-.zai-text{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:24px;max-width:500px;margin-left:auto;margin-right:auto;}
-.zai-cta{display:inline-block;padding:14px 32px;background:linear-gradient(135deg,var(--gold),#f0d060);color:#08090c;border-radius:8px;font-weight:800;font-size:15px;text-decoration:none;font-family:'Fraunces',serif;}
-.zai-cta:hover{opacity:0.9;}
-.zai-disc{font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;}
+/* Go button */
+.go{width:100%;padding:16px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Fraunces',serif;}
+.go:active{opacity:0.85;}
 
-/* Score comparison row */
-.score-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:3px;}
-.sc{border-radius:10px;padding:14px;text-align:center;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);}
-.sc.you{border-color:rgba(200,164,74,0.4);background:rgba(200,164,74,0.07);}
-.sc-num{font-family:'Fraunces',serif;font-size:20px;font-weight:900;}
-.sc-pay{font-size:13px;font-weight:600;color:#fff;margin:3px 0;}
-.sc-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.3);}
-.sc-you{font-size:9px;color:var(--gold);font-weight:700;margin-top:4px;}
+/* Results */
+#res{display:none;margin-top:28px;}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:3px;border-radius:14px;overflow:hidden;margin-bottom:12px;}
+.now{background:linear-gradient(160deg,#1a0305,#2a0808);padding:24px 20px;}
+.future{background:linear-gradient(160deg,#031a08,#052d10);padding:24px 20px;}
+.stag{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;margin-bottom:12px;}
+.now .stag{color:rgba(255,107,107,0.8);}
+.future .stag{color:rgba(107,255,184,0.8);}
+.snum{font-family:'Fraunces',serif;font-size:52px;font-weight:900;line-height:1;}
+.now .snum{color:#ff6b6b;}
+.future .snum{color:#6bffb8;}
+.spay{font-family:'Fraunces',serif;font-size:28px;font-weight:900;margin:6px 0 4px;}
+.now .spay{color:#ff9b9b;}
+.future .spay{color:#6bffb8;}
+.sdetail{font-size:11px;color:rgba(255,255,255,0.3);line-height:1.6;}
+.sdiff{margin-top:12px;background:rgba(107,255,184,0.1);border:1px solid rgba(107,255,184,0.25);border-radius:7px;padding:10px 12px;font-size:12px;color:#6bffb8;font-weight:600;line-height:1.6;}
 
-@media(max-width:768px){
-  header{padding:0 16px;}
-  .hero{padding:40px 16px 32px;}
+/* Email + CTA */
+.zbox{background:linear-gradient(160deg,#0a0d18,#0f1628);border:1.5px solid rgba(200,164,74,0.3);border-radius:14px;padding:28px;text-align:center;position:relative;overflow:hidden;margin-bottom:12px;}
+.zbox::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#c8a44a,transparent);}
+.ztag{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:12px;}
+.ztitle{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:10px;line-height:1.2;}
+.ztext{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:20px;}
+.affgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.aff{border-radius:10px;padding:16px;text-align:center;}
+.aff.sky{background:rgba(10,31,92,0.3);border:1px solid rgba(200,164,74,0.3);}
+.aff.smart{background:rgba(26,58,110,0.3);border:1px solid rgba(42,90,174,0.3);}
+.afflab{font-size:9px;text-transform:uppercase;letter-spacing:0.2em;font-weight:700;margin-bottom:5px;}
+.sky .afflab{color:rgba(200,164,74,0.7);}
+.smart .afflab{color:rgba(96,165,250,0.7);}
+.affname{font-size:13px;font-weight:700;color:#fff;margin-bottom:5px;}
+.affdesc{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:10px;line-height:1.5;}
+.affbtn{display:block;padding:8px;border-radius:6px;font-weight:800;font-size:12px;text-decoration:none;}
+.sky .affbtn{background:linear-gradient(135deg,#c8a44a,#f0d060);color:#0a0e1a;}
+.smart .affbtn{background:linear-gradient(135deg,#1a3a6e,#2a5aae);color:#fff;}
+.disc{font-size:10px;color:rgba(255,255,255,0.2);}
+
+/* Email form */
+.eform{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:16px;text-align:left;}
+.etitle{font-size:12px;font-weight:700;color:#fff;margin-bottom:4px;}
+.esub{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:12px;}
+.erow{display:flex;gap:8px;}
+.einp{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:9px 12px;font-size:12px;color:#fff;outline:none;}
+.einp:focus{border-color:#c8a44a;}
+.esend{padding:9px 16px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border:none;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap;}
+
+@media(max-width:500px){
   .split{grid-template-columns:1fr;}
-  .score-row{grid-template-columns:1fr 1fr;}
-  .score-grid{grid-template-columns:repeat(4,1fr);}
+  .affgrid{grid-template-columns:1fr;}
+  header{padding:0 16px;}
 }
 </style>
 </head>
 <body>
 <header>
   <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
-  <a href="index.html" class="back">← Back</a>
+  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Back</a>
 </header>
 
 <div class="hero">
-  <h1>Your Credit Score.<br>Two <em>Realities.</em></h1>
-  <p class="sub">See exactly what your current score costs you — and what life looks like after fixing it.</p>
+  <h1>Your Score.<br>Two <em>Realities.</em></h1>
+  <p class="sub">See exactly what your score costs you — and what 740 would save.</p>
 </div>
 
-<div class="calc-box">
-  <div class="input-group">
-    <label>Loan Amount</label>
-    <div class="amount-wrap">
-      <span class="prefix">$</span>
-      <input type="number" id="loanAmt" value="400000" placeholder="400000">
-    </div>
-  </div>
-  <div class="input-group">
-    <label>Your Current Credit Score</label>
-    <div class="score-grid">
-      <button class="score-btn" onclick="pick(this,580)" type="button">580</button>
-      <button class="score-btn active" onclick="pick(this,620)" type="button">620</button>
-      <button class="score-btn" onclick="pick(this,640)" type="button">640</button>
-      <button class="score-btn" onclick="pick(this,660)" type="button">660</button>
-      <button class="score-btn" onclick="pick(this,680)" type="button">680</button>
-      <button class="score-btn" onclick="pick(this,700)" type="button">700</button>
-      <button class="score-btn" onclick="pick(this,720)" type="button">720</button>
-      <button class="score-btn" onclick="pick(this,740)" type="button">740+</button>
-    </div>
-  </div>
-  <button class="calc-btn" onclick="run()">Show Me My Two Realities →</button>
-</div>
-
-<div id="results">
-
-  <!-- SPLIT SCREEN -->
-  <div class="split">
-    <div class="split-now">
-      <div class="split-tag">⚠️ Your Reality Now</div>
-      <div class="split-score" id="sNow">620</div>
-      <div class="split-rate" id="rNow">Rate: ~7.5%</div>
-      <div class="split-payment" id="pNow">$2,800</div>
-      <div class="split-label">Monthly payment</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:8px;" id="tNow">30-yr total: $1,007,000</div>
-    </div>
-    <div class="split-future">
-      <div class="split-tag">✨ Alternative Reality (740)</div>
-      <div class="split-score" style="color:#6bffb8;">740</div>
-      <div class="split-rate" id="rFuture">Rate: ~6.1%</div>
-      <div class="split-payment" id="pFuture">$2,432</div>
-      <div class="split-label">Monthly payment</div>
-      <div class="split-diff" id="diffBox"></div>
+<div class="wrap">
+  <div class="row">
+    <span class="lbl">Loan Amount</span>
+    <div class="amt">
+      <span class="pre">$</span>
+      <input type="number" id="loan" value="400000">
     </div>
   </div>
 
-  <!-- SCORE ROW -->
-  <div class="score-row" id="scoreRow"></div>
+  <div class="row">
+    <span class="lbl">Your Current Credit Score</span>
+    <div class="sgrid">
+      <button class="sbtn" onclick="pick(this,580)">580</button>
+      <button class="sbtn on" onclick="pick(this,620)">620</button>
+      <button class="sbtn" onclick="pick(this,640)">640</button>
+      <button class="sbtn" onclick="pick(this,660)">660</button>
+      <button class="sbtn" onclick="pick(this,680)">680</button>
+      <button class="sbtn" onclick="pick(this,700)">700</button>
+      <button class="sbtn" onclick="pick(this,720)">720</button>
+      <button class="sbtn" onclick="pick(this,740)">740+</button>
+    </div>
+  </div>
 
-  <!-- ZAI CTA -->
-  <div class="zai-box" id="zaiBox"></div>
+  <button class="go" onclick="run()">Show Me My Two Realities →</button>
 
+  <div id="res">
+    <!-- split -->
+    <div class="split" style="margin-top:24px;">
+      <div class="now">
+        <div class="stag">⚠️ Your Reality Now</div>
+        <div class="snum" id="sNow">620</div>
+        <div class="sdetail" id="rNow">Rate: ~7.5%</div>
+        <div class="spay" id="pNow">$0</div>
+        <div class="sdetail">Monthly payment</div>
+        <div class="sdetail" id="tNow"></div>
+      </div>
+      <div class="future">
+        <div class="stag">✨ Alternative Reality</div>
+        <div class="snum" style="color:#6bffb8;">740</div>
+        <div class="sdetail" id="rFuture">Rate: ~6.1%</div>
+        <div class="spay" id="pFuture">$0</div>
+        <div class="sdetail">Monthly payment</div>
+        <div class="sdiff" id="diffBox"></div>
+      </div>
+    </div>
+
+    <!-- Zai CTA -->
+    <div class="zbox">
+      <div class="ztag">🏦 Zai's Recommendation</div>
+      <div class="ztitle" id="zTitle">This alternative reality is real.<br>Choose your path.</div>
+      <div class="ztext">I'm an AI — I can simulate it, but the real work needs a licensed partner.</div>
+
+      <div class="eform">
+        <div class="etitle">📧 Get your recovery plan by email — free</div>
+        <div class="esub">Zai sends you exact steps to reach 740.</div>
+        <form class="erow" action="https://formspree.io/f/mkoewrgp" method="POST" onsubmit="this.innerHTML='<div style=\'color:#6bffb8;font-size:12px;\'>✓ Sent!</div>'">
+          <input type="hidden" name="source" value="credit-simulator">
+          <input type="hidden" name="score" id="scoreHidden" value="620">
+          <input class="einp" type="email" name="email" placeholder="your@email.com" required>
+          <button class="esend" type="submit">Send</button>
+        </form>
+      </div>
+
+      <div class="affgrid">
+        <div class="aff sky">
+          <div class="afflab">Dispute & Delete</div>
+          <div class="affname">Sky Blue Credit</div>
+          <div class="affdesc">Professional dispute letters. Collections removed.</div>
+          <a class="affbtn" href="https://skyblue.ltroute.com/click.track?CID=139993&AFID=569709" target="_blank" rel="sponsored">Start → #ad</a>
+        </div>
+        <div class="aff smart">
+          <div class="afflab">Monitor & Boost</div>
+          <div class="affname">SmartCredit</div>
+          <div class="affdesc">3-bureau scores + Score Builder.</div>
+          <a class="affbtn" href="https://www.tkqlhce.com/click-101700650-16981737" target="_blank" rel="sponsored">$1 Trial → #ad</a>
+        </div>
+      </div>
+      <div class="disc">Not financial advice · Individual results vary · Affiliate links</div>
+    </div>
+  </div>
 </div>
 
 <script>
 var sel = 620;
 var rates = {580:8.1,620:7.5,640:7.1,660:6.9,680:6.6,700:6.4,720:6.25,740:6.1};
-var labels = {580:'Poor',620:'Very Fair',640:'Fair',660:'Below Avg',680:'Average',700:'Good',720:'Very Good',740:'Excellent'};
-var colors = {580:'#ff4444',620:'#ff6b6b',640:'#ff9944',660:'#ffbb44',680:'#ffdd44',700:'#aadd44',720:'#44cc44',740:'#00ff88'};
 
 function pick(el, s){
   sel = s;
-  document.querySelectorAll('.score-btn').forEach(function(b){b.classList.remove('active');});
-  el.classList.add('active');
+  document.querySelectorAll('.sbtn').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+  document.getElementById('scoreHidden').value = s;
 }
 
-function fmt(n){return '$'+Math.round(n).toLocaleString();}
+function fmt(n){ return '$' + Math.round(n).toLocaleString(); }
 
-function mo(p,r,n){
-  var mr=r/100/12;
-  return p*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1);
+function mo(p, r){
+  var mr = r/100/12;
+  return p * mr * Math.pow(1+mr,360) / (Math.pow(1+mr,360)-1);
 }
 
 function run(){
-  var loan = parseFloat(document.getElementById('loanAmt').value)||400000;
-  var score = sel;
-  var rNow = rates[score]||7.5;
+  var loan = parseFloat(document.getElementById('loan').value) || 400000;
+  var rNow = rates[sel] || 7.5;
   var r740 = rates[740];
-  var pNow = mo(loan,rNow,360);
-  var p740 = mo(loan,r740,360);
-  var moDiff = Math.round(pNow-p740);
-  var yrDiff = Math.round(moDiff*360);
+  var pNow = mo(loan, rNow);
+  var p740 = mo(loan, r740);
+  var diff = Math.round(pNow - p740);
+  var total = Math.round(diff * 360);
 
-  // Fill split
-  document.getElementById('sNow').textContent = score;
-  document.getElementById('rNow').textContent = 'Rate: ~'+rNow.toFixed(1)+'%';
+  document.getElementById('sNow').textContent = sel;
+  document.getElementById('rNow').textContent = 'Rate: ~' + rNow.toFixed(1) + '%';
   document.getElementById('pNow').textContent = fmt(pNow);
-  document.getElementById('tNow').textContent = '30-yr total: '+fmt(pNow*360);
-  document.getElementById('rFuture').textContent = 'Rate: ~'+r740.toFixed(1)+'%';
+  document.getElementById('tNow').textContent = '30-yr total: ' + fmt(pNow*360);
+  document.getElementById('rFuture').textContent = 'Rate: ~' + r740.toFixed(1) + '%';
   document.getElementById('pFuture').textContent = fmt(p740);
-  document.getElementById('diffBox').innerHTML =
-    'You save <strong>'+fmt(moDiff)+'/mo</strong><br>That\'s <strong>'+fmt(yrDiff)+'</strong> over 30 years';
+  document.getElementById('diffBox').innerHTML = 'Save <strong>' + fmt(diff) + '/mo</strong><br>That\'s <strong>' + fmt(total) + '</strong> over 30 years';
+  document.getElementById('zTitle').innerHTML = 'This alternative reality is real.<br>That\'s ' + fmt(total) + ' you can keep.';
 
-  // Score row
-  var row = '';
-  [580,640,680,720].forEach(function(s){
-    var r=rates[s];var m=mo(loan,r,360);
-    var isYou=(s===score||(score<600&&s===580)||(score>=600&&score<650&&s===640)||(score>=650&&score<700&&s===680)||(score>=700&&s===720));
-    row += '<div class="sc'+(isYou?' you':'')+'">'+
-      '<div class="sc-num" style="color:'+colors[s]+'">'+s+'</div>'+
-      '<div class="sc-pay">'+fmt(m)+'/mo</div>'+
-      '<div class="sc-lbl">'+labels[s]+'</div>'+
-      (isYou?'<div class="sc-you">← You</div>':'')+
-      '</div>';
-  });
-  document.getElementById('scoreRow').innerHTML = row;
-
-  // Zai CTA
-  document.getElementById('zaiBox').innerHTML =
-    '<div class="zai-tag">🏦 Zai\'s Recommendation</div>'+
-    '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:16px;text-align:left;">'+
-    '<div style="font-size:11px;font-weight:700;color:#fff;margin-bottom:6px;">📧 Get your personalized recovery plan — free</div>'+
-    '<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:12px;">Zai will email you the exact steps to reach 740 based on your profile.</div>'+
-    '<form action="https://formspree.io/f/mkoewrgp" method="POST" style="display:flex;gap:8px;flex-wrap:wrap;" onsubmit="this.innerHTML=\'<div style=\\\'color:#6bffb8;font-size:12px;\\\'>✓ Sent! Check your inbox.</div>\'">'+
-    '<input type="hidden" name="score" value="'+score+'">'+
-    '<input type="hidden" name="loan" value="'+loan+'">'+
-    '<input type="email" name="email" placeholder="your@email.com" required style="flex:1;min-width:160px;padding:8px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#fff;font-size:12px;outline:none;">'+
-    '<button type="submit" style="padding:8px 16px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#0a0e1a;border:none;border-radius:6px;font-weight:800;font-size:12px;cursor:pointer;">Send My Plan</button>'+
-    '</form>'+
-    '</div>'++
-    '<div class="zai-title">This alternative reality is real.<br>Choose your path.</div>'+
-    '<div class="zai-text">I\'m an AI — I can simulate it, but the real work needs a licensed partner.</div>'+
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">'+
-    '<div style="background:rgba(10,31,92,0.3);border:1px solid rgba(200,164,74,0.3);border-radius:10px;padding:16px;text-align:center;">'+
-    '<div style="font-size:10px;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:6px;">DISPUTE & DELETE</div>'+
-    '<div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:8px;">Sky Blue Credit</div>'+
-    '<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:10px;">Professional dispute letters. Collections removed.</div>'+
-    '<a href="https://skyblue.ltroute.com/click.track?CID=139993&AFID=569709" target="_blank" rel="sponsored" style="display:block;padding:8px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#0a0e1a;border-radius:6px;font-weight:800;font-size:12px;text-decoration:none;">Start → #ad</a>'+
-    '</div>'+
-    '<div style="background:rgba(26,58,110,0.3);border:1px solid rgba(42,90,174,0.3);border-radius:10px;padding:16px;text-align:center;">'+
-    '<div style="font-size:10px;color:rgba(96,165,250,0.7);font-weight:700;margin-bottom:6px;">MONITOR & BOOST</div>'+
-    '<div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:8px;">SmartCredit</div>'+
-    '<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:10px;">3-bureau scores + Score Builder. Just $1.</div>'+
-    '<a href="https://www.tkqlhce.com/click-101700650-16981737" target="_blank" rel="sponsored" style="display:block;padding:8px;background:linear-gradient(135deg,#1a3a6e,#2a5aae);color:#fff;border-radius:6px;font-weight:800;font-size:12px;text-decoration:none;">$1 Trial → #ad</a>'+
-    '</div>'+
-    '</div>'+
-    '<div class="zai-disc">Not financial advice · Individual results vary · Affiliate links</div>';
-
-  document.getElementById('results').style.display='block';
-  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('res').style.display = 'block';
+  document.getElementById('res').scrollIntoView({behavior:'smooth', block:'start'});
 }
 </script>
 <script src="/banker-widget.js?v=6"></script>
