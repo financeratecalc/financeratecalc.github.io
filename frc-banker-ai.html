@@ -198,7 +198,29 @@ function addMessage(role, content){
   // Action buttons for AI messages
   if(role==='ai'){
     var actions=document.createElement('div');
-    actions.style.cssText='display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;';
+    actions.style.cssText='display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center;';
+
+    // Helpful/Not helpful
+    var helpLabel=document.createElement('span');
+    helpLabel.style.cssText='font-size:9px;color:rgba(255,255,255,0.25);';
+    helpLabel.textContent='Helpful?';
+    actions.appendChild(helpLabel);
+
+    var yBtn=document.createElement('button');
+    yBtn.innerHTML='👍';
+    yBtn.style.cssText='padding:2px 7px;background:rgba(107,255,184,0.07);border:1px solid rgba(107,255,184,0.2);color:rgba(107,255,184,0.5);border-radius:4px;font-size:11px;cursor:pointer;';
+    yBtn.onclick=function(){fetch('https://formspree.io/f/mkoewrgp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'feedback',rating:'helpful',msg:bubble.innerText.substring(0,300)})});yBtn.style.color='#6bffb8';yBtn.disabled=true;nBtn.disabled=true;};
+    actions.appendChild(yBtn);
+
+    var nBtn=document.createElement('button');
+    nBtn.innerHTML='👎';
+    nBtn.style.cssText='padding:2px 7px;background:rgba(255,107,107,0.07);border:1px solid rgba(255,107,107,0.2);color:rgba(255,107,107,0.5);border-radius:4px;font-size:11px;cursor:pointer;';
+    nBtn.onclick=function(){fetch('https://formspree.io/f/mkoewrgp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'feedback',rating:'not_helpful',msg:bubble.innerText.substring(0,300)})});nBtn.style.color='#ff6b6b';yBtn.disabled=true;nBtn.disabled=true;};
+    actions.appendChild(nBtn);
+
+    var dot=document.createElement('span');
+    dot.style.cssText='color:rgba(255,255,255,0.1);';dot.textContent='·';
+    actions.appendChild(dot);
 
     var copyBtn=document.createElement('button');
     copyBtn.innerHTML='📋 Copy';
