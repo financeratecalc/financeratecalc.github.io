@@ -39,6 +39,19 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-ND9P4F3PHT');
+
+  // Track key clicks
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a');
+    if(!a) return;
+    var href = a.href || '';
+    if(href.includes('frc-api')) gtag('event','click',{event_category:'nav',event_label:'brokers_api'});
+    if(href.includes('frc-banker-ai')) gtag('event','click',{event_category:'nav',event_label:'zai_ai'});
+    if(href.includes('denial-letter')) gtag('event','click',{event_category:'tool',event_label:'denial_decoder'});
+    if(href.includes('credit-score-sim')) gtag('event','click',{event_category:'tool',event_label:'credit_simulator'});
+    if(href.includes('skyblue') || href.includes('ltroute')) gtag('event','click',{event_category:'affiliate',event_label:'skyblue'});
+    if(href.includes('tkqlhce')) gtag('event','click',{event_category:'affiliate',event_label:'smartcredit'});
+  });
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -417,6 +430,7 @@ window.scrollTo(0, 0);
     </div>
     <span class="nav-badge">Licensed Pro</span>
     <a href="for-realtors.html" style="padding:7px 14px;background:#c8a44a;color:#0a0e1a;border-radius:4px;font-size:11px;font-weight:800;text-decoration:none;margin-left:8px;">🏠 For Realtors</a>
+    <a href="frc-api.html" style="padding:7px 14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:4px;font-size:11px;font-weight:700;text-decoration:none;margin-left:4px;">⚡ For Brokers</a>
   </div>
   <button class="hamburger" onclick="toggleMobile()" id="hamburger">
     <span></span><span></span><span></span>

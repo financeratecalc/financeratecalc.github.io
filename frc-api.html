@@ -1,106 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>FRC Mortgage API — Live Calculator Endpoint</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRC For Brokers — Zai API & FUB Integration | FinanceRateCalc</title>
+<meta name="description" content="Give your clients a 23-year banking AI. Embed Zai on your site, connect to Follow Up Boss, or use the mortgage API. Free for brokers.">
+<link rel="canonical" href="https://financeratecalc.com/frc-api.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body{font-family:monospace;background:#08090c;color:#e2e8f0;padding:40px;max-width:800px;margin:0 auto;}
-h1{color:#c8a44a;font-size:18px;margin-bottom:8px;}
-.box{background:#0f1117;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:20px;margin-bottom:20px;}
-.label{font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
-.url{color:#60a5fa;font-size:13px;word-break:break-all;}
-input{background:#0f1117;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:8px 12px;color:#fff;font-family:monospace;font-size:13px;width:100%;}
-label{font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px;}
-button{background:#c8a44a;color:#08090c;border:none;border-radius:6px;padding:10px 24px;font-weight:700;cursor:pointer;font-size:13px;margin-top:12px;}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;}
-pre{color:#a3e635;font-size:12px;overflow-x:auto;line-height:1.6;margin:0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#c8a44a;}
+.hero{padding:64px 40px 48px;max-width:1000px;margin:0 auto;}
+.eyebrow{font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(36px,5vw,58px);font-weight:900;line-height:0.95;letter-spacing:-2px;margin-bottom:20px;}
+h1 em{font-style:italic;color:#c8a44a;}
+.sub{font-size:16px;color:rgba(255,255,255,0.5);line-height:1.7;max-width:560px;margin-bottom:40px;}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:64px;}
+.btn-primary{padding:13px 24px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:7px;font-weight:800;font-size:14px;text-decoration:none;}
+.btn-secondary{padding:13px 24px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:7px;font-weight:700;font-size:14px;text-decoration:none;}
+
+/* Cards */
+.section{max-width:1000px;margin:0 auto;padding:0 40px 64px;}
+.section-label{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:24px;}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
+.card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:24px;}
+.card-icon{font-size:24px;margin-bottom:12px;}
+.card-title{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;margin-bottom:8px;}
+.card-desc{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.7;}
+.card-link{display:inline-block;margin-top:12px;font-size:12px;font-weight:700;color:#c8a44a;text-decoration:none;}
+
+/* API Demo */
+.api-box{background:#0a0e1a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;margin-bottom:48px;}
+.api-header{padding:14px 20px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:8px;}
+.api-dot{width:10px;height:10px;border-radius:50%;}
+.api-body{padding:24px;}
+.input-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.api-input{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:8px 12px;color:#fff;font-size:13px;outline:none;width:100%;}
+.api-input:focus{border-color:#c8a44a;}
+.api-label{font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;display:block;}
+.run-btn{padding:10px 20px;background:#c8a44a;color:#08090c;border:none;border-radius:6px;font-weight:800;font-size:13px;cursor:pointer;}
+.result-box{background:#050810;border-radius:8px;padding:16px;margin-top:16px;font-family:'Courier New',monospace;font-size:12px;color:#a3e635;line-height:1.7;display:none;}
+
+/* FUB Section */
+.fub-box{background:linear-gradient(135deg,rgba(10,31,92,0.3),rgba(8,9,12,0));border:1px solid rgba(10,31,92,0.5);border-radius:12px;padding:32px;display:flex;align-items:center;gap:32px;margin-bottom:48px;}
+.fub-text h2{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:#fff;margin-bottom:8px;}
+.fub-text p{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.7;max-width:480px;}
+.fub-icon{font-size:48px;flex-shrink:0;}
+
+/* Widget embed */
+.embed-box{background:#0a0e1a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;}
+.embed-code{background:#050810;border-radius:8px;padding:16px;font-family:'Courier New',monospace;font-size:12px;color:#60a5fa;line-height:1.7;margin-bottom:16px;overflow-x:auto;}
+.copy-btn{padding:8px 16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:#fff;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;}
+
+@media(max-width:768px){
+  header{padding:0 16px;}
+  .hero{padding:48px 16px 32px;}
+  .section{padding:0 16px 48px;}
+  .cards{grid-template-columns:1fr;}
+  .input-row{grid-template-columns:1fr 1fr;}
+  .fub-box{flex-direction:column;gap:16px;}
+}
 </style>
 </head>
 <body>
-<h1>⚡ FRC Mortgage API</h1>
-<p style="color:rgba(255,255,255,0.4);font-size:13px;margin-bottom:28px;">Live mortgage calculator endpoint — built for AI connectors, FUB integrations, and developers.</p>
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Back</a>
+</header>
 
-<div class="box">
-  <div class="label">Endpoint URL</div>
-  <div class="url">https://financeratecalc.com/api/mortgage.html?price=650000&down=20&rate=6.5&term=30</div>
-</div>
-
-<div class="box">
-  <div class="label">Live Test</div>
-  <div class="grid">
-    <div><label>Home Price ($)</label><input id="p" value="650000"></div>
-    <div><label>Down (%)</label><input id="d" value="20"></div>
-    <div><label>Rate (%)</label><input id="r" value="6.5"></div>
-    <div><label>Term (yrs)</label><input id="t" value="30"></div>
-    <div><label>Tax (%/yr)</label><input id="tx" value="1.1"></div>
-    <div><label>Insurance ($/mo)</label><input id="ins" value="150"></div>
+<div class="hero">
+  <div class="eyebrow">For Mortgage Brokers & Real Estate Professionals</div>
+  <h1>Give your clients<br>a <em>23-year banker</em><br>on demand.</h1>
+  <p class="sub">Embed Zai on your website, connect to Follow Up Boss, or use the mortgage API. Free. No setup fee. Built by a banker — not a startup.</p>
+  <div class="cta-row">
+    <a href="mailto:press@financeratecalc.com?subject=FRC Broker Partnership" class="btn-primary">📬 Get Early Access</a>
+    <a href="frc-banker-ai.html" class="btn-secondary">🏦 Try Zai Live</a>
   </div>
-  <button onclick="calc()">Calculate →</button>
 </div>
 
-<div class="box" id="out" style="border-color:rgba(39,174,96,0.3);">
-  <div class="label">JSON Response</div>
-  <pre id="json"></pre>
-</div>
+<div class="section">
+  <div class="section-label">What You Get</div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🤖</div>
+      <div class="card-title">Zai Widget</div>
+      <div class="card-desc">Embed a 23-year banking AI on your site. Answers client questions 24/7. Your branding, your leads.</div>
+      <a href="widget.html" class="card-link">Get embed code →</a>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <div class="card-title">Mortgage API</div>
+      <div class="card-desc">Live mortgage calculations via API. Returns PITI, amortization, required income, and a banker note.</div>
+      <a href="#api-demo" class="card-link">Try the API →</a>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔗</div>
+      <div class="card-title">FUB Integration</div>
+      <div class="card-desc">Connect to Follow Up Boss. Zai analyzes your leads and surfaces mortgage readiness scores automatically.</div>
+      <a href="mailto:press@financeratecalc.com?subject=FUB Integration" class="card-link">Request access →</a>
+    </div>
+  </div>
 
-<div class="box">
-  <div class="label">FUB Connector Tool Definition</div>
-  <pre id="toolDef"></pre>
+  <!-- FUB Section -->
+  <div class="fub-box">
+    <div class="fub-icon">🔗</div>
+    <div class="fub-text">
+      <h2>Follow Up Boss Integration</h2>
+      <p>Zai connects to your FUB pipeline. When a lead comes in, Zai runs a mortgage readiness analysis — credit tier, DTI estimate, likely lender type — and posts it as a note on the contact. Your agents know what they're working with before the first call.</p>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="mailto:press@financeratecalc.com?subject=FUB Integration Request" class="btn-primary" style="font-size:13px;padding:10px 18px;">Request FUB Access</a>
+        <a href="frc-banker-ai.html" class="btn-secondary" style="font-size:13px;padding:10px 18px;">See Zai in Action</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Demo -->
+  <div class="section-label" id="api-demo">Live API Demo</div>
+  <div class="api-box">
+    <div class="api-header">
+      <div class="api-dot" style="background:#ff5f57;"></div>
+      <div class="api-dot" style="background:#febc2e;"></div>
+      <div class="api-dot" style="background:#28c840;"></div>
+      <span style="font-size:11px;color:rgba(255,255,255,0.3);margin-left:8px;">FRC Mortgage API — Live Test</span>
+    </div>
+    <div class="api-body">
+      <div class="input-row">
+        <div>
+          <span class="api-label">Home Price ($)</span>
+          <input class="api-input" id="apiPrice" type="number" value="500000">
+        </div>
+        <div>
+          <span class="api-label">Down Payment (%)</span>
+          <input class="api-input" id="apiDown" type="number" value="20">
+        </div>
+        <div>
+          <span class="api-label">Rate (%)</span>
+          <input class="api-input" id="apiRate" type="number" value="6.7" step="0.1">
+        </div>
+        <div>
+          <span class="api-label">Term (years)</span>
+          <input class="api-input" id="apiTerm" type="number" value="30">
+        </div>
+      </div>
+      <button class="run-btn" onclick="runApi()">▶ Run API Call</button>
+      <div class="result-box" id="apiResult"></div>
+    </div>
+  </div>
+
+  <!-- Widget embed -->
+  <div class="section-label">Embed Zai on Your Site</div>
+  <div class="embed-box">
+    <p style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:16px;">Add this one line to any page. Zai appears in the bottom-right corner — ready to answer your clients' mortgage questions 24/7.</p>
+    <div class="embed-code" id="embedCode">&lt;script src="https://financeratecalc.com/banker-widget.js"&gt;&lt;/script&gt;</div>
+    <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('embedCode').innerText);this.textContent='✓ Copied!';setTimeout(()=>this.textContent='Copy Code',2000)">Copy Code</button>
+    <div style="margin-top:16px;font-size:11px;color:rgba(255,255,255,0.25);">Free forever · No API key required · Mobile responsive</div>
+  </div>
+
+  <div style="text-align:center;padding:40px 0;border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;">Ready to get started?</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:24px;">Email us — we'll set you up within 24 hours.</div>
+    <a href="mailto:press@financeratecalc.com?subject=FRC Broker Partnership" class="btn-primary">📬 press@financeratecalc.com</a>
+  </div>
 </div>
 
 <script>
-function fmt(n){return '$'+Math.round(n).toLocaleString();}
+function runApi(){
+  var price = parseFloat(document.getElementById('apiPrice').value)||500000;
+  var downPct = parseFloat(document.getElementById('apiDown').value)||20;
+  var rate = parseFloat(document.getElementById('apiRate').value)||6.7;
+  var term = parseInt(document.getElementById('apiTerm').value)||30;
+  var down = price * downPct / 100;
+  var loan = price - down;
+  var mr = rate/100/12;
+  var n = term * 12;
+  var pi = loan * mr * Math.pow(1+mr,n) / (Math.pow(1+mr,n)-1);
+  var tax = price * 0.012 / 12;
+  var ins = price * 0.005 / 12;
+  var pmi = downPct < 20 ? loan * 0.008 / 12 : 0;
+  var total = pi + tax + ins + pmi;
+  var reqIncome = total * 12 / 0.36;
 
-function calc(){
-  var price=parseFloat(document.getElementById('p').value)||650000;
-  var down=parseFloat(document.getElementById('d').value)||20;
-  var rate=parseFloat(document.getElementById('r').value)||6.5;
-  var term=parseFloat(document.getElementById('t').value)||30;
-  var tax=parseFloat(document.getElementById('tx').value)||1.1;
-  var ins=parseFloat(document.getElementById('ins').value)||150;
-
-  var loan=price*(1-down/100);
-  var mr=rate/100/12, n=term*12;
-  var pi=loan*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1);
-  var taxMo=price*tax/100/12;
-  var pmi=down<20?loan*0.005/12:0;
-  var total=pi+taxMo+ins+pmi;
-  var totalInt=pi*n-loan;
-  var reqIncome=total*12/0.28;
-
-  var note = rate>7?'Rate above 7% — consider 2-1 buydown or ARM if selling within 5 years.':rate<6?'Excellent rate. Lock immediately if floating.':'Solid rate. Compare at least 3 lenders before committing.';
-
-  var result={
-    input:{home_price:fmt(price),down_payment:fmt(price*down/100)+' ('+down+'%)',loan_amount:fmt(loan),rate:rate+'%',term:term+' years'},
-    monthly:{principal_interest:fmt(pi),property_tax:fmt(taxMo),insurance:fmt(ins),pmi:down<20?fmt(pmi):null,total:fmt(total)},
-    totals:{total_interest:fmt(totalInt),total_loan_cost:fmt(pi*n),total_all_in:fmt(total*n)},
-    qualification:{required_income_annual:fmt(reqIncome),required_income_monthly:fmt(reqIncome/12),note:'Based on 28% front-end DTI. Most lenders allow up to 36%.'},
-    banker_note:note,
-    powered_by:'FinanceRateCalc.com — Free tools by a 23-year banker',
-    full_calculator:'https://financeratecalc.com/mortgage-calculator.html'
+  var result = {
+    loan_amount: Math.round(loan).toLocaleString(),
+    monthly_pi: '$' + Math.round(pi).toLocaleString(),
+    monthly_tax: '$' + Math.round(tax).toLocaleString(),
+    monthly_insurance: '$' + Math.round(ins).toLocaleString(),
+    monthly_pmi: pmi > 0 ? '$' + Math.round(pmi).toLocaleString() : '$0 (20%+ down)',
+    total_monthly: '$' + Math.round(total).toLocaleString(),
+    required_annual_income: '$' + Math.round(reqIncome).toLocaleString(),
+    banker_note: 'At ' + rate + '% with ' + downPct + '% down, buyer needs ~$' + Math.round(reqIncome).toLocaleString() + ' annual income. PMI ' + (pmi > 0 ? 'applies until 80% LTV.' : 'not required.')
   };
 
-  // Remove null values
-  Object.keys(result.monthly).forEach(k=>{if(result.monthly[k]===null)delete result.monthly[k];});
-
-  document.getElementById('json').textContent=JSON.stringify(result,null,2);
-
-  document.getElementById('toolDef').textContent=JSON.stringify({
-    name:'frc_mortgage_calculator',
-    description:'Calculate monthly payment, total interest, and required income for any US property. Returns structured JSON with monthly breakdown, totals, and a 23-year banker note.',
-    parameters:{type:'object',properties:{price:{type:'number',description:'Home listing price in USD'},down:{type:'number',description:'Down payment percentage, default 20'},rate:{type:'number',description:'Annual interest rate percentage'},term:{type:'number',description:'Loan term in years, default 30'}},required:['price','rate']},
-    endpoint:'https://financeratecalc.com/api/mortgage.html'
-  },null,2);
+  document.getElementById('apiResult').style.display = 'block';
+  document.getElementById('apiResult').textContent = JSON.stringify(result, null, 2);
 }
-
-window.addEventListener('load',function(){
-  var p=new URLSearchParams(window.location.search);
-  if(p.get('price')) document.getElementById('p').value=p.get('price');
-  if(p.get('down')) document.getElementById('d').value=p.get('down');
-  if(p.get('rate')) document.getElementById('r').value=p.get('rate');
-  if(p.get('term')) document.getElementById('t').value=p.get('term');
-  calc();
-});
 </script>
 <script src="/banker-widget.js?v=6"></script>
 </body>
