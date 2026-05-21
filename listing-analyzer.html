@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Is My Listing Not Selling? — FRC Listing Analyzer | Zai AI</title>
+<meta name="description" content="Paste any Zillow or Redfin listing URL. Zai tells you exactly why it's not selling and what price would make it move in 14 days.">
+<link rel="canonical" href="https://financeratecalc.com/listing-analyzer.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;min-height:100vh;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#c8a44a;}
+.hero{padding:56px 40px 40px;text-align:center;max-width:700px;margin:0 auto;}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);border-radius:20px;padding:5px 14px;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ff6b6b;margin-bottom:20px;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#ff4444;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(2.2);opacity:0;}}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,54px);font-weight:900;line-height:0.95;letter-spacing:-2px;margin-bottom:14px;}
+h1 em{font-style:italic;color:#c8a44a;}
+.sub{font-size:15px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:40px;}
+.main{max-width:780px;margin:0 auto;padding:0 20px 80px;}
+
+/* Input */
+.input-card{background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px;margin-bottom:16px;}
+.input-card:focus-within{border-color:rgba(200,164,74,0.4);}
+.input-label{font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px;display:block;}
+.url-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:13px 16px;font-size:14px;color:#fff;outline:none;font-family:'DM Sans',sans-serif;margin-bottom:16px;}
+.url-input:focus{border-color:rgba(200,164,74,0.5);}
+.url-input::placeholder{color:rgba(255,255,255,0.25);}
+.details-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;}
+.detail-item label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:6px;display:block;}
+.detail-item input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:10px 12px;font-size:14px;color:#fff;outline:none;}
+.detail-item input:focus{border-color:rgba(200,164,74,0.4);}
+.analyze-btn{width:100%;padding:16px;background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Fraunces',serif;transition:opacity 0.15s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.analyze-btn:hover{opacity:0.9;}
+.analyze-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* Examples */
+.examples{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px;}
+.ex-label{font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;}
+.ex-chip{padding:7px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;font-size:11px;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.15s;}
+.ex-chip:hover{border-color:rgba(200,164,74,0.4);color:#c8a44a;}
+
+/* Results */
+#results{display:none;}
+.typing{display:flex;align-items:center;gap:8px;padding:20px;color:rgba(255,255,255,0.4);font-size:13px;}
+.dot{width:6px;height:6px;border-radius:50%;background:#c8a44a;animation:bounce 1.4s ease-in-out infinite;}
+.dot:nth-child(2){animation-delay:0.2s;}.dot:nth-child(3){animation-delay:0.4s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+
+/* Score display */
+.score-banner{border-radius:12px;padding:28px;margin-bottom:16px;text-align:center;}
+.score-hot{background:linear-gradient(160deg,#1a0505,#2a0808);border:1.5px solid rgba(192,57,43,0.4);}
+.score-warm{background:linear-gradient(160deg,#1a1205,#2a1e08);border:1.5px solid rgba(240,160,40,0.4);}
+.score-cold{background:linear-gradient(160deg,#05101a,#081828);border:1.5px solid rgba(42,90,174,0.4);}
+.score-num{font-family:'Fraunces',serif;font-size:72px;font-weight:900;line-height:1;margin-bottom:8px;}
+.score-label{font-size:14px;font-weight:700;margin-bottom:4px;}
+.score-sub{font-size:12px;opacity:0.5;}
+
+.result-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:24px;margin-bottom:12px;}
+.result-tag{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;margin-bottom:10px;}
+.result-title{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;margin-bottom:10px;}
+.result-body{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.8;}
+.result-body strong{color:#fff;}
+
+.price-box{background:linear-gradient(135deg,rgba(39,174,96,0.08),rgba(8,9,12,0));border:1px solid rgba(39,174,96,0.25);border-radius:12px;padding:24px;margin-bottom:12px;}
+.price-current{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:4px;}
+.price-recommended{font-family:'Fraunces',serif;font-size:42px;font-weight:900;color:#6bffb8;margin-bottom:4px;}
+.price-note{font-size:12px;color:rgba(107,255,184,0.6);}
+
+.share-row{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0;}
+.share-btn{padding:9px 16px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:none;}
+.share-copy{background:rgba(255,255,255,0.08);color:#fff;}
+.share-wa{background:rgba(37,211,102,0.15);color:#25d366;border:1px solid rgba(37,211,102,0.3);}
+.share-tw{background:rgba(29,161,242,0.15);color:#1da1f2;border:1px solid rgba(29,161,242,0.3);}
+
+.widget-cta{background:linear-gradient(135deg,#0a1f5c,#162d6e);border:1px solid rgba(200,164,74,0.3);border-radius:12px;padding:24px;text-align:center;margin-top:24px;}
+.widget-cta h3{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:8px;}
+.widget-cta p{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:16px;line-height:1.6;}
+.widget-cta a{display:inline-block;padding:11px 22px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:7px;font-weight:800;font-size:13px;text-decoration:none;}
+
+@media(max-width:640px){
+  header{padding:0 16px;}
+  .hero{padding:40px 16px 32px;}
+  .details-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="index.html" class="back" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Back</a>
+</header>
+
+<div class="hero">
+  <div class="badge"><span class="live-dot"></span>Zai AI · World First</div>
+  <h1>Why isn't your<br>listing <em>selling?</em></h1>
+  <p class="sub">Paste any listing URL or describe the property. Zai tells you exactly what's killing it — and what price would make it move in 14 days.</p>
+</div>
+
+<div class="main">
+  <div class="ex-label">Try an example</div>
+  <div class="examples">
+    <div class="ex-chip" onclick="fillExample('overpriced')">Overpriced by $40K</div>
+    <div class="ex-chip" onclick="fillExample('days')">94 days on market</div>
+    <div class="ex-chip" onclick="fillExample('pricecut')">3 price cuts, still sitting</div>
+    <div class="ex-chip" onclick="fillExample('new')">New listing, no offers</div>
+  </div>
+
+  <div class="input-card">
+    <span class="input-label">Zillow / Redfin URL or describe the listing</span>
+    <input class="url-input" id="listingUrl" placeholder="https://www.zillow.com/homedetails/... or describe: '3bd/2ba in Austin, listed at $485K, 67 days on market, 2 price cuts'">
+    <div class="details-grid">
+      <div class="detail-item">
+        <label>List Price ($)</label>
+        <input type="number" id="listPrice" placeholder="485000">
+      </div>
+      <div class="detail-item">
+        <label>Days on Market</label>
+        <input type="number" id="daysOnMarket" placeholder="67">
+      </div>
+      <div class="detail-item">
+        <label>Price Cuts (#)</label>
+        <input type="number" id="priceCuts" placeholder="2">
+      </div>
+    </div>
+    <button class="analyze-btn" onclick="analyze()" id="analyzeBtn">
+      🔍 Analyze This Listing — Zai Will Tell You Why
+    </button>
+  </div>
+
+  <div id="results"></div>
+</div>
+
+<script>
+var SYSTEM = `You are Zai — a 23-year banking and real estate market professional at FinanceRateCalc.com. A real estate agent or seller is asking why their listing isn't selling.
+
+Analyze the listing details and provide:
+1. A buyer demand score (0-100)
+2. The market temperature: HOT (85-100), WARM (60-84), COOLING (40-59), COLD (0-39)
+3. The real reason it's not selling (be specific and brutally honest)
+4. The recommended price to get it sold in 14 days
+5. 3 specific action steps (not generic advice)
+6. A viral one-liner the agent can share with their client
+
+Respond ONLY with valid JSON:
+{
+  "score": number 0-100,
+  "temperature": "HOT|WARM|COOLING|COLD",
+  "real_reason": "specific honest reason in 2-3 sentences",
+  "current_price_problem": "what the current price signals to buyers",
+  "recommended_price": number,
+  "price_reduction": number,
+  "days_to_sell": "estimated days at recommended price",
+  "action_steps": ["step 1", "step 2", "step 3"],
+  "viral_line": "one punchy sentence an agent can screenshot and share",
+  "zai_note": "insider insight only a 23-year banking/market professional would know"
+}`;
+
+var examples = {
+  overpriced: "3 bedroom, 2 bath home in Austin TX. Listed at $485,000. 67 days on market. 2 price cuts already (from $525,000). No offers. Similar homes in the area sold for $440,000-$460,000 last month.",
+  days: "4 bedroom home in Phoenix AZ. Listed at $620,000. 94 days on market. 1 price cut from $650,000. Getting showings but no offers. Built in 2005, updated kitchen.",
+  pricecut: "2 bedroom condo in Miami FL. Listed at $389,000. 3 price cuts over 5 months (started at $450,000). HOA is $800/month. Getting very few showings.",
+  new: "New listing, 3 bed 2 bath in Denver CO. $575,000. First week on market. 0 showings scheduled. Listed last Friday."
+};
+
+function fillExample(key){
+  document.getElementById('listingUrl').value = examples[key];
+}
+
+async function analyze(){
+  var url = document.getElementById('listingUrl').value.trim();
+  var price = document.getElementById('listPrice').value;
+  var days = document.getElementById('daysOnMarket').value;
+  var cuts = document.getElementById('priceCuts').value;
+
+  if(!url){ alert('Please describe the listing or paste a URL.'); return; }
+
+  var context = url;
+  if(price) context += '. List price: $' + parseInt(price).toLocaleString();
+  if(days) context += '. Days on market: ' + days;
+  if(cuts) context += '. Price cuts: ' + cuts;
+
+  var btn = document.getElementById('analyzeBtn');
+  btn.disabled = true;
+  btn.innerHTML = '🔍 Zai is analyzing...';
+
+  var results = document.getElementById('results');
+  results.style.display = 'block';
+  results.innerHTML = '<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Zai is reading the market data...</span></div>';
+
+  try {
+    var res = await fetch('https://api.financeratecalc.com', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        system: SYSTEM,
+        messages: [{role: 'user', content: 'Analyze this listing: ' + context}]
+      })
+    });
+
+    var data = await res.json();
+    var reply = data.reply || '';
+
+    var d;
+    try { d = JSON.parse(reply); }
+    catch(e) { var m = reply.match(/\{[\s\S]*\}/); if(m) d = JSON.parse(m[0]); }
+
+    if(!d) throw new Error('Parse error');
+
+    var tempColors = {
+      'HOT': {bg:'score-hot', num:'#ff6b6b', emoji:'🔥'},
+      'WARM': {bg:'score-warm', num:'#f0a020', emoji:'🟡'},
+      'COOLING': {bg:'score-cold', num:'#60a5fa', emoji:'🔵'},
+      'COLD': {bg:'score-cold', num:'#93c5fd', emoji:'❄️'}
+    };
+    var tc = tempColors[d.temperature] || tempColors['COOLING'];
+
+    var currentPrice = price ? parseInt(price) : (d.recommended_price + d.price_reduction);
+    var shareText = '"' + d.viral_line + '" — Analyzed by Zai AI at FinanceRateCalc.com';
+    var shareUrl = 'https://financeratecalc.com/listing-analyzer.html';
+
+    var html = '';
+
+    // Score banner
+    html += '<div class="score-banner ' + tc.bg + '">';
+    html += '<div class="score-num" style="color:' + tc.num + '">' + tc.emoji + ' ' + d.score + '</div>';
+    html += '<div class="score-label" style="color:' + tc.num + '">' + d.temperature + ' MARKET</div>';
+    html += '<div class="score-sub">FRC Buyer Demand Score</div>';
+    html += '</div>';
+
+    // Real reason
+    html += '<div class="result-card">';
+    html += '<div class="result-tag" style="color:rgba(255,107,107,0.8);">🔍 The Real Reason It\'s Not Selling</div>';
+    html += '<div class="result-title">' + d.current_price_problem + '</div>';
+    html += '<div class="result-body">' + d.real_reason + '</div>';
+    html += '</div>';
+
+    // Price recommendation
+    html += '<div class="price-box">';
+    html += '<div class="price-current">Current price: $' + currentPrice.toLocaleString() + ' &nbsp;→&nbsp; Reduce by $' + Math.round(d.price_reduction).toLocaleString() + '</div>';
+    html += '<div class="price-recommended">$' + Math.round(d.recommended_price).toLocaleString() + '</div>';
+    html += '<div class="price-note">Estimated sell time at this price: ' + d.days_to_sell + '</div>';
+    html += '</div>';
+
+    // Action steps
+    html += '<div class="result-card">';
+    html += '<div class="result-tag" style="color:rgba(200,164,74,0.8);">⚡ 3 Actions — This Week</div>';
+    html += '<ol style="padding-left:18px;color:rgba(255,255,255,0.7);font-size:14px;line-height:2;">';
+    d.action_steps.forEach(s => html += '<li>' + s + '</li>');
+    html += '</ol></div>';
+
+    // Zai insider note
+    if(d.zai_note){
+      html += '<div style="padding:16px 20px;border-left:3px solid #c8a44a;background:rgba(200,164,74,0.05);border-radius:0 8px 8px 0;margin-bottom:12px;">';
+      html += '<div style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.6);margin-bottom:6px;">💡 Zai\'s Insider Note</div>';
+      html += '<div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.7;">' + d.zai_note + '</div>';
+      html += '</div>';
+    }
+
+    // Viral line + share
+    html += '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;margin-bottom:12px;">';
+    html += '<div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">📸 Screenshot & Share</div>';
+    html += '<div style="font-family:\'Fraunces\',serif;font-size:16px;font-weight:900;color:#fff;line-height:1.4;margin-bottom:12px;">"' + d.viral_line + '"</div>';
+    html += '<div class="share-row">';
+    html += '<button class="share-btn share-copy" onclick="navigator.clipboard.writeText(`' + shareText.replace(/`/g,'\\`') + '`);this.textContent=\'✓ Copied!\';setTimeout(()=>this.textContent=\'📋 Copy\',2000)">📋 Copy</button>';
+    html += '<a class="share-btn share-wa" href="https://wa.me/?text=' + encodeURIComponent(shareText + '\n\n' + shareUrl) + '" target="_blank" style="text-decoration:none;padding:9px 16px;">💬 WhatsApp</a>';
+    html += '<a class="share-btn share-tw" href="https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText + ' ' + shareUrl) + '" target="_blank" style="text-decoration:none;padding:9px 16px;">𝕏 Share</a>';
+    html += '</div></div>';
+
+    // Widget CTA
+    html += '<div class="widget-cta">';
+    html += '<h3>Show this analysis to your client.</h3>';
+    html += '<p>Add Zai to your real estate website. Clients get instant listing analysis — leads come to you.</p>';
+    html += '<a href="for-realtors.html">Get Free Widget for Your Site →</a>';
+    html += '</div>';
+
+    results.innerHTML = html;
+
+  } catch(err) {
+    results.innerHTML = '<div class="result-card"><div class="result-tag" style="color:rgba(255,107,107,0.7);">Error</div><div class="result-body">Could not analyze. <a href="frc-banker-ai.html" style="color:#c8a44a;">Ask Zai directly →</a></div></div>';
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '🔍 Analyze This Listing — Zai Will Tell You Why';
+}
+</script>
+<script src="/banker-widget.js?v=6"></script>
+</body>
+</html>
