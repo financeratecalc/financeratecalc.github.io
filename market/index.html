@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US Housing Market by ZIP Code — Buyer Demand Score | FRC</title>
+<meta name="description" content="Is your ZIP code a buyer's or seller's market? FRC Buyer Demand Score for 50+ ZIP codes. Free mortgage calculator for each market.">
+<link rel="canonical" href="https://financeratecalc.com/market/">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{color:#c8a44a;font-style:italic;}
+.hero{padding:56px 20px 40px;text-align:center;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;}
+h1 em{color:#c8a44a;font-style:italic;}
+.sub{font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:32px;}
+.search-wrap{max-width:400px;margin:0 auto 48px;display:flex;gap:8px;}
+#zipSearch{flex:1;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:14px 16px;font-size:16px;color:#fff;outline:none;font-family:'DM Sans',sans-serif;}
+#zipSearch:focus{border-color:#c8a44a;}
+#zipSearch::placeholder{color:rgba(255,255,255,0.3);}
+.search-btn{padding:14px 20px;background:#c8a44a;color:#08090c;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;}
+.grid{max-width:1100px;margin:0 auto;padding:0 20px 80px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.zcard{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;text-decoration:none;color:#fff;transition:border-color 0.15s;}
+.zcard:hover{border-color:#c8a44a;}
+.zcard-zip{font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px;letter-spacing:0.05em;}
+.zcard-city{font-size:15px;font-weight:700;margin-bottom:6px;}
+.zcard-score{font-size:13px;font-weight:700;margin-bottom:4px;}
+.zcard-price{font-size:12px;color:rgba(255,255,255,0.4);}
+@media(max-width:768px){.grid{grid-template-columns:1fr 1fr;}.hero{padding:40px 16px 32px;}header{padding:0 16px;}}
+@media(max-width:400px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Back</a>
+</header>
+<div class="hero">
+  <h1>US Housing Markets<br>by <em>ZIP Code</em></h1>
+  <p class="sub">FRC Buyer Demand Score — is your market HOT, WARM, or COLD?</p>
+  <div class="search-wrap">
+    <input id="zipSearch" type="number" placeholder="Enter ZIP code..." maxlength="5">
+    <button class="search-btn" onclick="goZip()">Go →</button>
+  </div>
+</div>
+<div class="grid">
+  <a href="/market/90210.html" class="zcard">
+    <div class="zcard-zip">90210</div>
+    <div class="zcard-city">Beverly Hills, CA</div>
+    <div class="zcard-score" style="color:#ff6b6b;">🔥 HOT · 95/100</div>
+    <div class="zcard-price">Median: $2.8M</div>
+  </a>
+  <a href="/market/10001.html" class="zcard">
+    <div class="zcard-zip">10001</div>
+    <div class="zcard-city">New York, NY</div>
+    <div class="zcard-score" style="color:#ff6b6b;">🔥 HOT · 88/100</div>
+    <div class="zcard-price">Median: $1.2M</div>
+  </a>
+  <a href="/market/33101.html" class="zcard">
+    <div class="zcard-zip">33101</div>
+    <div class="zcard-city">Miami, FL</div>
+    <div class="zcard-score" style="color:#ff9b9b;">🔥 HOT · 82/100</div>
+    <div class="zcard-price">Median: $650K</div>
+  </a>
+  <a href="/market/60601.html" class="zcard">
+    <div class="zcard-zip">60601</div>
+    <div class="zcard-city">Chicago, IL</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 71/100</div>
+    <div class="zcard-price">Median: $420K</div>
+  </a>
+  <a href="/market/77001.html" class="zcard">
+    <div class="zcard-zip">77001</div>
+    <div class="zcard-city">Houston, TX</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 68/100</div>
+    <div class="zcard-price">Median: $380K</div>
+  </a>
+  <a href="/market/85001.html" class="zcard">
+    <div class="zcard-zip">85001</div>
+    <div class="zcard-city">Phoenix, AZ</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 72/100</div>
+    <div class="zcard-price">Median: $450K</div>
+  </a>
+  <a href="/market/92101.html" class="zcard">
+    <div class="zcard-zip">92101</div>
+    <div class="zcard-city">San Diego, CA</div>
+    <div class="zcard-score" style="color:#ff6b6b;">🔥 HOT · 85/100</div>
+    <div class="zcard-price">Median: $950K</div>
+  </a>
+  <a href="/market/75201.html" class="zcard">
+    <div class="zcard-zip">75201</div>
+    <div class="zcard-city">Dallas, TX</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 74/100</div>
+    <div class="zcard-price">Median: $520K</div>
+  </a>
+  <a href="/market/78201.html" class="zcard">
+    <div class="zcard-zip">78201</div>
+    <div class="zcard-city">San Antonio, TX</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 65/100</div>
+    <div class="zcard-price">Median: $310K</div>
+  </a>
+  <a href="/market/95101.html" class="zcard">
+    <div class="zcard-zip">95101</div>
+    <div class="zcard-city">San Jose, CA</div>
+    <div class="zcard-score" style="color:#ff6b6b;">🔥 HOT · 88/100</div>
+    <div class="zcard-price">Median: $1.1M</div>
+  </a>
+  <a href="/market/78701.html" class="zcard">
+    <div class="zcard-zip">78701</div>
+    <div class="zcard-city">Austin, TX</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 58/100</div>
+    <div class="zcard-price">Median: $580K</div>
+  </a>
+  <a href="/market/98101.html" class="zcard">
+    <div class="zcard-zip">98101</div>
+    <div class="zcard-city">Seattle, WA</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 79/100</div>
+    <div class="zcard-price">Median: $780K</div>
+  </a>
+  <a href="/market/80201.html" class="zcard">
+    <div class="zcard-zip">80201</div>
+    <div class="zcard-city">Denver, CO</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 61/100</div>
+    <div class="zcard-price">Median: $560K</div>
+  </a>
+  <a href="/market/02101.html" class="zcard">
+    <div class="zcard-zip">02101</div>
+    <div class="zcard-city">Boston, MA</div>
+    <div class="zcard-score" style="color:#ff6b6b;">🔥 HOT · 83/100</div>
+    <div class="zcard-price">Median: $820K</div>
+  </a>
+  <a href="/market/19101.html" class="zcard">
+    <div class="zcard-zip">19101</div>
+    <div class="zcard-city">Philadelphia, PA</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 69/100</div>
+    <div class="zcard-price">Median: $290K</div>
+  </a>
+  <a href="/market/48201.html" class="zcard">
+    <div class="zcard-zip">48201</div>
+    <div class="zcard-city">Detroit, MI</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 52/100</div>
+    <div class="zcard-price">Median: $180K</div>
+  </a>
+  <a href="/market/37201.html" class="zcard">
+    <div class="zcard-zip">37201</div>
+    <div class="zcard-city">Nashville, TN</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 73/100</div>
+    <div class="zcard-price">Median: $480K</div>
+  </a>
+  <a href="/market/28201.html" class="zcard">
+    <div class="zcard-zip">28201</div>
+    <div class="zcard-city">Charlotte, NC</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 76/100</div>
+    <div class="zcard-price">Median: $390K</div>
+  </a>
+  <a href="/market/32801.html" class="zcard">
+    <div class="zcard-zip">32801</div>
+    <div class="zcard-city">Orlando, FL</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 71/100</div>
+    <div class="zcard-price">Median: $390K</div>
+  </a>
+  <a href="/market/30301.html" class="zcard">
+    <div class="zcard-zip">30301</div>
+    <div class="zcard-city">Atlanta, GA</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 74/100</div>
+    <div class="zcard-price">Median: $420K</div>
+  </a>
+  <a href="/market/64101.html" class="zcard">
+    <div class="zcard-zip">64101</div>
+    <div class="zcard-city">Kansas City, MO</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 67/100</div>
+    <div class="zcard-price">Median: $280K</div>
+  </a>
+  <a href="/market/43201.html" class="zcard">
+    <div class="zcard-zip">43201</div>
+    <div class="zcard-city">Columbus, OH</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 70/100</div>
+    <div class="zcard-price">Median: $290K</div>
+  </a>
+  <a href="/market/46201.html" class="zcard">
+    <div class="zcard-zip">46201</div>
+    <div class="zcard-city">Indianapolis, IN</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 68/100</div>
+    <div class="zcard-price">Median: $285K</div>
+  </a>
+  <a href="/market/35201.html" class="zcard">
+    <div class="zcard-zip">35201</div>
+    <div class="zcard-city">Birmingham, AL</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 61/100</div>
+    <div class="zcard-price">Median: $230K</div>
+  </a>
+  <a href="/market/73101.html" class="zcard">
+    <div class="zcard-zip">73101</div>
+    <div class="zcard-city">Oklahoma City, OK</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 64/100</div>
+    <div class="zcard-price">Median: $250K</div>
+  </a>
+  <a href="/market/87101.html" class="zcard">
+    <div class="zcard-zip">87101</div>
+    <div class="zcard-city">Albuquerque, NM</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 62/100</div>
+    <div class="zcard-price">Median: $310K</div>
+  </a>
+  <a href="/market/89101.html" class="zcard">
+    <div class="zcard-zip">89101</div>
+    <div class="zcard-city">Las Vegas, NV</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 66/100</div>
+    <div class="zcard-price">Median: $420K</div>
+  </a>
+  <a href="/market/84101.html" class="zcard">
+    <div class="zcard-zip">84101</div>
+    <div class="zcard-city">Salt Lake City, UT</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 70/100</div>
+    <div class="zcard-price">Median: $510K</div>
+  </a>
+  <a href="/market/97201.html" class="zcard">
+    <div class="zcard-zip">97201</div>
+    <div class="zcard-city">Portland, OR</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 67/100</div>
+    <div class="zcard-price">Median: $560K</div>
+  </a>
+  <a href="/market/99201.html" class="zcard">
+    <div class="zcard-zip">99201</div>
+    <div class="zcard-city">Spokane, WA</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 64/100</div>
+    <div class="zcard-price">Median: $355K</div>
+  </a>
+  <a href="/market/23201.html" class="zcard">
+    <div class="zcard-zip">23201</div>
+    <div class="zcard-city">Richmond, VA</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 72/100</div>
+    <div class="zcard-price">Median: $380K</div>
+  </a>
+  <a href="/market/27601.html" class="zcard">
+    <div class="zcard-zip">27601</div>
+    <div class="zcard-city">Raleigh, NC</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 77/100</div>
+    <div class="zcard-price">Median: $430K</div>
+  </a>
+  <a href="/market/29201.html" class="zcard">
+    <div class="zcard-zip">29201</div>
+    <div class="zcard-city">Columbia, SC</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 63/100</div>
+    <div class="zcard-price">Median: $260K</div>
+  </a>
+  <a href="/market/40201.html" class="zcard">
+    <div class="zcard-zip">40201</div>
+    <div class="zcard-city">Louisville, KY</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 66/100</div>
+    <div class="zcard-price">Median: $270K</div>
+  </a>
+  <a href="/market/53201.html" class="zcard">
+    <div class="zcard-zip">53201</div>
+    <div class="zcard-city">Milwaukee, WI</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 64/100</div>
+    <div class="zcard-price">Median: $240K</div>
+  </a>
+  <a href="/market/55401.html" class="zcard">
+    <div class="zcard-zip">55401</div>
+    <div class="zcard-city">Minneapolis, MN</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 72/100</div>
+    <div class="zcard-price">Median: $380K</div>
+  </a>
+  <a href="/market/63101.html" class="zcard">
+    <div class="zcard-zip">63101</div>
+    <div class="zcard-city">St. Louis, MO</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 65/100</div>
+    <div class="zcard-price">Median: $250K</div>
+  </a>
+  <a href="/market/70112.html" class="zcard">
+    <div class="zcard-zip">70112</div>
+    <div class="zcard-city">New Orleans, LA</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 60/100</div>
+    <div class="zcard-price">Median: $320K</div>
+  </a>
+  <a href="/market/72201.html" class="zcard">
+    <div class="zcard-zip">72201</div>
+    <div class="zcard-city">Little Rock, AR</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 62/100</div>
+    <div class="zcard-price">Median: $220K</div>
+  </a>
+  <a href="/market/39201.html" class="zcard">
+    <div class="zcard-zip">39201</div>
+    <div class="zcard-city">Jackson, MS</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 55/100</div>
+    <div class="zcard-price">Median: $190K</div>
+  </a>
+  <a href="/market/68101.html" class="zcard">
+    <div class="zcard-zip">68101</div>
+    <div class="zcard-city">Omaha, NE</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 69/100</div>
+    <div class="zcard-price">Median: $290K</div>
+  </a>
+  <a href="/market/57101.html" class="zcard">
+    <div class="zcard-zip">57101</div>
+    <div class="zcard-city">Sioux Falls, SD</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 71/100</div>
+    <div class="zcard-price">Median: $310K</div>
+  </a>
+  <a href="/market/58101.html" class="zcard">
+    <div class="zcard-zip">58101</div>
+    <div class="zcard-city">Fargo, ND</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 70/100</div>
+    <div class="zcard-price">Median: $280K</div>
+  </a>
+  <a href="/market/59101.html" class="zcard">
+    <div class="zcard-zip">59101</div>
+    <div class="zcard-city">Billings, MT</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 65/100</div>
+    <div class="zcard-price">Median: $380K</div>
+  </a>
+  <a href="/market/83701.html" class="zcard">
+    <div class="zcard-zip">83701</div>
+    <div class="zcard-city">Boise, ID</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 66/100</div>
+    <div class="zcard-price">Median: $420K</div>
+  </a>
+  <a href="/market/59801.html" class="zcard">
+    <div class="zcard-zip">59801</div>
+    <div class="zcard-city">Missoula, MT</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 63/100</div>
+    <div class="zcard-price">Median: $420K</div>
+  </a>
+  <a href="/market/82001.html" class="zcard">
+    <div class="zcard-zip">82001</div>
+    <div class="zcard-city">Cheyenne, WY</div>
+    <div class="zcard-score" style="color:#60a5fa;">🔵 COOLING · 64/100</div>
+    <div class="zcard-price">Median: $320K</div>
+  </a>
+  <a href="/market/80901.html" class="zcard">
+    <div class="zcard-zip">80901</div>
+    <div class="zcard-city">Colorado Springs, CO</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 67/100</div>
+    <div class="zcard-price">Median: $420K</div>
+  </a>
+  <a href="/market/50301.html" class="zcard">
+    <div class="zcard-zip">50301</div>
+    <div class="zcard-city">Des Moines, IA</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 68/100</div>
+    <div class="zcard-price">Median: $270K</div>
+  </a>
+  <a href="/market/66101.html" class="zcard">
+    <div class="zcard-zip">66101</div>
+    <div class="zcard-city">Kansas City, KS</div>
+    <div class="zcard-score" style="color:#f0a020;">🟡 WARM · 65/100</div>
+    <div class="zcard-price">Median: $240K</div>
+  </a>
+</div>
+<script>
+function goZip(){
+  var z = document.getElementById('zipSearch').value.trim();
+  if(z.length === 5) window.location.href = '/market/' + z + '.html';
+}
+document.getElementById('zipSearch').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') goZip();
+});
+</script>
+<script src="/banker-widget.js?v=6"></script>
+</body>
+</html>
