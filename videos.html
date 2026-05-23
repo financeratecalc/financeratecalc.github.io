@@ -5,40 +5,76 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zai in Action — FRC Video Demos</title>
 <link rel="icon" href="/favicon.ico">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
 header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
 .logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
 .logo em{color:#c8a44a;font-style:italic;}
-.hero{padding:56px 40px 48px;text-align:center;}
+.hero{padding:56px 20px 48px;text-align:center;}
 h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;}
 h1 em{color:#c8a44a;font-style:italic;}
 .sub{font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:48px;}
-.grid{max-width:1100px;margin:0 auto;padding:0 20px 80px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
-.card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;}
-.card-label{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:8px;}
-.card-icon{font-size:18px;}
-.card-title{font-size:13px;font-weight:700;color:#fff;}
-.card-sub{font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px;}
-.frame-wrap{position:relative;width:100%;background:#000;}
-.frame-wrap.tiktok{padding-bottom:177.8%;}
-.frame-wrap.youtube{padding-bottom:56.25%;}
-.frame-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
-.card-cta{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
-.cta-link{font-size:12px;font-weight:700;color:#c8a44a;text-decoration:none;}
-.cta-badge{font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:0.1em;text-transform:uppercase;}
+.grid{max-width:1000px;margin:0 auto;padding:0 20px 80px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+
+/* Video card */
+.vcard{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;overflow:hidden;cursor:pointer;transition:border-color 0.2s;}
+.vcard:hover{border-color:rgba(200,164,74,0.4);}
+.vscreen{position:relative;width:100%;background:#050810;display:flex;align-items:center;justify-content:center;}
+.vscreen.tall{padding-bottom:177.8%;}
+.vscreen.wide{padding-bottom:56.25%;}
+.vscreen-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;}
+
+/* TikTok animation */
+.tiktok-demo{width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:16px;}
+.tk-top{display:flex;flex-direction:column;gap:8px;}
+.tk-line{height:10px;border-radius:5px;background:rgba(255,255,255,0.1);animation:shimmer 2s ease-in-out infinite;}
+.tk-line.gold{background:rgba(200,164,74,0.4);width:70%;}
+.tk-line.red{background:rgba(192,57,43,0.4);width:85%;}
+@keyframes shimmer{0%,100%{opacity:0.5;}50%{opacity:1;}}
+.tk-score{font-family:'Fraunces',serif;font-size:48px;font-weight:900;color:#ff6b6b;text-align:center;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+.tk-badge{background:#ff4444;color:#fff;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;text-align:center;}
+
+/* YouTube animation */
+.yt-demo{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:16px;}
+.yt-row{display:flex;align-items:center;gap:10px;}
+.yt-icon{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.yt-before{background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);}
+.yt-after{background:rgba(39,174,96,0.2);border:1px solid rgba(39,174,96,0.4);}
+.yt-text{font-size:12px;line-height:1.5;}
+.yt-arrow{text-align:center;font-size:20px;color:#c8a44a;animation:bounce 1.5s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+
+/* Cinematic animation */
+.cin-demo{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;padding:20px;}
+.cin-number{font-family:'Fraunces',serif;font-size:56px;font-weight:900;line-height:1;}
+.cin-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;opacity:0.5;}
+.cin-bar{width:100%;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;}
+.cin-bar-fill{height:100%;background:linear-gradient(90deg,#c8a44a,#f0d060);animation:fill 3s ease-in-out infinite;}
+@keyframes fill{0%{width:0%;}100%{width:100%;}}
+
+/* Play overlay */
+.play-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);opacity:0;transition:opacity 0.2s;}
+.vcard:hover .play-overlay{opacity:1;}
+.play-btn{width:56px;height:56px;background:rgba(200,164,74,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;}
+
+.vcard-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06);}
+.vcard-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;}
+.vcard-sub{font-size:10px;color:rgba(255,255,255,0.35);}
+.vcard-link{display:inline-block;margin-top:10px;font-size:12px;font-weight:700;color:#c8a44a;text-decoration:none;}
+
+/* CTA section */
+.cta-section{text-align:center;padding:0 20px 80px;max-width:600px;margin:0 auto;}
+.cta-title{font-family:'Fraunces',serif;font-size:28px;font-weight:900;margin-bottom:12px;}
+.cta-sub{font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:24px;}
+.cta-btn{display:inline-block;padding:14px 28px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:8px;font-weight:800;font-size:14px;text-decoration:none;}
+
 @media(max-width:768px){
-  .grid{grid-template-columns:1fr;}
   header{padding:0 16px;}
   .hero{padding:40px 16px 32px;}
-}
-
-.mobile-overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;letter-spacing:0.05em;}
-@media(max-width:768px){
-  .mobile-overlay{display:flex;}
-  .frame-wrap iframe{pointer-events:none;}
+  .grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -50,71 +86,106 @@ h1 em{color:#c8a44a;font-style:italic;}
 
 <div class="hero">
   <h1>See <em>Zai</em> in Action</h1>
-  <p class="sub">Three formats. One mission — the mortgage math banks don't want you to see.</p>
+  <p class="sub">23 years of banking. Condensed into a chat. Here's what that looks like.</p>
 </div>
 
 <div class="grid">
 
-  <div class="card">
-    <div class="card-label">
-      <span class="card-icon">📱</span>
-      <div>
-        <div class="card-title">TikTok / Reels / Shorts</div>
-        <div class="card-sub">9:16 · ~25 seconds · For social media</div>
+  <!-- TikTok card -->
+  <a href="denial-letter-decoder.html" class="vcard" style="text-decoration:none;">
+    <div class="vscreen tall">
+      <div class="vscreen-inner" style="background:linear-gradient(160deg,#1a0305,#08090c);">
+        <div class="tiktok-demo">
+          <div class="tk-top">
+            <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,107,107,0.7);font-weight:700;">🔍 Your Denial Letter</div>
+            <div class="tk-line red"></div>
+            <div class="tk-line" style="width:60%;"></div>
+            <div class="tk-line" style="width:90%;"></div>
+          </div>
+          <div style="text-align:center;">
+            <div class="tk-score">❌</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:8px;">Bank denied you</div>
+          </div>
+          <div class="yt-arrow">↓</div>
+          <div style="text-align:center;">
+            <div style="font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#6bffb8;">✓ Decoded</div>
+            <div class="tk-badge" style="background:rgba(39,174,96,0.2);color:#6bffb8;margin-top:8px;">Zai explains the real reason</div>
+          </div>
+        </div>
       </div>
+      <div class="play-overlay"><div class="play-btn">▶</div></div>
     </div>
-    <a href="https://96f0a71e-19eb-43e2-99e5-c606e4968df0-00-2n2351llpncvf.janeway.replit.dev/__mockup/preview/TikTokVideo" target="_blank" style="display:block;text-decoration:none;">
-      <div class="frame-wrap tiktok" style="background:linear-gradient(135deg,#1a0a2e,#0a0e1a);">
-        <iframe src="https://96f0a71e-19eb-43e2-99e5-c606e4968df0-00-2n2351llpncvf.janeway.replit.dev/__mockup/preview/TikTokVideo" allowfullscreen loading="lazy"></iframe>
-        <div class="mobile-overlay">📱 Tap to Watch</div>
-      </div>
-    </a>
-    <div class="card-cta">
-      <a href="frc-banker-ai.html" class="cta-link">Try Zai Free →</a>
-      <span class="cta-badge">25 sec</span>
+    <div class="vcard-footer">
+      <div class="vcard-title">📱 TikTok / Reels / Shorts</div>
+      <div class="vcard-sub">Denial Letter Decoder · 25 seconds</div>
+      <span class="vcard-link">Try it free →</span>
     </div>
-  </div>
+  </a>
 
-  <div class="card">
-    <div class="card-label">
-      <span class="card-icon">🎬</span>
-      <div>
-        <div class="card-title">Cinematic Teaser</div>
-        <div class="card-sub">16:9 · ~33 seconds · LinkedIn / Pre-roll</div>
+  <!-- Cinematic card -->
+  <a href="frc-banker-ai.html" class="vcard" style="text-decoration:none;">
+    <div class="vscreen wide">
+      <div class="vscreen-inner" style="background:linear-gradient(160deg,#0a1520,#08090c);">
+        <div class="cin-demo">
+          <div class="cin-label">620 credit score costs you</div>
+          <div class="cin-number" style="color:#ff6b6b;">$47,000</div>
+          <div class="cin-bar"><div class="cin-bar-fill"></div></div>
+          <div class="cin-label">over 30 years</div>
+          <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:#c8a44a;margin-top:8px;">Ask Zai what to do about it.</div>
+        </div>
       </div>
+      <div class="play-overlay"><div class="play-btn">▶</div></div>
     </div>
-    <a href="https://96f0a71e-19eb-43e2-99e5-c606e4968df0-00-2n2351llpncvf.janeway.replit.dev/__mockup/preview/VideoTemplate" target="_blank" style="display:block;text-decoration:none;">
-      <div class="frame-wrap youtube" style="background:linear-gradient(135deg,#0a1520,#050810);">
-        <iframe src="https://96f0a71e-19eb-43e2-99e5-c606e4968df0-00-2n2351llpncvf.janeway.replit.dev/__mockup/preview/VideoTemplate" allowfullscreen loading="lazy"></iframe>
-        <div class="mobile-overlay">🎬 Tap to Watch</div>
-      </div>
-    </a>
-    <div class="card-cta">
-      <a href="denial-letter-decoder.html" class="cta-link">Decode Your Denial →</a>
-      <span class="cta-badge">33 sec</span>
+    <div class="vcard-footer">
+      <div class="vcard-title">🎬 Cinematic Teaser</div>
+      <div class="vcard-sub">LinkedIn / Pre-roll · 33 seconds</div>
+      <span class="vcard-link">Ask Zai →</span>
     </div>
-  </div>
+  </a>
 
-  <div class="card">
-    <div class="card-label">
-      <span class="card-icon">▶️</span>
-      <div>
-        <div class="card-title">YouTube Walkthrough</div>
-        <div class="card-sub">16:9 · ~41 seconds · Product demo</div>
+  <!-- YouTube card -->
+  <a href="credit-score-simulator.html" class="vcard" style="text-decoration:none;">
+    <div class="vscreen wide">
+      <div class="vscreen-inner" style="background:linear-gradient(160deg,#1a0a05,#08090c);">
+        <div class="yt-demo">
+          <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:4px;">Your Two Realities</div>
+          <div class="yt-row">
+            <div class="yt-icon yt-before">⚠️</div>
+            <div class="yt-text">
+              <div style="color:rgba(255,255,255,0.5);font-size:11px;">Score 620 · Rate 7.5%</div>
+              <div style="color:#ff6b6b;font-weight:700;">$2,847/mo</div>
+            </div>
+          </div>
+          <div class="yt-arrow">↕</div>
+          <div class="yt-row">
+            <div class="yt-icon yt-after">✨</div>
+            <div class="yt-text">
+              <div style="color:rgba(255,255,255,0.5);font-size:11px;">Score 740 · Rate 6.1%</div>
+              <div style="color:#6bffb8;font-weight:700;">$2,432/mo</div>
+            </div>
+          </div>
+          <div style="background:rgba(107,255,184,0.1);border:1px solid rgba(107,255,184,0.2);border-radius:6px;padding:8px;text-align:center;margin-top:4px;">
+            <div style="font-size:11px;color:#6bffb8;font-weight:700;">Save $47,520 over 30 years</div>
+          </div>
+        </div>
       </div>
+      <div class="play-overlay"><div class="play-btn">▶</div></div>
     </div>
-    <a href="https://96f0a71e-19eb-43e2-99e5-c606e4968df0-00-2n2351llpncvf.janeway.replit.dev/__mockup/preview/YouTubeVideo" target="_blank" style="display:block;text-decoration:none;">
-      <div class="frame-wrap youtube" style="background:linear-gradient(135deg,#1a0a05,#0a0810);">
-        <iframe src="https://96f0a71e-19eb-43e2-99e5-c606e4968df0-00-2n2351llpncvf.janeway.replit.dev/__mockup/preview/YouTubeVideo" allowfullscreen loading="lazy"></iframe>
-        <div class="mobile-overlay">▶️ Tap to Watch</div>
-      </div>
-    </a>
-    <div class="card-cta">
-      <a href="index.html" class="cta-link">Explore All Tools →</a>
-      <span class="cta-badge">41 sec</span>
+    <div class="vcard-footer">
+      <div class="vcard-title">▶️ YouTube Walkthrough</div>
+      <div class="vcard-sub">Credit Score Simulator · 41 seconds</div>
+      <span class="vcard-link">Simulate my score →</span>
     </div>
-  </div>
+  </a>
 
 </div>
+
+<div class="cta-section">
+  <div class="cta-title">Ready to talk to Zai?</div>
+  <div class="cta-sub">23 years of banking. Free. No sign-up. No SSN.</div>
+  <a href="frc-banker-ai.html" class="cta-btn">🏦 Ask Zai Now →</a>
+</div>
+
+<script src="/banker-widget.js?v=6"></script>
 </body>
 </html>
