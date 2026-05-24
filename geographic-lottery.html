@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Geographic Lottery — What If Your Parents Bought in a Different ZIP Code?</title>
+<meta name="description" content="What if your parents had bought a home in a different city? Calculate the wealth gap created by where you were born. The zip code lottery that changed your financial future.">
+<meta name="keywords" content="geographic lottery wealth gap, zip code wealth inequality, home price appreciation by city, where you were born wealth">
+<link rel="canonical" href="https://financeratecalc.com/geographic-lottery.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;min-height:100vh;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{color:#c8a44a;font-style:italic;}
+.hero{padding:56px 20px 40px;text-align:center;max-width:700px;margin:0 auto;}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.3);border-radius:20px;padding:5px 14px;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#c8a44a;margin-bottom:20px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,6vw,58px);font-weight:900;line-height:0.92;letter-spacing:-3px;margin-bottom:16px;}
+h1 em{font-style:italic;color:#c8a44a;}
+.sub{font-size:16px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:48px;}
+
+/* Calculator */
+.calc{max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.step-label{font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:10px;}
+.city-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+.city-card{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;}
+.city-card:focus-within{border-color:rgba(200,164,74,0.5);}
+.city-title{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;}
+.city-card.born .city-title{color:rgba(255,107,107,0.8);}
+.city-card.now .city-title{color:rgba(107,255,184,0.8);}
+.city-select{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:11px 14px;font-size:14px;font-weight:600;color:#fff;outline:none;cursor:pointer;appearance:none;font-family:'DM Sans',sans-serif;}
+.city-select:focus{border-color:#c8a44a;}
+.year-row{margin-bottom:24px;}
+.year-select{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;font-size:15px;font-weight:700;color:#fff;outline:none;cursor:pointer;appearance:none;font-family:'Fraunces',serif;}
+.year-select:focus{border-color:#c8a44a;}
+.calc-btn{width:100%;padding:18px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border:none;border-radius:12px;font-size:16px;font-weight:900;cursor:pointer;font-family:'Fraunces',serif;letter-spacing:-0.5px;}
+.calc-btn:hover{opacity:0.9;}
+
+/* Results */
+#results{display:none;margin-top:40px;}
+.lottery-banner{border-radius:16px;padding:40px 32px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden;}
+.lottery-banner.positive{background:linear-gradient(160deg,#031a08,#052d10);border:2px solid rgba(39,174,96,0.4);}
+.lottery-banner.negative{background:linear-gradient(160deg,#1a0305,#2a0808);border:2px solid rgba(192,57,43,0.4);}
+.lottery-banner.neutral{background:linear-gradient(160deg,#0a0d18,#0f1628);border:2px solid rgba(200,164,74,0.3);}
+.lottery-label{font-size:10px;letter-spacing:0.3em;text-transform:uppercase;font-weight:700;margin-bottom:12px;}
+.positive .lottery-label{color:rgba(107,255,184,0.7);}
+.negative .lottery-label{color:rgba(255,107,107,0.7);}
+.neutral .lottery-label{color:rgba(200,164,74,0.7);}
+.lottery-score{font-family:'Fraunces',serif;font-size:clamp(48px,10vw,80px);font-weight:900;line-height:1;margin-bottom:8px;}
+.positive .lottery-score{color:#6bffb8;}
+.negative .lottery-score{color:#ff6b6b;}
+.neutral .lottery-score{color:#c8a44a;}
+.lottery-sub{font-size:14px;opacity:0.5;margin-bottom:20px;}
+.lottery-verdict{font-size:16px;font-weight:600;line-height:1.6;opacity:0.8;max-width:480px;margin:0 auto;}
+
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.compare-card{border-radius:12px;padding:24px;}
+.compare-born{background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.2);}
+.compare-now{background:rgba(39,174,96,0.08);border:1px solid rgba(39,174,96,0.2);}
+.compare-city{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.compare-born .compare-city{color:rgba(255,107,107,0.7);}
+.compare-now .compare-city{color:rgba(107,255,184,0.7);}
+.compare-price-then{font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:4px;}
+.compare-price-now{font-family:'Fraunces',serif;font-size:28px;font-weight:900;}
+.compare-born .compare-price-now{color:#ff9b9b;}
+.compare-now .compare-price-now{color:#6bffb8;}
+.compare-gain{font-size:12px;margin-top:6px;font-weight:600;}
+.compare-born .compare-gain{color:rgba(255,107,107,0.6);}
+.compare-now .compare-gain{color:rgba(107,255,184,0.6);}
+
+.insight-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:24px;margin-bottom:16px;}
+.insight-tag{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:10px;}
+.insight-text{font-size:14px;color:rgba(255,255,255,0.65);line-height:1.8;}
+.insight-text strong{color:#fff;}
+
+.share-section{background:rgba(200,164,74,0.06);border:1px solid rgba(200,164,74,0.2);border-radius:12px;padding:24px;text-align:center;margin-bottom:20px;}
+.share-title{font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin-bottom:6px;}
+.share-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px;}
+.share-text-box{background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;margin-bottom:14px;text-align:left;font-style:italic;}
+.share-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.share-btn{padding:9px 18px;border-radius:7px;font-weight:700;font-size:12px;cursor:pointer;border:none;text-decoration:none;display:inline-block;}
+.s-copy{background:rgba(255,255,255,0.1);color:#fff;}
+.s-tw{background:rgba(29,161,242,0.15);color:#1da1f2;border:1px solid rgba(29,161,242,0.3);}
+.s-wa{background:rgba(37,211,102,0.15);color:#25d366;border:1px solid rgba(37,211,102,0.3);}
+.s-li{background:rgba(10,102,194,0.15);color:#0a66c2;border:1px solid rgba(10,102,194,0.3);}
+
+.zai-cta{background:linear-gradient(135deg,rgba(10,31,92,0.3),rgba(8,9,12,0));border:1px solid rgba(200,164,74,0.3);border-radius:12px;padding:24px;text-align:center;}
+.zai-cta h3{font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:8px;}
+.zai-cta p{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px;line-height:1.6;}
+.btn-gold{display:inline-block;padding:11px 22px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:7px;font-weight:800;font-size:13px;text-decoration:none;margin:4px;}
+.btn-dark{display:inline-block;padding:11px 22px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:7px;font-weight:700;font-size:13px;text-decoration:none;margin:4px;}
+
+@media(max-width:600px){
+  header{padding:0 16px;}
+  .hero{padding:40px 16px 32px;}
+  .city-grid{grid-template-columns:1fr;}
+  .compare-grid{grid-template-columns:1fr;}
+  .lottery-score{font-size:52px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Back</a>
+</header>
+
+<div class="hero">
+  <div class="badge">🎲 World First · Zai AI</div>
+  <h1>The <em>Geographic</em><br>Lottery</h1>
+  <p class="sub">What if your parents had bought a home in a different city?<br>Calculate the wealth gap created by where you were born.</p>
+</div>
+
+<div class="calc">
+  <div class="step-label">Step 1 — Where did you grow up vs. where do you live now?</div>
+  <div class="city-grid">
+    <div class="city-card born">
+      <div class="city-title">🏚️ Where You Were Born / Grew Up</div>
+      <select class="city-select" id="cityBorn">
+        <option value="">Select a city...</option>
+        <option value="detroit">Detroit, MI</option>
+        <option value="cleveland">Cleveland, OH</option>
+        <option value="memphis">Memphis, TN</option>
+        <option value="baltimore">Baltimore, MD</option>
+        <option value="chicago">Chicago, IL</option>
+        <option value="houston">Houston, TX</option>
+        <option value="phoenix">Phoenix, AZ</option>
+        <option value="dallas">Dallas, TX</option>
+        <option value="atlanta">Atlanta, GA</option>
+        <option value="denver">Denver, CO</option>
+        <option value="austin">Austin, TX</option>
+        <option value="miami">Miami, FL</option>
+        <option value="seattle">Seattle, WA</option>
+        <option value="boston">Boston, MA</option>
+        <option value="nyc">New York, NY</option>
+        <option value="sf">San Francisco, CA</option>
+        <option value="la">Los Angeles, CA</option>
+        <option value="sandiego">San Diego, CA</option>
+        <option value="portland">Portland, OR</option>
+        <option value="nashville">Nashville, TN</option>
+        <option value="charlotte">Charlotte, NC</option>
+        <option value="raleigh">Raleigh, NC</option>
+        <option value="minneapolis">Minneapolis, MN</option>
+        <option value="stlouis">St. Louis, MO</option>
+        <option value="pittsburgh">Pittsburgh, PA</option>
+        <option value="indianapolis">Indianapolis, IN</option>
+        <option value="columbus">Columbus, OH</option>
+        <option value="vegas">Las Vegas, NV</option>
+        <option value="saltlake">Salt Lake City, UT</option>
+        <option value="boise">Boise, ID</option>
+      </select>
+    </div>
+    <div class="city-card now">
+      <div class="city-title">🏡 Where You Live Now</div>
+      <select class="city-select" id="cityNow">
+        <option value="">Select a city...</option>
+        <option value="sf">San Francisco, CA</option>
+        <option value="nyc">New York, NY</option>
+        <option value="la">Los Angeles, CA</option>
+        <option value="seattle">Seattle, WA</option>
+        <option value="boston">Boston, MA</option>
+        <option value="sandiego">San Diego, CA</option>
+        <option value="miami">Miami, FL</option>
+        <option value="austin">Austin, TX</option>
+        <option value="denver">Denver, CO</option>
+        <option value="nashville">Nashville, TN</option>
+        <option value="raleigh">Raleigh, NC</option>
+        <option value="charlotte">Charlotte, NC</option>
+        <option value="atlanta">Atlanta, GA</option>
+        <option value="dallas">Dallas, TX</option>
+        <option value="phoenix">Phoenix, AZ</option>
+        <option value="chicago">Chicago, IL</option>
+        <option value="houston">Houston, TX</option>
+        <option value="portland">Portland, OR</option>
+        <option value="minneapolis">Minneapolis, MN</option>
+        <option value="saltlake">Salt Lake City, UT</option>
+        <option value="boise">Boise, ID</option>
+        <option value="vegas">Las Vegas, NV</option>
+        <option value="columbus">Columbus, OH</option>
+        <option value="indianapolis">Indianapolis, IN</option>
+        <option value="pittsburgh">Pittsburgh, PA</option>
+        <option value="stlouis">St. Louis, MO</option>
+        <option value="detroit">Detroit, MI</option>
+        <option value="cleveland">Cleveland, OH</option>
+        <option value="memphis">Memphis, TN</option>
+        <option value="baltimore">Baltimore, MD</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="year-row">
+    <div class="step-label">Step 2 — When did your parents buy? (approximate)</div>
+    <select class="year-select" id="buyYear">
+      <option value="1985">Around 1985</option>
+      <option value="1990" selected>Around 1990</option>
+      <option value="1995">Around 1995</option>
+      <option value="2000">Around 2000</option>
+      <option value="2005">Around 2005</option>
+      <option value="2010">Around 2010</option>
+      <option value="2015">Around 2015</option>
+    </select>
+  </div>
+
+  <button class="calc-btn" onclick="calculate()">🎲 Calculate My Geographic Lottery Result →</button>
+
+  <div id="results"></div>
+</div>
+
+<script>
+// Home price data: median prices by city and year (approximate)
+const data = {
+  sf:          {1985:130000, 1990:260000, 1995:245000, 2000:430000, 2005:650000, 2010:550000, 2015:890000, 2026:1250000, name:"San Francisco, CA"},
+  nyc:         {1985:120000, 1990:190000, 1995:175000, 2000:280000, 2005:480000, 2010:450000, 2015:550000, 2026:800000,  name:"New York, NY"},
+  la:          {1985:120000, 1990:220000, 1995:185000, 2000:220000, 2005:480000, 2010:350000, 2015:490000, 2026:890000,  name:"Los Angeles, CA"},
+  seattle:     {1985:75000,  1990:115000, 1995:135000, 2000:220000, 2005:310000, 2010:285000, 2015:380000, 2026:780000,  name:"Seattle, WA"},
+  boston:      {1985:100000, 1990:175000, 1995:160000, 2000:290000, 2005:380000, 2010:340000, 2015:430000, 2026:750000,  name:"Boston, MA"},
+  sandiego:    {1985:110000, 1990:185000, 1995:165000, 2000:245000, 2005:490000, 2010:360000, 2015:480000, 2026:850000,  name:"San Diego, CA"},
+  miami:       {1985:80000,  1990:110000, 1995:105000, 2000:160000, 2005:370000, 2010:195000, 2015:280000, 2026:620000,  name:"Miami, FL"},
+  austin:      {1985:65000,  1990:75000,  1995:85000,  2000:145000, 2005:185000, 2010:190000, 2015:265000, 2026:580000,  name:"Austin, TX"},
+  denver:      {1985:70000,  1990:80000,  1995:90000,  2000:170000, 2005:225000, 2010:215000, 2015:310000, 2026:560000,  name:"Denver, CO"},
+  nashville:   {1985:65000,  1990:80000,  1995:90000,  2000:145000, 2005:175000, 2010:175000, 2015:225000, 2026:480000,  name:"Nashville, TN"},
+  raleigh:     {1985:60000,  1990:80000,  1995:95000,  2000:155000, 2005:195000, 2010:185000, 2015:225000, 2026:430000,  name:"Raleigh, NC"},
+  charlotte:   {1985:60000,  1990:80000,  1995:95000,  2000:155000, 2005:190000, 2010:175000, 2015:215000, 2026:390000,  name:"Charlotte, NC"},
+  atlanta:     {1985:70000,  1990:95000,  1995:110000, 2000:160000, 2005:195000, 2010:155000, 2015:195000, 2026:420000,  name:"Atlanta, GA"},
+  dallas:      {1985:85000,  1990:80000,  1995:90000,  2000:140000, 2005:165000, 2010:155000, 2015:220000, 2026:520000,  name:"Dallas, TX"},
+  phoenix:     {1985:75000,  1990:85000,  1995:85000,  2000:135000, 2005:265000, 2010:140000, 2015:195000, 2026:450000,  name:"Phoenix, AZ"},
+  chicago:     {1985:85000,  1990:120000, 1995:130000, 2000:195000, 2005:265000, 2010:210000, 2015:225000, 2026:320000,  name:"Chicago, IL"},
+  houston:     {1985:80000,  1990:70000,  1995:85000,  2000:130000, 2005:150000, 2010:155000, 2015:195000, 2026:320000,  name:"Houston, TX"},
+  portland:    {1985:65000,  1990:90000,  1995:110000, 2000:175000, 2005:235000, 2010:230000, 2015:310000, 2026:540000,  name:"Portland, OR"},
+  minneapolis: {1985:70000,  1990:90000,  1995:105000, 2000:165000, 2005:215000, 2010:185000, 2015:225000, 2026:355000,  name:"Minneapolis, MN"},
+  saltlake:    {1985:70000,  1990:80000,  1995:90000,  2000:150000, 2005:200000, 2010:185000, 2015:245000, 2026:510000,  name:"Salt Lake City, UT"},
+  boise:       {1985:55000,  1990:65000,  1995:75000,  2000:115000, 2005:165000, 2010:145000, 2015:185000, 2026:420000,  name:"Boise, ID"},
+  vegas:       {1985:75000,  1990:95000,  1995:100000, 2000:145000, 2005:295000, 2010:135000, 2015:195000, 2026:420000,  name:"Las Vegas, NV"},
+  columbus:    {1985:65000,  1990:80000,  1995:95000,  2000:145000, 2005:170000, 2010:155000, 2015:175000, 2026:290000,  name:"Columbus, OH"},
+  indianapolis:{1985:60000,  1990:75000,  1995:85000,  2000:130000, 2005:150000, 2010:140000, 2015:160000, 2026:285000,  name:"Indianapolis, IN"},
+  pittsburgh:  {1985:65000,  1990:65000,  1995:75000,  2000:95000,  2005:115000, 2010:120000, 2015:140000, 2026:220000,  name:"Pittsburgh, PA"},
+  stlouis:     {1985:65000,  1990:75000,  1995:85000,  2000:120000, 2005:145000, 2010:130000, 2015:155000, 2026:240000,  name:"St. Louis, MO"},
+  detroit:     {1985:65000,  1990:80000,  1995:80000,  2000:120000, 2005:130000, 2010:55000,  2015:80000,  2026:165000,  name:"Detroit, MI"},
+  cleveland:   {1985:60000,  1990:70000,  1995:75000,  2000:105000, 2005:115000, 2010:85000,  2015:100000, 2026:190000,  name:"Cleveland, OH"},
+  memphis:     {1985:60000,  1990:70000,  1995:75000,  2000:110000, 2005:130000, 2010:105000, 2015:120000, 2026:215000,  name:"Memphis, TN"},
+  baltimore:   {1985:70000,  1990:95000,  1995:100000, 2000:140000, 2005:225000, 2010:195000, 2015:215000, 2026:310000,  name:"Baltimore, MD"},
+};
+
+function fmt(n){ return '$' + Math.round(n).toLocaleString(); }
+function fmtDiff(n){
+  if(n > 0) return '+' + fmt(n);
+  return '-' + fmt(Math.abs(n));
+}
+
+function calculate(){
+  var born = document.getElementById('cityBorn').value;
+  var now = document.getElementById('cityNow').value;
+  var year = parseInt(document.getElementById('buyYear').value);
+
+  if(!born || !now){ alert('Please select both cities.'); return; }
+
+  var bornData = data[born];
+  var nowData = data[now];
+
+  var priceThenBorn = bornData[year] || bornData[1990];
+  var priceThenNow = nowData[year] || nowData[1990];
+  var priceNowBorn = bornData[2026];
+  var priceNowNow = nowData[2026];
+
+  var gainBorn = priceNowBorn - priceThenBorn;
+  var gainNow = priceNowNow - priceThenNow;
+  var lotteryGap = gainNow - gainBorn;
+
+  var bornMultiple = (priceNowBorn / priceThenBorn).toFixed(1);
+  var nowMultiple = (priceNowNow / priceThenNow).toFixed(1);
+
+  var isPositive = lotteryGap > 50000;
+  var isNegative = lotteryGap < -50000;
+  var bannerClass = isPositive ? 'positive' : isNegative ? 'negative' : 'neutral';
+
+  var scoreLabel = isPositive ? '🎰 You Won the Geographic Lottery' :
+                  isNegative ? '🎲 You Lost the Geographic Lottery' :
+                  '⚖️ Geographic Lottery: Even';
+
+  var verdict = isPositive ?
+    'If your parents had bought in ' + nowData.name + ' instead of ' + bornData.name + ', the family home would be worth <strong>' + fmt(lotteryGap) + ' more today</strong>. That wealth gap was determined entirely by geography — not effort, not intelligence, not work ethic.' :
+    isNegative ?
+    'If your parents had stayed in ' + bornData.name + ' instead of ' + nowData.name + ', the family home would have appreciated <strong>' + fmt(Math.abs(lotteryGap)) + ' less</strong>. The zip code you grew up in outperformed where you live now.' :
+    'The cities roughly matched each other in appreciation. Your geographic lottery result is close to even.';
+
+  var shareText = 'My Geographic Lottery result: ' + fmtDiff(lotteryGap) + '. If my parents had bought in ' + nowData.name + ' instead of ' + bornData.name + ' in ' + year + ', our family would have ' + (lotteryGap > 0 ? 'built' : 'missed') + ' an extra ' + fmt(Math.abs(lotteryGap)) + ' in wealth. Calculate yours: financeratecalc.com/geographic-lottery.html';
+
+  var html = '';
+
+  // Main lottery result
+  html += '<div class="lottery-banner ' + bannerClass + '">';
+  html += '<div class="lottery-label">' + scoreLabel + '</div>';
+  html += '<div class="lottery-score">' + fmtDiff(lotteryGap) + '</div>';
+  html += '<div class="lottery-sub">Wealth gap created by geography</div>';
+  html += '<div class="lottery-verdict">' + verdict + '</div>';
+  html += '</div>';
+
+  // City comparison
+  html += '<div class="compare-grid">';
+  html += '<div class="compare-card compare-born">';
+  html += '<div class="compare-city">📍 ' + bornData.name + '</div>';
+  html += '<div class="compare-price-then">Median price in ' + year + ': ' + fmt(priceThenBorn) + '</div>';
+  html += '<div class="compare-price-now">' + fmt(priceNowBorn) + '</div>';
+  html += '<div class="compare-gain">' + bornMultiple + 'x appreciation · +' + fmt(gainBorn) + ' gain</div>';
+  html += '</div>';
+  html += '<div class="compare-card compare-now">';
+  html += '<div class="compare-city">🏡 ' + nowData.name + '</div>';
+  html += '<div class="compare-price-then">Median price in ' + year + ': ' + fmt(priceThenNow) + '</div>';
+  html += '<div class="compare-price-now">' + fmt(priceNowNow) + '</div>';
+  html += '<div class="compare-gain">' + nowMultiple + 'x appreciation · +' + fmt(gainNow) + ' gain</div>';
+  html += '</div>';
+  html += '</div>';
+
+  // Insight
+  html += '<div class="insight-box">';
+  html += '<div class="insight-tag">💡 Zai\'s Insight</div>';
+  html += '<div class="insight-text">A home bought in <strong>' + bornData.name + '</strong> in <strong>' + year + '</strong> for <strong>' + fmt(priceThenBorn) + '</strong> is worth approximately <strong>' + fmt(priceNowBorn) + '</strong> today — a <strong>' + bornMultiple + 'x return</strong> over ' + (2026-year) + ' years. ';
+  html += 'The same purchase in <strong>' + nowData.name + '</strong> would have cost <strong>' + fmt(priceThenNow) + '</strong> and be worth <strong>' + fmt(priceNowNow) + '</strong> today — a <strong>' + nowMultiple + 'x return</strong>. ';
+  html += 'Real estate wealth in America is as much about geography as it is about financial discipline.</div>';
+  html += '</div>';
+
+  // Share section
+  html += '<div class="share-section">';
+  html += '<div class="share-title">📱 Share Your Result</div>';
+  html += '<div class="share-sub">This is the number nobody talks about.</div>';
+  html += '<div class="share-text-box">"' + shareText.substring(0, 180) + '..."</div>';
+  html += '<div class="share-btns">';
+  html += '<button class="share-btn s-copy" onclick="navigator.clipboard.writeText(`' + shareText.replace(/`/g,'\\`') + '`);this.textContent=\'✓ Copied!\';setTimeout(()=>this.textContent=\'📋 Copy\',2000)">📋 Copy</button>';
+  html += '<a class="share-btn s-tw" href="https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareText) + '" target="_blank">𝕏 Tweet</a>';
+  html += '<a class="share-btn s-wa" href="https://wa.me/?text=' + encodeURIComponent(shareText) + '" target="_blank">💬 WhatsApp</a>';
+  html += '<a class="share-btn s-li" href="https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent('https://financeratecalc.com/geographic-lottery.html') + '" target="_blank">in LinkedIn</a>';
+  html += '</div></div>';
+
+  // Zai CTA
+  html += '<div class="zai-cta">';
+  html += '<h3>What can you do about it?</h3>';
+  html += '<p>You can\'t change where you were born. But you can optimize the financial decisions from here. Ask Zai — free, no SSN.</p>';
+  html += '<a href="/frc-banker-ai.html" class="btn-gold">🏦 Ask Zai →</a>';
+  html += '<a href="/credit-score-simulator.html" class="btn-dark">📊 Simulate My Score</a>';
+  html += '</div>';
+
+  document.getElementById('results').innerHTML = html;
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+}
+</script>
+<script src="/banker-widget.js?v=6"></script>
+</body>
+</html>
