@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRC Affordability Alert — Stop Guessing When to Buy | FinanceRateCalc</title>
+<meta name="description" content="World's first personal mortgage affordability alert. Set your target home, income, and budget — we'll tell you when rates or prices hit your sweet spot. Free.">
+<meta name="keywords" content="mortgage affordability alert, when to buy a house alert, mortgage rate alert, home buying timing tool">
+<link rel="canonical" href="https://financeratecalc.com/affordability-alert.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;min-height:100vh;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{color:#c8a44a;font-style:italic;}
+
+/* Hero */
+.hero{padding:64px 20px 48px;text-align:center;max-width:680px;margin:0 auto;}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(107,255,184,0.08);border:1px solid rgba(107,255,184,0.25);border-radius:20px;padding:5px 16px;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#6bffb8;margin-bottom:20px;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#6bffb8;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(2.2);opacity:0;}}
+h1{font-family:'Fraunces',serif;font-size:clamp(36px,7vw,62px);font-weight:900;line-height:0.92;letter-spacing:-3px;margin-bottom:16px;}
+h1 em{font-style:italic;color:#c8a44a;}
+.tagline{font-size:22px;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:12px;font-style:italic;}
+.sub{font-size:15px;color:rgba(255,255,255,0.4);line-height:1.7;margin-bottom:48px;}
+
+/* Comparison */
+.compare{max-width:760px;margin:0 auto 56px;padding:0 20px;}
+.compare-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:32px;}
+.compare-item{border-radius:10px;padding:16px;text-align:center;}
+.compare-item.bad{background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.2);}
+.compare-item.good{background:rgba(107,255,184,0.08);border:1px solid rgba(107,255,184,0.25);}
+.ci-name{font-size:12px;font-weight:700;margin-bottom:6px;}
+.bad .ci-name{color:#ff6b6b;}.good .ci-name{color:#6bffb8;}
+.ci-feature{font-size:11px;color:rgba(255,255,255,0.4);line-height:1.6;}
+.ci-check{font-size:16px;margin-bottom:6px;}
+
+/* Calculator */
+.calc{max-width:600px;margin:0 auto;padding:0 20px 32px;}
+.step{margin-bottom:20px;}
+.step-num{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:8px;}
+.step-label{font-size:14px;font-weight:700;color:#fff;margin-bottom:10px;}
+
+.inp-group{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;}
+.inp-group:focus-within{border-color:rgba(200,164,74,0.5);}
+.inp-prefix{padding:14px 16px;display:flex;align-items:center;gap:8px;}
+.inp-sym{font-size:18px;font-weight:700;color:#c8a44a;}
+.inp-group input{background:none;border:none;outline:none;font-size:20px;font-weight:700;color:#fff;width:100%;font-family:'Fraunces',serif;}
+.inp-group input::-webkit-inner-spin-button{display:none;}
+.inp-group select{background:none;border:none;outline:none;font-size:16px;font-weight:600;color:#fff;width:100%;cursor:pointer;padding:14px 16px;font-family:'DM Sans',sans-serif;appearance:none;}
+.inp-group select option{background:#0a0e1a;}
+
+/* Live preview */
+#preview{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:24px;margin:24px 0;display:none;}
+.preview-title{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:700;margin-bottom:16px;}
+.preview-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.preview-row:last-child{border-bottom:none;}
+.preview-key{font-size:13px;color:rgba(255,255,255,0.5);}
+.preview-val{font-size:15px;font-weight:700;}
+.preview-val.red{color:#ff6b6b;}
+.preview-val.gold{color:#c8a44a;}
+.preview-val.green{color:#6bffb8;}
+.gap-bar{height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;margin:16px 0 8px;}
+.gap-fill{height:100%;border-radius:4px;transition:width 0.5s ease;}
+.gap-label{font-size:11px;color:rgba(255,255,255,0.3);display:flex;justify-content:space-between;}
+
+/* Alert form */
+.alert-form{background:linear-gradient(135deg,rgba(10,31,92,0.25),rgba(8,9,12,0));border:1.5px solid rgba(200,164,74,0.3);border-radius:14px;padding:28px;position:relative;overflow:hidden;}
+.alert-form::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#c8a44a,transparent);}
+.alert-title{font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:6px;}
+.alert-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px;line-height:1.6;}
+.email-row{display:flex;gap:10px;margin-bottom:12px;}
+.email-inp{flex:1;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.12);border-radius:8px;padding:13px 16px;font-size:15px;color:#fff;outline:none;font-family:'DM Sans',sans-serif;}
+.email-inp:focus{border-color:#c8a44a;}
+.email-inp::placeholder{color:rgba(255,255,255,0.3);}
+.alert-btn{padding:13px 24px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border:none;border-radius:8px;font-weight:900;font-size:14px;cursor:pointer;font-family:'Fraunces',serif;white-space:nowrap;}
+.alert-btn:hover{opacity:0.9;}
+.fine-print{font-size:11px;color:rgba(255,255,255,0.25);line-height:1.6;}
+.success-msg{display:none;background:rgba(107,255,184,0.1);border:1px solid rgba(107,255,184,0.3);border-radius:8px;padding:16px;text-align:center;color:#6bffb8;font-weight:700;font-size:14px;}
+
+/* How it works */
+.how{max-width:680px;margin:0 auto 80px;padding:0 20px;}
+.how h2{font-family:'Fraunces',serif;font-size:28px;font-weight:900;margin-bottom:32px;text-align:center;}
+.steps{display:flex;flex-direction:column;gap:16px;}
+.how-step{display:flex;gap:16px;align-items:flex-start;}
+.how-num{width:36px;height:36px;border-radius:50%;background:rgba(200,164,74,0.15);border:1px solid rgba(200,164,74,0.3);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#c8a44a;flex-shrink:0;}
+.how-text h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;}
+.how-text p{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;}
+
+@media(max-width:640px){
+  header{padding:0 16px;}
+  .hero{padding:48px 16px 32px;}
+  .compare-grid{grid-template-columns:1fr;}
+  .email-row{flex-direction:column;}
+  .alert-btn{width:100%;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Back</a>
+</header>
+
+<div class="hero">
+  <div class="badge"><span class="live-dot"></span>World First · Free Forever</div>
+  <h1>Stop <em>Guessing</em><br>When to Buy.</h1>
+  <div class="tagline">We'll tell you.</div>
+  <p class="sub">Set your target home, income, and monthly budget. We monitor rates and prices — and alert you the moment your dream home becomes affordable.</p>
+</div>
+
+<!-- Comparison -->
+<div class="compare">
+  <div class="compare-grid">
+    <div class="compare-item bad">
+      <div class="ci-check">❌</div>
+      <div class="ci-name">Zillow</div>
+      <div class="ci-feature">Price alerts only.<br>No affordability alerts.</div>
+    </div>
+    <div class="compare-item bad">
+      <div class="ci-check">❌</div>
+      <div class="ci-name">Redfin</div>
+      <div class="ci-feature">Price alerts only.<br>No income-based alerts.</div>
+    </div>
+    <div class="compare-item good">
+      <div class="ci-check">✅</div>
+      <div class="ci-name">FRC Alert</div>
+      <div class="ci-feature">Personal affordability.<br>Rate + price + your income.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Calculator -->
+<div class="calc">
+  <div class="step">
+    <div class="step-num">Step 1</div>
+    <div class="step-label">Target city & home price</div>
+    <div class="inp-group" style="margin-bottom:10px;">
+      <div class="inp-prefix" style="padding:0;">
+        <select id="city" onchange="updatePreview()">
+          <option value="">Select your target city...</option>
+          <option value="austin,580000">Austin, TX</option>
+          <option value="dallas,520000">Dallas, TX</option>
+          <option value="houston,380000">Houston, TX</option>
+          <option value="phoenix,450000">Phoenix, AZ</option>
+          <option value="denver,560000">Denver, CO</option>
+          <option value="nashville,480000">Nashville, TN</option>
+          <option value="atlanta,420000">Atlanta, GA</option>
+          <option value="charlotte,390000">Charlotte, NC</option>
+          <option value="raleigh,430000">Raleigh, NC</option>
+          <option value="miami,680000">Miami, FL</option>
+          <option value="orlando,390000">Orlando, FL</option>
+          <option value="seattle,780000">Seattle, WA</option>
+          <option value="portland,560000">Portland, OR</option>
+          <option value="chicago,420000">Chicago, IL</option>
+          <option value="minneapolis,380000">Minneapolis, MN</option>
+          <option value="boston,820000">Boston, MA</option>
+          <option value="nyc,1200000">New York, NY</option>
+          <option value="sf,1250000">San Francisco, CA</option>
+          <option value="la,890000">Los Angeles, CA</option>
+          <option value="sandiego,850000">San Diego, CA</option>
+          <option value="saltlake,510000">Salt Lake City, UT</option>
+          <option value="boise,420000">Boise, ID</option>
+          <option value="vegas,420000">Las Vegas, NV</option>
+          <option value="columbus,290000">Columbus, OH</option>
+          <option value="indianapolis,285000">Indianapolis, IN</option>
+        </select>
+      </div>
+    </div>
+    <div class="inp-group">
+      <div class="inp-prefix">
+        <span class="inp-sym">$</span>
+        <input type="number" id="homePrice" placeholder="380000" oninput="updatePreview()">
+      </div>
+    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;">Or enter a custom price above</div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step 2</div>
+    <div class="step-label">Your annual income</div>
+    <div class="inp-group">
+      <div class="inp-prefix">
+        <span class="inp-sym">$</span>
+        <input type="number" id="income" placeholder="95000" oninput="updatePreview()">
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step 3</div>
+    <div class="step-label">Your max comfortable monthly payment</div>
+    <div class="inp-group">
+      <div class="inp-prefix">
+        <span class="inp-sym">$</span>
+        <input type="number" id="maxPayment" placeholder="2400" oninput="updatePreview()">
+      </div>
+    </div>
+  </div>
+
+  <!-- Live preview -->
+  <div id="preview">
+    <div class="preview-title">📊 Your Affordability Snapshot — Today</div>
+    <div class="preview-row">
+      <span class="preview-key">Current est. monthly payment</span>
+      <span class="preview-val red" id="pvCurrent">—</span>
+    </div>
+    <div class="preview-row">
+      <span class="preview-key">Your budget</span>
+      <span class="preview-val gold" id="pvBudget">—</span>
+    </div>
+    <div class="preview-row">
+      <span class="preview-key">Gap to affordability</span>
+      <span class="preview-val" id="pvGap">—</span>
+    </div>
+    <div class="preview-row">
+      <span class="preview-key">Rate needed to hit your budget</span>
+      <span class="preview-val green" id="pvRate">—</span>
+    </div>
+    <div class="gap-bar">
+      <div class="gap-fill" id="gapFill" style="width:0%;background:#ff6b6b;"></div>
+    </div>
+    <div class="gap-label">
+      <span>Not affordable</span>
+      <span id="gapPct">—</span>
+      <span>✅ Affordable</span>
+    </div>
+  </div>
+
+  <!-- Alert signup -->
+  <div class="alert-form" id="alertForm" style="display:none;">
+    <div class="alert-title">🔔 Set Your Affordability Alert</div>
+    <div class="alert-sub" id="alertSubText">We'll monitor rates and prices monthly — and email you the moment this home hits your budget.</div>
+    <form id="alertFormEl" onsubmit="submitAlert(event)">
+      <div class="email-row">
+        <input class="email-inp" type="email" id="alertEmail" placeholder="your@email.com" required>
+        <button class="alert-btn" type="submit">🔔 Alert Me →</button>
+      </div>
+      <div class="fine-print">No spam. Monthly update or when affordability changes. Unsubscribe anytime.<br>Built by a 23-year banking professional. Free forever.</div>
+    </form>
+    <div class="success-msg" id="successMsg">✅ Alert set! We'll email you when <span id="successCity">this home</span> becomes affordable. Check your inbox for confirmation.</div>
+  </div>
+</div>
+
+<!-- How it works -->
+<div class="how">
+  <h2>How FRC Affordability Alert Works</h2>
+  <div class="steps">
+    <div class="how-step">
+      <div class="how-num">1</div>
+      <div class="how-text">
+        <h3>You set your target</h3>
+        <p>Enter your city, target price, income, and max monthly payment. We calculate exactly where you stand today — and how far you are from affordable.</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">2</div>
+      <div class="how-text">
+        <h3>We monitor monthly</h3>
+        <p>Every month, we recalculate your affordability score based on current mortgage rates and local price trends. When something changes significantly, we run the numbers.</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">3</div>
+      <div class="how-text">
+        <h3>You get the alert</h3>
+        <p>"Austin affordability improved 6% this month. Your target home is now $180/month closer to your budget." You'll know before anyone else in your network.</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">4</div>
+      <div class="how-text">
+        <h3>You buy at the right time</h3>
+        <p>When your target hits your budget, you're already pre-informed — not scrambling. Ask Zai for the next steps the moment you get the green light.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var cityPrices = {
+  "austin":580000,"dallas":520000,"houston":380000,"phoenix":450000,
+  "denver":560000,"nashville":480000,"atlanta":420000,"charlotte":390000,
+  "raleigh":430000,"miami":680000,"orlando":390000,"seattle":780000,
+  "portland":560000,"chicago":420000,"minneapolis":380000,"boston":820000,
+  "nyc":1200000,"sf":1250000,"la":890000,"sandiego":850000,
+  "saltlake":510000,"boise":420000,"vegas":420000,"columbus":290000,
+  "indianapolis":285000
+};
+
+var selectedCity = "";
+var selectedPrice = 0;
+
+function mo(price, down, rate){
+  var loan = price * (1-down);
+  var mr = rate/100/12;
+  return loan * mr * Math.pow(1+mr,360) / (Math.pow(1+mr,360)-1);
+}
+
+function findRate(price, maxPayment){
+  // Binary search for rate that hits maxPayment
+  var down = 0.2;
+  var loan = price * (1-down);
+  for(var r=1; r<=15; r+=0.05){
+    var p = mo(price, down, r);
+    if(p <= maxPayment) return r.toFixed(2);
+  }
+  return null;
+}
+
+document.getElementById('city').addEventListener('change', function(){
+  var val = this.value;
+  if(val){
+    var parts = val.split(',');
+    selectedCity = parts[0];
+    var medianPrice = parseInt(parts[1]);
+    if(!document.getElementById('homePrice').value){
+      document.getElementById('homePrice').value = medianPrice;
+    }
+    selectedPrice = medianPrice;
+  }
+  updatePreview();
+});
+
+function updatePreview(){
+  var price = parseInt(document.getElementById('homePrice').value) || selectedPrice;
+  var income = parseInt(document.getElementById('income').value);
+  var maxPmt = parseInt(document.getElementById('maxPayment').value);
+
+  if(!price || price < 50000) return;
+
+  // Auto-fill max payment from income if not set
+  if(income && !maxPmt){
+    maxPmt = Math.round(income * 0.36 / 12);
+    document.getElementById('maxPayment').value = maxPmt;
+  }
+
+  if(!maxPmt) return;
+
+  var currentRate = 6.9;
+  var currentPmt = Math.round(mo(price, 0.2, currentRate));
+  var tax = Math.round(price * 0.012 / 12);
+  var ins = Math.round(price * 0.005 / 12);
+  var totalPmt = currentPmt + tax + ins;
+  var gap = totalPmt - maxPmt;
+  var pct = Math.min(100, Math.round((maxPmt / totalPmt) * 100));
+  var neededRate = findRate(price, maxPmt - tax - ins);
+
+  document.getElementById('pvCurrent').textContent = '$' + totalPmt.toLocaleString() + '/mo';
+  document.getElementById('pvBudget').textContent = '$' + maxPmt.toLocaleString() + '/mo';
+
+  if(gap <= 0){
+    document.getElementById('pvGap').textContent = '✅ Already affordable!';
+    document.getElementById('pvGap').className = 'preview-val green';
+    document.getElementById('gapFill').style.background = '#6bffb8';
+  } else {
+    document.getElementById('pvGap').textContent = '$' + gap.toLocaleString() + '/mo over budget';
+    document.getElementById('pvGap').className = 'preview-val red';
+    document.getElementById('gapFill').style.background = gap > 500 ? '#ff6b6b' : '#f0a020';
+  }
+
+  document.getElementById('pvRate').textContent = neededRate ? neededRate + '% rate needed' : 'Needs price reduction';
+  document.getElementById('gapFill').style.width = pct + '%';
+  document.getElementById('gapPct').textContent = pct + '% there';
+
+  document.getElementById('preview').style.display = 'block';
+  document.getElementById('alertForm').style.display = 'block';
+
+  // Update alert sub text
+  var cityName = document.getElementById('city').options[document.getElementById('city').selectedIndex].text;
+  if(cityName && cityName !== 'Select your target city...'){
+    document.getElementById('alertSubText').textContent = 
+      'We\'ll monitor rates and prices in ' + cityName + ' monthly — and email you the moment this home hits your $' + maxPmt.toLocaleString() + '/mo budget.';
+  }
+}
+
+async function submitAlert(e){
+  e.preventDefault();
+  var email = document.getElementById('alertEmail').value;
+  var price = document.getElementById('homePrice').value;
+  var income = document.getElementById('income').value;
+  var maxPmt = document.getElementById('maxPayment').value;
+  var cityEl = document.getElementById('city');
+  var cityName = cityEl.options[cityEl.selectedIndex].text;
+
+  try {
+    await fetch('https://formspree.io/f/mkoewrgp', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        type: 'affordability_alert',
+        email: email,
+        city: cityName,
+        target_price: price,
+        income: income,
+        max_payment: maxPmt,
+        source: 'affordability-alert'
+      })
+    });
+  } catch(err) {}
+
+  document.getElementById('alertFormEl').style.display = 'none';
+  document.getElementById('successCity').textContent = cityName || 'your target home';
+  document.getElementById('successMsg').style.display = 'block';
+}
+</script>
+<script src="/banker-widget.js?v=6"></script>
+</body>
+</html>
