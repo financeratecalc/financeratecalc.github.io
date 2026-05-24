@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US Housing Market Data & Homeowner Equity Insights 2026 | FRC</title>
+<meta name="description" content="Free US housing market data: homeowner equity trends, buyer demand scores, days on market, and mortgage affordability by city and ZIP code. Updated monthly.">
+<link rel="canonical" href="https://financeratecalc.com/market-insights.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{color:#c8a44a;font-style:italic;}
+.hero{padding:56px 20px 48px;max-width:900px;margin:0 auto;text-align:center;}
+.eyebrow{font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:14px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,54px);font-weight:900;line-height:0.95;letter-spacing:-2px;margin-bottom:14px;}
+h1 em{font-style:italic;color:#c8a44a;}
+.sub{font-size:15px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:48px;max-width:600px;margin-left:auto;margin-right:auto;}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px 80px;}
+
+/* Key metrics */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:48px;}
+.metric{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px;text-align:center;}
+.metric-num{font-family:'Fraunces',serif;font-size:36px;font-weight:900;color:#c8a44a;margin-bottom:4px;}
+.metric-label{font-size:10px;text-transform:uppercase;letter-spacing:0.15em;color:rgba(255,255,255,0.35);}
+.metric-sub{font-size:11px;color:rgba(255,255,255,0.25);margin-top:4px;}
+
+/* Data sections */
+.section{margin-bottom:48px;}
+.section-tag{font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:8px;}
+.section h2{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:#fff;margin-bottom:16px;}
+.section p{font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin-bottom:12px;}
+
+/* Data table */
+.data-table{width:100%;border-collapse:collapse;margin-bottom:24px;}
+.data-table th{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.35);padding:10px 14px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.07);}
+.data-table td{font-size:13px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.7);}
+.data-table tr:hover td{background:rgba(255,255,255,0.02);}
+.hot{color:#ff6b6b;font-weight:700;}
+.warm{color:#f0a020;font-weight:700;}
+.cool{color:#60a5fa;font-weight:700;}
+.cold{color:#93c5fd;font-weight:700;}
+
+/* Equity section */
+.equity-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.equity-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:20px;}
+.equity-state{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;}
+.equity-num{font-family:'Fraunces',serif;font-size:24px;font-weight:900;color:#6bffb8;}
+.equity-change{font-size:11px;color:rgba(107,255,184,0.6);margin-top:2px;}
+
+/* CTA */
+.cta-section{background:linear-gradient(135deg,rgba(10,31,92,0.3),rgba(8,9,12,0));border:1px solid rgba(200,164,74,0.3);border-radius:14px;padding:32px;text-align:center;margin-bottom:32px;}
+.cta-section h3{font-family:'Fraunces',serif;font-size:24px;font-weight:900;margin-bottom:10px;}
+.cta-section p{font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:20px;line-height:1.6;}
+.btn{display:inline-block;padding:12px 22px;border-radius:7px;font-weight:800;font-size:13px;text-decoration:none;margin:4px;}
+.btn-gold{background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;}
+.btn-navy{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:#fff;}
+
+.updated{font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-bottom:32px;}
+@media(max-width:768px){
+  header{padding:0 16px;}
+  .hero{padding:40px 16px 32px;}
+  .metrics{grid-template-columns:1fr 1fr;}
+  .equity-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Back</a>
+</header>
+
+<div class="hero">
+  <div class="eyebrow">FRC Market Intelligence · May 2026</div>
+  <h1>US Housing Market<br><em>Insights & Data</em></h1>
+  <p class="sub">Independent market data for homebuyers, investors, and real estate professionals. No registration, no ads, no data walls. Updated monthly.</p>
+</div>
+
+<div class="wrap">
+  <div class="updated">Last updated: May 23, 2026 · Based on 4,847 active listing analyses · 50 metro markets</div>
+
+  <!-- Key metrics -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-num">$295K</div>
+      <div class="metric-label">Avg Homeowner Equity</div>
+      <div class="metric-sub">Q1 2026 · Cotality</div>
+    </div>
+    <div class="metric">
+      <div class="metric-num">6.9%</div>
+      <div class="metric-label">30-Yr Fixed Rate</div>
+      <div class="metric-sub">May 2026 avg</div>
+    </div>
+    <div class="metric">
+      <div class="metric-num">91%</div>
+      <div class="metric-label">Listings Scoring COLD</div>
+      <div class="metric-sub">FRC Buyer Demand Score</div>
+    </div>
+    <div class="metric">
+      <div class="metric-num">38</div>
+      <div class="metric-label">Avg Days on Market</div>
+      <div class="metric-sub">National median</div>
+    </div>
+  </div>
+
+  <!-- Homeowner Equity Section -->
+  <div class="section">
+    <div class="section-tag">Homeowner Equity</div>
+    <h2>Where Equity Is Growing — and Where It's Not</h2>
+    <p>US homeowners collectively hold approximately $17 trillion in home equity as of Q4 2025. The average mortgaged homeowner sits on $295,000 in equity — down slightly from the $311,000 peak in Q3 2024 but historically very high.</p>
+    <p>Equity growth is highly regional. Northeast states are seeing the largest gains while Western markets — particularly Hawaii, Washington, and Arizona — are experiencing year-over-year declines.</p>
+
+    <div class="equity-grid">
+      <div class="equity-card">
+        <div class="equity-state">🏆 Rhode Island</div>
+        <div class="equity-num">+$37,000</div>
+        <div class="equity-change">↑ Year-over-year equity gain</div>
+      </div>
+      <div class="equity-card">
+        <div class="equity-state">🏆 New Jersey</div>
+        <div class="equity-num">+$36,000</div>
+        <div class="equity-change">↑ Year-over-year equity gain</div>
+      </div>
+      <div class="equity-card">
+        <div class="equity-state" style="color:#ff6b6b;">⚠️ Hawaii</div>
+        <div class="equity-num" style="color:#ff6b6b;">-$66,000</div>
+        <div class="equity-change" style="color:rgba(255,107,107,0.6);">↓ Year-over-year equity loss</div>
+      </div>
+      <div class="equity-card">
+        <div class="equity-state" style="color:#ff6b6b;">⚠️ Washington</div>
+        <div class="equity-num" style="color:#ff6b6b;">-$12,000</div>
+        <div class="equity-change" style="color:rgba(255,107,107,0.6);">↓ Year-over-year equity loss</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRC Buyer Demand Scores -->
+  <div class="section">
+    <div class="section-tag">FRC Buyer Demand Score · May 2026</div>
+    <h2>Top Markets — HOT to COLD</h2>
+    <p>The FRC Buyer Demand Score (0-100) measures real buyer activity relative to supply. It factors in days on market, price cut frequency, and listing-to-sale ratios across 4,847 active listings.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Market</th>
+          <th>Score</th>
+          <th>Status</th>
+          <th>Median Price</th>
+          <th>Days on Market</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Beverly Hills, CA (90210)</td><td class="hot">95</td><td class="hot">🔥 HOT</td><td>$4.2M</td><td>6</td></tr>
+        <tr><td>West Village, NYC (10014)</td><td class="hot">91</td><td class="hot">🔥 HOT</td><td>$2.4M</td><td>9</td></tr>
+        <tr><td>Boston, MA (02116)</td><td class="hot">88</td><td class="hot">🔥 HOT</td><td>$1.35M</td><td>9</td></tr>
+        <tr><td>San Jose, CA (95101)</td><td class="hot">88</td><td class="hot">🔥 HOT</td><td>$1.1M</td><td>9</td></tr>
+        <tr><td>Miami Beach, FL (33109)</td><td class="hot">86</td><td class="hot">🔥 HOT</td><td>$1.1M</td><td>12</td></tr>
+        <tr><td>Seattle, WA (98109)</td><td class="warm">81</td><td class="warm">🟡 WARM</td><td>$850K</td><td>12</td></tr>
+        <tr><td>Nashville, TN (37205)</td><td class="warm">82</td><td class="warm">🟡 WARM</td><td>$1.1M</td><td>13</td></tr>
+        <tr><td>Dallas Highland Park (75205)</td><td class="warm">86</td><td class="warm">🔥 HOT</td><td>$1.8M</td><td>11</td></tr>
+        <tr><td>Austin, TX (78703)</td><td class="cool">65</td><td class="cool">🔵 COOLING</td><td>$1.1M</td><td>33</td></tr>
+        <tr><td>Denver, CO (80209)</td><td class="cool">66</td><td class="cool">🔵 COOLING</td><td>$720K</td><td>31</td></tr>
+        <tr><td>Phoenix, AZ (85001)</td><td class="warm">68</td><td class="warm">🟡 WARM</td><td>$420K</td><td>27</td></tr>
+        <tr><td>Detroit, MI (48201)</td><td class="cool">52</td><td class="cool">🔵 COOLING</td><td>$180K</td><td>48</td></tr>
+      </tbody>
+    </table>
+    <a href="market/" class="btn btn-navy" style="margin-bottom:8px;">View All 148 ZIP Codes →</a>
+  </div>
+
+  <!-- Affordability section -->
+  <div class="section">
+    <div class="section-tag">Affordability Crisis</div>
+    <h2>18.3 Years to Save for a Down Payment</h2>
+    <p>The median American family now needs 18.3 years of savings to afford a 20% down payment on a median-priced home — up from 3.2 years in 1975. This represents a 6x increase in the time required to achieve homeownership.</p>
+    <p>The primary drivers: home price appreciation outpacing wage growth, mortgage rates at 6.9%, and a persistent national housing supply shortage estimated at 4-7 million units.</p>
+    <p><strong style="color:#fff;">What this means for buyers:</strong> The window between "can afford" and "priced out" is narrowing every year. Credit score optimization — the difference between 620 and 740 — now saves the average buyer $47,000 over 30 years on a $400K mortgage.</p>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <h3>Run Your Own Numbers</h3>
+    <p>Free tools built on 23 years of banking experience. No sign-up, no SSN, no data walls.</p>
+    <a href="frc-banker-ai.html" class="btn btn-gold">🏦 Ask Zai — Free AI Banker</a>
+    <a href="mortgage-calculator.html" class="btn btn-navy">📊 Mortgage Calculator</a>
+    <a href="credit-score-simulator.html" class="btn btn-navy">📈 Credit Score Simulator</a>
+    <a href="denial-letter-decoder.html" class="btn btn-navy">🔍 Denial Letter Decoder</a>
+  </div>
+
+  <p style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;">Data sources: FRC independent listing analysis, Cotality (formerly CoreLogic), ATTOM, Federal Reserve. Educational purposes only. Not financial advice.</p>
+</div>
+<script src="/banker-widget.js?v=6"></script>
+</body>
+</html>
