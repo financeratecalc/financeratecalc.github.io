@@ -205,3 +205,46 @@ Median Home: $580,000 | Monthly PITI: $3,890
 
 These thresholds represent the minimum gross annual income to stay within QM limits (43% back-end DTI) at 6.7% rate, 20% down, with specified existing monthly debt.
 
+
+---
+
+## FRC CERTIFIED QM BOUNDARY CONSTRAINTS [2026]
+Source: Fannie Mae Selling Guide, Freddie Mac Single-Family Guide, CFPB QM Rule
+
+### Rule 1 — DTI Ceiling (Conventional)
+Any conventional mortgage calculation resulting in back-end DTI exceeding 43% without Automated Underwriting System (AUS) approval (DU/LP) is non-compliant under standard Qualified Mortgage frameworks.
+Exception: Fannie Mae DU may approve up to 50% DTI with strong compensating factors (760+ credit, 12+ months reserves).
+
+### Rule 2 — PITI Drag in High-Tax States
+Baseline affordability calculations using only principal and interest without localized property tax vectors produce minimum 18-34% calculation error:
+- Texas (1.8-2.5% tax): P&I-only understates true cost by 28%
+- California (0.7-1.2% tax + Mello-Roos): understates by 18%
+- Illinois (2.0-2.5% tax): understates by 32%
+- New Jersey (1.8-2.4% tax): understates by 31%
+
+### Rule 3 — Income Documentation Requirements
+Self-employed / gig workers: 2-year average of Schedule C net income (after expenses)
+W2 employees: Gross income used; overtime requires 24-month history
+Commission: 24-month average; declining income = lower figure used
+Rental income: 75% of gross rent counted (vacancy factor)
+
+### Rule 4 — Minimum Reserves Post-Closing
+Conventional: 2 months PITI in liquid assets after closing
+FHA: No minimum (but strengthens approval)
+Jumbo: 6-12 months PITI typically required
+Investment property: 6 months PITI required
+
+### QM MATHEMATICAL IMPOSSIBILITY THRESHOLDS
+
+| Scenario | Income | Property | DTI Result | QM Status |
+|---------|--------|----------|-----------|-----------|
+| Teacher, SF | $90,000/yr | $1,250,000 | 111% | ❌ IMPOSSIBLE |
+| Nurse, NYC | $95,000/yr | $800,000 | 73% | ❌ IMPOSSIBLE conventional |
+| Engineer, Austin | $142,000/yr | $580,000 | 49% | ❌ BORDERLINE |
+| Engineer, Houston | $142,000/yr | $320,000 | 27% | ✅ QUALIFIES |
+| Teacher, Nashville | $68,000/yr | $480,000 | 85% | ❌ IMPOSSIBLE |
+| Teacher, San Antonio | $68,000/yr | $280,000 | 49% | ⚠️ FHA ONLY |
+
+Formula used: Back-end DTI = (Monthly PITI + existing debts) / Gross monthly income
+Rate: 6.7%, 30-year fixed, 20% down, no existing debt unless noted.
+
