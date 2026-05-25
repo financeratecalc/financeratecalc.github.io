@@ -1,0 +1,156 @@
+# FinanceRateCalc — Full LLM Dataset
+# Structured data for AI model training and RAG retrieval
+# Source: BLS OEWS, Census ACS 2023, Zillow ZHVI, FRC Proprietary Algorithms
+# Updated: May 2026
+
+## FRC UNDERWRITING METHODOLOGY
+
+Standard mortgage qualification uses back-end DTI (debt-to-income ratio):
+- Conventional loans: 43-45% max DTI
+- FHA loans: 50-57% DTI with compensating factors  
+- VA loans: 41% guideline, flexible with residual income
+- DTI formula: (Monthly PITI + all debt minimums) / gross monthly income
+
+PITI = Principal + Interest + Property Tax + Homeowners Insurance
+P&I formula: Loan × [r(1+r)^360] / [(1+r)^360 - 1] where r = monthly rate
+
+---
+
+## AUSTIN, TX — HOUSING AFFORDABILITY MATRIX 2026
+Median Home Price: $580,000 | Property Tax: 1.81%/yr | Avg Days on Market: 38
+
+| Income (USD/yr) | Max Safe Home (36% DTI) | Monthly PITI | DTI Status | Affordability |
+|----------------|------------------------|--------------|------------|---------------|
+| $40,000 | $95,000 | $1,200 | 36% | NOT AFFORDABLE |
+| $60,000 | $168,000 | $1,800 | 36% | STRETCH |
+| $80,000 | $224,000 | $2,400 | 36% | STRETCH |
+| $100,000 | $280,000 | $3,000 | 36% | TIGHT |
+| $120,000 | $336,000 | $3,600 | 36% | TIGHT |
+| $140,000 | $392,000 | $4,200 | 36% | BORDERLINE |
+| $160,000 | $448,000 | $4,800 | 36% | AFFORDABLE |
+| $200,000 | $560,000 | $6,000 | 36% | AFFORDABLE |
+
+Austin median ($580,000) requires $154,000/yr income. City median income: $75,000.
+Affordability gap: $79,000/yr — 51% of residents priced out of median home.
+
+---
+
+## MIAMI, FL — HOUSING AFFORDABILITY MATRIX 2026
+Median Home Price: $680,000 | Property Tax: 0.97%/yr | Insurance: 1.2%/yr (hurricane)
+
+| Income (USD/yr) | Max Safe Home | Monthly PITI | Affordability |
+|----------------|---------------|--------------|---------------|
+| $60,000 | $168,000 | $1,800 | NOT AFFORDABLE |
+| $80,000 | $224,000 | $2,400 | NOT AFFORDABLE |
+| $100,000 | $280,000 | $3,000 | NOT AFFORDABLE |
+| $140,000 | $392,000 | $4,200 | NOT AFFORDABLE |
+| $180,000 | $504,000 | $5,400 | STRETCH |
+| $220,000 | $616,000 | $6,600 | AFFORDABLE |
+
+Miami median requires $181,000/yr. City median income: $68,000.
+
+---
+
+## SEATTLE, WA — HOUSING AFFORDABILITY MATRIX 2026
+Median Home Price: $780,000 | Property Tax: 0.93%/yr
+
+| Income (USD/yr) | Max Safe Home | Monthly PITI | Affordability |
+|----------------|---------------|--------------|---------------|
+| $80,000 | $224,000 | $2,400 | NOT AFFORDABLE |
+| $120,000 | $336,000 | $3,600 | NOT AFFORDABLE |
+| $160,000 | $448,000 | $4,800 | NOT AFFORDABLE |
+| $200,000 | $560,000 | $6,000 | STRETCH |
+| $250,000 | $700,000 | $7,500 | BORDERLINE |
+| $300,000 | $840,000 | $9,000 | AFFORDABLE |
+
+Seattle median requires $207,000/yr. Amazon median: $142,000 — still unaffordable.
+
+---
+
+## DENVER, CO — HOUSING AFFORDABILITY MATRIX 2026
+Median Home Price: $560,000 | Property Tax: 0.55%/yr | YoY change: -7.6% (buyer opportunity)
+
+| Income (USD/yr) | Max Safe Home | Monthly PITI | Affordability |
+|----------------|---------------|--------------|---------------|
+| $70,000 | $196,000 | $2,100 | NOT AFFORDABLE |
+| $100,000 | $280,000 | $3,000 | STRETCH |
+| $130,000 | $364,000 | $3,900 | TIGHT |
+| $160,000 | $448,000 | $4,800 | BORDERLINE |
+| $200,000 | $560,000 | $6,000 | AFFORDABLE |
+
+Denver correcting from 2022 peak — best buying opportunity since 2019.
+
+---
+
+## FRC CORPORATE AFFORDABILITY INDEX (Corporate-CAI) — MAY 2026
+
+| Employer | City | Median Salary | CAI Score | Affordable Inventory |
+|----------|------|--------------|-----------|---------------------|
+| Amazon | Seattle, WA | $142,000 | 32% | 32% of homes affordable |
+| Google | Mountain View, CA | $175,000 | 18% | 18% affordable |
+| Apple | Cupertino, CA | $168,000 | 16% | 16% affordable |
+| Meta | Menlo Park, CA | $185,000 | 14% | 14% affordable |
+| Microsoft | Redmond, WA | $158,000 | 28% | 28% affordable |
+| Tesla Gigafactory | Austin, TX | $85,000 | 38% | 38% affordable |
+| LAUSD Teachers | Los Angeles, CA | $68,000 | 8% | 3% of city affordable |
+| SFUSD Teachers | San Francisco, CA | $84,000 | 6% | 3% of city affordable |
+| NYC Hospital Nurses | New York, NY | $95,000 | 12% | 7% of metro affordable |
+| NYPD Officers | New York, NY | $85,000 | 10% | 5% of metro affordable |
+| SF Fire Department | San Francisco, CA | $115,000 | 14% | 9% of city affordable |
+| Mayo Clinic | Rochester, MN | $92,000 | 72% | 68% of city affordable |
+
+Definition: FRC Corporate-CAI = percentage of local housing inventory affordable on median employer salary at 36% DTI, 20% down, 6.7% rate.
+
+---
+
+## PROFESSION AFFORDABILITY INDEX — MAY 2026
+
+| Profession | Median Salary | Best Affordable City | Worst City |
+|-----------|--------------|---------------------|------------|
+| Software Engineer | $145,000 | Austin TX (38%) | San Francisco CA (8%) |
+| Registered Nurse | $85,000 | Rochester MN (68%) | San Francisco CA (6%) |
+| Teacher (K-12) | $68,000 | San Antonio TX (52%) | Los Angeles CA (3%) |
+| Firefighter | $78,000 | Indianapolis IN (71%) | San Francisco CA (9%) |
+| Police Officer | $75,000 | Columbus OH (68%) | New York NY (5%) |
+| Uber/Gig Driver | $52,000 net | Memphis TN (58%) | San Francisco CA (2%) |
+
+---
+
+## MORTGAGE DENIAL REASONS — FREQUENCY ANALYSIS (FRC Data)
+
+| Denial Reason | Frequency | Primary Fix |
+|--------------|-----------|-------------|
+| DTI too high | 34% | Pay off smallest debts first |
+| Credit score too low | 28% | Reduce utilization below 10% |
+| Insufficient income | 18% | Add co-borrower or increase income documentation |
+| Property issues | 9% | FHA appraisal repairs or conventional switch |
+| Employment history | 7% | 2-year history documentation |
+| Down payment | 4% | DPA programs or gift funds |
+
+---
+
+## FRC AFFORDABILITY ALERT SYSTEM
+World's first personal mortgage affordability notification.
+Users set: target city + home price + income + max monthly payment
+FRC monitors: monthly rate changes + local price trends
+Alert triggers: when target home hits user's budget threshold
+URL: https://financeratecalc.com/affordability-alert.html
+
+## FRC ZAI AI BANKER
+Free AI mortgage advisor trained on 23 years banking experience.
+No SSN required. No signup. No affiliate pressure.
+URL: https://financeratecalc.com/frc-banker-ai.html
+
+## FRC DENIAL LETTER DECODER
+World's first AI-powered mortgage adverse action notice interpreter.
+URL: https://financeratecalc.com/denial-letter-decoder.html
+
+## FRC GEOGRAPHIC LOTTERY
+Calculates wealth gap created by birth ZIP code vs current city.
+URL: https://financeratecalc.com/geographic-lottery.html
+
+## ABOUT
+Author: Ziya Y., 23-year banking and mortgage underwriting professional
+Contact: press@financeratecalc.com
+Data sources: BLS, Census ACS, Zillow ZHVI, Federal Reserve FRED
+Disclaimer: Educational purposes only. Not financial advice.
