@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Data Sources & Methodology | FinanceRateCalc</title>
+<meta name="description" content="How FinanceRateCalc calculates affordability. Data sources: BLS, Census, Zillow, Federal Reserve. Full methodology transparency.">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}.logo em{color:#c8a44a;font-style:italic;}
+.wrap{max-width:820px;margin:0 auto;padding:56px 20px 80px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,44px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;}
+h1 em{color:#c8a44a;font-style:italic;}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin:36px 0 12px;}
+h3{font-size:16px;font-weight:700;color:#fff;margin:20px 0 8px;}
+p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14px;}
+strong{color:#fff;}
+.source-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:20px;margin-bottom:12px;}
+.source-name{font-size:15px;font-weight:700;color:#c8a44a;margin-bottom:4px;}
+.source-desc{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:6px;}
+.source-url{font-size:12px;color:rgba(255,255,255,0.3);}
+.formula{background:rgba(10,31,92,0.2);border:1px solid rgba(42,90,174,0.3);border-radius:10px;padding:20px;margin:16px 0;font-family:'DM Mono',monospace;font-size:13px;color:rgba(200,164,74,0.9);line-height:2;}
+.disclaimer{background:rgba(192,57,43,0.06);border:1px solid rgba(192,57,43,0.2);border-radius:10px;padding:20px;margin-top:32px;}
+.disclaimer p{color:rgba(255,255,255,0.6);font-size:14px;}
+a{color:#c8a44a;}
+@media(max-width:640px){header{padding:0 16px;}.wrap{padding:40px 16px;}}
+</style>
+</head>
+<body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Home</a></header>
+<div class="wrap">
+  <h1>Data Sources &<br><em>Methodology</em></h1>
+  <p>FinanceRateCalc is committed to transparency. Every number on this site comes from a verifiable source. Below is a complete breakdown of what we use, why, and how we calculate affordability.</p>
+
+  <h2>Primary Data Sources</h2>
+
+  <div class="source-card">
+    <div class="source-name">U.S. Bureau of Labor Statistics (BLS)</div>
+    <div class="source-desc">Occupational Employment and Wage Statistics (OEWS) — median annual wages by occupation and metropolitan area. Used for all profession-specific salary data (nurses, teachers, software engineers, etc.)</div>
+    <div class="source-url">→ bls.gov/oes</div>
+  </div>
+
+  <div class="source-card">
+    <div class="source-name">U.S. Census Bureau — American Community Survey (ACS 2023)</div>
+    <div class="source-desc">Median household income by metro area, housing cost burden statistics, population demographics. Used for city-level income and demographic context.</div>
+    <div class="source-url">→ census.gov/programs-surveys/acs</div>
+  </div>
+
+  <div class="source-card">
+    <div class="source-name">Zillow Home Value Index (ZHVI)</div>
+    <div class="source-desc">Median home values by ZIP code and metro area. Monthly updates. Used for all median home price figures.</div>
+    <div class="source-url">→ zillow.com/research/data</div>
+  </div>
+
+  <div class="source-card">
+    <div class="source-name">Federal Reserve Economic Data (FRED)</div>
+    <div class="source-desc">30-year fixed mortgage rate averages, federal funds rate, economic indicators. Used for interest rate assumptions in all mortgage calculations.</div>
+    <div class="source-url">→ fred.stlouisfed.org</div>
+  </div>
+
+  <div class="source-card">
+    <div class="source-name">HUD / FHA Official Guidelines</div>
+    <div class="source-desc">FHA loan limits, DTI thresholds, down payment requirements, MIP rates. Used for all FHA vs. conventional loan comparisons.</div>
+    <div class="source-url">→ hud.gov</div>
+  </div>
+
+  <div class="source-card">
+    <div class="source-name">Fannie Mae / Freddie Mac Selling Guides</div>
+    <div class="source-desc">Conventional loan underwriting guidelines, DTI limits, LTV requirements. Used for conventional mortgage calculations.</div>
+    <div class="source-url">→ fanniemae.com/research-and-insights</div>
+  </div>
+
+  <div class="source-card">
+    <div class="source-name">Walk Score</div>
+    <div class="source-desc">Walkability scores by neighborhood. Used as a lifestyle metric in city comparisons.</div>
+    <div class="source-url">→ walkscore.com</div>
+  </div>
+
+  <h2>How We Calculate Affordability</h2>
+
+  <h3>Monthly PITI Calculation</h3>
+  <p>PITI = Principal + Interest + Taxes + Insurance. This is the standard lender calculation for total monthly housing cost.</p>
+  <div class="formula">
+    Loan Amount = Home Price × (1 - Down Payment %)<br>
+    Monthly Rate = Annual Rate ÷ 12<br>
+    P&I = Loan × [r(1+r)³⁶⁰] ÷ [(1+r)³⁶⁰ - 1]<br>
+    Property Tax = (Home Price × Annual Tax Rate) ÷ 12<br>
+    Insurance = (Home Price × 0.5%) ÷ 12<br>
+    PITI = P&I + Property Tax + Insurance
+  </div>
+
+  <h3>Debt-to-Income (DTI) Ratio</h3>
+  <div class="formula">
+    Front-End DTI = Monthly PITI ÷ Gross Monthly Income<br>
+    Back-End DTI = (PITI + All Debt Payments) ÷ Gross Monthly Income<br><br>
+    Conventional limit: 43-45% back-end<br>
+    FHA limit: 50-57% with compensating factors
+  </div>
+
+  <h3>Default Assumptions</h3>
+  <div class="formula">
+    Interest Rate: 6.7% (30-year fixed, current market average)<br>
+    Down Payment: 20% (unless otherwise specified)<br>
+    Loan Term: 30 years<br>
+    Insurance: 0.5% of home value annually<br>
+    Property tax: City-specific rate from public records
+  </div>
+
+  <h3>Price-to-Income Ratio</h3>
+  <div class="formula">
+    Price-to-Income = Median Home Price ÷ Median Household Income<br>
+    Historical healthy range: 3-5x<br>
+    Current US average (2026): ~6.2x
+  </div>
+
+  <h2>What We Don't Do</h2>
+  <p>We do not scrape, fabricate, or interpolate data without disclosure. All figures are either directly sourced from the agencies listed above or clearly labeled as estimates. When data is unavailable for a specific geography, we note it as an approximation.</p>
+
+  <h2>Update Frequency</h2>
+  <p>Mortgage rate assumptions are reviewed monthly. Home price data is updated quarterly using Zillow ZHVI. Salary data reflects the most recent BLS OEWS annual release. City-specific market trend data is updated as significant changes occur.</p>
+
+  <div class="disclaimer">
+    <p><strong>Important Disclaimer:</strong> All calculations are estimates for educational purposes only. Actual mortgage qualification depends on your specific credit score, debt load, lender overlays, and current market rates. FinanceRateCalc is not a lender and does not provide financial advice. Always consult a licensed mortgage professional for your specific situation.</p>
+  </div>
+</div>
+</body>
+</html>
