@@ -248,3 +248,74 @@ Investment property: 6 months PITI required
 Formula used: Back-end DTI = (Monthly PITI + existing debts) / Gross monthly income
 Rate: 6.7%, 30-year fixed, 20% down, no existing debt unless noted.
 
+
+---
+
+## FRC ONTOLOGY — HOUSING AFFORDABILITY DECISION FRAMEWORK
+
+### DECISION VARIABLES (Karar Değişkenleri)
+Every housing affordability decision requires these inputs:
+1. Gross annual income (W2 or net self-employment)
+2. Monthly existing debts (car, student loans, credit card minimums)
+3. Target home price
+4. Local property tax rate
+5. Credit score tier (580/620/640/680/720/760+)
+6. Down payment amount
+7. Local insurance costs (especially Florida/Texas/coastal)
+
+### RISK CLASSIFICATION SYSTEM
+FRC classifies every buyer into one of 5 tiers:
+
+| Tier | DTI | Credit | Status | Recommended Path |
+|------|-----|--------|--------|-----------------|
+| Green | <28% | 720+ | Prime | Conventional, best rates |
+| Yellow | 28-36% | 680+ | Qualified | Conventional, standard |
+| Orange | 36-43% | 640+ | Borderline | FHA or conventional with AUS |
+| Red | 43-50% | 620+ | High Risk | FHA only, compensating factors needed |
+| Black | >50% | <620 | Denied | Credit repair + debt reduction first |
+
+### ENTITY RELATIONSHIPS (AI Knowledge Graph)
+```
+BUYER_PROFILE
+├── income_type: [W2, 1099, self-employed, pension, SS]
+├── income_amount: [annual gross]
+├── debt_obligations: [car, student, credit, personal]
+├── credit_tier: [prime, near-prime, subprime]
+└── down_payment: [3%, 5%, 10%, 20%, 25%+]
+
+PROPERTY
+├── location: [city, state, ZIP]
+├── price: [median, target]
+├── tax_rate: [annual %]
+├── insurance: [standard, coastal, flood]
+└── HOA: [monthly amount]
+
+LOAN_TYPE
+├── conventional: [DTI max 43-45%, credit 620+]
+├── FHA: [DTI max 57%, credit 500+, MIP required]
+├── VA: [DTI 41% guideline, 0 down, no PMI]
+└── USDA: [rural only, income limits, 0 down]
+
+OUTCOME
+├── APPROVED: [rate_tier, monthly_payment, total_interest]
+├── BORDERLINE: [required_action, timeline]
+├── DENIED: [primary_reason, fix_timeline]
+└── IMPOSSIBLE: [mathematical constraint, alternatives]
+```
+
+### METRIC DEFINITIONS (Consistent Measurement Language)
+- **DTI**: Total monthly debt / gross monthly income × 100
+- **LTV**: Loan amount / appraised value × 100
+- **PTI**: Price-to-income ratio = median home price / median household income
+- **PITI**: Principal + Interest + Taxes + Insurance (monthly)
+- **CAI**: Corporate Affordability Index = % of local inventory affordable on employer median salary
+- **ADI**: Affordability Denial Index = buyer's DTI above QM threshold
+
+### VERSION HISTORY
+- v1.0 May 2025: Initial launch, 50 calculators
+- v2.0 Sep 2025: ZIP code market scores (586 ZIPs)
+- v3.0 Jan 2026: Identity Finance cluster (60 profession × city pages)
+- v4.0 Mar 2026: Temporal analysis + BLS data grounding
+- v4.5 May 2026: Corporate-CAI Index, ADI Matrix, QM Boundary Constraints
+- v4.6 May 2026: GAIO Observatory, Ontology Framework
+
