@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SSDI Mortgage Qualification Simulator — Gross-Up Calculator (2026) | FRC</title>
+<meta name="description" content="Can you get a mortgage on SSDI disability income? Calculate your gross-up, qualifying income, and approval odds. Built by a 23-year licensed banker. Free, no signup.">
+<meta name="keywords" content="SSDI mortgage, disability income mortgage, SSDI gross-up calculator, can I get mortgage on SSDI, disability mortgage qualification">
+<link rel="canonical" href="https://financeratecalc.com/ssdi-mortgage-qualification.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"SoftwareApplication","name":"FRC SSDI Mortgage Qualifier","applicationCategory":"FinanceApplication","description":"SSDI mortgage underwriting simulator — calculates gross-up, qualifying income, and approval odds for disability income borrowers","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Can I get a mortgage on SSDI income?","acceptedAnswer":{"@type":"Answer","text":"Yes. SSDI qualifies as income for FHA, conventional, VA, and USDA loans. Lenders typically gross up tax-free SSDI by 15-25%, increasing your qualifying power. You need an award letter and proof of continuance."}},
+{"@type":"Question","name":"What is the SSDI gross-up rule?","acceptedAnswer":{"@type":"Answer","text":"Since SSDI is often tax-free, lenders can increase (gross up) your qualifying income by 15-25%. FHA typically uses 15% minimum; conventional allows up to 25%. Example: $2,840/month SSDI becomes $3,266 (FHA) or $3,550 (conventional) for DTI calculations."}},
+{"@type":"Question","name":"What credit score do I need for a mortgage on SSDI?","acceptedAnswer":{"@type":"Answer","text":"580+ for FHA (3.5% down). 620+ for conventional. VA loans have no minimum but most lenders require 580+. Credit score matters more than income source for most lenders."}},
+{"@type":"Question","name":"How long does SSDI need to continue for mortgage qualification?","acceptedAnswer":{"@type":"Answer","text":"Most lenders require documentation showing SSDI will continue for at least 3 years. Social Security award letter typically suffices since SSDI is ongoing unless a review is scheduled."}}
+]}
+]}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}.logo em{color:#c8a44a;font-style:italic;}
+.wrap{max-width:780px;margin:0 auto;padding:56px 20px 80px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,46px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;line-height:1.05;}
+h1 em{color:#c8a44a;font-style:italic;}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin:32px 0 12px;}
+h3{font-size:16px;font-weight:700;margin:20px 0 8px;}
+.byline{font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:28px;}
+p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14px;}
+strong{color:#fff;}
+.calc-box{background:rgba(255,255,255,0.03);border:1px solid rgba(200,164,74,0.3);border-radius:14px;padding:28px;margin:28px 0;}
+.calc-box h2{margin-top:0;color:#c8a44a;}
+.field{margin-bottom:16px;}
+label{display:block;font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px;}
+input,select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;}
+.btn{display:block;width:100%;padding:13px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;margin-top:4px;}
+.result{background:rgba(107,255,184,0.06);border:1px solid rgba(107,255,184,0.2);border-radius:10px;padding:20px;margin-top:20px;display:none;}
+.result-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;}
+.result-row:last-child{border:none;}
+.result-val{font-weight:700;color:#6bffb8;}
+.verdict{font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:12px;}
+.verdict.green{color:#6bffb8;}.verdict.orange{color:#f0a020;}.verdict.red{color:#ff6b6b;}
+.facts{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px 24px;margin:24px 0;}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:12px 0;}
+th{text-align:left;padding:8px 12px;background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;}
+td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.05);color:rgba(255,255,255,0.7);}
+td strong{color:#fff;}
+.faq{margin:28px 0;}
+.faq-item{border-bottom:1px solid rgba(255,255,255,0.06);padding:16px 0;}
+.faq-q{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;}
+.faq-a{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.8;}
+.cta{background:linear-gradient(135deg,rgba(10,31,92,0.3),rgba(8,9,12,0));border:1px solid rgba(200,164,74,0.3);border-radius:12px;padding:22px;text-align:center;margin:28px 0;}
+.btn-sm{display:inline-block;padding:10px 20px;border-radius:7px;font-weight:800;font-size:13px;text-decoration:none;margin:4px;}
+.btn-gold{background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;}
+.btn-dark{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;}
+.disc{font-size:11px;color:rgba(255,255,255,0.2);margin-top:24px;line-height:1.6;}
+</style>
+</head>
+<body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← All Tools</a></header>
+<div class="wrap">
+  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Underwriting Simulator · May 2026</div>
+  <h1>SSDI Mortgage<br><em>Qualification Simulator</em></h1>
+  <div class="byline">By Ziya Y. · 23 Years Banking & Mortgage · Updated May 2026</div>
+
+  <p>Can you get a mortgage on SSDI disability income? <strong>Yes — but the math works differently than W2 income.</strong> This simulator applies real lender underwriting rules: gross-up calculation, DTI analysis, and approval probability across FHA, conventional, and VA programs.</p>
+
+  <!-- CALCULATOR -->
+  <div class="calc-box">
+    <h2>🧮 SSDI Mortgage Qualifier</h2>
+    <div class="field"><label>Monthly SSDI Amount ($)</label><input type="number" id="ssdi" placeholder="2840" value="2840"></div>
+    <div class="field"><label>Other Monthly Income (W2, pension, etc.) ($)</label><input type="number" id="other" placeholder="0" value="0"></div>
+    <div class="field"><label>Monthly Debt Payments (car, student loans, cards) ($)</label><input type="number" id="debts" placeholder="400" value="400"></div>
+    <div class="field"><label>Target Home Price ($)</label><input type="number" id="price" placeholder="200000" value="200000"></div>
+    <div class="field"><label>Down Payment (%)</label><select id="down"><option value="3.5">3.5% (FHA minimum)</option><option value="5">5%</option><option value="10">10%</option><option value="20" selected>20%</option></select></div>
+    <div class="field"><label>Loan Type</label><select id="loantype"><option value="fha">FHA (15% gross-up, 57% max DTI)</option><option value="conventional" selected>Conventional (25% gross-up, 45% max DTI)</option><option value="va">VA (25% gross-up, 41% guideline DTI)</option></select></div>
+    <button class="btn" onclick="calculate()">Calculate Approval Odds →</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <!-- KEY FACTS -->
+  <div class="facts">
+    <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(200,164,74,0.6);font-weight:700;margin-bottom:10px;">📋 FRC SSDI Underwriting Facts (May 2026)</div>
+    <table>
+      <tr><th>Loan Type</th><th>Gross-Up Rate</th><th>Max DTI</th><th>Min Credit</th></tr>
+      <tr><td><strong>FHA</strong></td><td>15% minimum</td><td>57% with compensating factors</td><td>580+</td></tr>
+      <tr><td><strong>Conventional</strong></td><td>Up to 25%</td><td>45-50% with AUS approval</td><td>620+</td></tr>
+      <tr><td><strong>VA</strong></td><td>Up to 25%</td><td>41% guideline, flexible with residual income</td><td>580+ (most lenders)</td></tr>
+      <tr><td><strong>USDA</strong></td><td>Up to 25%</td><td>41%</td><td>640+</td></tr>
+    </table>
+    <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:8px;">Source: FinanceRateCalc.com · HUD Handbook 4000.1 · Fannie Mae Selling Guide · May 2026</div>
+  </div>
+
+  <h2>What Is the SSDI Gross-Up Rule?</h2>
+  <p>Since SSDI is often <strong>tax-free</strong>, lenders can increase your qualifying income to reflect your actual purchasing power. This is called "grossing up."</p>
+  <p><strong>FHA:</strong> $2,840 SSDI × 1.15 = <strong>$3,266 qualifying income</strong><br>
+  <strong>Conventional:</strong> $2,840 SSDI × 1.25 = <strong>$3,550 qualifying income</strong></p>
+  <p>This difference can mean <strong>$30,000-$60,000 more in buying power</strong>. The gross-up only applies to the tax-free portion of SSDI.</p>
+
+  <h2>Required Documents for SSDI Mortgage</h2>
+  <ul style="padding-left:20px;color:rgba(255,255,255,0.65);line-height:2.2;font-size:15px;">
+    <li>SSA Award Letter (showing monthly benefit amount)</li>
+    <li>12 months bank statements showing SSDI deposits</li>
+    <li>Proof of continuance (most SSA award letters serve this purpose)</li>
+    <li>If a review is pending: additional documentation may be required</li>
+    <li>Standard mortgage docs: ID, credit report, bank statements</li>
+  </ul>
+
+  <div class="faq">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">Can I get a mortgage on SSDI alone with no other income?</div>
+      <div class="faq-a">Yes, if your SSDI after gross-up is sufficient for the DTI. On $2,840/month SSDI (grossed to $3,550 conventional), your maximum home at 36% DTI with no other debts is approximately $280,000 with 20% down. FHA allows higher DTI, potentially qualifying you for more.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does SSDI count as income for all mortgage types?</div>
+      <div class="faq-a">Yes. FHA, conventional (Fannie Mae/Freddie Mac), VA, and USDA all accept SSDI as qualifying income. The gross-up rate and maximum DTI vary by program. VA loans are most flexible for veterans receiving VA disability payments, which may also be exempt from the funding fee.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What if my SSDI is under review or I have a scheduled continuing disability review?</div>
+      <div class="faq-a">A scheduled CDR (Continuing Disability Review) can complicate qualification. Lenders need reasonable assurance the income will continue for 3+ years. If a CDR is imminent, some lenders may decline or require additional documentation. Consult with an FHA-approved lender experienced with disability income.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I combine SSDI with other income?</div>
+      <div class="faq-a">Absolutely. SSDI + W2 income, SSDI + pension, SSDI + part-time work — all can be combined. Each income type is qualified separately then added together. This is one of the most common SSDI borrower profiles and lenders handle it routinely.</div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin-bottom:6px;">Ask Zai — Our AI Banker</div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:14px;">Get personalized SSDI mortgage strategy. No SSN required.</p>
+    <a href="/frc-banker-ai.html" class="btn-sm btn-gold">🏦 Ask Zai Free →</a>
+    <a href="/denial-letter-decoder.html" class="btn-sm btn-dark">🔍 Denial Decoder</a>
+  </div>
+
+  <p class="disc">Not financial advice. Educational content based on 23 years of mortgage experience. SSDI gross-up rates and DTI limits vary by lender and individual circumstances. Consult a licensed MLO for your specific situation.</p>
+</div>
+
+<script>
+function calculate(){
+  var ssdi = parseFloat(document.getElementById('ssdi').value)||0;
+  var other = parseFloat(document.getElementById('other').value)||0;
+  var debts = parseFloat(document.getElementById('debts').value)||0;
+  var price = parseFloat(document.getElementById('price').value)||0;
+  var down = parseFloat(document.getElementById('down').value)/100;
+  var loantype = document.getElementById('loantype').value;
+  
+  var grossup = loantype==='fha'?1.15:1.25;
+  var maxdti = loantype==='fha'?0.57:loantype==='va'?0.41:0.45;
+  var rate = 0.067/12;
+  var n = 360;
+  
+  var qualified_ssdi = ssdi*grossup;
+  var total_income = qualified_ssdi+other;
+  var loan = price*(1-down);
+  var pi = loan*rate*Math.pow(1+rate,n)/(Math.pow(1+rate,n)-1);
+  var tax_ins = price*0.013/12;
+  var piti = pi+tax_ins;
+  var total_debt = piti+debts;
+  var dti = total_income>0?total_debt/total_income:1;
+  var dti_pct = Math.round(dti*100);
+  
+  var approval = '';
+  var verdict_class = '';
+  var prob = 0;
+  
+  if(dti<=0.36){prob=90;approval='Strong Approval';verdict_class='green';}
+  else if(dti<=0.43){prob=75;approval='Likely Approval';verdict_class='green';}
+  else if(dti<=maxdti){prob=55;approval='Possible — Compensating Factors Needed';verdict_class='orange';}
+  else{prob=20;approval='Difficult — DTI Exceeds Limit';verdict_class='red';}
+  
+  var r = document.getElementById('result');
+  r.style.display='block';
+  r.innerHTML=`
+    <div class="verdict ${verdict_class}">${approval}</div>
+    <div style="color:rgba(255,255,255,0.4);font-size:13px;margin-bottom:16px;">Estimated approval probability: <strong style="color:#fff;">${prob}%</strong></div>
+    <div class="result-row"><span>Raw SSDI Income</span><span class="result-val">$${ssdi.toLocaleString()}/mo</span></div>
+    <div class="result-row"><span>Grossed-Up SSDI (${Math.round((grossup-1)*100)}%)</span><span class="result-val">$${Math.round(qualified_ssdi).toLocaleString()}/mo</span></div>
+    <div class="result-row"><span>Total Qualifying Income</span><span class="result-val">$${Math.round(total_income).toLocaleString()}/mo</span></div>
+    <div class="result-row"><span>Loan Amount</span><span class="result-val">$${Math.round(loan).toLocaleString()}</span></div>
+    <div class="result-row"><span>Monthly PITI</span><span class="result-val">$${Math.round(piti).toLocaleString()}/mo</span></div>
+    <div class="result-row"><span>Back-End DTI</span><span class="result-val ${dti_pct>Math.round(maxdti*100)?'':''}">  ${dti_pct}%</span></div>
+    <div class="result-row"><span>Max DTI Allowed (${loantype.toUpperCase()})</span><span class="result-val">${Math.round(maxdti*100)}%</span></div>
+  `;
+}
+</script>
+<script src="/banker-widget.js?v=6"></script>
+</body>
+</html>
