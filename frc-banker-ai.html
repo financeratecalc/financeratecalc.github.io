@@ -361,21 +361,31 @@ async function sendMessage(){
   showTyping();
 
   try {
-    var response = await fetch('https://api.financeratecalc.com', {
+    var response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({system: SYSTEM_PROMPT, messages: messages})
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': window._AKEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: messages
+      })
     });
 
     var data = await response.json();
     removeTyping();
 
-    if (data && data.reply) {
-      var reply = data.reply;
+    if (data && data.content && data.content[0]) {
+      var reply = data.content[0].text;
       messages.push({role: 'assistant', content: reply});
       addMessage('ai', reply);
     } else if (data && data.error) {
-      addMessage('ai', data.error);
+      addMessage('ai', 'Error: ' + (data.error.message || 'Please try again.'));
     } else {
       addMessage('ai', 'Systems are currently experiencing high traffic. Please try your request again shortly.');
     }
