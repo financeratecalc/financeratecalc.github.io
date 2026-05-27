@@ -50,6 +50,32 @@ td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);color:rgba(2
     Assumptions: 6.7% mortgage rate, 20% down payment, local property tax + insurance rates.
   </div>
 
+  
+  <!-- CITE BUTTON -->
+  <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+    <button onclick="copyCitation()" style="padding:9px 18px;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.3);color:#c8a44a;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;">📋 Cite This Dataset (APA)</button>
+    <a href="/employer/cai-data-2026.csv" download style="padding:9px 18px;background:rgba(107,255,184,0.07);border:1px solid rgba(107,255,184,0.2);color:#6bffb8;border-radius:7px;font-size:12px;font-weight:700;text-decoration:none;">⬇ Download CSV</a>
+    <a href="/employer/cai-data-2026.json" download style="padding:9px 18px;background:rgba(107,107,255,0.07);border:1px solid rgba(107,107,255,0.2);color:#9b9bff;border-radius:7px;font-size:12px;font-weight:700;text-decoration:none;">⬇ Download JSON</a>
+  </div>
+  <div id="cite-toast" style="display:none;background:#6bffb8;color:#08090c;padding:10px 16px;border-radius:7px;font-size:13px;font-weight:700;margin-bottom:12px;">✓ Citation copied to clipboard!</div>
+
+  <!-- BAR CHART -->
+  <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:24px;margin-bottom:28px;">
+    <div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:16px;">CAI Score (Higher = More Affordable)</div>
+    <div id="chart"></div>
+  </div>
+
+  <!-- METHODOLOGY -->
+  <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:20px;margin-bottom:28px;">
+    <div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:700;margin-bottom:10px;">📐 Methodology</div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.8;margin:0;">
+      <strong style="color:#fff;">CAI Formula:</strong> (homes where PITI &le; 36% of median monthly salary) / total local inventory &times; 100<br>
+      <strong style="color:#fff;">PITI calculation:</strong> P&I at 6.7% rate, 30-year fixed, 20% down + local property tax rate + homeowners insurance estimate<br>
+      <strong style="color:#fff;">Salary data:</strong> BLS Occupational Employment and Wage Statistics (OEWS), May 2024<br>
+      <strong style="color:#fff;">Home prices:</strong> Zillow Home Value Index (ZHVI), May 2026<br>
+      <strong style="color:#fff;">Last updated:</strong> May 28, 2026 | <strong style="color:#fff;">Next update:</strong> Q3 2026
+    </p>
+  </div>
   <div class="legend">
     <div class="leg"><div class="dot" style="background:#ff6b6b;"></div><span>Crisis (0-20)</span></div>
     <div class="leg"><div class="dot" style="background:#f0a020;"></div><span>Stressed (20-40)</span></div>
@@ -197,5 +223,43 @@ td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);color:rgba(2
   <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:32px;line-height:1.6;">Source: BLS Occupational Employment Statistics, Zillow Home Value Index May 2026, FRC Underwriting Model. Educational purposes only. Not financial advice. Contact: press@financeratecalc.com</p>
 </div>
 <script src="/banker-widget.js?v=6"></script>
+
+<script>
+// Build bar chart
+var employers = [
+  {name:'SFUSD Teachers',cai:6,color:'#ff6b6b'},
+  {name:'LAUSD Teachers',cai:8,color:'#ff6b6b'},
+  {name:'NYPD Officers',cai:10,color:'#ff6b6b'},
+  {name:'NYC Nurses',cai:12,color:'#ff6b6b'},
+  {name:'SFFD Firefighters',cai:14,color:'#ff6b6b'},
+  {name:'Meta Engineers',cai:14,color:'#ff6b6b'},
+  {name:'Apple Engineers',cai:16,color:'#ff6b6b'},
+  {name:'Google Engineers',cai:18,color:'#ff6b6b'},
+  {name:'Microsoft Engineers',cai:28,color:'#f0a020'},
+  {name:'Amazon Engineers',cai:32,color:'#f0a020'},
+  {name:'Tesla Workers',cai:38,color:'#f0a020'},
+  {name:'Mayo Clinic Staff',cai:72,color:'#6bffb8'},
+];
+var chart = document.getElementById('chart');
+employers.forEach(function(e){
+  var bar = document.createElement('div');
+  bar.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:8px;';
+  bar.innerHTML = '<div style="width:160px;font-size:12px;color:rgba(255,255,255,0.5);text-align:right;flex-shrink:0;">' + e.name + '</div>' +
+    '<div style="height:20px;width:' + (e.cai*3) + 'px;background:' + e.color + ';border-radius:4px;min-width:4px;transition:width 0.3s;"></div>' +
+    '<div style="font-size:12px;font-weight:700;color:' + e.color + ';">' + e.cai + '</div>';
+  chart.appendChild(bar);
+});
+
+// Citation copy
+function copyCitation(){
+  var text = 'FinanceRateCalc. (2026). FRC Corporate Affordability Index (CAI): Housing Affordability by Employer. Retrieved from https://financeratecalc.com/employer/ (BLS OEWS + Zillow ZHVI, May 2026)';
+  navigator.clipboard.writeText(text).then(function(){
+    document.getElementById('cite-toast').style.display='block';
+    setTimeout(function(){document.getElementById('cite-toast').style.display='none';},3000);
+  }).catch(function(){
+    prompt('Copy this citation:',text);
+  });
+}
+</script>
 </body>
 </html>
