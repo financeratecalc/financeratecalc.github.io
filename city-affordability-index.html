@@ -43,7 +43,11 @@ td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.05);color:rgba(2
 <body>
 <header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Home</a></header>
 <div class="wrap">
-  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">FRC City Affordability Index · May 2026</div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);">FRC City Affordability Index</div>
+  <span style="background:rgba(107,255,184,0.1);border:1px solid rgba(107,255,184,0.3);color:#6bffb8;border-radius:4px;padding:2px 10px;font-size:11px;font-weight:700;">📅 Updated May 28, 2026</span>
+  <span style="background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.3);color:#c8a44a;border-radius:4px;padding:2px 10px;font-size:11px;font-weight:700;">Next update: Q3 2026</span>
+</div>
   <h1>22 US Cities:<br><em>Housing Affordability Ranked</em></h1>
   <p style="font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:20px;">By Ziya Y. · 23 Years Banking · BLS + Zillow May 2026</p>
 
@@ -128,6 +132,19 @@ td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.05);color:rgba(2
     </p>
   </div>
 
+  
+  <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:22px;margin-top:28px;text-align:center;">
+    <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin-bottom:8px;">Which city should we add next?</div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:14px;">We currently cover 22 cities. Vote for the next one.</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+      <button onclick="requestCity('Portland, OR')" style="padding:8px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">Portland, OR</button>
+      <button onclick="requestCity('Minneapolis, MN')" style="padding:8px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">Minneapolis, MN</button>
+      <button onclick="requestCity('Salt Lake City, UT')" style="padding:8px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">Salt Lake City, UT</button>
+      <button onclick="requestCity('Tampa, FL')" style="padding:8px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">Tampa, FL</button>
+      <button onclick="requestCity('Other')" style="padding:8px 16px;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.3);color:#c8a44a;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">+ Request Other</button>
+    </div>
+    <div id="request-thanks" style="display:none;color:#6bffb8;font-size:13px;font-weight:700;margin-top:12px;">✓ Thanks! We'll add it to our Q3 2026 update.</div>
+  </div>
   <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:20px;line-height:1.6;">Not financial advice. Educational data analysis. Consult a licensed MLO for your specific situation. press@financeratecalc.com</p>
 </div>
 
@@ -153,6 +170,18 @@ function filterTable(cat, btn) {
   });
 }
 
+function requestCity(city) {
+  if(city === 'Other') {
+    city = prompt('Which city would you like added?') || 'Unknown';
+  }
+  fetch('https://formspree.io/f/mkoewrgp', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({type: 'city_request', city: city})
+  });
+  document.getElementById('request-thanks').style.display = 'block';
+  document.getElementById('request-thanks').textContent = '✓ Thanks! ' + city + ' added to Q3 2026 update list.';
+}
 function copyCitation(){
   var text = 'FinanceRateCalc. (2026). FRC City Housing Affordability Index: 22 US Cities Ranked. Retrieved from https://financeratecalc.com/city-affordability-index.html (BLS OEWS + Zillow ZHVI, May 2026)';
   navigator.clipboard.writeText(text).then(function(){
