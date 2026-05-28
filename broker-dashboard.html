@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FRC Broker Dashboard — Mortgage Denial Analysis for Professionals</title>
+<meta name="description" content="FRC Broker Dashboard. Analyze client denial letters, run underwriting simulations, and find the right loan path — no client SSN required. Free for mortgage professionals.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}.logo em{color:#c8a44a;font-style:italic;}
+.broker-badge{background:rgba(107,255,184,0.1);border:1px solid rgba(107,255,184,0.25);color:#6bffb8;border-radius:4px;padding:3px 10px;font-size:11px;font-weight:700;}
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 56px);}
+.sidebar{background:rgba(255,255,255,0.02);border-right:1px solid rgba(255,255,255,0.07);padding:24px 16px;}
+.sidebar-title{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:700;margin-bottom:12px;margin-top:20px;}
+.sidebar-title:first-child{margin-top:0;}
+.nav-item{display:block;padding:9px 12px;border-radius:7px;font-size:13px;color:rgba(255,255,255,0.55);text-decoration:none;cursor:pointer;margin-bottom:2px;transition:all 0.15s;border:none;background:none;width:100%;text-align:left;}
+.nav-item:hover,.nav-item.active{background:rgba(200,164,74,0.1);color:#c8a44a;}
+.main{padding:32px;}
+.panel{display:none;}
+.panel.active{display:block;}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:6px;}
+h3{font-family:'Fraunces',serif;font-size:17px;font-weight:900;margin-bottom:10px;}
+p{font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin-bottom:14px;}
+strong{color:#fff;}
+.card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px;margin-bottom:14px;}
+.card.gold{border-color:rgba(200,164,74,0.25);background:rgba(200,164,74,0.03);}
+.card.green{border-color:rgba(107,255,184,0.2);background:rgba(107,255,184,0.03);}
+.field{margin-bottom:14px;}
+label{display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em;}
+input,select,textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;}
+textarea{min-height:140px;resize:vertical;}
+.btn{padding:11px 22px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;}
+.btn-gold{background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;}
+.btn-outline{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#fff;}
+.result-area{margin-top:20px;display:none;}
+.outcome-tag{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:800;}
+.tag-approve{background:rgba(107,255,184,0.15);color:#6bffb8;border:1px solid rgba(107,255,184,0.3);}
+.tag-deny{background:rgba(255,107,107,0.15);color:#ff6b6b;border:1px solid rgba(255,107,107,0.3);}
+.tag-refer{background:rgba(240,160,32,0.15);color:#f0a020;border:1px solid rgba(240,160,32,0.3);}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.stat-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;text-align:center;}
+.stat-val{font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:#c8a44a;}
+.stat-lbl{font-size:11px;color:rgba(255,255,255,0.35);margin-top:3px;}
+.typing{display:flex;gap:5px;align-items:center;padding:12px;color:rgba(255,255,255,0.3);font-size:13px;}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);animation:bounce 1s infinite;}
+.dot:nth-child(2){animation-delay:0.15s;}.dot:nth-child(3){animation-delay:0.3s;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.share-box{background:rgba(200,164,74,0.06);border:1px solid rgba(200,164,74,0.2);border-radius:8px;padding:14px;margin-top:16px;}
+@media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.main{padding:20px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span class="broker-badge">🏢 Broker Dashboard</span>
+    <a href="/partners.html" style="font-size:12px;color:rgba(255,255,255,0.3);text-decoration:none;">Partner Program →</a>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-title">Analysis Tools</div>
+    <button class="nav-item active" onclick="showPanel('denial')">🔍 Denial Letter Decoder</button>
+    <button class="nav-item" onclick="showPanel('twin')">🧠 Digital Twin Simulation</button>
+    <button class="nav-item" onclick="showPanel('compare')">⚖️ Loan Type Comparison</button>
+    
+    <div class="sidebar-title">Client Resources</div>
+    <button class="nav-item" onclick="showPanel('share')">📤 Share with Client</button>
+    <button class="nav-item" onclick="showPanel('overlay')">🏦 Overlay Reference</button>
+    
+    <div class="sidebar-title">Quick Links</div>
+    <a href="/fha-vs-conventional-vs-va-calculator.html" class="nav-item" target="_blank">FHA vs Conv vs VA ↗</a>
+    <a href="/ssdi-mortgage-qualification.html" class="nav-item" target="_blank">SSDI Qualifier ↗</a>
+    <a href="/physician-loan-calculator.html" class="nav-item" target="_blank">Physician Loan ↗</a>
+    <a href="/lender-overlay-database.html" class="nav-item" target="_blank">Overlay Guide ↗</a>
+
+    <div style="margin-top:24px;padding:14px;background:rgba(107,255,184,0.05);border:1px solid rgba(107,255,184,0.15);border-radius:8px;">
+      <div style="font-size:11px;font-weight:700;color:#6bffb8;margin-bottom:4px;">💡 Broker Tip</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.6;">Ask clients to redact their SSN and name before sharing denial letters. The denial reason text is all you need.</div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- DENIAL PANEL -->
+    <div id="panel-denial" class="panel active">
+      <h2>Denial Letter Decoder</h2>
+      <p>Paste your client's adverse action notice. Zai identifies whether the denial was an <strong>agency guideline</strong> (fixed) or a <strong>lender overlay</strong> (find another lender).</p>
+      
+      <div class="card gold">
+        <div style="font-size:11px;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:10px;">⚡ Key Insight for Brokers</div>
+        <p style="margin:0;font-size:13px;">If it's an overlay, your client can often be approved <em>today</em> by switching loan programs or lender types — without fixing anything. That's your commission back.</p>
+      </div>
+
+      <div class="field"><label>Client Nickname / Reference (optional)</label><input type="text" id="b_ref" placeholder="e.g. Smith file, Client #42..."></div>
+      <div class="field">
+        <label>Paste Denial Letter Text (redact name/SSN first)</label>
+        <textarea id="b_letter" placeholder="Paste the adverse action letter here...
+
+Example: 'We are unable to approve your application. Principal reasons: Excessive obligations in relation to income. Debt-to-income ratio exceeds our guidelines.'
+
+Or describe the situation: 'Client has 640 credit, 52% DTI, SSDI income. Lender denied, said income unverifiable.'"></textarea>
+      </div>
+      <button class="btn btn-gold" onclick="runDenial()">🔍 Decode for Client →</button>
+
+      <div class="result-area" id="denial-result"></div>
+    </div>
+
+    <!-- TWIN PANEL -->
+    <div id="panel-twin" class="panel">
+      <h2>Digital Twin Simulation</h2>
+      <p>Run your client's profile across 5 lender types simultaneously. See exactly which categories approve, deny, and why.</p>
+      <div style="text-align:center;padding:32px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;">
+        <div style="font-size:32px;margin-bottom:12px;">🧠</div>
+        <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin-bottom:8px;">Full Digital Twin</div>
+        <p style="margin-bottom:16px;">Opens the complete parallel universe simulator with all 5 lender types and Borrower Risk Genome.</p>
+        <a href="/underwriting-digital-twin.html" target="_blank" class="btn btn-gold" style="text-decoration:none;display:inline-block;">Open Digital Twin ↗</a>
+      </div>
+    </div>
+
+    <!-- COMPARE PANEL -->
+    <div id="panel-compare" class="panel">
+      <h2>Quick Loan Type Comparison</h2>
+      <p>Enter client basics to instantly compare FHA vs Conventional vs VA.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div class="field"><label>Credit Score</label><input type="number" id="cmp_credit" value="660"></div>
+        <div class="field"><label>Annual Income</label><input type="number" id="cmp_income" value="75000"></div>
+        <div class="field"><label>Home Price</label><input type="number" id="cmp_price" value="350000"></div>
+        <div class="field"><label>Down Payment</label><input type="number" id="cmp_down" value="12000"></div>
+        <div class="field"><label>Monthly Debts</label><input type="number" id="cmp_debts" value="500"></div>
+        <div class="field"><label>VA Eligible?</label><select id="cmp_va"><option value="0">No</option><option value="1">Yes</option></select></div>
+      </div>
+      <button class="btn btn-gold" onclick="quickCompare()">Compare Loan Types →</button>
+      <div id="cmp-result" style="margin-top:16px;"></div>
+    </div>
+
+    <!-- SHARE PANEL -->
+    <div id="panel-share" class="panel">
+      <h2>Share Tools with Client</h2>
+      <p>Send your client a direct link to the right FRC tool for their situation. No login required on their end.</p>
+      
+      <div class="card" style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div><strong>SSDI Mortgage Qualifier</strong><br><span style="font-size:12px;color:rgba(255,255,255,0.4);">For clients with disability income</span></div>
+          <button onclick="copyLink('https://financeratecalc.com/ssdi-mortgage-qualification.html')" class="btn btn-outline" style="font-size:12px;">📋 Copy Link</button>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div><strong>Self-Employed Qualifier</strong><br><span style="font-size:12px;color:rgba(255,255,255,0.4);">For 1099 / Schedule C clients</span></div>
+          <button onclick="copyLink('https://financeratecalc.com/self-employed-mortgage-qualification.html')" class="btn btn-outline" style="font-size:12px;">📋 Copy Link</button>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div><strong>Denial Letter Decoder</strong><br><span style="font-size:12px;color:rgba(255,255,255,0.4);">For denied applicants</span></div>
+          <button onclick="copyLink('https://financeratecalc.com/denial-letter-decoder.html')" class="btn btn-outline" style="font-size:12px;">📋 Copy Link</button>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div><strong>Physician Loan Simulator</strong><br><span style="font-size:12px;color:rgba(255,255,255,0.4);">For MD/DO/DDS residents & attendings</span></div>
+          <button onclick="copyLink('https://financeratecalc.com/physician-loan-calculator.html')" class="btn btn-outline" style="font-size:12px;">📋 Copy Link</button>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div><strong>FHA vs Conventional vs VA</strong><br><span style="font-size:12px;color:rgba(255,255,255,0.4);">Side-by-side loan comparison</span></div>
+          <button onclick="copyLink('https://financeratecalc.com/fha-vs-conventional-vs-va-calculator.html')" class="btn btn-outline" style="font-size:12px;">📋 Copy Link</button>
+        </div>
+      </div>
+      <div id="copy-toast" style="display:none;background:#6bffb8;color:#08090c;padding:10px 16px;border-radius:7px;font-size:13px;font-weight:700;margin-top:12px;">✓ Link copied!</div>
+    </div>
+
+    <!-- OVERLAY PANEL -->
+    <div id="panel-overlay" class="panel">
+      <h2>Overlay Reference Guide</h2>
+      <p>Quick reference for agency guidelines vs typical lender overlay categories.</p>
+      <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <tr style="background:rgba(255,255,255,0.04);">
+          <th style="padding:10px;text-align:left;color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;">Category</th>
+          <th style="padding:10px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;">Min Credit</th>
+          <th style="padding:10px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;">Max DTI</th>
+          <th style="padding:10px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;">SSDI</th>
+          <th style="padding:10px;text-align:center;color:rgba(255,255,255,0.4);font-size:11px;">1099</th>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:10px;color:#6bffb8;font-weight:700;">FHA (Agency)</td>
+          <td style="padding:10px;text-align:center;">580</td><td style="padding:10px;text-align:center;">57%</td>
+          <td style="padding:10px;text-align:center;color:#6bffb8;">✅ 15%</td><td style="padding:10px;text-align:center;color:#6bffb8;">✅ 24mo</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:10px;color:#c8a44a;font-weight:700;">Conventional (Agency)</td>
+          <td style="padding:10px;text-align:center;">620</td><td style="padding:10px;text-align:center;">50%</td>
+          <td style="padding:10px;text-align:center;color:#6bffb8;">✅ 25%</td><td style="padding:10px;text-align:center;color:#6bffb8;">✅ 24mo</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:10px;color:#9b9bff;font-weight:700;">Conservative Overlay</td>
+          <td style="padding:10px;text-align:center;">640-660</td><td style="padding:10px;text-align:center;">43-45%</td>
+          <td style="padding:10px;text-align:center;color:#f0a020;">⚠️ Varies</td><td style="padding:10px;text-align:center;color:#ff6b6b;">❌ Often no</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+          <td style="padding:10px;color:#f0a020;font-weight:700;">Flexible Overlay</td>
+          <td style="padding:10px;text-align:center;">600-620</td><td style="padding:10px;text-align:center;">50-55%</td>
+          <td style="padding:10px;text-align:center;color:#6bffb8;">✅ 25%</td><td style="padding:10px;text-align:center;color:#6bffb8;">✅ 12mo</td>
+        </tr>
+        <tr>
+          <td style="padding:10px;color:#c084fc;font-weight:700;">Portfolio/Non-QM</td>
+          <td style="padding:10px;text-align:center;">600+</td><td style="padding:10px;text-align:center;">55%+</td>
+          <td style="padding:10px;text-align:center;color:#6bffb8;">✅</td><td style="padding:10px;text-align:center;color:#6bffb8;">✅ Bank stmt</td>
+        </tr>
+      </table>
+      </div>
+      <div style="margin-top:14px;">
+        <a href="/lender-overlay-database.html" target="_blank" style="font-size:12px;color:#9b9bff;text-decoration:none;font-weight:700;">→ Full Overlay Reference Guide with Smart Match</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function copyLink(url) {
+  navigator.clipboard.writeText(url).then(function() {
+    var t = document.getElementById('copy-toast');
+    t.style.display = 'block';
+    setTimeout(function(){ t.style.display = 'none'; }, 2500);
+  });
+}
+
+async function runDenial() {
+  var letter = document.getElementById('b_letter').value.trim();
+  var ref = document.getElementById('b_ref').value.trim();
+  if(!letter) { alert('Please paste a denial letter or describe the situation.'); return; }
+  
+  var resultDiv = document.getElementById('denial-result');
+  resultDiv.style.display = 'block';
+  resultDiv.innerHTML = '<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Zai is analyzing...</span></div>';
+  
+  var key = localStorage.getItem('zai_k') || window._AKEY || '';
+  if(!key) {
+    resultDiv.innerHTML = '<div style="color:#ff6b6b;padding:12px;background:rgba(255,107,107,0.08);border-radius:8px;">Zai key not set. <a href="/frc-banker-ai.html" style="color:#c8a44a;">Set up Zai →</a></div>';
+    return;
+  }
+  
+  var system = `You are Zai, a 23-year mortgage professional advising a mortgage BROKER (not the end borrower). 
+Analyze this denial letter/situation and provide:
+1. Real denial reason in plain English
+2. OVERLAY ANALYSIS: Is this an agency rule (fixed — borrower must fix something) or a lender overlay (borrower can find another lender today)?
+3. If overlay: what loan category would likely approve this borrower now?
+4. If agency: what's the fastest fix and timeline?
+5. Broker action: what should the broker do next?
+
+Format as JSON:
+{
+  "real_reason": "...",
+  "type": "agency_rule" or "lender_overlay",
+  "overlay_analysis": "...",
+  "fixability": "Same day possible" or "30-60 days" or "3-6 months" or "6-12 months",
+  "broker_action": "Specific next step for the broker",
+  "loan_category_now": "Which loan category to try now",
+  "loan_category_after": "Which category after fix",
+  "commission_saved": true or false,
+  "zai_note": "One key insight"
+}
+Respond ONLY with valid JSON.`;
+  
+  try {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 600,
+        system: system,
+        messages: [{role: 'user', content: (ref ? 'Client: ' + ref + '\n\n' : '') + 'Denial letter/situation:\n' + letter}]
+      })
+    });
+    var data = await res.json();
+    var text = data.content[0].text;
+    var d = JSON.parse(text.replace(/```json|```/g,'').trim());
+    
+    var typeColor = d.type === 'lender_overlay' ? '#6bffb8' : '#f0a020';
+    var typeLabel = d.type === 'lender_overlay' ? '✅ Lender Overlay — Client can find another lender TODAY' : '⚠️ Agency Rule — Client needs to fix something first';
+    var commTag = d.commission_saved ? '<span class="outcome-tag tag-approve">💰 Commission recoverable</span>' : '<span class="outcome-tag tag-refer">⏳ Requires timeline</span>';
+    
+    resultDiv.innerHTML = `
+      <div style="background:${typeColor}10;border:1px solid ${typeColor}30;border-radius:10px;padding:16px;margin-bottom:12px;">
+        <div style="font-weight:800;color:${typeColor};font-size:14px;margin-bottom:6px;">${typeLabel}</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);">${d.overlay_analysis}</div>
+      </div>
+      <div class="card" style="margin-bottom:10px;">
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:4px;">REAL REASON</div>
+        <div style="font-size:14px;color:#fff;">${d.real_reason}</div>
+      </div>
+      <div class="card" style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:4px;">BROKER ACTION</div>
+            <div style="font-size:14px;color:#fff;font-weight:700;">${d.broker_action}</div>
+          </div>
+          ${commTag}
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div class="card"><div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:4px;">TRY NOW</div><div style="font-size:13px;color:#6bffb8;font-weight:700;">${d.loan_category_now}</div></div>
+        <div class="card"><div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:4px;">TIMELINE</div><div style="font-size:13px;color:#f0a020;font-weight:700;">${d.fixability}</div></div>
+      </div>
+      <div style="padding:14px;border-left:3px solid #c8a44a;background:rgba(200,164,74,0.05);border-radius:0 8px 8px 0;margin-bottom:14px;">
+        <div style="font-size:10px;color:rgba(200,164,74,0.6);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.1em;">💡 Zai's Insight</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);">${d.zai_note}</div>
+      </div>
+      <div class="share-box">
+        <div style="font-size:12px;font-weight:700;color:#c8a44a;margin-bottom:8px;">Share with client:</div>
+        <button onclick="copyLink('https://financeratecalc.com/denial-letter-decoder.html')" class="btn btn-outline" style="font-size:12px;margin-right:8px;">📋 Denial Decoder</button>
+        <button onclick="copyLink('https://financeratecalc.com/underwriting-digital-twin.html')" class="btn btn-outline" style="font-size:12px;">🧠 Digital Twin</button>
+      </div>`;
+  } catch(e) {
+    resultDiv.innerHTML = '<div style="color:#ff6b6b;padding:12px;">Error — ' + e.message + '</div>';
+  }
+}
+
+function quickCompare() {
+  var credit = parseInt(document.getElementById('cmp_credit').value)||660;
+  var income = parseFloat(document.getElementById('cmp_income').value)||75000;
+  var price = parseFloat(document.getElementById('cmp_price').value)||350000;
+  var down = parseFloat(document.getElementById('cmp_down').value)||12000;
+  var debts = parseFloat(document.getElementById('cmp_debts').value)||500;
+  var va = document.getElementById('cmp_va').value==='1';
+  
+  var monthly = income/12;
+  var n = 360;
+  
+  var loans = [
+    {name:'FHA', rate:0.068, down:Math.max(down,price*0.035), dtiMax:57, creditMin:580, mip:true, color:'#9b9bff'},
+    {name:'Conventional', rate:credit>=740?0.065:credit>=700?0.067:credit>=660?0.069:0.072, down:down, dtiMax:50, creditMin:620, mip:false, color:'#c8a44a'},
+    {name:'VA', rate:0.064, down:down, dtiMax:55, creditMin:580, mip:false, color:'#6bffb8', vaOnly:true},
+  ];
+  
+  var html = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;">';
+  loans.forEach(function(l) {
+    if(l.vaOnly && !va) {
+      html += `<div class="card" style="opacity:0.3;text-align:center;"><div style="font-weight:700;color:${l.color};">${l.name}</div><div style="font-size:12px;margin-top:8px;color:rgba(255,255,255,0.4);">Not VA eligible</div></div>`;
+      return;
+    }
+    var loan = price - l.down;
+    if(l.name==='FHA') loan += loan*0.0175;
+    var r = l.rate/12;
+    var pi = loan*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+    var ins = l.mip ? (price-l.down)*0.0055/12 : (l.down/price<0.2?loan*0.007/12:0);
+    var piti = pi + ins + price*0.012/12 + price*0.005/12;
+    var dti = Math.round((piti+debts)/monthly*100);
+    var ok = credit>=l.creditMin && dti<=l.dtiMax;
+    html += `<div class="card" style="border-color:${l.color}30;text-align:center;">
+      <div style="font-weight:800;color:${l.color};margin-bottom:10px;">${l.name}</div>
+      <div style="font-size:18px;font-weight:900;color:#fff;">$${Math.round(piti).toLocaleString()}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:8px;">/month</div>
+      <div style="font-size:12px;color:${dti<=l.dtiMax?'#6bffb8':'#ff6b6b'};">DTI: ${dti}%</div>
+      <div style="margin-top:8px;"><span class="outcome-tag ${ok?'tag-approve':'tag-deny'}">${ok?'Likely OK':'Check eligibility'}</span></div>
+    </div>`;
+  });
+  html += '</div><div style="margin-top:10px;"><a href="/fha-vs-conventional-vs-va-calculator.html" target="_blank" style="font-size:12px;color:#9b9bff;text-decoration:none;font-weight:700;">→ Full comparison with 30-year cost analysis</a></div>';
+  document.getElementById('cmp-result').innerHTML = html;
+}
+</script>
+<script>window._AKEY = localStorage.getItem('zai_k') || '';</script>
+</body>
+</html>
