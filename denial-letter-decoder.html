@@ -176,6 +176,11 @@ Format response as JSON ONLY:
   "real_reason": "Plain English explanation (2-3 sentences)",
   "bank_translation": "What they said vs what they meant",
   "overlay_analysis": "Was this an agency rule or a lender overlay? Which loan type would NOT have this restriction?",
+  "confidence": {
+    "overlay_probability": "e.g. 82% — how confident this is a lender overlay vs agency rule",
+    "alternate_approval_probability": "e.g. 68% — probability of approval at a more flexible lender type",
+    "confidence_basis": "what data points support this confidence level"
+  },
   "fixability": "Easy|Medium|Hard",
   "timeline": "Specific timeframe",
   "action_steps": ["step 1", "step 2", "step 3", "step 4"],
@@ -255,13 +260,20 @@ async function decode(){
     d.action_steps.forEach(function(s){ html += '<li style="margin-bottom:8px;">' + s + '</li>'; });
     html += '</ol></div></div>';
 
-    // Overlay analysis card
+    // Overlay analysis card with confidence
     if(d.overlay_analysis) {
       html += '<div class="result-card" style="border-color:rgba(107,107,255,0.3);background:linear-gradient(160deg,rgba(107,107,255,0.06),rgba(8,9,12,0));">';
       html += '<div class="card-tag" style="color:rgba(155,155,255,0.8);">🔍 Overlay Analysis</div>';
       html += '<div class="card-title">Agency Rule vs Lender Overlay</div>';
       html += '<div class="card-body">' + d.overlay_analysis + '</div>';
-      html += '<div style="margin-top:12px;"><a href="/lender-overlay-database.html" style="font-size:12px;color:#9b9bff;text-decoration:none;font-weight:700;">→ See Overlay Reference Guide</a></div>';
+      if(d.confidence) {
+        html += '<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">';
+        html += '<div style="background:rgba(107,107,255,0.1);border:1px solid rgba(107,107,255,0.2);border-radius:7px;padding:8px 14px;font-size:12px;"><span style="color:rgba(255,255,255,0.4);">Overlay probability: </span><strong style="color:#9b9bff;">' + (d.confidence.overlay_probability||'—') + '</strong></div>';
+        html += '<div style="background:rgba(107,255,184,0.08);border:1px solid rgba(107,255,184,0.2);border-radius:7px;padding:8px 14px;font-size:12px;"><span style="color:rgba(255,255,255,0.4);">Alternate approval: </span><strong style="color:#6bffb8;">' + (d.confidence.alternate_approval_probability||'—') + '</strong></div>';
+        html += '</div>';
+        html += '<div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:6px;font-style:italic;">Confidence basis: ' + (d.confidence.confidence_basis||'Based on agency guideline comparison') + '</div>';
+      }
+      html += '<div style="margin-top:10px;"><a href="/lender-overlay-database.html" style="font-size:12px;color:#9b9bff;text-decoration:none;font-weight:700;">→ See Overlay Reference Guide</a></div>';
       html += '</div>';
     }
 
