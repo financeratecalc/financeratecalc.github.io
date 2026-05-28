@@ -112,6 +112,30 @@ td strong{color:#fff;}
     <li>Standard mortgage docs: ID, credit report, bank statements</li>
   </ul>
 
+  
+  <!-- GLASS BOX: Reasoning Path -->
+  <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(107,255,184,0.15);border-radius:12px;padding:22px;margin:28px 0;">
+    <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(107,255,184,0.5);font-weight:700;margin-bottom:14px;">🔍 Glass Box — How This Calculator Decides</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:2;font-family:monospace;">
+      1. INPUT: Monthly SSDI = $X<br>
+      &nbsp;&nbsp;&nbsp;├─ IRS §86: SSDI tax-free? → YES<br>
+      &nbsp;&nbsp;&nbsp;└─ Source: <span style="color:#c8a44a;">FHA Handbook 4000.1 II.A.4.b.ii.(3)</span><br>
+      <br>
+      2. RULE: Non-taxable income → eligible for gross-up<br>
+      &nbsp;&nbsp;&nbsp;├─ FHA gross-up rate: 15% minimum<br>
+      &nbsp;&nbsp;&nbsp;├─ Conventional: up to 25%<br>
+      &nbsp;&nbsp;&nbsp;└─ Source: <span style="color:#c8a44a;">Fannie Mae Selling Guide B3-3.1-09</span><br>
+      <br>
+      3. FORMULA: Grossed-up income = SSDI × (1 + gross-up rate)<br>
+      &nbsp;&nbsp;&nbsp;└─ Example: $2,840 × 1.25 = $3,550 qualifying income<br>
+      <br>
+      4. DTI CHECK: (PITI + debts) / grossed-up income ≤ 36% back-end<br>
+      &nbsp;&nbsp;&nbsp;├─ FHA cap: 57% with compensating factors<br>
+      &nbsp;&nbsp;&nbsp;└─ Conventional cap: 45-50%<br>
+      <br>
+      5. OUTPUT: Approval probability + recommended loan type
+    </div>
+  </div>
   <div class="faq">
     <h2>Frequently Asked Questions</h2>
     <div class="faq-item">

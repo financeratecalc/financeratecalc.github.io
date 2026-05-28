@@ -82,6 +82,102 @@ p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14p
 
   <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:20px;line-height:1.6;">Source: BLS OEWS 2024, Zillow ZHVI May 2026, FRC Underwriting Model. Not financial advice. Educational analysis only.</p>
 </div>
-<script src="/banker-widget.js?v=6"></script>
+
+<!-- Zai City Context Widget -->
+<div id="zai-city-widget" style="position:fixed;bottom:24px;right:24px;z-index:1000;">
+  <div id="zai-bubble" style="background:linear-gradient(135deg,#c8a44a,#f0d060);width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(200,164,74,0.4);font-size:24px;" onclick="toggleZai()">🏦</div>
+  <div id="zai-panel" style="display:none;position:absolute;bottom:68px;right:0;width:340px;background:#0d111c;border:1px solid rgba(200,164,74,0.3);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+    <div style="background:linear-gradient(135deg,#c8a44a20,#0d111c);padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.07);">
+      <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;">Zai · FRC Banker AI</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;">Answering about Denver, CO</div>
+    </div>
+    <div id="zai-messages" style="height:280px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;"></div>
+    <div style="padding:10px;border-top:1px solid rgba(255,255,255,0.07);display:flex;gap:8px;">
+      <input id="zai-input" placeholder="Ask about Denver housing..." style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;" onkeydown="if(event.key==='Enter')sendZai()">
+      <button onclick="sendZai()" style="background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border:none;border-radius:8px;padding:9px 14px;font-weight:800;font-size:13px;cursor:pointer;">→</button>
+    </div>
+    <div style="padding:6px 10px 10px;text-align:center;">
+      <a href="/frc-banker-ai.html" style="font-size:11px;color:rgba(255,255,255,0.3);text-decoration:none;">Full Zai experience →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+var ZAI_CITY = "Denver";
+var ZAI_STATE = "CO";
+var ZAI_HOME = 560000;
+var ZAI_121000 = 121000;
+var ZAI_PCT = 28;
+var zaiMessages = [];
+var zaiOpen = false;
+
+function toggleZai() {
+  zaiOpen = !zaiOpen;
+  document.getElementById('zai-panel').style.display = zaiOpen ? 'block' : 'none';
+  if(zaiOpen && zaiMessages.length === 0) {
+    addZaiMsg('ai', 'Hi! I know ' + ZAI_CITY + ' well. The median home here is $' + ZAI_HOME.toLocaleString() + ' and you need $' + ZAI_121000.toLocaleString() + '/year to qualify. Only ' + ZAI_PCT + '% of homes are affordable on median income. What\'s your situation?');
+  }
+}
+
+function addZaiMsg(role, text) {
+  var wrap = document.getElementById('zai-messages');
+  var div = document.createElement('div');
+  div.style.cssText = role === 'user' ? 'align-self:flex-end;background:rgba(200,164,74,0.15);border-radius:10px 10px 2px 10px;padding:9px 12px;font-size:13px;max-width:85%;color:#fff;' : 'align-self:flex-start;background:rgba(255,255,255,0.05);border-radius:10px 10px 10px 2px;padding:9px 12px;font-size:13px;max-width:90%;color:rgba(255,255,255,0.85);line-height:1.6;';
+  div.textContent = text;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+  zaiMessages.push({role: role === 'user' ? 'user' : 'assistant', content: text});
+}
+
+async function sendZai() {
+  var input = document.getElementById('zai-input');
+  var msg = input.value.trim();
+  if(!msg) return;
+  input.value = '';
+  addZaiMsg('user', msg);
+  
+  var thinking = document.createElement('div');
+  thinking.id = 'zai-thinking';
+  thinking.style.cssText = 'align-self:flex-start;color:rgba(255,255,255,0.3);font-size:12px;padding:8px 12px;';
+  thinking.textContent = '...';
+  document.getElementById('zai-messages').appendChild(thinking);
+  
+  var key = localStorage.getItem('zai_k') || window._AKEY || '';
+  if(!key) { 
+    document.getElementById('zai-thinking').remove();
+    addZaiMsg('ai', 'Please set up Zai first — visit /frc-banker-ai.html to activate.');
+    return;
+  }
+  
+  var cityContext = 'You are Zai, a 23-year banking professional. The user is viewing the ' + ZAI_CITY + ', ' + ZAI_STATE + ' housing affordability page. Key data: median home $' + ZAI_HOME.toLocaleString() + ', income needed $' + ZAI_121000.toLocaleString() + '/year, only ' + ZAI_PCT + '% of homes affordable on median income. Give concise, city-specific answers about mortgage qualification, affordability, and local market context.';
+  
+  try {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        system: cityContext,
+        messages: zaiMessages.slice(-6)
+      })
+    });
+    var data = await res.json();
+    document.getElementById('zai-thinking').remove();
+    if(data.content && data.content[0]) {
+      addZaiMsg('ai', data.content[0].text);
+    }
+  } catch(e) {
+    document.getElementById('zai-thinking').remove();
+    addZaiMsg('ai', 'Connection error. Try the full Zai at /frc-banker-ai.html');
+  }
+}
+</script>
+<script>window._AKEY = localStorage.getItem("zai_k") || "";</script>
 </body>
 </html>
