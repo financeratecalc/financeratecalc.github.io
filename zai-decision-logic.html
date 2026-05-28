@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zai Decision Logic — FRC's Open Mortgage Intelligence Specification</title>
+<meta name="description" content="The decision framework behind Zai AI's mortgage denial analysis. How FRC detects lender overlays, classifies denial types, and routes borrowers to alternative programs. Open specification.">
+<link rel="canonical" href="https://financeratecalc.com/zai-decision-logic.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}.logo em{color:#c8a44a;font-style:italic;}
+.wrap{max-width:860px;margin:0 auto;padding:56px 20px 80px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,4.5vw,40px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;line-height:1.05;}
+h1 em{color:#c8a44a;font-style:italic;}
+h2{font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin:28px 0 10px;}
+p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14px;}strong{color:#fff;}
+.code{background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;font-family:monospace;font-size:12px;color:#9b9bff;overflow-x:auto;margin:14px 0;line-height:1.7;}
+.step{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+.step-n{background:rgba(200,164,74,0.15);border:1px solid rgba(200,164,74,0.3);color:#c8a44a;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;flex-shrink:0;margin-top:2px;}
+@media(max-width:640px){header{padding:0 16px;}.wrap{padding:40px 14px 60px;}}
+</style>
+</head>
+<body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/denial-genome-project.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Denial Genome Project</a></header>
+<div class="wrap">
+  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Open Specification · May 2026</div>
+  <h1>Zai Decision<br><em>Logic Specification</em></h1>
+  <p style="font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:22px;">By Ziya Y. · 23 Years Banking · FRC Denial Genome Project</p>
+
+  <p>This document describes the decision framework Zai uses to analyze mortgage denials. It is the mortgage logic — not the AI model itself. Published openly so the methodology can be examined, critiqued, and built upon.</p>
+
+  <h2>Layer 1: Denial Input Classification</h2>
+  <p>When a denial letter is received, Zai classifies it across 4 dimensions:</p>
+  <div class="code">CLASSIFICATION_DIMENSIONS = {
+  "primary_reason": ["DTI", "CREDIT", "INCOME", "PROPERTY", "RESERVES", "EMPLOYMENT"],
+  "stated_threshold": float | null,  // What the lender said
+  "agency_threshold": float,          // What FHA/VA/Fannie actually requires
+  "gap": stated - agency              // Positive gap = possible overlay
+}</div>
+
+  <h2>Layer 2: Overlay Detection Rule</h2>
+  <div class="step"><div class="step-n">1</div><div><strong>Extract stated reason</strong> — parse denial letter for ECOA code or equivalent language</div></div>
+  <div class="step"><div class="step-n">2</div><div><strong>Compare to agency floor</strong> — look up FHA/VA/conventional minimum for that factor</div></div>
+  <div class="step"><div class="step-n">3</div><div><strong>Check borrower data</strong> — does borrower meet agency minimum but not lender's stated requirement?</div></div>
+  <div class="step"><div class="step-n">4</div><div><strong>Classify</strong> — if borrower meets agency standard but failed lender threshold → OVERLAY. If fails agency standard → AGENCY_RULE.</div></div>
+  <div class="code">def classify_denial(borrower_value, stated_threshold, agency_threshold):
+    if borrower_value >= agency_threshold and borrower_value < stated_threshold:
+        return "LENDER_OVERLAY"  # borrower meets government standard
+    elif borrower_value < agency_threshold:
+        return "AGENCY_RULE"     # genuine qualification issue
+    else:
+        return "OTHER"           # denial reason is something else</div>
+
+  <h2>Layer 3: Confidence Scoring</h2>
+  <p>Every classification gets a confidence score based on data quality:</p>
+  <div class="code">CONFIDENCE_FACTORS = {
+  "stated_threshold_explicit": +0.3,   // letter gives specific number
+  "agency_threshold_current": +0.2,    // guideline confirmed &lt;12 months old
+  "borrower_data_complete": +0.2,      // all relevant fields provided
+  "income_type_known": +0.15,          // income type clearly identified
+  "multiple_denial_reasons": -0.1,     // harder to isolate cause
+}</div>
+
+  <h2>Layer 4: Routing Engine</h2>
+  <p>If classified as LENDER_OVERLAY, Zai maps the borrower to alternative programs:</p>
+  <div class="code">ROUTING_LOGIC = {
+  "credit_overlay": ["FHA_agency_min_lender", "credit_union", "portfolio"],
+  "dti_overlay": ["FHA_high_dti_lender", "VA_residual_method", "portfolio"],
+  "ssdi_rejection": ["FHA_ssdi_friendly", "VA_if_eligible", "conventional_grossup"],
+  "1099_rejection": ["portfolio", "bank_statement_nonqm", "fha_2yr_history"],
+  "reserve_overlay": ["FHA_zero_reserve", "VA_no_reserve_req", "flexible_overlay"],
+}</div>
+
+  <h2>Agency Reference Table</h2>
+  <div class="code">AGENCY_MINIMUMS = {
+  "FHA":          {"credit": 580, "dti_max": 0.57, "ssdi": True,  "gross_up": 0.15},
+  "Conventional": {"credit": 620, "dti_max": 0.50, "ssdi": True,  "gross_up": 0.25},
+  "VA":           {"credit": None,"dti_max": None,  "ssdi": True,  "gross_up": 0.25},
+  "USDA":         {"credit": 640, "dti_max": 0.41, "ssdi": True,  "gross_up": 0.25},
+}</div>
+
+  <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:24px;">This specification describes the logic layer only. FRC's AI implementation uses this framework with additional natural language processing for denial letter parsing. Agency guidelines current as of May 2026 — subject to change. See HUD Handbook 4000.1, Fannie Mae Selling Guide, VA Lender's Handbook for authoritative sources.</p>
+
+  <div style="border-top:1px solid rgba(255,255,255,0.05);padding:20px 0;margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;">
+    <strong style="color:rgba(255,255,255,0.3);">FinanceRateCalc Denial Genome Project</strong> · Open specification · May 2026 · Part of <a href="/denial-genome-project.html" style="color:rgba(200,164,74,0.4);">the Denial Genome Project</a> · © 2026 FinanceRateCalc
+  </div>
+</div>
+</body>
+</html>

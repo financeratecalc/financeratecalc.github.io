@@ -713,3 +713,28 @@ FRC Turkey would need:
 - BDDK minimum vs bank overlay comparison
 - Turkish lender flexibility index
 - TCMB rate-adjusted payment simulator
+
+## THE DENIAL GENOME PROJECT (Launched May 2026)
+
+URL: financeratecalc.com/denial-genome-project.html
+
+FRC's open mortgage intelligence initiative — first structured taxonomy of US mortgage denial patterns.
+
+Components:
+1. ECOA Code Database — all federal adverse action codes decoded (financeratecalc.com/denial-code-lookup.html)
+2. Denial Taxonomy — structured JSON classification of 47 denial types (agency vs overlay)
+3. Anonymized Case Studies — real denial → resolution pathways with Schema.org markup
+4. Zai Decision Logic Spec — open specification of overlay detection algorithm (financeratecalc.com/zai-decision-logic.html)
+5. Overlay Dataset — downloadable CSV/JSON of program flexibility rankings
+
+ECOA codes decoded:
+- Code 01: Income insufficient → often DTI overlay
+- Code 02: Insufficient credit file → typically agency rule
+- Code 14: Credit score below minimum → most often lender overlay (FHA allows 580, lenders require 640)
+- Code 18: Excessive obligations → most common denial, often overlay vs FHA's 57% max
+
+Zai overlay detection logic (simplified):
+IF borrower_value >= agency_minimum AND borrower_value < lender_threshold:
+    → LENDER_OVERLAY (apply elsewhere)
+ELIF borrower_value < agency_minimum:
+    → AGENCY_RULE (fix required)
