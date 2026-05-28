@@ -143,28 +143,49 @@ Or just describe what happened: 'Chase denied me, said my DTI was too high. I ma
 </div>
 
 <script>
-var SYSTEM = `You are Zai — a 23-year banking and mortgage professional. A user is sharing their mortgage denial letter or situation. Your job is to:
+var SYSTEM = `You are Zai — a 23-year banking and mortgage professional. A user is sharing their mortgage denial letter or situation.
 
-1. Identify the REAL reason behind the denial (banks use vague legal language — decode it)
-2. Rate the fixability: Easy (30-60 days), Medium (3-6 months), Hard (6-12 months)
-3. Give a specific action plan — exactly what to do, in what order
-4. Tell them which lender TYPE would likely approve them now vs after fixes
-5. If credit score is a factor, mention that Sky Blue Credit (dispute letters) or SmartCredit ($1 trial for 3-bureau report) can help
+OVERLAY INTELLIGENCE (use this to explain WHY a lender denied and WHICH lender type would approve):
+- Government programs (FHA): 580+ credit, 57% DTI max, SSDI 15% gross-up OK, 1099 24mo OK
+- Agency conventional: 620+ credit, 50% DTI max, SSDI 25% gross-up OK, 1099 24mo OK  
+- Conservative lenders (typical overlay): 640-660+ credit, 43-45% DTI, may reject SSDI/1099
+- Flexible lenders (typical): 600-620 credit, 50-55% DTI, SSDI and 1099 friendly
+- Portfolio/Non-QM: Most flexible, 600+ credit, bank statement income, higher rate
+- Physician loan programs: 700+ credit, student loans excluded from DTI, 0% down OK
 
-Format your response as JSON with these exact fields:
+DENIAL REASON CODES (ECOA/HMDA — help decode these):
+- "Excessive obligations in relation to income" = DTI too high
+- "Insufficient collateral" = home appraised below purchase price or LTV too high
+- "Credit score below minimum requirements" = credit overlay not met
+- "Inability to verify income" = documentation issue (1099, self-employed, SSDI)
+- "Insufficient length of employment" = job history < 2 years
+- "Derogatory credit history" = late payments, collections, bankruptcy
+- "Excessive debt" = specific debts killing DTI (student loans, car payments)
+- "Property not eligible" = condo hotel, non-warrantable, rural
+
+Your job:
+1. Identify the REAL reason (decode vague legal language)
+2. Identify WHICH OVERLAY likely caused it (was this an agency rule or a lender overlay?)
+3. Rate fixability: Easy (30-60 days), Medium (3-6 months), Hard (6-12 months)
+4. Give specific action steps in order
+5. Tell them which loan CATEGORY would approve them NOW vs after fixes
+6. If credit is a factor, mention Sky Blue Credit or SmartCredit can help
+
+Format response as JSON ONLY:
 {
-  "real_reason": "The actual reason in plain English (2-3 sentences)",
-  "bank_translation": "What the bank said vs what they meant",
+  "real_reason": "Plain English explanation (2-3 sentences)",
+  "bank_translation": "What they said vs what they meant",
+  "overlay_analysis": "Was this an agency rule or a lender overlay? Which loan type would NOT have this restriction?",
   "fixability": "Easy|Medium|Hard",
   "timeline": "Specific timeframe",
   "action_steps": ["step 1", "step 2", "step 3", "step 4"],
-  "lender_now": "Which lender type might approve them NOW",
-  "lender_after": "Which lender type will approve after fixes",
+  "lender_now": "Which loan category/type might approve them NOW",
+  "lender_after": "Which loan category will approve after fixes",
   "credit_factor": true or false,
-  "zai_note": "One powerful closing insight only a 23-year banker would know"
+  "zai_note": "One insight only a 23-year banker would know"
 }
 
-Respond ONLY with valid JSON. No preamble, no explanation outside the JSON.`;
+Respond ONLY with valid JSON. No preamble.`;
 
 var examples = {
   dti: "We regret to inform you that your application for a mortgage loan in the amount of $380,000 has been denied. The principal reason(s) for this action: Excessive obligations in relation to income. Your debt-to-income ratio exceeds our maximum guidelines. Sincerely, Chase Home Lending",
@@ -234,6 +255,16 @@ async function decode(){
     d.action_steps.forEach(function(s){ html += '<li style="margin-bottom:8px;">' + s + '</li>'; });
     html += '</ol></div></div>';
 
+    // Overlay analysis card
+    if(d.overlay_analysis) {
+      html += '<div class="result-card" style="border-color:rgba(107,107,255,0.3);background:linear-gradient(160deg,rgba(107,107,255,0.06),rgba(8,9,12,0));">';
+      html += '<div class="card-tag" style="color:rgba(155,155,255,0.8);">🔍 Overlay Analysis</div>';
+      html += '<div class="card-title">Agency Rule vs Lender Overlay</div>';
+      html += '<div class="card-body">' + d.overlay_analysis + '</div>';
+      html += '<div style="margin-top:12px;"><a href="/lender-overlay-database.html" style="font-size:12px;color:#9b9bff;text-decoration:none;font-weight:700;">→ See Overlay Reference Guide</a></div>';
+      html += '</div>';
+    }
+
     // Lender card
     html += '<div class="result-card gold">';
     html += '<div class="card-tag">🏦 Lender Strategy</div>';
@@ -241,6 +272,10 @@ async function decode(){
     html += '<div class="card-body">';
     html += '<div style="margin-bottom:10px;"><strong>Right now:</strong> ' + d.lender_now + '</div>';
     html += '<div><strong>After fixes:</strong> ' + d.lender_after + '</div>';
+    html += '<div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.07);">';
+    html += '<a href="/lender-overlay-database.html" style="font-size:12px;color:#c8a44a;text-decoration:none;font-weight:700;">→ Compare Loan Categories & Overlays</a>&nbsp;&nbsp;';
+    html += '<a href="/fha-vs-conventional-vs-va-calculator.html" style="font-size:12px;color:#c8a44a;text-decoration:none;font-weight:700;">→ FHA vs Conventional vs VA Calculator</a>';
+    html += '</div>';
     html += '</div></div>';
 
     // Zai note

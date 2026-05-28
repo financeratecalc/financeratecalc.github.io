@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FHA vs Conventional vs VA Loan Calculator 2026 — Side-by-Side Comparison | FRC</title>
+<meta name="description" content="FHA vs Conventional vs VA loan calculator. Compare monthly payments, approval odds, PMI costs, and total cost over 30 years. Built by a 23-year banker. Free.">
+<meta name="keywords" content="FHA vs conventional calculator, FHA vs VA loan, conventional vs VA mortgage, which mortgage is best, FHA vs conventional 2026">
+<link rel="canonical" href="https://financeratecalc.com/fha-vs-conventional-vs-va-calculator.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"SoftwareApplication","name":"FRC FHA vs Conventional vs VA Calculator","applicationCategory":"FinanceApplication","description":"Side-by-side mortgage comparison: FHA, Conventional, and VA loans. Monthly payment, PMI, approval odds, total 30-year cost.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What is the difference between FHA and conventional loans?","acceptedAnswer":{"@type":"Answer","text":"FHA loans are government-backed (HUD) with lower credit requirements (580+) but require mortgage insurance for the life of the loan. Conventional loans require 620+ credit but allow PMI removal at 20% equity. FHA is better for lower credit scores; conventional is cheaper long-term for borrowers with good credit and 20% down."}},
+{"@type":"Question","name":"Who qualifies for a VA loan?","acceptedAnswer":{"@type":"Answer","text":"VA loans are available to eligible veterans, active-duty service members, and surviving spouses. They offer 0% down payment, no PMI, and competitive rates. Credit minimums vary by lender (typically 580-620). VA disability income is tax-free and can be grossed up 25% for qualification."}},
+{"@type":"Question","name":"Which loan has the lowest monthly payment?","acceptedAnswer":{"@type":"Answer","text":"VA loans typically have the lowest monthly payment because they require no PMI and often have competitive rates. FHA loans require upfront and annual MIP (mortgage insurance premium). Conventional with 20% down eliminates PMI but requires more cash upfront."}}
+]}
+]}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}.logo em{color:#c8a44a;font-style:italic;}
+.wrap{max-width:960px;margin:0 auto;padding:56px 20px 80px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,4vw,44px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;line-height:1.05;}
+h1 em{color:#c8a44a;font-style:italic;}
+h2{font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin:32px 0 12px;}
+p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14px;}
+strong{color:#fff;}
+.input-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:24px;margin:24px 0;}
+.field label{display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;}
+.field input,.field select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 12px;color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;}
+.btn-calc{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Fraunces',serif;margin-top:8px;}
+.compare-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0;}
+.loan-card{border-radius:14px;padding:22px;position:relative;}
+.loan-card.fha{background:rgba(107,107,255,0.08);border:1px solid rgba(107,107,255,0.3);}
+.loan-card.conv{background:rgba(200,164,74,0.08);border:1px solid rgba(200,164,74,0.3);}
+.loan-card.va{background:rgba(107,255,184,0.08);border:1px solid rgba(107,255,184,0.3);}
+.loan-card.disabled{opacity:0.3;filter:grayscale(0.8);}
+.loan-type{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+.fha .loan-type{color:#9b9bff;}
+.conv .loan-type{color:#c8a44a;}
+.va .loan-type{color:#6bffb8;}
+.loan-name{font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:14px;}
+.metric{margin-bottom:10px;}
+.metric-label{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:2px;}
+.metric-val{font-size:18px;font-weight:700;color:#fff;}
+.metric-val.good{color:#6bffb8;}
+.metric-val.warn{color:#f0a020;}
+.metric-val.bad{color:#ff6b6b;}
+.winner-badge{position:absolute;top:12px;right:12px;background:rgba(107,255,184,0.2);border:1px solid rgba(107,255,184,0.4);color:#6bffb8;border-radius:4px;padding:3px 8px;font-size:10px;font-weight:700;}
+.verdict-box{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:22px;margin:20px 0;}
+.verdict-title{font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin-bottom:10px;}
+.approval-bar{margin:8px 0;}
+.approval-bar-label{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:4px;}
+.bar-track{background:rgba(255,255,255,0.07);border-radius:4px;height:8px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width 0.5s;}
+.faq-item{border-bottom:1px solid rgba(255,255,255,0.06);padding:16px 0;}
+.faq-q{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;}
+.faq-a{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.8;}
+.cta{background:linear-gradient(135deg,rgba(10,31,92,0.3),rgba(8,9,12,0));border:1px solid rgba(200,164,74,0.3);border-radius:12px;padding:22px;text-align:center;margin:28px 0;}
+.btn-sm{display:inline-block;padding:10px 18px;border-radius:7px;font-weight:800;font-size:13px;text-decoration:none;margin:4px;}
+.btn-gold{background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;}
+.btn-dark{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;}
+#results{display:none;}
+@media(max-width:700px){
+  .compare-grid{grid-template-columns:1fr;}
+  header{padding:0 16px;}
+  .wrap{padding:40px 14px 60px;}
+}
+</style>
+</head>
+<body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← All Tools</a></header>
+<div class="wrap">
+  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Loan Comparison · May 2026</div>
+  <h1>FHA vs Conventional<br><em>vs VA — Side by Side</em></h1>
+  <p style="font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:22px;">By Ziya Y. · 23 Years Banking · Updated May 2026</p>
+
+  <p>Same home. Three different loans. Wildly different monthly payments, insurance costs, and approval odds. Enter your numbers — see which one wins <em>for your situation</em>.</p>
+
+  <!-- INPUTS -->
+  <div class="input-grid">
+    <div class="field"><label>Home Price ($)</label><input type="number" id="price" value="400000" placeholder="400000"></div>
+    <div class="field"><label>Credit Score</label><input type="number" id="credit" value="680" placeholder="680" min="500" max="850"></div>
+    <div class="field"><label>Annual Income ($)</label><input type="number" id="income" value="85000" placeholder="85000"></div>
+    <div class="field"><label>Monthly Debts ($)</label><input type="number" id="debts" value="400" placeholder="400"></div>
+    <div class="field"><label>Down Payment ($)</label><input type="number" id="down" value="20000" placeholder="20000"></div>
+    <div class="field"><label>VA Eligible?</label>
+      <select id="va_eligible">
+        <option value="0">No</option>
+        <option value="1">Yes — veteran/active duty</option>
+      </select>
+    </div>
+    <div class="field"><label>State (for taxes)</label>
+      <select id="state_tax">
+        <option value="0.012">Average US (1.2%)</option>
+        <option value="0.0195">Texas (1.95%)</option>
+        <option value="0.0074">California (0.74%)</option>
+        <option value="0.0055">Colorado (0.55%)</option>
+        <option value="0.021">Illinois (2.1%)</option>
+        <option value="0.0088">New York (0.88%)</option>
+        <option value="0.0097">Florida (0.97%)</option>
+        <option value="0.009">Georgia (0.90%)</option>
+        <option value="0.0085">North Carolina (0.85%)</option>
+        <option value="0.0147">Ohio (1.47%)</option>
+      </select>
+    </div>
+  </div>
+  <button class="btn-calc" onclick="calculate()">Compare All Three Loans →</button>
+
+  <!-- RESULTS -->
+  <div id="results">
+    <div class="compare-grid" id="cards"></div>
+    <div class="verdict-box" id="verdict"></div>
+    <div id="approval-bars" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px;margin:16px 0;"></div>
+    <div id="total-cost-box" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px;margin:16px 0;"></div>
+  </div>
+
+  <!-- QUICK GUIDE -->
+  <h2>Which Loan Is Right for You?</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin:16px 0;">
+    <div style="background:rgba(107,107,255,0.06);border:1px solid rgba(107,107,255,0.2);border-radius:10px;padding:18px;">
+      <div style="color:#9b9bff;font-weight:700;font-size:13px;margin-bottom:8px;">FHA — Best for:</div>
+      <ul style="padding-left:16px;color:rgba(255,255,255,0.6);font-size:13px;line-height:2;">
+        <li>Credit score 580-639</li>
+        <li>Less than 10% down payment</li>
+        <li>Higher DTI (up to 57%)</li>
+        <li>First-time homebuyers</li>
+        <li>SSDI or non-standard income</li>
+      </ul>
+      <div style="margin-top:10px;font-size:12px;color:rgba(107,107,255,0.7);">⚠️ MIP for life if &lt;10% down</div>
+    </div>
+    <div style="background:rgba(200,164,74,0.06);border:1px solid rgba(200,164,74,0.2);border-radius:10px;padding:18px;">
+      <div style="color:#c8a44a;font-weight:700;font-size:13px;margin-bottom:8px;">Conventional — Best for:</div>
+      <ul style="padding-left:16px;color:rgba(255,255,255,0.6);font-size:13px;line-height:2;">
+        <li>Credit score 680+</li>
+        <li>20% down (eliminates PMI)</li>
+        <li>Long-term cost savings</li>
+        <li>Investment properties</li>
+        <li>Jumbo loans (&gt;$832K)</li>
+      </ul>
+      <div style="margin-top:10px;font-size:12px;color:rgba(200,164,74,0.7);">✅ PMI removable at 20% equity</div>
+    </div>
+    <div style="background:rgba(107,255,184,0.06);border:1px solid rgba(107,255,184,0.2);border-radius:10px;padding:18px;">
+      <div style="color:#6bffb8;font-weight:700;font-size:13px;margin-bottom:8px;">VA — Best for:</div>
+      <ul style="padding-left:16px;color:rgba(255,255,255,0.6);font-size:13px;line-height:2;">
+        <li>Veterans &amp; active duty</li>
+        <li>0% down payment</li>
+        <li>No PMI ever</li>
+        <li>VA disability income</li>
+        <li>Lowest monthly payment</li>
+      </ul>
+      <div style="margin-top:10px;font-size:12px;color:rgba(107,255,184,0.7);">✅ Best deal if you qualify</div>
+    </div>
+  </div>
+
+  <div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">Can I switch from FHA to conventional later?</div>
+      <div class="faq-a">Yes — this is called an FHA-to-conventional refinance. Once you have 20% equity and your credit score improves, refinancing to conventional removes the lifetime MIP. Many FHA borrowers plan this from day one: start with FHA, refinance in 5-7 years when equity and credit improve. The math often works out better than waiting to save 20% down.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is the FHA MIP and how much does it cost?</div>
+      <div class="faq-a">FHA Mortgage Insurance Premium (MIP) has two components: upfront MIP (1.75% of loan amount, typically rolled into the loan) and annual MIP (0.55% for most loans with &lt;10% down). On a $380K loan, that's $6,650 upfront + $174/month annual. If you put less than 10% down, MIP stays for the life of the loan — this is the biggest FHA disadvantage.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does the VA funding fee cancel out VA loan savings?</div>
+      <div class="faq-a">Rarely. The VA funding fee (2.15% for first use, 0% down) is a one-time cost. Compare this to FHA MIP (1.75% upfront + 0.55%/year for life) or conventional PMI (0.5-1.5%/year until 20% equity). Over 30 years, VA almost always wins on total cost — especially for borrowers who would otherwise pay MIP. VA disability recipients pay 0% funding fee.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What credit score do I need for each loan?</div>
+      <div class="faq-a">Agency minimums: FHA 580 (3.5% down) or 500-579 (10% down), Conventional 620, VA 580 (no set minimum but most lenders require 580+). Most lenders add overlays above these minimums — conservative lenders often require 640-660 for FHA and 640+ for conventional. Check the FRC Overlay Reference Guide for typical ranges.</div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin-bottom:6px;">Not Sure Which Fits You?</div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:14px;">Ask Zai your situation — SSDI, 1099, physician, first-time buyer.</p>
+    <a href="/frc-banker-ai.html" class="btn-sm btn-gold">🏦 Ask Zai Free →</a>
+    <a href="/lender-overlay-database.html" class="btn-sm btn-dark">🏦 Overlay Guide →</a>
+    <a href="/denial-letter-decoder.html" class="btn-sm btn-dark">🔍 Denial Decoder →</a>
+  </div>
+
+  <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:20px;line-height:1.6;">Rates shown are estimates based on May 2026 market conditions. Actual rates vary by lender, credit score, and market. Not financial advice. Consult a licensed MLO.</p>
+</div>
+
+<script>
+function calculate(){
+  var price = parseFloat(document.getElementById('price').value)||400000;
+  var credit = parseInt(document.getElementById('credit').value)||680;
+  var income = parseFloat(document.getElementById('income').value)||85000;
+  var debts = parseFloat(document.getElementById('debts').value)||400;
+  var down = parseFloat(document.getElementById('down').value)||20000;
+  var va_ok = document.getElementById('va_eligible').value==='1';
+  var ptax_rate = parseFloat(document.getElementById('state_tax').value)||0.012;
+  
+  var monthly_income = income/12;
+  var down_pct = down/price;
+  var n = 360;
+  
+  // === FHA ===
+  var fha_rate = 0.0675;
+  var fha_down = Math.max(down, price*0.035);
+  var fha_down_pct = fha_down/price;
+  var fha_ufmip = (price-fha_down)*0.0175;
+  var fha_loan = (price-fha_down)+fha_ufmip;
+  var fha_r = fha_rate/12;
+  var fha_pi = fha_loan*fha_r*Math.pow(1+fha_r,n)/(Math.pow(1+fha_r,n)-1);
+  var fha_mip = (price-fha_down)*0.0055/12;
+  var fha_tax = price*ptax_rate/12;
+  var fha_ins = price*0.005/12;
+  var fha_piti = fha_pi + fha_mip + fha_tax + fha_ins;
+  var fha_dti = (fha_piti+debts)/monthly_income*100;
+  var fha_eligible = credit>=580 && fha_dti<=57;
+  var fha_prob = fha_eligible ? Math.max(40, Math.min(92, 92-(fha_dti-36)*1.5-(Math.max(0,640-credit)*0.5))) : 0;
+  var fha_total30 = fha_piti*360 + down;
+
+  // === Conventional ===
+  var conv_rate = credit>=740?0.065:credit>=700?0.067:credit>=660?0.069:credit>=620?0.072:0.075;
+  var conv_loan = price-down;
+  var conv_r = conv_rate/12;
+  var conv_pi = conv_loan*conv_r*Math.pow(1+conv_r,n)/(Math.pow(1+conv_r,n)-1);
+  var conv_pmi = down_pct<0.2 ? conv_loan*(credit>=740?0.004:credit>=700?0.006:credit>=660?0.009:0.012)/12 : 0;
+  var conv_tax = price*ptax_rate/12;
+  var conv_ins = price*0.005/12;
+  var conv_piti = conv_pi + conv_pmi + conv_tax + conv_ins;
+  var conv_dti = (conv_piti+debts)/monthly_income*100;
+  var conv_eligible = credit>=620 && conv_dti<=50;
+  var conv_prob = conv_eligible ? Math.max(30, Math.min(90, 90-(conv_dti-36)*1.5-(Math.max(0,660-credit)*0.8))) : 0;
+  var conv_total30 = conv_piti*360 + down;
+  var pmi_years = down_pct<0.2 ? Math.ceil(Math.log(0.8)/(Math.log(1+conv_rate/12)*(-1))/12)+1 : 0;
+
+  // === VA ===
+  var va_rate = 0.064;
+  var va_funding = price*0.0215;
+  var va_loan = (price-down)+va_funding;
+  var va_r = va_rate/12;
+  var va_pi = va_loan*va_r*Math.pow(1+va_r,n)/(Math.pow(1+va_r,n)-1);
+  var va_tax = price*ptax_rate/12;
+  var va_ins = price*0.005/12;
+  var va_piti = va_pi + va_tax + va_ins; // NO PMI
+  var va_dti = (va_piti+debts)/monthly_income*100;
+  var va_eligible = va_ok && credit>=580 && va_dti<=55;
+  var va_prob = va_eligible ? Math.max(50, Math.min(94, 94-(va_dti-41)*1.2-(Math.max(0,620-credit)*0.5))) : 0;
+  var va_total30 = va_piti*360 + down;
+
+  // Best pick
+  var best = '';
+  if(va_eligible && va_piti < fha_piti && va_piti < conv_piti) best = 'va';
+  else if(conv_eligible && conv_total30 < fha_total30 && credit>=680) best = 'conv';
+  else if(fha_eligible) best = 'fha';
+
+  // Render cards
+  function card(type, name, col, piti, dti, prob, eligible, notes, extraLines) {
+    var winner = type===best ? '<div class="winner-badge">⭐ Best Fit</div>' : '';
+    var dis = !eligible ? ' disabled' : '';
+    var notEligible = !eligible ? '<div style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.2);border-radius:6px;padding:8px 10px;font-size:12px;color:#ff6b6b;margin-top:10px;">'+notes+'</div>' : '';
+    return `<div class="loan-card ${type}${dis}">
+      ${winner}
+      <div class="loan-type">${name}</div>
+      <div class="metric"><div class="metric-label">Monthly Payment (PITI)</div>
+        <div class="metric-val ${eligible?(piti<2500?'good':piti<3500?'':'warn'):'bad'}">$${Math.round(piti).toLocaleString()}/mo</div></div>
+      <div class="metric"><div class="metric-label">Back-End DTI</div>
+        <div class="metric-val ${dti<36?'good':dti<45?'':'warn'}">${Math.round(dti)}%</div></div>
+      <div class="metric"><div class="metric-label">Approval Probability</div>
+        <div class="metric-val ${prob>=70?'good':prob>=45?'warn':'bad'}">${Math.round(prob)}%</div></div>
+      ${extraLines}
+      ${notEligible}
+    </div>`;
+  }
+
+  var fhaExtra = `<div class="metric"><div class="metric-label">Monthly MIP</div><div class="metric-val warn">$${Math.round(fha_mip)}/mo (lifetime)</div></div>`;
+  var convExtra = conv_pmi>0 ? `<div class="metric"><div class="metric-label">PMI (removable)</div><div class="metric-val warn">$${Math.round(conv_pmi)}/mo (~${pmi_years}yr)</div></div>` : `<div class="metric"><div class="metric-label">PMI</div><div class="metric-val good">$0 (20%+ down)</div></div>`;
+  var vaExtra = `<div class="metric"><div class="metric-label">PMI</div><div class="metric-val good">$0 — Never</div></div><div class="metric"><div class="metric-label">VA Funding Fee</div><div class="metric-val warn">$${Math.round(price*0.0215).toLocaleString()} (one-time)</div></div>`;
+
+  var fhaNotes = credit<580?'Credit below FHA minimum (580)':'DTI '+Math.round(fha_dti)+'% exceeds FHA max (57%)';
+  var convNotes = credit<620?'Credit below conventional minimum (620)':'DTI '+Math.round(conv_dti)+'% exceeds conventional max (50%)';
+  var vaNotes = !va_ok?'Not VA eligible — check service history':'Credit or DTI issue';
+
+  document.getElementById('cards').innerHTML = 
+    card('fha','FHA Loan','#9b9bff',fha_piti,fha_dti,fha_prob,fha_eligible,fhaNotes,fhaExtra) +
+    card('conv','Conventional','#c8a44a',conv_piti,conv_dti,conv_prob,conv_eligible,convNotes,convExtra) +
+    card('va','VA Loan','#6bffb8',va_piti,va_dti,va_prob,va_eligible,vaNotes,vaExtra);
+
+  // Verdict
+  var verdicts = {
+    va: '🏆 VA loan wins for you. No PMI, lowest rate, and you earned it. The funding fee is a one-time cost that pays off fast.',
+    conv: '🏆 Conventional is your best bet. '+(down_pct>=0.2?'With 20%+ down, no PMI and the lowest total cost.':'PMI will drop off once you hit 20% equity — FHA MIP never does.'),
+    fha: '🏆 FHA is your strongest option right now. '+(credit<640?'Your credit score makes conventional difficult — FHA is designed for your profile.':'The lower down payment and flexible DTI work in your favor.')
+  };
+  var verdict_html = `<div class="verdict-title">${verdicts[best]||'Enter your info above'}</div>`;
+  verdict_html += `<p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin:0;">`;
+  if(best==='fha') verdict_html += `Note: If you plan to stay long-term, consider refinancing to conventional when your equity reaches 20% — that removes the lifetime MIP.`;
+  if(best==='conv' && conv_pmi>0) verdict_html += `Your PMI of $${Math.round(conv_pmi)}/mo will drop off automatically at 20% equity (approx. year ${pmi_years}).`;
+  if(best==='va') verdict_html += `If you're a disabled veteran (VA disability rating), the funding fee is waived entirely — saving $${Math.round(price*0.0215).toLocaleString()}.`;
+  verdict_html += '</p>';
+  document.getElementById('verdict').innerHTML = verdict_html;
+  document.getElementById('verdict').style.display = 'block';
+
+  // Approval bars
+  var bars_html = '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:700;margin-bottom:14px;">Approval Probability</div>';
+  [[fha_prob,'FHA','#9b9bff',fha_eligible],[conv_prob,'Conventional','#c8a44a',conv_eligible],[va_prob,'VA','#6bffb8',va_eligible]].forEach(function(r){
+    bars_html += `<div class="approval-bar"><div class="approval-bar-label"><span>${r[1]}</span><span style="color:${r[2]};">${r[3]?Math.round(r[0])+'%':'Not eligible'}</span></div><div class="bar-track"><div class="bar-fill" style="width:${r[0]}%;background:${r[2]};"></div></div></div>`;
+  });
+  document.getElementById('approval-bars').innerHTML = bars_html;
+
+  // Total cost
+  var tc_html = '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:700;margin-bottom:14px;">Total 30-Year Cost</div>';
+  tc_html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">';
+  [[fha_total30,'FHA','#9b9bff',fha_eligible],[conv_total30,'Conventional','#c8a44a',conv_eligible],[va_total30,'VA','#6bffb8',va_eligible]].forEach(function(r){
+    tc_html += `<div style="text-align:center;"><div style="font-size:12px;color:${r[3]?r[2]:'rgba(255,255,255,0.3)'};font-weight:700;">${r[1]}</div><div style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:${r[3]?'#fff':'rgba(255,255,255,0.2)'};">$${r[3]?Math.round(r[0]/1000)+'K':'N/A'}</div></div>`;
+  });
+  tc_html += '</div><p style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:12px;margin-bottom:0;">Total includes all payments + down payment. Lower is better. Does not include appreciation or investment of down payment.</p>';
+  document.getElementById('total-cost-box').innerHTML = tc_html;
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+<script>window._AKEY = localStorage.getItem('zai_k') || '';</script>
+</body>
+</html>
