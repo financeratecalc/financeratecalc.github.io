@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mortgage Approval Window — At What Rate Can I Qualify? (2026) | FRC</title>
+<meta name="description" content="Mortgage approval window calculator. Find out at what interest rate you qualify, how rate changes affect your approval, and what your approval window looks like in 2026.">
+<meta name="keywords" content="mortgage approval window, at what rate can I qualify, mortgage rate approval threshold, how much rate can I afford mortgage">
+<link rel="canonical" href="https://financeratecalc.com/mortgage-approval-window.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}.logo em{color:#c8a44a;font-style:italic;}
+.wrap{max-width:860px;margin:0 auto;padding:56px 20px 80px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,4.5vw,42px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;line-height:1.05;}
+h1 em{color:#c8a44a;font-style:italic;}
+p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14px;}strong{color:#fff;}
+.input-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px;margin:20px 0;}
+.field label{display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:5px;text-transform:uppercase;}
+.field input,.field select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:9px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;}
+.btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border:none;border-radius:9px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Fraunces',serif;margin:8px 0;}
+#results{display:none;}
+.window-row{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:8px;margin-bottom:6px;}
+.window-rate{font-family:'Fraunces',serif;font-size:20px;font-weight:900;width:70px;flex-shrink:0;}
+.window-bar{flex:1;background:rgba(255,255,255,0.06);border-radius:4px;height:10px;overflow:hidden;}
+.window-fill{height:100%;border-radius:4px;transition:width 0.6s;}
+.window-label{font-size:12px;font-weight:700;width:120px;text-align:right;flex-shrink:0;}
+@media(max-width:640px){header{padding:0 16px;}.wrap{padding:40px 14px 60px;}}
+</style>
+</head>
+<body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Home</a></header>
+<div class="wrap">
+  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Rate Intelligence · May 2026</div>
+  <h1>Your Mortgage<br><em>Approval Window</em></h1>
+  <p style="font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:18px;">By Ziya Y. · 23 Years Banking · FRC Decision Intelligence System</p>
+
+  <p>At 6.7% you might qualify. At 7.5% you might not. This tool shows your <strong>approval window</strong> — exactly which rate range keeps you within DTI limits, and how much a rate change costs you in qualification power.</p>
+
+  <div class="input-grid">
+    <div class="field"><label>Annual Income ($)</label><input type="number" id="aw_income" value="90000"></div>
+    <div class="field"><label>Monthly Debts ($)</label><input type="number" id="aw_debts" value="500"></div>
+    <div class="field"><label>Home Price ($)</label><input type="number" id="aw_price" value="380000"></div>
+    <div class="field"><label>Down Payment ($)</label><input type="number" id="aw_down" value="19000"></div>
+    <div class="field"><label>Loan Program</label>
+      <select id="aw_program">
+        <option value="fha">FHA (57% DTI max)</option>
+        <option value="conv" selected>Conventional (50% DTI)</option>
+        <option value="va">VA (41% guideline)</option>
+        <option value="conservative">Conservative Overlay (45%)</option>
+      </select>
+    </div>
+  </div>
+  <button class="btn" onclick="runWindow()">Show My Approval Window →</button>
+
+  <div id="results">
+    <div id="window-output"></div>
+    <div id="summary-box" style="background:rgba(200,164,74,0.06);border:1px solid rgba(200,164,74,0.25);border-radius:12px;padding:20px;margin-top:16px;"></div>
+    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">
+      <a href="/fha-vs-conventional-vs-va-calculator.html" style="padding:9px 18px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:7px;font-size:12px;font-weight:800;text-decoration:none;">⚖️ Full Loan Comparison →</a>
+      <a href="/pre-denial-intelligence.html" style="padding:9px 18px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:7px;font-size:12px;font-weight:800;text-decoration:none;">🔮 Pre-Denial Check →</a>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid rgba(255,255,255,0.05);padding:20px 0;margin-top:32px;font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;">
+    <strong style="color:rgba(255,255,255,0.3);">FinanceRateCalc</strong> is a mortgage decision intelligence system. Not financial advice. Rates estimated for illustrative purposes. © 2026
+  </div>
+</div>
+
+<script>
+var dtiLimits = {fha:0.57, conv:0.50, va:0.41, conservative:0.45};
+var dtiLabels = {fha:'FHA (57%)', conv:'Conventional (50%)', va:'VA (41%)', conservative:'Conservative Overlay (45%)'};
+
+function runWindow() {
+  var income = parseFloat(document.getElementById('aw_income').value)||90000;
+  var debts = parseFloat(document.getElementById('aw_debts').value)||500;
+  var price = parseFloat(document.getElementById('aw_price').value)||380000;
+  var down = parseFloat(document.getElementById('aw_down').value)||19000;
+  var program = document.getElementById('aw_program').value;
+  var dtiLimit = dtiLimits[program];
+  var loan = price - down;
+  var monthly = income/12;
+  var n = 360;
+
+  var rates = [5.0,5.5,6.0,6.5,6.7,7.0,7.5,8.0,8.5,9.0];
+  var results = rates.map(function(r) {
+    var rm = r/100/12;
+    var pi = loan*rm*Math.pow(1+rm,n)/(Math.pow(1+rm,n)-1);
+    var tax = price*0.012/12;
+    var ins = price*0.005/12;
+    var pmi = (down/price<0.2 && program!=='va') ? loan*0.007/12 : 0;
+    var piti = pi+tax+ins+pmi;
+    var dti = (piti+debts)/monthly*100;
+    return {rate:r, pi:Math.round(pi), piti:Math.round(piti), dti:Math.round(dti*10)/10, ok:dti<=dtiLimit*100};
+  });
+
+  // Find window
+  var firstOk = results.find(r=>r.ok);
+  var lastOk = [...results].reverse().find(r=>r.ok);
+  var breakeven = results.find(r=>!r.ok && results[results.indexOf(r)-1]?.ok);
+
+  var html = '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:700;margin-bottom:14px;">DTI by Rate — '+dtiLabels[program]+'</div>';
+  results.forEach(function(r) {
+    var col = r.ok ? '#6bffb8' : '#ff6b6b';
+    var barW = Math.min(100, Math.round(r.dti/70*100));
+    var current = r.rate===6.7 ? ' ← current' : '';
+    html += '<div class="window-row" style="background:'+(r.ok?'rgba(107,255,184,0.03)':'rgba(255,107,107,0.03)')+';border:1px solid '+(r.ok?'rgba(107,255,184,0.1)':'rgba(255,107,107,0.08)')+';">';
+    html += '<div class="window-rate" style="color:'+col+';">'+r.rate+'%</div>';
+    html += '<div class="window-bar"><div class="window-fill" style="width:'+barW+'%;background:'+col+';"></div></div>';
+    html += '<div class="window-label" style="color:'+col+';">DTI '+r.dti+'%'+(r.ok?' ✓':' ✗')+current+'</div>';
+    html += '</div>';
+  });
+  document.getElementById('window-output').innerHTML = html;
+
+  var summaryHtml = '';
+  if(lastOk) {
+    summaryHtml += '<div style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:900;margin-bottom:10px;">Your Approval Window</div>';
+    summaryHtml += '<div style="font-size:14px;color:rgba(255,255,255,0.65);line-height:1.8;">';
+    summaryHtml += 'You qualify under <strong>'+dtiLabels[program]+'</strong> at rates up to <strong style="color:#6bffb8;">'+lastOk.rate+'%</strong>.<br>';
+    if(breakeven) summaryHtml += 'Above <strong style="color:#ff6b6b;">'+breakeven.rate+'%</strong>, your DTI exceeds the limit.<br>';
+    summaryHtml += 'At current rate (~6.7%): <strong style="color:'+(results.find(r=>r.rate===6.7)?.ok?'#6bffb8':'#ff6b6b')+'">'+(results.find(r=>r.rate===6.7)?.ok?'You qualify ✓':'You do not qualify ✗')+'</strong>';
+    summaryHtml += '</div>';
+    
+    if(!results.find(r=>r.rate===6.7)?.ok) {
+      summaryHtml += '<div style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.5);">💡 Consider: FHA allows higher DTI, or a lower purchase price could bring you into range.</div>';
+    }
+  } else {
+    summaryHtml = '<div style="color:#ff6b6b;font-size:14px;">At this price and income, approval is difficult across most rate scenarios. Consider reducing the purchase price or increasing down payment.</div>';
+  }
+  document.getElementById('summary-box').innerHTML = summaryHtml;
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+<script>window._AKEY = localStorage.getItem('zai_k') || '';</script>
+</body>
+</html>
