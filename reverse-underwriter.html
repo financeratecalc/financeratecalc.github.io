@@ -338,19 +338,16 @@ function runRU() {
   }
   document.getElementById('best-path').innerHTML = bestHtml;
   
-  // Challenge box — viral
-  var denied = results.filter(r => !r.approved && r.lc.id !== 'physician_specialty');
-  if(denied.length > 0 && best) {
-    var deniedNames = denied.slice(0,2).map(r=>r.lc.name).join(', ');
-    var challengeMsg = 'My mortgage profile has a '+best.prob+'% approval probability at '+best.lc.name+' category lenders — but '+denied[0].lc.name+' category would deny me for an overlay, not a government rule. Decoded by FRC: financeratecalc.com/reverse-underwriter.html';
+  // Neutral share — educational, no lender accusations
+  if(best) {
+    var shareMsg = 'I found out which mortgage program fits my profile using FRC\'s free Reverse Underwriter. '+best.prob+'% approval odds, est. '+( best.rate*100).toFixed(2)+'% rate. financeratecalc.com/reverse-underwriter.html';
     document.getElementById('challenge-section').innerHTML = '<div class="challenge-box">' +
-      '<div style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:900;margin-bottom:8px;">⚡ Challenge Your Lender</div>' +
-      '<div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:14px;">Your profile is approvable. If you were denied by a conservative overlay lender, share this:</div>' +
-      '<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:12px;font-size:12px;color:rgba(255,255,255,0.5);font-style:italic;margin-bottom:14px;line-height:1.7;">'+challengeMsg+'</div>' +
+      '<div style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:900;margin-bottom:8px;">📤 Share Your Results</div>' +
+      '<div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:14px;">Know someone navigating mortgage approval? Share this free tool.</div>' +
       '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">' +
-      '<a href="https://x.com/intent/tweet?text='+encodeURIComponent(challengeMsg)+'" target="_blank" style="padding:8px 18px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">𝕏 Share on X</a>' +
-      '<a href="https://wa.me/?text='+encodeURIComponent(challengeMsg)+'" target="_blank" style="padding:8px 18px;background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.25);color:#25d366;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">WhatsApp</a>' +
-      '<a href="https://reddit.com/r/FirstTimeHomeBuyer/submit?title='+encodeURIComponent('Mortgage denial decoded by AI — it was a lender overlay, not a government rule')+'&text='+encodeURIComponent(challengeMsg)+'" target="_blank" style="padding:8px 18px;background:rgba(255,87,0,0.12);border:1px solid rgba(255,87,0,0.25);color:#ff5700;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">Reddit</a>' +
+      '<a href="https://x.com/intent/tweet?text='+encodeURIComponent(shareMsg)+'" target="_blank" style="padding:8px 18px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">𝕏 Share</a>' +
+      '<a href="https://wa.me/?text='+encodeURIComponent(shareMsg)+'" target="_blank" style="padding:8px 18px;background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.25);color:#25d366;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">WhatsApp</a>' +
+      '<button onclick="navigator.clipboard.writeText(\''+shareMsg+'\')" style="padding:8px 18px;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.2);color:#c8a44a;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">📋 Copy</button>' +
       '</div></div>';
   }
   
