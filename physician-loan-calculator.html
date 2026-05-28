@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Physician Loan Calculator 2026 — Residents, Fellows & Doctors | FinanceRateCalc</title>
+<meta name="description" content="Physician loan simulator for medical residents, fellows and doctors. Student loans excluded from DTI, 0% down, offer letter accepted. Built by a 23-year banker. Free.">
+<meta name="keywords" content="physician loan calculator, doctor mortgage, medical resident loan, fellow mortgage, physician loan DTI, student loan excluded mortgage">
+<link rel="canonical" href="https://financeratecalc.com/physician-loan-calculator.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"SoftwareApplication","name":"FRC Physician Loan Simulator","applicationCategory":"FinanceApplication","description":"Physician loan mortgage simulator — excludes student loans from DTI, accepts offer letters, 0-10% down. Built for medical residents, fellows, and attending physicians.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Can a medical resident get a mortgage?","acceptedAnswer":{"@type":"Answer","text":"Yes. Physician loans (also called doctor loans) are designed specifically for residents and fellows. They accept an employment contract or offer letter as proof of income, even if you haven't started working yet. Student loans are typically excluded from DTI or counted at a reduced rate (0.5-1% of balance vs. standard 1% minimum payment)."}},
+{"@type":"Question","name":"Do physician loans require a down payment?","acceptedAnswer":{"@type":"Answer","text":"Most physician loan programs offer 0% down up to $1M and 5-10% down up to $1.5-2M. Unlike conventional loans, physician loans do not require PMI (private mortgage insurance) even with less than 20% down."}},
+{"@type":"Question","name":"How are student loans treated in physician loan underwriting?","acceptedAnswer":{"@type":"Answer","text":"This is the biggest advantage of physician loans. Standard underwriting counts student loans at 0.5-1% of the outstanding balance per month in DTI. Physician loans often exclude student loan payments entirely (if in deferment/forbearance) or use IBR payment amounts. On $280K in student loans, this can mean $2,800/month LESS counted toward your DTI."}},
+{"@type":"Question","name":"What credit score do I need for a physician loan?","acceptedAnswer":{"@type":"Answer","text":"Most physician loan programs require 700+ credit score, though some accept 680+. The higher the loan amount (especially over $1M), the stricter the credit requirement — typically 720+ for jumbo physician loans."}}
+]}
+]}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}.logo em{color:#c8a44a;font-style:italic;}
+.wrap{max-width:800px;margin:0 auto;padding:56px 20px 80px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,46px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;line-height:1.05;}
+h1 em{color:#c8a44a;font-style:italic;}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin:32px 0 12px;}
+.byline{font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:28px;}
+p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14px;}
+strong{color:#fff;}
+.calc-box{background:rgba(255,255,255,0.03);border:1px solid rgba(200,164,74,0.3);border-radius:14px;padding:28px;margin:28px 0;}
+.calc-box h2{margin-top:0;color:#c8a44a;}
+.field{margin-bottom:16px;}
+label{display:block;font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px;}
+input,select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;}
+.btn{display:block;width:100%;padding:13px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;margin-top:4px;}
+.result{background:rgba(107,255,184,0.06);border:1px solid rgba(107,255,184,0.2);border-radius:10px;padding:20px;margin-top:20px;display:none;}
+.result-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;}
+.result-row:last-child{border:none;}
+.result-val{font-weight:700;color:#6bffb8;}
+.result-val.bad{color:#ff6b6b;}
+.verdict{font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:12px;}
+.verdict.green{color:#6bffb8;}.verdict.orange{color:#f0a020;}.verdict.red{color:#ff6b6b;}
+.compare-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;}
+.compare-table th{padding:10px 12px;background:rgba(255,255,255,0.04);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.4);text-align:left;}
+.compare-table th:nth-child(2){color:#c8a44a;}
+.compare-table th:nth-child(3){color:#9b9bff;}
+.compare-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.05);color:rgba(255,255,255,0.65);}
+.compare-table td:nth-child(2){background:rgba(200,164,74,0.04);}
+.compare-table td:nth-child(3){background:rgba(107,107,255,0.04);}
+.glass-box{background:rgba(255,255,255,0.02);border:1px solid rgba(107,255,184,0.15);border-radius:12px;padding:22px;margin:28px 0;}
+.faq-item{border-bottom:1px solid rgba(255,255,255,0.06);padding:16px 0;}
+.faq-q{font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;}
+.faq-a{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.8;}
+.cta{background:linear-gradient(135deg,rgba(10,31,92,0.3),rgba(8,9,12,0));border:1px solid rgba(200,164,74,0.3);border-radius:12px;padding:22px;text-align:center;margin:28px 0;}
+.btn-sm{display:inline-block;padding:10px 20px;border-radius:7px;font-weight:800;font-size:13px;text-decoration:none;margin:4px;}
+.btn-gold{background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;}
+.btn-dark{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;}
+@media(max-width:640px){header{padding:0 16px;}.wrap{padding:40px 16px 60px;}}
+</style>
+</head>
+<body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← All Tools</a></header>
+<div class="wrap">
+  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Underwriting Simulator · May 2026</div>
+  <h1>Physician Loan<br><em>Qualification Simulator</em></h1>
+  <div class="byline">By Ziya Y. · 23 Years Banking & Mortgage · Updated May 2026</div>
+
+  <p>Physician loans break the normal rules — and that's the point. <strong>Student loans excluded from DTI. Offer letter accepted as income. 0% down with no PMI.</strong> This simulator runs the real math that physician loan lenders use.</p>
+
+  <div class="calc-box">
+    <h2>🩺 Physician Loan Qualifier</h2>
+    <div class="field"><label>Career Stage</label>
+      <select id="stage">
+        <option value="resident">Resident / Intern (offer letter)</option>
+        <option value="fellow">Fellow (offer letter or current pay)</option>
+        <option value="attending">Attending / Practicing Physician</option>
+      </select>
+    </div>
+    <div class="field"><label>Annual Income (or Offer Letter Salary) ($)</label><input type="number" id="income" placeholder="65000" value="65000"></div>
+    <div class="field"><label>Student Loan Balance ($)</label><input type="number" id="student" placeholder="280000" value="280000"></div>
+    <div class="field"><label>Student Loan Status</label>
+      <select id="loan_status">
+        <option value="deferment">In Deferment / Forbearance (physician loan: $0 counted)</option>
+        <option value="ibr">IBR/IDR Payment Active (physician loan: use actual payment)</option>
+        <option value="standard">Standard Repayment</option>
+      </select>
+    </div>
+    <div class="field"><label>Other Monthly Debts (car, cards) ($)</label><input type="number" id="debts" placeholder="500" value="500"></div>
+    <div class="field"><label>Home Price ($)</label><input type="number" id="price" placeholder="600000" value="600000"></div>
+    <div class="field"><label>Down Payment</label>
+      <select id="down">
+        <option value="0">0% (physician loan, no PMI)</option>
+        <option value="5">5%</option>
+        <option value="10" selected>10%</option>
+        <option value="20">20%</option>
+      </select>
+    </div>
+    <button class="btn" onclick="calculate()">Simulate Physician Loan Approval →</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <!-- COMPARISON TABLE -->
+  <h2>Physician Loan vs Standard Conventional</h2>
+  <table class="compare-table">
+    <tr><th>Feature</th><th>Physician Loan</th><th>Conventional</th></tr>
+    <tr><td><strong>Min Down Payment</strong></td><td>0% (up to $1M)</td><td>3-20%</td></tr>
+    <tr><td><strong>PMI Required</strong></td><td>Never</td><td>Yes if &lt;20% down</td></tr>
+    <tr><td><strong>Student Loans (DTI)</strong></td><td>Excluded (if deferred) or IBR payment</td><td>0.5-1% of balance/month</td></tr>
+    <tr><td><strong>Income Proof</strong></td><td>Offer letter / contract accepted</td><td>Must be currently employed</td></tr>
+    <tr><td><strong>Max Loan</strong></td><td>$1M-$2M (varies by lender)</td><td>$832,750 conforming</td></tr>
+    <tr><td><strong>Min Credit Score</strong></td><td>680-700 (most lenders)</td><td>620</td></tr>
+    <tr><td><strong>Rate vs Conventional</strong></td><td>0.25-0.75% higher typically</td><td>Baseline</td></tr>
+    <tr><td><strong>Who Qualifies</strong></td><td>MD, DO, DDS, DMD, PharmD, DVM, residents, fellows</td><td>Anyone</td></tr>
+  </table>
+
+  <!-- GLASS BOX -->
+  <div class="glass-box">
+    <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(107,255,184,0.5);font-weight:700;margin-bottom:14px;">🔍 Glass Box — Physician Loan Decision Logic</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:2;font-family:monospace;">
+      1. INCOME: Offer letter salary accepted as qualifying income<br>
+      &nbsp;&nbsp;&nbsp;└─ Source: <span style="color:#c8a44a;">Fannie Mae Selling Guide B3-3.1-09 (future employment)</span><br>
+      <br>
+      2. STUDENT LOAN DTI TREATMENT:<br>
+      &nbsp;&nbsp;&nbsp;├─ Standard: 0.5-1% of balance = $1,400-2,800/mo on $280K<br>
+      &nbsp;&nbsp;&nbsp;├─ Physician loan (deferred): $0 counted → save $1,400-2,800 in DTI<br>
+      &nbsp;&nbsp;&nbsp;└─ Physician loan (IBR): Use actual IBR payment (often $200-400/mo)<br>
+      <br>
+      3. PMI EXEMPTION: No PMI regardless of LTV<br>
+      &nbsp;&nbsp;&nbsp;└─ Lender absorbs PMI risk based on physician income trajectory<br>
+      <br>
+      4. MAX LOAN: Most programs $1M at 0% down, $1.5-2M at 5-10% down<br>
+      <br>
+      5. APPROVAL: Physicians have historically low default rates → lenders price this in
+    </div>
+  </div>
+
+  <h2>The Student Loan Math</h2>
+  <p>This is where physician loans create the biggest advantage. On <strong>$280,000 in student loans</strong>:</p>
+  <ul style="padding-left:20px;color:rgba(255,255,255,0.65);line-height:2.2;font-size:15px;margin-bottom:16px;">
+    <li><strong>Standard conventional:</strong> 1% rule = $2,800/month in DTI</li>
+    <li><strong>Physician loan (deferred):</strong> $0/month in DTI</li>
+    <li><strong>Physician loan (IBR):</strong> $200-400/month actual payment</li>
+  </ul>
+  <p>On a $65,000 resident salary, that $2,800/month difference is the difference between <strong>DTI 85%</strong> (denied) and <strong>DTI 38%</strong> (approved). Physician loans exist because this math is otherwise impossible.</p>
+
+  <div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item"><div class="faq-q">Can I use a physician loan as a resident before starting residency?</div><div class="faq-a">Yes — this is one of the most powerful features. You can use your signed residency contract or offer letter as proof of income, even if you haven't started yet. Most programs allow closing up to 90 days before your start date. Some extend to 6 months.</div></div>
+    <div class="faq-item"><div class="faq-q">Which specialties qualify for physician loans?</div><div class="faq-a">MD and DO degrees universally qualify. Most programs also include: DDS/DMD (dentists), PharmD (pharmacists), DVM (veterinarians), CRNA/NP (nurse practitioners/anesthetists), and podiatrists (DPM). Some lenders restrict to MD/DO only — always confirm before applying.</div></div>
+    <div class="faq-item"><div class="faq-q">Are physician loan rates much higher than conventional?</div><div class="faq-a">Typically 0.25-0.75% higher than a comparable conventional loan. At current rates (~6.7%), expect 6.9-7.5% on a physician loan. The premium reflects the no-PMI benefit and student loan exclusion — for most borrowers, the math still strongly favors the physician loan vs PMI + student loan DTI penalty.</div></div>
+    <div class="faq-item"><div class="faq-q">What if I'm moonlighting or have 1099 income during residency?</div><div class="faq-a">Moonlighting income is tricky. Most physician loan programs require 12-24 months of documented 1099/moonlighting income before it counts toward qualifying. Your residency contract income is straightforward — the moonlighting is bonus context, not primary qualifying income during residency.</div></div>
+  </div>
+
+  <div class="cta">
+    <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin-bottom:6px;">Ask Zai About Your Situation</div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:14px;">Residency start date, specialty, loan amount, student balance — Zai knows physician loan nuances.</p>
+    <a href="/frc-banker-ai.html" class="btn-sm btn-gold">🏦 Ask Zai Free →</a>
+    <a href="/mortgage-calculator-medical-residents-doctors.html" class="btn-sm btn-dark">📄 Resident Guide</a>
+  </div>
+
+  <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:20px;line-height:1.6;">Not financial advice. Physician loan terms vary significantly by lender. Always get multiple quotes. Consult a licensed MLO experienced with physician loans. press@financeratecalc.com</p>
+</div>
+
+<script>
+function calculate(){
+  var stage = document.getElementById('stage').value;
+  var income = parseFloat(document.getElementById('income').value)||0;
+  var student = parseFloat(document.getElementById('student').value)||0;
+  var loan_status = document.getElementById('loan_status').value;
+  var debts = parseFloat(document.getElementById('debts').value)||0;
+  var price = parseFloat(document.getElementById('price').value)||0;
+  var down_pct = parseFloat(document.getElementById('down').value)/100;
+  
+  var monthly_income = income/12;
+  var loan_amt = price*(1-down_pct);
+  var rate = 0.071/12; // physician loan slightly higher
+  var n = 360;
+  var pi = loan_amt*rate*Math.pow(1+rate,n)/(Math.pow(1+rate,n)-1);
+  var piti = pi + price*0.0085/12 + price*0.005/12;
+  
+  // Student loan treatment
+  var student_payment_conventional = student*0.01; // 1% rule
+  var student_payment_physician = loan_status === 'deferment' ? 0 : loan_status === 'ibr' ? Math.max(student*0.001, 200) : student*0.01;
+  
+  // Physician loan DTI
+  var total_debt_physician = piti + debts + student_payment_physician;
+  var dti_physician = monthly_income > 0 ? total_debt_physician/monthly_income : 1;
+  
+  // Conventional DTI (for comparison)
+  var total_debt_conventional = piti + debts + student_payment_conventional;
+  var dti_conventional = monthly_income > 0 ? total_debt_conventional/monthly_income : 1;
+  
+  var dti_p = Math.round(dti_physician*100);
+  var dti_c = Math.round(dti_conventional*100);
+  
+  var verdict=''; var vc=''; var prob=0;
+  if(dti_physician<=0.38){prob=88;verdict='Strong Approval Likely';vc='green';}
+  else if(dti_physician<=0.45){prob=70;verdict='Good Approval Odds';vc='green';}
+  else if(dti_physician<=0.55){prob=48;verdict='Possible — Compensating Factors';vc='orange';}
+  else{prob=18;verdict='Difficult Even for Physician Loan';vc='red';}
+  
+  var r = document.getElementById('result');
+  r.style.display='block';
+  r.innerHTML=`
+    <div class="verdict ${vc}">${verdict}</div>
+    <div style="color:rgba(255,255,255,0.4);font-size:13px;margin-bottom:16px;">Estimated approval probability: <strong style="color:#fff;">${prob}%</strong></div>
+    <div class="result-row"><span>Monthly Income (${stage})</span><span class="result-val">$${Math.round(monthly_income).toLocaleString()}/mo</span></div>
+    <div class="result-row"><span>Loan Amount (${Math.round(down_pct*100)}% down)</span><span class="result-val">$${Math.round(loan_amt).toLocaleString()}</span></div>
+    <div class="result-row"><span>Monthly PITI (~7.1% physician rate)</span><span class="result-val">$${Math.round(piti).toLocaleString()}/mo</span></div>
+    <div class="result-row"><span>Student Loan (physician loan)</span><span class="result-val">$${Math.round(student_payment_physician).toLocaleString()}/mo</span></div>
+    <div class="result-row"><span>Student Loan (conventional would be)</span><span class="result-val bad">$${Math.round(student_payment_conventional).toLocaleString()}/mo</span></div>
+    <div class="result-row"><span>DTI — Physician Loan</span><span class="result-val">${dti_p}%</span></div>
+    <div class="result-row"><span>DTI — Conventional (comparison)</span><span class="result-val bad">${dti_c}% ${dti_c>50?'❌ DENIED':'⚠️'}</span></div>
+    <div class="result-row"><span>Monthly Savings vs Conventional</span><span class="result-val">$${Math.round(student_payment_conventional - student_payment_physician).toLocaleString()}/mo in DTI relief</span></div>
+  `;
+}
+</script>
+<script>window._AKEY = localStorage.getItem('zai_k') || '';</script>
+</body>
+</html>
