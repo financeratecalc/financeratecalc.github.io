@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Underwriting Digital Twin — Mortgage Parallel Universe Simulation | FRC</title>
+<meta name="description" content="See your mortgage approval across 5 different lender types simultaneously. Conservative bank vs FHA vs credit union vs portfolio lender — same borrower, different outcomes. World's first.">
+<meta name="keywords" content="mortgage approval simulation, underwriting simulator, lender comparison, why was I denied mortgage, mortgage parallel universe">
+<link rel="canonical" href="https://financeratecalc.com/underwriting-digital-twin.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}.logo em{color:#c8a44a;font-style:italic;}
+.wrap{max-width:960px;margin:0 auto;padding:56px 20px 80px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,48px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;line-height:1.0;}
+h1 em{color:#c8a44a;font-style:italic;}
+h2{font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin:32px 0 12px;}
+p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14px;}
+strong{color:#fff;}
+.input-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:22px;margin:22px 0;}
+.field label{display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em;}
+.field input,.field select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:9px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;}
+.run-btn{display:block;width:100%;padding:15px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Fraunces',serif;margin:8px 0 28px;}
+#twin-results{display:none;}
+.twin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;margin:20px 0;}
+.lender-card{border-radius:12px;padding:18px;position:relative;transition:transform 0.2s;}
+.lender-card:hover{transform:translateY(-2px);}
+.lender-type{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+.lender-name{font-size:14px;font-weight:800;color:#fff;margin-bottom:12px;}
+.outcome-badge{display:inline-block;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:800;margin-bottom:10px;}
+.prob-bar{background:rgba(255,255,255,0.08);border-radius:4px;height:6px;overflow:hidden;margin:8px 0;}
+.prob-fill{height:100%;border-radius:4px;transition:width 0.8s ease;}
+.prob-label{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:3px;}
+.key-factor{font-size:11px;color:rgba(255,255,255,0.5);margin-top:8px;line-height:1.6;}
+.why-different{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:22px;margin:20px 0;}
+.genome-box{background:rgba(200,164,74,0.04);border:1px solid rgba(200,164,74,0.2);border-radius:12px;padding:22px;margin:20px 0;}
+.genome-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.genome-row:last-child{border:none;}
+.genome-trait{font-size:13px;color:rgba(255,255,255,0.6);}
+.genome-grade{font-weight:800;font-size:16px;}
+.strategy-box{background:rgba(107,255,184,0.04);border:1px solid rgba(107,255,184,0.15);border-radius:12px;padding:22px;margin:20px 0;}
+@media(max-width:640px){header{padding:0 16px;}.wrap{padding:40px 14px 60px;}.twin-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Home</a></header>
+<div class="wrap">
+
+  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">🧠 World's First · May 2026</div>
+  <h1>Underwriting<br><em>Digital Twin</em></h1>
+  <p style="font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:6px;">By Ziya Y. · 23 Years Banking · FRC Approval Intelligence Platform</p>
+  <p>Why does the same borrower get approved at one lender and denied at another? Enter your profile — see your mortgage across <strong>5 parallel lender universes simultaneously.</strong> No other consumer tool does this.</p>
+
+  <div class="input-grid">
+    <div class="field"><label>Credit Score</label><input type="number" id="dt_credit" value="660" min="500" max="850"></div>
+    <div class="field"><label>Annual Income ($)</label><input type="number" id="dt_income" value="75000"></div>
+    <div class="field"><label>Income Type</label>
+      <select id="dt_income_type">
+        <option value="w2">W-2 (Salaried)</option>
+        <option value="ssdi">SSDI Disability</option>
+        <option value="1099">Self-Employed / 1099</option>
+        <option value="pension">Pension / Retirement</option>
+        <option value="physician">Physician (Offer Letter)</option>
+      </select>
+    </div>
+    <div class="field"><label>Monthly Debts ($)</label><input type="number" id="dt_debts" value="500"></div>
+    <div class="field"><label>Home Price ($)</label><input type="number" id="dt_price" value="350000"></div>
+    <div class="field"><label>Down Payment ($)</label><input type="number" id="dt_down" value="17500"></div>
+    <div class="field"><label>Reserves (months)</label><input type="number" id="dt_reserves" value="3" min="0" max="24"></div>
+    <div class="field"><label>Recent Late Payments?</label>
+      <select id="dt_lates">
+        <option value="0">None</option>
+        <option value="1">1 (12+ months ago)</option>
+        <option value="2">1-2 (recent)</option>
+        <option value="3">3+ (multiple)</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="run-btn" onclick="runTwin()">🧠 Run Parallel Universe Simulation →</button>
+
+  <div id="twin-results">
+    <div id="twin-grid" class="twin-grid"></div>
+    <div id="why-box" class="why-different"></div>
+    <div id="genome-box" class="genome-box"></div>
+    <div id="strategy-box" class="strategy-box"></div>
+  </div>
+
+</div>
+
+<script>
+var lenderProfiles = [
+  {
+    id: "conservative",
+    name: "Conservative Bank",
+    type: "Big Bank",
+    color: "#ff6b6b",
+    rules: {
+      credit_min: 640, dti_max: 43, ssdi: false, income_1099: false,
+      lates_allowed: 0, reserves_min: 6, overlay_note: "Strict overlays. No SSDI, no 1099, strong credit required."
+    }
+  },
+  {
+    id: "fha",
+    name: "FHA Lender",
+    type: "Government",
+    color: "#9b9bff",
+    rules: {
+      credit_min: 580, dti_max: 57, ssdi: true, ssdi_grossup: 0.15, income_1099: true,
+      lates_allowed: 1, reserves_min: 0, overlay_note: "Government-backed. Most flexible credit + DTI. SSDI OK with 15% gross-up."
+    }
+  },
+  {
+    id: "moderate",
+    name: "Typical Bank",
+    type: "Regional Bank",
+    color: "#f0a020",
+    rules: {
+      credit_min: 620, dti_max: 50, ssdi: true, ssdi_grossup: 0.25, income_1099: true,
+      lates_allowed: 0, reserves_min: 2, overlay_note: "Agency guidelines. SSDI with 25% gross-up. 1099 needs 24 months history."
+    }
+  },
+  {
+    id: "credit_union",
+    name: "Credit Union",
+    type: "Credit Union",
+    color: "#34d399",
+    rules: {
+      credit_min: 620, dti_max: 50, ssdi: true, ssdi_grossup: 0.25, income_1099: true,
+      lates_allowed: 1, reserves_min: 1, overlay_note: "Member-friendly. More manual underwriting. Slightly more flexible on lates."
+    }
+  },
+  {
+    id: "portfolio",
+    name: "Portfolio Lender",
+    type: "Portfolio / Non-QM",
+    color: "#c8a44a",
+    rules: {
+      credit_min: 600, dti_max: 55, ssdi: true, ssdi_grossup: 0.25, income_1099: true,
+      lates_allowed: 2, reserves_min: 1, overlay_note: "Holds loans on own books. Most flexible. Higher rate. Manual UW common."
+    }
+  }
+];
+
+function runTwin() {
+  var credit = parseInt(document.getElementById('dt_credit').value)||660;
+  var income = parseFloat(document.getElementById('dt_income').value)||75000;
+  var income_type = document.getElementById('dt_income_type').value;
+  var debts = parseFloat(document.getElementById('dt_debts').value)||500;
+  var price = parseFloat(document.getElementById('dt_price').value)||350000;
+  var down = parseFloat(document.getElementById('dt_down').value)||17500;
+  var reserves = parseInt(document.getElementById('dt_reserves').value)||3;
+  var lates = parseInt(document.getElementById('dt_lates').value)||0;
+
+  var monthly = income/12;
+  var rate = 0.067/12; var n = 360;
+  var loan = price - down;
+  var pi = loan*rate*Math.pow(1+rate,n)/(Math.pow(1+rate,n)-1);
+  var piti = pi + price*0.012/12 + price*0.005/12;
+  if(down/price < 0.2) piti += loan*0.007/12; // PMI estimate
+
+  var results = lenderProfiles.map(function(lender) {
+    var rules = lender.rules;
+    var qualifying_income = monthly;
+
+    // Income adjustments
+    if(income_type === 'ssdi' && rules.ssdi) {
+      qualifying_income = monthly * (1 + (rules.ssdi_grossup||0));
+    } else if(income_type === 'ssdi' && !rules.ssdi) {
+      qualifying_income = 0; // SSDI not accepted
+    } else if(income_type === '1099' && !rules.income_1099) {
+      qualifying_income = 0;
+    } else if(income_type === 'physician') {
+      qualifying_income = monthly; // offer letter accepted by all
+    }
+
+    var dti = qualifying_income > 0 ? (piti + debts) / qualifying_income * 100 : 999;
+    
+    // Hard gates
+    var failures = [];
+    if(credit < rules.credit_min) failures.push('Credit ' + credit + ' below ' + rules.credit_min + ' minimum');
+    if(dti > rules.dti_max) failures.push('DTI ' + Math.round(dti) + '% exceeds ' + rules.dti_max + '% cap');
+    if(income_type === 'ssdi' && !rules.ssdi) failures.push('SSDI income not accepted');
+    if(income_type === '1099' && !rules.income_1099) failures.push('1099/self-employed income not accepted');
+    if(lates > rules.lates_allowed) failures.push('Late payments exceed policy (' + lates + ' vs max ' + rules.lates_allowed + ')');
+    if(reserves < rules.reserves_min) failures.push('Reserves ' + reserves + ' months below ' + rules.reserves_min + ' month minimum');
+
+    var approved = failures.length === 0;
+    var prob = 0;
+    if(approved) {
+      prob = 90;
+      if(credit < rules.credit_min + 40) prob -= 15;
+      if(dti > rules.dti_max - 5) prob -= 20;
+      if(lates === rules.lates_allowed) prob -= 10;
+      if(reserves <= rules.reserves_min) prob -= 10;
+      prob = Math.max(35, Math.min(95, prob));
+    }
+
+    return { lender, approved, prob, failures, dti: Math.round(dti), qualifying_income };
+  });
+
+  // Render cards
+  var cards = '';
+  results.forEach(function(r) {
+    var col = r.lender.color;
+    var outcome = r.approved ? 'Likely Approved' : 'Likely Denied';
+    var outcome_bg = r.approved ? 'rgba(107,255,184,0.15)' : 'rgba(255,107,107,0.15)';
+    var outcome_border = r.approved ? 'rgba(107,255,184,0.3)' : 'rgba(255,107,107,0.3)';
+    var outcome_color = r.approved ? '#6bffb8' : '#ff6b6b';
+    var fail_html = r.failures.length ? '<div class="key-factor">❌ ' + r.failures.join('<br>❌ ') + '</div>' : '<div class="key-factor" style="color:rgba(107,255,184,0.6);">✅ All criteria met</div>';
+    
+    cards += `<div class="lender-card" style="background:${col}0d;border:1px solid ${col}30;">
+      <div class="lender-type" style="color:${col};">${r.lender.type}</div>
+      <div class="lender-name">${r.lender.name}</div>
+      <div class="outcome-badge" style="background:${outcome_bg};border:1px solid ${outcome_border};color:${outcome_color};">${outcome}</div>
+      <div class="prob-label"><span>Probability</span><span style="color:${col};">${r.prob}%</span></div>
+      <div class="prob-bar"><div class="prob-fill" style="width:${r.prob}%;background:${col};"></div></div>
+      <div class="key-factor" style="color:rgba(255,255,255,0.35);">DTI: ${r.dti === 999 ? 'N/A (income rejected)' : r.dti+'%'}</div>
+      ${fail_html}
+    </div>`;
+  });
+  document.getElementById('twin-grid').innerHTML = cards;
+
+  // Why different
+  var approved_count = results.filter(r => r.approved).length;
+  var denied_count = 5 - approved_count;
+  var why_html = `<div style="font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin-bottom:10px;">Why Different Lenders Give Different Answers</div>`;
+  why_html += `<p style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:14px;">Same borrower. Same loan. <strong style="color:#fff;">${approved_count} lender type(s) would approve, ${denied_count} would deny.</strong> The difference is overlays — rules lenders add on top of agency guidelines.</p>`;
+  
+  var unique_reasons = [...new Set(results.filter(r=>!r.approved).flatMap(r=>r.failures))];
+  if(unique_reasons.length) {
+    why_html += '<div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;">Your approval blockers:</div>';
+    unique_reasons.forEach(function(reason) {
+      var fixed_by = results.filter(r => r.approved && r.lender.rules).map(r => r.lender.name);
+      why_html += `<div style="padding:8px 12px;background:rgba(255,107,107,0.06);border-left:3px solid rgba(255,107,107,0.3);border-radius:0 6px 6px 0;margin-bottom:6px;font-size:13px;color:rgba(255,255,255,0.65);">❌ ${reason}</div>`;
+    });
+  }
+  why_html += `<a href="/lender-overlay-database.html" style="font-size:12px;color:#9b9bff;text-decoration:none;font-weight:700;">→ See full overlay reference guide</a>`;
+  document.getElementById('why-box').innerHTML = why_html;
+
+  // Borrower Genome
+  var income_score = income_type === 'w2' ? 'A' : income_type === 'ssdi' || income_type === 'pension' ? 'B+' : income_type === 'physician' ? 'A-' : 'C';
+  var credit_score_grade = credit >= 740 ? 'A' : credit >= 700 ? 'B+' : credit >= 660 ? 'B' : credit >= 620 ? 'C+' : 'C';
+  var dti_test = (piti + debts) / (income/12) * 100;
+  var dti_grade = dti_test <= 36 ? 'A' : dti_test <= 43 ? 'B' : dti_test <= 50 ? 'C+' : 'C';
+  var reserve_grade = reserves >= 6 ? 'A' : reserves >= 3 ? 'B' : reserves >= 1 ? 'C' : 'D';
+  var late_grade = lates === 0 ? 'A' : lates === 1 ? 'C+' : 'D';
+  
+  var genome_html = `<div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.5);font-weight:700;margin-bottom:14px;">🧬 Borrower Risk Genome</div>`;
+  var traits = [
+    ['Income Stability', income_score, income_type === 'w2' ? 'W-2 salaried — strongest income type' : income_type === '1099' ? '1099/self-employed — requires 24mo history' : 'See income type notes'],
+    ['Credit Profile', credit_score_grade, credit + ' FICO — ' + (credit >= 700 ? 'solid' : credit >= 640 ? 'acceptable' : 'improvement opportunity')],
+    ['Debt Load (DTI)', dti_grade, Math.round(dti_test) + '% back-end DTI — ' + (dti_test <= 43 ? 'healthy' : dti_test <= 50 ? 'borderline' : 'high')],
+    ['Cash Reserves', reserve_grade, reserves + ' months — ' + (reserves >= 6 ? 'strong' : reserves >= 3 ? 'adequate' : 'low')],
+    ['Payment History', late_grade, lates === 0 ? 'Clean — no lates' : lates + ' late payment(s) — impacts approval'],
+    ['Overlay Sensitivity', approved_count >= 4 ? 'Low' : approved_count >= 2 ? 'Medium' : 'High', approved_count + '/5 lender types would approve'],
+  ];
+  
+  var grade_color = {A:'#6bffb8','A-':'#6bffb8','B+':'#9bffb8','B':'#f0d060','C+':'#f0a020','C':'#f0a020',D:'#ff6b6b',Low:'#6bffb8',Medium:'#f0a020',High:'#ff6b6b'};
+  traits.forEach(function(t) {
+    genome_html += `<div class="genome-row"><div><div class="genome-trait">${t[0]}</div><div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px;">${t[2]}</div></div><div class="genome-grade" style="color:${grade_color[t[1]]||'#fff'};">${t[1]}</div></div>`;
+  });
+  document.getElementById('genome-box').innerHTML = genome_html;
+
+  // Strategy
+  var best = results.filter(r => r.approved).sort((a,b) => b.prob - a.prob)[0];
+  var strategy_html = `<div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(107,255,184,0.5);font-weight:700;margin-bottom:12px;">🎯 Approval Strategy</div>`;
+  if(best) {
+    strategy_html += `<div style="font-family:'Fraunces',serif;font-size:17px;font-weight:900;margin-bottom:10px;">Best path: ${best.lender.name} (${best.prob}% probability)</div>`;
+    strategy_html += `<p style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:12px;">${best.lender.rules.overlay_note}</p>`;
+  }
+  if(denied_count > 0) {
+    strategy_html += `<div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;">To unlock more lender types:</div>`;
+    var fixes = [];
+    if(credit < 640) fixes.push('Raise credit to 640+ → unlocks conservative banks');
+    if(lates > 0) fixes.push('12+ months clean payment history → removes late payment flag');
+    if(reserves < 6) fixes.push('Save ' + (6-reserves) + ' more months reserves → reduces denial risk');
+    if(income_type === '1099') fixes.push('24+ months 1099 history → qualifies at most lenders');
+    fixes.forEach(f => {
+      strategy_html += `<div style="padding:7px 12px;background:rgba(107,255,184,0.05);border-left:3px solid rgba(107,255,184,0.3);border-radius:0 6px 6px 0;margin-bottom:5px;font-size:13px;color:rgba(255,255,255,0.65);">💡 ${f}</div>`;
+    });
+  }
+  strategy_html += `<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
+    <a href="/frc-banker-ai.html" style="padding:8px 16px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:7px;font-size:12px;font-weight:800;text-decoration:none;">Ask Zai for Strategy →</a>
+    <a href="/fha-vs-conventional-vs-va-calculator.html" style="padding:8px 16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:7px;font-size:12px;font-weight:800;text-decoration:none;">FHA vs Conv vs VA →</a>
+  </div>`;
+  document.getElementById('strategy-box').innerHTML = strategy_html;
+
+  document.getElementById('twin-results').style.display = 'block';
+  document.getElementById('twin-results').scrollIntoView({behavior:'smooth', block:'start'});
+}
+</script>
+<script>window._AKEY = localStorage.getItem('zai_k') || '';</script>
+</body>
+</html>
