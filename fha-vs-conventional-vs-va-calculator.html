@@ -94,7 +94,9 @@ strong{color:#fff;}
     <div class="field"><label>VA Eligible?</label>
       <select id="va_eligible">
         <option value="0">No</option>
-        <option value="1">Yes — veteran/active duty</option>
+        <option value="1">Yes — first VA use</option>
+        <option value="2">Yes — subsequent VA use</option>
+        <option value="3">Yes — disabled veteran (0% fee)</option>
       </select>
     </div>
     <div class="field"><label>State (for taxes)</label>
@@ -206,7 +208,9 @@ function calculate(){
   var n = 360;
   
   // === FHA ===
-  var fha_rate = 0.0675;
+  // May 2026 rates — FHA ~0.1% above conventional, VA ~0.25% below
+  var base_rate = credit>=740?0.065:credit>=700?0.067:credit>=660?0.069:credit>=620?0.072:0.075;
+  var fha_rate = base_rate + 0.001; // FHA slight premium
   var fha_down = Math.max(down, price*0.035);
   var fha_down_pct = fha_down/price;
   var fha_ufmip = (price-fha_down)*0.0175;
@@ -238,8 +242,11 @@ function calculate(){
   var pmi_years = down_pct<0.2 ? Math.ceil(Math.log(0.8)/(Math.log(1+conv_rate/12)*(-1))/12)+1 : 0;
 
   // === VA ===
-  var va_rate = 0.064;
-  var va_funding = price*0.0215;
+  var va_rate = Math.max(0.063, base_rate - 0.0025); // VA typically 0.25% below conventional
+  var va_use = document.getElementById('va_eligible').value==='2'?0.033:0.0215;
+  var va_funding = (down/price>=0.10)?price*0.0125:(down/price>=0.05)?price*0.015:price*va_use;
+  var va_exempt = document.getElementById('va_eligible').value==='3';
+  if(va_exempt) va_funding = 0; // Disabled veteran — no funding fee
   var va_loan = (price-down)+va_funding;
   var va_r = va_rate/12;
   var va_pi = va_loan*va_r*Math.pow(1+va_r,n)/(Math.pow(1+va_r,n)-1);
