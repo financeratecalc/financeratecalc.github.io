@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>OFI Methodology — Overlay Friction Index | FRC</title>
+<meta name="description" content="OFI does not model what the rules theoretically allow. It models how lender overlays distort approval outcomes in practice. Full methodology, philosophy, and framework.">
+<link rel="canonical" href="https://financeratecalc.com/ofi-methodology.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle","name":"OFI Methodology — Overlay Friction Index","description":"OFI measures the gap between official mortgage agency guidelines and real-world lender approval behavior.","author":{"@type":"Person","name":"Ziya Y.","description":"23 years banking and mortgage underwriting"},"publisher":{"@type":"Organization","name":"FinanceRateCalc"},"datePublished":"2024-10-01","dateModified":"2026-05-29"}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{color:#c8a44a;font-style:italic;}
+.wrap{max-width:780px;margin:0 auto;padding:60px 24px 100px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(30px,5vw,52px);font-weight:900;letter-spacing:-2px;line-height:1.0;margin-bottom:14px;}
+h1 em{color:#c8a44a;font-style:italic;}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin:40px 0 14px;color:#fff;}
+h3{font-size:14px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;margin:28px 0 10px;}
+p{font-size:15px;color:rgba(255,255,255,0.7);line-height:1.9;margin-bottom:14px;}
+strong{color:#fff;}
+.tagline{font-size:18px;font-style:italic;color:rgba(200,164,74,0.9);border-left:3px solid rgba(200,164,74,0.4);padding:16px 20px;margin:28px 0;background:rgba(200,164,74,0.04);border-radius:0 8px 8px 0;line-height:1.7;}
+.vs-box{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.vs-item{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:18px;}
+.vs-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+.vs-text{font-size:14px;color:rgba(255,255,255,0.65);line-height:1.7;}
+.measure-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:16px 0;}
+.measure-item{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:14px 16px;}
+.measure-title{font-size:12px;font-weight:700;color:#c8a44a;margin-bottom:5px;}
+.measure-desc{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;}
+.score-table{width:100%;border-collapse:collapse;margin:16px 0;}
+.score-table th{padding:10px 16px;background:rgba(255,255,255,0.03);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);text-align:left;border-bottom:1px solid rgba(255,255,255,0.07);}
+.score-table td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:14px;color:rgba(255,255,255,0.7);}
+.bend-box{background:rgba(107,107,255,0.05);border:1px solid rgba(107,107,255,0.15);border-radius:12px;padding:24px;margin:24px 0;}
+.sub-index-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0;}
+.sub-item{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:14px;}
+.sub-code{font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin-bottom:6px;}
+.sub-name{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:4px;}
+.sub-source{font-size:11px;color:rgba(255,255,255,0.3);}
+.coming{display:inline-block;padding:3px 8px;background:rgba(200,164,74,0.12);border:1px solid rgba(200,164,74,0.25);border-radius:4px;font-size:10px;font-weight:700;color:rgba(200,164,74,0.7);margin-left:6px;}
+@media(max-width:640px){
+  header{padding:0 16px;}
+  .wrap{padding:40px 16px 60px;}
+  .vs-box{grid-template-columns:1fr;}
+  .sub-index-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/ofi.html" style="font-size:12px;color:#c8a44a;text-decoration:none;font-weight:700;">OFI = 47 →</a>
+</header>
+
+<div class="wrap">
+
+  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:12px;">By Ziya Y. · 23 Years Banking · FRC Research</div>
+
+  <h1>Overlay Friction<br>Index — <em>Methodology</em></h1>
+
+  <div class="tagline">
+    "FRC does not just model mortgage rules.<br>
+    It models how real-world lending behavior diverges from them."
+  </div>
+
+  <h2>Core Concept</h2>
+  <p>The Overlay Friction Index (OFI) is a behavioral underwriting intelligence metric designed to measure the gap between official mortgage agency guidelines and real-world lender approval behavior.</p>
+
+  <div class="vs-box">
+    <div class="vs-item">
+      <div class="vs-label" style="color:rgba(107,255,184,0.7);">What agencies say</div>
+      <div class="vs-text">FHA allows 57% DTI. VA has no credit score minimum. Fannie Mae allows 50% DTI with compensating factors.</div>
+    </div>
+    <div class="vs-item">
+      <div class="vs-label" style="color:rgba(255,107,107,0.7);">What lenders do</div>
+      <div class="vs-text">Lenders cap DTI at 43-45%. Add credit floors of 640+. Reject SSDI income. Apply reserve requirements agencies don't require.</div>
+    </div>
+  </div>
+
+  <p>The result: a borrower can be <strong>agency-eligible</strong> but <strong>market-ineligible</strong>. OFI quantifies this hidden friction.</p>
+
+  <h2>The Three Layers of Rule Bending</h2>
+  <p>When a mortgage rule enters the market, it bends in three ways. OFI attempts to capture all three:</p>
+
+  <div class="bend-box">
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <strong style="color:#c8a44a;">Lender Bending</strong>
+        <p style="margin:4px 0 0;font-size:14px;">The lender adds internal overlays on top of agency rules. "FHA says 580 credit minimum. We require 640." Undocumented, unannounced, invisible.</p>
+      </div>
+      <div>
+        <strong style="color:#9b9bff;">LO Bending</strong>
+        <p style="margin:4px 0 0;font-size:14px;">The loan officer interprets rules through experience. "Technically 580 qualifies but we've been rejecting 590s this month. Don't bother submitting." Rule exists on paper. Doesn't exist in practice.</p>
+      </div>
+      <div>
+        <strong style="color:#6bffb8;">Market Bending</strong>
+        <p style="margin:4px 0 0;font-size:14px;">Market conditions silently reshape rules. Rates rise → lenders quietly tighten DTI. No announcement. No policy change. Just behavior shift. OFI detects this before anyone reports it.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>What OFI Measures</h2>
+  <div class="measure-grid">
+    <div class="measure-item">
+      <div class="measure-title">Lender Overlays</div>
+      <div class="measure-desc">Rules lenders apply beyond agency minimums. Credit floors, DTI caps, reserve requirements.</div>
+    </div>
+    <div class="measure-item">
+      <div class="measure-title">Approval Divergence</div>
+      <div class="measure-desc">Gap between lenders for identical profiles. Same borrower → different outcomes across categories.</div>
+    </div>
+    <div class="measure-item">
+      <div class="measure-title">Denial Patterns</div>
+      <div class="measure-desc">Recurring denial clusters by geography, loan type, borrower profile. CFPB-sourced, AI-classified.</div>
+    </div>
+    <div class="measure-item">
+      <div class="measure-title">AUS-to-Manual Drift</div>
+      <div class="measure-desc">When automated systems say approve but humans deny. The gap is overlay behavior.</div>
+    </div>
+    <div class="measure-item">
+      <div class="measure-title">Regional Variability</div>
+      <div class="measure-desc">Same profile, different state → different approval probability. Geographic overlay mapping.</div>
+    </div>
+    <div class="measure-item">
+      <div class="measure-title">Edge-Case Treatment</div>
+      <div class="measure-desc">SSDI gross-up, self-employed income, physician loans, ITIN borrowers. Where overlays bite hardest.</div>
+    </div>
+  </div>
+
+  <h2>OFI Score Interpretation</h2>
+  <table class="score-table">
+    <tr><th>OFI Range</th><th>State</th><th>Interpretation</th></tr>
+    <tr><td style="color:#6bffb8;font-weight:700;">0 – 35</td><td style="color:#6bffb8;">EXPANSION</td><td>Market behavior closely matches agency rules. Edge-case borrowers have broad approval paths.</td></tr>
+    <tr><td style="color:#c8a44a;font-weight:700;">35 – 55</td><td style="color:#c8a44a;">MODERATE</td><td>Mixed overlay behavior. Program selection matters. Some lender types significantly more flexible than others.</td></tr>
+    <tr><td style="color:#ff9966;font-weight:700;">55 – 70</td><td style="color:#ff9966;">TIGHTENING</td><td>Overlay compression across categories. Edge-case borrowers face elevated denial risk market-wide.</td></tr>
+    <tr><td style="color:#ff6b6b;font-weight:700;">70 – 100</td><td style="color:#ff6b6b;">RESTRICTIVE</td><td>Maximum friction. Only strongest profiles qualify broadly. Lender category selection critical.</td></tr>
+  </table>
+
+  <h2>Current OFI: Q2 2026</h2>
+  <div style="text-align:center;padding:28px;background:rgba(200,164,74,0.05);border:1px solid rgba(200,164,74,0.2);border-radius:12px;margin:16px 0;">
+    <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(200,164,74,0.5);margin-bottom:8px;">Overlay Friction Index</div>
+    <div style="font-family:'Fraunces',serif;font-size:72px;font-weight:900;color:#c8a44a;line-height:1;">47</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.5);margin-top:6px;">MODERATE · Re-tightening signal detected</div>
+    <div style="margin-top:14px;font-size:13px;color:rgba(255,255,255,0.4);">Active signal: <span style="color:#ff6b6b;font-weight:700;">FRC-TIGHTENING-001</span></div>
+    <a href="/ofi.html" style="display:inline-block;margin-top:14px;padding:9px 20px;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.25);color:#c8a44a;border-radius:7px;font-size:12px;font-weight:700;text-decoration:none;">Full OFI Report →</a>
+  </div>
+
+  <h2>Sub-Index Framework <span class="coming">Q3 2026 — HMDA-calibrated</span></h2>
+  <p>The full OFI methodology will decompose into three auditable sub-indices, each grounded in federal HMDA data:</p>
+
+  <div class="sub-index-grid">
+    <div class="sub-item">
+      <div class="sub-code" style="color:#c8a44a;">OFI-LO</div>
+      <div class="sub-name">Lender Overlay Index</div>
+      <div class="sub-source">HMDA + contributed LO outcomes</div>
+    </div>
+    <div class="sub-item">
+      <div class="sub-code" style="color:#9b9bff;">OFI-RV</div>
+      <div class="sub-name">Regional Variability</div>
+      <div class="sub-source">HMDA geographic segmentation</div>
+    </div>
+    <div class="sub-item">
+      <div class="sub-code" style="color:#6bffb8;">OFI-EC</div>
+      <div class="sub-name">Edge-Case Treatment</div>
+      <div class="sub-source">Agency-eligible, market-denied cases</div>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:rgba(255,255,255,0.35);font-style:italic;">Full HMDA-calibrated methodology and audit trail publishing Q3 2026. Current OFI = expert-calibrated baseline from 23 years of underwriting observation, cross-referenced with CFPB complaint signal analysis.</p>
+
+  <h2>Strategic Importance</h2>
+  <p>Traditional mortgage systems answer: <em>"Can this borrower theoretically qualify?"</em></p>
+  <p>OFI answers: <em>"Will the market actually approve this borrower — and at which lender category?"</em></p>
+  <p>This distinction matters because most mortgage denials are caused not by agency rule failure, but by lender overlays that exist nowhere in writing. The borrower who fails at one lender is often approved at another the same week.</p>
+
+  <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:24px;margin:28px 0;">
+    <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.3);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.1em;">OFI evolves into</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <span style="padding:6px 14px;background:rgba(200,164,74,0.08);border:1px solid rgba(200,164,74,0.2);border-radius:20px;font-size:12px;font-weight:700;color:rgba(200,164,74,0.8);">Underwriting Observability Layer</span>
+      <span style="padding:6px 14px;background:rgba(155,155,255,0.08);border:1px solid rgba(155,155,255,0.2);border-radius:20px;font-size:12px;font-weight:700;color:rgba(155,155,255,0.8);">Lender Behavior Graph</span>
+      <span style="padding:6px 14px;background:rgba(107,255,184,0.08);border:1px solid rgba(107,255,184,0.2);border-radius:20px;font-size:12px;font-weight:700;color:rgba(107,255,184,0.8);">Denial Intelligence Engine</span>
+      <span style="padding:6px 14px;background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.2);border-radius:20px;font-size:12px;font-weight:700;color:rgba(255,107,107,0.8);">Real Approval Probability System</span>
+    </div>
+  </div>
+
+  <div class="tagline" style="margin-top:36px;">
+    "In practice, OFI behaves more like a credit risk intelligence framework than a standard mortgage calculator."
+  </div>
+
+  <div style="margin-top:32px;display:flex;gap:10px;flex-wrap:wrap;">
+    <a href="/ofi.html" style="padding:12px 22px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:8px;font-weight:800;font-size:14px;text-decoration:none;">View Current OFI →</a>
+    <a href="/live-underwriting-radar.html" style="padding:12px 22px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">Live Radar →</a>
+    <a href="/live-intelligence.json" style="padding:12px 22px;background:rgba(200,164,74,0.06);border:1px solid rgba(200,164,74,0.18);color:#c8a44a;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">Open Data →</a>
+  </div>
+
+  <div style="border-top:1px solid rgba(255,255,255,0.05);padding:20px 0;margin-top:40px;font-size:11px;color:rgba(255,255,255,0.2);line-height:1.9;">
+    <strong style="color:rgba(255,255,255,0.3);">FinanceRateCalc Research Division</strong> · Ziya Y., 23 Years Banking · OFI is an educational intelligence framework · Not financial advice · © 2026 · <a href="/live-intelligence.json" style="color:rgba(200,164,74,0.35);text-decoration:none;">CC BY 4.0</a>
+  </div>
+</div>
+
+<style>@keyframes zairing{0%{transform:scale(1);opacity:0.5}100%{transform:scale(1.9);opacity:0}}</style>
+<div style="position:fixed;bottom:24px;right:24px;z-index:9999;">
+  <a href="/frc-banker-ai.html" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#c8a44a,#f0d060);display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 4px 20px rgba(200,164,74,0.45);">
+    <span style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#08090c;">Z</span>
+  </a>
+  <div style="position:absolute;top:0;left:0;width:52px;height:52px;border-radius:50%;border:2px solid rgba(200,164,74,0.4);animation:zairing 2s ease-out infinite;pointer-events:none;"></div>
+</div>
+</body>
+</html>
