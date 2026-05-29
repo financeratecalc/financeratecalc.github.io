@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Reverse Underwriter — Which Lender Type Will Approve You? | FRC</title>
-<meta name="description" content="Don't ask why you were denied. Ask which lender type will approve you today. FRC's Reverse Underwriter shows exact approval geometry — FICO floor, DTI cap, overlay risk — by lender category.">
-<meta name="keywords" content="which lender will approve me mortgage, reverse underwriter mortgage, mortgage approval by lender type, find mortgage lender that approves me">
+<meta name="description" content="Don't ask why you were denied. Ask which lender type will approve you today. FRC Reverse Underwriter shows approval probability, rate, and overlay fingerprint across 7 lender categories.">
 <link rel="canonical" href="https://financeratecalc.com/reverse-underwriter.html">
 <link rel="icon" href="/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,17 +11,19 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"FRC Reverse Underwriter","description":"Shows exact approval probability by lender type for a borrower profile. Reveals overlay fingerprints — the hidden rules different lender categories apply on top of agency guidelines.","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"FRC Reverse Underwriter","description":"Shows exact approval probability by lender type for a borrower profile.","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
 </script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
 header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
-.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}.logo em{color:#c8a44a;font-style:italic;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{color:#c8a44a;font-style:italic;}
 .wrap{max-width:960px;margin:0 auto;padding:56px 20px 80px;}
 h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,48px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;line-height:1.0;}
 h1 em{color:#c8a44a;font-style:italic;}
-p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14px;}strong{color:#fff;}
+p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14px;}
+strong{color:#fff;}
 .input-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:22px;margin:22px 0;}
 .field label{display:block;font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em;}
 .field input,.field select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:9px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;}
@@ -32,21 +33,21 @@ p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14p
 .approval-table th{padding:10px 14px;background:rgba(255,255,255,0.03);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.3);text-align:left;border-bottom:1px solid rgba(255,255,255,0.08);}
 .approval-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;font-size:13px;}
 .approval-table tr.best-match td{background:rgba(107,255,184,0.04);}
-.prob-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;flex-shrink:0;}
-.overlay-fp{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px;margin-top:8px;}
 .fp-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;margin:2px;}
 .fp-strict{background:rgba(255,107,107,0.15);color:#ff6b6b;}
 .fp-flexible{background:rgba(107,255,184,0.15);color:#6bffb8;}
 .fp-neutral{background:rgba(240,160,32,0.15);color:#f0a020;}
-.challenge-box{background:rgba(200,164,74,0.05);border:2px solid rgba(200,164,74,0.2);border-radius:12px;padding:22px;margin-top:20px;text-align:center;}
-.data-donation{background:rgba(107,107,255,0.05);border:1px solid rgba(107,107,255,0.2);border-radius:12px;padding:20px;margin-top:20px;}
 @media(max-width:680px){header{padding:0 16px;}.wrap{padding:40px 14px 60px;}.approval-table{font-size:11px;}th,td{padding:8px 8px;}}
 </style>
 </head>
 <body>
-<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Home</a></header>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/index.html" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">← Home</a>
+</header>
+
 <div class="wrap">
-  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">🔬 World's First · May 2026</div>
+  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">World's First · May 2026</div>
   <h1>Reverse<br><em>Underwriter</em></h1>
   <p style="font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:18px;">By Ziya Y. · 23 Years Banking · FRC Decision Intelligence System</p>
   <p>Stop asking <em>"why was I denied?"</em> Ask <strong>"which lender type will approve me — and at what exact terms?"</strong> Enter your profile. See the full approval geometry across every lender category.</p>
@@ -76,9 +77,10 @@ p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14p
       </select>
     </div>
   </div>
-  <button class="run-btn" onclick="runRU()">🔬 Reveal My Approval Geometry →</button>
 
-  <div id="results" style="display:none;">
+  <button class="run-btn" id="runBtn">🔬 Reveal My Approval Geometry →</button>
+
+  <div id="results">
     <h2 style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:6px;">Your Approval Geometry</h2>
     <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:14px;">Ranked by approval probability. Overlay fingerprints show why each category behaves differently.</p>
     <div style="overflow-x:auto;">
@@ -87,315 +89,193 @@ p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14p
           <th>Lender Category</th>
           <th>Approval Odds</th>
           <th>Est. Rate</th>
-          <th>Key Overlay Fingerprint</th>
-          <th>Your Blockers</th>
+          <th>Overlay Fingerprint</th>
+          <th>Your Status</th>
         </tr>
       </table>
     </div>
-    <div id="best-path"></div>
-    <div id="challenge-section"></div>
-    <div id="data-section"></div>
+    <div id="best-path" style="margin-top:16px;"></div>
+    <div id="share-section" style="margin-top:12px;"></div>
   </div>
 
   <div style="border-top:1px solid rgba(255,255,255,0.05);padding:20px 0;margin-top:32px;font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;">
-    <strong style="color:rgba(255,255,255,0.3);">FinanceRateCalc</strong> is a mortgage decision intelligence system. Lender categories represent typical overlay behavior patterns — not specific named lenders. Approval probabilities are educational estimates. Not financial advice. © 2026 | Part of the <a href="/denial-genome-project.html" style="color:rgba(200,164,74,0.4);">Denial Genome Project</a>
+    <strong style="color:rgba(255,255,255,0.3);">FinanceRateCalc</strong> — Mortgage Decision Intelligence. Lender categories represent typical overlay behavior patterns. Educational only, not financial advice. © 2026
   </div>
 </div>
 
-<script>
-// OVERLAY FINGERPRINT DATABASE
-// Legal: categories only — no specific lender names
-// Based on 23 years of underwriting pattern observation
-var LENDER_CATEGORIES = [
-  {
-    id: "fha_flexible",
-    name: "FHA-Focused Lender (Flexible)",
-    type: "Government",
-    color: "#9b9bff",
-    fingerprint: {
-      credit_floor: 580,
-      dti_max: 57,
-      ssdi: true, ssdi_grossup: 0.15,
-      income_1099: true, months_1099: 24,
-      emp_years: 2,
-      lates_ok: 1,
-      reserves_months: 0,
-      rate_premium: 0.10, // above base
-      notes: ["Follows HUD 4000.1 closely", "Manual underwriting available", "SSDI 15% gross-up applied", "High DTI OK with compensating factors"]
-    }
-  },
-  {
-    id: "va_specialist",
-    name: "VA Specialist Lender",
-    type: "Government",
-    color: "#6bffb8",
-    fingerprint: {
-      credit_floor: 580,
-      dti_max: 65, // residual income method
-      ssdi: true, ssdi_grossup: 0.25,
-      income_1099: true, months_1099: 24,
-      emp_years: 2,
-      lates_ok: 1,
-      reserves_months: 0,
-      rate_premium: -0.25, // below base
-      notes: ["Residual income method (not just DTI)", "No PMI", "Disability income = 0% funding fee", "50-60% DTI OK if residual income strong"]
-    }
-  },
-  {
-    id: "credit_union",
-    name: "Credit Union",
-    type: "Credit Union",
-    color: "#34d399",
-    fingerprint: {
-      credit_floor: 620,
-      dti_max: 50,
-      ssdi: true, ssdi_grossup: 0.25,
-      income_1099: true, months_1099: 24,
-      emp_years: 2,
-      lates_ok: 1,
-      reserves_months: 1,
-      rate_premium: -0.15,
-      notes: ["Member-friendly underwriting", "More manual review available", "Some allow 580 for FHA", "1 late OK if 12+ months ago"]
-    }
-  },
-  {
-    id: "agency_standard",
-    name: "Agency-Standard Bank",
-    type: "Regional Bank",
-    color: "#f0a020",
-    fingerprint: {
-      credit_floor: 620,
-      dti_max: 50,
-      ssdi: true, ssdi_grossup: 0.25,
-      income_1099: true, months_1099: 24,
-      emp_years: 2,
-      lates_ok: 0,
-      reserves_months: 2,
-      rate_premium: 0.0,
-      notes: ["Follows Fannie/Freddie guidelines", "SSDI 25% gross-up applied", "No recent lates allowed", "2 months reserves required"]
-    }
-  },
-  {
-    id: "conservative_overlay",
-    name: "Conservative Overlay Lender",
-    type: "Conservative Bank",
-    color: "#ff9966",
-    fingerprint: {
-      credit_floor: 640,
-      dti_max: 45,
-      ssdi: false, ssdi_grossup: 0,
-      income_1099: false, months_1099: 0,
-      emp_years: 2,
-      lates_ok: 0,
-      reserves_months: 6,
-      rate_premium: 0.05,
-      notes: ["640+ credit overlay (vs FHA's 580)", "45% DTI cap (vs FHA's 57%)", "SSDI often rejected or limited", "1099 income may not qualify", "6 months reserves required"]
-    }
-  },
-  {
-    id: "portfolio_nonqm",
-    name: "Portfolio / Non-QM Lender",
-    type: "Alternative",
-    color: "#c084fc",
-    fingerprint: {
-      credit_floor: 600,
-      dti_max: 55,
-      ssdi: true, ssdi_grossup: 0.25,
-      income_1099: true, months_1099: 12,
-      emp_years: 1,
-      lates_ok: 2,
-      reserves_months: 3,
-      rate_premium: 0.75, // higher rate
-      notes: ["Bank statements accepted (12-24 months)", "1099 history: 12 months OK", "Manual underwriting standard", "Higher rate for flexibility", "2 recent lates may still qualify"]
-    }
-  },
-  {
-    id: "physician_specialty",
-    name: "Physician Loan Specialist",
-    type: "Physician",
-    color: "#e879f9",
-    fingerprint: {
-      credit_floor: 700,
-      dti_max: 55,
-      ssdi: false, ssdi_grossup: 0,
-      income_1099: false, months_1099: 0,
-      emp_years: 0, // offer letter OK
-      lates_ok: 0,
-      reserves_months: 0,
-      rate_premium: 0.30,
-      notes: ["MD/DO/DDS/PharmD only", "Offer letter accepted (no history needed)", "Student loans excluded from DTI", "0% down available", "No PMI"]
-    }
-  },
-];
-
-function runRU() {
-  var credit = parseInt(document.getElementById('ru_credit').value)||650;
-  var income = parseFloat(document.getElementById('ru_income').value)||78000;
-  var itype = document.getElementById('ru_itype').value;
-  var debts = parseFloat(document.getElementById('ru_debts').value)||450;
-  var price = parseFloat(document.getElementById('ru_price').value)||340000;
-  var down = parseFloat(document.getElementById('ru_down').value)||17000;
-  var emp = parseFloat(document.getElementById('ru_emp').value)||3;
-  var lates = parseInt(document.getElementById('ru_lates').value)||0;
-  
-  var monthly = income/12;
-  var loan = price - down;
-  var n = 360;
-  var base_rate = 0.067;
-  
-  var results = LENDER_CATEGORIES.map(function(lc) {
-    var fp = lc.fingerprint;
-    var rate = base_rate + fp.rate_premium/100;
-    var rm = rate/12;
-    var pi = loan*rm*Math.pow(1+rm,n)/(Math.pow(1+rm,n)-1);
-    var piti = pi + price*0.012/12 + price*0.005/12;
-    if(down/price < 0.2 && lc.id !== 'va_specialist' && lc.id !== 'physician_specialty') piti += loan*0.007/12;
-    
-    // Qualifying income
-    var qi = monthly;
-    if(itype === 'ssdi' && fp.ssdi) qi = monthly * (1 + fp.ssdi_grossup);
-    else if(itype === 'ssdi' && !fp.ssdi) qi = 0;
-    else if(itype === '1099' && !fp.income_1099) qi = 0;
-    else if(itype === 'physician' && lc.id !== 'physician_specialty') qi = 0.3 * monthly; // harsh for non-physician lenders
-    else if(itype === 'physician' && lc.id === 'physician_specialty') qi = monthly * 1.2; // offer letter boost
-    
-    var dti = qi > 0 ? (piti + debts) / qi * 100 : 999;
-    
-    // Hard failures
-    var blockers = [];
-    if(credit < fp.credit_floor) blockers.push('Credit '+credit+' < '+fp.credit_floor+' floor');
-    if(dti > fp.dti_max) blockers.push('DTI '+Math.round(dti)+'% > '+fp.dti_max+'% cap');
-    if(itype==='ssdi' && !fp.ssdi) blockers.push('SSDI income not accepted');
-    if(itype==='1099' && !fp.income_1099) blockers.push('1099 income not accepted');
-    if(lates > fp.lates_ok) blockers.push('Late payments: '+lates+' (max '+fp.lates_ok+')');
-    if(emp < fp.emp_years && lc.id !== 'physician_specialty') blockers.push('Employment '+emp+'yr < '+fp.emp_years+'yr required');
-    if(itype==='physician' && lc.id !== 'physician_specialty') blockers.push('Profile fits physician specialty program');
-    
-    var approved = blockers.length === 0;
-    var prob = 0;
-    if(approved) {
-      prob = 90;
-      if(credit < fp.credit_floor + 40) prob -= 12;
-      if(dti > fp.dti_max - 5) prob -= 18;
-      if(lates === fp.lates_ok && lates > 0) prob -= 8;
-      prob = Math.max(38, Math.min(96, prob));
-    }
-    
-    return {lc, rate, dti:Math.round(dti), prob, blockers, approved, monthly_payment:Math.round(piti)};
-  }).filter(function(r) {
-    // Filter physician if not physician
-    if(r.lc.id === 'physician_specialty' && itype !== 'physician') return false;
-    if(r.lc.id === 'va_specialist') return true; // always show VA (user may be eligible)
-    return true;
-  }).sort((a,b) => b.prob - a.prob);
-  
-  // Render table
-  var t = document.getElementById('approval-table');
-  // Clear old rows
-  while(t.rows.length > 1) t.deleteRow(1);
-  
-  results.forEach(function(r, idx) {
-    var col = r.lc.color;
-    var probBg = r.approved ? col+'22' : 'rgba(255,107,107,0.08)';
-    var probBorder = r.approved ? col+'44' : 'rgba(255,107,107,0.2)';
-    var probColor = r.approved ? col : '#ff6b6b';
-    var probLabel = r.approved ? r.prob+'%' : '✗';
-    
-    var fpTags = r.lc.fingerprint.notes.slice(0,2).map(function(n) {
-      var isStrict = n.includes('vs FHA') || n.includes('rejected') || n.includes('required');
-      var isFlex = n.includes('OK') || n.includes('accepted') || n.includes('available') || n.includes('friendly');
-      var cls = isStrict ? 'fp-strict' : isFlex ? 'fp-flexible' : 'fp-neutral';
-      return '<span class="fp-tag '+cls+'">'+n+'</span>';
-    }).join('');
-    
-    var blockerText = r.blockers.length ? '<span style="color:#ff6b6b;font-size:11px;">'+r.blockers[0]+(r.blockers.length>1?' +'+( r.blockers.length-1)+' more':'')+'</span>' : '<span style="color:#6bffb8;font-size:11px;">✓ All criteria met</span>';
-    
-    var rateDisplay = r.approved ? (r.rate*100).toFixed(2)+'%' : '—';
-    var payDisplay = r.approved ? '$'+r.monthly_payment.toLocaleString()+'/mo' : '—';
-    
-    var isBest = idx === 0 && r.approved;
-    var row = t.insertRow();
-    if(isBest) row.classList.add('best-match');
-    
-    row.innerHTML = '<td><div style="font-weight:800;color:'+col+';">'+r.lc.name+(isBest?' ⭐':'')+'</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">'+r.lc.type+' · FICO floor '+r.lc.fingerprint.credit_floor+' · DTI cap '+r.lc.fingerprint.dti_max+'%</div></td>' +
-      '<td><div style="background:'+probBg+';border:1px solid '+probBorder+';border-radius:8px;padding:6px 12px;display:inline-block;text-align:center;min-width:60px;"><div style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:900;color:'+probColor+';">'+probLabel+'</div><div style="font-size:10px;color:rgba(255,255,255,0.3);">'+(r.approved?payDisplay:'denied')+'</div></div></td>' +
-      '<td style="color:rgba(255,255,255,0.6);">'+rateDisplay+'</td>' +
-      '<td><div style="max-width:200px;">'+fpTags+'</div></td>' +
-      '<td>'+blockerText+'</td>';
-  });
-  
-  // Best path
-  var best = results.find(r => r.approved);
-  var bestHtml = '';
-  if(best) {
-    bestHtml = '<div style="background:rgba(107,255,184,0.04);border:1px solid rgba(107,255,184,0.2);border-radius:12px;padding:20px;margin-top:16px;">' +
-      '<div style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:900;margin-bottom:8px;">🎯 Highest-Probability Path: '+best.lc.name+'</div>' +
-      '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:10px;">'+best.prob+'% approval probability · Est. rate '+( best.rate*100).toFixed(2)+'% · $'+best.monthly_payment.toLocaleString()+'/mo</div>' +
-      '<div style="font-size:13px;color:rgba(255,255,255,0.45);">'+best.lc.fingerprint.notes.join(' · ')+'</div>' +
-      '</div>';
-  } else {
-    bestHtml = '<div style="background:rgba(255,107,107,0.05);border:1px solid rgba(255,107,107,0.2);border-radius:12px;padding:20px;margin-top:16px;font-size:14px;color:rgba(255,255,255,0.6);">No standard category matches your current profile. Consider: increasing down payment, reducing debts, or a portfolio/Non-QM lender. <a href="/denial-letter-decoder.html" style="padding:9px 18px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:7px;font-size:12px;font-weight:800;text-decoration:none;">🔍 Got a Denial? Decode It →</a>
-      <a href="/frc-banker-ai.html" style="color:#c8a44a;">Ask Zai for a custom plan →</a></div>';
-  }
-  document.getElementById('best-path').innerHTML = bestHtml;
-  
-  // Neutral share — educational, no lender accusations
-  if(best) {
-    var shareMsg = 'I found out which mortgage program fits my profile using FRC free Reverse Underwriter. '+best.prob+'% approval odds, est. '+(best.rate*100).toFixed(2)+'% rate. financeratecalc.com/reverse-underwriter.html'; _lastShareMsg = shareMsg;
-    document.getElementById('challenge-section').innerHTML = '<div class="challenge-box">' +
-      '<div style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:900;margin-bottom:8px;">📤 Share Your Results</div>' +
-      '<div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:14px;">Know someone navigating mortgage approval? Share this free tool.</div>' +
-      '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">' +
-      '<a href="https://x.com/intent/tweet?text='+encodeURIComponent(shareMsg)+'" target="_blank" style="padding:8px 18px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">𝕏 Share</a>' +
-      '<a href="https://wa.me/?text='+encodeURIComponent(shareMsg)+'" target="_blank" style="padding:8px 18px;background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.25);color:#25d366;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">WhatsApp</a>' +
-      '<button onclick="copyResult()" style="padding:8px 18px;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.2);color:#c8a44a;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">📋 Copy</button>' +
-      '</div></div>';
-  }
-  
-  // Data donation
-  document.getElementById('data-section').innerHTML = '<div class="data-donation">' +
-    '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(107,107,255,0.5);font-weight:700;margin-bottom:8px;">🧬 Help Build the Overlay Fingerprint Map</div>' +
-    '<div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:10px;">Did you get approved or denied recently? Your anonymous experience improves our overlay fingerprint database for everyone.</div>' +
-    '<a href="/overlay-leaderboard.html#donate" style="font-size:12px;color:#9b9bff;font-weight:700;text-decoration:none;">→ Submit Anonymous Data to the Denial Genome Project</a>' +
-    '</div>';
-  
-  document.getElementById('results').style.display = 'block';
-  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-var _lastShareMsg = '';
-function copyResult() {
-  if(_lastShareMsg) navigator.clipboard.writeText(_lastShareMsg);
-}
-</script>
-<script>window._AKEY = localStorage.getItem('zai_k') || '';</script>
-
-  <!-- FRC VOCABULARY + CITATION STANDARD -->
-  <div style="background:rgba(200,164,74,0.03);border-top:1px solid rgba(200,164,74,0.1);padding:18px 0;margin-top:28px;">
-    <div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(200,164,74,0.4);font-weight:700;margin-bottom:10px;">FRC Research · Current Indicators</div>
-    <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:12px;">
-      <div><span style="color:rgba(255,255,255,0.3);">Overlay Friction Index (OFI)</span> <strong style="color:#c8a44a;">47</strong> <span style="color:rgba(240,160,32,0.6);font-size:10px;">↗ Q2 2026</span></div>
-      <div><span style="color:rgba(255,255,255,0.3);">Active Signal</span> <strong style="color:#ff6b6b;">FRC-TIGHTENING-001</strong></div>
-      <div><span style="color:rgba(255,255,255,0.3);">Overlay Climate</span> <strong style="color:#f0a020;">Moderate · Re-tightening</strong></div>
-      <div><span style="color:rgba(255,255,255,0.3);">SSDI Acceptance</span> <strong style="color:#6bffb8;">71% ↑</strong></div>
-    </div>
-    <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,0.18);">
-      Source: <a href="/frc-research.html" style="color:rgba(200,164,74,0.35);text-decoration:none;">FRC Research</a> · 
-      <a href="/frc-signals.html" style="color:rgba(200,164,74,0.35);text-decoration:none;">FRC Signals</a> · 
-      <a href="/frc-ofi-data.json" style="color:rgba(200,164,74,0.35);text-decoration:none;">Data (JSON)</a> · 
-      Updated quarterly · CC BY 4.0
-    </div>
-  </div>
-
-<!-- ZAI FLOATING Z -->
-<style>
-@keyframes zairing{0%{transform:scale(1);opacity:0.5}100%{transform:scale(1.9);opacity:0}}
-</style>
+<style>@keyframes zairing{0%{transform:scale(1);opacity:0.5}100%{transform:scale(1.9);opacity:0}}</style>
 <div style="position:fixed;bottom:24px;right:24px;z-index:9999;">
-  <a href="/frc-banker-ai.html" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#c8a44a,#f0d060);display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 4px 20px rgba(200,164,74,0.45);transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-    <span style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#08090c;line-height:1;">Z</span>
+  <a href="/frc-banker-ai.html" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#c8a44a,#f0d060);display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 4px 20px rgba(200,164,74,0.45);">
+    <span style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#08090c;">Z</span>
   </a>
   <div style="position:absolute;top:0;left:0;width:52px;height:52px;border-radius:50%;border:2px solid rgba(200,164,74,0.4);animation:zairing 2s ease-out infinite;pointer-events:none;"></div>
 </div>
+
+<script>
+var CATS = [
+  {id:"fha_flexible",name:"FHA-Focused Lender (Flexible)",type:"Government",color:"#9b9bff",
+   credit_floor:580,dti_max:57,ssdi:true,ssdi_grossup:0.15,inc_1099:true,emp_years:2,lates_ok:1,rate_premium:0.10,
+   notes:["Follows HUD 4000.1 closely","Manual underwriting available","SSDI 15% gross-up applied"]},
+  {id:"va_specialist",name:"VA Specialist Lender",type:"Government",color:"#6bffb8",
+   credit_floor:580,dti_max:65,ssdi:true,ssdi_grossup:0.25,inc_1099:true,emp_years:2,lates_ok:1,rate_premium:-0.25,
+   notes:["Residual income method","No PMI","VA disability = 0% funding fee"]},
+  {id:"credit_union",name:"Credit Union",type:"Credit Union",color:"#34d399",
+   credit_floor:620,dti_max:50,ssdi:true,ssdi_grossup:0.25,inc_1099:true,emp_years:2,lates_ok:1,rate_premium:-0.15,
+   notes:["Member-friendly underwriting","Manual review available"]},
+  {id:"portfolio_nonqm",name:"Portfolio / Non-QM Lender",type:"Alternative",color:"#c084fc",
+   credit_floor:600,dti_max:55,ssdi:true,ssdi_grossup:0.25,inc_1099:true,emp_years:1,lates_ok:2,rate_premium:0.75,
+   notes:["Bank statements accepted","12-month 1099 OK","Higher rate for flexibility"]},
+  {id:"agency_standard",name:"Agency-Standard Bank",type:"Regional Bank",color:"#f0a020",
+   credit_floor:620,dti_max:50,ssdi:true,ssdi_grossup:0.25,inc_1099:true,emp_years:2,lates_ok:0,rate_premium:0.0,
+   notes:["Follows Fannie/Freddie guidelines","No recent lates allowed"]},
+  {id:"conservative_overlay",name:"Conservative Overlay Lender",type:"Conservative Bank",color:"#ff9966",
+   credit_floor:640,dti_max:45,ssdi:false,ssdi_grossup:0,inc_1099:false,emp_years:2,lates_ok:0,rate_premium:0.05,
+   notes:["640+ credit overlay","45% DTI cap","SSDI often rejected"]},
+  {id:"physician_specialty",name:"Physician Specialty Program",type:"Physician",color:"#e879f9",
+   credit_floor:700,dti_max:55,ssdi:false,ssdi_grossup:0,inc_1099:false,emp_years:0,lates_ok:0,rate_premium:0.30,
+   notes:["MD/DO/DDS only","Offer letter accepted","Student loans excluded from DTI"]}
+];
+
+document.getElementById('runBtn').addEventListener('click', function() {
+  var credit = parseInt(document.getElementById('ru_credit').value) || 650;
+  var income = parseFloat(document.getElementById('ru_income').value) || 78000;
+  var itype  = document.getElementById('ru_itype').value;
+  var debts  = parseFloat(document.getElementById('ru_debts').value) || 450;
+  var price  = parseFloat(document.getElementById('ru_price').value) || 340000;
+  var down   = parseFloat(document.getElementById('ru_down').value) || 17000;
+  var emp    = parseFloat(document.getElementById('ru_emp').value) || 3;
+  var lates  = parseInt(document.getElementById('ru_lates').value) || 0;
+
+  var monthly = income / 12;
+  var loan = price - down;
+  var n = 360;
+  var base_rate = 0.067;
+
+  var results = [];
+
+  for (var i = 0; i < CATS.length; i++) {
+    var cat = CATS[i];
+
+    // Skip physician if not physician
+    if (cat.id === 'physician_specialty' && itype !== 'physician') continue;
+
+    var rate = base_rate + cat.rate_premium / 100;
+    var rm = rate / 12;
+    var pi = loan * rm * Math.pow(1 + rm, n) / (Math.pow(1 + rm, n) - 1);
+    var piti = pi + price * 0.012 / 12 + price * 0.005 / 12;
+    if (down / price < 0.2 && cat.id !== 'va_specialist' && cat.id !== 'physician_specialty') {
+      piti += loan * 0.007 / 12;
+    }
+
+    var qi = monthly;
+    if (itype === 'ssdi') {
+      qi = cat.ssdi ? monthly * (1 + cat.ssdi_grossup) : 0;
+    } else if (itype === '1099') {
+      qi = cat.inc_1099 ? monthly : 0;
+    } else if (itype === 'physician') {
+      qi = cat.id === 'physician_specialty' ? monthly * 1.2 : monthly * 0.3;
+    }
+
+    var dti = qi > 0 ? (piti + debts) / qi * 100 : 999;
+
+    var blockers = [];
+    if (credit < cat.credit_floor) blockers.push('Credit ' + credit + ' below ' + cat.credit_floor + ' floor');
+    if (dti > cat.dti_max) blockers.push('DTI ' + Math.round(dti) + '% above ' + cat.dti_max + '% cap');
+    if (itype === 'ssdi' && !cat.ssdi) blockers.push('SSDI income not accepted');
+    if (itype === '1099' && !cat.inc_1099) blockers.push('1099 income not accepted');
+    if (lates > cat.lates_ok) blockers.push('Late payments: ' + lates + ' (max ' + cat.lates_ok + ')');
+    if (emp < cat.emp_years && cat.id !== 'physician_specialty') blockers.push('Employment ' + emp + 'yr below ' + cat.emp_years + 'yr required');
+    if (itype === 'physician' && cat.id !== 'physician_specialty') blockers.push('Consider physician specialty program instead');
+
+    var approved = blockers.length === 0;
+    var prob = 0;
+    if (approved) {
+      prob = 90;
+      if (credit < cat.credit_floor + 40) prob -= 12;
+      if (dti > cat.dti_max - 5) prob -= 18;
+      if (lates === cat.lates_ok && lates > 0) prob -= 8;
+      prob = Math.max(38, Math.min(96, prob));
+    }
+
+    results.push({
+      cat: cat,
+      rate: rate,
+      dti: Math.round(dti),
+      prob: prob,
+      blockers: blockers,
+      approved: approved,
+      payment: Math.round(piti)
+    });
+  }
+
+  results.sort(function(a, b) { return b.prob - a.prob; });
+
+  // Render table
+  var tbl = document.getElementById('approval-table');
+  while (tbl.rows.length > 1) tbl.deleteRow(1);
+
+  for (var j = 0; j < results.length; j++) {
+    var r = results[j];
+    var col = r.cat.color;
+    var isBest = j === 0 && r.approved;
+    var row = tbl.insertRow();
+    if (isBest) row.className = 'best-match';
+
+    var probHTML = '<div style="background:' + (r.approved ? col + '22' : 'rgba(255,107,107,0.08)') + ';border:1px solid ' + (r.approved ? col + '44' : 'rgba(255,107,107,0.2)') + ';border-radius:8px;padding:6px 12px;display:inline-block;text-align:center;min-width:60px;"><div style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:900;color:' + (r.approved ? col : '#ff6b6b') + ';">' + (r.approved ? r.prob + '%' : '✗') + '</div><div style="font-size:10px;color:rgba(255,255,255,0.3);">' + (r.approved ? '$' + r.payment.toLocaleString() + '/mo' : 'denied') + '</div></div>';
+
+    var fpHTML = r.cat.notes.slice(0, 2).map(function(n) {
+      var cls = (n.includes('rejected') || n.includes('overlay') || n.includes('cap')) ? 'fp-strict' : (n.includes('OK') || n.includes('accepted') || n.includes('available')) ? 'fp-flexible' : 'fp-neutral';
+      return '<span class="fp-tag ' + cls + '">' + n + '</span>';
+    }).join('');
+
+    var statusHTML = r.blockers.length
+      ? '<span style="color:#ff6b6b;font-size:11px;">' + r.blockers[0] + (r.blockers.length > 1 ? ' +' + (r.blockers.length - 1) + ' more' : '') + '</span>'
+      : '<span style="color:#6bffb8;font-size:11px;">✓ All criteria met</span>';
+
+    row.innerHTML =
+      '<td><div style="font-weight:800;color:' + col + ';">' + r.cat.name + (isBest ? ' ⭐' : '') + '</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">' + r.cat.type + ' · Credit floor ' + r.cat.credit_floor + ' · DTI cap ' + r.cat.dti_max + '%</div></td>' +
+      '<td>' + probHTML + '</td>' +
+      '<td style="color:rgba(255,255,255,0.6);">' + (r.approved ? (r.rate * 100).toFixed(2) + '%' : '—') + '</td>' +
+      '<td>' + fpHTML + '</td>' +
+      '<td>' + statusHTML + '</td>';
+  }
+
+  // Best path
+  var best = null;
+  for (var k = 0; k < results.length; k++) {
+    if (results[k].approved) { best = results[k]; break; }
+  }
+
+  var bestHTML = '';
+  if (best) {
+    bestHTML = '<div style="background:rgba(107,255,184,0.04);border:1px solid rgba(107,255,184,0.2);border-radius:12px;padding:20px;">' +
+      '<div style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:900;margin-bottom:8px;">🎯 Best Path: ' + best.cat.name + '</div>' +
+      '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:8px;">' + best.prob + '% approval probability · ' + (best.rate * 100).toFixed(2) + '% est. rate · $' + best.payment.toLocaleString() + '/mo</div>' +
+      '<div style="font-size:13px;color:rgba(255,255,255,0.4);">' + best.cat.notes.join(' · ') + '</div>' +
+      '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">' +
+      '<a href="/denial-letter-decoder.html" style="padding:9px 18px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:7px;font-size:12px;font-weight:800;text-decoration:none;">🔍 Decode Denial Letter →</a>' +
+      '<a href="/frc-banker-ai.html" style="padding:9px 18px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:7px;font-size:12px;font-weight:800;text-decoration:none;">Ask Zai →</a>' +
+      '</div></div>';
+  } else {
+    bestHTML = '<div style="background:rgba(255,107,107,0.05);border:1px solid rgba(255,107,107,0.2);border-radius:12px;padding:20px;font-size:14px;color:rgba(255,255,255,0.6);">No standard category matches this profile. Consider reducing debts, increasing down payment, or <a href="/frc-banker-ai.html" style="color:#c8a44a;">asking Zai for a custom plan</a>.</div>';
+  }
+  document.getElementById('best-path').innerHTML = bestHTML;
+
+  // Share
+  if (best) {
+    var shareMsg = 'FRC Reverse Underwriter shows ' + best.prob + '% approval odds for my mortgage profile at flexible lender categories. Free tool: financeratecalc.com/reverse-underwriter.html';
+    document.getElementById('share-section').innerHTML =
+      '<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;margin-top:8px;">' +
+      '<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.3);margin-bottom:10px;">📤 Share Your Results</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+      '<a href="https://x.com/intent/tweet?text=' + encodeURIComponent(shareMsg) + '" target="_blank" style="padding:8px 16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">𝕏 Share</a>' +
+      '<a href="https://wa.me/?text=' + encodeURIComponent(shareMsg) + '" target="_blank" style="padding:8px 16px;background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.25);color:#25d366;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">WhatsApp</a>' +
+      '</div></div>';
+  }
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+});
+</script>
 </body>
 </html>
