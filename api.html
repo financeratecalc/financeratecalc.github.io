@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FRC API — Mortgage Intelligence Data Endpoints</title>
+<meta name="description" content="FRC public data API. Free JSON endpoints for Overlay Friction Index, active signals, overlay climate, denial taxonomy, and underwriting cycle state. CC BY 4.0.">
+<link rel="canonical" href="https://financeratecalc.com/api.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}.logo em{color:#c8a44a;font-style:italic;}
+.wrap{max-width:900px;margin:0 auto;padding:56px 20px 80px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,4.5vw,42px);font-weight:900;letter-spacing:-2px;margin-bottom:12px;line-height:1.05;}
+h1 em{color:#c8a44a;font-style:italic;}
+h2{font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin:32px 0 10px;}
+h3{font-size:15px;font-weight:700;color:#fff;margin:20px 0 8px;}
+p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14px;}strong{color:#fff;}
+.endpoint{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:20px;margin-bottom:14px;}
+.endpoint-url{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.method{background:rgba(107,255,184,0.12);color:#6bffb8;border-radius:4px;padding:3px 10px;font-size:11px;font-weight:800;font-family:monospace;}
+.url{font-family:monospace;font-size:14px;color:#c8a44a;}
+code{background:rgba(0,0,0,0.4);border-radius:4px;padding:12px;display:block;font-family:monospace;font-size:12px;color:#9b9bff;overflow-x:auto;line-height:1.7;margin:10px 0;}
+.response-field{display:grid;grid-template-columns:150px 80px 1fr;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+.field-name{color:#c8a44a;font-family:monospace;}
+.field-type{color:rgba(107,255,184,0.7);font-family:monospace;}
+.field-desc{color:rgba(255,255,255,0.5);}
+.badge-free{background:rgba(107,255,184,0.12);color:#6bffb8;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;}
+.badge-cc{background:rgba(200,164,74,0.12);color:#c8a44a;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;}
+@media(max-width:640px){header{padding:0 16px;}.wrap{padding:40px 14px 60px;}}
+</style>
+</head>
+<body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><span style="font-size:12px;font-weight:700;color:rgba(200,164,74,0.7);">API Docs</span></header>
+<div class="wrap">
+  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">FRC Intelligence API · v1</div>
+  <h1>FRC<br><em>API Reference</em></h1>
+  <p style="font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:22px;">Mortgage decision intelligence endpoints · Free · No auth required · CC BY 4.0</p>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;">
+    <span class="badge-free">FREE</span>
+    <span class="badge-cc">CC BY 4.0</span>
+    <span style="background:rgba(155,155,255,0.12);color:#9b9bff;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;">No auth</span>
+    <span style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;">Static JSON</span>
+    <span style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.5);border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;">CORS enabled</span>
+  </div>
+
+  <p>FRC provides free, publicly accessible JSON endpoints for mortgage overlay intelligence data. All endpoints are static files updated quarterly. No API key required. Attribution required (CC BY 4.0).</p>
+
+  <h2>Base URL</h2>
+  <code>https://financeratecalc.com/</code>
+
+  <h2>Endpoints</h2>
+
+  <div class="endpoint">
+    <div class="endpoint-url">
+      <span class="method">GET</span>
+      <span class="url">/signals.json</span>
+      <span style="font-size:12px;color:rgba(255,255,255,0.3);">Active underwriting signals</span>
+    </div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:10px;">Returns all active and archived FRC Signals — named underwriting intelligence alerts.</p>
+    <code>fetch('https://financeratecalc.com/signals.json')
+  .then(r => r.json())
+  .then(data => {
+    const active = data.active_signals;
+    // active[0].id → "FRC-TIGHTENING-001"
+    // active[0].description → plain English explanation
+    // active[0].recommendation → borrower action
+  });</code>
+    <h3>Response fields</h3>
+    <div class="response-field"><span class="field-name">active_signals</span><span class="field-type">array</span><span class="field-desc">Named signal objects with id, name, status, severity, description, recommendation</span></div>
+    <div class="response-field"><span class="field-name">archived_signals</span><span class="field-type">array</span><span class="field-desc">Resolved signals with period and resolution</span></div>
+    <div class="response-field" style="border:none;"><span class="field-name">updated</span><span class="field-type">string</span><span class="field-desc">ISO date of last update</span></div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-url">
+      <span class="method">GET</span>
+      <span class="url">/overlay-climate.json</span>
+      <span style="font-size:12px;color:rgba(255,255,255,0.3);">OFI + climate by category</span>
+    </div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:10px;">Current Overlay Friction Index, climate state, and per-category breakdown with historical OFI series.</p>
+    <code>fetch('https://financeratecalc.com/overlay-climate.json')
+  .then(r => r.json())
+  .then(data => {
+    const ofi = data.current_state.ofi;       // 47
+    const state = data.current_state.macro_state; // "MODERATE"
+    const history = data.ofi_history;         // [{period, value}]
+    const categories = data.by_category;      // per-lender-type breakdown
+  });</code>
+    <h3>Response fields</h3>
+    <div class="response-field"><span class="field-name">current_state.ofi</span><span class="field-type">integer</span><span class="field-desc">Current Overlay Friction Index (0-100)</span></div>
+    <div class="response-field"><span class="field-name">current_state.macro_state</span><span class="field-type">string</span><span class="field-desc">EXPANSION | MODERATE | TIGHTENING | RESTRICTIVE</span></div>
+    <div class="response-field"><span class="field-name">by_category</span><span class="field-type">array</span><span class="field-desc">OFI, climate, SSDI/1099 acceptance, credit floor by lender category</span></div>
+    <div class="response-field" style="border:none;"><span class="field-name">ofi_history</span><span class="field-type">array</span><span class="field-desc">Quarterly OFI values [{period, value}]</span></div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-url">
+      <span class="method">GET</span>
+      <span class="url">/decision-taxonomy.json</span>
+      <span style="font-size:12px;color:rgba(255,255,255,0.3);">Denial type classification</span>
+    </div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:10px;">Complete mortgage denial taxonomy: 47 types, ECOA codes, overlay detection rule.</p>
+    <code>fetch('https://financeratecalc.com/decision-taxonomy.json')
+  .then(r => r.json())
+  .then(data => {
+    const rule = data.overlay_detection_rule;
+    const ecoa = data.ecoa_codes; // {"01": "description", ...}
+    const cats = data.categories; // agency_rule, lender_overlay, documentation, property
+  });</code>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-url">
+      <span class="method">GET</span>
+      <span class="url">/underwriting-cycle.json</span>
+      <span style="font-size:12px;color:rgba(255,255,255,0.3);">Macro-cycle state + transitions</span>
+    </div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:10px;">Current underwriting macro-state and historical state transitions.</p>
+    <code>fetch('https://financeratecalc.com/underwriting-cycle.json')
+  .then(r => r.json())
+  .then(data => {
+    const current = data.current; // {state, ofi, period, direction}
+    const transitions = data.transitions; // historical state changes
+    const states = data.states; // state definitions with OFI ranges
+  });</code>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-url">
+      <span class="method">GET</span>
+      <span class="url">/frc-ofi-data.json</span>
+      <span style="font-size:12px;color:rgba(255,255,255,0.3);">Full OFI dataset</span>
+    </div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:0;">Complete OFI historical series with FHA Flexibility Tracker, SSDI Acceptance Rate, and all active signals in one file.</p>
+  </div>
+
+  <h2>Usage Example</h2>
+  <code>// Embed current OFI in your site
+async function getFRCClimate() {
+  const res = await fetch('https://financeratecalc.com/overlay-climate.json');
+  const data = await res.json();
+  return {
+    ofi: data.current_state.ofi,
+    state: data.current_state.macro_state,
+    direction: data.current_state.direction,
+    source: 'FRC Research — financeratecalc.com'
+  };
+}
+
+// Widget display
+getFRCClimate().then(climate => {
+  document.getElementById('ofi').textContent = climate.ofi;
+  document.getElementById('state').textContent = climate.state;
+  // Always display: Source: FRC Research
+});</code>
+
+  <h2>Attribution (Required)</h2>
+  <p>All FRC data is CC BY 4.0. Use is free with attribution. Required format:</p>
+  <code>// In your UI:
+"Source: FRC Research — financeratecalc.com"
+
+// In academic/research citations:
+FinanceRateCalc Research. (2026). [Dataset name]. 
+financeratecalc.com/[endpoint]. CC BY 4.0.</code>
+
+  <h2>Embed Badge</h2>
+  <p>Embeddable OFI widget — no JavaScript required:</p>
+  <code>&lt;iframe 
+  src="https://financeratecalc.com/ofi-badge.html" 
+  width="240" height="120" 
+  frameborder="0" 
+  style="border-radius:10px;"
+&gt;&lt;/iframe&gt;</code>
+
+  <h2>Update Cadence</h2>
+  <p>All endpoints updated quarterly (Q1: Feb, Q2: May, Q3: Aug, Q4: Nov). Signal status may update mid-quarter when significant overlay behavior changes are detected. Subscribe to updates: <a href="mailto:press@financeratecalc.com" style="color:#c8a44a;">press@financeratecalc.com</a></p>
+
+  <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;margin-top:24px;">
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.3);margin-bottom:8px;">Questions or data partnerships</div>
+    <p style="font-size:13px;margin:0;color:rgba(255,255,255,0.5);">For research partnerships, data licensing, or fair lending research access: <a href="mailto:press@financeratecalc.com" style="color:#c8a44a;">press@financeratecalc.com</a></p>
+  </div>
+
+  <div style="border-top:1px solid rgba(255,255,255,0.05);padding:20px 0;margin-top:28px;font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;">
+    <strong style="color:rgba(255,255,255,0.3);">FRC API v1</strong> · FinanceRateCalc · © 2026 · CC BY 4.0 · <a href="/frc-research.html" style="color:rgba(200,164,74,0.4);">FRC Research</a>
+  </div>
+</div>
+</body>
+</html>
