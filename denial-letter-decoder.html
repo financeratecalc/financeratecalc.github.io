@@ -229,6 +229,9 @@ async function decode(){
 
   var apiKey = localStorage.getItem('zai_k') || window._AKEY || '';
   
+  // Store letter for banker AI
+  try { sessionStorage.setItem('zai_prefill', 'Decode my mortgage denial: ' + letter.substring(0, 500)); } catch(e) {}
+  
   try {
     var res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -245,6 +248,8 @@ async function decode(){
         messages: [{role: 'user', content: 'Here is my denial letter/situation: ' + letter}]
       })
     });
+    
+    if (!res.ok) throw new Error('cors');
     
     var data = await res.json();
     var reply = (data.content && data.content[0]) ? data.content[0].text : '';
@@ -380,7 +385,7 @@ async function decode(){
     results.innerHTML = html;
 
   } catch(err) {
-    results.innerHTML = '<div class="result-card red"><div class="card-tag">Error</div><div class="card-body">Could not decode. Please try again or <a href="frc-banker-ai.html" style="color:#c8a44a;">ask Zai directly</a>.</div></div>';
+    results.innerHTML = '<div style="background:rgba(200,164,74,0.08);border:1px solid rgba(200,164,74,0.3);border-radius:12px;padding:24px;text-align:center;"><div style=\"font-family:Fraunces,serif;font-size:20px;font-weight:900;margin-bottom:10px;\">Open Zai for Full Analysis</div><p style=\"font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:18px;\">Your letter has been captured. Click below to decode it in Zai.</p><a href=\"/frc-banker-ai.html\" style=\"display:inline-block;padding:13px 28px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:9px;font-weight:800;font-size:15px;text-decoration:none;\">🔍 Decode with Zai →</a></div>';
   }
 
   btn.disabled = false;
