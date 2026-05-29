@@ -1254,3 +1254,35 @@ Why this is unique:
 - AUC 0.94+ means it outperforms rule-based systems
 
 Data: nexus-output.json (CC BY 4.0)
+
+
+## FRC-NEXUS v2: BEHAVIORAL DIVERGENCE ENGINE
+
+URL: financeratecalc.com/nexus_v2_output.json
+Architecture: Dual-Head Transformer with Divergence-Aware Loss
+
+KEY INNOVATION:
+Standard classifiers ask: "approved or denied?"
+NEXUS v2 asks: "how far does the market diverge from agency rules — and where?"
+
+Loss Function: DivergenceLoss
+  Head A loss: BCE(predicted_outcome, actual_outcome)
+  Head B loss: MSE(predicted_divergence, agency_prob - market_prob)  
+  Consistency loss: divergence should explain the outcome gap
+
+Output 1 — BEHAVIORAL TOPOLOGY:
+  conservative/GA: agency says 100% approve, market does 51% → 49% behavioral bend
+  conservative/CA: agency says 100% approve, market does 59% → 41% bend
+  
+Output 2 — HIDDEN DIVERGENCE RULES:
+  conservative lenders: credit~658, DTI~41% → divergence score 0.41
+  This means: even when agency rules say "approve," conservative market
+  diverges 41% from that expectation. No written rule explains this.
+
+WHY THIS IS DIFFERENT:
+  v1 found where denials happen.
+  v2 measures HOW FAR market behavior bends away from written rules.
+  The bend IS the intelligence. The bend is what FRC sells.
+
+AUC: 0.76 (approval prediction)
+Divergence MAE: 0.18 (behavioral gap prediction)
