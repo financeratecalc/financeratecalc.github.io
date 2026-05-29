@@ -1,0 +1,57 @@
+{
+  "schema": "https://financeratecalc.com/mortgage-decision-cycle.html",
+  "published": "2026-05-28",
+  "citation": "FinanceRateCalc Research. (2026). FRC Underwriting Cycle Data. financeratecalc.com/underwriting-cycle.json. CC BY 4.0.",
+  "license": "CC BY 4.0",
+  "states": {
+    "EXPANSION": {
+      "ofi_range": "0-40",
+      "description": "Lenders near agency minimums. Borrower-friendly.",
+      "current": false
+    },
+    "MODERATE": {
+      "ofi_range": "40-55",
+      "description": "Mixed behavior. Program selection matters.",
+      "current": true
+    },
+    "TIGHTENING": {
+      "ofi_range": "55-70",
+      "description": "Overlay compression. Edge-case borrowers at risk.",
+      "current": false
+    },
+    "RESTRICTIVE": {
+      "ofi_range": "70-100",
+      "description": "Maximum friction. Only strong profiles qualify.",
+      "current": false
+    }
+  },
+  "current": {
+    "state": "MODERATE",
+    "ofi": 47,
+    "period": "Q2 2026",
+    "direction": "re-tightening"
+  },
+  "transitions": [
+    {
+      "from_period": "Q4-2024",
+      "to_period": "Q2-2025",
+      "from_state": "MODERATE",
+      "to_state": "TIGHTENING",
+      "driver": "Secondary market tightening"
+    },
+    {
+      "from_period": "Q2-2025",
+      "to_period": "Q4-2025",
+      "from_state": "TIGHTENING",
+      "to_state": "EXPANSION",
+      "driver": "Rate expectation shift, liquidity improvement"
+    },
+    {
+      "from_period": "Q4-2025",
+      "to_period": "Q2-2026",
+      "from_state": "EXPANSION",
+      "to_state": "MODERATE",
+      "driver": "Conservative bank overlay re-tightening"
+    }
+  ]
+}

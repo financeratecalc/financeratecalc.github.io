@@ -1,0 +1,61 @@
+{
+  "schema": "https://financeratecalc.com/denial-genome-project.html",
+  "published": "2026-05-28",
+  "citation": "FinanceRateCalc Research. (2026). FRC Mortgage Denial Taxonomy. financeratecalc.com/decision-taxonomy.json. CC BY 4.0.",
+  "license": "CC BY 4.0",
+  "version": "1.0",
+  "total_types": 47,
+  "categories": {
+    "agency_rule": {
+      "description": "Denial caused by federal minimum standards (FHA, VA, Fannie Mae). Borrower must address underlying issue.",
+      "examples": [
+        "credit_score_below_580_fha",
+        "dti_above_57_fha",
+        "property_not_eligible",
+        "bankruptcy_seasoning"
+      ],
+      "action": "Address underlying issue before reapplying. Timeline varies by issue type."
+    },
+    "lender_overlay": {
+      "description": "Denial caused by lender-specific rules stricter than agency minimums. Same borrower may be approved elsewhere today.",
+      "examples": [
+        "credit_floor_620_640_gap",
+        "dti_43_50_gap",
+        "ssdi_income_rejection",
+        "reserve_requirement_overlay",
+        "employment_history_overlay"
+      ],
+      "action": "Apply at lender category without this overlay. No wait required."
+    },
+    "documentation": {
+      "description": "Denial caused by insufficient or unacceptable documentation of otherwise qualifying profile.",
+      "examples": [
+        "income_unverifiable",
+        "1099_history_insufficient",
+        "asset_documentation_gap"
+      ],
+      "action": "Gather required documentation. Timeline: 30-90 days typically."
+    },
+    "property": {
+      "description": "Denial caused by property type, condition, or valuation issues.",
+      "examples": [
+        "appraisal_gap",
+        "non_warrantable_condo",
+        "property_condition",
+        "rural_restriction"
+      ],
+      "action": "Renegotiate price, different property, or portfolio lender for property type."
+    }
+  },
+  "ecoa_codes": {
+    "01": "Income insufficient \u2192 often DTI overlay (compare to FHA 57%)",
+    "02": "Insufficient credit file \u2192 agency rule, thin file needs building",
+    "03": "Unable to verify credit \u2192 may be overlay, manual UW often available",
+    "08": "Length of employment \u2192 often overlay (agency requires total 2yr, not at current job)",
+    "10": "Temporary employment \u2192 often overlay for SSDI/1099 which agencies accept",
+    "14": "Credit score below minimum \u2192 most often overlay (FHA: 580, Conv: 620)",
+    "18": "Excessive obligations \u2192 most common, often overlay vs FHA 57% max",
+    "22": "Derogatory public record \u2192 agency rule, timing matters"
+  },
+  "overlay_detection_rule": "IF borrower_value >= agency_minimum AND borrower_value < lender_threshold THEN classification = LENDER_OVERLAY ELSE IF borrower_value < agency_minimum THEN classification = AGENCY_RULE"
+}

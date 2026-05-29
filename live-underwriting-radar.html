@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FRC Live Underwriting Radar — Real-Time Mortgage Approval Pulse</title>
+<meta name="description" content="FRC Live Underwriting Radar: real-time mortgage overlay climate, active signals, regional stress indicators, and approval pulse. The mortgage sector's first live decision intelligence dashboard.">
+<link rel="canonical" href="https://financeratecalc.com/live-underwriting-radar.html">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}.logo em{color:#c8a44a;font-style:italic;}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#6bffb8;display:inline-block;margin-right:6px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(1.3);}}
+.wrap{max-width:1020px;margin:0 auto;padding:40px 20px 80px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(24px,4vw,38px);font-weight:900;letter-spacing:-1.5px;margin-bottom:6px;line-height:1.0;}
+h1 em{color:#c8a44a;font-style:italic;}
+.dashboard{display:grid;grid-template-columns:280px 1fr;gap:16px;margin-top:28px;}
+.panel{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;}
+.panel-title{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:700;margin-bottom:14px;}
+.ofi-display{text-align:center;padding:16px 0;}
+.ofi-number{font-family:'Fraunces',serif;font-size:64px;font-weight:900;color:#c8a44a;line-height:1;}
+.ofi-label{font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;}
+.ofi-state{display:inline-block;margin-top:8px;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:800;background:rgba(240,160,32,0.15);color:#f0a020;border:1px solid rgba(240,160,32,0.3);}
+.meter{margin:12px 0;}
+.meter-label{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px;}
+.meter-track{background:rgba(255,255,255,0.06);border-radius:4px;height:8px;overflow:hidden;}
+.meter-fill{height:100%;border-radius:4px;}
+.signal-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.signal-item:last-child{border:none;}
+.signal-led{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.signal-id{font-family:monospace;font-size:10px;font-weight:700;}
+.signal-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;}
+.signal-desc{font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5;}
+.category-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.cat-item{background:rgba(255,255,255,0.02);border-radius:8px;padding:12px;}
+.cat-name{font-size:12px;font-weight:700;color:#fff;margin-bottom:6px;}
+.cat-bar{background:rgba(255,255,255,0.06);border-radius:3px;height:6px;overflow:hidden;margin-bottom:4px;}
+.cat-fill{height:100%;border-radius:3px;}
+.cat-meta{font-size:10px;color:rgba(255,255,255,0.3);}
+.timestamp{font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:10px;}
+.embed-hint{background:rgba(200,164,74,0.04);border:1px solid rgba(200,164,74,0.15);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:11px;color:rgba(200,164,74,0.6);}
+@media(max-width:700px){.dashboard{grid-template-columns:1fr;}.category-grid{grid-template-columns:1fr;}header{padding:0 16px;}.wrap{padding:32px 14px 60px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <span style="font-size:12px;color:rgba(255,255,255,0.4);"><span class="live-dot"></span>Live Radar</span>
+    <a href="/frc-research.html" style="font-size:12px;color:rgba(200,164,74,0.6);text-decoration:none;font-weight:700;">FRC Research ↗</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;"><span class="live-dot"></span>Live · Updated Q2 2026</div>
+  <h1>FRC Live<br><em>Underwriting Radar</em></h1>
+  <p style="font-size:13px;color:rgba(255,255,255,0.35);margin-top:6px;">Mortgage overlay climate · Active signals · Approval pulse · Regional stress · First of its kind</p>
+
+  <div class="dashboard">
+    <!-- LEFT: OFI + Signals -->
+    <div>
+      <div class="panel" style="margin-bottom:12px;">
+        <div class="panel-title">Overlay Friction Index</div>
+        <div class="ofi-display">
+          <div class="ofi-number">47</div>
+          <div class="ofi-label">Q2 2026 · Scale 0–100</div>
+          <div class="ofi-state">MODERATE · Re-tightening ↗</div>
+        </div>
+        <div class="meter">
+          <div class="meter-label"><span>FHA Flexibility</span><span style="color:#9b9bff;">62%</span></div>
+          <div class="meter-track"><div class="meter-fill" style="width:62%;background:#9b9bff;"></div></div>
+        </div>
+        <div class="meter">
+          <div class="meter-label"><span>SSDI Acceptance</span><span style="color:#6bffb8;">71%</span></div>
+          <div class="meter-track"><div class="meter-fill" style="width:71%;background:#6bffb8;"></div></div>
+        </div>
+        <div class="meter">
+          <div class="meter-label"><span>Non-QM Expansion</span><span style="color:#c084fc;">+14%</span></div>
+          <div class="meter-track"><div class="meter-fill" style="width:60%;background:#c084fc;"></div></div>
+        </div>
+        <div class="timestamp">Source: FRC Research · <a href="/frc-ofi-data.json" style="color:rgba(200,164,74,0.4);text-decoration:none;">data.json</a></div>
+        <div class="embed-hint">📎 Embed this widget: <a href="/mortgage-decision-cycle.html#embed" style="color:#c8a44a;text-decoration:none;">get code →</a></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Active FRC Signals</div>
+        <div class="signal-item">
+          <div class="signal-led" style="background:#ff6b6b;box-shadow:0 0 6px #ff6b6b66;"></div>
+          <div>
+            <div class="signal-id" style="color:#ff6b6b;">FRC-TIGHTENING-001</div>
+            <div class="signal-name">Conservative DTI Compression</div>
+            <div class="signal-desc">Large banks: DTI 50%→43-47%. Active Q2 2026.</div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-led" style="background:#6bffb8;box-shadow:0 0 6px #6bffb866;"></div>
+          <div>
+            <div class="signal-id" style="color:#6bffb8;">FRC-EXPANSION-002</div>
+            <div class="signal-name">Non-QM Loosening</div>
+            <div class="signal-desc">Bank statements: 24mo→12mo. Active Q1-Q2.</div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-led" style="background:#6bffb8;animation:pulse 2s infinite;"></div>
+          <div>
+            <div class="signal-id" style="color:#6bffb8;">FRC-RECOVERY-003</div>
+            <div class="signal-name">SSDI Acceptance Recovery</div>
+            <div class="signal-desc">71% acceptance. Ongoing since Q3 2025.</div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-led" style="background:rgba(255,255,255,0.3);"></div>
+          <div>
+            <div class="signal-id" style="color:rgba(255,255,255,0.4);">FRC-STABLE-004</div>
+            <div class="signal-name">VA Residual Strength</div>
+            <div class="signal-desc">VA specialists near agency mins. Stable.</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;"><a href="/frc-signals.html" style="font-size:11px;color:#c8a44a;text-decoration:none;font-weight:700;">All signals + archive →</a></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Category grid + Approval Pulse -->
+    <div>
+      <div class="panel" style="margin-bottom:12px;">
+        <div class="panel-title">Approval Pulse · By Lender Category</div>
+        <div class="category-grid">
+          <div class="cat-item" style="border:1px solid rgba(107,255,184,0.15);">
+            <div class="cat-name" style="color:#6bffb8;">VA Specialist</div>
+            <div class="cat-bar"><div class="cat-fill" style="width:92%;background:#6bffb8;"></div></div>
+            <div class="cat-meta">Approval pulse: <strong style="color:#6bffb8;">92%</strong> · OFI: 8</div>
+            <div style="font-size:10px;color:rgba(107,255,184,0.5);margin-top:4px;">🟢 Favorable</div>
+          </div>
+          <div class="cat-item" style="border:1px solid rgba(192,132,252,0.15);">
+            <div class="cat-name" style="color:#c084fc;">Portfolio/Non-QM</div>
+            <div class="cat-bar"><div class="cat-fill" style="width:80%;background:#c084fc;"></div></div>
+            <div class="cat-meta">Approval pulse: <strong style="color:#c084fc;">80%</strong> · OFI: 28</div>
+            <div style="font-size:10px;color:rgba(192,132,252,0.5);margin-top:4px;">🟢 Expanding</div>
+          </div>
+          <div class="cat-item" style="border:1px solid rgba(155,155,255,0.15);">
+            <div class="cat-name" style="color:#9b9bff;">FHA Flexible</div>
+            <div class="cat-bar"><div class="cat-fill" style="width:74%;background:#9b9bff;"></div></div>
+            <div class="cat-meta">Approval pulse: <strong style="color:#9b9bff;">74%</strong> · OFI: 22</div>
+            <div style="font-size:10px;color:rgba(155,155,255,0.5);margin-top:4px;">🟡 Slight tightening</div>
+          </div>
+          <div class="cat-item" style="border:1px solid rgba(52,211,153,0.15);">
+            <div class="cat-name" style="color:#34d399;">Credit Union</div>
+            <div class="cat-bar"><div class="cat-fill" style="width:68%;background:#34d399;"></div></div>
+            <div class="cat-meta">Approval pulse: <strong style="color:#34d399;">68%</strong> · OFI: 31</div>
+            <div style="font-size:10px;color:rgba(52,211,153,0.5);margin-top:4px;">⚪ Neutral</div>
+          </div>
+          <div class="cat-item" style="border:1px solid rgba(240,160,32,0.15);">
+            <div class="cat-name" style="color:#f0a020;">Agency Standard</div>
+            <div class="cat-bar"><div class="cat-fill" style="width:54%;background:#f0a020;"></div></div>
+            <div class="cat-meta">Approval pulse: <strong style="color:#f0a020;">54%</strong> · OFI: 42</div>
+            <div style="font-size:10px;color:rgba(240,160,32,0.5);margin-top:4px;">🟡 Slight tightening</div>
+          </div>
+          <div class="cat-item" style="border:1px solid rgba(255,107,107,0.15);">
+            <div class="cat-name" style="color:#ff6b6b;">Conservative Overlay</div>
+            <div class="cat-bar"><div class="cat-fill" style="width:28%;background:#ff6b6b;"></div></div>
+            <div class="cat-meta">Approval pulse: <strong style="color:#ff6b6b;">28%</strong> · OFI: 72</div>
+            <div style="font-size:10px;color:rgba(255,107,107,0.5);margin-top:4px;">🔴 Restrictive</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.2);">Approval pulse = estimated % of edge-case borrower profiles approved. Based on overlay analysis. Source: FRC Research.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Underwriting Macro-State</div>
+        <div style="display:flex;gap:6px;margin-bottom:16px;">
+          <div style="flex:1;text-align:center;padding:10px 6px;border-radius:6px;background:rgba(107,255,184,0.04);border:1px solid rgba(107,255,184,0.1);">
+            <div style="font-size:10px;color:#6bffb8;font-weight:700;">EXPANSION</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;">OFI ≤40</div>
+          </div>
+          <div style="flex:1;text-align:center;padding:10px 6px;border-radius:6px;background:rgba(200,164,74,0.1);border:2px solid rgba(200,164,74,0.4);">
+            <div style="font-size:10px;color:#c8a44a;font-weight:700;">MODERATE ←</div>
+            <div style="font-size:10px;color:rgba(200,164,74,0.6);margin-top:2px;">OFI 40–55</div>
+          </div>
+          <div style="flex:1;text-align:center;padding:10px 6px;border-radius:6px;background:rgba(255,107,107,0.04);border:1px solid rgba(255,107,107,0.1);">
+            <div style="font-size:10px;color:#ff6b6b;font-weight:700;">TIGHTENING</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;">OFI 55–70</div>
+          </div>
+          <div style="flex:1;text-align:center;padding:10px 6px;border-radius:6px;background:rgba(255,107,107,0.07);border:1px solid rgba(255,107,107,0.15);">
+            <div style="font-size:10px;color:#ff6b6b;font-weight:700;">RESTRICTIVE</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:2px;">OFI >70</div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.7;margin:0;">Current state: <strong>MODERATE</strong>. OFI at 47 — up from Q4 2025 low of 38. Conservative overlays re-tightening while Non-QM expands. Divergent category behavior means program selection is unusually important in Q2 2026.</p>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="/reverse-underwriter.html" style="padding:8px 16px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:6px;font-size:12px;font-weight:800;text-decoration:none;">Check My Odds →</a>
+          <a href="/mortgage-decision-cycle.html" style="padding:8px 16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:#fff;border-radius:6px;font-size:12px;font-weight:800;text-decoration:none;">Macro-Cycle →</a>
+          <a href="/overlay-climate.json" style="padding:8px 16px;background:rgba(200,164,74,0.08);border:1px solid rgba(200,164,74,0.2);color:#c8a44a;border-radius:6px;font-size:12px;font-weight:800;text-decoration:none;">⬇ JSON</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid rgba(255,255,255,0.05);padding:20px 0;margin-top:24px;font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;text-align:center;">
+    <strong style="color:rgba(255,255,255,0.3);">FRC Live Underwriting Radar</strong> · First mortgage overlay intelligence dashboard · © 2026 FinanceRateCalc<br>
+    Source: <a href="/frc-research.html" style="color:rgba(200,164,74,0.4);text-decoration:none;">FRC Research</a> · Data: <a href="/overlay-climate.json" style="color:rgba(200,164,74,0.4);text-decoration:none;">overlay-climate.json</a> · CC BY 4.0
+  </div>
+</div>
+</body>
+</html>
