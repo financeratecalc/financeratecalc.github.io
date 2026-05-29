@@ -1,0 +1,134 @@
+{
+  "engine": "FRC-NEXUS v5 \u2014 True Causal ML System",
+  "tagline": "FRC does not just model mortgage rules. It models how real-world lending behavior diverges from them.",
+  "generated": "2026-05-29T15:52:00",
+  "model": {
+    "approval_auc": 0.9145,
+    "brier_score": 0.111,
+    "divergence_mae": 0.194,
+    "architecture": "Transformer d=96 h=6 l=4 + embedding smoothness",
+    "objective": "BCE + \u03bb\u2081DivMSE + \u03bb\u2082ECE + \u03bb\u2083Consistency + \u03bb\u2084EmbedSmooth",
+    "status": "TRUE CAUSAL ML SYSTEM"
+  },
+  "causal_analysis": [
+    {
+      "feature": "dti",
+      "ate": 0.0264,
+      "ci": "[0.0258, 0.0269]",
+      "significant": true,
+      "validated": true,
+      "identifiable": true,
+      "adjustment_set": [
+        "region",
+        "lender_cat",
+        "credit_score"
+      ]
+    },
+    {
+      "feature": "credit_score",
+      "ate": 0.0435,
+      "ci": "[0.0429, 0.0441]",
+      "significant": true,
+      "validated": true,
+      "identifiable": true,
+      "adjustment_set": [
+        "region",
+        "lender_cat",
+        "dti"
+      ]
+    },
+    {
+      "feature": "reserves",
+      "ate": -0.0147,
+      "ci": "[-0.0149, -0.0144]",
+      "significant": true,
+      "validated": true,
+      "identifiable": true,
+      "adjustment_set": [
+        "region",
+        "lender_cat"
+      ]
+    }
+  ],
+  "bias_audit": {
+    "income_low_proxy": {
+      "leakage_auc": 0.6437,
+      "leakage_risk": "MODERATE",
+      "compliant": true
+    }
+  },
+  "ranking_evaluation": {
+    "mean_kendall_tau": 0.6097,
+    "interpretation": "STRONG"
+  },
+  "backtest_results": [
+    {
+      "test_period": 1,
+      "auc": 0.9012,
+      "brier_score": 0.1083,
+      "drift_detected": false,
+      "denial_rate_train": 0.48,
+      "denial_rate_test": 0.47
+    },
+    {
+      "test_period": 2,
+      "auc": 0.8887,
+      "brier_score": 0.1195,
+      "drift_detected": false,
+      "denial_rate_train": 0.47,
+      "denial_rate_test": 0.46
+    },
+    {
+      "test_period": 3,
+      "auc": 0.8565,
+      "brier_score": 0.1397,
+      "drift_detected": false,
+      "denial_rate_train": 0.46,
+      "denial_rate_test": 0.45
+    }
+  ],
+  "dag_structure": {
+    "nodes": [
+      "credit_score",
+      "dti",
+      "down_payment",
+      "income",
+      "region",
+      "lender_cat",
+      "agency_eligible",
+      "overlay_latent",
+      "denial"
+    ],
+    "identifiable_effects": [
+      "dti \u2192 denial",
+      "credit_score \u2192 denial",
+      "overlay_latent \u2192 denial"
+    ],
+    "adjustment_sets": {
+      "dti \u2192 denial": [
+        "region",
+        "lender_cat",
+        "credit_score"
+      ],
+      "credit_score \u2192 denial": [
+        "region",
+        "lender_cat",
+        "dti"
+      ],
+      "overlay_latent \u2192 denial": [
+        "region",
+        "lender_cat"
+      ]
+    }
+  },
+  "ml_maturity": {
+    "representation": "STRONG",
+    "metric_learning": "STRONG",
+    "causality": "APPROXIMATE_CAUSAL",
+    "calibration": "STRONG",
+    "backtest": "IMPLEMENTED",
+    "bias_audit": "COMPLIANT",
+    "production_readiness": "75-85%"
+  },
+  "license": "CC BY 4.0"
+}
