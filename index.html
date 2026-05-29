@@ -437,5 +437,129 @@ footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0
 </footer>
 
 <script>window._AKEY = localStorage.getItem('zai_k') || '';</script>
+
+<!-- ZAI FLOATING POPUP -->
+<div id="zai-bubble" style="position:fixed;bottom:24px;right:24px;z-index:9999;">
+  <!-- Bubble button -->
+  <button id="zai-btn" onclick="toggleZai()" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#c8a44a,#f0d060);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(200,164,74,0.5);display:flex;align-items:center;justify-content:center;font-size:24px;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+    <span id="zai-icon">✦</span>
+  </button>
+  <!-- Pulse ring -->
+  <div style="position:absolute;top:0;left:0;width:56px;height:56px;border-radius:50%;border:2px solid rgba(200,164,74,0.4);animation:zaiping 2s ease-out infinite;pointer-events:none;"></div>
+  <!-- Label -->
+  <div id="zai-label" style="position:absolute;right:64px;top:50%;transform:translateY(-50%);background:#111318;border:1px solid rgba(200,164,74,0.3);border-radius:8px;padding:6px 12px;font-size:12px;color:#c8a44a;font-weight:700;white-space:nowrap;font-family:'DM Sans',sans-serif;opacity:1;transition:opacity 0.2s;">Ask Zai →</div>
+
+  <!-- Chat panel -->
+  <div id="zai-panel" style="display:none;position:absolute;bottom:68px;right:0;width:320px;background:#111318;border:1px solid rgba(200,164,74,0.25);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.7);overflow:hidden;font-family:'DM Sans',sans-serif;">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,rgba(200,164,74,0.15),rgba(200,164,74,0.05));padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:32px;height:32px;background:linear-gradient(135deg,#c8a44a,#f0d060);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;">✦</div>
+        <div>
+          <div style="font-weight:800;font-size:13px;color:#fff;">Zai</div>
+          <div style="font-size:10px;color:rgba(107,255,184,0.8);">● Online · 23yr banker AI</div>
+        </div>
+      </div>
+      <button onclick="toggleZai()" style="background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:18px;line-height:1;">×</button>
+    </div>
+    <!-- Messages -->
+    <div id="zai-messages" style="height:220px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;">
+      <div style="background:rgba(200,164,74,0.08);border:1px solid rgba(200,164,74,0.15);border-radius:10px 10px 10px 2px;padding:10px 12px;font-size:13px;color:rgba(255,255,255,0.8);line-height:1.6;max-width:85%;">
+        Hi — I'm Zai. 23 years of underwriting knowledge. Was your mortgage denied? Ask me anything. 👇
+      </div>
+    </div>
+    <!-- Quick questions -->
+    <div style="padding:8px 12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:6px;flex-wrap:wrap;">
+      <button onclick="quickAsk('Why was I denied?')" style="padding:5px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:11px;color:rgba(255,255,255,0.6);cursor:pointer;font-family:inherit;">Why denied?</button>
+      <button onclick="quickAsk('What is a lender overlay?')" style="padding:5px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:11px;color:rgba(255,255,255,0.6);cursor:pointer;font-family:inherit;">Overlays?</button>
+      <button onclick="quickAsk('Will I qualify for FHA?')" style="padding:5px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:11px;color:rgba(255,255,255,0.6);cursor:pointer;font-family:inherit;">FHA qualify?</button>
+    </div>
+    <!-- Input -->
+    <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px;">
+      <input id="zai-input" type="text" placeholder="Ask about your mortgage..." style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;font-family:inherit;outline:none;" onkeydown="if(event.key==='Enter')sendZai()">
+      <button onclick="sendZai()" style="background:linear-gradient(135deg,#c8a44a,#f0d060);border:none;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:14px;font-weight:700;color:#08090c;">→</button>
+    </div>
+    <!-- Footer -->
+    <div style="padding:6px 12px 10px;text-align:center;font-size:10px;color:rgba(255,255,255,0.2);">
+      Powered by Zai · <a href="/frc-banker-ai.html" style="color:rgba(200,164,74,0.4);text-decoration:none;">Full AI →</a>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes zaiping{0%{transform:scale(1);opacity:0.6}100%{transform:scale(1.8);opacity:0}}
+#zai-messages::-webkit-scrollbar{width:4px;}
+#zai-messages::-webkit-scrollbar-track{background:transparent;}
+#zai-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px;}
+</style>
+
+<script>
+var zaiOpen = false;
+var zaiKey = localStorage.getItem('zai_k') || '';
+var zaiHistory = [];
+
+function toggleZai() {
+  zaiOpen = !zaiOpen;
+  document.getElementById('zai-panel').style.display = zaiOpen ? 'block' : 'none';
+  document.getElementById('zai-label').style.opacity = zaiOpen ? '0' : '1';
+  document.getElementById('zai-icon').textContent = zaiOpen ? '×' : '✦';
+  if(zaiOpen) document.getElementById('zai-input').focus();
+}
+
+function quickAsk(q) {
+  document.getElementById('zai-input').value = q;
+  sendZai();
+}
+
+function addMsg(text, role) {
+  var msgs = document.getElementById('zai-messages');
+  var div = document.createElement('div');
+  var isUser = role === 'user';
+  div.style.cssText = 'padding:9px 12px;border-radius:'+(isUser?'10px 10px 2px 10px':'10px 10px 10px 2px')+';font-size:13px;line-height:1.6;max-width:85%;' + (isUser ? 'align-self:flex-end;background:rgba(155,155,255,0.12);border:1px solid rgba(155,155,255,0.2);color:rgba(255,255,255,0.9);' : 'background:rgba(200,164,74,0.08);border:1px solid rgba(200,164,74,0.15);color:rgba(255,255,255,0.8);');
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function sendZai() {
+  var input = document.getElementById('zai-input');
+  var q = input.value.trim();
+  if(!q) return;
+  input.value = '';
+  addMsg(q, 'user');
+  zaiHistory.push({role:'user', content: q});
+
+  // Thinking indicator
+  var thinking = document.createElement('div');
+  thinking.id = 'zai-thinking';
+  thinking.style.cssText = 'padding:9px 12px;border-radius:10px 10px 10px 2px;font-size:13px;color:rgba(200,164,74,0.5);background:rgba(200,164,74,0.05);border:1px solid rgba(200,164,74,0.1);max-width:60%;';
+  thinking.textContent = '✦ Thinking...';
+  document.getElementById('zai-messages').appendChild(thinking);
+  document.getElementById('zai-messages').scrollTop = 99999;
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','anthropic-version':'2023-06-01','x-api-key': zaiKey},
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        system: 'You are Zai, a mortgage intelligence AI built on 23 years of banking and underwriting experience. You help users understand mortgage denials, lender overlays, and approval paths. Be concise (2-3 sentences max in popup). Educational only — not financial advice. Always mention FRC tools when relevant (Denial Decoder, Reverse Underwriter). Tone: expert but warm.',
+        messages: zaiHistory
+      })
+    });
+    var data = await resp.json();
+    var reply = data.content && data.content[0] ? data.content[0].text : "I couldn't process that. Try the full Zai at /frc-banker-ai.html";
+    thinking.remove();
+    addMsg(reply, 'assistant');
+    zaiHistory.push({role:'assistant', content: reply});
+    if(zaiHistory.length > 10) zaiHistory = zaiHistory.slice(-10);
+  } catch(e) {
+    thinking.remove();
+    addMsg('Open the full Zai for detailed analysis → frc-banker-ai.html', 'assistant');
+  }
+}
+</script>
+
 </body>
 </html>
