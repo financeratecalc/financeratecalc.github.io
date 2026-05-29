@@ -202,17 +202,22 @@ async function analyze(){
   results.innerHTML = '<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Zai is reading the market data...</span></div>';
 
   try {
-    var res = await fetch('https://api.financeratecalc.com', {
+    var apiKey = localStorage.getItem('zai_k') || window._AKEY || '';
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'},
       body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1000,
         system: SYSTEM,
         messages: [{role: 'user', content: 'Analyze this listing: ' + context}]
       })
     });
 
     var data = await res.json();
-    var reply = data.reply || '';
+    var reply = (data.content && data.content[0]) ? data.content[0].text : (data.reply || '');
 
     var d;
     try { d = JSON.parse(reply); }

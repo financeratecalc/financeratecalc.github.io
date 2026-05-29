@@ -207,6 +207,18 @@ async function decode(){
   var letter = document.getElementById('letterInput').value.trim();
   if(!letter){ alert('Please paste your denial letter or describe your situation.'); return; }
   
+  // Check API key
+  var apiKey = localStorage.getItem('zai_k') || window._AKEY || '';
+  if (!apiKey) {
+    var key = prompt('Enter your Zai API key to use this tool:');
+    if (key) { localStorage.setItem('zai_k', key); window._AKEY = key; }
+    else { 
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('results').innerHTML = '<div style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:10px;padding:16px;color:rgba(255,255,255,0.7);">API key required. <a href="/frc-banker-ai.html" style="color:#c8a44a;">Use full Zai instead →</a></div>';
+      return; 
+    }
+  }
+  
   var btn = document.getElementById('decodeBtn');
   btn.disabled = true;
   btn.textContent = 'Zai is reading your letter...';
@@ -215,18 +227,28 @@ async function decode(){
   results.style.display = 'block';
   results.innerHTML = '<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Zai is decoding your denial letter...</span></div>';
 
+  var apiKey = localStorage.getItem('zai_k') || window._AKEY || '';
+  
   try {
-    var res = await fetch('https://api.financeratecalc.com', {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
       body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1000,
         system: SYSTEM,
         messages: [{role: 'user', content: 'Here is my denial letter/situation: ' + letter}]
       })
     });
     
     var data = await res.json();
-    var reply = data.reply || '';
+    var reply = (data.content && data.content[0]) ? data.content[0].text : '';
+    
+    if (!reply && data.error) throw new Error(data.error.message || 'API error');
     
     // Parse JSON from reply
     var d;
@@ -234,7 +256,9 @@ async function decode(){
       d = JSON.parse(reply);
     } catch(e) {
       var match = reply.match(/\{[\s\S]*\}/);
-      if(match) d = JSON.parse(match[0]);
+      if(match) {
+        try { d = JSON.parse(match[0]); } catch(e2) {}
+      }
     }
     
     if(!d) throw new Error('Could not parse response');
