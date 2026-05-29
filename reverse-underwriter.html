@@ -78,7 +78,7 @@ p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.85;margin-bottom:14p
   </div>
   <button class="run-btn" onclick="runRU()">🔬 Reveal My Approval Geometry →</button>
 
-  <div id="results">
+  <div id="results" style="display:none;">
     <h2 style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:6px;">Your Approval Geometry</h2>
     <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:14px;">Ranked by approval probability. Overlay fingerprints show why each category behaves differently.</p>
     <div style="overflow-x:auto;">
@@ -341,14 +341,14 @@ function runRU() {
   
   // Neutral share — educational, no lender accusations
   if(best) {
-    var shareMsg = 'I found out which mortgage program fits my profile using FRC\'s free Reverse Underwriter. '+best.prob+'% approval odds, est. '+( best.rate*100).toFixed(2)+'% rate. financeratecalc.com/reverse-underwriter.html';
+    var shareMsg = 'I found out which mortgage program fits my profile using FRC free Reverse Underwriter. '+best.prob+'% approval odds, est. '+(best.rate*100).toFixed(2)+'% rate. financeratecalc.com/reverse-underwriter.html'; _lastShareMsg = shareMsg;
     document.getElementById('challenge-section').innerHTML = '<div class="challenge-box">' +
       '<div style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:900;margin-bottom:8px;">📤 Share Your Results</div>' +
       '<div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:14px;">Know someone navigating mortgage approval? Share this free tool.</div>' +
       '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">' +
       '<a href="https://x.com/intent/tweet?text='+encodeURIComponent(shareMsg)+'" target="_blank" style="padding:8px 18px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">𝕏 Share</a>' +
       '<a href="https://wa.me/?text='+encodeURIComponent(shareMsg)+'" target="_blank" style="padding:8px 18px;background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.25);color:#25d366;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;">WhatsApp</a>' +
-      '<button onclick="navigator.clipboard.writeText(\''+shareMsg+'\')" style="padding:8px 18px;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.2);color:#c8a44a;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">📋 Copy</button>' +
+      '<button onclick="copyResult()" style="padding:8px 18px;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.2);color:#c8a44a;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">📋 Copy</button>' +
       '</div></div>';
   }
   
@@ -361,6 +361,11 @@ function runRU() {
   
   document.getElementById('results').style.display = 'block';
   document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+var _lastShareMsg = '';
+function copyResult() {
+  if(_lastShareMsg) navigator.clipboard.writeText(_lastShareMsg);
 }
 </script>
 <script>window._AKEY = localStorage.getItem('zai_k') || '';</script>
