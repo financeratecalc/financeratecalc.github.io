@@ -4,7 +4,6 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>FinanceRateCalc — Mortgage Decision Intelligence</title>
 <meta name="description" content="FRC explains mortgage denials. FRC detects lender overlays. FRC shows alternative approval paths. Built by a 23-year banker. Free. No SSN required.">
-<meta name="keywords" content="mortgage denial, lender overlay, mortgage approval, FHA denial, why was I denied mortgage, overlay friction index">
 <link rel="canonical" href="https://financeratecalc.com/">
 <link rel="icon" href="/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,113 +11,219 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","name":"FinanceRateCalc","url":"https://financeratecalc.com","description":"Mortgage decision intelligence system. Detects lender overlays. Explains mortgage denials. Predicts approval probability.","publisher":{"@type":"Organization","name":"FinanceRateCalc","logo":{"@type":"ImageObject","url":"https://financeratecalc.com/favicon.ico"}}}
+{"@context":"https://schema.org","@type":"WebSite","name":"FinanceRateCalc","url":"https://financeratecalc.com","description":"Mortgage decision intelligence system.","publisher":{"@type":"Organization","name":"FinanceRateCalc"}}
 </script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;-webkit-font-smoothing:antialiased;}
 
+/* LOGO WAVE */
+@keyframes wave{0%,100%{transform:translateY(0)}25%{transform:translateY(-3px)}75%{transform:translateY(2px)}}
+.logo-char{display:inline-block;}
+.logo-char:nth-child(1){animation:wave 2s ease-in-out infinite 0.0s}
+.logo-char:nth-child(2){animation:wave 2s ease-in-out infinite 0.1s}
+.logo-char:nth-child(3){animation:wave 2s ease-in-out infinite 0.2s}
+.logo-char:nth-child(4){animation:wave 2s ease-in-out infinite 0.3s}
+.logo-char:nth-child(5){animation:wave 2s ease-in-out infinite 0.4s}
+.logo-char:nth-child(6){animation:wave 2s ease-in-out infinite 0.5s}
+.logo-char:nth-child(7){animation:wave 2s ease-in-out infinite 0.6s}
+.logo-char:nth-child(8){animation:wave 2s ease-in-out infinite 0.7s}
+.logo-char:nth-child(9){animation:wave 2s ease-in-out infinite 0.8s}
+.logo-char:nth-child(10){animation:wave 2s ease-in-out infinite 0.9s}
+.logo-char:nth-child(11){animation:wave 2s ease-in-out infinite 1.0s}
+.logo-char:nth-child(12){animation:wave 2s ease-in-out infinite 1.1s}
+.logo-char:nth-child(13){animation:wave 2s ease-in-out infinite 1.2s}
+.logo-char:nth-child(14){animation:wave 2s ease-in-out infinite 1.3s}
+.logo-char:nth-child(15){animation:wave 2s ease-in-out infinite 1.4s}
+
 /* HEADER */
-header{background:rgba(8,9,12,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(12px);}
-.logo{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.5px;}.logo em{color:#c8a44a;font-style:italic;}
-.nav-links{display:flex;align-items:center;gap:6px;}
-.nav-link{padding:6px 14px;border-radius:6px;font-size:13px;color:rgba(255,255,255,0.55);text-decoration:none;transition:color 0.15s;}
-.nav-link:hover{color:#fff;}
-.nav-cta{padding:7px 16px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:7px;font-size:13px;font-weight:700;text-decoration:none;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(12px);}
+.logo{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.5px;}
+.logo .em{color:#c8a44a;}
+
+/* DROPDOWN NAV */
+.nav{display:flex;align-items:center;gap:4px;}
+.nav-item{position:relative;}
+.nav-btn{padding:7px 14px;border-radius:7px;font-size:13px;color:rgba(255,255,255,0.8);text-decoration:none;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+.nav-btn:hover,.nav-btn:focus{background:rgba(255,255,255,0.08);color:#fff;}
+.nav-btn svg{opacity:0.5;transition:transform 0.2s;}
+.nav-item:hover .nav-btn svg{transform:rotate(180deg);opacity:1;}
+.dropdown{position:absolute;top:calc(100% + 8px);left:0;background:#111318;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:8px;min-width:220px;opacity:0;pointer-events:none;transform:translateY(-6px);transition:all 0.18s;z-index:200;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+.nav-item:hover .dropdown{opacity:1;pointer-events:all;transform:translateY(0);}
+.dropdown a{display:block;padding:8px 12px;border-radius:7px;font-size:13px;color:rgba(255,255,255,0.75);text-decoration:none;transition:all 0.12s;}
+.dropdown a:hover{background:rgba(255,255,255,0.07);color:#fff;}
+.dropdown-sep{height:1px;background:rgba(255,255,255,0.07);margin:6px 0;}
+.dropdown-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);padding:6px 12px 2px;font-weight:700;}
+.nav-cta{padding:8px 18px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:8px;font-size:13px;font-weight:800;text-decoration:none;margin-left:6px;}
 
 /* HERO */
-.hero{padding:80px 40px 72px;text-align:center;max-width:760px;margin:0 auto;}
-.hero-eyebrow{font-size:11px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:700;margin-bottom:20px;}
-.hero h1{font-family:'Fraunces',serif;font-size:clamp(36px,7vw,68px);font-weight:900;letter-spacing:-3px;line-height:0.95;color:#fff;margin-bottom:12px;}
+.hero{padding:80px 40px 68px;text-align:center;max-width:780px;margin:0 auto;}
+.hero-eyebrow{font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.45);font-weight:700;margin-bottom:22px;}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(38px,7vw,70px);font-weight:900;letter-spacing:-3px;line-height:0.95;margin-bottom:14px;}
 .hero h1 em{color:#c8a44a;font-style:italic;}
-.hero-sub{font-size:17px;color:rgba(255,255,255,0.5);line-height:1.7;max-width:520px;margin:0 auto 32px;}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.65);line-height:1.7;max-width:540px;margin:0 auto 36px;}
 .hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-.btn-primary{padding:14px 28px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:9px;font-weight:800;font-size:15px;text-decoration:none;display:inline-block;}
-.btn-secondary{padding:14px 28px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:9px;font-weight:700;font-size:15px;text-decoration:none;display:inline-block;}
+.btn-primary{padding:15px 30px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:10px;font-weight:800;font-size:15px;text-decoration:none;}
+.btn-secondary{padding:15px 30px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);color:#fff;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;}
+
+/* STATS */
+.stats{display:flex;justify-content:center;gap:0;border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07);}
+.stat{padding:22px 40px;text-align:center;border-right:1px solid rgba(255,255,255,0.07);}
+.stat:last-child{border-right:none;}
+.stat-val{font-family:'Fraunces',serif;font-size:30px;font-weight:900;color:#fff;}
+.stat-lbl{font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px;}
 
 /* OFI STRIP */
-.ofi-strip{background:rgba(200,164,74,0.06);border-top:1px solid rgba(200,164,74,0.15);border-bottom:1px solid rgba(200,164,74,0.15);padding:12px 40px;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;}
-.ofi-item{font-size:12px;display:flex;align-items:center;gap:6px;}
-.ofi-label{color:rgba(255,255,255,0.35);}
+.ofi-strip{background:rgba(200,164,74,0.06);border-bottom:1px solid rgba(200,164,74,0.12);padding:11px 40px;display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap;}
+.ofi-item{font-size:13px;display:flex;align-items:center;gap:7px;}
+.ofi-label{color:rgba(255,255,255,0.5);}
 .ofi-val{font-weight:800;}
-.live-dot{width:6px;height:6px;border-radius:50%;background:#6bffb8;display:inline-block;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#6bffb8;display:inline-block;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 
-/* CORE TOOLS */
-.section{padding:64px 40px;max-width:1040px;margin:0 auto;}
-.section-label{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.25);font-weight:700;margin-bottom:20px;text-align:center;}
+/* TOOLS */
+.section{padding:64px 40px;max-width:1060px;margin:0 auto;}
+.section-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);font-weight:700;margin-bottom:22px;text-align:center;}
 .tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-.tool-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px;text-decoration:none;display:block;transition:all 0.2s;}
-.tool-card:hover{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.15);transform:translateY(-2px);}
-.tool-card.featured{border-color:rgba(200,164,74,0.3);background:rgba(200,164,74,0.04);}
+.tool-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:28px;text-decoration:none;display:block;transition:all 0.2s;}
+.tool-card:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.18);transform:translateY(-2px);}
+.tool-card.featured{border-color:rgba(200,164,74,0.35);background:rgba(200,164,74,0.05);}
 .tool-tag{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;font-weight:700;margin-bottom:10px;}
 .tool-name{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:8px;line-height:1.15;}
-.tool-desc{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.65;margin-bottom:16px;}
+.tool-desc{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:16px;}
 .tool-arrow{font-size:12px;font-weight:700;}
 
-/* MORE TOOLS */
-.more-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:14px;}
-.more-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:16px;text-decoration:none;display:block;transition:all 0.15s;}
-.more-card:hover{background:rgba(255,255,255,0.04);}
+/* MORE */
+.more-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:14px;}
+.more-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;text-decoration:none;transition:all 0.15s;}
+.more-card:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.14);}
 .more-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;}
-.more-desc{font-size:11px;color:rgba(255,255,255,0.35);line-height:1.5;}
+.more-desc{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.5;}
 
-/* RESEARCH BAR */
-.research-bar{background:linear-gradient(135deg,#0a1020,#0d1530);border-top:1px solid rgba(107,107,255,0.15);border-bottom:1px solid rgba(107,107,255,0.15);padding:40px;}
-.research-inner{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;}
-.research-left h2{font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;margin-bottom:6px;}
-.research-left p{font-size:14px;color:rgba(255,255,255,0.5);}
-.research-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
-.research-link{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;border:1px solid;}
+/* RESEARCH */
+.research-bar{background:linear-gradient(135deg,#0a1020,#0d1530);border-top:1px solid rgba(107,107,255,0.15);border-bottom:1px solid rgba(107,107,255,0.15);padding:44px 40px;}
+.research-inner{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;}
+.research-left h2{font-family:'Fraunces',serif;font-size:24px;font-weight:900;color:#fff;margin-bottom:8px;}
+.research-left p{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;}
+.research-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.r-link{padding:8px 16px;border-radius:7px;font-size:12px;font-weight:700;text-decoration:none;border:1px solid;}
 
 /* TRUST */
-.trust{padding:48px 40px;text-align:center;border-top:1px solid rgba(255,255,255,0.05);}
-.trust-inner{max-width:700px;margin:0 auto;}
-.trust-items{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-top:20px;}
-.trust-item{font-size:13px;color:rgba(255,255,255,0.35);}
-.trust-item strong{color:rgba(255,255,255,0.7);display:block;font-size:15px;margin-bottom:2px;}
+.trust{padding:48px 40px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+.trust p{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px;}
+.trust-items{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;}
+.trust-item strong{color:#fff;display:block;font-size:16px;margin-bottom:3px;}
+.trust-item span{font-size:12px;color:rgba(255,255,255,0.45);}
+
+/* GUIDES */
+.guides{padding:40px;border-top:1px solid rgba(255,255,255,0.06);}
+.guides-inner{max-width:1060px;margin:0 auto;}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.pill{padding:8px 18px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:20px;font-size:13px;color:rgba(255,255,255,0.65);text-decoration:none;transition:all 0.15s;}
+.pill:hover{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.18);}
+.pill.green{background:rgba(107,255,184,0.07);border-color:rgba(107,255,184,0.2);color:rgba(107,255,184,0.85);}
 
 /* FOOTER */
-footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0.06);padding:24px 40px;}
-.footer-inner{max-width:1040px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
-.footer-links{display:flex;gap:16px;flex-wrap:wrap;}
-.footer-links a{font-size:12px;color:rgba(255,255,255,0.3);text-decoration:none;}
-.footer-links a:hover{color:rgba(200,164,74,0.7);}
-.footer-copy{font-size:12px;color:rgba(255,255,255,0.2);}
+footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0.07);padding:28px 40px;}
+.footer-inner{max-width:1060px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.footer-links{display:flex;gap:18px;flex-wrap:wrap;}
+.footer-links a{font-size:13px;color:rgba(255,255,255,0.45);text-decoration:none;}
+.footer-links a:hover{color:rgba(200,164,74,0.8);}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.25);}
 
-@media(max-width:768px){
+/* COUNTER ANIMATION */
+@keyframes countup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.stat-val{animation:countup 0.8s ease-out forwards;}
+
+@media(max-width:800px){
   header{padding:0 16px;}
-  .nav-links{display:none;}
-  .hero{padding:56px 20px 52px;}
+  .nav .nav-item:not(:last-child){display:none;}
+  .hero{padding:52px 20px 48px;}
+  .stats{overflow-x:auto;justify-content:flex-start;}
+  .stat{min-width:120px;}
   .ofi-strip{padding:10px 16px;gap:14px;}
-  .section{padding:48px 16px;}
+  .section{padding:44px 16px;}
   .tools-grid{grid-template-columns:1fr;}
   .research-bar{padding:32px 20px;}
   .research-inner{grid-template-columns:1fr;}
   .trust{padding:36px 20px;}
-  .trust-items{gap:20px;}
-  footer{padding:20px 16px;}
+  .guides{padding:32px 20px;}
+  footer{padding:22px 16px;}
   .footer-inner{flex-direction:column;align-items:flex-start;}
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- HEADER with WAVE LOGO + DROPDOWNS -->
 <header>
-  <a href="/" class="logo">Finance<em>Rate</em>Calc</a>
-  <nav class="nav-links">
-    <a href="/denial-letter-decoder.html" class="nav-link">Denial Decoder</a>
-    <a href="/reverse-underwriter.html" class="nav-link">Reverse Underwriter</a>
-    <a href="/frc-research.html" class="nav-link">Research</a>
-    <a href="/about.html" class="nav-link">About</a>
+  <a href="/" class="logo">
+    <span class="logo-char">F</span><span class="logo-char">i</span><span class="logo-char">n</span><span class="logo-char">a</span><span class="logo-char">n</span><span class="logo-char">c</span><span class="logo-char">e</span><span class="logo-char em">R</span><span class="logo-char em">a</span><span class="logo-char em">t</span><span class="logo-char em">e</span><span class="logo-char">C</span><span class="logo-char">a</span><span class="logo-char">l</span><span class="logo-char">c</span>
+  </a>
+  <nav class="nav">
+    <!-- Tools dropdown -->
+    <div class="nav-item">
+      <button class="nav-btn">Tools <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 4l4 4 4-4"/></svg></button>
+      <div class="dropdown">
+        <div class="dropdown-label">Core Intelligence</div>
+        <a href="/denial-letter-decoder.html">🔍 Denial Letter Decoder</a>
+        <a href="/reverse-underwriter.html">🔬 Reverse Underwriter</a>
+        <a href="/underwriting-digital-twin.html">🧠 Digital Twin</a>
+        <a href="/pre-denial-intelligence.html">🔮 Pre-Denial Intelligence</a>
+        <div class="dropdown-sep"></div>
+        <div class="dropdown-label">Loan Comparison</div>
+        <a href="/fha-vs-conventional-vs-va-calculator.html">⚖️ FHA vs Conv vs VA</a>
+        <a href="/mortgage-approval-window.html">📊 Approval Window</a>
+        <div class="dropdown-sep"></div>
+        <div class="dropdown-label">Specialty</div>
+        <a href="/ssdi-mortgage-qualification.html">SSDI Qualifier</a>
+        <a href="/self-employed-mortgage-qualification.html">Self-Employed</a>
+        <a href="/physician-loan-calculator.html">Physician Loan</a>
+      </div>
+    </div>
+    <!-- Resources dropdown -->
+    <div class="nav-item">
+      <button class="nav-btn">Resources <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 4l4 4 4-4"/></svg></button>
+      <div class="dropdown">
+        <div class="dropdown-label">Intelligence Guides</div>
+        <a href="/why-was-my-mortgage-denied.html">Why Was I Denied?</a>
+        <a href="/lender-overlay-explained.html">Lender Overlay Explained</a>
+        <a href="/mortgage-denial-reasons.html">Denial Reasons Guide</a>
+        <a href="/how-to-read-mortgage-denial-letter.html">Read Denial Letter</a>
+        <div class="dropdown-sep"></div>
+        <div class="dropdown-label">Data & Research</div>
+        <a href="/overlay-leaderboard.html">🏆 Flexibility Rankings</a>
+        <a href="/mortgage-denial-rate-by-city.html">🏙️ Denial Rate by City</a>
+        <a href="/city-affordability-index.html">🏠 City Affordability</a>
+        <a href="/denial-code-lookup.html">ECOA Code Lookup</a>
+        <div class="dropdown-sep"></div>
+        <div class="dropdown-label">Broker Tools</div>
+        <a href="/broker-dashboard.html">Broker Dashboard</a>
+        <a href="/partners.html">Partner Program</a>
+      </div>
+    </div>
+    <!-- Research dropdown -->
+    <div class="nav-item">
+      <button class="nav-btn">Research <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 4l4 4 4-4"/></svg></button>
+      <div class="dropdown">
+        <a href="/frc-research.html">📊 FRC Research Division</a>
+        <a href="/state-of-underwriting-2026.html">📋 State of Underwriting 2026</a>
+        <a href="/live-underwriting-radar.html">🔴 Live Radar</a>
+        <a href="/frc-signals.html">📡 FRC Signals</a>
+        <a href="/underwriting-weather.html">🌤 Underwriting Weather</a>
+        <a href="/ofi.html">OFI = 47</a>
+        <a href="/mortgage-decision-glossary.html">📖 Glossary</a>
+        <a href="/api.html">⚡ API</a>
+      </div>
+    </div>
+    <a href="/about.html" class="nav-btn">About</a>
     <a href="/frc-banker-ai.html" class="nav-cta">Ask Zai →</a>
   </nav>
 </header>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-eyebrow">Mortgage Decision Intelligence · Built by a 23-year banker</div>
+  <div class="hero-eyebrow">Mortgage Decision Intelligence · 23-Year Banker · Free · No SSN</div>
   <h1>Mortgage denial<br>doesn't mean<br><em>you don't qualify.</em></h1>
   <p class="hero-sub">It means you were rejected by a lender's rules — not necessarily the government's. FRC tells you the difference, and shows you who will say yes.</p>
   <div class="hero-ctas">
@@ -127,24 +232,44 @@ footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0
   </div>
 </section>
 
-<!-- OFI LIVE STRIP -->
+<!-- STATS COUNTER -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-val" id="c1">2,248</div>
+    <div class="stat-lbl">Pages indexed</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" id="c2">20</div>
+    <div class="stat-lbl">Intelligence tools</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" id="c3">578K+</div>
+    <div class="stat-lbl">Quora views</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" id="c4">7</div>
+    <div class="stat-lbl">AI platforms citing FRC</div>
+  </div>
+</div>
+
+<!-- OFI STRIP -->
 <div class="ofi-strip">
   <div class="ofi-item">
     <span class="live-dot"></span>
     <span class="ofi-label">Overlay Friction Index</span>
     <span class="ofi-val" style="color:#c8a44a;">47</span>
-    <span style="font-size:10px;color:rgba(240,160,32,0.6);">MODERATE ↗</span>
+    <span style="font-size:11px;color:rgba(240,160,32,0.7);">MODERATE ↗</span>
   </div>
   <div class="ofi-item">
     <span class="ofi-label">Active Signal</span>
-    <span class="ofi-val" style="color:#ff6b6b;">FRC-TIGHTENING-001</span>
+    <span class="ofi-val" style="color:#ff6b6b;font-size:12px;">FRC-TIGHTENING-001</span>
   </div>
   <div class="ofi-item">
     <span class="ofi-label">SSDI Acceptance</span>
     <span class="ofi-val" style="color:#6bffb8;">71% ↑</span>
   </div>
   <div class="ofi-item">
-    <a href="/live-underwriting-radar.html" style="font-size:12px;color:rgba(200,164,74,0.6);text-decoration:none;font-weight:700;">Live Radar →</a>
+    <a href="/live-underwriting-radar.html" style="font-size:12px;color:rgba(200,164,74,0.7);text-decoration:none;font-weight:700;">Live Radar →</a>
   </div>
 </div>
 
@@ -152,70 +277,63 @@ footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0
 <div class="section">
   <div class="section-label">Core Intelligence Tools</div>
   <div class="tools-grid">
-
     <a href="/denial-letter-decoder.html" class="tool-card featured">
-      <div class="tool-tag" style="color:#c8a44a;">Most Used</div>
+      <div class="tool-tag" style="color:#c8a44a;">Most Used · AI-Powered</div>
       <div class="tool-name">Denial Letter<br>Decoder</div>
-      <div class="tool-desc">Paste your denial letter. Zai identifies whether it was a government rule or a lender's hidden overlay — with confidence scoring.</div>
+      <div class="tool-desc">Paste your denial letter. Zai identifies whether it was a government rule or a lender's hidden overlay — with confidence scoring and action plan.</div>
       <div class="tool-arrow" style="color:#c8a44a;">Decode Now →</div>
     </a>
-
     <a href="/reverse-underwriter.html" class="tool-card">
       <div class="tool-tag" style="color:#c084fc;">World's First</div>
       <div class="tool-name">Reverse<br>Underwriter</div>
-      <div class="tool-desc">Stop asking why you were denied. Ask which lender type will approve you — with probability, rate, and overlay fingerprint.</div>
+      <div class="tool-desc">Which lender type will approve you — at what probability, rate, and monthly payment? 7 categories, simultaneously.</div>
       <div class="tool-arrow" style="color:#c084fc;">See My Odds →</div>
     </a>
-
     <a href="/underwriting-digital-twin.html" class="tool-card">
       <div class="tool-tag" style="color:#9b9bff;">World's First</div>
       <div class="tool-name">Underwriting<br>Digital Twin</div>
-      <div class="tool-desc">Same borrower. 5 lender types. Simultaneously. See your Borrower Risk Genome and exactly why outcomes differ.</div>
+      <div class="tool-desc">Same borrower, 5 lender types, simultaneously. Your Borrower Risk Genome — income, credit, DTI, reserves, payment history graded A–D.</div>
       <div class="tool-arrow" style="color:#9b9bff;">Run Simulation →</div>
     </a>
-
     <a href="/pre-denial-intelligence.html" class="tool-card">
-      <div class="tool-tag" style="color:rgba(255,255,255,0.4);">Before You Apply</div>
+      <div class="tool-tag" style="color:rgba(255,255,255,0.5);">Before You Apply</div>
       <div class="tool-name">Pre-Denial<br>Intelligence</div>
-      <div class="tool-desc">Know which lender types will deny your profile — and why — before you apply. No credit pull.</div>
-      <div class="tool-arrow" style="color:rgba(255,255,255,0.4);">Check First →</div>
+      <div class="tool-desc">Know which lender types will deny your profile — and why — before you apply. No credit pull. No SSN.</div>
+      <div class="tool-arrow" style="color:rgba(255,255,255,0.5);">Check First →</div>
     </a>
-
     <a href="/fha-vs-conventional-vs-va-calculator.html" class="tool-card">
-      <div class="tool-tag" style="color:rgba(255,255,255,0.4);">Loan Comparison</div>
+      <div class="tool-tag" style="color:rgba(255,255,255,0.5);">Loan Comparison</div>
       <div class="tool-name">FHA vs Conv<br>vs VA</div>
-      <div class="tool-desc">Side-by-side: payment, PMI, approval odds, 30-year cost. Winner highlighted for your exact profile.</div>
-      <div class="tool-arrow" style="color:rgba(255,255,255,0.4);">Compare →</div>
+      <div class="tool-desc">Side-by-side: payment, PMI, approval odds, 30-year total cost. Winner automatically highlighted for your profile.</div>
+      <div class="tool-arrow" style="color:rgba(255,255,255,0.5);">Compare →</div>
     </a>
-
     <a href="/frc-banker-ai.html" class="tool-card">
-      <div class="tool-tag" style="color:#6bffb8;">AI · Free</div>
-      <div class="tool-name">Ask Zai —<br>Banker AI</div>
-      <div class="tool-desc">23 years of underwriting knowledge on demand. SSDI, self-employed, physician, denied — any scenario.</div>
+      <div class="tool-tag" style="color:#6bffb8;">Free AI · 23 Years</div>
+      <div class="tool-name">Zai —<br>Banker AI</div>
+      <div class="tool-desc">23 years of underwriting knowledge on demand. SSDI, self-employed, physician, denied applicant — any edge case.</div>
       <div class="tool-arrow" style="color:#6bffb8;">Ask Zai →</div>
     </a>
-
   </div>
 
   <!-- MORE TOOLS -->
-  <div style="margin-top:32px;">
-    <div class="section-label" style="text-align:left;margin-bottom:14px;">Specialty Qualifiers</div>
+  <div style="margin-top:36px;">
+    <div class="section-label" style="text-align:left;">Specialty & Data</div>
     <div class="more-grid">
       <a href="/ssdi-mortgage-qualification.html" class="more-card">
-        <div class="more-name">SSDI Mortgage Qualifier</div>
-        <div class="more-desc">Gross-up simulation · FHA 15% · Conv 25%</div>
+        <div class="more-name">SSDI Qualifier</div>
+        <div class="more-desc">FHA 15% · Conv 25% gross-up</div>
       </a>
       <a href="/self-employed-mortgage-qualification.html" class="more-card">
-        <div class="more-name">Self-Employed Qualifier</div>
-        <div class="more-desc">2-year tax return normalizer · Schedule C</div>
+        <div class="more-name">Self-Employed</div>
+        <div class="more-desc">2-yr tax return normalizer</div>
       </a>
       <a href="/physician-loan-calculator.html" class="more-card">
-        <div class="more-name">Physician Loan Simulator</div>
-        <div class="more-desc">Resident · Fellow · Attending · Student debt excluded</div>
+        <div class="more-name">Physician Loan</div>
+        <div class="more-desc">Resident · Fellow · Attending</div>
       </a>
       <a href="/overlay-leaderboard.html" class="more-card">
         <div class="more-name">Flexibility Rankings</div>
-        <div class="more-desc">VA (95) → Conservative (28) · Ranked</div>
+        <div class="more-desc">VA(95) → Conservative(28)</div>
       </a>
       <a href="/mortgage-approval-window.html" class="more-card">
         <div class="more-name">Approval Window</div>
@@ -223,7 +341,15 @@ footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0
       </a>
       <a href="/mortgage-denial-rate-by-city.html" class="more-card">
         <div class="more-name">Denial Rate by City</div>
-        <div class="more-desc">15 metros · HMDA data</div>
+        <div class="more-desc">15 US metros · HMDA data</div>
+      </a>
+      <a href="/broker-dashboard.html" class="more-card">
+        <div class="more-name">Broker Dashboard</div>
+        <div class="more-desc">Client tools · Link sharing</div>
+      </a>
+      <a href="/denial-genome-project.html" class="more-card" style="border-color:rgba(107,255,184,0.2);">
+        <div class="more-name" style="color:#6bffb8;">🧬 Denial Genome Project</div>
+        <div class="more-desc">Open taxonomy · Case studies</div>
       </a>
     </div>
   </div>
@@ -234,51 +360,52 @@ footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0
   <div class="research-inner">
     <div class="research-left">
       <h2>FRC Research Division</h2>
-      <p>Quarterly overlay intelligence reports. OFI historical series. Open data (CC BY 4.0).</p>
+      <p>Quarterly overlay intelligence. OFI historical series since Q4 2024. Open data CC BY 4.0 — free to cite and embed.</p>
       <div class="research-links">
-        <a href="/state-of-underwriting-2026.html" class="research-link" style="color:#c8a44a;border-color:rgba(200,164,74,0.3);background:rgba(200,164,74,0.08);">State of Underwriting 2026 →</a>
-        <a href="/frc-signals.html" class="research-link" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);">FRC Signals</a>
-        <a href="/mortgage-decision-glossary.html" class="research-link" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);">Glossary</a>
-        <a href="/api.html" class="research-link" style="color:rgba(155,155,255,0.8);border-color:rgba(155,155,255,0.2);background:rgba(155,155,255,0.06);">API</a>
+        <a href="/state-of-underwriting-2026.html" class="r-link" style="color:#c8a44a;border-color:rgba(200,164,74,0.3);background:rgba(200,164,74,0.08);">State of Underwriting 2026 →</a>
+        <a href="/frc-signals.html" class="r-link" style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);">FRC Signals</a>
+        <a href="/mortgage-decision-glossary.html" class="r-link" style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);">Glossary</a>
+        <a href="/api.html" class="r-link" style="color:rgba(155,155,255,0.9);border-color:rgba(155,155,255,0.25);background:rgba(155,155,255,0.07);">API</a>
       </div>
     </div>
-    <div style="text-align:center;">
-      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.4);margin-bottom:6px;">OFI · Q2 2026</div>
-      <div style="font-family:'Fraunces',serif;font-size:56px;font-weight:900;color:#c8a44a;line-height:1;">47</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:4px;">Moderate · Re-tightening</div>
-      <a href="/overlay-friction-index.html" style="font-size:11px;color:rgba(200,164,74,0.5);text-decoration:none;display:block;margin-top:6px;">What is OFI? →</a>
+    <div style="text-align:center;min-width:140px;">
+      <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,164,74,0.5);margin-bottom:6px;">OFI · Q2 2026</div>
+      <div style="font-family:'Fraunces',serif;font-size:60px;font-weight:900;color:#c8a44a;line-height:1;">47</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;">Moderate · Re-tightening</div>
+      <a href="/ofi.html" style="font-size:11px;color:rgba(200,164,74,0.5);text-decoration:none;display:block;margin-top:6px;">What is OFI? →</a>
     </div>
   </div>
 </div>
 
 <!-- INTELLIGENCE GUIDES -->
-<div class="section" style="padding-top:48px;padding-bottom:48px;">
-  <div class="section-label">Intelligence Guides</div>
-  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
-    <a href="/why-was-my-mortgage-denied.html" style="padding:7px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;">Why Was I Denied?</a>
-    <a href="/lender-overlay-explained.html" style="padding:7px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;">What Is a Lender Overlay?</a>
-    <a href="/mortgage-denied-due-to-dti.html" style="padding:7px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;">DTI Denial Explained</a>
-    <a href="/mortgage-denied-due-to-credit-score.html" style="padding:7px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;">Credit Score Denial</a>
-    <a href="/va-loan-denial-reasons.html" style="padding:7px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;">VA Loan Denial</a>
-    <a href="/fha-vs-lender-overlay.html" style="padding:7px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;">FHA vs Overlay</a>
-    <a href="/how-to-read-mortgage-denial-letter.html" style="padding:7px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;">Read Denial Letter</a>
-    <a href="/can-i-get-approved-for-mortgage.html" style="padding:7px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;">Can I Get Approved?</a>
-    <a href="/self-employed-mortgage-denial.html" style="padding:7px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;">Self-Employed Denial</a>
-    <a href="/denial-code-lookup.html" style="padding:7px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;">ECOA Code Lookup</a>
-    <a href="/denial-genome-project.html" style="padding:7px 16px;background:rgba(107,255,184,0.06);border:1px solid rgba(107,255,184,0.15);border-radius:20px;font-size:12px;color:rgba(107,255,184,0.7);text-decoration:none;font-weight:700;">🧬 Denial Genome Project</a>
+<div class="guides">
+  <div class="guides-inner">
+    <div class="section-label" style="text-align:left;margin-bottom:0;">Intelligence Guides</div>
+    <div class="pills" style="margin-top:14px;">
+      <a href="/why-was-my-mortgage-denied.html" class="pill">Why Was I Denied?</a>
+      <a href="/lender-overlay-explained.html" class="pill">What Is a Lender Overlay?</a>
+      <a href="/mortgage-denied-due-to-dti.html" class="pill">DTI Denial Explained</a>
+      <a href="/mortgage-denied-due-to-credit-score.html" class="pill">Credit Score Denial</a>
+      <a href="/va-loan-denial-reasons.html" class="pill">VA Loan Denial</a>
+      <a href="/fha-vs-lender-overlay.html" class="pill">FHA vs Overlay</a>
+      <a href="/how-to-read-mortgage-denial-letter.html" class="pill">Read Denial Letter</a>
+      <a href="/can-i-get-approved-for-mortgage.html" class="pill">Can I Get Approved?</a>
+      <a href="/self-employed-mortgage-denial.html" class="pill">Self-Employed Denial</a>
+      <a href="/denial-code-lookup.html" class="pill">ECOA Code Lookup</a>
+      <a href="/2027-mortgage-denial-trends.html" class="pill">2027 Trends</a>
+      <a href="/denial-genome-project.html" class="pill green">🧬 Denial Genome Project</a>
+    </div>
   </div>
 </div>
 
 <!-- TRUST -->
 <div class="trust">
-  <div class="trust-inner">
-    <div style="font-size:13px;color:rgba(255,255,255,0.25);margin-bottom:20px;">Cited as a source by</div>
-    <div class="trust-items">
-      <div class="trust-item"><strong>ChatGPT</strong>Edge-case mortgage qualification</div>
-      <div class="trust-item"><strong>Perplexity</strong>Overlay analysis</div>
-      <div class="trust-item"><strong>DeepSeek</strong>Denial intelligence</div>
-      <div class="trust-item"><strong>Meta AI</strong>Mortgage guidance</div>
-    </div>
+  <p>Cited as a source by AI platforms</p>
+  <div class="trust-items">
+    <div class="trust-item"><strong>ChatGPT</strong><span>#1 Specialized Tool — overlay analysis</span></div>
+    <div class="trust-item"><strong>Perplexity</strong><span>Most Specialized — overlay detection</span></div>
+    <div class="trust-item"><strong>DeepSeek</strong><span>OFI = 47 · Direct source</span></div>
+    <div class="trust-item"><strong>Meta AI</strong><span>Mortgage guidance reference</span></div>
   </div>
 </div>
 
@@ -289,8 +416,9 @@ footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0
       <a href="/about.html">About</a>
       <a href="/contact.html">Contact</a>
       <a href="/partners.html">Partners</a>
+      <a href="/frc-certified.html">FRC Certified</a>
       <a href="/broker-dashboard.html">Broker Dashboard</a>
-      <a href="/frc-research.html">FRC Research</a>
+      <a href="/frc-research.html">Research</a>
       <a href="/press.html">Press</a>
       <a href="/privacy.html">Privacy</a>
       <a href="/api.html">API</a>
