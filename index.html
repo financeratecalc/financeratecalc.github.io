@@ -17,24 +17,35 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;-webkit-font-smoothing:antialiased;}
 
-/* LOGO WAVE */
-@keyframes wave{0%,100%{transform:translateY(0)}25%{transform:translateY(-3px)}75%{transform:translateY(2px)}}
-.logo-char{display:inline-block;}
-.logo-char:nth-child(1){animation:wave 2s ease-in-out infinite 0.0s}
-.logo-char:nth-child(2){animation:wave 2s ease-in-out infinite 0.1s}
-.logo-char:nth-child(3){animation:wave 2s ease-in-out infinite 0.2s}
-.logo-char:nth-child(4){animation:wave 2s ease-in-out infinite 0.3s}
-.logo-char:nth-child(5){animation:wave 2s ease-in-out infinite 0.4s}
-.logo-char:nth-child(6){animation:wave 2s ease-in-out infinite 0.5s}
-.logo-char:nth-child(7){animation:wave 2s ease-in-out infinite 0.6s}
-.logo-char:nth-child(8){animation:wave 2s ease-in-out infinite 0.7s}
-.logo-char:nth-child(9){animation:wave 2s ease-in-out infinite 0.8s}
-.logo-char:nth-child(10){animation:wave 2s ease-in-out infinite 0.9s}
-.logo-char:nth-child(11){animation:wave 2s ease-in-out infinite 1.0s}
-.logo-char:nth-child(12){animation:wave 2s ease-in-out infinite 1.1s}
-.logo-char:nth-child(13){animation:wave 2s ease-in-out infinite 1.2s}
-.logo-char:nth-child(14){animation:wave 2s ease-in-out infinite 1.3s}
-.logo-char:nth-child(15){animation:wave 2s ease-in-out infinite 1.4s}
+/* LOGO — flowing gradient sweep */
+@keyframes logowave{
+  0%  {background-position:0% 50%}
+  50% {background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+@keyframes charrise{
+  0%,100%{transform:translateY(0) scale(1);color:inherit;}
+  50%{transform:translateY(-5px) scale(1.1);}
+}
+.logo{
+  font-family:'Fraunces',serif;
+  font-size:19px;font-weight:900;
+  text-decoration:none;letter-spacing:-0.5px;
+  background:linear-gradient(90deg,#fff 0%,#c8a44a 30%,#f0d060 50%,#c8a44a 70%,#fff 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:logowave 3s linear infinite;
+}
+.logo-char{
+  display:inline-block;
+  -webkit-text-fill-color:transparent;
+}
+.logo-char:hover{
+  animation:charrise 0.4s ease-out forwards;
+  -webkit-text-fill-color:transparent;
+}
 
 /* HEADER */
 header{background:rgba(8,9,12,0.97);padding:0 40px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(12px);}
@@ -157,9 +168,7 @@ footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0
 
 <!-- HEADER with WAVE LOGO + DROPDOWNS -->
 <header>
-  <a href="/" class="logo">
-    <span class="logo-char">F</span><span class="logo-char">i</span><span class="logo-char">n</span><span class="logo-char">a</span><span class="logo-char">n</span><span class="logo-char">c</span><span class="logo-char">e</span><span class="logo-char em">R</span><span class="logo-char em">a</span><span class="logo-char em">t</span><span class="logo-char em">e</span><span class="logo-char">C</span><span class="logo-char">a</span><span class="logo-char">l</span><span class="logo-char">c</span>
-  </a>
+  <a href="/" class="logo">FinanceRateCalc</a>
   <nav class="nav">
     <!-- Tools dropdown -->
     <div class="nav-item">
