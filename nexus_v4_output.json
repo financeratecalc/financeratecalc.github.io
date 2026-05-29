@@ -1,0 +1,114 @@
+{
+  "engine": "FRC-NEXUS v4 \u2014 Real ML System",
+  "tagline": "FRC does not just model mortgage rules. It models how real-world lending behavior diverges from them.",
+  "generated": "2026-05-29T20:01:28.057241",
+  "model": {
+    "approval_auc": 0.9039,
+    "brier_score": 0.1267,
+    "divergence_mae": 0.0565,
+    "architecture": "Transformer encoder + Causal twin + Metric learning (contrastive)",
+    "objective": "CalibratedFrictionLoss: BCE + \u03bb\u2081\u00d7DivMSE + \u03bb\u2082\u00d7ECE + \u03bb\u2083\u00d7CausalConsistency",
+    "note": "v4 is a real ML system: formal objective, learned embedding space, causal intervention"
+  },
+  "causal_interventions": [
+    {
+      "feature": "credit_score",
+      "avg_ite": -0.3938,
+      "avg_improvement": 0.0,
+      "direction": "NO_EFFECT"
+    },
+    {
+      "feature": "dti",
+      "avg_ite": -0.4168,
+      "avg_improvement": 0.0,
+      "direction": "NO_EFFECT"
+    },
+    {
+      "feature": "down_payment",
+      "avg_ite": -0.4155,
+      "avg_improvement": 0.0,
+      "direction": "NO_EFFECT"
+    },
+    {
+      "feature": "income",
+      "avg_ite": -0.4073,
+      "avg_improvement": 0.0,
+      "direction": "NO_EFFECT"
+    },
+    {
+      "feature": "reserves",
+      "avg_ite": -0.4072,
+      "avg_improvement": 0.0,
+      "direction": "NO_EFFECT"
+    }
+  ],
+  "embedding_clusters": [
+    {
+      "cluster_id": 0,
+      "size": 250,
+      "denial_rate": 0.556,
+      "avg_divergence": 0.168,
+      "dominant_lender": "conservative",
+      "dominant_state": "CA",
+      "avg_credit": 658,
+      "avg_dti": 44.8,
+      "interpretation": "HIGH FRICTION CLUSTER"
+    },
+    {
+      "cluster_id": 4,
+      "size": 376,
+      "denial_rate": 0.152,
+      "avg_divergence": 0.091,
+      "dominant_lender": "conservative",
+      "dominant_state": "WA",
+      "avg_credit": 665,
+      "avg_dti": 40.4,
+      "interpretation": "FLEXIBLE CLUSTER"
+    },
+    {
+      "cluster_id": 3,
+      "size": 304,
+      "denial_rate": 0.839,
+      "avg_divergence": 0.082,
+      "dominant_lender": "fha_flexible",
+      "dominant_state": "WA",
+      "avg_credit": 632,
+      "avg_dti": 48.0,
+      "interpretation": "FLEXIBLE CLUSTER"
+    },
+    {
+      "cluster_id": 5,
+      "size": 56,
+      "denial_rate": 0.946,
+      "avg_divergence": 0.062,
+      "dominant_lender": "conservative",
+      "dominant_state": "WA",
+      "avg_credit": 581,
+      "avg_dti": 42.3,
+      "interpretation": "FLEXIBLE CLUSTER"
+    },
+    {
+      "cluster_id": 2,
+      "size": 386,
+      "denial_rate": 0.938,
+      "avg_divergence": 0.042,
+      "dominant_lender": "conservative",
+      "dominant_state": "AZ",
+      "avg_credit": 593,
+      "avg_dti": 45.0,
+      "interpretation": "ALIGNED CLUSTER"
+    },
+    {
+      "cluster_id": 1,
+      "size": 1128,
+      "denial_rate": 0.02,
+      "avg_divergence": 0.023,
+      "dominant_lender": "agency_standard",
+      "dominant_state": "GA",
+      "avg_credit": 690,
+      "avg_dti": 39.3,
+      "interpretation": "ALIGNED CLUSTER"
+    }
+  ],
+  "license": "CC BY 4.0"
+}
