@@ -220,16 +220,12 @@ async function decode(){
   var letter = document.getElementById('letterInput').value.trim();
   if(!letter){ alert('Please paste your denial letter or describe your situation.'); return; }
   
-  // Check API key
+  // Check API key — if missing, save letter and redirect to Zai key screen
   var apiKey = localStorage.getItem('zai_k') || window._AKEY || '';
   if (!apiKey) {
-    var key = prompt('Enter your Zai API key to use this tool:');
-    if (key) { localStorage.setItem('zai_k', key); window._AKEY = key; }
-    else { 
-      document.getElementById('results').style.display = 'block';
-      document.getElementById('results').innerHTML = '<div style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:10px;padding:16px;color:rgba(255,255,255,0.7);">API key required. <a href="/frc-banker-ai.html" style="color:#c8a44a;">Use full Zai instead →</a></div>';
-      return; 
-    }
+    sessionStorage.setItem('zai_pending_letter', letter);
+    window.location.href = '/frc-banker-ai.html?from=decoder';
+    return;
   }
   
   var btn = document.getElementById('decodeBtn');
@@ -401,7 +397,9 @@ async function decode(){
     results.innerHTML = html;
 
   } catch(err) {
-    results.innerHTML = '<div style="background:rgba(200,164,74,0.08);border:1px solid rgba(200,164,74,0.3);border-radius:12px;padding:24px;text-align:center;"><div style=\"font-family:Fraunces,serif;font-size:20px;font-weight:900;margin-bottom:10px;\">Open Zai for Full Analysis</div><p style=\"font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:18px;\">Your letter has been captured. Click below to decode it in Zai.</p><a href=\"/frc-banker-ai.html\" style=\"display:inline-block;padding:13px 28px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:9px;font-weight:800;font-size:15px;text-decoration:none;\">🔍 Decode with Zai →</a></div>';
+    var savedLetter = document.getElementById('letterInput').value.trim();
+    if(savedLetter) sessionStorage.setItem('zai_pending_letter', savedLetter);
+    results.innerHTML = '<div style="background:rgba(200,164,74,0.08);border:1px solid rgba(200,164,74,0.3);border-radius:12px;padding:24px;text-align:center;"><div style="font-family:Fraunces,serif;font-size:20px;font-weight:900;margin-bottom:10px;">Open Zai for Full Analysis</div><p style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:18px;">Your letter has been captured. Click below to decode it in Zai.</p><a href="/frc-banker-ai.html?from=decoder" style="display:inline-block;padding:13px 28px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:9px;font-weight:800;font-size:15px;text-decoration:none;">🔍 Decode with Zai →</a></div>';
   }
 
   btn.disabled = false;
