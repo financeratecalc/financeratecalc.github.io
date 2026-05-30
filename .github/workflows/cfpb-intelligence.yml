@@ -1,0 +1,37 @@
+name: FRC Daily Intelligence Update
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # Her gün saat 09:00 UTC
+  workflow_dispatch:      # Manuel tetikleme butonu
+
+jobs:
+  update-intelligence:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install requests anthropic
+
+    - name: Run intelligence pipeline
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: python .github/scripts/daily_intelligence.py
+
+    - name: Commit updated data
+      run: |
+        git config user.name "FRC Intelligence Bot"
+        git config user.email "bot@financeratecalc.com"
+        git add live-intelligence.json ofi-live.json
+        git diff --staged --quiet || git commit -m "Daily intelligence update: $(date +'%Y-%m-%d')"
+        git push
