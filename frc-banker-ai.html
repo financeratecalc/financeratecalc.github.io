@@ -112,16 +112,66 @@ footer{display:none;}
 <!-- © 2026 FinanceRateCalc.com — Original content. Reproduction prohibited without permission. press@financeratecalc.com -->
 <script>
 window._AKEY = localStorage.getItem('zai_k') || '';
-if(!window._AKEY){
-  var k = prompt('Enter API key to activate Zai:');
-  if(k && k.startsWith('sk-')){
-    localStorage.setItem('zai_k', k);
-    window._AKEY = k;
-  }
-}
 </script>
+<style>
+#key-screen{position:fixed;inset:0;background:#08090c;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;}
+#key-screen.hidden{display:none;}
+.key-card{width:100%;max-width:420px;background:rgba(255,255,255,0.02);border:1px solid rgba(200,164,74,0.25);border-radius:16px;padding:40px 36px;}
+.key-z{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#c8a44a,#f0d060);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;}
+.key-z span{font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:#08090c;}
+.key-title{font-family:'Fraunces',serif;font-size:22px;font-weight:900;text-align:center;margin-bottom:6px;color:#fff;}
+.key-sub{font-size:13px;color:rgba(255,255,255,0.4);text-align:center;line-height:1.6;margin-bottom:28px;}
+.key-input-wrap{position:relative;margin-bottom:12px;}
+.key-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 44px 12px 14px;font-size:14px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;}
+.key-input:focus{border-color:rgba(200,164,74,0.5);}
+.key-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;padding:4px;}
+.key-toggle:hover{color:rgba(255,255,255,0.6);}
+.key-btn{width:100%;padding:13px;background:linear-gradient(135deg,#c8a44a,#f0d060);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:#08090c;cursor:pointer;transition:opacity 0.2s;margin-top:4px;}
+.key-btn:hover{opacity:0.9;}
+.key-err{font-size:12px;color:#e8845a;text-align:center;margin-top:10px;min-height:18px;}
+.key-note{font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:16px;line-height:1.6;}
+.key-note a{color:rgba(200,164,74,0.5);text-decoration:none;}
+</style>
 </head>
 <body>
+
+<div id="key-screen">
+  <div class="key-card">
+    <div class="key-z"><span>Z</span></div>
+    <div class="key-title">Activate Zai</div>
+    <div class="key-sub">Enter your Anthropic API key to start chatting with Zai — FRC's 23-year banking intelligence.</div>
+    <div class="key-input-wrap">
+      <input class="key-input" id="keyInput" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
+      <button class="key-toggle" id="keyToggle" onclick="toggleKeyVis()" title="Show/hide key">👁</button>
+    </div>
+    <button class="key-btn" onclick="activateZai()">Activate Zai →</button>
+    <div class="key-err" id="keyErr"></div>
+    <div class="key-note">Your key is stored only in your browser (localStorage). It is never sent to FRC servers.<br>Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></div>
+  </div>
+</div>
+
+<script>
+function toggleKeyVis(){
+  var inp = document.getElementById('keyInput');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+function activateZai(){
+  var k = document.getElementById('keyInput').value.trim();
+  var err = document.getElementById('keyErr');
+  if(!k){ err.textContent = 'Please enter your API key.'; return; }
+  if(!k.startsWith('sk-')){ err.textContent = 'Key must start with sk- — check and try again.'; return; }
+  localStorage.setItem('zai_k', k);
+  window._AKEY = k;
+  document.getElementById('key-screen').classList.add('hidden');
+  err.textContent = '';
+}
+document.getElementById('keyInput').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') activateZai();
+});
+if(window._AKEY){
+  document.getElementById('key-screen').classList.add('hidden');
+}
+</script>
 
 <header>
   <a href="index.html" class="logo">Finance<em>Rate</em>Calc</a>
