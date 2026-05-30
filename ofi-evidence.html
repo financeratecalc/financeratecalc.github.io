@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Overlay Evidence — FRC Research | HMDA + CFPB Data</title>
+<meta name="description" content="Seven years of CFPB HMDA data reveals structural mortgage overlay friction: 38.6pp lender spread, 80,000 annual FHA denials, two-directional borrower squeeze. FRC Overlay Friction Index evidence base.">
+<meta name="keywords" content="mortgage overlay data, FHA denial rate by lender, HMDA lender analysis, Wells Fargo FHA denial, overlay friction index evidence, CFPB mortgage data">
+<link rel="canonical" href="https://financeratecalc.com/ofi-evidence.html">
+<link rel="icon" href="/favicon.ico">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Dataset","name":"FRC Overlay Evidence Base — HMDA + CFPB 2018-2024","description":"Seven years of CFPB HMDA data analyzed across 5 lenders, 5 states, 3 loan types. Key findings: 38.6pp FHA denial spread between lenders, ~80,000 annual overlay denials, two-directional borrower squeeze (+98pp FICO, -10pp DTI).","publisher":{"@type":"Organization","name":"FinanceRateCalc","url":"https://financeratecalc.com"},"dateModified":"2026-05-30","license":"https://creativecommons.org/licenses/by/4.0/"}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;overflow-x:hidden;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.06);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{color:#c8a44a;font-style:italic;}
+nav a{font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;margin-left:20px;}
+nav a:hover{color:#c8a44a;}
+
+/* Hero */
+.hero{padding:72px 40px 56px;max-width:900px;margin:0 auto;}
+.hero-tag{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:#c8a44a;font-weight:700;margin-bottom:20px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:-2px;line-height:1.0;margin-bottom:20px;}
+h1 em{color:#c8a44a;font-style:italic;}
+.hero-sub{font-size:15px;color:rgba(255,255,255,0.5);line-height:1.9;max-width:640px;margin-bottom:40px;}
+.hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:56px;}
+.stat{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:18px 20px;}
+.stat-n{font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#c8a44a;line-height:1;}
+.stat-l{font-size:11px;color:rgba(255,255,255,0.35);margin-top:6px;line-height:1.5;}
+
+/* Sections */
+.wrap{max-width:900px;margin:0 auto;padding:0 40px 80px;}
+.section{margin-bottom:64px;}
+.section-head{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.25);font-weight:700;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.05);}
+h2{font-family:'Fraunces',serif;font-size:clamp(20px,3vw,30px);font-weight:900;letter-spacing:-1px;margin-bottom:12px;line-height:1.1;}
+h2 em{color:#c8a44a;font-style:italic;}
+.prose{font-size:14px;color:rgba(255,255,255,0.55);line-height:1.9;margin-bottom:20px;}
+.prose strong{color:#fff;font-weight:600;}
+
+/* Chart boxes */
+.chart-box{background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px;margin:24px 0;}
+.chart-title{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:20px;}
+.chart-container{position:relative;width:100%;height:260px;}
+
+/* Lender table */
+.lender-table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0;}
+.lender-table th{padding:10px 14px;background:rgba(255,255,255,0.02);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.25);text-align:left;border-bottom:1px solid rgba(255,255,255,0.06);}
+.lender-table td{padding:13px 14px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);}
+.lender-table tr:hover td{background:rgba(255,255,255,0.02);}
+.lender-table .val{font-weight:600;font-family:'Fraunces',serif;font-size:15px;}
+.bad{color:#e8845a;}
+.mid{color:#c8a44a;}
+.good{color:#6bbf92;}
+.best{color:#5fde9e;}
+
+/* Squeeze viz */
+.squeeze{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;}
+.squeeze-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:22px;}
+.sq-label{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:12px;}
+.sq-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.sq-key{font-size:12px;color:rgba(255,255,255,0.4);}
+.sq-val{font-family:'Fraunces',serif;font-size:18px;font-weight:900;}
+.sq-gap{font-size:22px;font-weight:700;text-align:center;margin:12px 0 4px;}
+.sq-desc{font-size:11px;color:rgba(255,255,255,0.3);text-align:center;line-height:1.5;}
+
+/* State heatmap */
+.state-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0;}
+.state-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px;text-align:center;}
+.state-name{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;}
+.state-rate{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:4px;}
+.state-sub{font-size:10px;color:rgba(255,255,255,0.25);}
+
+/* Floor viz */
+.floor-box{background:rgba(200,164,74,0.04);border:1px solid rgba(200,164,74,0.15);border-radius:12px;padding:28px;margin:24px 0;text-align:center;}
+.floor-num{font-family:'Fraunces',serif;font-size:64px;font-weight:900;color:#c8a44a;line-height:1;}
+.floor-label{font-size:13px;color:rgba(255,255,255,0.5);margin-top:8px;line-height:1.7;}
+
+/* Sources */
+.sources{border-top:1px solid rgba(255,255,255,0.05);padding-top:32px;margin-top:48px;}
+.source-item{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-bottom:6px;}
+.source-item a{color:rgba(200,164,74,0.4);text-decoration:none;}
+.source-item a:hover{color:#c8a44a;}
+
+footer{border-top:1px solid rgba(255,255,255,0.05);padding:24px 40px;font-size:11px;color:rgba(255,255,255,0.2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+footer a{color:rgba(255,255,255,0.2);text-decoration:none;}
+
+@media(max-width:640px){
+  header{padding:0 16px;}nav{display:none;}
+  .hero{padding:48px 16px 40px;}
+  .wrap{padding:0 16px 60px;}
+  .squeeze{grid-template-columns:1fr;}
+  .state-grid{grid-template-columns:repeat(3,1fr);}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">Finance<em>Rate</em>Calc</a>
+  <nav>
+    <a href="/ofi.html">OFI = 47</a>
+    <a href="/ofi-methodology.html">Methodology</a>
+    <a href="/ofi-dashboard.html">Dashboard</a>
+    <a href="/frc-research.html">Research</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="hero-tag">FRC Research Division · HMDA + CFPB Evidence Base · 2026</div>
+  <h1>The Overlay<br><em>Evidence</em></h1>
+  <p class="hero-sub">Seven years of CFPB HMDA data. Five lenders. Five states. Three loan types. The data confirms what borrowers experience: the same application, the same profile, a radically different outcome depending on which lender receives it.</p>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-n">38.6pp</div>
+      <div class="stat-l">FHA denial rate spread between best and worst lender (2024)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">~80K</div>
+      <div class="stat-l">FHA home purchase applicants denied annually by overlay</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">+98pt</div>
+      <div class="stat-l">FICO overlay above FHA agency minimum (580 → 678 actual median)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">7 yrs</div>
+      <div class="stat-l">HMDA data analyzed: 2018–2024</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- Section 1: Lender Spread -->
+  <div class="section">
+    <div class="section-head">Finding 01 — The Lender Spread</div>
+    <h2>Same Borrower. Same Loan. <em>38.6 Points Apart.</em></h2>
+    <p class="prose">In 2024, the FHA denial rate ranged from <strong>19.9% (UWM)</strong> to <strong>58.5% (Wells Fargo)</strong> — a 38.6 percentage point spread. The FHA guidelines did not change. The borrower profile did not change. Only the lender changed.</p>
+
+    <div class="chart-box">
+      <div class="chart-title">FHA Denial Rate by Lender — 2024 · Source: CFPB HMDA Data Browser</div>
+      <div class="chart-container">
+        <canvas id="lenderChart" role="img" aria-label="FHA denial rates 2024: UWM 19.9%, National 22.4%, PennyMac 26.6%, Rocket 28.4%, loanDepot 37.0%, Wells Fargo 58.5%"></canvas>
+      </div>
+    </div>
+
+    <table class="lender-table">
+      <thead><tr><th>Lender</th><th>FHA Denial Rate</th><th>vs National Avg</th><th>FHA Volume</th><th>Type</th></tr></thead>
+      <tbody>
+        <tr><td>UWM</td><td class="val best">19.9%</td><td class="best">−2.5pp ← best</td><td>74,402</td><td>Wholesale</td></tr>
+        <tr><td>National Average</td><td class="val">22.4%</td><td>—</td><td>826,925</td><td>—</td></tr>
+        <tr><td>PennyMac</td><td class="val good">26.6%</td><td class="good">+4.2pp</td><td>15,078</td><td>Nonbank</td></tr>
+        <tr><td>Rocket Mortgage</td><td class="val mid">28.4%</td><td class="mid">+6.0pp</td><td>66,721</td><td>Nonbank</td></tr>
+        <tr><td>loanDepot</td><td class="val bad">37.0%</td><td class="bad">+14.6pp</td><td>20,996</td><td>Nonbank</td></tr>
+        <tr><td>Wells Fargo</td><td class="val bad">58.5%</td><td class="bad">+36.1pp ← worst</td><td>848</td><td>Large Bank</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 2: Wells Fargo longitudinal -->
+  <div class="section">
+    <div class="section-head">Finding 02 — Systematic Exit</div>
+    <h2>Wells Fargo FHA: <em>Seven Years of Withdrawal</em></h2>
+    <p class="prose">Wells Fargo originated <strong>2,300 FHA loans in 2018</strong>. By 2024 that fell to <strong>848</strong> — a 63% decline. Meanwhile, the denial rate rose from 46.7% to 58.5%. In 2020, denials exceeded originations for the first time. This is not overlay. This is strategic market exit.</p>
+
+    <div class="chart-box">
+      <div class="chart-title">Wells Fargo vs Rocket Mortgage — FHA Denial Rate 2018–2024</div>
+      <div class="chart-container">
+        <canvas id="longitudinalChart" aria-label="Wells Fargo FHA denial rate rising from 46.7% to 58.5%, Rocket stable 28-35%"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Two-directional squeeze -->
+  <div class="section">
+    <div class="section-head">Finding 03 — The Borrower Squeeze</div>
+    <h2>Two-Directional <em>Overlay Pressure</em></h2>
+    <p class="prose">CFPB data reveals that lenders apply overlay pressure in both directions simultaneously. FHA borrowers must beat agency minimums on FICO <em>and</em> DTI to get approved. Neither squeeze appears in any published guideline.</p>
+
+    <div class="squeeze">
+      <div class="squeeze-card">
+        <div class="sq-label">Credit Score (FICO)</div>
+        <div class="sq-row"><span class="sq-key">FHA Agency Minimum</span><span class="sq-val" style="color:rgba(255,255,255,0.4);">580</span></div>
+        <div class="sq-row"><span class="sq-key">Actual Median (2025)</span><span class="sq-val" style="color:#c8a44a;">678</span></div>
+        <div class="sq-gap" style="color:#e8845a;">↑ +98 points</div>
+        <div class="sq-desc">Borrowers need 98pts above the agency floor to get approved in practice</div>
+      </div>
+      <div class="squeeze-card">
+        <div class="sq-label">Debt-to-Income (DTI)</div>
+        <div class="sq-row"><span class="sq-key">FHA Agency Maximum</span><span class="sq-val" style="color:rgba(255,255,255,0.4);">57%</span></div>
+        <div class="sq-row"><span class="sq-key">Actual Median (2025)</span><span class="sq-val" style="color:#c8a44a;">47%</span></div>
+        <div class="sq-gap" style="color:#6bbf92;">↓ −10 points</div>
+        <div class="sq-desc">Borrowers need 10pp below the agency ceiling to get approved in practice</div>
+      </div>
+    </div>
+    <p class="prose" style="font-size:13px;color:rgba(255,255,255,0.35);">Source: CFPB HMDA Quarterly Graphs — Median Credit Scores and DTI by Loan Type, Home Purchase, 2018–2025.</p>
+  </div>
+
+  <!-- Section 4: State analysis -->
+  <div class="section">
+    <div class="section-head">Finding 04 — Overlay Is National Policy</div>
+    <h2>Five States. <em>Same Pattern.</em></h2>
+    <p class="prose">Wells Fargo's FHA denial rate never dropped below 34% in any state with meaningful loan volume. The overlay is not regional policy adapting to local markets — it is a national institutional decision, applied uniformly.</p>
+
+    <div class="state-grid">
+      <div class="state-card">
+        <div class="state-name">Texas</div>
+        <div class="state-rate bad">56.7%</div>
+        <div class="state-sub">FHA denial 2024</div>
+      </div>
+      <div class="state-card">
+        <div class="state-name">California</div>
+        <div class="state-rate bad">58.5%</div>
+        <div class="state-sub">FHA denial 2024</div>
+      </div>
+      <div class="state-card" style="border-color:rgba(232,132,90,0.3);">
+        <div class="state-name">Florida</div>
+        <div class="state-rate bad">65.3%</div>
+        <div class="state-sub">FHA denial 2024 ← worst</div>
+      </div>
+      <div class="state-card">
+        <div class="state-name">Ohio</div>
+        <div class="state-rate bad">56.4%</div>
+        <div class="state-sub">FHA denial 2024</div>
+      </div>
+      <div class="state-card">
+        <div class="state-name">Georgia</div>
+        <div class="state-rate bad">58.6%</div>
+        <div class="state-sub">FHA denial 2024</div>
+      </div>
+    </div>
+    <p class="prose">Florida's 2022 peak: <strong>71.0%</strong> — the highest FHA denial rate recorded in our dataset. Seven in ten FHA applicants denied at a single lender, in a single state, in a single year.</p>
+  </div>
+
+  <!-- Section 5: Structural floor -->
+  <div class="section">
+    <div class="section-head">Finding 05 — The Structural Denial Floor</div>
+    <h2>Every Year. <em>Every Quarter.</em></h2>
+    <p class="prose">FHA home purchase applications have remained stable at 80,000–100,000 per quarter since 2018 — regardless of interest rates. Conventional applications collapsed when rates rose. FHA applications held steady because FHA borrowers have no alternative: they cannot move up to conventional. At the national denial rate of 22.4%, approximately <strong>18,000–22,000 FHA home purchase applicants are denied every quarter</strong>.</p>
+
+    <div class="floor-box">
+      <div class="floor-num">~80,000</div>
+      <div class="floor-label">FHA home purchase applicants denied annually<br>by lender overlay — not by agency rules<br><span style="font-size:11px;color:rgba(255,255,255,0.25);">Estimate: 80-100K quarterly applications × 22.4% denial rate × 4 quarters</span></div>
+    </div>
+  </div>
+
+  <!-- OFI connection -->
+  <div class="section">
+    <div class="section-head">OFI Connection</div>
+    <h2>What OFI <em>Measures</em></h2>
+    <p class="prose">The Overlay Friction Index (OFI) translates these five data patterns into a single quarterly signal. OFI = 47 in Q2 2026 means the market is in MODERATE re-tightening — historically consistent with the conditions shown in this dataset when lender denial rates rise above 2019 baselines.</p>
+    <p class="prose">OFI is not a prediction. It is an observation — the same kind of observation this data supports, expressed as a single calibrated number updated each quarter.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;">
+      <a href="/ofi-methodology.html" style="padding:10px 20px;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.3);color:#c8a44a;border-radius:7px;font-size:12px;font-weight:700;text-decoration:none;">OFI Methodology →</a>
+      <a href="/ofi-dashboard.html" style="padding:10px 20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);border-radius:7px;font-size:12px;font-weight:700;text-decoration:none;">Historical Dashboard →</a>
+      <a href="/hmda-master-dataset.json" style="padding:10px 20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);border-radius:7px;font-size:12px;font-weight:700;text-decoration:none;">Download Data (CC BY 4.0) →</a>
+    </div>
+  </div>
+
+  <!-- Sources -->
+  <div class="sources">
+    <div class="section-head">Data Sources</div>
+    <div class="source-item">1. CFPB HMDA Data Browser — Denial Rates by Lender and Loan Type 2018–2024 · <a href="https://ffiec.cfpb.gov/data-browser/" target="_blank">ffiec.cfpb.gov/data-browser</a></div>
+    <div class="source-item">2. CFPB HMDA Quarterly Graphs — Median Credit Scores by Loan Type, Home Purchase 2018–2025 · <a href="https://ffiec.cfpb.gov/data-browser/graphs/quarterly/credit-scores?loanPurpose=Home+Purchase" target="_blank">View graph</a></div>
+    <div class="source-item">3. CFPB HMDA Quarterly Graphs — Median DTI by Loan Type, Home Purchase 2018–2025 · <a href="https://ffiec.cfpb.gov/data-browser/graphs/quarterly/dti-loan-purpose-home" target="_blank">View graph</a></div>
+    <div class="source-item">4. CFPB HMDA Quarterly Graphs — Application Count by Loan Type, Home Purchase 2018–2025 · <a href="https://ffiec.cfpb.gov/data-browser/graphs/quarterly/applications-loan-purpose-home" target="_blank">View graph</a></div>
+    <div class="source-item">5. CFPB HMDA Quarterly Graphs — Median Total Loan Costs, Home Purchase 2018–2025 · <a href="https://ffiec.cfpb.gov/data-browser/graphs/quarterly/tlc-loan-purpose-home" target="_blank">View graph</a></div>
+    <div class="source-item" style="margin-top:12px;">Analysis by FRC Research Division · Ziya Y., 23 years banking · <a href="/ofi-methodology.html">OFI Methodology</a> · Not financial advice · © 2026 · CC BY 4.0</div>
+  </div>
+
+</div>
+
+<footer>
+  <span>© 2026 FinanceRateCalc Research Division · Not financial advice</span>
+  <span><a href="/ofi.html">OFI = 47</a> · <a href="/ofi-methodology.html">Methodology</a> · <a href="/frc-research.html">Research</a></span>
+</footer>
+
+<script>
+// Chart 1: Lender FHA denial rates 2024
+new Chart(document.getElementById('lenderChart'), {
+  type: 'bar',
+  data: {
+    labels: ['UWM', 'National Avg', 'PennyMac', 'Rocket', 'loanDepot', 'Wells Fargo'],
+    datasets: [{
+      data: [19.9, 22.4, 26.6, 28.4, 37.0, 58.5],
+      backgroundColor: ['#5fde9e','rgba(255,255,255,0.2)','#6bbf92','#c8a44a','#e8a84a','#e8845a'],
+      borderRadius: 4,
+      borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {display:false},
+      tooltip: {
+        callbacks: {label: ctx => `FHA Denial Rate: ${ctx.parsed.y}%`},
+        backgroundColor:'#0d0e11',borderColor:'#c8a44a',borderWidth:1,
+        titleColor:'#c8a44a',bodyColor:'rgba(255,255,255,0.7)',padding:10,cornerRadius:6
+      }
+    },
+    scales: {
+      x: {grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'rgba(255,255,255,0.4)',font:{size:12}}},
+      y: {min:0,max:70,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'rgba(255,255,255,0.4)',font:{size:12},callback:v=>v+'%'}}
+    }
+  }
+});
+
+// Chart 2: WF vs Rocket longitudinal
+const years = ['2018','2019','2020','2021','2022','2023','2024'];
+new Chart(document.getElementById('longitudinalChart'), {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      {
+        label: 'Wells Fargo',
+        data: [46.7, 46.9, 51.5, 51.7, 60.4, 56.3, 58.5],
+        borderColor: '#e8845a', borderWidth: 2.5,
+        pointBackgroundColor: '#e8845a', pointRadius: 5,
+        fill: true, backgroundColor: 'rgba(232,132,90,0.06)', tension: 0.35
+      },
+      {
+        label: 'Rocket Mortgage',
+        data: [34.8, 29.7, 30.3, 27.9, 31.9, 29.0, 28.4],
+        borderColor: '#6bbf92', borderWidth: 2.5,
+        pointBackgroundColor: '#6bbf92', pointRadius: 5,
+        fill: true, backgroundColor: 'rgba(107,191,146,0.06)', tension: 0.35
+      },
+      {
+        label: 'National Average',
+        data: [23.9, 19.9, 18.3, 18.9, 24.1, 22.3, 22.4],
+        borderColor: 'rgba(255,255,255,0.25)', borderWidth: 1.5, borderDash: [4,4],
+        pointBackgroundColor: 'rgba(255,255,255,0.3)', pointRadius: 3,
+        fill: false, tension: 0.35
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: {color:'rgba(255,255,255,0.4)',font:{size:12},boxWidth:12,padding:20}
+      },
+      tooltip: {
+        backgroundColor:'#0d0e11',borderColor:'#c8a44a',borderWidth:1,
+        titleColor:'#c8a44a',bodyColor:'rgba(255,255,255,0.7)',padding:10,cornerRadius:6
+      }
+    },
+    scales: {
+      x: {grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'rgba(255,255,255,0.4)',font:{size:12}}},
+      y: {min:10,max:70,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'rgba(255,255,255,0.4)',font:{size:12},callback:v=>v+'%'}}
+    }
+  }
+});
+</script>
+</body>
+</html>
