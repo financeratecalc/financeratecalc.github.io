@@ -137,12 +137,12 @@ if(!window._AKEY){
 
 <div class="suggestions" id="suggestions">
   <div class="sug" onclick="askSuggestion(this)">Why was my mortgage denied?</div>
+  <div class="sug" onclick="window.location.href='/denial-letter-decoder.html'" style="border-color:rgba(200,164,74,0.4);color:#c8a44a;">📄 Decode my denial letter →</div>
   <div class="sug" onclick="askSuggestion(this)">What credit score do I need to buy a home?</div>
   <div class="sug" onclick="askSuggestion(this)">Is it worth refinancing at 6.5%?</div>
   <div class="sug" onclick="askSuggestion(this)">How much house can I afford on $90K/year?</div>
   <div class="sug" onclick="askSuggestion(this)">What's the difference between FHA and conventional?</div>
   <div class="sug" onclick="askSuggestion(this)">Should I pay points to lower my rate?</div>
-  <div class="sug" onclick="askSuggestion(this)">How does bi-weekly mortgage payment work?</div>
   <div class="sug" onclick="askSuggestion(this)">What hidden costs do buyers miss?</div>
 </div>
 
@@ -410,9 +410,21 @@ async function sendMessage(){
   showTyping();
 
   try {
-    var response = await fetch('https://frc-api.netlify.app/.netlify/functions/zai', {
+    if(!window._AKEY) {
+      removeTyping();
+      addMessage('ai', 'To activate Zai, please enter your API key. Refresh the page to enter it.');
+      isLoading = false;
+      document.getElementById('sendBtn').disabled = false;
+      return;
+    }
+    var response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': window._AKEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
