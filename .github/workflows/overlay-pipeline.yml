@@ -1,0 +1,37 @@
+name: FRC Overlay Intelligence Pipeline
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Her Pazartesi 06:00 UTC
+  workflow_dispatch:      # Manuel tetikleme
+
+jobs:
+  update-overlay-database:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install requests pdfplumber anthropic
+
+    - name: Run PDF Pipeline
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: python .github/scripts/pdf_pipeline.py
+
+    - name: Commit updated overlay database
+      run: |
+        git config user.name "FRC Intelligence Bot"
+        git config user.email "bot@financeratecalc.com"
+        git add overlay-intelligence.json
+        git diff --staged --quiet || (git pull --rebase origin main && git commit -m "Weekly overlay intelligence update: $(date +'%Y-%m-%d')" && git push)
