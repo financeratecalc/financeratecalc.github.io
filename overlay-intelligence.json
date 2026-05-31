@@ -1,0 +1,257 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-05-31",
+  "methodology": "FRC Research \u2014 HMDA 2018-2024 + public guideline analysis",
+  "ml_ready": false,
+  "total_cases": 0,
+  "lenders": {
+    "PennyMac_Correspondent": {
+      "full_name": "PennyMac Correspondent Group",
+      "type": "nonbank_correspondent",
+      "source": "public_overlay_matrix",
+      "source_url": "corr.pennymac.com/assets/documents/non-delegated-resources/",
+      "source_date": "2026-03-31",
+      "confidence_score": 0.9,
+      "fha": {
+        "min_fico": 580,
+        "min_fico_note": "Agency minimum \u2014 PennyMac follows FHA floor per overlay matrix",
+        "max_dti": 57,
+        "max_dti_note": "With compensating factors per FHA 4000.1",
+        "min_down_pct": 3.5,
+        "reserves_months": 0,
+        "condo_eligible": false,
+        "condo_note": "FHA Single Unit Condo approval ineligible per overlay matrix",
+        "manufactured_home": false,
+        "frozen_credit": false,
+        "frozen_credit_note": "All bureaus must be unfrozen \u2014 AUS rerun required",
+        "disputed_derogatory_max": 1000,
+        "disputed_derogatory_note": "Borrowers with $1000+ in disputed derogatory accounts require manual UW",
+        "installment_debt_note": "May not pay down to < 10 months to exclude from DTI"
+      },
+      "conventional": {
+        "min_fico": 620,
+        "max_dti": 50,
+        "min_down_pct": 3,
+        "reserves_months": 2
+      },
+      "va": {
+        "min_fico": 580,
+        "max_dti": 41,
+        "min_down_pct": 0,
+        "cash_out_min_fico": 700,
+        "cash_out_note": "Min 700 FICO for cash-out Type II transactions"
+      },
+      "ofi_component": {
+        "fha_friction_score": 1.8,
+        "conv_friction_score": 2.1,
+        "va_friction_score": 1.6,
+        "note": "Based on 2024 HMDA denial rate 26.6% FHA (national 22.4%)"
+      }
+    },
+    "UWM": {
+      "full_name": "United Wholesale Mortgage",
+      "type": "wholesale",
+      "source": "hmda_analysis + public_statements",
+      "source_date": "2026-05-31",
+      "confidence_score": 0.85,
+      "fha": {
+        "min_fico": 580,
+        "min_fico_note": "UWM known for low overlays \u2014 near agency minimum",
+        "max_dti": 57,
+        "min_down_pct": 3.5,
+        "reserves_months": 0,
+        "condo_eligible": true,
+        "manufactured_home": true
+      },
+      "conventional": {
+        "min_fico": 620,
+        "max_dti": 50,
+        "min_down_pct": 3,
+        "reserves_months": 0
+      },
+      "va": {
+        "min_fico": 580,
+        "max_dti": 50,
+        "min_down_pct": 0
+      },
+      "ofi_component": {
+        "fha_friction_score": 1.0,
+        "conv_friction_score": 1.1,
+        "va_friction_score": 0.9,
+        "note": "2024 HMDA denial rate 19.9% FHA \u2014 lowest in dataset. Wholesale model pre-screens."
+      }
+    },
+    "Rocket_Mortgage": {
+      "full_name": "Rocket Mortgage LLC",
+      "type": "nonbank_direct",
+      "source": "hmda_analysis",
+      "source_date": "2026-05-31",
+      "confidence_score": 0.85,
+      "fha": {
+        "min_fico": 580,
+        "min_fico_note": "Rocket historically serves FHA \u2014 66,721 FHA originated 2024",
+        "max_dti": 57,
+        "min_down_pct": 3.5,
+        "reserves_months": 0
+      },
+      "conventional": {
+        "min_fico": 620,
+        "max_dti": 50,
+        "min_down_pct": 3,
+        "reserves_months": 2
+      },
+      "va": {
+        "min_fico": 580,
+        "max_dti": 50,
+        "min_down_pct": 0
+      },
+      "ofi_component": {
+        "fha_friction_score": 1.4,
+        "conv_friction_score": 1.2,
+        "va_friction_score": 1.1,
+        "note": "2024 HMDA denial rate 28.4% FHA \u2014 moderate overlay"
+      }
+    },
+    "Wells_Fargo": {
+      "full_name": "Wells Fargo Bank, National Association",
+      "type": "large_bank",
+      "source": "hmda_analysis",
+      "source_date": "2026-05-31",
+      "confidence_score": 0.95,
+      "fha": {
+        "min_fico": 660,
+        "min_fico_note": "Inferred from HMDA \u2014 only 848 FHA originated 2024, 58.5% denial rate",
+        "max_dti": 43,
+        "min_down_pct": 3.5,
+        "reserves_months": 6,
+        "condo_eligible": false,
+        "manufactured_home": false,
+        "strategic_note": "Wells Fargo has systematically exited FHA market \u2014 63% volume decline 2018-2024"
+      },
+      "conventional": {
+        "min_fico": 680,
+        "max_dti": 43,
+        "min_down_pct": 5,
+        "reserves_months": 6
+      },
+      "va": {
+        "min_fico": 620,
+        "max_dti": 41,
+        "min_down_pct": 0
+      },
+      "ofi_component": {
+        "fha_friction_score": 4.8,
+        "conv_friction_score": 3.5,
+        "va_friction_score": 2.8,
+        "note": "2024 HMDA: FHA 58.5%, Conv 30.9% \u2014 highest friction in dataset"
+      }
+    },
+    "JPMorgan_Chase": {
+      "full_name": "JPMorgan Chase Bank, National Association",
+      "type": "large_bank",
+      "source": "hmda_analysis",
+      "source_date": "2026-05-31",
+      "confidence_score": 0.85,
+      "fha": {
+        "min_fico": 640,
+        "min_fico_note": "Inferred \u2014 1,372 FHA originated, 44.3% denial rate",
+        "max_dti": 45,
+        "min_down_pct": 3.5,
+        "reserves_months": 3,
+        "strategic_note": "JPMorgan FHA presence minimal \u2014 primarily conventional focus"
+      },
+      "conventional": {
+        "min_fico": 640,
+        "max_dti": 45,
+        "min_down_pct": 5,
+        "reserves_months": 3
+      },
+      "ofi_component": {
+        "fha_friction_score": 3.8,
+        "conv_friction_score": 1.8,
+        "va_friction_score": 2.2,
+        "note": "2024 HMDA: FHA 44.3%, Conv 12.1% \u2014 conv efficient, FHA restricted"
+      }
+    },
+    "Bank_of_America": {
+      "full_name": "Bank of America, National Association",
+      "type": "large_bank",
+      "source": "hmda_analysis",
+      "source_date": "2026-05-31",
+      "confidence_score": 0.9,
+      "fha": {
+        "min_fico": 660,
+        "min_fico_note": "Inferred \u2014 412 FHA originated, 45.6% denial rate",
+        "max_dti": 43,
+        "min_down_pct": 5,
+        "reserves_months": 6,
+        "strategic_note": "BofA FHA near-exit: only 412 originated 2024, 63 VA originated"
+      },
+      "conventional": {
+        "min_fico": 680,
+        "max_dti": 43,
+        "min_down_pct": 5,
+        "reserves_months": 6
+      },
+      "ofi_component": {
+        "fha_friction_score": 4.2,
+        "conv_friction_score": 4.5,
+        "va_friction_score": 3.0,
+        "note": "2024 HMDA: FHA 45.6%, Conv 42.0% \u2014 highest conventional friction"
+      }
+    },
+    "loanDepot": {
+      "full_name": "loanDepot.com, LLC",
+      "type": "nonbank_direct",
+      "source": "hmda_analysis",
+      "source_date": "2026-05-31",
+      "confidence_score": 0.8,
+      "fha": {
+        "min_fico": 600,
+        "min_fico_note": "Inferred \u2014 20,996 FHA originated, 37.0% denial rate",
+        "max_dti": 50,
+        "min_down_pct": 3.5,
+        "reserves_months": 2,
+        "note": "Permanent tightening post-2022 shock \u2014 DTI conservatism increased"
+      },
+      "conventional": {
+        "min_fico": 620,
+        "max_dti": 50,
+        "min_down_pct": 3,
+        "reserves_months": 2
+      },
+      "ofi_component": {
+        "fha_friction_score": 2.5,
+        "conv_friction_score": 1.8,
+        "va_friction_score": 2.0,
+        "note": "2024 HMDA: FHA 37.0% \u2014 elevated above national, structural shift post-2022"
+      }
+    }
+  },
+  "ml_config": {
+    "status": "PENDING",
+    "activation_threshold": 100,
+    "current_cases": 0,
+    "model_type": "RandomForestClassifier",
+    "features": [
+      "fico",
+      "dti",
+      "loan_type",
+      "loan_amount",
+      "state",
+      "lender_category"
+    ],
+    "target": "overlay_probability",
+    "training_data_path": "denial_cases.json",
+    "note": "ML activates when 100 verified denial cases collected via Denial Decoder"
+  },
+  "feedback_config": {
+    "flag_threshold": 3,
+    "note": "3 broker flag = rule auto-reviewed. 5 flags = rule updated.",
+    "sources": [
+      "denial_decoder",
+      "zai_conversations",
+      "broker_flag"
+    ]
+  }
+}
