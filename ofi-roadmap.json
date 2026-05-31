@@ -1,0 +1,118 @@
+{
+  "title": "OFI Development Roadmap",
+  "current": {
+    "version": "3.0",
+    "status": "LIVE",
+    "quarter": "Q2 2026",
+    "components": [
+      "Stage 1: Ridge Regression (28 quarterly points, LOO MAE=1.79)",
+      "Stage 2: FRED Weekly HF Modifier (STLFSI4, REDBOOK, SOFR)",
+      "Overlay Intelligence Database (7 lenders, FHA/Conv/VA rules)",
+      "Extended Backtest (8 critical periods 2019-2025)",
+      "Stress Test Matrix (17 scenarios, range 33.5-69.9)"
+    ]
+  },
+  "v3_1": {
+    "version": "3.1",
+    "status": "PLANNED",
+    "quarter": "Q3 2026",
+    "components": [
+      "FRED live integration active (FRED_API_KEY configured)",
+      "PDF Pipeline: automated overlay rule extraction",
+      "Sub-indices: OFI-LO, OFI-RV, OFI-EC (HMDA Q3 2026 data)",
+      "Denial Decoder feedback loop \u2192 overlay database auto-update",
+      "ML activation at 100 denial cases"
+    ]
+  },
+  "v4_0": {
+    "version": "4.0 \u2014 Access Layer",
+    "status": "PLANNED",
+    "quarter": "Q4 2026",
+    "concept": "OFI currently measures lender overlay friction. v4.0 adds structural market access barriers that exist even when lender overlays are zero.",
+    "new_dimensions": {
+      "Insurance_Crisis_Index": {
+        "description": "Measures insurance availability by state/ZIP. In Florida/California, lenders deny loans on properties that can't be insured \u2014 regardless of borrower profile.",
+        "data_sources": [
+          "AM Best insurer withdrawal data",
+          "State DOI reports",
+          "NFIP flood zone maps"
+        ],
+        "fred_proxies": [
+          "None \u2014 direct source required"
+        ],
+        "ofi_mechanism": "No insurance = no lender approval = structural denial, not overlay"
+      },
+      "Rate_Lockout_Index": {
+        "description": "Measures inventory suppression from rate lock-in effect. 2020-2021 buyers at 2.5-3% refuse to sell \u2192 FHA borrowers can't find eligible properties.",
+        "data_sources": [
+          "FRED: USHVAC (housing vacancy)",
+          "NAR existing home sales",
+          "Redfin days-on-market"
+        ],
+        "fred_proxies": [
+          "USHVAC",
+          "HOUST (housing starts)"
+        ],
+        "ofi_mechanism": "Low inventory \u2192 bidding wars \u2192 cash buyers win \u2192 FHA borrowers excluded by market, not lender"
+      },
+      "Institutional_Competition_Index": {
+        "description": "Tracks share of homes purchased by institutional investors (all-cash). FHA borrowers can't compete with Blackstone/Invitation Homes.",
+        "data_sources": [
+          "ATTOM investor purchase data",
+          "CoreLogic investor share",
+          "HMDA cash purchase tracking"
+        ],
+        "fred_proxies": [
+          "RHORUSQ156N (homeownership rate)"
+        ],
+        "ofi_mechanism": "Higher institutional share \u2192 lower FHA success rate \u2192 market-level exclusion"
+      },
+      "Doom_Spending_Signal": {
+        "description": "Gen Z homeownership intent collapse. Lower FHA application volume from young cohort compresses lender revenue \u2192 overlay paradox (may ease or tighten).",
+        "data_sources": [
+          "MBA purchase index by age",
+          "CFPB consumer surveys",
+          "Redfin first-time buyer share"
+        ],
+        "fred_proxies": [
+          "REDBOOK (retail spending)",
+          "Consumer confidence"
+        ],
+        "ofi_mechanism": "Demand collapse from young cohort changes lender competitive dynamics"
+      },
+      "YieldStar_Rental_Pressure": {
+        "description": "Algorithmic rent inflation traps renters \u2014 can't save for down payment, DTI worsens, mortgage access deteriorates.",
+        "data_sources": [
+          "FRED: CUUR0000SEHA (rent CPI)",
+          "Zillow rent index",
+          "CoStar rental vacancy"
+        ],
+        "fred_proxies": [
+          "CUUR0000SEHA"
+        ],
+        "ofi_mechanism": "High rent \u2192 low savings \u2192 high DTI \u2192 denied even at low-overlay lenders"
+      }
+    },
+    "formula": "OFI v4.0 = Stage1_Ridge + Stage2_HF_Modifier + Access_Layer_Score",
+    "access_layer_formula": "Access_Score = f(insurance_availability, inventory_suppression, institutional_competition, rental_burden)",
+    "activation_criteria": [
+      "Homeownership rate data collected quarterly (FRED)",
+      "Insurance availability index built (3+ states)",
+      "Institutional buyer share data secured",
+      "At least 2 quarters of parallel tracking vs v3.0"
+    ],
+    "estimated_mae_improvement": "Expected LOO MAE improvement: 1.79 \u2192 ~1.2 (estimated)"
+  },
+  "v5_0": {
+    "version": "5.0 \u2014 ZIP-Level OFI",
+    "status": "VISION",
+    "quarter": "2027",
+    "concept": "Overlay Friction Heat Map \u2014 ZIP code level OFI. First real-time underwriting behavior map of America.",
+    "components": [
+      "HMDA ZIP-level denial patterns",
+      "Insurance availability by ZIP",
+      "Institutional buyer concentration by ZIP",
+      "Interactive map visualization"
+    ]
+  }
+}
