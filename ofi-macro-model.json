@@ -1,27 +1,35 @@
 {
-  "model_version": "2.1",
+  "model_version": "3.0_quarterly_ridge",
   "trained": "2026-05-31",
-  "loo_mae": 5.5,
+  "algorithm": "Ridge Regression",
+  "data_frequency": "quarterly",
+  "n_samples": 28,
+  "n_features": 3,
   "features": [
     "mortgage_rate_30y",
-    "fha_denial_rate",
-    "cc_delinquency",
-    "saving_rate",
-    "corp_bond_spread",
-    "real_gdp_growth"
+    "cc_delinquency_rate",
+    "mbs_spread_proxy"
   ],
-  "top_drivers": [
-    "mortgage_rate_30y",
-    "saving_rate",
-    "fha_denial_rate"
-  ],
-  "note": "CDS proxy=corp_bond_spread. Petrol indirect via CDS/CPI.",
+  "loo_mae": 1.79,
+  "train_mae": 1.51,
+  "coefficients": {
+    "mortgage_rate_30y": 8.865,
+    "cc_delinquency_rate": -3.7432,
+    "mbs_spread_proxy": 1.9693
+  },
+  "intercept": 42.96,
+  "key_finding": {
+    "mortgage_rate": "Strongest driver \u2014 direct positive correlation with OFI",
+    "cc_delinquency": "Borrower stress indicator \u2014 rises as overlay tightens",
+    "mbs_spread": "CDS proxy \u2014 risk premium in mortgage-backed securities market",
+    "petrol_note": "Oil price captured indirectly via MBS spread and CPI passthrough"
+  },
   "scenarios_q3_2026": {
-    "Baz Senaryo": 48.6,
-    "Oil Soku (CDS up)": 48.6,
-    "Fed Faiz Indirimi": 48.5,
-    "Delinquency Spike": 49.6,
-    "Resesyon Sinyali": 49.6,
-    "Soft Landing": 47.6
+    "Baz senaryo": 44.6,
+    "Fed faiz indirimi": 42.3,
+    "Oil/CDS soku": 46.4,
+    "Delinquency spike": 41.4,
+    "Resesyon": 46.7,
+    "Soft landing": 44.1
   }
 }
