@@ -507,6 +507,96 @@ function quickPrompt(text) {
     sendMessage();
   }
 }
+// ─── DENIAL CASE FEEDBACK LOOP ───────────────────────────────────────────────
+// Zai'nin VERDICT içeren cevaplarından anonim vaka verisi çıkarır
+// overlay-intelligence.json için feedback signal üretir
+
+function extractAndStoreDenialCase(reply, conversationHistory) {
+  try {
+    // VERDICT var mı?
+    var verdictMatch = reply.match(/VERDICT:\s*(LENDER OVERLAY|AGENCY RULE|MIXED|CANNOT DETERMINE)/i);
+    if (!verdictMatch) return;
+    
+    var verdict = verdictMatch[1].toUpperCase();
+    
+    // Konuşma geçmişinden profil bilgilerini çıkar
+    var fullConversation = conversationHistory.map(m => m.content).join(' ');
+    
+    // FICO çıkar
+    var ficoMatch = fullConversation.match(/\b(fico|credit\s*score)[:\s]*(\d{3})\b/i);
+    var fico = ficoMatch ? parseInt(ficoMatch[2]) : null;
+    
+    // DTI çıkar
+    var dtiMatch = fullConversation.match(/\b(dti|debt.to.income)[:\s]*(\d{1,2}(?:\.\d+)?)\s*%?/i);
+    var dti = dtiMatch ? parseFloat(dtiMatch[2]) : null;
+    
+    // Loan type çıkar
+    var loanType = 'unknown';
+    if (/\bfha\b/i.test(fullConversation)) loanType = 'FHA';
+    else if (/\bva\b/i.test(fullConversation)) loanType = 'VA';
+    else if (/\busda\b/i.test(fullConversation)) loanType = 'USDA';
+    else if (/\bconventional\b/i.test(fullConversation)) loanType = 'Conventional';
+    
+    // Lender adı çıkar (varsa)
+    var lenderMatch = fullConversation.match(/\b(wells\s*fargo|uwm|rocket|pennymac|loandepot|chase|bank\s*of\s*america)\b/i);
+    var lender = lenderMatch ? lenderMatch[1].toLowerCase().replace(/\s+/g, '_') : 'unknown';
+    
+    // Kaç bankaya başvuruldu?
+    var appCountMatch = fullConversation.match(/(\d+)\s*(lender|bank|institution)/i);
+    var appCount = appCountMatch ? parseInt(appCountMatch[1]) : null;
+    
+    // Vaka objesi oluştur
+    var denialCase = {
+      timestamp: new Date().toISOString(),
+      verdict: verdict,
+      profile: {
+        fico: fico,
+        dti: dti,
+        loan_type: loanType,
+        lender_mentioned: lender,
+        applications_count: appCount
+      },
+      ofi_context: 47,  // Current OFI
+      quarter: 'Q2_2026',
+      source: 'zai_conversation'
+    };
+    
+    // SessionStorage'a ekle (bu session için)
+    var existing = JSON.parse(sessionStorage.getItem('frc_denial_cases') || '[]');
+    existing.push(denialCase);
+    sessionStorage.setItem('frc_denial_cases', JSON.stringify(existing));
+    
+    // Overlay flag: Eğer LENDER OVERLAY ise, lender overlay veritabanını güncelleme sinyali
+    if (verdict === 'LENDER OVERLAY' && lender !== 'unknown' && (fico || dti)) {
+      var flags = JSON.parse(sessionStorage.getItem('frc_overlay_flags') || '[]');
+      flags.push({
+        lender: lender,
+        loan_type: loanType,
+        fico: fico,
+        dti: dti,
+        timestamp: new Date().toISOString(),
+        signal: 'OVERLAY_CONFIRMED'
+      });
+      sessionStorage.setItem('frc_overlay_flags', JSON.stringify(flags));
+      
+      console.log('FRC: Overlay signal captured →', lender, loanType, 'FICO:', fico, 'DTI:', dti);
+    }
+    
+    // Toplam vaka sayısını güncelle
+    var totalCases = parseInt(localStorage.getItem('frc_total_cases') || '0') + 1;
+    localStorage.setItem('frc_total_cases', totalCases);
+    
+    // ML eşiği kontrolü
+    if (totalCases >= 100 && !localStorage.getItem('frc_ml_notified')) {
+      localStorage.setItem('frc_ml_notified', 'true');
+      console.log('FRC: ML activation threshold reached! 100 cases collected.');
+    }
+    
+  } catch(e) {
+    // Sessizce geç — kullanıcı deneyimini etkileme
+  }
+}
+
 async function sendMessage(){
   var input = document.getElementById('userInput');
   var text = input.value.trim();
@@ -553,6 +643,10 @@ async function sendMessage(){
       var reply = data.content[0].text;
       messages.push({role: 'assistant', content: reply});
       addMessage('ai', reply);
+      
+      // ─── FEEDBACK LOOP: Extract denial case data ──────────────────────────
+      extractAndStoreDenialCase(reply, messages);
+      
     } else if (data && data.error) {
       addMessage('ai', 'Error: ' + (data.error.message || 'Please try again.'));
     } else {
