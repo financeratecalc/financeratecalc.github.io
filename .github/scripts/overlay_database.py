@@ -277,7 +277,9 @@ OVERLAY_DATABASE = {
 }
 
 # JSON'a yaz
-output_path = '/home/claude/financeratecalc.github.io/overlay-intelligence.json'
+script_dir = os.path.dirname(os.path.abspath(__file__))
+repo_root = os.path.join(script_dir, '..', '..')
+output_path = os.path.join(repo_root, 'overlay-intelligence.json')
 with open(output_path, 'w') as f:
     json.dump(OVERLAY_DATABASE, f, indent=2)
 

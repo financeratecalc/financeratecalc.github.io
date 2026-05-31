@@ -141,7 +141,9 @@ def analyze_with_claude(text, lender_name):
 
 def run_pipeline():
     """Ana pipeline"""
-    db_path = '/home/claude/financeratecalc.github.io/overlay-intelligence.json'
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_root = os.path.join(script_dir, '..', '..')
+    db_path = os.path.join(repo_root, 'overlay-intelligence.json')
     
     with open(db_path, 'r') as f:
         db = json.load(f)

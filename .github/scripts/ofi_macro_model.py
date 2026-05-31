@@ -306,7 +306,9 @@ def main():
         }
     }
 
-    path = '/home/claude/financeratecalc.github.io/ofi-macro-model.json'
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    repo_root = os.path.join(script_dir, '..', '..')
+    path = os.path.join(repo_root, 'ofi-macro-model.json')
     with open(path, 'w') as f:
         json.dump(output, f, indent=2)
     print(f"\n✅ ofi-macro-model.json updated")
