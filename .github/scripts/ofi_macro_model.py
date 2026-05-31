@@ -315,3 +315,64 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+def check_pipeline_health(db_path, model_path):
+    """
+    Emergency stop + health check.
+    Eğer veri null veya mantıksız gelirse fallback moda geç.
+    """
+    import json
+    from datetime import datetime
+    
+    log = {
+        "timestamp": datetime.now().isoformat(),
+        "status": "OK",
+        "checks": {}
+    }
+    
+    # 1. overlay-intelligence.json var mı?
+    if os.path.exists(db_path):
+        with open(db_path) as f:
+            db = json.load(f)
+        lender_count = len(db.get('lenders', {}))
+        log["checks"]["overlay_db"] = f"OK — {lender_count} lenders"
+    else:
+        log["status"] = "FALLBACK"
+        log["checks"]["overlay_db"] = "MISSING"
+    
+    # 2. ofi-macro-model.json var mı?
+    if os.path.exists(model_path):
+        with open(model_path) as f:
+            model = json.load(f)
+        log["checks"]["macro_model"] = f"OK — v{model.get('model_version', '?')}"
+    else:
+        log["status"] = "FALLBACK"
+        log["checks"]["macro_model"] = "MISSING"
+    
+    # 3. OFI değeri mantıklı mı? (0-100 arası)
+    ofi_val = fallback_data.get("ofi_current", 0)
+    if 20 <= ofi_val <= 80:
+        log["checks"]["ofi_range"] = f"OK — {ofi_val}"
+    else:
+        log["status"] = "FALLBACK"
+        log["checks"]["ofi_range"] = f"INVALID — {ofi_val}"
+    
+    # Log kaydet
+    log_path = os.path.join(os.path.dirname(db_path), 'pipeline-log.json')
+    try:
+        with open(log_path, 'r') as f:
+            history = json.load(f)
+    except:
+        history = []
+    history.append(log)
+    history = history[-20:]  # Son 20 log
+    with open(log_path, 'w') as f:
+        json.dump(history, f, indent=2)
+    
+    print(f"Pipeline health: {log['status']}")
+    for k, v in log['checks'].items():
+        print(f"  {k}: {v}")
+    
+    return log["status"] == "OK"
