@@ -1,0 +1,63 @@
+{
+  "version": "4.0_schema",
+  "status": "PENDING_DATA",
+  "description": "OFI Access Layer \u2014 measures market-level exclusion beyond lender overlays",
+  "note": "Schema ready. Activation pending data acquisition. Expected Q4 2026.",
+  "variables": {
+    "institutional_concentration": {
+      "description": "Share of home purchases by institutional investors (cash buyers)",
+      "ofi_mechanism": "Higher institutional share \u2192 FHA borrowers outcompeted \u2192 market exclusion",
+      "direction": "positive",
+      "coefficient_estimate": "+2.5 per 10pp increase",
+      "data_source": "ATTOM investor purchase data / CoreLogic",
+      "fred_proxy": "RHORUSQ156N (homeownership rate \u2014 inverse)",
+      "update_frequency": "quarterly",
+      "status": "PENDING",
+      "known_values": {
+        "2021": "18.4% (peak \u2014 pandemic investor surge)",
+        "2022": "14.2%",
+        "2023": "13.8%",
+        "2024": "12.1% (estimated)"
+      }
+    },
+    "insurance_burden_index": {
+      "description": "Average insurance cost as % of monthly mortgage payment, by state",
+      "ofi_mechanism": "High insurance cost \u2192 effective DTI increases \u2192 lender denial even at agency minimums",
+      "direction": "positive",
+      "coefficient_estimate": "+1.8 per 5pp insurance/payment ratio increase",
+      "data_source": "AM Best insurer withdrawal reports / State DOI",
+      "fred_proxy": "None \u2014 direct source required",
+      "update_frequency": "annual",
+      "status": "PENDING",
+      "known_values": {
+        "Florida_2024": "Insurance cost = 3.1x national average",
+        "California_2024": "Major insurers (State Farm, Allstate) withdrawn",
+        "Texas_2024": "Wind/hail surcharges increasing DTI 8-12%"
+      }
+    },
+    "eviction_processing_speed": {
+      "description": "Average days to complete eviction by state \u2014 proxy for landlord/lender risk tolerance",
+      "ofi_mechanism": "Slow eviction \u2192 lenders add collateral requirements \u2192 overlay tightens in high-risk states",
+      "direction": "positive",
+      "coefficient_estimate": "+0.8 per 30-day increase in eviction timeline",
+      "data_source": "Princeton Eviction Lab / State court records",
+      "fred_proxy": "None \u2014 direct source required",
+      "update_frequency": "annual",
+      "status": "PENDING",
+      "known_values": {
+        "California": "60-120 days",
+        "New_York": "90-180 days",
+        "Texas": "21-30 days (fast)",
+        "Florida": "45-60 days"
+      }
+    }
+  },
+  "activation_criteria": {
+    "minimum_data_points": 3,
+    "minimum_states": 5,
+    "parallel_tracking_quarters": 2,
+    "expected_mae_improvement": "1.75 \u2192 ~1.3 estimated"
+  },
+  "combined_formula": "OFI_v4 = Ridge_Stage1 + FRED_HF_Stage2 + (w1*institutional + w2*insurance + w3*eviction)",
+  "weights_to_be_calibrated": true
+}
