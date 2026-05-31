@@ -326,3 +326,75 @@ footer a{color:rgba(255,255,255,0.2);text-decoration:none;}
 </footer>
 </body>
 </html>
+
+<script>
+// OFI Radar Widget — overlay-intelligence.json'dan beslenir
+async function loadRadarWidget() {
+  try {
+    const resp = await fetch('/overlay-intelligence.json');
+    const data = await resp.json();
+    const lenders = data.lenders;
+    
+    const container = document.getElementById('ofi-radar-widget');
+    if (!container) return;
+    
+    const rows = Object.entries(lenders).map(([key, l]) => {
+      const fha = l.fha || {};
+      const ofi = l.ofi_component || {};
+      const score = ofi.fha_friction_score || 0;
+      const color = score >= 4.0 ? '#ff6b6b' : score >= 3.0 ? '#e8845a' : score >= 2.0 ? '#c8a44a' : '#6bffb8';
+      const icon = score >= 4.0 ? '🔴' : score >= 3.0 ? '🟠' : score >= 2.0 ? '🟡' : '🟢';
+      const label = score >= 4.0 ? 'HIGH FRICTION' : score >= 3.0 ? 'ELEVATED' : score >= 2.0 ? 'MODERATE' : 'LOW FRICTION';
+      const fico = fha.min_fico || '—';
+      const dti = fha.max_dti || '—';
+      const conf = Math.round((l.confidence_score || 0.8) * 100);
+      
+      return `
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+          <td style="padding:12px 10px;">
+            <div style="font-weight:600;color:#fff;font-size:13px;">${l.full_name || key}</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">${l.type || ''} · ${conf}% confidence</div>
+          </td>
+          <td style="text-align:center;padding:12px 10px;">
+            <span style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:${color};">${score.toFixed(1)}</span>
+          </td>
+          <td style="text-align:center;padding:12px 10px;color:rgba(255,255,255,0.6);font-size:13px;">${fico}</td>
+          <td style="text-align:center;padding:12px 10px;color:rgba(255,255,255,0.6);font-size:13px;">${dti ? dti+'%' : '—'}</td>
+          <td style="padding:12px 10px;">
+            <span style="font-size:11px;font-weight:700;color:${color};">${icon} ${label}</span>
+          </td>
+        </tr>`;
+    }).join('');
+    
+    container.innerHTML = `
+      <div style="background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:24px;margin:28px 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.25);font-weight:700;margin-bottom:4px;">OFI Lender Radar · Live</div>
+            <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;">FHA Overlay Intelligence</div>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.3);">Updated weekly · Source: HMDA + PDF Pipeline<br>Scale: 1.0 (no friction) → 5.0 (max friction)</div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.08);">
+              <th style="text-align:left;padding:8px 10px;color:rgba(255,255,255,0.3);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;">Lender</th>
+              <th style="text-align:center;padding:8px 10px;color:rgba(255,255,255,0.3);font-size:10px;text-transform:uppercase;">OFI Score</th>
+              <th style="text-align:center;padding:8px 10px;color:rgba(255,255,255,0.3);font-size:10px;text-transform:uppercase;">Min FICO</th>
+              <th style="text-align:center;padding:8px 10px;color:rgba(255,255,255,0.3);font-size:10px;text-transform:uppercase;">Max DTI</th>
+              <th style="text-align:left;padding:8px 10px;color:rgba(255,255,255,0.3);font-size:10px;text-transform:uppercase;">Status</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <div style="margin-top:14px;font-size:11px;color:rgba(255,255,255,0.2);">
+          Data: CFPB HMDA 2018-2024 + FRC overlay analysis · Not financial advice · 
+          <a href="/overlay-intelligence.json" style="color:rgba(200,164,74,0.4);">Download JSON (CC BY 4.0)</a>
+        </div>
+      </div>`;
+  } catch(e) {
+    console.log('Radar widget error:', e);
+  }
+}
+document.addEventListener('DOMContentLoaded', loadRadarWidget);
+</script>
