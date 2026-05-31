@@ -3,12 +3,11 @@ name: FRC Overlay Intelligence Pipeline
 on:
   schedule:
     - cron: '0 6 * * 1'  # Her Pazartesi 06:00 UTC
-  workflow_dispatch:      # Manuel tetikleme
+  workflow_dispatch:
 
 jobs:
   update-overlay-database:
     runs-on: ubuntu-latest
-    
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -22,16 +21,21 @@ jobs:
         python-version: '3.11'
 
     - name: Install dependencies
-      run: pip install requests pdfplumber anthropic
+      run: pip install requests pdfplumber anthropic scikit-learn numpy fredapi
 
     - name: Run PDF Pipeline
       env:
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       run: python .github/scripts/pdf_pipeline.py
 
-    - name: Commit updated overlay database
+    - name: Run OFI Macro Model (Two-Stage)
+      env:
+        FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+      run: python .github/scripts/ofi_macro_model.py
+
+    - name: Commit updates
       run: |
         git config user.name "FRC Intelligence Bot"
         git config user.email "bot@financeratecalc.com"
-        git add overlay-intelligence.json
-        git diff --staged --quiet || (git pull --rebase origin main && git commit -m "Weekly overlay intelligence update: $(date +'%Y-%m-%d')" && git push)
+        git add overlay-intelligence.json ofi-macro-model.json
+        git diff --staged --quiet || (git pull --rebase origin main && git commit -m "Weekly overlay + macro model update: $(date +'%Y-%m-%d')" && git push)
