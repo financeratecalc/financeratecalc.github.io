@@ -108,5 +108,52 @@
       "rental_vacancy_rate": "Higher vacancy \u2192 rental stress easing \u2192 more potential buyers \u2192 FHA demand up",
       "housing_vacancy_rate": "Very low vacancy \u2192 inventory crisis \u2192 FHA borrowers excluded by market competition"
     }
+  },
+  "model_v32": {
+    "model_version": "3.2",
+    "trained": "2026-05-31",
+    "features": [
+      "mortgage_rate_30y",
+      "cc_delinquency",
+      "mbs_spread",
+      "homeownership_rate",
+      "rental_vacancy",
+      "housing_vacancy",
+      "institutional_investor_share",
+      "eviction_filing_rate",
+      "insurance_stress_proxy"
+    ],
+    "n_features": 9,
+    "new_features_added": {
+      "institutional_investor_share": "Redfin quarterly investor purchase data \u2014 % of homes bought by investors",
+      "eviction_filing_rate": "Princeton Eviction Lab \u2014 national eviction filings per 100 renter HH",
+      "insurance_stress_proxy": "FRED CUUR0000SEHA \u2014 rent CPI YoY as insurance burden proxy"
+    },
+    "loo_mae_comparison": {
+      "v3.0 (3 features)": 1.79,
+      "v3.1 (6 features)": 1.75,
+      "v3.2 (9 features)": 1.86
+    },
+    "coefficients": {
+      "mortgage_rate_30y": 6.0025,
+      "cc_delinquency": -2.7825,
+      "mbs_spread": 1.7526,
+      "homeownership_rate": 1.0632,
+      "rental_vacancy": -0.3015,
+      "housing_vacancy": 1.0261,
+      "institutional_investor_share": -1.3033,
+      "eviction_filing_rate": 1.4659,
+      "insurance_stress_proxy": 2.1216
+    },
+    "q3_2026_predictions": {
+      "base_case": 44.5,
+      "institutional_surge_20pct": 41.9,
+      "insurance_crisis": 51.0
+    },
+    "data_sources": {
+      "institutional_investor_share": "https://www.redfin.com/news/category/real-estate-market-news/investor-purchases/",
+      "eviction_filing_rate": "https://evictionlab.org/eviction-tracking/get-the-data/",
+      "insurance_stress_proxy": "FRED CUUR0000SEHA (rent of primary residence CPI)"
+    }
   }
 }
