@@ -32,7 +32,8 @@
 
   .state-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
   .state-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.2s; }
-  .state-card:hover { border-color: rgba(200,164,74,0.3); background: rgba(200,164,74,0.04); }
+  .state-card:hover { border-color: rgba(200,164,74,0.3); background: rgba(200,164,74,0.04); transform: translateY(-2px); }
+  .state-card { cursor: pointer; transition: all 0.2s; }
   .state-card.tightening { border-left: 3px solid #ff6b6b; }
   .state-card.elevated { border-left: 3px solid #e8845a; }
   .state-card.moderate { border-left: 3px solid #c8a44a; }
@@ -206,6 +207,55 @@ const stateNames = {
   VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming",DC:"D.C."
 };
 
+function showState(code) {
+  var s = states.find(x => x.s === code);
+  if (!s) return;
+  var name = stateNames[code] || code;
+  var color = s.level === 'tightening' ? '#ff6b6b' : s.level === 'elevated' ? '#e8845a' : s.level === 'moderate' ? '#c8a44a' : '#6bffb8';
+  var zaiUrl = '/frc-banker-ai.html';
+  
+  document.getElementById('modalContent').innerHTML = `
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.3);margin-bottom:8px;">State Detail</div>
+    <div style="font-size:24px;font-weight:800;margin-bottom:4px;">${name}</div>
+    <div style="font-size:42px;font-weight:900;color:${color};margin:12px 0;">${s.ofi}</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:16px;">OFI Score · ${s.level.toUpperCase()} · 2024</div>
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span style="color:rgba(255,255,255,0.4);">FHA Denial Rate</span>
+        <span style="color:${color};font-weight:700;">${s.dr}%</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span style="color:rgba(255,255,255,0.4);">FHA Originated</span>
+        <span style="color:#fff;">${s.orig.toLocaleString()}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="color:rgba(255,255,255,0.4);">FHA Denied</span>
+        <span style="color:#fff;">${s.denied.toLocaleString()}</span>
+      </div>
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.7;margin-bottom:16px;">
+      National average: 22.4% denial · National OFI: 47<br>
+      ${name} is ${s.dr > 22.4 ? 'above' : 'below'} national average by ${Math.abs(s.dr - 22.4).toFixed(1)} points.
+    </div>
+    <a href="${zaiUrl}?state=${code}" style="display:block;background:#c8a44a;color:#000;padding:12px;border-radius:8px;text-align:center;font-weight:700;font-size:13px;text-decoration:none;">
+      Ask Zai About ${name} →
+    </a>
+  `;
+  
+  var modal = document.getElementById('stateModal');
+  modal.style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('stateModal').style.display = 'none';
+}
+
+// Click outside to close
+document.addEventListener('click', function(e) {
+  var modal = document.getElementById('stateModal');
+  if (e.target === modal) closeModal();
+});
+
 function renderStates(filter) {
   const grid = document.getElementById('stateGrid');
   const filtered = filter === 'all' ? states : states.filter(s => s.level === filter);
@@ -228,5 +278,14 @@ function filterStates(filter) {
 
 renderStates('all');
 </script>
+
+<!-- STATE DETAIL MODAL -->
+<div id="stateModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:#0f0f1a;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:28px;max-width:480px;width:90%;position:relative;">
+    <button onclick="closeModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
 </body>
 </html>
