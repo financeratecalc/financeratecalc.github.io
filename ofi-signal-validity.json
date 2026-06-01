@@ -1,0 +1,115 @@
+{
+  "signal_validity_version": "1.0",
+  "date": "2026-06-01",
+  "total_signal_score": 63.2,
+  "verdict": "\u2705 MODERATE SIGNAL \u2014 OFI has meaningful incremental value",
+  "tests": {
+    "ablation": {
+      "core_signal_features": [
+        "mortgage_rate",
+        "cc_delinquency",
+        "mbs_spread"
+      ],
+      "results": {
+        "mortgage_rate": {
+          "mae_without": 2.8,
+          "drop": 1.32,
+          "sensitivity": "CORE SIGNAL"
+        },
+        "cc_delinquency": {
+          "mae_without": 2.26,
+          "drop": 0.782,
+          "sensitivity": "CORE SIGNAL"
+        },
+        "mbs_spread": {
+          "mae_without": 1.85,
+          "drop": 0.367,
+          "sensitivity": "CORE SIGNAL"
+        },
+        "homeownership": {
+          "mae_without": 1.47,
+          "drop": -0.009,
+          "sensitivity": "REDUNDANT"
+        },
+        "rental_vacancy": {
+          "mae_without": 1.51,
+          "drop": 0.027,
+          "sensitivity": "REDUNDANT"
+        },
+        "housing_vacancy": {
+          "mae_without": 1.48,
+          "drop": -0.005,
+          "sensitivity": "REDUNDANT"
+        },
+        "fha_denial_rate": {
+          "mae_without": 1.44,
+          "drop": -0.042,
+          "sensitivity": "REDUNDANT"
+        },
+        "mba_index": {
+          "mae_without": 1.47,
+          "drop": -0.012,
+          "sensitivity": "REDUNDANT"
+        },
+        "price_to_rent": {
+          "mae_without": 1.49,
+          "drop": 0.004,
+          "sensitivity": "REDUNDANT"
+        },
+        "mortgage_delinquency": {
+          "mae_without": 1.5,
+          "drop": 0.021,
+          "sensitivity": "REDUNDANT"
+        }
+      },
+      "score": 60
+    },
+    "granger_causality": {
+      "ofi_leads_denial_rate": {
+        "r": 0.679,
+        "p": 0.0
+      },
+      "ofi_leads_mba_index": {
+        "r": -0.873,
+        "p": 0.0
+      },
+      "verdict": "LEADING INDICATOR",
+      "score": 70
+    },
+    "orthogonality": {
+      "macro_only_r2": 0.946,
+      "full_model_r2": 0.974,
+      "incremental_r2": 0.028,
+      "score": 50
+    },
+    "incremental_power": {
+      "macro_only_mae": 1.76,
+      "full_ofi_mae": 1.48,
+      "improvement": 0.28,
+      "improvement_pct": 15.7,
+      "score": 65
+    },
+    "regime_stability": {
+      "cv": 0.37,
+      "regime_maes": {
+        "Low rate (2019-2021)": {
+          "mae": 1.07,
+          "dir_correct": 7
+        },
+        "Rate shock (2022)": {
+          "mae": 2.51,
+          "dir_correct": 3
+        },
+        "High rate (2023)": {
+          "mae": 1.4,
+          "dir_correct": 3
+        },
+        "Normalizing (2024)": {
+          "mae": 1.19,
+          "dir_correct": 2
+        }
+      },
+      "score": 80
+    }
+  }
+}
