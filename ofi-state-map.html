@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OFI State Map — FHA Overlay Friction by State 2024 | FinanceRateCalc</title>
+<meta name="description" content="Interactive map showing FHA mortgage overlay friction by US state. Which states have the highest and lowest lender overlay barriers in 2024?">
+<link rel="canonical" href="https://financeratecalc.com/ofi-state-map.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0f; color: #fff; font-family: 'Inter', system-ui, sans-serif; min-height: 100vh; }
+  
+  .header { padding: 32px 24px 16px; max-width: 1100px; margin: 0 auto; }
+  .tag { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(200,164,74,0.7); font-weight: 700; margin-bottom: 8px; }
+  h1 { font-size: clamp(22px, 4vw, 36px); font-weight: 800; margin-bottom: 8px; }
+  .subtitle { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 24px; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 1100px; margin: 0 auto 24px; padding: 0 24px; }
+  .stat-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 14px; text-align: center; }
+  .stat-num { font-size: 28px; font-weight: 900; }
+  .stat-label { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 4px; }
+
+  .map-container { max-width: 1100px; margin: 0 auto; padding: 0 24px 32px; }
+  
+  /* Simple sortable table instead of SVG map */
+  .filter-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-btn { padding: 7px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.6); font-size: 12px; cursor: pointer; transition: all 0.2s; }
+  .filter-btn.active, .filter-btn:hover { background: rgba(200,164,74,0.1); border-color: rgba(200,164,74,0.3); color: #c8a44a; }
+
+  .state-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+  .state-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.2s; }
+  .state-card:hover { border-color: rgba(200,164,74,0.3); background: rgba(200,164,74,0.04); }
+  .state-card.tightening { border-left: 3px solid #ff6b6b; }
+  .state-card.elevated { border-left: 3px solid #e8845a; }
+  .state-card.moderate { border-left: 3px solid #c8a44a; }
+  .state-card.low { border-left: 3px solid #6bffb8; }
+  
+  .state-name { font-size: 13px; font-weight: 700; color: #fff; }
+  .state-ofi { font-size: 22px; font-weight: 900; margin: 4px 0; }
+  .state-denial { font-size: 11px; color: rgba(255,255,255,0.35); }
+  .state-level { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+  .tightening .state-ofi, .tightening .state-level { color: #ff6b6b; }
+  .elevated .state-ofi, .elevated .state-level { color: #e8845a; }
+  .moderate .state-ofi, .moderate .state-level { color: #c8a44a; }
+  .low .state-ofi, .low .state-level { color: #6bffb8; }
+
+  .legend { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.5); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .cta-box { background: linear-gradient(135deg,rgba(200,164,74,0.08),rgba(107,191,146,0.05)); border: 1px solid rgba(200,164,74,0.2); border-radius: 12px; padding: 22px 24px; margin: 24px 0; }
+  
+  footer { text-align: center; padding: 24px; font-size: 11px; color: rgba(255,255,255,0.2); }
+  @media(max-width:600px) { .stats-row { grid-template-columns: repeat(2,1fr); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="tag">OFI State Intelligence · 2024 HMDA Data</div>
+  <h1>FHA Overlay Friction by State</h1>
+  <p class="subtitle">Which states have the highest lender overlay barriers? Based on 2024 CFPB HMDA data — 827,561 FHA originations, 239,641 denials across all 50 states + DC.</p>
+</div>
+
+<div class="stats-row">
+  <div class="stat-box">
+    <div class="stat-num" style="color:#ff6b6b;">9</div>
+    <div class="stat-label">🔴 TIGHTENING states</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num" style="color:#e8845a;">29</div>
+    <div class="stat-label">🟠 ELEVATED states</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num" style="color:#c8a44a;">10</div>
+    <div class="stat-label">🟡 MODERATE states</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num" style="color:#6bffb8;">3</div>
+    <div class="stat-label">🟢 LOW friction states</div>
+  </div>
+</div>
+
+<div class="map-container">
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;"></div>TIGHTENING (OFI 55+)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e8845a;"></div>ELEVATED (45-55)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#c8a44a;"></div>MODERATE (35-45)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6bffb8;"></div>LOW (&lt;35)</div>
+  </div>
+
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="filterStates('all')">All States</button>
+    <button class="filter-btn" onclick="filterStates('tightening')">🔴 Tightening</button>
+    <button class="filter-btn" onclick="filterStates('elevated')">🟠 Elevated</button>
+    <button class="filter-btn" onclick="filterStates('moderate')">🟡 Moderate</button>
+    <button class="filter-btn" onclick="filterStates('low')">🟢 Low</button>
+  </div>
+
+  <div class="state-grid" id="stateGrid"></div>
+
+  <div class="cta-box" style="margin-top:28px;">
+    <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(200,164,74,0.7);font-weight:700;margin-bottom:8px;">Free Analysis</div>
+    <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Buying in a high-friction state?</div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:14px;">State OFI shows market-level friction. Your individual approval depends on which lender you choose. Ask Zai to find the lowest-overlay lender for your specific profile — free, no SSN required.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="/frc-banker-ai.html" style="background:#c8a44a;color:#000;padding:11px 20px;border-radius:7px;font-weight:700;font-size:13px;text-decoration:none;">Talk to Zai — Free →</a>
+      <a href="/ofi.html" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);padding:11px 20px;border-radius:7px;font-weight:600;font-size:13px;text-decoration:none;border:1px solid rgba(255,255,255,0.1);">National OFI = 47 →</a>
+    </div>
+  </div>
+
+  <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:16px;">Data: CFPB HMDA 2024 · FHA Home Purchase · Originated + Denied · <a href="/ofi-state-index.json" style="color:rgba(200,164,74,0.3);">Download JSON (CC BY 4.0)</a> · Not financial advice.</p>
+</div>
+
+<footer>© 2026 FinanceRateCalc Research Division · Ziya Y., 23-year banking professional · Not financial advice</footer>
+
+<script>
+const states = [
+  {s:"DC",ofi:80.0,dr:39.2,level:"tightening",orig:424,denied:273},
+  {s:"VT",ofi:73.4,dr:35.0,level:"tightening",orig:576,denied:310},
+  {s:"HI",ofi:71.1,dr:33.9,level:"tightening",orig:687,denied:353},
+  {s:"MI",ofi:60.4,dr:28.8,level:"tightening",orig:20395,denied:8241},
+  {s:"CT",ofi:60.2,dr:28.7,level:"tightening",orig:6089,denied:2448},
+  {s:"IL",ofi:58.8,dr:28.0,level:"tightening",orig:21398,denied:8324},
+  {s:"WI",ofi:57.9,dr:27.6,level:"tightening",orig:7630,denied:2907},
+  {s:"NH",ofi:55.2,dr:26.3,level:"tightening",orig:2152,denied:769},
+  {s:"PA",ofi:55.2,dr:26.3,level:"tightening",orig:24018,denied:8571},
+  {s:"DE",ofi:54.1,dr:25.8,level:"elevated",orig:3583,denied:1244},
+  {s:"GA",ofi:54.1,dr:25.8,level:"elevated",orig:41682,denied:14506},
+  {s:"LA",ofi:53.9,dr:25.7,level:"elevated",orig:12909,denied:4473},
+  {s:"NJ",ofi:52.9,dr:25.2,level:"elevated",orig:17312,denied:5838},
+  {s:"MA",ofi:52.7,dr:25.1,level:"elevated",orig:8998,denied:3014},
+  {s:"MS",ofi:52.7,dr:25.1,level:"elevated",orig:9078,denied:3045},
+  {s:"WV",ofi:52.7,dr:25.1,level:"elevated",orig:4751,denied:1593},
+  {s:"FL",ofi:52.0,dr:24.8,level:"elevated",orig:83921,denied:27664},
+  {s:"ME",ofi:52.0,dr:24.8,level:"elevated",orig:2773,denied:913},
+  {s:"MD",ofi:51.4,dr:24.5,level:"elevated",orig:16966,denied:5503},
+  {s:"OH",ofi:50.8,dr:24.2,level:"elevated",orig:30217,denied:9639},
+  {s:"IA",ofi:50.6,dr:24.1,level:"elevated",orig:5541,denied:1760},
+  {s:"NY",ofi:50.1,dr:23.9,level:"elevated",orig:15510,denied:4861},
+  {s:"IN",ofi:49.5,dr:23.6,level:"elevated",orig:23570,denied:7299},
+  {s:"KS",ofi:49.3,dr:23.5,level:"elevated",orig:5969,denied:1833},
+  {s:"NE",ofi:48.0,dr:22.9,level:"elevated",orig:3992,denied:1184},
+  {s:"AR",ofi:47.8,dr:22.8,level:"elevated",orig:9042,denied:2672},
+  {s:"MN",ofi:47.8,dr:22.8,level:"elevated",orig:8867,denied:2621},
+  {s:"AL",ofi:47.6,dr:22.7,level:"elevated",orig:18751,denied:5508},
+  {s:"VA",ofi:47.2,dr:22.5,level:"elevated",orig:21313,denied:6185},
+  {s:"NC",ofi:47.0,dr:22.4,level:"elevated",orig:30322,denied:8773},
+  {s:"MT",ofi:46.8,dr:22.3,level:"elevated",orig:2029,denied:581},
+  {s:"CA",ofi:46.6,dr:22.2,level:"elevated",orig:57939,denied:16537},
+  {s:"RI",ofi:46.4,dr:22.1,level:"elevated",orig:2777,denied:786},
+  {s:"MO",ofi:46.0,dr:21.9,level:"elevated",orig:16707,denied:4680},
+  {s:"SC",ofi:46.0,dr:21.9,level:"elevated",orig:21001,denied:5887},
+  {s:"TN",ofi:45.7,dr:21.8,level:"elevated",orig:24803,denied:6902},
+  {s:"CO",ofi:45.5,dr:21.7,level:"elevated",orig:17560,denied:4855},
+  {s:"KY",ofi:45.3,dr:21.6,level:"elevated",orig:12970,denied:3581},
+  {s:"NM",ofi:44.5,dr:21.2,level:"moderate",orig:6458,denied:1738},
+  {s:"AK",ofi:43.6,dr:20.8,level:"moderate",orig:1306,denied:343},
+  {s:"OK",ofi:42.4,dr:20.2,level:"moderate",orig:12380,denied:3132},
+  {s:"SD",ofi:41.5,dr:19.8,level:"moderate",orig:2064,denied:508},
+  {s:"WA",ofi:39.0,dr:18.6,level:"moderate",orig:15135,denied:3463},
+  {s:"WY",ofi:38.8,dr:18.5,level:"moderate",orig:1970,denied:448},
+  {s:"AZ",ofi:38.2,dr:18.2,level:"moderate",orig:29901,denied:6645},
+  {s:"NV",ofi:37.8,dr:18.0,level:"moderate",orig:12030,denied:2638},
+  {s:"OR",ofi:37.1,dr:17.7,level:"moderate",orig:9253,denied:1988},
+  {s:"ND",ofi:35.7,dr:17.0,level:"moderate",orig:1701,denied:349},
+  {s:"ID",ofi:34.8,dr:16.6,level:"low",orig:5991,denied:1191},
+  {s:"TX",ofi:30.0,dr:14.3,level:"low",orig:97319,denied:16283},
+  {s:"UT",ofi:29.8,dr:14.2,level:"low",orig:12278,denied:2033}
+];
+
+const stateNames = {
+  AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",
+  CO:"Colorado",CT:"Connecticut",DE:"Delaware",FL:"Florida",GA:"Georgia",
+  HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",
+  KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",
+  MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",
+  MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",
+  NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",
+  OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",
+  SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",
+  VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming",DC:"D.C."
+};
+
+function renderStates(filter) {
+  const grid = document.getElementById('stateGrid');
+  const filtered = filter === 'all' ? states : states.filter(s => s.level === filter);
+  
+  grid.innerHTML = filtered.map(s => `
+    <div class="state-card ${s.level}">
+      <div class="state-name">${stateNames[s.s] || s.s}</div>
+      <div class="state-ofi">${s.ofi}</div>
+      <div class="state-denial">Denial rate: ${s.dr}%</div>
+      <div class="state-level">${s.level}</div>
+    </div>
+  `).join('');
+}
+
+function filterStates(filter) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderStates(filter);
+}
+
+renderStates('all');
+</script>
+</body>
+</html>
