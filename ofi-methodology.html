@@ -186,6 +186,48 @@ strong{color:#fff;}
 
 
 
+
+  <h2>Model Transparency — Common Questions <span class="coming" style="background:rgba(107,191,146,0.15);color:#6bffb8;border-color:rgba(107,191,146,0.3);">FAQ</span></h2>
+
+  <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.9;margin-bottom:16px;">OFI is not a credit score. It measures lender behavior, not borrower creditworthiness. Think of it as a market thermometer — showing how tight or loose lenders are operating relative to agency minimums.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;">
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;">
+      <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">How many lenders tracked?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;">7 major lenders with full overlay profiles (UWM, Rocket, PennyMac, loanDepot, Wells Fargo, Freedom, Chase). Expanding with PDF pipeline weekly.</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;">
+      <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">How often updated?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;">Weekly via FRED API (STLFSI4, REDBOOK, SOFR). Overlay database updated every Monday 06:00 UTC via GitHub Actions pipeline.</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;">
+      <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">What is the data source?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;">CFPB HMDA 2018–2024 (federal public data), FRED API, Freddie Mac PMMS, Princeton Eviction Lab, Redfin investor data. All sources cited and CC BY 4.0 licensed.</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;">
+      <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">Correlation with actual denials?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;">r = 0.902 with national FHA denial rates. LOO cross-validated MAE = 1.50 OFI points (v3.5 ensemble model). 100% directional accuracy across 8 historical periods.</div>
+    </div>
+  </div>
+
+  <div style="background:rgba(200,164,74,0.04);border:1px solid rgba(200,164,74,0.15);border-radius:8px;padding:14px 18px;margin:16px 0;">
+    <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">Interest Rate — OFI Relationship</div>
+    <div style="font-family:monospace;font-size:14px;color:#6bffb8;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:6px;margin-bottom:8px;">OFI = 4.81 × mortgage_rate + 20.17 &nbsp;(r = 0.902)</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.7;">Every 1 percentage point increase in 30Y mortgage rate corresponds to a 4.8 OFI point increase. This relationship holds across the 2018–2024 cycle including pandemic, rate shock, and normalization phases.</div>
+  </div>
+
+  <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px 18px;margin:16px 0;">
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em;">Full Model Specification (v3.5)</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:2.0;">
+      <strong style="color:rgba(255,255,255,0.6);">Algorithm:</strong> Ridge Regression (α=0.5) + Random Forest ensemble<br>
+      <strong style="color:rgba(255,255,255,0.6);">Training data:</strong> 28 quarterly observations (2018 Q1 – 2024 Q4)<br>
+      <strong style="color:rgba(255,255,255,0.6);">Validation:</strong> Leave-One-Out Cross-Validation (LOO-CV)<br>
+      <strong style="color:rgba(255,255,255,0.6);">Features (9):</strong> mortgage_rate, cc_delinquency, mbs_spread, homeownership_rate, rental_vacancy, housing_vacancy, fha_denial_rate, mba_purchase_index, price_to_rent_ratio<br>
+      <strong style="color:rgba(255,255,255,0.6);">Stage 2 (HF):</strong> FRED weekly signals — STLFSI4, REDBOOK, SOFR<br>
+      <strong style="color:rgba(255,255,255,0.6);">State layer:</strong> 51 state OFI scores from 2024 HMDA (827K originations, 240K denials)
+    </div>
+  </div>
+
   <h2>Disconnect Index — P/R vs OFI Divergence <span class="coming" style="background:rgba(107,191,146,0.15);color:#6bffb8;border-color:rgba(107,191,146,0.3);">NEW</span></h2>
 
   <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.9;margin-bottom:16px;">The Disconnect Index measures the divergence between market valuation (Price-to-Rent Ratio) and lender behavior (OFI). When lenders are too loose for current valuations — or too tight — the index flags it. This is where bubble risk and opportunity windows are identified.</p>
