@@ -189,6 +189,47 @@ strong{color:#fff;}
 
 
 
+
+  <h2>Common Questions About OFI Methodology</h2>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;">
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;">
+      <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">How many lenders tracked?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">7 major lenders with full overlay profiles (UWM, Rocket, PennyMac, loanDepot, Wells Fargo, Freedom, Chase). Expanding with PDF pipeline weekly.</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;">
+      <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">How often updated?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">Weekly via FRED API. Overlay database updated every Monday 06:00 UTC via GitHub Actions pipeline.</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;">
+      <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">What is the data source?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">CFPB HMDA 2018–2024 (federal public data), FRED API, Freddie Mac PMMS, MBA Purchase Index. All sources CC BY 4.0.</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;">
+      <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">Correlation with actual denials?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">r = 0.902 with national FHA denial rates. LOO MAE = 1.48. 87.5% directional accuracy last 8 quarters. Live forecast avg error: 0.67 points.</div>
+    </div>
+  </div>
+
+  <div style="background:rgba(200,164,74,0.04);border:1px solid rgba(200,164,74,0.15);border-radius:8px;padding:14px 18px;margin:12px 0;">
+    <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">Interest Rate — OFI Relationship</div>
+    <div style="font-family:monospace;font-size:14px;color:#6bffb8;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:6px;margin-bottom:8px;">OFI = 4.81 × mortgage_rate + 20.17 &nbsp;(r = 0.902)</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.7;">Every 1 percentage point increase in 30Y mortgage rate = +4.8 OFI points. Enhanced model adds rate momentum: OFI = 4.53 × rate + 3.31 × rate_change (MAE 2.13). Direction matters as much as level.</div>
+  </div>
+
+  <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px 18px;margin:12px 0;">
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em;">Full Model Specification — v3.6 (FROZEN)</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:2.0;">
+      <strong style="color:rgba(255,255,255,0.6);">Algorithm:</strong> Ridge Regression (α=0.5) — frozen at v3.6<br>
+      <strong style="color:rgba(255,255,255,0.6);">Validation:</strong> Leave-One-Out Cross-Validation · LOO MAE = 1.48<br>
+      <strong style="color:rgba(255,255,255,0.6);">Training data:</strong> 28 quarterly observations (2018 Q1 – 2024 Q4)<br>
+      <strong style="color:rgba(255,255,255,0.6);">10 Features:</strong> mortgage_rate_30y, cc_delinquency, mbs_spread, homeownership_rate, rental_vacancy, housing_vacancy, fha_denial_rate_national, mba_purchase_index, price_to_rent_ratio, mortgage_delinquency_rate<br>
+      <strong style="color:rgba(255,255,255,0.6);">Core signal (ablation):</strong> mortgage_rate, cc_delinquency, mbs_spread — other 7 features redundant<br>
+      <strong style="color:rgba(255,255,255,0.6);">State layer:</strong> 51 state OFI scores from 2024 HMDA (827K originations, 240K denials)<br>
+      <strong style="color:rgba(255,255,255,0.6);">Live forecasts:</strong> 3/3 correct since Q4 2025, avg error 0.67 points
+    </div>
+  </div>
+
   <h2>OFI Positioning — Three Audiences</h2>
 
   <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.9;margin-bottom:16px;">The same index tells three different truths depending on who is reading it.</p>
