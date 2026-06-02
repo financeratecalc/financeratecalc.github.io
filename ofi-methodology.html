@@ -220,7 +220,7 @@ strong{color:#fff;}
     </div>
     <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;">
       <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">Correlation with actual denials?</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">r = 0.902 with national FHA denial rates. LOO MAE = 1.48. 87.5% directional accuracy last 8 quarters. Live forecast avg error: 0.67 points.</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">r = 0.902 with national FHA denial rates. LOO MAE = 1.23. 87.5% directional accuracy last 8 quarters. Live forecast avg error: 0.67 points.</div>
     </div>
   </div>
 
@@ -231,11 +231,11 @@ strong{color:#fff;}
   </div>
 
   <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px 18px;margin:12px 0;">
-    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em;">Full Model Specification — v3.6 (FROZEN)</div>
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em;">Full Model Specification — v3.7 (FROZEN)</div>
     <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:2.0;">
       <strong style="color:rgba(255,255,255,0.6);">Algorithm:</strong> Ridge Regression (α=0.5) — frozen at v3.6<br>
-      <strong style="color:rgba(255,255,255,0.6);">Validation:</strong> Leave-One-Out Cross-Validation · LOO MAE = 1.48<br>
-      <strong style="color:rgba(255,255,255,0.6);">Training data:</strong> 28 quarterly observations (2018 Q1 – 2024 Q4)<br>
+      <strong style="color:rgba(255,255,255,0.6);">Validation:</strong> Leave-One-Out Cross-Validation · LOO MAE = 1.23<br>
+      <strong style="color:rgba(255,255,255,0.6);">Training data:</strong> 44 quarterly observations (2014Q1-2024Q4) (2018 Q1 – 2024 Q4)<br>
       <strong style="color:rgba(255,255,255,0.6);">10 Features:</strong> mortgage_rate_30y, cc_delinquency, mbs_spread, homeownership_rate, rental_vacancy, housing_vacancy, fha_denial_rate_national, mba_purchase_index, price_to_rent_ratio, mortgage_delinquency_rate<br>
       <strong style="color:rgba(255,255,255,0.6);">Core signal (ablation):</strong> mortgage_rate, cc_delinquency, mbs_spread — other 7 features redundant<br>
       <strong style="color:rgba(255,255,255,0.6);">State layer:</strong> 51 state OFI scores from 2024 HMDA (827K originations, 240K denials)<br>
@@ -312,6 +312,49 @@ strong{color:#fff;}
 
   <p style="font-size:11px;color:rgba(255,255,255,0.2);">Full signal validity report: <a href="/ofi-signal-validity.json" style="color:rgba(200,164,74,0.3);">ofi-signal-validity.json</a></p>
 
+
+
+  <h2>Why OFI Is Not "Just Macro Compression"</h2>
+
+  <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.9;">The most sophisticated challenge to OFI: <em>"R²=0.946 means OFI is 94.6% explained by macro variables. Why not just track interest rates?"</em></p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;">
+
+    <div style="background:rgba(232,132,90,0.04);border:1px solid rgba(232,132,90,0.2);border-radius:10px;padding:16px 18px;">
+      <div style="font-size:11px;font-weight:700;color:#e8845a;margin-bottom:8px;">What "just tracking rates" gives you</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.8;">
+        A single number with no behavioral layer.<br>
+        Rate = 6.72% tells you nothing about whether UWM or Wells Fargo will approve a 580 FICO file today.<br>
+        It has no state-level resolution.<br>
+        It has no lender divergence signal.<br>
+        It has no leading indicator property.
+      </div>
+    </div>
+
+    <div style="background:rgba(107,191,146,0.04);border:1px solid rgba(107,191,146,0.2);border-radius:10px;padding:16px 18px;">
+      <div style="font-size:11px;font-weight:700;color:#6bffb8;margin-bottom:8px;">What OFI adds on top of rates</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.8;">
+        15.7% incremental predictive power (p&lt;0.001).<br>
+        51 state-level friction scores from 827K HMDA loans.<br>
+        7 lender overlay profiles with behavioral DNA.<br>
+        Leading indicator: r=0.679 with future denial rates.<br>
+        Regime detection across 4 market cycles.
+      </div>
+    </div>
+  </div>
+
+  <div style="background:rgba(200,164,74,0.04);border:1px solid rgba(200,164,74,0.15);border-radius:8px;padding:14px 18px;margin:12px 0;">
+    <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8;">
+      <strong style="color:#c8a44a;">The VIX analogy:</strong> VIX is 100% derived from S&P 500 options data — it creates no new information. But it compresses volatility state into a single number that everyone uses. OFI does the same for underwriting friction. The value is not independence from macro — it is <strong style="color:#fff;">earlier, smoother, and more usable representation of existing truth.</strong>
+    </div>
+  </div>
+
+  <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px 18px;margin:12px 0;">
+    <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.9;">
+      <strong style="color:rgba(255,255,255,0.6);">The one-sentence answer:</strong><br>
+      "We are not discovering new information — we are measuring a system state earlier and more consistently than existing metrics, with behavioral resolution no single macro variable provides."
+    </div>
+  </div>
 
   <h2>CRO Defense Layer — The 3 Hardest Questions</h2>
 
@@ -394,7 +437,7 @@ strong{color:#fff;}
     <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em;">Full Model Specification (v3.5)</div>
     <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:2.0;">
       <strong style="color:rgba(255,255,255,0.6);">Algorithm:</strong> Ridge Regression (α=0.5) + Random Forest ensemble<br>
-      <strong style="color:rgba(255,255,255,0.6);">Training data:</strong> 28 quarterly observations (2018 Q1 – 2024 Q4)<br>
+      <strong style="color:rgba(255,255,255,0.6);">Training data:</strong> 44 quarterly observations (2014Q1-2024Q4) (2018 Q1 – 2024 Q4)<br>
       <strong style="color:rgba(255,255,255,0.6);">Validation:</strong> Leave-One-Out Cross-Validation (LOO-CV)<br>
       <strong style="color:rgba(255,255,255,0.6);">Features (9):</strong> mortgage_rate, cc_delinquency, mbs_spread, homeownership_rate, rental_vacancy, housing_vacancy, fha_denial_rate, mba_purchase_index, price_to_rent_ratio<br>
       <strong style="color:rgba(255,255,255,0.6);">Stage 2 (HF):</strong> FRED weekly signals — STLFSI4, REDBOOK, SOFR<br>

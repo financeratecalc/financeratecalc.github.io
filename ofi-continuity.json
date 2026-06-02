@@ -1,0 +1,43 @@
+{
+  "document": "OFI Business Continuity & Reproducibility Guide",
+  "version": "1.0",
+  "date": "2026-06-02",
+  "purpose": "Ensure OFI can be reproduced independently without founder involvement",
+  "data_sources": {
+    "FRED_API": "https://fred.stlouisfed.org \u2014 mortgage_rate, cc_delinquency, mbs_spread (public)",
+    "HMDA": "https://ffiec.cfpb.gov/data-publication \u2014 annual federal public data (CC BY 4.0)",
+    "MBA": "https://www.mba.org/news-and-research/research-and-economics/single-family-research"
+  },
+  "model_spec": {
+    "algorithm": "Ridge Regression alpha=0.5",
+    "features": [
+      "mortgage_rate_30y",
+      "cc_delinquency",
+      "mbs_spread",
+      "homeownership_rate",
+      "rental_vacancy",
+      "housing_vacancy",
+      "fha_denial_rate_national",
+      "mba_purchase_index",
+      "price_to_rent_ratio",
+      "mortgage_delinquency_rate"
+    ],
+    "training_period": "2014Q1-2024Q4",
+    "n_points": 44,
+    "validation": "Leave-One-Out Cross-Validation",
+    "loo_mae": 1.2267,
+    "direction_accuracy": "72.1%"
+  },
+  "reproducibility": {
+    "step1": "Download HMDA annual data from CFPB public portal",
+    "step2": "Pull FRED series: MORTGAGE30US, DRCCLACBS, UMORTGAGE, RRVRUSQ156N",
+    "step3": "Run Ridge(alpha=0.5) on standardized features",
+    "step4": "Validate with LOO \u2014 target MAE < 1.5",
+    "time_to_reproduce": "4-6 hours for a data scientist"
+  },
+  "pipeline": {
+    "github_actions": "Two workflows \u2014 Overlay Pipeline (weekly) + Daily Intelligence",
+    "repo": "financeratecalc/financeratecalc.github.io",
+    "schedule": "Overlay: Monday 06:00 UTC / Daily: 06:00 UTC"
+  }
+}
