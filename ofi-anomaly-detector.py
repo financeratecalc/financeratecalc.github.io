@@ -169,7 +169,8 @@ output = {
         "rank_correlation_2019_vs_2024": round(float(rank_corr), 3),
         "normal_order": normal_order,
         "current_order": current_order,
-        "status": "STABLE" if rank_corr > 0.8 else "WATCH" if rank_corr > 0.6 else "FRAGMENTED",
+        "status": "STABLE" if rank_corr > 0.8 else "STRUCTURAL_SHIFT" if rank_corr > 0.3 else "FRAGMENTED",
+        "note": "Low rank correlation may reflect positive lender improvements (e.g. PennyMac), not crisis fragmentation. Always check which lender drives the change.",
         "uwm_rank_2019": normal_order.index("UWM") + 1,
         "uwm_rank_2024": current_order.index("UWM") + 1,
         "uwm_signal": "SAFE — UWM still most accessible lender"
