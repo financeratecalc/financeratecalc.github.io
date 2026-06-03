@@ -312,6 +312,120 @@ function calcDTI() {
     '<strong style="color:' + color + '">DTI: ' + dti + '%</strong>';
 }
 
+
+function buildLenderScores(fico, dti, income, ofi, loanType) {
+  const f = parseInt(fico), d = parseFloat(dti), o = parseInt(ofi);
+  
+  // Lender DNA scoring — nonlinear interactions
+  const scores = [
+    {
+      name: 'FHA-Specialist',
+      example: 'UWM 19.9% denial',
+      score: calcScore(f, d, income, o, 'fha'),
+      best: ['Self-Employed','SSDI','1099 / Contract']
+    },
+    {
+      name: 'Flexible-Conventional',
+      example: 'PennyMac 26.6%',
+      score: calcScore(f, d, income, o, 'conv'),
+      best: ['W2','Retirement']
+    },
+    {
+      name: 'Portfolio / Non-QM',
+      example: 'Bank statement ok',
+      score: calcScore(f, d, income, o, 'portfolio'),
+      best: ['Self-Employed','1099 / Contract']
+    },
+    {
+      name: 'Conservative-Bank',
+      example: 'Wells Fargo 58.5%',
+      score: calcScore(f, d, income, o, 'conservative'),
+      best: ['W2','Retirement']
+    }
+  ];
+  
+  scores.sort((a,b) => b.score - a.score);
+  
+  return scores.map((s,i) => {
+    const color = s.score >= 70 ? '#6bffb8' : s.score >= 45 ? '#C8A84B' : '#e8845a';
+    const label = s.score >= 70 ? 'Strong' : s.score >= 45 ? 'Moderate' : 'Weak';
+    const bar = Math.round(s.score);
+    return \`<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-size:12px;font-weight:600;">${s.name} <span style="font-size:10px;color:rgba(255,255,255,0.3);">${s.example}</span></div>
+        <div style="font-size:11px;font-weight:700;color:\${color};">\${label}</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.06);border-radius:3px;height:4px;">
+        <div style="width:\${bar}%;background:\${color};height:100%;border-radius:3px;transition:width 0.8s;"></div>
+      </div>
+    </div>\`;
+  }).join('');
+}
+
+function calcScore(fico, dti, income, ofi, type) {
+  let score = 50;
+  
+  if(type === 'fha') {
+    // FICO interaction
+    if(fico >= 640) score += 15;
+    else if(fico >= 580) score += 8;
+    else score -= 20;
+    // DTI — FHA allows 57%
+    if(dti <= 43) score += 15;
+    else if(dti <= 50) score += 10;
+    else if(dti <= 57) score += 5;
+    else score -= 15;
+    // Income type — FHA specialist loves self-employed
+    if(['Self-Employed','SSDI','1099 / Contract'].includes(income)) score += 12;
+    // OFI — lower is better, self-employed amplified
+    if(ofi <= 35) score += 10;
+    else if(ofi <= 50) score += 5;
+    else score -= 5;
+    if(income === 'Self-Employed' && ofi > 50) score -= 8;
+  }
+  
+  if(type === 'conv') {
+    if(fico >= 660) score += 20;
+    else if(fico >= 640) score += 10;
+    else if(fico >= 620) score += 0;
+    else score -= 25;
+    if(dti <= 43) score += 15;
+    else if(dti <= 50) score += 5;
+    else score -= 10;
+    if(income === 'W2') score += 10;
+    else if(['Self-Employed','1099 / Contract'].includes(income)) score -= 10;
+    if(ofi <= 40) score += 5;
+    else if(ofi >= 60) score -= 10;
+  }
+  
+  if(type === 'portfolio') {
+    // Portfolio loves non-W2
+    if(['Self-Employed','1099 / Contract'].includes(income)) score += 20;
+    else if(income === 'SSDI') score += 10;
+    if(dti >= 50) score += 10; // High DTI ok for portfolio
+    if(dti <= 43) score -= 5; // Doesn't need portfolio if clean
+    if(fico >= 620) score += 5;
+    else score -= 5;
+    // OFI matters less for portfolio
+    score += 3;
+  }
+  
+  if(type === 'conservative') {
+    if(fico >= 700) score += 25;
+    else if(fico >= 680) score += 10;
+    else if(fico >= 660) score -= 5;
+    else score -= 30;
+    if(dti <= 36) score += 20;
+    else if(dti <= 43) score += 5;
+    else score -= 25;
+    if(income === 'W2') score += 10;
+    else score -= 20; // Conservative hates non-W2
+    if(ofi >= 50) score -= 10; // Overlays compound
+  }
+  
+  return Math.max(5, Math.min(95, score));
+}
+
 async function getDecision() {
   const fico = document.getElementById('fico').value;
   const dti = document.getElementById('dti').value;
@@ -329,20 +443,43 @@ async function getDecision() {
   document.getElementById('decision').classList.remove('show');
   document.getElementById('loading').classList.add('show');
 
-  const prompt = `Borrower: FICO ${fico}, DTI ${dti}%, ${loanType}, ${income} income, ${state} (OFI ${ofi}), prior denial: ${denied==='none'?'none':denied}. Context: ${ctx||'none'}. Market OFI: 47 (Q2 2026, moderate-tightening).
+  // OFI x Borrower Type Interaction Matrix
+const ofiNum = parseInt('${ofi}') || 47;
+const incomeType = '${income}';
+const ofiSensitivity = {
+  'Self-Employed': ofiNum > 45 ? 'HIGH — self-employed profiles face amplified overlay friction in tight markets' : 'MODERATE — self-employed income acceptable in this market',
+  'SSDI': ofiNum > 50 ? 'HIGH — SSDI income faces extra scrutiny in high-OFI states' : 'LOW — SSDI gross-up favorable in this market',
+  '1099 / Contract': ofiNum > 48 ? 'HIGH — contract income triggers overlays in tight markets' : 'MODERATE',
+  'W2': ofiNum > 55 ? 'MODERATE — even W2 faces friction in high-OFI states' : 'LOW — W2 income OFI-resilient',
+  'Retirement': 'LOW — retirement income stable across OFI levels'
+};
+const ofiSignal = ofiSensitivity['${income}'] || 'MODERATE';
 
-Respond ONLY in this exact format, one line each:
+const prompt = \`Borrower routing analysis:
+FICO: ${fico} | DTI: ${dti}% | Loan: ${loanType} | Income: ${income} | State: ${state} OFI ${ofi} | Denied by: ${denied==='none'?'none':denied}
+Context: ${ctx||'none'}
+Market: OFI 47 Q2 2026 (moderate-tightening)
+
+OFI × Income Interaction: \${ofiSignal}
+HMDA verified lenders: UWM 19.9%, PennyMac 26.6%, Rocket 28.4%, loanDepot 37.0%, Wells Fargo 58.5%
+
+Key interactions to model:
+- FICO ${fico} + ${income} income = [nonlinear risk — address specifically]
+- DTI ${dti}% at OFI ${ofi} = [overlay friction level]
+- ${loanType} + ${income} = [program-specific friction]
+
+Respond ONLY in this exact format:
 ROUTE: [FHA-Specialist / Flexible-Conventional / Portfolio-NonQM / Conservative-Bank]
 FIT: [Strong / Moderate / Weak]
-R1: [reason one line]
-R2: [reason one line]
-R3: [OFI/state context one line]
+R1: [specific FICO+income interaction — not generic]
+R2: [DTI+OFI interaction]
+R3: [state OFI ${ofi} vs national 47 — specific impact]
 RISK: [primary risk one sentence]
 DOCS: [2-3 docs comma separated]
-SUBMIT: [lender DNA to submit to]
-LOWER: [lower fit DNA and why — one line]
-OFI: [state OFI impact one line]
-DETAIL: [3-4 sentence broker analysis]`;
+SUBMIT: [best lender DNA with example — use HMDA data if citing specific lender]
+LOWER: [lower fit DNA — why this profile is a mismatch]
+OFI: [OFI ${ofi} × ${income} interaction — one specific insight]
+DETAIL: [4-5 sentence broker analysis — address nonlinear interactions, score erosion risk, submission strategy]\`;
 
   try {
     const res = await fetch('https://frc-api.ziyetis.workers.dev/v1/messages',{
@@ -355,6 +492,7 @@ DETAIL: [3-4 sentence broker analysis]`;
 
     const g = k => { const m = txt.match(new RegExp(k+':\\s*(.+)')); return m?m[1].trim():''; };
 
+    const _fico=document.getElementById('fico').value,_dti=document.getElementById('dti').value,_income=document.getElementById('incomeType').value,_ofi=ofi,_loan=loanType;
     const route=g('ROUTE'),fit=g('FIT'),r1=g('R1'),r2=g('R2'),r3=g('R3');
     const risk=g('RISK'),docs=g('DOCS'),submit=g('SUBMIT'),lower=g('LOWER');
     const ofiLine=g('OFI'),detail=g('DETAIL');
@@ -385,6 +523,11 @@ DETAIL: [3-4 sentence broker analysis]`;
       <div class="d-ofi">
         <div class="d-ofi-text">${ofiLine||state+' — OFI '+ofi}</div>
         <div class="d-ofi-num">OFI ${ofi}</div>
+      </div>
+
+      <div class="d-reasons" style="border-color:rgba(107,255,184,0.15);">
+        <div class="d-reasons-title" style="color:rgba(107,255,184,0.5);">Lender DNA Match Scores</div>
+        ${buildLenderScores(_fico, _dti, _income, _ofi, _loan)}
       </div>
 
       ${detail?`<div class="d-detail"><div class="d-detail-label">Broker Analysis</div><div class="d-detail-text">${detail}</div></div>`:''}
