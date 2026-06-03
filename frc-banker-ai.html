@@ -748,9 +748,8 @@ async function judgeResponse(response, apiKey) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
+        'x-api-key': 'frc-proxy',
         'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
@@ -836,7 +835,6 @@ async function sendMessage(){
         'Content-Type': 'application/json',
         'x-api-key': 'frc-proxy', // Handled by Cloudflare Worker
         'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
@@ -931,8 +929,7 @@ function handleFile(input){
           'Content-Type': 'application/json',
           'x-api-key': 'frc-proxy', // Handled by Cloudflare Worker
           'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
+          },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 1000,
