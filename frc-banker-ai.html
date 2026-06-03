@@ -849,8 +849,8 @@ async function sendMessage(){
     var data = await response.json();
     removeTyping();
 
-    if (data && data.content && data.content[0]) {
-      var reply = data.content[0].text;
+    if (data && (data.reply || (data.content && data.content[0]))) {
+      var reply = data.reply || data.content[0].text;
       
       // LLM Judge kontrolü
       var isSafe = await judgeResponse(reply, window._AKEY);
@@ -934,8 +934,8 @@ function handleFile(input){
       })
       .then(function(r){return r.json();})
       .then(function(data){
-        if(data.content && data.content[0]){
-          var reply = data.content[0].text;
+        if(data.reply || (data.content && data.content[0])){
+          var reply = data.reply || data.content[0].text;
           messages.push({role:'assistant', content:reply});
           addMessage('ai', reply);
         }
