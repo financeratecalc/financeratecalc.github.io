@@ -216,6 +216,140 @@ function fillExample(key){
   document.getElementById('letterInput').value = examples[key];
 }
 
+
+// OFI REVERSE — Lost Origination Data
+var LENDER_LOST_DATA = {
+  "rocket": {
+    name: "Rocket Mortgage",
+    overlay_denials: 9743,
+    lost_loans: 6625,
+    lost_revenue_m: 24.8,
+    denial_rate: 28.4,
+    overlay_fico: 640,
+    keywords: ["rocket", "quicken", "rocket mortgage"]
+  },
+  "wellsfargo": {
+    name: "Wells Fargo",
+    overlay_denials: 11367,
+    lost_loans: 7729,
+    lost_revenue_m: 31.7,
+    denial_rate: 58.5,
+    overlay_fico: 680,
+    keywords: ["wells fargo", "wells", "wf"]
+  },
+  "loandepot": {
+    name: "loanDepot",
+    overlay_denials: 7755,
+    lost_loans: 5273,
+    lost_revenue_m: 17.5,
+    denial_rate: 37.0,
+    overlay_fico: 660,
+    keywords: ["loandepot", "loan depot"]
+  },
+  "pennymac": {
+    name: "PennyMac",
+    overlay_denials: 4396,
+    lost_loans: 2989,
+    lost_revenue_m: 10.7,
+    denial_rate: 26.6,
+    overlay_fico: 620,
+    keywords: ["pennymac", "penny mac"]
+  },
+  "uwm": {
+    name: "UWM",
+    overlay_denials: 1789,
+    lost_loans: 1216,
+    lost_revenue_m: 4.2,
+    denial_rate: 19.9,
+    overlay_fico: 620,
+    keywords: ["uwm", "united wholesale", "united wholesale mortgage"]
+  }
+};
+
+function detectLender(text) {
+  var lower = text.toLowerCase();
+  for (var key in LENDER_LOST_DATA) {
+    var lender = LENDER_LOST_DATA[key];
+    for (var i = 0; i < lender.keywords.length; i++) {
+      if (lower.includes(lender.keywords[i])) {
+        return lender;
+      }
+    }
+  }
+  return null;
+}
+
+function buildLostOriginationCard(lender) {
+  return `
+    <div style="background:linear-gradient(135deg,rgba(232,132,90,0.06),rgba(200,164,74,0.03));border:1px solid rgba(232,132,90,0.25);border-radius:12px;padding:22px;margin:16px 0;">
+      <div style="font-size:10px;font-weight:700;color:#e8845a;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">⚡ OFI REVERSE — The Other Side of Your Denial</div>
+      
+      <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.5;">
+        ${lender.name} denied you.<br>
+        <span style="color:#e8845a;">But they lost money doing it.</span>
+      </div>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0;">
+        <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:24px;font-weight:900;color:#e8845a;font-family:serif;">${lender.overlay_denials.toLocaleString()}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;">Files denied<br>like yours in 2024</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:24px;font-weight:900;color:#c8a44a;font-family:serif;">${lender.lost_loans.toLocaleString()}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;">Were approvable<br>at other lenders</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:24px;font-weight:900;color:#6bffb8;font-family:serif;">$${lender.lost_revenue_m}M</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;">Lost origination<br>revenue (2024)</div>
+        </div>
+      </div>
+      
+      <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.8;margin:12px 0;">
+        <strong style="color:#fff;">You are not the problem.</strong> ${lender.name}'s overlay policy is stricter than FHA requires. 
+        FHA minimum FICO: 580. ${lender.name} overlay: ${lender.overlay_fico}+. 
+        That ${lender.overlay_fico - 580}-point gap is why you were denied — not your actual eligibility.
+      </div>
+      
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+        <button onclick="shareOFIReverse('${lender.name}', ${lender.lost_revenue_m}, ${lender.overlay_denials})" 
+          style="padding:9px 16px;background:rgba(200,164,74,0.15);border:1px solid rgba(200,164,74,0.3);color:#c8a44a;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;">
+          📢 Share This
+        </button>
+        <a href="/ofi-for-lenders.html" 
+          style="padding:9px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);border-radius:7px;font-size:12px;font-weight:700;text-decoration:none;">
+          See Full Lender Data →
+        </a>
+      </div>
+      
+      <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;">
+        Source: CFPB HMDA 2024 public federal data · OFI Reverse Engine v1.0 · financeratecalc.com/ofi-methodology.html
+      </div>
+    </div>
+  `;
+}
+
+function shareOFIReverse(lenderName, lostM, denials) {
+  var text = lenderName + " denied " + denials.toLocaleString() + " borrowers like me in 2024 — losing $" + lostM + "M in the process. My denial was their mistake, not mine. Data: CFPB HMDA 2024. financeratecalc.com/denial-letter-decoder.html #mortgage #OFI";
+  
+  if (navigator.share) {
+    navigator.share({
+      title: 'My Mortgage Denial Was the Lender's Mistake',
+      text: text,
+      url: 'https://financeratecalc.com/denial-letter-decoder.html'
+    });
+  } else {
+    navigator.clipboard.writeText(text);
+    alert('Copied! Paste to Twitter, Reddit, or Facebook.');
+  }
+  
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'ofi_reverse_share', {
+      'event_category': 'viral',
+      'event_label': lenderName
+    });
+  }
+}
+
 async function decode(){
   var letter = document.getElementById('letterInput').value.trim();
   if(!letter){ alert('Please paste your denial letter or describe your situation.'); return; }
@@ -394,6 +528,13 @@ async function decode(){
     html += '<a href="frc-banker-ai.html?q=' + encodeURIComponent('I was denied. ' + letter.substring(0,100)) + '" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,#0a1f5c,#162d6e);border:1px solid rgba(200,164,74,0.3);color:#c8a44a;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;">Talk to Zai in Full →</a>';
     html += '</div>';
 
+    // OFI REVERSE — Lender detection
+    var letterText = document.getElementById('letterInput').value;
+    var detectedLender = detectLender(letterText);
+    if (detectedLender && d.type === 'lender_overlay') {
+      html += buildLostOriginationCard(detectedLender);
+    }
+    
     results.innerHTML = html;
 
   } catch(err) {
