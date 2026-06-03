@@ -11,33 +11,44 @@
 
 // HMDA 2024 Verified Lender Data
 
-// 7-Year FHA Denial Rate Trend Data (2018-2024)
-// Source: CFPB HMDA Data Browser — verified manually
+// HMDA 2018-2024 Complete Trend Data — Source: CFPB HMDA Data Browser
 const LENDER_TRENDS = {
   years: [2018, 2019, 2020, 2021, 2022, 2023, 2024],
   lenders: {
+    "CrossCountry": {
+      rates: [8.6, 5.5, 5.5, 6.6, 6.8, 6.4, 5.5],
+      trend: "stable-low", dna: "FHA-Specialist",
+      note: "Most consistent FHA approval rate — 7 years %5-9"
+    },
     "UWM": {
       rates: [15.7, 12.2, 18.1, 15.6, 17.2, 17.3, 19.9],
-      trend: "worsening", change: +4.2, dna: "FHA-Specialist"
+      trend: "worsening", dna: "FHA-Specialist",
+      note: "Gradual tightening, follows market OFI"
+    },
+    "Freedom Mortgage": {
+      rates: [49.0, 19.1, 9.8, 7.6, 22.4, 33.1, 24.4],
+      trend: "volatile", dna: "FHA-Specialist",
+      note: "COVID era FHA specialist — now re-tightening"
+    },
+    "PennyMac": {
+      rates: [52.8, 48.0, 41.9, 24.9, 33.1, 33.1, 26.6],
+      trend: "improving", dna: "Flexible-Conventional",
+      note: "Major improvement — invested heavily in FHA 2020-2021"
     },
     "Rocket Mortgage": {
       rates: [34.8, 29.7, 30.3, 27.9, 31.9, 29.0, 28.4],
-      trend: "improving", change: -6.4, dna: "Flexible-Conventional"
-    },
-    "Wells Fargo": {
-      rates: [46.7, 46.9, 51.5, 51.7, 60.4, 56.3, 58.5],
-      trend: "worsening", change: +11.8, dna: "Conservative-Bank",
-      note: "Effectively exiting FHA market"
-    },
-    "CrossCountry": {
-      rates: [8.6, 5.5, 5.5, 6.6, 6.8, 6.4, 5.5],
-      trend: "stable-low", change: -3.1, dna: "FHA-Specialist",
-      note: "Most consistent FHA approval rate over 7 years"
+      trend: "improving", dna: "Flexible-Conventional",
+      note: "Slowly improving but consistently high"
     },
     "loanDepot": {
       rates: [40.0, 33.3, 24.5, 28.7, 36.7, 38.5, 37.0],
-      trend: "volatile", change: -3.0, dna: "Conservative-Bank",
-      note: "Bottomed 2020, re-tightening since"
+      trend: "volatile", dna: "Conservative-Bank",
+      note: "Bottomed 2020, re-tightening since — avoid for borderline profiles"
+    },
+    "Wells Fargo": {
+      rates: [46.7, 46.9, 51.5, 51.7, 60.4, 56.3, 58.5],
+      trend: "worsening", dna: "Conservative-Bank",
+      note: "Effectively exiting FHA — +11.8pp since 2018"
     }
   }
 };
