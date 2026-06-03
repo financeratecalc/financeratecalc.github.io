@@ -572,7 +572,12 @@ function addMessage(role, content){
   wrap.appendChild(div);
   setTimeout(function(){
     wrap.scrollTop = wrap.scrollHeight;
-  setTimeout(function(){ wrap.scrollTop = wrap.scrollHeight; }, 100);
+  setTimeout(function(){ 
+    wrap.scrollTop = wrap.scrollHeight;
+    var lastMsg = wrap.lastElementChild;
+    if(lastMsg) lastMsg.scrollIntoView({behavior:'smooth', block:'end'});
+  }, 150);
+  setTimeout(function(){ wrap.scrollTop = wrap.scrollHeight; }, 500);
     wrap.scrollTo({top:wrap.scrollHeight,behavior:'smooth'});
   }, 100);
   return bubble;
@@ -826,7 +831,12 @@ function scrollToBottom() {
   var wrap = document.getElementById('chatWrap');
   if (wrap) {
     wrap.scrollTop = wrap.scrollHeight;
-  setTimeout(function(){ wrap.scrollTop = wrap.scrollHeight; }, 100);
+  setTimeout(function(){ 
+    wrap.scrollTop = wrap.scrollHeight;
+    var lastMsg = wrap.lastElementChild;
+    if(lastMsg) lastMsg.scrollIntoView({behavior:'smooth', block:'end'});
+  }, 150);
+  setTimeout(function(){ wrap.scrollTop = wrap.scrollHeight; }, 500);
   }
   var chatMessages = document.getElementById('chatMessages');
   if (chatMessages) {
@@ -880,7 +890,7 @@ async function sendMessage(){
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1000,
+        max_tokens: 2000,
         system: SYSTEM_PROMPT,
         messages: messages
       })
@@ -974,7 +984,7 @@ function handleFile(input){
           },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 1000,
+          max_tokens: 2000,
           system: SYSTEM_PROMPT,
           messages: [{role:'user', content:[
             {type:'image', source:{type:'base64', media_type:file.type, data:base64}},
