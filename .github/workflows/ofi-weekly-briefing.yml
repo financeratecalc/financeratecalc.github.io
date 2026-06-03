@@ -1,0 +1,25 @@
+name: OFI Weekly Briefing
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Her Pazartesi 08:00 UTC
+  workflow_dispatch:      # Manuel tetikleme
+
+jobs:
+  send-briefing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install sendgrid requests
+
+      - name: Send OFI Weekly Briefing
+        env:
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+        run: python ofi-weekly-briefing.py
