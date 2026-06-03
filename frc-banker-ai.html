@@ -850,7 +850,18 @@ async function sendMessage(){
     removeTyping();
 
     if (data) {
-      var reply = data.reply || (data.content && data.content[0] && data.content[0].text) || "";
+      var reply = "";
+      if (data.reply) {
+        reply = data.reply;
+      } else if (data.content && Array.isArray(data.content)) {
+        for (var i = 0; i < data.content.length; i++) {
+          if (data.content[i].type === "text") {
+            reply = data.content[i].text;
+            break;
+          }
+        }
+      }
+      if (!reply) reply = JSON.stringify(data);
       
       // LLM Judge kontrolü
       var isSafe = await judgeResponse(reply, window._AKEY);
@@ -935,7 +946,15 @@ function handleFile(input){
       .then(function(r){return r.json();})
       .then(function(data){
         if(data) {
-          var reply = data.reply || (data.content && data.content[0] && data.content[0].text) || '';
+          var reply = "";
+          if (data.reply) {
+            reply = data.reply;
+          } else if (data.content && Array.isArray(data.content)) {
+            for (var ci = 0; ci < data.content.length; ci++) {
+              if (data.content[ci].type === "text") { reply = data.content[ci].text; break; }
+            }
+          }
+          if (!reply) reply = data.error || "No response";
           messages.push({role:'assistant', content:reply});
           addMessage('ai', reply);
         }
