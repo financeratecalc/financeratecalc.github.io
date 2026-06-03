@@ -143,9 +143,39 @@ header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;al
         <input type="number" id="fico" placeholder="612" min="300" max="850">
       </div>
       <div class="field">
-        <label>DTI %</label>
-        <input type="number" id="dti" placeholder="48" min="0" max="70">
+        <label>DTI % <span id="dtiToggle" onclick="toggleDTI()" style="color:var(--gold);cursor:pointer;font-size:10px;text-transform:none;letter-spacing:0;margin-left:4px;">calculate →</span></label>
+        <input type="number" id="dti" placeholder="48 (or calculate →)" min="0" max="70">
       </div>
+    </div>
+
+    <!-- DTI Calculator — hidden by default -->
+    <div id="dtiCalc" style="display:none;background:rgba(200,168,75,0.06);border:1px solid rgba(200,168,75,0.2);border-radius:10px;padding:14px;margin-bottom:14px;">
+      <div style="font-size:10px;font-weight:700;color:rgba(200,168,75,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">DTI Calculator</div>
+      <div class="grid2">
+        <div class="field">
+          <label>Monthly Income ($)</label>
+          <input type="number" id="income" placeholder="6500" oninput="calcDTI()">
+        </div>
+        <div class="field">
+          <label>Home Price ($)</label>
+          <input type="number" id="homePrice" placeholder="320000" oninput="calcDTI()">
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>Car Payment ($)</label>
+          <input type="number" id="car" placeholder="420" oninput="calcDTI()">
+        </div>
+        <div class="field">
+          <label>Credit Cards ($)</label>
+          <input type="number" id="cards" placeholder="180" oninput="calcDTI()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Other Monthly Debts ($)</label>
+        <input type="number" id="other" placeholder="0" oninput="calcDTI()">
+      </div>
+      <div id="dtiResult" style="font-size:13px;color:var(--dim);margin-top:6px;"></div>
     </div>
 
     <div class="field">
@@ -233,6 +263,55 @@ header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;al
 </div>
 
 <script>
+
+function toggleDTI() {
+  var calc = document.getElementById('dtiCalc');
+  var toggle = document.getElementById('dtiToggle');
+  if(calc.style.display === 'none') {
+    calc.style.display = 'block';
+    toggle.textContent = 'hide ↑';
+  } else {
+    calc.style.display = 'none';
+    toggle.textContent = 'calculate →';
+  }
+}
+
+function calcDTI() {
+  var income = parseFloat(document.getElementById('income').value) || 0;
+  var homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
+  var car = parseFloat(document.getElementById('car').value) || 0;
+  var cards = parseFloat(document.getElementById('cards').value) || 0;
+  var other = parseFloat(document.getElementById('other').value) || 0;
+
+  if(!income || !homePrice) {
+    document.getElementById('dtiResult').textContent = 'Enter income and home price to calculate';
+    return;
+  }
+
+  // Loan amount (assume 5% down)
+  var loanAmt = homePrice * 0.95;
+  // Monthly P&I at 6.6% 30yr
+  var rate = 0.066/12;
+  var n = 360;
+  var pi = loanAmt * rate * Math.pow(1+rate,n) / (Math.pow(1+rate,n)-1);
+  // Property tax (avg 0.8%), insurance, PMI
+  var tax = homePrice * 0.008 / 12;
+  var ins = 120;
+  var pmi = loanAmt * 0.008 / 12;
+  var housing = pi + tax + ins + pmi;
+  var totalDebt = housing + car + cards + other;
+  var dti = (totalDebt / income * 100).toFixed(1);
+
+  // Auto-fill DTI field
+  document.getElementById('dti').value = dti;
+
+  var color = dti < 43 ? '#6bffb8' : dti < 50 ? '#C8A84B' : '#e8845a';
+  document.getElementById('dtiResult').innerHTML = 
+    'Est. housing: $' + Math.round(housing).toLocaleString() + '/mo &nbsp;·&nbsp; ' +
+    'Total debts: $' + Math.round(totalDebt).toLocaleString() + '/mo &nbsp;·&nbsp; ' +
+    '<strong style="color:' + color + '">DTI: ' + dti + '%</strong>';
+}
+
 async function getDecision() {
   const fico = document.getElementById('fico').value;
   const dti = document.getElementById('dti').value;
