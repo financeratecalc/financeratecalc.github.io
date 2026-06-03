@@ -1,0 +1,31 @@
+name: OFI ML Anomaly Detector
+
+on:
+  schedule:
+    - cron: '0 8 * * 3'  # Her Çarşamba 08:00 UTC
+  workflow_dispatch:
+
+jobs:
+  run-anomaly-detector:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install scikit-learn scipy numpy
+
+      - name: Run OFI Anomaly Detector
+        run: python ofi-anomaly-detector.py
+
+      - name: Commit results
+        run: |
+          git config user.email "pipeline@financeratecalc.com"
+          git config user.name "OFI Pipeline"
+          git add ofi-anomaly-scores.json
+          git diff --staged --quiet || git commit -m "Auto: Weekly ML anomaly detection update"
+          git push
