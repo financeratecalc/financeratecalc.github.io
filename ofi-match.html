@@ -181,23 +181,63 @@ select option{background:#1a1a2e;}
 const LENDER_PROFILES = {
   "UWM (via broker)": {
     fico_min: 580, dti_max: "over57", income_types: ["W2","selfemployed","ssdi","1099","retirement"],
-    base_prob: 72, denial_rate: 19.9, note: "Wholesale channel via licensed broker. Most overlay-flexible lender in market.",
-    best_for: ["580-619","620-639","ssdi","selfemployed"]
+    base_prob: 72, denial_rate: 19.9, note: "Lowest FHA denial rate in market (19.9%). Wholesale channel via licensed broker. FICO-tolerant, SSDI experienced.",
+    best_for: ["580-599","600-619","620-639","ssdi","selfemployed"]
+  },
+  "Freedom Mortgage": {
+    fico_min: 580, dti_max: "55-57", income_types: ["W2","ssdi","retirement","1099"],
+    base_prob: 64, denial_rate: 22.7, note: "FHA/VA specialist — 70%+ government loans. Low denial rate (22.7%). Southeast and Mid-Atlantic strong.",
+    best_for: ["600-619","620-639","ssdi","W2"]
+  },
+  "Guild Mortgage": {
+    fico_min: 580, dti_max: "50-55", income_types: ["W2","selfemployed","retirement"],
+    base_prob: 63, denial_rate: 22.1, note: "West Coast specialist. Low denial rate (22.1%). FICO-flexible. Strong in CA, AZ, OR, WA, NM.",
+    best_for: ["580-599","600-619","W2","retirement"]
+  },
+  "Planet Home Lending": {
+    fico_min: 580, dti_max: "55-57", income_types: ["W2","ssdi","1099","selfemployed"],
+    base_prob: 65, denial_rate: 21.8, note: "Lowest retail denial rate (21.8%). Southeast specialist. SSDI-friendly. Wholesale/correspondent channel.",
+    best_for: ["580-599","600-619","ssdi","1099"]
   },
   "PennyMac": {
     fico_min: 580, dti_max: "55-57", income_types: ["W2","selfemployed","ssdi","1099"],
-    base_prob: 65, denial_rate: 26.6, note: "FHA specialist. Improving overlay discipline. DTI to 55-56% with compensating factors.",
-    best_for: ["600-619","620-639","W2"]
+    base_prob: 62, denial_rate: 26.6, note: "FHA specialist. Denial rate improved from 52.8% (2018) to 26.6% (2024). DTI to 55-56% with compensating factors.",
+    best_for: ["600-619","620-639","W2","selfemployed"]
+  },
+  "CrossCountry Mortgage": {
+    fico_min: 600, dti_max: "50-55", income_types: ["W2","selfemployed","retirement"],
+    base_prob: 58, denial_rate: 24.8, note: "1,000+ branches nationwide. 24.8% denial rate. Branch quality varies — ask for FHA specialist branch.",
+    best_for: ["620-639","640-659","W2"]
+  },
+  "Newrez / Shellpoint": {
+    fico_min: 580, dti_max: "50-55", income_types: ["W2","selfemployed","1099"],
+    base_prob: 60, denial_rate: 26.5, note: "Growing non-bank. 26.5% denial rate, improving. Correspondent channel strong.",
+    best_for: ["600-619","620-639","W2","1099"]
   },
   "Portfolio Lender": {
     fico_min: 560, dti_max: "over57", income_types: ["W2","selfemployed","ssdi","1099","retirement"],
     base_prob: 68, denial_rate: null, note: "Bank statement income accepted. DTI to 60%. Rates ~0.5-1% higher. Best for non-QM profiles.",
-    best_for: ["580-599","selfemployed","1099","over57"]
+    best_for: ["580-599","selfemployed","1099","over57","ssdi"]
+  },
+  "Mr. Cooper": {
+    fico_min: 600, dti_max: "45-50", income_types: ["W2","retirement"],
+    base_prob: 52, denial_rate: 27.6, note: "Large servicer, growing originations. 27.6% denial rate. Moderate overlay. Strong for clean W2 profiles.",
+    best_for: ["640-659","660-679","W2","retirement"]
   },
   "Rocket Mortgage": {
     fico_min: 620, dti_max: "50-55", income_types: ["W2","retirement"],
-    base_prob: 45, denial_rate: 28.4, note: "Strong for W2/640+ FICO conventional. Tighter overlay on edge-case FHA.",
-    best_for: ["640-659","660-679","W2"]
+    base_prob: 45, denial_rate: 28.4, note: "Strong for W2/640+ FICO conventional. Tighter overlay on edge-case FHA. 28.4% denial rate.",
+    best_for: ["640-659","660-679","680+","W2"]
+  },
+  "loanDepot": {
+    fico_min: 640, dti_max: "45-50", income_types: ["W2"],
+    base_prob: 35, denial_rate: 37.0, note: "Above-average denial rate (37.0%). High OFI sensitivity. Low profile match for edge-case FHA.",
+    best_for: ["660-679","680+","W2"]
+  },
+  "Wells Fargo": {
+    fico_min: 660, dti_max: "under45", income_types: ["W2","retirement"],
+    base_prob: 18, denial_rate: 58.5, note: "58.5% FHA denial rate — 2.6x national average. Conventional/jumbo specialist. Low match for FHA edge cases.",
+    best_for: ["680+","W2","retirement"]
   },
 };
 
