@@ -353,18 +353,10 @@ function shareOFIReverse(lenderName, lostM, denials) {
 async function decode(){
   var letter = document.getElementById('letterInput').value.trim();
   if(!letter){ alert('Please paste your denial letter or describe your situation.'); return; }
-  
-  // Check API key — if missing, save letter and redirect to Zai key screen
-  var apiKey = localStorage.getItem('zai_k') || window._AKEY || '';
-  if (!apiKey) {
-    // No key — redirect to Zai with pre-filled question
-    var encoded = encodeURIComponent('Please decode my denial letter: ' + letter.substring(0,400));
-    window.location.href = '/frc-banker-ai.html?q=' + encoded;
-    return;
-  }
+
   var btn = document.getElementById('decodeBtn');
   btn.disabled = true;
-  btn.textContent = 'Zai is reading your letter...';
+  btn.textContent = '✦ Zai is reading...';
   
   var results = document.getElementById('results');
   results.style.display = 'block';
@@ -376,9 +368,14 @@ async function decode(){
   try { sessionStorage.setItem('zai_prefill', 'Decode my mortgage denial: ' + letter.substring(0, 500)); } catch(e) {}
   
   try {
-    var res = await fetch('https://frc-api.netlify.app/.netlify/functions/zai', {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
@@ -397,6 +394,14 @@ async function decode(){
     
     if (!res.ok) throw new Error('cors');
     
+    if (!res.ok) {
+      // CORS or error — redirect to Zai
+      var encoded = encodeURIComponent('Please decode my denial letter and tell me if it was a lender overlay or agency rule: ' + letter.substring(0,400));
+      results.innerHTML = '<div style="background:rgba(200,164,74,0.08);border:1px solid rgba(200,164,74,0.25);border-radius:12px;padding:20px;text-align:center;"><div style=\"font-size:14px;color:rgba(255,255,255,0.7);margin-bottom:14px;\">Open in full Zai for complete analysis</div><a href=\"/frc-banker-ai.html?q=' + encoded + '\" style=\"display:inline-block;padding:12px 24px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:8px;font-weight:800;font-size:14px;text-decoration:none;\">🔍 Decode with Zai →</a></div>';
+      btn.disabled = false;
+      btn.textContent = '🔍 Decode My Denial — Zai Will Explain Everything';
+      return;
+    }
     var data = await res.json();
     var reply = (data.content && data.content[0]) ? data.content[0].text : '';
     
@@ -574,18 +579,18 @@ function shareResult(){
 </div>
 <div style="margin:32px 0;">
   <div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);font-weight:700;margin-bottom:16px;">What to do next</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px;">
-    <a href="/reverse-underwriter.html" style="display:block;background:rgba(200,164,74,0.06);border:1px solid rgba(200,164,74,0.2);border-radius:12px;padding:18px;text-decoration:none;">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:stretch;">
+    <a href="/reverse-underwriter.html" style="display:flex;flex-direction:column;background:rgba(200,164,74,0.06);border:1px solid rgba(200,164,74,0.2);border-radius:12px;padding:20px;text-decoration:none;height:100%;box-sizing:border-box;">
       <div style="font-size:22px;margin-bottom:8px;">🔬</div>
       <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:#fff;margin-bottom:4px;">Who Will Approve Me?</div>
       <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.5;">Approval odds across 7 lender types.</div>
     </a>
-    <a href="/frc-banker-ai.html" style="display:block;background:rgba(107,255,184,0.04);border:1px solid rgba(107,255,184,0.18);border-radius:12px;padding:18px;text-decoration:none;">
+    <a href="/frc-banker-ai.html" style="display:flex;flex-direction:column;background:rgba(107,255,184,0.04);border:1px solid rgba(107,255,184,0.18);border-radius:12px;padding:20px;text-decoration:none;height:100%;box-sizing:border-box;">
       <div style="font-size:22px;margin-bottom:8px;">✦</div>
       <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:#fff;margin-bottom:4px;">Ask Zai</div>
       <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.5;">23 years underwriting. Ask anything.</div>
     </a>
-    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;">
+    <div style="display:flex;flex-direction:column;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px;box-sizing:border-box;">
       <div style="font-size:22px;margin-bottom:8px;">📋</div>
       <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:#fff;margin-bottom:4px;">Expert Review</div>
       <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.5;margin-bottom:12px;">Ziya reviews your case. Free.</div>
