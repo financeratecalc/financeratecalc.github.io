@@ -782,6 +782,38 @@ function sanitizeInput(text) {
 }
 
 // ─── LLM JUDGE — CEVAP GÜVENLİK KONTROLÜ ─────────────────────────────────────
+// OUTPUT CLEANER — yasal ve dilsel sorunları temizle
+function cleanZaiOutput(text) {
+  // 1. "Do NOT apply to X" → "Lower profile fit for X"
+  text = text.replace(/Do NOT apply (directly )?to ([A-Za-z\s,]+)\./gi, 
+    function(m, p1, p2) { return 'Lower profile fit for ' + p2.trim() + '.'; });
+  
+  // 2. "avoid conservative banks entirely" → "conservative-bank DNA: weak fit"
+  text = text.replace(/avoid conservative banks entirely/gi, 
+    'conservative-bank DNA: weak fit for self-employed profiles');
+  text = text.replace(/avoid (submitting to|applying to) ([A-Za-z\s]+)/gi,
+    function(m, p1, p2) { return 'lower profile fit for ' + p2.trim(); });
+  
+  // 3. "Skip these" → remove
+  text = text.replace(/Skip these\./gi, 'Lower profile fit for this scenario.');
+  text = text.replace(/Not worth the application\./gi, 'Lower profile fit — prioritize better-matched lenders.');
+  
+  // 4. Yüzde sayıları → Strong/Moderate/Weak (sadece approval probability context)
+  text = text.replace(/Approval (odds|probability)[:\s]+(\d+[-–]\d+)%/gi, 
+    function(m, p1, p2) {
+      var avg = parseInt(p2);
+      var fit = avg >= 70 ? 'Strong Fit' : avg >= 50 ? 'Moderate Fit' : 'Weak Fit';
+      return 'Profile Fit: ' + fit;
+    });
+  
+  // 5. "Do NOT" genel → "Lower priority"
+  text = text.replace(/Do NOT ([a-z]+)/gi, function(m, p1) {
+    return 'Lower priority: ' + p1;
+  });
+
+  return text;
+}
+
 async function judgeResponse(response, apiKey) {
   // Sadece şüpheli cevaplar için çalış — performans için
   var suspicious = [
