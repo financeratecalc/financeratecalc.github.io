@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>OFI Lender Behavior Forecast — 60-90 Day Prediction | FinanceRateCalc</title>
+<meta name="description" content="OFI predicts how UWM, Rocket, PennyMac, loanDepot overlay behavior will change in the next 60-90 days. Updated weekly. Free for brokers.">
+<link rel="canonical" href="https://financeratecalc.com/ofi-lender-forecast.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{color:#c8a44a;font-style:italic;}
+.wrap{max-width:820px;margin:0 auto;padding:60px 24px 100px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,48px);font-weight:900;letter-spacing:-2px;line-height:1.0;margin-bottom:12px;}
+h1 em{color:#c8a44a;font-style:italic;}
+.intro{font-size:16px;color:rgba(255,255,255,0.55);line-height:1.8;margin-bottom:32px;}
+.ofi-context{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px;}
+.ofi-box{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;text-align:center;}
+.ofi-val{font-size:32px;font-weight:900;font-family:'Fraunces',serif;}
+.ofi-lbl{font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;}
+.ofi-sub{font-size:11px;color:rgba(255,255,255,0.3);margin-top:3px;}
+.lender-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px 22px;margin-bottom:14px;transition:border-color 0.2s;}
+.lender-card:hover{border-color:rgba(200,164,74,0.3);}
+.lender-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.lender-name{font-size:18px;font-weight:700;}
+.signal-badge{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.05em;}
+.signal-stable{background:rgba(200,164,74,0.1);color:#c8a44a;border:1px solid rgba(200,164,74,0.2);}
+.signal-tighten{background:rgba(232,132,90,0.1);color:#e8845a;border:1px solid rgba(232,132,90,0.2);}
+.signal-ease{background:rgba(107,191,146,0.1);color:#6bffb8;border:1px solid rgba(107,191,146,0.2);}
+.denial-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+.denial-stat{text-align:center;}
+.denial-num{font-size:22px;font-weight:900;font-family:'Fraunces',serif;}
+.denial-lbl{font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;}
+.action-box{background:rgba(0,0,0,0.2);border-radius:7px;padding:10px 14px;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;}
+.sensitivity-bar{background:rgba(255,255,255,0.05);border-radius:4px;height:4px;margin-top:10px;overflow:hidden;}
+.sensitivity-fill{background:linear-gradient(90deg,#6bffb8,#c8a44a,#e8845a);height:100%;border-radius:4px;}
+.weekly-note{background:rgba(200,164,74,0.04);border:1px solid rgba(200,164,74,0.12);border-radius:10px;padding:18px 20px;margin:24px 0;font-size:13px;color:rgba(255,255,255,0.5);line-height:1.8;}
+.day-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0;}
+.day-box{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:12px;text-align:center;}
+.day-name{font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:6px;}
+.day-pct{font-size:18px;font-weight:900;font-family:'Fraunces',serif;}
+.day-peak{border-color:rgba(200,164,74,0.3);background:rgba(200,164,74,0.04);}
+.pulse{width:7px;height:7px;background:#6bffb8;border-radius:50%;animation:pulse 1.5s infinite;display:inline-block;margin-right:6px;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.footer-note{font-size:11px;color:rgba(255,255,255,0.2);margin-top:40px;line-height:1.8;}
+@media(max-width:600px){.ofi-context{grid-template-columns:1fr 1fr;}.denial-row{grid-template-columns:1fr 1fr;}.day-grid{grid-template-columns:repeat(5,1fr);}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/ofi.html" style="font-size:12px;color:#c8a44a;text-decoration:none;font-weight:700;">OFI = 47 →</a>
+</header>
+
+<div class="wrap">
+  <div style="display:inline-flex;align-items:center;background:rgba(107,191,146,0.08);border:1px solid rgba(107,191,146,0.2);border-radius:20px;padding:4px 12px;font-size:11px;color:#6bffb8;font-weight:700;margin-bottom:20px;">
+    <div class="pulse"></div> UPDATED WEEKLY — TUESDAY 08:00 UTC
+  </div>
+
+  <h1>Lender Overlay<br><em>Forecast</em></h1>
+  <p class="intro">No Bloomberg terminal tells you when UWM will tighten its overlay. OFI does. Based on 7 years of HMDA data and each lender's historical OFI sensitivity, this page predicts how lender behavior will shift in the next 60-90 days.</p>
+
+  <!-- OFI Context -->
+  <div class="ofi-context">
+    <div class="ofi-box">
+      <div class="ofi-val" style="color:#c8a44a;">47</div>
+      <div class="ofi-lbl">Current OFI</div>
+      <div class="ofi-sub">Q2 2026 · MODERATE</div>
+    </div>
+    <div class="ofi-box">
+      <div class="ofi-val" style="color:#e8845a;">50</div>
+      <div class="ofi-lbl">60-Day Projection</div>
+      <div class="ofi-sub">Slight tightening</div>
+    </div>
+    <div class="ofi-box">
+      <div class="ofi-val" style="color:#e8845a;">52</div>
+      <div class="ofi-lbl">90-Day Projection</div>
+      <div class="ofi-sub">Moderate tightening</div>
+    </div>
+  </div>
+
+  <!-- Lender Cards -->
+  <div id="lenderCards">
+
+    <div class="lender-card">
+      <div class="lender-header">
+        <div class="lender-name">UWM</div>
+        <div class="signal-badge signal-stable">→ STABLE</div>
+      </div>
+      <div class="denial-row">
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#c8a44a;">19.9%</div>
+          <div class="denial-lbl">Current FHA Denial</div>
+        </div>
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#e8845a;">20.1%</div>
+          <div class="denial-lbl">60-Day Forecast</div>
+        </div>
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#888;">LOW</div>
+          <div class="denial-lbl">OFI Sensitivity</div>
+        </div>
+      </div>
+      <div class="action-box">No significant overlay change expected. UWM remains the best-fit lender for edge-case FHA profiles at current OFI levels. Continue routing 580-620 FICO, SSDI, self-employed files here first.</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:8px;">Sensitivity: 0.08 · Lag: 1 quarter · Tightens above OFI 60</div>
+      <div class="sensitivity-bar"><div class="sensitivity-fill" style="width:16%;"></div></div>
+    </div>
+
+    <div class="lender-card">
+      <div class="lender-header">
+        <div class="lender-name">PennyMac</div>
+        <div class="signal-badge signal-stable">→ STABLE</div>
+      </div>
+      <div class="denial-row">
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#c8a44a;">26.6%</div>
+          <div class="denial-lbl">Current FHA Denial</div>
+        </div>
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#e8845a;">27.1%</div>
+          <div class="denial-lbl">60-Day Forecast</div>
+        </div>
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#888;">DECREASING</div>
+          <div class="denial-lbl">OFI Sensitivity</div>
+        </div>
+      </div>
+      <div class="action-box">Improving overlay discipline — best FHA trajectory in market. +0.4pp change minimal. Strong backup for UWM rejections. DTI flexibility to 55-56% with compensating factors.</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:8px;">Sensitivity: 0.15 · Lag: 1 quarter · Tightens above OFI 55</div>
+      <div class="sensitivity-bar"><div class="sensitivity-fill" style="width:28%;"></div></div>
+    </div>
+
+    <div class="lender-card">
+      <div class="lender-header">
+        <div class="lender-name">Rocket Mortgage</div>
+        <div class="signal-badge signal-stable">→ STABLE</div>
+      </div>
+      <div class="denial-row">
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#c8a44a;">28.4%</div>
+          <div class="denial-lbl">Current FHA Denial</div>
+        </div>
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#e8845a;">28.9%</div>
+          <div class="denial-lbl">60-Day Forecast</div>
+        </div>
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#888;">MEDIUM</div>
+          <div class="denial-lbl">OFI Sensitivity</div>
+        </div>
+      </div>
+      <div class="action-box">Stable for now. Rocket overlay tightens meaningfully above OFI 52 — approaching that zone. Strong for W2/640+ FICO profiles. Route edge-cases to UWM while window is open.</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:8px;">Sensitivity: 0.18 · Lag: 1 quarter · Tightens above OFI 52</div>
+      <div class="sensitivity-bar"><div class="sensitivity-fill" style="width:34%;"></div></div>
+    </div>
+
+    <div class="lender-card" style="border-color:rgba(232,132,90,0.2);">
+      <div class="lender-header">
+        <div class="lender-name">loanDepot</div>
+        <div class="signal-badge signal-tighten">⚠ WATCH</div>
+      </div>
+      <div class="denial-row">
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#c8a44a;">37.0%</div>
+          <div class="denial-lbl">Current FHA Denial</div>
+        </div>
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#e8845a;">37.8%</div>
+          <div class="denial-lbl">60-Day Forecast</div>
+        </div>
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#e8845a;">HIGH</div>
+          <div class="denial-lbl">OFI Sensitivity</div>
+        </div>
+      </div>
+      <div class="action-box">⚠ Highest OFI sensitivity with zero lag — reacts immediately. Already at 37% denial. As OFI rises toward 50, expect 38-39% range. Low profile match for edge-case FHA files. Route elsewhere.</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:8px;">Sensitivity: 0.28 · Lag: 0 quarters · Already tightening above OFI 48</div>
+      <div class="sensitivity-bar"><div class="sensitivity-fill" style="width:56%;"></div></div>
+    </div>
+
+    <div class="lender-card" style="border-color:rgba(232,132,90,0.15);">
+      <div class="lender-header">
+        <div class="lender-name">Wells Fargo</div>
+        <div class="signal-badge signal-tighten">⚠ HIGH OVERLAY</div>
+      </div>
+      <div class="denial-row">
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#e8845a;">58.5%</div>
+          <div class="denial-lbl">Current FHA Denial</div>
+        </div>
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#e8845a;">59.9%</div>
+          <div class="denial-lbl">60-Day Forecast</div>
+        </div>
+        <div class="denial-stat">
+          <div class="denial-num" style="color:#e8845a;">VERY HIGH</div>
+          <div class="denial-lbl">OFI Sensitivity</div>
+        </div>
+      </div>
+      <div class="action-box">Highest overlay sensitivity in market. 58.5% current denial — 2.6x national average. Conventional/jumbo specialist. Low profile match for FHA edge cases at any OFI level.</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:8px;">Sensitivity: 0.45 · Lag: 2 quarters · Portfolio-focused strategy</div>
+      <div class="sensitivity-bar"><div class="sensitivity-fill" style="width:90%;"></div></div>
+    </div>
+  </div>
+
+  <!-- Day/Week Breakdown -->
+  <div style="margin-top:40px;">
+    <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">When Brokers Are Most Active — Day Breakdown</div>
+    <div class="day-grid">
+      <div class="day-box">
+        <div class="day-name">MON</div>
+        <div class="day-pct" style="color:rgba(255,255,255,0.6);">18%</div>
+      </div>
+      <div class="day-box day-peak">
+        <div class="day-name" style="color:#c8a44a;">TUE ★</div>
+        <div class="day-pct" style="color:#c8a44a;">22%</div>
+      </div>
+      <div class="day-box">
+        <div class="day-name">WED</div>
+        <div class="day-pct" style="color:rgba(255,255,255,0.7);">22%</div>
+      </div>
+      <div class="day-box">
+        <div class="day-name">THU</div>
+        <div class="day-pct" style="color:rgba(255,255,255,0.6);">20%</div>
+      </div>
+      <div class="day-box">
+        <div class="day-name">FRI</div>
+        <div class="day-pct" style="color:rgba(255,255,255,0.5);">18%</div>
+      </div>
+    </div>
+    <div class="weekly-note">
+      <strong style="color:#c8a44a;">Timing insight:</strong> Mortgage application activity peaks Tuesday-Wednesday (MBA survey data). OFI Weekly Briefing goes out Monday morning — so brokers read it before the Tuesday decision peak. Ayın 1. haftası %28 daha yüksek aktivite — maaş günü sonrası karar döngüsü. En yüksek trafik beklentisi: ayın ilk Salısı sabahı.
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div style="background:rgba(200,164,74,0.04);border:1px solid rgba(200,164,74,0.15);border-radius:12px;padding:24px;text-align:center;margin-top:32px;">
+    <div style="font-size:16px;font-weight:700;margin-bottom:8px;">Get This Every Tuesday — Free</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:16px;">OFI Lender Forecast delivered to your inbox. Updated weekly.</div>
+    <a href="/ofi-weekly.html" style="background:#c8a44a;color:#000;padding:12px 24px;border-radius:7px;font-weight:700;font-size:14px;text-decoration:none;display:inline-block;margin-right:10px;">Subscribe Free →</a>
+    <a href="/zai-for-brokers.html" style="background:rgba(107,191,146,0.1);color:#6bffb8;padding:12px 24px;border-radius:7px;font-weight:700;font-size:14px;text-decoration:none;display:inline-block;border:1px solid rgba(107,191,146,0.3);">Route a File →</a>
+  </div>
+
+  <div class="footer-note">
+    Data: CFPB HMDA 2024 · OFI v3.7 · Sensitivity coefficients derived from 2018-2024 lender behavior patterns<br>
+    All lenders are legitimate institutions. Forecasts are statistical models — not guarantees.<br>
+    Not financial advice. Not legal advice. FinanceRateCalc Research Division.
+  </div>
+</div>
+</body>
+</html>

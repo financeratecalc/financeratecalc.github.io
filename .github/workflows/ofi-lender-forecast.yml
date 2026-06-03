@@ -1,0 +1,29 @@
+name: OFI Lender Behavior Forecast
+
+on:
+  schedule:
+    - cron: '0 8 * * 2'  # Her Salı 08:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update-forecast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install requests
+      - name: Update Lender Forecast
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python ofi-lender-forecast-update.py
+      - name: Commit and push
+        run: |
+          git config user.email "pipeline@financeratecalc.com"
+          git config user.name "OFI Pipeline"
+          git add ofi-lender-predictions.json
+          git diff --staged --quiet || git commit -m "Auto: Weekly lender behavior forecast update"
+          git push
