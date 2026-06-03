@@ -299,48 +299,52 @@ function addMessage(role, content){
   contentDiv.appendChild(name);
   contentDiv.appendChild(bubble);
 
-  // Action buttons for AI messages
+  // Action buttons for AI messages — Claude-like minimal icons
   if(role==='ai'){
     var actions=document.createElement('div');
-    actions.style.cssText='display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center;';
+    actions.style.cssText='display:flex;gap:4px;margin-top:8px;align-items:center;opacity:0;transition:opacity 0.15s;';
+    contentDiv.addEventListener('mouseenter',function(){actions.style.opacity='1';});
+    contentDiv.addEventListener('mouseleave',function(){actions.style.opacity='0';});
 
-    // Helpful/Not helpful
-    var helpLabel=document.createElement('span');
-    helpLabel.style.cssText='font-size:9px;color:rgba(255,255,255,0.25);';
-    helpLabel.textContent='Helpful?';
-    actions.appendChild(helpLabel);
-
+    // Thumbs up
     var yBtn=document.createElement('button');
-    yBtn.innerHTML='👍';
-    yBtn.style.cssText='padding:2px 7px;background:rgba(107,255,184,0.07);border:1px solid rgba(107,255,184,0.2);color:rgba(107,255,184,0.5);border-radius:4px;font-size:11px;cursor:pointer;';
-    yBtn.onclick=function(){fetch('https://formspree.io/f/mkoewrgp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'feedback',rating:'helpful',msg:bubble.innerText.substring(0,300)})});yBtn.style.color='#6bffb8';yBtn.disabled=true;nBtn.disabled=true;};
+    yBtn.title='Helpful';
+    yBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>';
+    yBtn.style.cssText='padding:4px;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;border-radius:4px;display:flex;align-items:center;transition:color 0.15s;';
+    yBtn.onmouseover=function(){this.style.color='rgba(107,255,184,0.8)';};
+    yBtn.onmouseout=function(){this.style.color=this.dataset.active?'#6bffb8':'rgba(255,255,255,0.3)';};
+    yBtn.onclick=function(){
+      fetch('https://formspree.io/f/mkoewrgp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'feedback',rating:'helpful'})});
+      this.style.color='#6bffb8';this.dataset.active='1';this.disabled=true;nBtn.disabled=true;
+    };
     actions.appendChild(yBtn);
 
+    // Thumbs down
     var nBtn=document.createElement('button');
-    nBtn.innerHTML='👎';
-    nBtn.style.cssText='padding:2px 7px;background:rgba(255,107,107,0.07);border:1px solid rgba(255,107,107,0.2);color:rgba(255,107,107,0.5);border-radius:4px;font-size:11px;cursor:pointer;';
-    nBtn.onclick=function(){fetch('https://formspree.io/f/mkoewrgp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'feedback',rating:'not_helpful',msg:bubble.innerText.substring(0,300)})});nBtn.style.color='#ff6b6b';yBtn.disabled=true;nBtn.disabled=true;};
+    nBtn.title='Not helpful';
+    nBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>';
+    nBtn.style.cssText='padding:4px;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;border-radius:4px;display:flex;align-items:center;transition:color 0.15s;';
+    nBtn.onmouseover=function(){this.style.color='rgba(255,107,107,0.8)';};
+    nBtn.onmouseout=function(){this.style.color=this.dataset.active?'#ff6b6b':'rgba(255,255,255,0.3)';};
+    nBtn.onclick=function(){
+      fetch('https://formspree.io/f/mkoewrgp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'feedback',rating:'not_helpful'})});
+      this.style.color='#ff6b6b';this.dataset.active='1';this.disabled=true;yBtn.disabled=true;
+    };
     actions.appendChild(nBtn);
 
-    var dot=document.createElement('span');
-    dot.style.cssText='color:rgba(255,255,255,0.1);';dot.textContent='·';
-    actions.appendChild(dot);
-
+    // Copy
     var copyBtn=document.createElement('button');
-    copyBtn.innerHTML='📋 Copy';
-    copyBtn.style.cssText='padding:4px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.45);border-radius:5px;font-size:10px;cursor:pointer;font-family:inherit;';
-    copyBtn.onclick=function(){navigator.clipboard.writeText(bubble.innerText);copyBtn.innerHTML='✓ Copied!';setTimeout(function(){copyBtn.innerHTML='📋 Copy';},2000);};
-    actions.appendChild(copyBtn);
-
-    var shareBtn=document.createElement('button');
-    shareBtn.innerHTML='↗ Share';
-    shareBtn.style.cssText='padding:4px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.45);border-radius:5px;font-size:10px;cursor:pointer;font-family:inherit;';
-    shareBtn.onclick=function(){
-      var txt='Zai (FRC Banker AI):\n\n'+bubble.innerText+'\n\nfinanceratecalc.com/frc-banker-ai.html';
-      if(navigator.share){navigator.share({text:txt});}
-      else{navigator.clipboard.writeText(txt);shareBtn.innerHTML='✓ Copied!';setTimeout(function(){shareBtn.innerHTML='↗ Share';},2000);}
+    copyBtn.title='Copy';
+    copyBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+    copyBtn.style.cssText='padding:4px;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;border-radius:4px;display:flex;align-items:center;transition:color 0.15s;';
+    copyBtn.onmouseover=function(){this.style.color='rgba(255,255,255,0.7)';};
+    copyBtn.onmouseout=function(){this.style.color='rgba(255,255,255,0.3)';};
+    copyBtn.onclick=function(){
+      navigator.clipboard.writeText(bubble.innerText);
+      copyBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6bffb8" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+      setTimeout(function(){copyBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';},2000);
     };
-    actions.appendChild(shareBtn);
+    actions.appendChild(copyBtn);
 
     // ─── OUTCOME TRACKER ───────────────────────────────────────────────────────
     var txt_lower = bubble.innerText.toLowerCase();
@@ -367,22 +371,6 @@ function addMessage(role, content){
       `;
       
       contentDiv.appendChild(outcomeWrap);
-    }
-
-    var txt=bubble.innerText.toLowerCase();
-    if(txt.includes('credit')||txt.includes('score')||txt.includes('deny')||txt.includes('denied')||txt.includes('680')||txt.includes('620')||txt.includes('700')){
-      var skyBtn=document.createElement('a');
-      skyBtn.href='https://skyblue.ltroute.com/click.track?CID=139993&AFID=569709';
-      skyBtn.target='_blank';
-      skyBtn.innerHTML='🔵 Sky Blue';
-      skyBtn.style.cssText='padding:4px 10px;background:rgba(200,164,74,0.1);border:1px solid rgba(200,164,74,0.3);color:#c8a44a;border-radius:5px;font-size:10px;cursor:pointer;text-decoration:none;font-family:inherit;';
-      actions.appendChild(skyBtn);
-      var smBtn=document.createElement('a');
-      smBtn.href='https://www.tkqlhce.com/click-101700650-16981737';
-      smBtn.target='_blank';
-      smBtn.innerHTML='🟦 SmartCredit $1';
-      smBtn.style.cssText='padding:4px 10px;background:rgba(26,58,110,0.2);border:1px solid rgba(42,90,174,0.4);color:#60a5fa;border-radius:5px;font-size:10px;cursor:pointer;text-decoration:none;font-family:inherit;';
-      actions.appendChild(smBtn);
     }
 
     contentDiv.appendChild(actions);
