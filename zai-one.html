@@ -9,7 +9,39 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
 <script>
 
-// HMDA 2024 Verified Lender Data — Source: CFPB HMDA Data Browser
+// HMDA 2024 Verified Lender Data
+
+// 7-Year FHA Denial Rate Trend Data (2018-2024)
+// Source: CFPB HMDA Data Browser — verified manually
+const LENDER_TRENDS = {
+  years: [2018, 2019, 2020, 2021, 2022, 2023, 2024],
+  lenders: {
+    "UWM": {
+      rates: [15.7, 12.2, 18.1, 15.6, 17.2, 17.3, 19.9],
+      trend: "worsening", change: +4.2, dna: "FHA-Specialist"
+    },
+    "Rocket Mortgage": {
+      rates: [34.8, 29.7, 30.3, 27.9, 31.9, 29.0, 28.4],
+      trend: "improving", change: -6.4, dna: "Flexible-Conventional"
+    },
+    "Wells Fargo": {
+      rates: [46.7, 46.9, 51.5, 51.7, 60.4, 56.3, 58.5],
+      trend: "worsening", change: +11.8, dna: "Conservative-Bank",
+      note: "Effectively exiting FHA market"
+    },
+    "CrossCountry": {
+      rates: [8.6, 5.5, 5.5, 6.6, 6.8, 6.4, 5.5],
+      trend: "stable-low", change: -3.1, dna: "FHA-Specialist",
+      note: "Most consistent FHA approval rate over 7 years"
+    },
+    "loanDepot": {
+      rates: [40.0, 33.3, 24.5, 28.7, 36.7, 38.5, 37.0],
+      trend: "volatile", change: -3.0, dna: "Conservative-Bank",
+      note: "Bottomed 2020, re-tightening since"
+    }
+  }
+};
+ — Source: CFPB HMDA Data Browser
 // All FHA denial rates calculated from public LAR data
 const HMDA_LENDERS = [
   {name:"CrossCountry Mortgage", denied:1342, originated:22994, rate:5.5, dna:"FHA-Specialist", note:"Lowest FHA denial rate among major lenders"},
