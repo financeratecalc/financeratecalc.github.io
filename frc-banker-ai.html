@@ -493,6 +493,33 @@ function addMessage(role, content){
     };
     actions.appendChild(shareBtn);
 
+    // ─── OUTCOME TRACKER ───────────────────────────────────────────────────────
+    var txt_lower = bubble.innerText.toLowerCase();
+    var hasLenderRouting = txt_lower.includes('uwm') || txt_lower.includes('pennymac') || 
+                           txt_lower.includes('approval probability') || txt_lower.includes('route') ||
+                           txt_lower.includes('wholesale') || txt_lower.includes('lender') && txt_lower.includes('%');
+    
+    if(hasLenderRouting){
+      var dot2=document.createElement('span');
+      dot2.style.cssText='color:rgba(255,255,255,0.1);';dot2.textContent='·';
+      actions.appendChild(dot2);
+
+      var outcomeWrap = document.createElement('div');
+      outcomeWrap.style.cssText='margin-top:10px;width:100%;background:rgba(200,164,74,0.04);border:1px solid rgba(200,164,74,0.15);border-radius:8px;padding:12px 14px;';
+      
+      outcomeWrap.innerHTML = `
+        <div style="font-size:10px;color:#c8a44a;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Did this work? Track your outcome →</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button onclick="trackOutcome('approved', this)" style="padding:6px 14px;background:rgba(107,255,184,0.1);border:1px solid rgba(107,255,184,0.25);color:#6bffb8;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;">✓ Approved!</button>
+          <button onclick="trackOutcome('denied', this)" style="padding:6px 14px;background:rgba(255,107,107,0.07);border:1px solid rgba(255,107,107,0.2);color:#ff6b6b;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;">✗ Still denied</button>
+          <button onclick="trackOutcome('pending', this)" style="padding:6px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;">⏳ Still in process</button>
+        </div>
+        <div id="outcomeThank" style="display:none;font-size:11px;color:rgba(255,255,255,0.4);margin-top:8px;">Thank you — your outcome helps validate OFI's predictions. <a href="/ofi-track-record.html" style="color:#c8a44a;">See live track record →</a></div>
+      `;
+      
+      contentDiv.appendChild(outcomeWrap);
+    }
+
     var txt=bubble.innerText.toLowerCase();
     if(txt.includes('credit')||txt.includes('score')||txt.includes('deny')||txt.includes('denied')||txt.includes('680')||txt.includes('620')||txt.includes('700')){
       var skyBtn=document.createElement('a');
