@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Zai — Mortgage Routing Engine | FinanceRateCalc</title>
+<meta name="description" content="Submit a borrower profile. Get one decision. FHA-Specialist, Conventional, Portfolio, or Conservative-Bank — instantly.">
+<link rel="canonical" href="https://financeratecalc.com/zai-one.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --ink:#0a0a0f;
+  --paper:#f5f4f0;
+  --gold:#c8a44a;
+  --green:#1a7a4a;
+  --red:#c0392b;
+  --muted:#888;
+  --border:#e0dfd8;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
+
+/* HEADER */
+header{padding:18px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.logo{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;letter-spacing:-0.02em;color:var(--ink);text-decoration:none;}
+.logo span{color:var(--gold);}
+.beta{font-size:10px;background:var(--ink);color:var(--paper);padding:2px 7px;border-radius:3px;font-family:'DM Mono',monospace;margin-left:8px;}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:420px 1fr;min-height:calc(100vh - 57px);}
+
+/* LEFT — INPUT */
+.panel-left{border-right:1px solid var(--border);padding:32px;overflow-y:auto;}
+.panel-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:24px;}
+
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:5px;}
+.field input,.field select{width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-size:14px;color:var(--ink);font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.15s;}
+.field input:focus,.field select:focus{border-color:var(--ink);}
+.field select option{background:#fff;}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+.submit-btn{width:100%;margin-top:20px;padding:14px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.05em;cursor:pointer;transition:opacity 0.15s;}
+.submit-btn:hover{opacity:0.85;}
+.submit-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+.ofi-context{margin-top:20px;padding:14px;background:#fff;border:1px solid var(--border);border-radius:8px;}
+.ofi-num{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:var(--gold);}
+.ofi-label{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* RIGHT — OUTPUT */
+.panel-right{padding:32px;display:flex;flex-direction:column;}
+
+/* EMPTY STATE */
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0.3;}
+.empty-icon{font-size:48px;margin-bottom:16px;}
+.empty-text{font-size:14px;font-family:'DM Mono',monospace;}
+
+/* DECISION CARD */
+.decision-card{display:none;flex-direction:column;gap:16px;}
+.decision-card.visible{display:flex;}
+
+.decision-header{padding:24px;border:2px solid var(--ink);border-radius:12px;position:relative;}
+.decision-label{font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.decision-route{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;line-height:1.1;margin-bottom:8px;}
+.decision-fit{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;font-family:'DM Mono',monospace;}
+.fit-strong{background:#d4edda;color:var(--green);}
+.fit-moderate{background:#fff3cd;color:#856404;}
+.fit-weak{background:#f8d7da;color:var(--red);}
+
+.reasons{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;}
+.reasons-title{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.reason{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.5;}
+.reason:last-child{border:none;padding-bottom:0;}
+.reason-bullet{color:var(--gold);font-weight:700;flex-shrink:0;}
+
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.action-card{padding:16px;border-radius:10px;border:1px solid var(--border);background:#fff;}
+.action-card.risk{border-left:3px solid var(--red);}
+.action-card.docs{border-left:3px solid var(--gold);}
+.action-card.submit{border-left:3px solid var(--green);}
+.action-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.action-val{font-size:13px;line-height:1.5;color:var(--ink);}
+
+.ofi-signal{background:var(--ink);color:var(--paper);border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;}
+.ofi-signal-left{font-size:13px;opacity:0.7;}
+.ofi-signal-right{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--gold);}
+
+.detail-section{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;}
+.detail-title{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.detail-content{font-size:13px;line-height:1.8;color:#444;white-space:pre-wrap;}
+
+.legal-note{font-size:10px;color:var(--muted);line-height:1.6;padding-top:12px;border-top:1px solid var(--border);}
+
+/* LOADING */
+.loading{display:none;align-items:center;gap:12px;padding:24px;font-size:14px;color:var(--muted);}
+.loading.visible{display:flex;}
+.dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 1.2s infinite;}
+.dot:nth-child(2){animation-delay:0.2s;}
+.dot:nth-child(3){animation-delay:0.4s;}
+@keyframes pulse{0%,100%{opacity:0.3;transform:scale(0.8);}50%{opacity:1;transform:scale(1.2);}}
+
+/* MOBILE */
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr;}
+  .panel-left{border-right:none;border-bottom:1px solid var(--border);}
+  header{padding:14px 20px;}
+  .panel-left,.panel-right{padding:20px;}
+  .action-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/index.html" class="logo">Finance<span>Rate</span>Calc <span class="beta">ZAI</span></a>
+  <a href="/ofi.html" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);text-decoration:none;">OFI 47 →</a>
+</header>
+
+<div class="layout">
+  <!-- LEFT: INPUT -->
+  <div class="panel-left">
+    <div class="panel-title">Borrower Profile</div>
+
+    <div class="grid2">
+      <div class="field">
+        <label>FICO Score</label>
+        <input type="number" id="fico" placeholder="612" min="300" max="850">
+      </div>
+      <div class="field">
+        <label>DTI %</label>
+        <input type="number" id="dti" placeholder="48" min="0" max="70">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Loan Type</label>
+      <select id="loanType">
+        <option value="FHA">FHA</option>
+        <option value="Conventional">Conventional</option>
+        <option value="VA">VA</option>
+        <option value="USDA">USDA</option>
+        <option value="Non-QM">Non-QM / Portfolio</option>
+      </select>
+    </div>
+
+    <div class="grid2">
+      <div class="field">
+        <label>Income Type</label>
+        <select id="incomeType">
+          <option value="W2">W2 Employment</option>
+          <option value="Self-Employed">Self-Employed</option>
+          <option value="SSDI">SSDI / Disability</option>
+          <option value="1099">1099 / Contract</option>
+          <option value="Retirement">Retirement</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>State</label>
+        <select id="state">
+          <option value="TX">Texas (OFI 30)</option>
+          <option value="UT">Utah (OFI 30)</option>
+          <option value="GA">Georgia (OFI 38)</option>
+          <option value="FL">Florida (OFI 42)</option>
+          <option value="CA">California (OFI 51)</option>
+          <option value="NY">New York (OFI 55)</option>
+          <option value="DC">DC (OFI 80)</option>
+          <option value="other">Other State</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Previous Denial (if any)</label>
+      <select id="deniedBy">
+        <option value="none">No prior denial</option>
+        <option value="Rocket Mortgage">Rocket Mortgage (28.4%)</option>
+        <option value="Wells Fargo">Wells Fargo (58.5%)</option>
+        <option value="loanDepot">loanDepot (37.0%)</option>
+        <option value="PennyMac">PennyMac (26.6%)</option>
+        <option value="Chase">Chase</option>
+        <option value="Other">Other lender</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Additional Context (optional)</label>
+      <input type="text" id="context" placeholder="e.g. 2 late payments 2022, self-employed 3 years">
+    </div>
+
+    <button class="submit-btn" onclick="getDecision()" id="submitBtn">
+      Get Routing Decision →
+    </button>
+
+    <div class="ofi-context">
+      <div class="ofi-label">Current Market Signal</div>
+      <div class="ofi-num">47</div>
+      <div class="ofi-label">OFI Q2 2026 — Moderate, Re-tightening</div>
+    </div>
+  </div>
+
+  <!-- RIGHT: OUTPUT -->
+  <div class="panel-right">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">⟶</div>
+      <div class="empty-text">Submit a borrower profile<br>to get the routing decision</div>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <span>Analyzing profile...</span>
+    </div>
+
+    <div class="decision-card" id="decisionCard">
+      <!-- Filled by JS -->
+    </div>
+  
+  <div style="margin-top:20px;padding:14px;background:#f0ede4;border:1px solid #e0dfd8;border-radius:8px;text-align:center;">
+    <div style="font-size:11px;color:#888;margin-bottom:8px;">Full broker access — unlimited routing decisions</div>
+    <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" style="background:#0a0a0f;color:#f5f4f0;padding:10px 20px;border-radius:6px;font-size:13px;font-weight:700;text-decoration:none;display:inline-block;">Zai for Brokers — $49/month →</a>
+    <div style="font-size:10px;color:#aaa;margin-top:6px;">7-day money back guarantee</div>
+  </div>
+  </div>
+</div>
+
+<script>
+const STATE_OFI = {TX:30,UT:30,GA:38,FL:42,CA:51,NY:55,DC:80,other:47};
+
+async function getDecision() {
+  const fico = document.getElementById('fico').value;
+  const dti = document.getElementById('dti').value;
+  const loanType = document.getElementById('loanType').value;
+  const income = document.getElementById('incomeType').value;
+  const state = document.getElementById('state').value;
+  const denied = document.getElementById('deniedBy').value;
+  const context = document.getElementById('context').value;
+
+  if (!fico || !dti) { alert('Please enter FICO score and DTI.'); return; }
+
+  const stateOfi = STATE_OFI[state] || 47;
+  const stateLabel = document.getElementById('state').options[document.getElementById('state').selectedIndex].text;
+
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('decisionCard').classList.remove('visible');
+  document.getElementById('loading').classList.add('visible');
+
+  const prompt = `Borrower profile:
+- FICO: ${fico}
+- DTI: ${dti}%
+- Loan type: ${loanType}
+- Income: ${income}
+- State: ${stateLabel} — OFI ${stateOfi}
+- Prior denial: ${denied === 'none' ? 'None' : denied}
+- Context: ${context || 'None'}
+- Current market OFI: 47 (Moderate, Q2 2026)
+
+Give me the routing decision in this EXACT format:
+ROUTE: [FHA-Specialist / Flexible-Conventional / Portfolio-NonQM / Conservative-Bank]
+FIT: [Strong / Moderate / Weak]
+REASON1: [one line]
+REASON2: [one line]
+REASON3: [OFI/state context — one line]
+RISK: [primary risk — one sentence]
+DOCS: [2-3 required documents, comma separated]
+SUBMIT_TO: [lender DNA type]
+LOWER_FIT: [lower fit DNA type and why — one line]
+OFI_SIGNAL: [state OFI impact — one line]
+DETAIL: [3-4 sentence analysis for broker — DTI math, key considerations, score erosion warning if relevant]`;
+
+  try {
+    const res = await fetch('https://frc-api.ziyetis.workers.dev/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'x-api-key': 'frc-proxy'},
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 800,
+        messages: [{role: 'user', content: prompt}]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.[0]?.text || data.reply || '';
+
+    // Parse structured response
+    const get = (key) => {
+      const match = text.match(new RegExp(key + ':\\s*(.+)'));
+      return match ? match[1].trim() : '';
+    };
+
+    const route = get('ROUTE');
+    const fit = get('FIT');
+    const r1 = get('REASON1');
+    const r2 = get('REASON2');
+    const r3 = get('REASON3');
+    const risk = get('RISK');
+    const docs = get('DOCS');
+    const submitTo = get('SUBMIT_TO');
+    const lowerFit = get('LOWER_FIT');
+    const ofiSignal = get('OFI_SIGNAL');
+    const detail = get('DETAIL');
+
+    const fitClass = fit === 'Strong' ? 'fit-strong' : fit === 'Moderate' ? 'fit-moderate' : 'fit-weak';
+
+    document.getElementById('decisionCard').innerHTML = `
+      <div class="decision-header">
+        <div class="decision-label">Routing Decision</div>
+        <div class="decision-route">${route || 'FHA-Specialist'}</div>
+        <span class="decision-fit ${fitClass}">${fit || 'Moderate'} Approval Path</span>
+      </div>
+
+      <div class="reasons">
+        <div class="reasons-title">Why This Route</div>
+        ${r1 ? `<div class="reason"><span class="reason-bullet">01</span>${r1}</div>` : ''}
+        ${r2 ? `<div class="reason"><span class="reason-bullet">02</span>${r2}</div>` : ''}
+        ${r3 ? `<div class="reason"><span class="reason-bullet">03</span>${r3}</div>` : ''}
+      </div>
+
+      <div class="action-row">
+        <div class="action-card risk">
+          <div class="action-label">Primary Risk</div>
+          <div class="action-val">${risk || '—'}</div>
+        </div>
+        <div class="action-card docs">
+          <div class="action-label">Required Docs</div>
+          <div class="action-val">${docs || '—'}</div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <div class="action-card submit">
+          <div class="action-label">Submit To</div>
+          <div class="action-val">${submitTo || route}</div>
+        </div>
+        <div class="action-card">
+          <div class="action-label">Lower Profile Fit</div>
+          <div class="action-val">${lowerFit || '—'}</div>
+        </div>
+      </div>
+
+      <div class="ofi-signal">
+        <div class="ofi-signal-left">${ofiSignal || stateLabel + ' — OFI ' + stateOfi}</div>
+        <div class="ofi-signal-right">OFI ${stateOfi}</div>
+      </div>
+
+      ${detail ? `
+      <div class="detail-section">
+        <div class="detail-title">Broker Analysis</div>
+        <div class="detail-content">${detail}</div>
+      </div>` : ''}
+
+      <div class="legal-note">
+        Not financial or legal advice. Educational purposes only. Approval probabilities are estimates based on HMDA 2024 data — individual outcomes vary. Consult a licensed mortgage professional. 
+        <a href="/terms.html" style="color:var(--muted);">Terms</a>
+      </div>
+    `;
+
+    document.getElementById('loading').classList.remove('visible');
+    document.getElementById('decisionCard').classList.add('visible');
+
+  } catch(err) {
+    document.getElementById('loading').classList.remove('visible');
+    document.getElementById('emptyState').style.display = 'flex';
+    alert('Error: ' + err.message);
+  }
+
+  document.getElementById('submitBtn').disabled = false;
+}
+</script>
+</body>
+</html>

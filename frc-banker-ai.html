@@ -393,14 +393,9 @@ function addMessage(role, content){
   div.appendChild(contentDiv);
   wrap.appendChild(div);
   setTimeout(function(){
-    window.scrollTo(0, document.body.scrollHeight);
-  setTimeout(function(){ 
-    window.scrollTo(0, document.body.scrollHeight);
+    setTimeout(function(){ 
     var lastMsg = wrap.lastElementChild;
-    if(lastMsg) lastMsg.scrollIntoView({behavior:'smooth', block:'end'});
-  }, 150);
-  setTimeout(function(){ window.scrollTo(0, document.body.scrollHeight); }, 500);
-    window.scrollTo({top: document.body.scrollHeight, behavior: 'instant'});
+    if(}, 150);
   }, 100);
   // Legal note — sadece AI mesajlarına
   if(role === 'ai') {
@@ -411,10 +406,12 @@ function addMessage(role, content){
   }
   
   // Scroll to bottom — single clean scroll
-  setTimeout(function(){
-    window.scrollTo({top: document.body.scrollHeight, behavior: 'instant'});
-  }, 100);
-  
+  // Clean single scroll
+  requestAnimationFrame(function(){
+    var last = document.querySelector('.msg:last-child');
+    if(last) last.scrollIntoView({block:'end'});
+  });
+  setTimeout(scrollBottom, 50);
   return bubble;
 }
 
@@ -454,8 +451,7 @@ function showTyping(){
   div.appendChild(avatar);
   div.appendChild(content);
   wrap.appendChild(div);
-  window.scrollTo({top: document.body.scrollHeight, behavior: 'instant'});
-}
+  }
 
 function removeTyping(){
   var t=document.getElementById('typingIndicator');
@@ -694,31 +690,17 @@ function incrementFreeMsg() {
 }
 
 
-function scrollToBottom() {
-  var wrap = document.getElementById('chatWrap');
-  if (wrap) {
-    window.scrollTo(0, document.body.scrollHeight);
-  setTimeout(function(){ 
-    window.scrollTo(0, document.body.scrollHeight);
-    var lastMsg = wrap.lastElementChild;
-    if(lastMsg) lastMsg.scrollIntoView({behavior:'smooth', block:'end'});
+);
   }, 150);
-  setTimeout(function(){ window.scrollTo(0, document.body.scrollHeight); }, 500);
   }
   var chatMessages = document.getElementById('chatMessages');
   if (chatMessages) {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
+    }
 }
 
 
 // SCROLL FIX — window scroll (chat-wrap is full page)
-function forceScrollBottom() {
-  try {
-    window.scrollTo(0, document.body.scrollHeight);
-    var msgs = document.querySelectorAll('.msg');
-    if(msgs.length > 0) {
-      msgs[msgs.length-1].scrollIntoView({behavior:'instant', block:'end'});
+);
     }
   } catch(e) {}
 }
@@ -730,6 +712,12 @@ function addLegalNote(bubble) {
   note.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);line-height:1.6;';
   note.innerHTML = 'Not financial or legal advice. Educational purposes only. Approval probabilities are estimates based on historical HMDA data — individual outcomes vary. Consult a licensed mortgage professional before making decisions. All lenders referenced are legitimate institutions. <a href="/terms.html" style="color:rgba(255,255,255,0.25);">Terms</a>';
   bubble.appendChild(note);
+}
+
+
+function scrollBottom() {
+  var el = document.querySelector('.msg:last-child');
+  if(el) el.scrollIntoView({block:'end', behavior:'instant'});
 }
 
 async function sendMessage(){
