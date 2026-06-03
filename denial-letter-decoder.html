@@ -282,11 +282,11 @@ function detectLender(text) {
 function buildLostOriginationCard(lender) {
   return `
     <div style="background:linear-gradient(135deg,rgba(232,132,90,0.06),rgba(200,164,74,0.03));border:1px solid rgba(232,132,90,0.25);border-radius:12px;padding:22px;margin:16px 0;">
-      <div style="font-size:10px;font-weight:700;color:#e8845a;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">⚡ OFI REVERSE — The Other Side of Your Denial</div>
+      <div style="font-size:10px;font-weight:700;color:#e8845a;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">📊 HMDA DATA CONTEXT — 2024 Federal Lending Data</div>
       
       <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.5;">
-        ${lender.name} denied you.<br>
-        <span style="color:#e8845a;">But they lost money doing it.</span>
+        2024 HMDA Data — ${lender.name}<br>
+        <span style="color:#c8a44a;">What the federal data shows about this denial pattern.</span>
       </div>
       
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0;">
@@ -305,7 +305,7 @@ function buildLostOriginationCard(lender) {
       </div>
       
       <div style="font-size:13px;color:rgba(255,255,255,0.55);line-height:1.8;margin:12px 0;">
-        <strong style="color:#fff;">You are not the problem.</strong> ${lender.name}'s overlay policy is stricter than FHA requires. 
+        <strong style="color:#fff;">Federal data context:</strong> ${lender.name}'s 2024 FHA denial rate was ${lender.denial_rate}% — compared to the 22.5% national average. 
         FHA minimum FICO: 580. ${lender.name} overlay: ${lender.overlay_fico}+. 
         That ${lender.overlay_fico - 580}-point gap is why you were denied — not your actual eligibility.
       </div>
@@ -322,14 +322,14 @@ function buildLostOriginationCard(lender) {
       </div>
       
       <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;">
-        Source: CFPB HMDA 2024 public federal data · OFI Reverse Engine v1.0 · financeratecalc.com/ofi-methodology.html
+        Source: CFPB HMDA 2024 public federal data · Estimates based on statistical modeling · Not a statement about any individual application · All lenders are legitimate institutions · Not legal or financial advice · financeratecalc.com/ofi-methodology.html
       </div>
     </div>
   `;
 }
 
 function shareOFIReverse(lenderName, lostM, denials) {
-  var text = lenderName + " denied " + denials.toLocaleString() + " borrowers like me in 2024 — losing $" + lostM + "M in the process. My denial was their mistake, not mine. Data: CFPB HMDA 2024. financeratecalc.com/denial-letter-decoder.html #mortgage #OFI";
+  var text = "CFPB HMDA 2024: " + lenderName + " FHA denial rate was " + denials + "% — above the 22.5% national average. An estimated " + lostM + "K files were approvable at other lenders. Data: financeratecalc.com/denial-letter-decoder.html #mortgage #FHA";
   
   if (navigator.share) {
     navigator.share({
