@@ -544,6 +544,7 @@ function addMessage(role, content){
   wrap.appendChild(div);
   setTimeout(function(){
     wrap.scrollTop = wrap.scrollHeight;
+  setTimeout(function(){ wrap.scrollTop = wrap.scrollHeight; }, 100);
     wrap.scrollTo({top:wrap.scrollHeight,behavior:'smooth'});
   }, 100);
   return bubble;
@@ -790,6 +791,19 @@ function checkFreeLimit() {
 function incrementFreeMsg() {
   freeMsgCount++;
   localStorage.setItem(FREE_MSG_KEY, freeMsgCount.toString());
+}
+
+
+function scrollToBottom() {
+  var wrap = document.getElementById('chatWrap');
+  if (wrap) {
+    wrap.scrollTop = wrap.scrollHeight;
+  setTimeout(function(){ wrap.scrollTop = wrap.scrollHeight; }, 100);
+  }
+  var chatMessages = document.getElementById('chatMessages');
+  if (chatMessages) {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
 }
 
 async function sendMessage(){
