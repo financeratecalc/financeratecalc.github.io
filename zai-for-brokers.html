@@ -596,8 +596,8 @@ function addMessage(role, content){
   div.appendChild(contentDiv);
   wrap.appendChild(div);
   setTimeout(function(){
-    wrap.scrollTop = wrap.scrollHeight;
-  setTimeout(function(){ wrap.scrollTop = wrap.scrollHeight; }, 300);
+    wrap.scrollTop = 99999; setTimeout(function(){var w=document.getElementById("chatWrap");if(w)w.scrollTop=99999;},300);
+  setTimeout(function(){ wrap.scrollTop = 99999; setTimeout(function(){var w=document.getElementById("chatWrap");if(w)w.scrollTop=99999;},300); }, 300);
     wrap.scrollTo({top:wrap.scrollHeight,behavior:'smooth'});
   }, 100);
   return bubble;
@@ -820,6 +820,15 @@ async function judgeResponse(response, apiKey) {
   } catch(e) {
     return true; // Hata durumunda geç ver
   }
+}
+
+
+// Legal note ekle AI cevabına
+function addLegalNote(bubble) {
+  var note = document.createElement('div');
+  note.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);line-height:1.6;';
+  note.innerHTML = 'Not financial or legal advice. Educational purposes only. Approval probabilities are estimates based on historical HMDA data — individual outcomes vary. Consult a licensed mortgage professional before making decisions. All lenders referenced are legitimate institutions. <a href="/terms.html" style="color:rgba(255,255,255,0.25);">Terms</a>';
+  bubble.appendChild(note);
 }
 
 async function sendMessage(){

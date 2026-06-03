@@ -581,15 +581,31 @@ function addMessage(role, content){
   div.appendChild(contentDiv);
   wrap.appendChild(div);
   setTimeout(function(){
-    wrap.scrollTop = wrap.scrollHeight;
+    wrap.scrollTop = 99999; forceScrollBottom(); setTimeout(forceScrollBottom, 200); setTimeout(forceScrollBottom, 600);
   setTimeout(function(){ 
-    wrap.scrollTop = wrap.scrollHeight;
+    wrap.scrollTop = 99999; forceScrollBottom(); setTimeout(forceScrollBottom, 200); setTimeout(forceScrollBottom, 600);
     var lastMsg = wrap.lastElementChild;
     if(lastMsg) lastMsg.scrollIntoView({behavior:'smooth', block:'end'});
   }, 150);
-  setTimeout(function(){ wrap.scrollTop = wrap.scrollHeight; }, 500);
+  setTimeout(function(){ wrap.scrollTop = 99999; forceScrollBottom(); setTimeout(forceScrollBottom, 200); setTimeout(forceScrollBottom, 600); }, 500);
     wrap.scrollTo({top:wrap.scrollHeight,behavior:'smooth'});
   }, 100);
+  // Legal note — sadece AI mesajlarına
+  if(role === 'ai') {
+    var legalNote = document.createElement('div');
+    legalNote.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.2);margin-top:12px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);line-height:1.6;';
+    legalNote.innerHTML = '⚠️ Not financial or legal advice. Educational purposes only. Approval probabilities are statistical estimates based on HMDA data — individual outcomes vary. Consult a licensed mortgage professional. <a href="/terms.html" style="color:rgba(255,255,255,0.2);">Terms</a>';
+    bubble.appendChild(legalNote);
+  }
+  
+  // Force scroll to bottom
+  setTimeout(function(){
+    if(wrap) { wrap.scrollTop = 99999; }
+  }, 100);
+  setTimeout(function(){
+    if(wrap) { wrap.scrollTop = 99999; }
+  }, 500);
+  
   return bubble;
 }
 
@@ -840,18 +856,40 @@ function incrementFreeMsg() {
 function scrollToBottom() {
   var wrap = document.getElementById('chatWrap');
   if (wrap) {
-    wrap.scrollTop = wrap.scrollHeight;
+    wrap.scrollTop = 99999; forceScrollBottom(); setTimeout(forceScrollBottom, 200); setTimeout(forceScrollBottom, 600);
   setTimeout(function(){ 
-    wrap.scrollTop = wrap.scrollHeight;
+    wrap.scrollTop = 99999; forceScrollBottom(); setTimeout(forceScrollBottom, 200); setTimeout(forceScrollBottom, 600);
     var lastMsg = wrap.lastElementChild;
     if(lastMsg) lastMsg.scrollIntoView({behavior:'smooth', block:'end'});
   }, 150);
-  setTimeout(function(){ wrap.scrollTop = wrap.scrollHeight; }, 500);
+  setTimeout(function(){ wrap.scrollTop = 99999; forceScrollBottom(); setTimeout(forceScrollBottom, 200); setTimeout(forceScrollBottom, 600); }, 500);
   }
   var chatMessages = document.getElementById('chatMessages');
   if (chatMessages) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
+}
+
+
+// SCROLL FIX — guaranteed bottom scroll
+function forceScrollBottom() {
+  try {
+    var w = document.getElementById('chatWrap');
+    if(w) { w.scrollTop = 99999; }
+    var msgs = document.querySelectorAll('.message, [class*="msg"], [class*="bubble"]');
+    if(msgs.length > 0) {
+      msgs[msgs.length-1].scrollIntoView({block:'end'});
+    }
+  } catch(e) {}
+}
+
+
+// Legal note ekle AI cevabına
+function addLegalNote(bubble) {
+  var note = document.createElement('div');
+  note.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);line-height:1.6;';
+  note.innerHTML = 'Not financial or legal advice. Educational purposes only. Approval probabilities are estimates based on historical HMDA data — individual outcomes vary. Consult a licensed mortgage professional before making decisions. All lenders referenced are legitimate institutions. <a href="/terms.html" style="color:rgba(255,255,255,0.25);">Terms</a>';
+  bubble.appendChild(note);
 }
 
 async function sendMessage(){
