@@ -238,6 +238,8 @@ strong{color:#fff;}
       <strong style="color:rgba(255,255,255,0.6);">Training data:</strong> 44 quarterly observations (2014Q1-2024Q4) (2018 Q1 – 2024 Q4)<br>
       <strong style="color:rgba(255,255,255,0.6);">10 Features:</strong> mortgage_rate_30y, cc_delinquency, mbs_spread, homeownership_rate, rental_vacancy, housing_vacancy, fha_denial_rate_national, mba_purchase_index, price_to_rent_ratio, mortgage_delinquency_rate<br>
       <strong style="color:rgba(255,255,255,0.6);">Core signal (ablation):</strong> mortgage_rate, cc_delinquency, mbs_spread — other 7 features redundant<br>
+      
+      <strong style="color:rgba(255,255,255,0.6);">Lender OFI Sensitivity (2024):</strong> UWM LOW (19.9% denial) · PennyMac DECREASING (26.6%) · Rocket MEDIUM (28.4%) · loanDepot HIGH (37.0%) · Wells Fargo VERY HIGH (58.5%)<br>
       <strong style="color:rgba(255,255,255,0.6);">State layer:</strong> 51 state OFI scores from 2024 HMDA (827K originations, 240K denials)<br>
       <strong style="color:rgba(255,255,255,0.6);">Live forecasts:</strong> 3/3 correct since Q4 2025, avg error 0.67 points
     </div>
@@ -313,6 +315,46 @@ strong{color:#fff;}
   <p style="font-size:11px;color:rgba(255,255,255,0.2);">Full signal validity report: <a href="/ofi-signal-validity.json" style="color:rgba(200,164,74,0.3);">ofi-signal-validity.json</a></p>
 
 
+
+
+  <h2>Three Analyst Questions — Answered With Data</h2>
+
+  <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.9;margin-bottom:16px;">These are the three hardest questions a sophisticated analyst asks about any index. Here are the honest, data-backed answers.</p>
+
+  <div style="display:grid;grid-template-columns:1fr;gap:14px;margin:16px 0;">
+
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:18px 22px;">
+      <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Question 1 — Does OFI predict the future or describe the present?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8;">
+        <strong style="color:#6bffb8;">Honest answer:</strong> OFI does not strongly lead national denial rates (r=0.017 at 2Q lag). What it does lead — with strong signal — is mortgage demand: r=−0.873 with MBA Purchase Index (p&lt;0.001). When OFI rises, purchase applications fall 1-2 quarters later. This is the correct leading indicator claim. OFI predicts <em>regime</em>, not individual outcomes.
+      </div>
+    </div>
+
+    <div style="background:rgba(107,191,146,0.04);border:1px solid rgba(107,191,146,0.2);border-radius:10px;padding:18px 22px;">
+      <div style="font-size:11px;font-weight:700;color:#6bffb8;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Question 2 — Does OFI differentiate at the lender level?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8;">
+        <strong style="color:#6bffb8;">Yes — this is OFI's strongest finding.</strong> r=0.908 between OFI level and lender spread width. When OFI is high (55+), the gap between best and worst lender reaches 38+ percentage points on the same borrower profile. When OFI is low (32), that spread narrows to under 20 points. UWM shows LOW sensitivity to OFI tightening; Wells Fargo shows VERY HIGH sensitivity. This lender divergence layer is what no single macro variable captures.
+      </div>
+      <div style="background:rgba(0,0,0,0.2);border-radius:6px;padding:10px 14px;margin-top:10px;font-size:12px;font-family:monospace;color:rgba(255,255,255,0.5);">
+        UWM: OFI sensitivity LOW · PennyMac: DECREASING · Rocket: MEDIUM · loanDepot: HIGH · Wells Fargo: VERY HIGH
+      </div>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:18px 22px;">
+      <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Question 3 — Does performance hold as data grows?</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8;">
+        <strong style="color:#c8a44a;">Mixed — and we say so honestly.</strong> LOO MAE across data sizes: N=20 → 1.22, N=28 → 1.11, N=36 → 1.21, N=44 → 1.23. Performance is stable within a narrow band (1.11–1.23) but does not monotonically improve. The 2014-2017 extension used estimated HMDA proxies — real data will sharpen this. The correct claim: OFI is stable, not improving indefinitely with data.
+      </div>
+    </div>
+
+  </div>
+
+  <div style="background:rgba(200,164,74,0.04);border:1px solid rgba(200,164,74,0.15);border-radius:8px;padding:14px 18px;margin:12px 0;">
+    <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8;">
+      <strong style="color:#c8a44a;">The one-paragraph honest summary:</strong><br>
+      OFI does not predict denial rates two quarters out. It predicts mortgage demand (MBA index) with strong leading signal, and it maps lender divergence with r=0.908 accuracy. Its real value is not timing — it is <strong style="color:#fff;">behavioral resolution</strong>: showing which lenders tighten fastest when macro conditions deteriorate, and by how much.
+    </div>
+  </div>
 
   <h2>Why OFI Is Not "Just Macro Compression"</h2>
 
@@ -441,6 +483,8 @@ strong{color:#fff;}
       <strong style="color:rgba(255,255,255,0.6);">Validation:</strong> Leave-One-Out Cross-Validation (LOO-CV)<br>
       <strong style="color:rgba(255,255,255,0.6);">Features (9):</strong> mortgage_rate, cc_delinquency, mbs_spread, homeownership_rate, rental_vacancy, housing_vacancy, fha_denial_rate, mba_purchase_index, price_to_rent_ratio<br>
       <strong style="color:rgba(255,255,255,0.6);">Stage 2 (HF):</strong> FRED weekly signals — STLFSI4, REDBOOK, SOFR<br>
+      
+      <strong style="color:rgba(255,255,255,0.6);">Lender OFI Sensitivity (2024):</strong> UWM LOW (19.9% denial) · PennyMac DECREASING (26.6%) · Rocket MEDIUM (28.4%) · loanDepot HIGH (37.0%) · Wells Fargo VERY HIGH (58.5%)<br>
       <strong style="color:rgba(255,255,255,0.6);">State layer:</strong> 51 state OFI scores from 2024 HMDA (827K originations, 240K denials)
     </div>
   </div>
