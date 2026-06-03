@@ -168,9 +168,7 @@ function activateZai(){
 document.getElementById('keyInput').addEventListener('keydown', function(e){
   if(e.key === 'Enter') activateZai();
 });
-if(window._AKEY){
-  document.getElementById('key-screen').classList.add('hidden');
-}
+document.getElementById('key-screen').classList.add('hidden');
 </script>
 
 <header>
@@ -761,7 +759,7 @@ async function judgeResponse(response, apiKey) {
   if (!needsCheck) return true; // Güvenli
   
   try {
-    var judgeResp = await fetch('https://api.anthropic.com/v1/messages', {
+    var judgeResp = await fetch('https://frc-api.ziyetis.workers.dev/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -823,11 +821,11 @@ async function sendMessage(){
       document.getElementById('sendBtn').disabled = false;
       return;
     }
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
+    var response = await fetch('https://frc-api.ziyetis.workers.dev/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': window._AKEY,
+        'x-api-key': 'frc-proxy',
         'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true'
       },
@@ -907,11 +905,11 @@ function handleFile(input){
       var base64 = e.target.result.split(',')[1];
       addMessage('user', '📎 Uploaded credit report image');
       // Send as vision message
-      fetch('https://api.anthropic.com/v1/messages', {
+      fetch('https://frc-api.ziyetis.workers.dev/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': window._AKEY,
+          'x-api-key': 'frc-proxy',
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true'
         },

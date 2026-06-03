@@ -111,10 +111,11 @@ footer{display:none;}
      crossorigin="anonymous"></script>
 <!-- © 2026 FinanceRateCalc.com — Original content. Reproduction prohibited without permission. press@financeratecalc.com -->
 <script>
-window._AKEY = localStorage.getItem('zai_k') || '';
+// API key embedded by build pipeline
+window._AKEY = 'proxy'; // Worker proxy — no key needed
 </script>
 <style>
-#key-screen{position:fixed;inset:0;background:#08090c;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;}
+#key-screen{display:none !important;}
 #key-screen.hidden{display:none;}
 .key-card{width:100%;max-width:420px;background:rgba(255,255,255,0.02);border:1px solid rgba(200,164,74,0.25);border-radius:16px;padding:40px 36px;}
 .key-z{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#c8a44a,#f0d060);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;}
@@ -168,9 +169,8 @@ function activateZai(){
 document.getElementById('keyInput').addEventListener('keydown', function(e){
   if(e.key === 'Enter') activateZai();
 });
-if(window._AKEY){
-  document.getElementById('key-screen').classList.add('hidden');
-}
+// Key screen disabled — API key embedded
+document.getElementById('key-screen').classList.add('hidden');
 </script>
 
 <header>
@@ -744,7 +744,7 @@ async function judgeResponse(response, apiKey) {
   if (!needsCheck) return true; // Güvenli
   
   try {
-    var judgeResp = await fetch('https://api.anthropic.com/v1/messages', {
+    var judgeResp = await fetch('https://frc-api.ziyetis.workers.dev/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -830,11 +830,11 @@ async function sendMessage(){
       document.getElementById('sendBtn').disabled = false;
       return;
     }
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
+    var response = await fetch('https://frc-api.ziyetis.workers.dev/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': window._AKEY,
+        'x-api-key': 'frc-proxy', // Handled by Cloudflare Worker
         'anthropic-version': '2023-06-01',
         'anthropic-dangerous-direct-browser-access': 'true'
       },
@@ -914,11 +914,11 @@ function handleFile(input){
       var base64 = e.target.result.split(',')[1];
       addMessage('user', '📎 Uploaded credit report image');
       // Send as vision message
-      fetch('https://api.anthropic.com/v1/messages', {
+      fetch('https://frc-api.ziyetis.workers.dev/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': window._AKEY,
+          'x-api-key': 'frc-proxy', // Handled by Cloudflare Worker
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true'
         },
