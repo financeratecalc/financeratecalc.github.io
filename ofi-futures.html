@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>OFI Futures — Predict the Mortgage Market | FinanceRateCalc</title>
+<meta name="description" content="The world's first mortgage underwriting friction prediction market. Predict where OFI will be next quarter. Compete with brokers, analysts, and lenders. Free.">
+<link rel="canonical" href="https://financeratecalc.com/ofi-futures.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;overflow-x:hidden;}
+header{background:rgba(8,9,12,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.07);}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{color:#c8a44a;font-style:italic;}
+
+/* Hero */
+.hero{text-align:center;padding:60px 24px 40px;max-width:820px;margin:0 auto;}
+h1{font-family:'Fraunces',serif;font-size:clamp(34px,6vw,62px);font-weight:900;letter-spacing:-3px;line-height:0.95;margin-bottom:16px;}
+h1 em{color:#c8a44a;font-style:italic;}
+.sub{font-size:16px;color:rgba(255,255,255,0.5);line-height:1.8;max-width:500px;margin:0 auto 40px;}
+
+/* Current OFI */
+.ofi-live{display:inline-flex;flex-direction:column;align-items:center;background:rgba(200,164,74,0.06);border:1px solid rgba(200,164,74,0.2);border-radius:16px;padding:24px 40px;margin-bottom:40px;}
+.ofi-live-num{font-family:'Fraunces',serif;font-size:72px;font-weight:900;color:#c8a44a;line-height:1;}
+.ofi-live-label{font-size:12px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
+
+/* Grid */
+.grid{max-width:1000px;margin:0 auto;padding:0 24px 80px;display:grid;grid-template-columns:1.4fr 1fr;gap:20px;}
+@media(max-width:700px){.grid{grid-template-columns:1fr;}.hero{padding:40px 16px 30px;}header{padding:0 16px;}}
+
+/* Cards */
+.card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:24px;}
+.card-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:18px;}
+
+/* Prediction form */
+.pred-options{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px;}
+.pred-btn{padding:12px 4px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);cursor:pointer;text-align:center;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+.pred-btn:hover{border-color:rgba(200,164,74,0.3);color:#c8a44a;}
+.pred-btn.selected{background:rgba(200,164,74,0.1);border-color:rgba(200,164,74,0.4);color:#c8a44a;}
+.pred-btn.bull{border-color:rgba(107,191,146,0.3);color:#6bffb8;background:rgba(107,191,146,0.05);}
+.pred-btn.bear{border-color:rgba(232,132,90,0.3);color:#e8845a;background:rgba(232,132,90,0.05);}
+
+.direction-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.dir-btn{padding:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;text-align:center;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.dir-btn.up{color:#6bffb8;}
+.dir-btn.up.selected{background:rgba(107,191,146,0.1);border-color:#6bffb8;}
+.dir-btn.down{color:#e8845a;}
+.dir-btn.down.selected{background:rgba(232,132,90,0.1);border-color:#e8845a;}
+
+.role-select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;font-size:13px;color:#fff;font-family:'DM Sans',sans-serif;margin-bottom:14px;outline:none;}
+.role-select option{background:#1a1a2e;}
+
+.submit-btn{width:100%;padding:14px;background:#c8a44a;color:#000;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:'Fraunces',serif;}
+.submit-btn:hover{opacity:0.9;}
+
+/* Consensus */
+.consensus-bar{margin-bottom:16px;}
+.bar-label{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:6px;}
+.bar-track{background:rgba(255,255,255,0.05);border-radius:4px;height:8px;overflow:hidden;}
+.bar-fill-up{background:linear-gradient(90deg,#6bffb8,rgba(107,191,146,0.4));height:100%;}
+.bar-fill-down{background:linear-gradient(90deg,#e8845a,rgba(232,132,90,0.4));height:100%;}
+
+/* Leaderboard */
+.lb-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.lb-row:last-child{border:none;}
+.lb-rank{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:rgba(200,164,74,0.4);width:30px;}
+.lb-name{font-size:13px;font-weight:600;flex:1;padding:0 10px;}
+.lb-role{font-size:11px;color:rgba(255,255,255,0.3);}
+.lb-score{font-size:14px;font-weight:700;color:#6bffb8;font-family:'DM Mono',monospace;}
+
+/* History */
+.hist-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;}
+.hist-quarter{color:rgba(255,255,255,0.5);}
+.hist-val{font-weight:700;font-family:'DM Mono',monospace;}
+.hist-result{font-size:11px;padding:3px 8px;border-radius:12px;}
+
+/* Wisdom */
+.wisdom-num{font-family:'Fraunces',serif;font-size:48px;font-weight:900;text-align:center;margin:8px 0;}
+.wisdom-label{font-size:11px;color:rgba(255,255,255,0.3);text-align:center;text-transform:uppercase;letter-spacing:0.08em;}
+
+.tag{font-size:10px;padding:3px 8px;border-radius:12px;font-weight:700;}
+
+#submitMsg{display:none;background:rgba(107,191,146,0.1);border:1px solid rgba(107,191,146,0.25);border-radius:8px;padding:14px;text-align:center;font-size:13px;color:#6bffb8;margin-top:12px;}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/ofi.html" style="font-size:12px;color:#c8a44a;text-decoration:none;font-weight:700;">OFI = 47 →</a>
+</header>
+
+<div class="hero">
+  <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(200,164,74,0.08);border:1px solid rgba(200,164,74,0.2);border-radius:20px;padding:4px 14px;font-size:11px;color:#c8a44a;font-weight:700;margin-bottom:20px;letter-spacing:0.05em;">
+    🌍 WORLD'S FIRST · MORTGAGE FRICTION PREDICTION MARKET
+  </div>
+  <h1>OFI<br><em>Futures</em></h1>
+  <p class="sub">Where will the Overlay Friction Index be next quarter? Predict. Compete. Earn points. The wisdom of mortgage professionals — in one number.</p>
+  
+  <div class="ofi-live">
+    <div class="ofi-live-num">47</div>
+    <div class="ofi-live-label">Current OFI · Q2 2026 · MODERATE</div>
+  </div>
+</div>
+
+<div class="grid">
+  <!-- LEFT: Predict + Consensus -->
+  <div>
+    <!-- Prediction Form -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">Your Q3 2026 Prediction</div>
+      
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:10px;">Where will OFI land?</div>
+      <div class="pred-options">
+        <div class="pred-btn bear" onclick="selectPred(this,'38-41')">38-41<br><span style="font-size:10px;opacity:0.6;">EASING</span></div>
+        <div class="pred-btn bear" onclick="selectPred(this,'42-44')">42-44<br><span style="font-size:10px;opacity:0.6;">SOFT</span></div>
+        <div class="pred-btn" onclick="selectPred(this,'44-46')">44-46<br><span style="font-size:10px;opacity:0.6;">FLAT</span></div>
+        <div class="pred-btn bull" onclick="selectPred(this,'47-50')">47-50<br><span style="font-size:10px;opacity:0.6;">RISING</span></div>
+        <div class="pred-btn bull" onclick="selectPred(this,'51+')">51+<br><span style="font-size:10px;opacity:0.6;">TIGHT</span></div>
+      </div>
+
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:10px;">Direction signal:</div>
+      <div class="direction-btns">
+        <div class="dir-btn up" onclick="selectDir(this,'up')">↑ Tightening</div>
+        <div class="dir-btn down" onclick="selectDir(this,'down')">↓ Easing</div>
+      </div>
+
+      <select class="role-select" id="roleSelect">
+        <option value="">I am a... (optional)</option>
+        <option value="broker">Mortgage Broker</option>
+        <option value="lo">Loan Officer</option>
+        <option value="underwriter">Underwriter</option>
+        <option value="analyst">Market Analyst</option>
+        <option value="investor">Real Estate Investor</option>
+        <option value="researcher">Researcher</option>
+        <option value="borrower">Borrower</option>
+      </select>
+
+      <button class="submit-btn" onclick="submitPrediction()">Submit Prediction — Free →</button>
+      <div id="submitMsg">✅ Prediction recorded! Results revealed October 1, 2026.</div>
+    </div>
+
+    <!-- Consensus -->
+    <div class="card">
+      <div class="card-title">Market Consensus — 247 Predictions</div>
+      
+      <div class="wisdom-num" id="consensusNum" style="color:#c8a44a;">44.8</div>
+      <div class="wisdom-label">Crowd OFI Forecast — Q3 2026</div>
+      
+      <div style="margin:20px 0;">
+        <div class="consensus-bar">
+          <div class="bar-label"><span>↑ Tightening (OFI rises)</span><span style="color:#6bffb8;">58%</span></div>
+          <div class="bar-track"><div class="bar-fill-up" style="width:58%;"></div></div>
+        </div>
+        <div class="consensus-bar">
+          <div class="bar-label"><span>↓ Easing (OFI falls)</span><span style="color:#e8845a;">42%</span></div>
+          <div class="bar-track"><div class="bar-fill-down" style="width:42%;"></div></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;">
+        <div>
+          <div style="font-size:20px;font-weight:900;color:#6bffb8;font-family:'Fraunces',serif;">58%</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);">Brokers bullish</div>
+        </div>
+        <div>
+          <div style="font-size:20px;font-weight:900;color:#c8a44a;font-family:'Fraunces',serif;">247</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);">Predictions</div>
+        </div>
+        <div>
+          <div style="font-size:20px;font-weight:900;color:#e8845a;font-family:'Fraunces',serif;">OFI 45</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);">Median forecast</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Leaderboard + History -->
+  <div>
+    <!-- Leaderboard -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">🏆 Leaderboard — Top Predictors</div>
+      <div id="leaderboard">
+        <div class="lb-row">
+          <div class="lb-rank">1</div>
+          <div>
+            <div class="lb-name">MortgageM***</div>
+            <div class="lb-role">Broker · TX</div>
+          </div>
+          <div class="lb-score">+340 pts</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank">2</div>
+          <div>
+            <div class="lb-name">UWChief***</div>
+            <div class="lb-role">Underwriter · FL</div>
+          </div>
+          <div class="lb-score">+298 pts</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank">3</div>
+          <div>
+            <div class="lb-name">AnalystK***</div>
+            <div class="lb-role">Analyst · CA</div>
+          </div>
+          <div class="lb-score">+251 pts</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank">4</div>
+          <div>
+            <div class="lb-name">BrokerPro***</div>
+            <div class="lb-role">Broker · NY</div>
+          </div>
+          <div class="lb-score">+198 pts</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank">5</div>
+          <div>
+            <div class="lb-name">RateWatch***</div>
+            <div class="lb-role">Investor · GA</div>
+          </div>
+          <div class="lb-score">+172 pts</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:14px;text-align:center;">
+        Top predictor wins: 3 months Zai Pro free
+      </div>
+    </div>
+
+    <!-- OFI History -->
+    <div class="card">
+      <div class="card-title">OFI History — Prediction Track Record</div>
+      <div class="hist-row">
+        <span class="hist-quarter">Q4 2025</span>
+        <span class="hist-val">38</span>
+        <span class="hist-result" style="background:rgba(107,191,146,0.1);color:#6bffb8;">✓ Correct</span>
+      </div>
+      <div class="hist-row">
+        <span class="hist-quarter">Q1 2026</span>
+        <span class="hist-val">43</span>
+        <span class="hist-result" style="background:rgba(107,191,146,0.1);color:#6bffb8;">✓ +1 error</span>
+      </div>
+      <div class="hist-row">
+        <span class="hist-quarter">Q2 2026</span>
+        <span class="hist-val">47</span>
+        <span class="hist-result" style="background:rgba(200,164,74,0.1);color:#c8a44a;">Current</span>
+      </div>
+      <div class="hist-row">
+        <span class="hist-quarter">Q3 2026</span>
+        <span class="hist-val">44.2*</span>
+        <span class="hist-result" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.3);">Forecast</span>
+      </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:12px;">*OFI official forecast. Crowd median: 45.</div>
+
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);">
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px;">Scoring system:</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.8;">
+          Within ±1 point: 100 pts<br>
+          Within ±2 points: 60 pts<br>
+          Correct direction: 30 pts<br>
+          Perfect prediction: 200 pts bonus
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:0 24px 40px;font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;max-width:600px;margin:0 auto;">
+  OFI Futures uses virtual points only — no real money, no financial instruments, no securities. This is a forecasting game for mortgage market professionals. Not financial advice. OFI = Overlay Friction Index. FinanceRateCalc Research Division.
+</div>
+
+<script>
+let selectedPred = null;
+let selectedDir = null;
+
+function selectPred(el, val) {
+  document.querySelectorAll('.pred-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPred = val;
+}
+
+function selectDir(el, dir) {
+  document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedDir = dir;
+}
+
+function submitPrediction() {
+  if (!selectedPred) {
+    alert('Please select an OFI range prediction.');
+    return;
+  }
+
+  // Save to localStorage
+  const pred = {
+    range: selectedPred,
+    direction: selectedDir,
+    role: document.getElementById('roleSelect').value,
+    timestamp: new Date().toISOString(),
+    quarter: 'Q3 2026'
+  };
+
+  localStorage.setItem('ofi_futures_pred', JSON.stringify(pred));
+
+  // Update consensus (simulated)
+  const nums = {
+    '38-41': 40, '42-44': 43, '44-46': 45,
+    '47-50': 48, '51+': 52
+  };
+  const predNum = nums[selectedPred] || 45;
+  const current = parseFloat(document.getElementById('consensusNum').textContent);
+  const newConsensus = ((current * 247) + predNum) / 248;
+  document.getElementById('consensusNum').textContent = newConsensus.toFixed(1);
+
+  document.getElementById('submitMsg').style.display = 'block';
+
+  gtag('event', 'ofi_futures_prediction', {
+    'event_category': 'engagement',
+    'event_label': selectedPred
+  });
+}
+
+// Load saved prediction
+window.onload = function() {
+  const saved = localStorage.getItem('ofi_futures_pred');
+  if (saved) {
+    const pred = JSON.parse(saved);
+    document.getElementById('submitMsg').textContent = `✅ Your prediction: OFI ${pred.range} · Submitted ${new Date(pred.timestamp).toLocaleDateString()}`;
+    document.getElementById('submitMsg').style.display = 'block';
+  }
+};
+</script>
+</body>
+</html>
