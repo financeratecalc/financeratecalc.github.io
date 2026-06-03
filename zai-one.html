@@ -374,6 +374,45 @@ function calcDTI() {
 }
 
 
+
+function buildTrendRow(route) {
+  const trendMap = {
+    'FHA-Specialist': [
+      {name:'CrossCountry', r2018:8.6, r2024:5.5, change:-3.1, dir:'improving'},
+      {name:'UWM', r2018:15.7, r2024:19.9, change:+4.2, dir:'worsening'},
+      {name:'Freedom', r2018:49.0, r2024:24.4, change:-24.6, dir:'improving'},
+    ],
+    'Flexible-Conventional': [
+      {name:'PennyMac', r2018:52.8, r2024:26.6, change:-26.2, dir:'improving'},
+      {name:'Rocket', r2018:34.8, r2024:28.4, change:-6.4, dir:'improving'},
+    ],
+    'Portfolio-NonQM': [
+      {name:'PennyMac', r2018:52.8, r2024:26.6, change:-26.2, dir:'improving'},
+    ],
+    'Conservative-Bank': [
+      {name:'Wells Fargo', r2018:46.7, r2024:58.5, change:+11.8, dir:'worsening'},
+      {name:'loanDepot', r2018:40.0, r2024:37.0, change:-3.0, dir:'stable'},
+    ]
+  };
+
+  // route string'den DNA çıkar
+  let dna = 'FHA-Specialist';
+  if(route && route.includes('Conventional')) dna = 'Flexible-Conventional';
+  if(route && route.includes('Portfolio')) dna = 'Portfolio-NonQM';
+  if(route && route.includes('Conservative')) dna = 'Conservative-Bank';
+
+  const lenders = trendMap[dna] || trendMap['FHA-Specialist'];
+  return lenders.map(l => {
+    const color = l.dir === 'improving' ? '#6bffb8' : l.dir === 'worsening' ? '#e8845a' : '#C8A84B';
+    const arrow = l.dir === 'improving' ? '↓' : l.dir === 'worsening' ? '↑' : '→';
+    const changeStr = l.change > 0 ? '+'+l.change.toFixed(1) : l.change.toFixed(1);
+    return \`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px;">
+      <span style="color:rgba(255,255,255,0.6);">\${l.name}</span>
+      <span>\${l.r2018}% → <strong>\${l.r2024}%</strong> <span style="color:\${color};">\${arrow} \${changeStr}pp</span></span>
+    </div>\`;
+  }).join('');
+}
+
 function buildLenderScores(fico, dti, income, ofi, loanType) {
   const f = parseInt(fico), d = parseFloat(dti), o = parseInt(ofi);
   
@@ -584,6 +623,14 @@ DETAIL: [4-5 sentence broker analysis — address nonlinear interactions, score 
       <div class="d-ofi">
         <div class="d-ofi-text">${ofiLine||state+' — OFI '+ofi}</div>
         <div class="d-ofi-num">OFI ${ofi}</div>
+      </div>
+
+      <div class="d-reasons" style="border-color:rgba(200,168,75,0.15);">
+        <div class="d-reasons-title" style="color:rgba(200,168,75,0.5);">7-Year Lender Trend (HMDA 2018–2024)</div>
+        ${buildTrendRow(route)}
+        <div style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:8px;">
+          <a href="/lender-trends.html" style="color:rgba(200,168,75,0.4);">View full trend data →</a>
+        </div>
       </div>
 
       <div class="d-reasons" style="border-color:rgba(107,255,184,0.15);">

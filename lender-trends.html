@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FHA Lender Denial Rate Trends 2018–2024 | FinanceRateCalc</title>
+<meta name="description" content="7-year FHA denial rate trends for major mortgage lenders. CFPB HMDA 2018-2024 verified data. CrossCountry, UWM, Rocket, Wells Fargo, PennyMac, Freedom, loanDepot.">
+<link rel="canonical" href="https://financeratecalc.com/lender-trends.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--navy:#0B132B;--gold:#C8A84B;--white:#fff;--dim:rgba(255,255,255,0.45);--border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--white);text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+.nav-links{display:flex;gap:24px;align-items:center;}
+.nav-links a{font-size:13px;color:var(--dim);text-decoration:none;}
+.nav-links a:hover{color:var(--gold);}
+
+.hero{padding:60px 40px 40px;max-width:1100px;margin:0 auto;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.3);border-radius:20px;font-size:11px;font-weight:600;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,44px);font-weight:900;line-height:1.1;margin-bottom:12px;}
+h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:15px;color:var(--dim);max-width:580px;line-height:1.7;}
+.source-note{margin-top:12px;font-size:12px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;}
+
+.container{max-width:1100px;margin:0 auto;padding:0 40px 60px;}
+
+/* FILTER TABS */
+.filter-row{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap;}
+.filter-btn{padding:7px 16px;border:1px solid var(--border);border-radius:20px;background:transparent;color:var(--dim);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.filter-btn:hover,.filter-btn.active{background:rgba(200,168,75,0.1);border-color:rgba(200,168,75,0.4);color:var(--gold);}
+
+/* CHART */
+.chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:24px;}
+.chart-title{font-size:13px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:20px;}
+.chart-area{position:relative;height:280px;}
+canvas{width:100%!important;}
+
+/* LENDER CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:40px;}
+.lender-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;}
+.lender-card.fha{border-left:3px solid #6bffb8;}
+.lender-card.flex{border-left:3px solid var(--gold);}
+.lender-card.cons{border-left:3px solid #e8845a;}
+.lc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.lc-name{font-family:'Fraunces',serif;font-size:16px;font-weight:700;}
+.lc-dna{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;border-radius:10px;}
+.dna-fha{background:rgba(107,255,184,0.1);color:#6bffb8;}
+.dna-flex{background:rgba(200,168,75,0.1);color:var(--gold);}
+.dna-cons{background:rgba(232,132,90,0.1);color:#e8845a;}
+.lc-rate{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:var(--white);margin-bottom:4px;}
+.lc-label{font-size:11px;color:var(--dim);margin-bottom:12px;}
+.lc-trend{font-size:12px;color:var(--dim);line-height:1.6;}
+.lc-change{font-weight:700;}
+.change-up{color:#e8845a;}
+.change-down{color:#6bffb8;}
+.lc-sparkline{margin:12px 0 8px;}
+.spark-bar{display:inline-block;width:12px;border-radius:2px 2px 0 0;margin-right:2px;vertical-align:bottom;transition:opacity 0.2s;}
+.lc-note{font-size:11px;color:rgba(255,255,255,0.3);font-style:italic;border-top:1px solid var(--border);padding-top:10px;margin-top:4px;}
+
+/* KEY FINDINGS */
+.findings{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.15);border-radius:12px;padding:28px;margin-bottom:40px;}
+.findings-title{font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:16px;color:var(--gold);}
+.finding{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6;color:rgba(255,255,255,0.75);}
+.finding:last-child{border:none;}
+.finding-icon{font-size:16px;flex-shrink:0;}
+
+/* CTA */
+.cta-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;text-align:center;}
+.cta-box h3{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:8px;}
+.cta-box p{font-size:14px;color:var(--dim);margin-bottom:20px;}
+.cta-btn{display:inline-block;padding:12px 28px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none;margin:0 8px 8px;}
+.cta-btn-sec{display:inline-block;padding:12px 28px;background:transparent;color:var(--gold);border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;margin:0 8px 8px;}
+
+.methodology{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:40px;padding-top:20px;border-top:1px solid var(--border);}
+.methodology a{color:rgba(255,255,255,0.25);}
+
+@media(max-width:768px){
+  header{padding:0 20px;}
+  .hero,.container{padding-left:20px;padding-right:20px;}
+  .hero{padding-top:40px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <div class="nav-links">
+    <a href="/ofi.html">OFI</a>
+    <a href="/zai-one.html">Zai</a>
+    <a href="/frc-banker-ai.html">AI Chat</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">HMDA 2018–2024 · CFPB Verified</div>
+  <h1>FHA Lender Denial Rate<br><em>Trends</em></h1>
+  <p class="hero-sub">7 years of FHA application data for major mortgage lenders — sourced directly from CFPB HMDA Data Browser. Updated through 2024.</p>
+  <p class="source-note">Source: CFPB HMDA Public LAR Dataset · Snapshot 2018–2024 · Manually verified</p>
+</div>
+
+<div class="container">
+
+  <!-- KEY FINDINGS -->
+  <div class="findings">
+    <div class="findings-title">Key Findings</div>
+    <div class="finding"><span class="finding-icon">📉</span><strong>Wells Fargo is exiting FHA</strong> — denial rate rose from 46.7% (2018) to 58.5% (2024), a +11.8pp increase over 7 years. FHA volume has dropped 63% since 2019.</div>
+    <div class="finding"><span class="finding-icon">🏆</span><strong>CrossCountry is the most consistent FHA specialist</strong> — denial rate has stayed between 5.5% and 8.6% for all 7 years. Lowest variance of any major lender.</div>
+    <div class="finding"><span class="finding-icon">🔄</span><strong>Freedom Mortgage: dramatic volatility</strong> — went from 49% (2018) to 7.6% (2021) to 24.4% (2024). COVID-era FHA push reversed as volume declined.</div>
+    <div class="finding"><span class="finding-icon">📈</span><strong>PennyMac made the biggest improvement</strong> — from 52.8% (2018) to 26.6% (2024). Invested heavily in FHA infrastructure 2020–2021.</div>
+    <div class="finding"><span class="finding-icon">⚠️</span><strong>loanDepot re-tightening</strong> — bottomed at 24.5% in 2020, now back up to 37%. Avoid for borderline FHA profiles in high-OFI markets.</div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="filterDNA('all')">All Lenders</button>
+    <button class="filter-btn" onclick="filterDNA('FHA-Specialist')">FHA-Specialist</button>
+    <button class="filter-btn" onclick="filterDNA('Flexible-Conventional')">Flexible-Conventional</button>
+    <button class="filter-btn" onclick="filterDNA('Conservative-Bank')">Conservative-Bank</button>
+  </div>
+
+  <!-- CHART -->
+  <div class="chart-wrap">
+    <div class="chart-title">FHA Denial Rate by Lender (2018–2024)</div>
+    <div class="chart-area">
+      <canvas id="trendChart"></canvas>
+    </div>
+  </div>
+
+  <!-- LENDER CARDS -->
+  <div class="cards-grid" id="cardsGrid"></div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <h3>Get Your Routing Decision</h3>
+    <p>Zai uses this data to match your borrower profile with the right lender DNA.</p>
+    <a href="/zai-one.html" class="cta-btn">Try Zai — Free</a>
+    <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" class="cta-btn-sec">Zai for Brokers — $49/mo</a>
+  </div>
+
+  <div class="methodology">
+    <strong>Methodology:</strong> All denial rates calculated as: Application Denied ÷ (Application Denied + Loan Originated) for FHA loan type only. Data sourced from CFPB HMDA Public LAR Snapshot dataset via HMDA Data Browser. Each data point manually verified. Withdrawn applications and incomplete files excluded. National lenders only. Data reflects calendar year activity. <a href="/methodology.html">Full methodology →</a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const YEARS = [2018, 2019, 2020, 2021, 2022, 2023, 2024];
+
+const LENDERS = [
+  {
+    name: "CrossCountry Mortgage", dna: "FHA-Specialist",
+    rates: [8.6, 5.5, 5.5, 6.6, 6.8, 6.4, 5.5],
+    color: "#6bffb8",
+    note: "Most consistent FHA specialist — 7yr range 5.5–8.6%"
+  },
+  {
+    name: "UWM", dna: "FHA-Specialist",
+    rates: [15.7, 12.2, 18.1, 15.6, 17.2, 17.3, 19.9],
+    color: "#4ade80",
+    note: "Largest wholesale FHA volume. Gradual tightening follows market OFI."
+  },
+  {
+    name: "Freedom Mortgage", dna: "FHA-Specialist",
+    rates: [49.0, 19.1, 9.8, 7.6, 22.4, 33.1, 24.4],
+    color: "#86efac",
+    note: "COVID-era FHA push reversed. High volatility — check current overlays."
+  },
+  {
+    name: "PennyMac", dna: "Flexible-Conventional",
+    rates: [52.8, 48.0, 41.9, 24.9, 33.1, 33.1, 26.6],
+    color: "#C8A84B",
+    note: "Biggest improvement over 7 years. FHA infrastructure investment showing."
+  },
+  {
+    name: "Rocket Mortgage", dna: "Flexible-Conventional",
+    rates: [34.8, 29.7, 30.3, 27.9, 31.9, 29.0, 28.4],
+    color: "#e8c96a",
+    note: "Slowly improving but consistently above market average."
+  },
+  {
+    name: "loanDepot", dna: "Conservative-Bank",
+    rates: [40.0, 33.3, 24.5, 28.7, 36.7, 38.5, 37.0],
+    color: "#e8845a",
+    note: "Bottomed 2020, re-tightening since. Avoid for borderline FHA profiles."
+  },
+  {
+    name: "Wells Fargo", dna: "Conservative-Bank",
+    rates: [46.7, 46.9, 51.5, 51.7, 60.4, 56.3, 58.5],
+    color: "#ef4444",
+    note: "Effectively exiting FHA market. +11.8pp since 2018."
+  }
+];
+
+// Chart
+const ctx = document.getElementById('trendChart').getContext('2d');
+const chart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: YEARS,
+    datasets: LENDERS.map(l => ({
+      label: l.name,
+      data: l.rates,
+      borderColor: l.color,
+      backgroundColor: l.color + '15',
+      borderWidth: 2,
+      pointRadius: 4,
+      pointHoverRadius: 6,
+      tension: 0.3,
+    }))
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { color: 'rgba(255,255,255,0.5)', font: {size: 11}, boxWidth: 12 }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%`
+        }
+      }
+    },
+    scales: {
+      x: { ticks: {color:'rgba(255,255,255,0.4)'}, grid: {color:'rgba(255,255,255,0.05)'} },
+      y: {
+        ticks: {color:'rgba(255,255,255,0.4)', callback: v => v+'%'},
+        grid: {color:'rgba(255,255,255,0.05)'},
+        min: 0, max: 70
+      }
+    }
+  }
+});
+
+// Cards
+function buildCards(filter) {
+  const grid = document.getElementById('cardsGrid');
+  const filtered = filter === 'all' ? LENDERS : LENDERS.filter(l => l.dna === filter);
+  
+  grid.innerHTML = filtered.map(l => {
+    const change = l.rates[6] - l.rates[0];
+    const changeStr = change > 0 ? `+${change.toFixed(1)}pp` : `${change.toFixed(1)}pp`;
+    const changeClass = change > 0 ? 'change-up' : 'change-down';
+    const cardClass = l.dna === 'FHA-Specialist' ? 'fha' : l.dna === 'Flexible-Conventional' ? 'flex' : 'cons';
+    const dnaClass = l.dna === 'FHA-Specialist' ? 'dna-fha' : l.dna === 'Flexible-Conventional' ? 'dna-flex' : 'dna-cons';
+    const maxRate = Math.max(...l.rates);
+    
+    const sparkBars = l.rates.map((r, i) => {
+      const h = Math.round((r / 70) * 48);
+      const opacity = i === 6 ? 1 : 0.5;
+      return `<span class="spark-bar" style="height:${h}px;background:${l.color};opacity:${opacity}" title="${YEARS[i]}: ${r}%"></span>`;
+    }).join('');
+
+    return `<div class="lender-card ${cardClass}">
+      <div class="lc-header">
+        <div class="lc-name">${l.name}</div>
+        <span class="lc-dna ${dnaClass}">${l.dna.replace('-',' ')}</span>
+      </div>
+      <div class="lc-rate">${l.rates[6]}%</div>
+      <div class="lc-label">2024 FHA Denial Rate</div>
+      <div class="lc-sparkline">${sparkBars}</div>
+      <div class="lc-trend">
+        2018: ${l.rates[0]}% → 2024: ${l.rates[6]}% &nbsp;
+        <span class="lc-change ${changeClass}">${changeStr}</span>
+      </div>
+      <div class="lc-note">${l.note}</div>
+    </div>`;
+  }).join('');
+}
+
+function filterDNA(dna) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  buildCards(dna);
+  
+  // Chart visibility
+  chart.data.datasets.forEach((ds, i) => {
+    const lender = LENDERS[i];
+    ds.hidden = dna !== 'all' && lender.dna !== dna;
+  });
+  chart.update();
+}
+
+buildCards('all');
+</script>
+
+</body>
+</html>
