@@ -577,14 +577,14 @@ function addMessage(role, content){
   div.appendChild(contentDiv);
   wrap.appendChild(div);
   setTimeout(function(){
-    window.scrollTo(0, document.body.scrollHeight); setTimeout(forceScrollBottom, 300);
+    window.scrollTo(0, document.body.scrollHeight);
   setTimeout(function(){ 
-    window.scrollTo(0, document.body.scrollHeight); setTimeout(forceScrollBottom, 300);
+    window.scrollTo(0, document.body.scrollHeight);
     var lastMsg = wrap.lastElementChild;
     if(lastMsg) lastMsg.scrollIntoView({behavior:'smooth', block:'end'});
   }, 150);
-  setTimeout(function(){ window.scrollTo(0, document.body.scrollHeight); setTimeout(forceScrollBottom, 300); }, 500);
-    wrap.scrollTo({top:wrap.scrollHeight,behavior:'smooth'});
+  setTimeout(function(){ window.scrollTo(0, document.body.scrollHeight); }, 500);
+    window.scrollTo({top: document.body.scrollHeight, behavior: 'instant'});
   }, 100);
   // Legal note — sadece AI mesajlarına
   if(role === 'ai') {
@@ -594,14 +594,10 @@ function addMessage(role, content){
     bubble.appendChild(legalNote);
   }
   
-  // Force scroll to bottom — window based
+  // Scroll to bottom — single clean scroll
   setTimeout(function(){
-    window.scrollTo(0, document.body.scrollHeight);
-    forceScrollBottom();
-  }, 200);
-  setTimeout(function(){
-    window.scrollTo(0, document.body.scrollHeight);
-  }, 800);
+    window.scrollTo({top: document.body.scrollHeight, behavior: 'instant'});
+  }, 100);
   
   return bubble;
 }
@@ -642,7 +638,7 @@ function showTyping(){
   div.appendChild(avatar);
   div.appendChild(content);
   wrap.appendChild(div);
-  wrap.scrollTo({top:wrap.scrollHeight,behavior:"smooth"});
+  window.scrollTo({top: document.body.scrollHeight, behavior: 'instant'});
 }
 
 function removeTyping(){
@@ -853,13 +849,13 @@ function incrementFreeMsg() {
 function scrollToBottom() {
   var wrap = document.getElementById('chatWrap');
   if (wrap) {
-    window.scrollTo(0, document.body.scrollHeight); setTimeout(forceScrollBottom, 300);
+    window.scrollTo(0, document.body.scrollHeight);
   setTimeout(function(){ 
-    window.scrollTo(0, document.body.scrollHeight); setTimeout(forceScrollBottom, 300);
+    window.scrollTo(0, document.body.scrollHeight);
     var lastMsg = wrap.lastElementChild;
     if(lastMsg) lastMsg.scrollIntoView({behavior:'smooth', block:'end'});
   }, 150);
-  setTimeout(function(){ window.scrollTo(0, document.body.scrollHeight); setTimeout(forceScrollBottom, 300); }, 500);
+  setTimeout(function(){ window.scrollTo(0, document.body.scrollHeight); }, 500);
   }
   var chatMessages = document.getElementById('chatMessages');
   if (chatMessages) {
@@ -874,7 +870,7 @@ function forceScrollBottom() {
     window.scrollTo(0, document.body.scrollHeight);
     var msgs = document.querySelectorAll('.msg');
     if(msgs.length > 0) {
-      msgs[msgs.length-1].scrollIntoView({behavior:'smooth', block:'end'});
+      msgs[msgs.length-1].scrollIntoView({behavior:'instant', block:'end'});
     }
   } catch(e) {}
 }
