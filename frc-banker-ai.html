@@ -721,6 +721,23 @@ function addLegalNote(bubble) {
   bubble.appendChild(note);
 }
 
+
+async function fetchWithRetry(url, options, retries=2) {
+  for(let i=0; i<=retries; i++) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 25000);
+      const res = await fetch(url, {...options, signal: controller.signal});
+      clearTimeout(timeout);
+      if(res.ok) return res;
+      if(i === retries) throw new Error('HTTP ' + res.status);
+    } catch(e) {
+      if(i === retries) throw e;
+      await new Promise(r => setTimeout(r, 1500 * (i+1)));
+    }
+  }
+}
+
 async function sendMessage(){
   var input = document.getElementById('userInput');
   var text = input.value.trim();
@@ -758,7 +775,7 @@ async function sendMessage(){
       document.getElementById('sendBtn').disabled = false;
       return;
     }
-    var response = await fetch('https://frc-api.ziyetis.workers.dev/v1/messages', {
+    var response = await fetchWithRetry('https://frc-api.ziyetis.workers.dev/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -809,7 +826,7 @@ async function sendMessage(){
     }
   } catch(err) {
     removeTyping();
-    addMessage('ai', 'Connection issue. Please refresh and try again.');
+    addMessage('ai', 'Connecting... please wait a moment and try again.');
   }
 
   isLoading = false;
