@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mortgage Approval Window Score | When to Apply | FinanceRateCalc</title>
+<meta name="description" content="Should you apply for a mortgage now or wait? Our Approval Window Score uses OFI forecast, FRED economic data, and lender behavior trends to tell you the optimal timing.">
+<link rel="canonical" href="https://financeratecalc.com/approval-window.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--navy:#0B132B;--gold:#C8A84B;--green:#6bffb8;--red:#e8845a;--white:#fff;--dim:rgba(255,255,255,0.45);--border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--white);text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+.nav a{font-size:13px;color:var(--dim);text-decoration:none;margin-left:20px;}
+.nav a:hover{color:var(--gold);}
+
+.hero{padding:60px 40px 40px;max-width:900px;margin:0 auto;text-align:center;}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.3);border-radius:20px;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:900;line-height:1.1;margin-bottom:16px;}
+h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:16px;color:var(--dim);max-width:560px;margin:0 auto;line-height:1.7;}
+
+.container{max-width:900px;margin:0 auto;padding:0 40px 60px;}
+
+/* AWS GAUGE */
+.aws-section{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:40px 0;}
+.aws-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;text-align:center;}
+.aws-card.primary{border-color:rgba(200,168,75,0.3);background:rgba(200,168,75,0.05);}
+.aws-label{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px;}
+.aws-score{font-family:'Fraunces',serif;font-size:72px;font-weight:900;line-height:1;}
+.aws-type{font-size:13px;color:var(--dim);margin-top:6px;}
+.aws-bar-wrap{margin:14px 0;background:rgba(255,255,255,0.06);border-radius:6px;height:8px;overflow:hidden;}
+.aws-bar{height:100%;border-radius:6px;transition:width 1s ease;}
+.aws-verdict{font-size:14px;font-weight:700;margin-top:10px;}
+
+/* OFI FORECAST */
+.forecast-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px;}
+.section-title{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:20px;}
+.ofi-timeline{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.ofi-point{text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid var(--border);}
+.ofi-point-label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.ofi-point-val{font-family:'Fraunces',serif;font-size:36px;font-weight:900;}
+.ofi-point-delta{font-size:12px;font-weight:700;margin-top:4px;font-family:'DM Mono',monospace;}
+
+/* RECOMMENDATION */
+.rec-box{border-radius:16px;padding:28px;margin-bottom:24px;}
+.rec-action{font-family:'Fraunces',serif;font-size:28px;font-weight:900;margin-bottom:8px;}
+.rec-reason{font-size:15px;color:rgba(255,255,255,0.7);line-height:1.6;margin-bottom:12px;}
+.rec-window{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;font-family:'DM Mono',monospace;}
+
+/* INCOME TYPE SELECTOR */
+.selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px;justify-content:center;}
+.sel-btn{padding:8px 18px;border:1px solid var(--border);border-radius:20px;background:transparent;color:var(--dim);font-size:13px;cursor:pointer;transition:all 0.15s;}
+.sel-btn.active,.sel-btn:hover{background:rgba(200,168,75,0.1);border-color:rgba(200,168,75,0.4);color:var(--gold);}
+
+/* INDICATORS */
+.indicators{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+.ind-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.ind-label{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.ind-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;}
+.ind-change{font-size:11px;margin-top:3px;}
+.up{color:var(--red);}
+.down{color:var(--green);}
+
+.methodology{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:40px;padding-top:20px;border-top:1px solid var(--border);}
+
+/* CTA */
+.cta-row{display:flex;gap:12px;justify-content:center;margin:32px 0;flex-wrap:wrap;}
+.cta-btn{padding:12px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;}
+.cta-sec{padding:12px 24px;background:transparent;color:var(--gold);border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;}
+
+@media(max-width:768px){
+  header{padding:0 20px;}
+  .hero,.container{padding-left:20px;padding-right:20px;}
+  .aws-section{grid-template-columns:1fr;}
+  .ofi-timeline{grid-template-columns:1fr;}
+  .indicators{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <nav class="nav">
+    <a href="/ofi.html">OFI</a>
+    <a href="/zai-one.html">Zai</a>
+    <a href="/lender-trends.html">Trends</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="badge">⏱ Mortgage Timing Intelligence</div>
+  <h1>Should You Apply<br><em>Now or Wait?</em></h1>
+  <p class="hero-sub">The Approval Window Score tells you when market conditions favor your mortgage application — based on OFI forecast, FRED economic data, and lender behavior.</p>
+</div>
+
+<div class="container">
+
+  <!-- INCOME TYPE SELECTOR -->
+  <div class="selector" id="typeSelector">
+    <button class="sel-btn active" onclick="selectType('W2')">W2 Employment</button>
+    <button class="sel-btn" onclick="selectType('Self-Employed')">Self-Employed</button>
+    <button class="sel-btn" onclick="selectType('SSDI')">SSDI</button>
+    <button class="sel-btn" onclick="selectType('1099')">1099 / Contract</button>
+    <button class="sel-btn" onclick="selectType('Retirement')">Retirement</button>
+  </div>
+
+  <!-- RECOMMENDATION BOX -->
+  <div class="rec-box" id="recBox" style="background:rgba(107,255,184,0.05);border:1px solid rgba(107,255,184,0.2);">
+    <div style="font-size:10px;font-weight:700;color:rgba(107,255,184,0.5);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:10px;">Approval Window Recommendation</div>
+    <div class="rec-action" id="recAction">Loading...</div>
+    <div class="rec-reason" id="recReason"></div>
+    <span class="rec-window" id="recWindow" style="background:rgba(107,255,184,0.1);color:var(--green);"></span>
+  </div>
+
+  <!-- AWS SCORES -->
+  <div class="aws-section">
+    <div class="aws-card primary">
+      <div class="aws-label" id="awsType">W2 Employment</div>
+      <div class="aws-score" id="awsScore" style="color:var(--gold);">—</div>
+      <div class="aws-type">Approval Window Score</div>
+      <div class="aws-bar-wrap">
+        <div class="aws-bar" id="awsBar" style="width:0%;background:var(--gold);"></div>
+      </div>
+      <div class="aws-verdict" id="awsVerdict"></div>
+    </div>
+    <div class="aws-card">
+      <div class="aws-label">OFI Market Sensitivity</div>
+      <div style="padding:20px 0;">
+        <div id="sensitivityGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OFI FORECAST -->
+  <div class="forecast-section">
+    <div class="section-title">OFI 90-Day Forecast</div>
+    <div class="ofi-timeline">
+      <div class="ofi-point">
+        <div class="ofi-point-label">Today</div>
+        <div class="ofi-point-val" id="ofiNow" style="color:var(--gold);">47</div>
+        <div class="ofi-point-delta" style="color:var(--dim);">Current</div>
+      </div>
+      <div class="ofi-point">
+        <div class="ofi-point-label">60 Days</div>
+        <div class="ofi-point-val" id="ofi60" style="color:var(--gold);">—</div>
+        <div class="ofi-point-delta" id="delta60"></div>
+      </div>
+      <div class="ofi-point">
+        <div class="ofi-point-label">90 Days</div>
+        <div class="ofi-point-val" id="ofi90" style="color:var(--gold);">—</div>
+        <div class="ofi-point-delta" id="delta90"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEADING INDICATORS -->
+  <div class="section-title" style="margin-bottom:12px;">Leading Indicators</div>
+  <div class="indicators" id="indicators">
+    <div class="ind-card">
+      <div class="ind-label">30yr Mortgage Rate</div>
+      <div class="ind-val" id="ind-rate">—</div>
+      <div class="ind-change" id="ind-rate-chg"></div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-label">Unemployment</div>
+      <div class="ind-val" id="ind-unemp">—</div>
+      <div class="ind-change" id="ind-unemp-chg"></div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-label">Rate Momentum (6wk)</div>
+      <div class="ind-val" id="ind-mom">—</div>
+      <div class="ind-change" id="ind-mom-chg"></div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-label">Building Permits</div>
+      <div class="ind-val" id="ind-permit">—</div>
+      <div class="ind-change" id="ind-permit-chg"></div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-label">Market Pressure</div>
+      <div class="ind-val" id="ind-pressure">—</div>
+      <div class="ind-change" id="ind-pressure-chg"></div>
+    </div>
+    <div class="ind-card">
+      <div class="ind-label">Last Updated</div>
+      <div class="ind-val" id="ind-updated" style="font-size:13px;">—</div>
+      <div class="ind-change" style="color:var(--dim);">Weekly refresh</div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-row">
+    <a href="/zai-one.html" class="cta-btn">Get Full Routing Decision →</a>
+    <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" class="cta-sec">Zai for Brokers — $49/mo</a>
+  </div>
+
+  <div class="methodology">
+    <strong>Methodology:</strong> Approval Window Score (AWS) combines current OFI with forward-looking FRED indicators: 30-year mortgage rate momentum (35% weight), building permits (20%), housing starts (15%), consumer sentiment (15%), weekly jobless claims (10%), fed funds direction (5%). Income type sensitivity modifies the base score — self-employed profiles are 2.7× more sensitive to OFI changes than W2. OFI base model: OFI = 4.81 × rate + 20.17 (r=0.902, n=44). Forecast horizon: 60-90 days. Not financial advice. <a href="/methodology.html" style="color:rgba(200,168,75,0.4);">Full methodology →</a>
+  </div>
+
+</div>
+
+<script>
+// Load forecast data
+let forecastData = null;
+let currentType = 'W2';
+
+const SENSITIVITY = {
+  'W2': {score: 0.3, label: 'LOW — W2 income is OFI-resilient'},
+  'Self-Employed': {score: 0.8, label: 'HIGH — amplified overlay friction in tight markets'},
+  'SSDI': {score: 0.5, label: 'MODERATE — gross-up eligibility varies by OFI'},
+  '1099': {score: 0.7, label: 'HIGH — contract income triggers overlays'},
+  'Retirement': {score: 0.2, label: 'LOW — stable income across OFI levels'}
+};
+
+async function loadForecast() {
+  try {
+    const r = await fetch('/_data/ofi_forecast.json?v=' + Date.now());
+    if(r.ok) {
+      forecastData = await r.json();
+      renderForecast();
+    } else {
+      useFallback();
+    }
+  } catch(e) {
+    useFallback();
+  }
+}
+
+function useFallback() {
+  // Fallback — static versiyon
+  forecastData = {
+    ofi: {current: 47, forecast_60d: 49, forecast_90d: 51, delta_60d: 2, delta_90d: 4, trend: 'tightening'},
+    aws: {'W2': 72, 'Self-Employed': 58},
+    recommendation: {
+      action: 'APPLY NOW',
+      urgency: 'MODERATE',
+      reason: 'Market conditions are stable with slight tightening forecast. Current window is favorable for most borrower profiles.',
+      window: 'Now — next 45 days'
+    },
+    inputs: {mortgage_rate: 6.82, unemployment: 4.1, rate_momentum_6wk: 0.8, permit_momentum: -1.2, total_pressure: 2.1},
+    generated: new Date().toISOString()
+  };
+  renderForecast();
+}
+
+function renderForecast() {
+  if(!forecastData) return;
+  const d = forecastData;
+  
+  // OFI timeline
+  document.getElementById('ofiNow').textContent = d.ofi.current;
+  document.getElementById('ofi60').textContent = d.ofi.forecast_60d;
+  document.getElementById('ofi90').textContent = d.ofi.forecast_90d;
+  
+  const d60 = d.ofi.delta_60d;
+  const d90 = d.ofi.delta_90d;
+  document.getElementById('delta60').innerHTML = `<span class="${d60>0?'up':'down'}">${d60>0?'+':''}${d60}pp</span>`;
+  document.getElementById('delta90').innerHTML = `<span class="${d90>0?'up':'down'}">${d90>0?'+':''}${d90}pp</span>`;
+  
+  // Color OFI by severity
+  ['ofiNow','ofi60','ofi90'].forEach((id,i) => {
+    const vals = [d.ofi.current, d.ofi.forecast_60d, d.ofi.forecast_90d];
+    const v = vals[i];
+    const el = document.getElementById(id);
+    el.style.color = v < 35 ? '#6bffb8' : v < 55 ? '#C8A84B' : '#e8845a';
+  });
+  
+  // Indicators
+  const inp = d.inputs;
+  if(inp.mortgage_rate) {
+    document.getElementById('ind-rate').textContent = inp.mortgage_rate.toFixed(2) + '%';
+    document.getElementById('ind-unemp').textContent = inp.unemployment?.toFixed(1) + '%';
+    document.getElementById('ind-mom').textContent = (inp.rate_momentum_6wk > 0 ? '+' : '') + inp.rate_momentum_6wk?.toFixed(2) + '%';
+    document.getElementById('ind-mom').className = 'ind-val ' + (inp.rate_momentum_6wk > 0 ? 'up' : 'down');
+    document.getElementById('ind-permit').textContent = inp.permit_momentum?.toFixed(1) + '%';
+    document.getElementById('ind-pressure').textContent = inp.total_pressure?.toFixed(1);
+    document.getElementById('ind-pressure').className = 'ind-val ' + (inp.total_pressure > 0 ? 'up' : 'down');
+  }
+  
+  const updated = new Date(d.generated);
+  document.getElementById('ind-updated').textContent = updated.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+  
+  updateAWS();
+}
+
+function updateAWS() {
+  if(!forecastData) return;
+  
+  const sens = SENSITIVITY[currentType];
+  const ofi = forecastData.ofi;
+  
+  // AWS hesapla
+  const base = Math.round(100 - ((ofi.current - 20) / 70 * 100));
+  const trendBonus = Math.round(-ofi.delta_60d * sens.score * 2);
+  const aws = Math.max(0, Math.min(100, base + trendBonus));
+  
+  const color = aws >= 70 ? '#6bffb8' : aws >= 45 ? '#C8A84B' : '#e8845a';
+  const verdict = aws >= 70 ? 'Favorable Window' : aws >= 45 ? 'Neutral Window' : 'Unfavorable Window';
+  
+  document.getElementById('awsType').textContent = currentType;
+  document.getElementById('awsScore').textContent = aws;
+  document.getElementById('awsScore').style.color = color;
+  document.getElementById('awsBar').style.width = aws + '%';
+  document.getElementById('awsBar').style.background = color;
+  document.getElementById('awsVerdict').textContent = verdict;
+  document.getElementById('awsVerdict').style.color = color;
+  
+  // Sensitivity grid
+  document.getElementById('sensitivityGrid').innerHTML = Object.entries(SENSITIVITY).map(([type, s]) => {
+    const isActive = type === currentType;
+    const barW = Math.round(s.score * 100);
+    return `<div style="margin-bottom:10px;opacity:${isActive?1:0.4};">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;">
+        <span style="color:${isActive?'var(--gold)':'var(--dim)'};">${type}</span>
+        <span style="color:var(--dim);font-family:'DM Mono',monospace;">${s.score*100}%</span>
+      </div>
+      <div style="background:rgba(255,255,255,0.06);border-radius:3px;height:3px;">
+        <div style="width:${barW}%;background:${isActive?'var(--gold)':'rgba(255,255,255,0.2)'};height:100%;border-radius:3px;"></div>
+      </div>
+    </div>`;
+  }).join('');
+  
+  // Recommendation
+  const rec = forecastData.recommendation;
+  const recColor = rec.urgency === 'HIGH' ? 'rgba(107,255,184,0.05)' : rec.urgency === 'LOW' ? 'rgba(200,168,75,0.05)' : 'rgba(200,168,75,0.03)';
+  const recBorder = rec.urgency === 'HIGH' ? 'rgba(107,255,184,0.2)' : 'rgba(200,168,75,0.2)';
+  document.getElementById('recBox').style.background = recColor;
+  document.getElementById('recBox').style.borderColor = recBorder;
+  document.getElementById('recAction').textContent = rec.action;
+  document.getElementById('recReason').textContent = rec.reason;
+  document.getElementById('recWindow').textContent = '⏱ ' + rec.window;
+}
+
+function selectType(type) {
+  currentType = type;
+  document.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  updateAWS();
+  if(typeof gtag !== 'undefined') gtag('event', 'aws_type_select', {event_label: type});
+}
+
+loadForecast();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+name: OFI Forward Forecast
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Her Pazartesi 09:00 UTC
+  workflow_dispatch:
+
+jobs:
+  forecast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests numpy pandas scikit-learn
+
+      - name: Run OFI Forecast
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_AP }}
+        run: python scripts/ofi_forecast.py
+
+      - name: Commit forecast
+        run: |
+          git config user.email "ofi-bot@financeratecalc.com"
+          git config user.name "OFI Forecast Bot"
+          git add _data/ofi_forecast.json
+          git diff --staged --quiet || git commit -m "OFI forecast update $(date +%Y-%m-%d)"
+          git push
