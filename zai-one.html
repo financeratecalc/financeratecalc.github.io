@@ -579,7 +579,13 @@ DOCS: [2-3 docs comma separated]
 SUBMIT: [best lender DNA with example — use HMDA data if citing specific lender]
 LOWER: [lower fit DNA — why this profile is a mismatch]
 OFI: [OFI ${ofi} × ${income} interaction — one specific insight]
-DETAIL: [4-5 sentence broker analysis — address nonlinear interactions, score erosion risk, submission strategy]\`;
+DETAIL: [4-5 sentence broker analysis — address nonlinear interactions, score erosion risk, submission strategy]
+LENDER1_NAME: [best lender name from HMDA data]
+LENDER1_WHY: [one specific reason this lender fits this exact profile]
+LENDER2_NAME: [second best lender]
+LENDER2_WHY: [one specific reason]
+LENDER3_NAME: [avoid this lender]
+LENDER3_WHY: [specific reason to avoid for this profile]\`;
 
   try {
     const res = await fetch('https://frc-api.ziyetis.workers.dev/v1/messages',{
@@ -639,6 +645,32 @@ DETAIL: [4-5 sentence broker analysis — address nonlinear interactions, score 
       </div>
 
       ${detail?`<div class="d-detail"><div class="d-detail-label">Broker Analysis</div><div class="d-detail-text">${detail}</div></div>`:''}
+
+      ${(g('LENDER1_NAME'))?`
+      <div class="d-reasons" style="border-color:rgba(107,255,184,0.15);">
+        <div class="d-reasons-title" style="color:rgba(107,255,184,0.5);">Why This Lender vs Others</div>
+        <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:13px;font-weight:700;color:#6bffb8;">✓ ${g('LENDER1_NAME')}</span>
+            <span style="font-size:10px;color:rgba(107,255,184,0.5);font-weight:700;">BEST FIT</span>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);">${g('LENDER1_WHY')}</div>
+        </div>
+        <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:13px;font-weight:700;color:#C8A84B;">~ ${g('LENDER2_NAME')}</span>
+            <span style="font-size:10px;color:rgba(200,168,75,0.5);font-weight:700;">BACKUP</span>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);">${g('LENDER2_WHY')}</div>
+        </div>
+        <div style="padding:8px 0;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:13px;font-weight:700;color:#e8845a;">✗ ${g('LENDER3_NAME')}</span>
+            <span style="font-size:10px;color:rgba(232,132,90,0.5);font-weight:700;">AVOID</span>
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);">${g('LENDER3_WHY')}</div>
+        </div>
+      </div>`:''}
 
       <div class="legal">Not financial or legal advice. Educational only. Approval fit labels are estimates based on HMDA 2024 data — individual outcomes vary. Consult a licensed mortgage professional. <a href="/terms.html">Terms</a></div>
     `;
