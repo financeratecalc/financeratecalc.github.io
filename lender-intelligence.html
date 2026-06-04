@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lender Behavior Intelligence | Cycle Sensitivity | FinanceRateCalc</title>
+<meta name="description" content="Which mortgage lenders collapse when rates rise? 7-year behavioral analysis of 11 major lenders. Refi dependency, purchase resilience, cycle sensitivity scores.">
+<link rel="canonical" href="https://financeratecalc.com/lender-intelligence.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--navy:#0B132B;--gold:#C8A84B;--green:#6bffb8;--red:#e8845a;--white:#fff;--dim:rgba(255,255,255,0.45);--border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--white);text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+nav a{font-size:13px;color:var(--dim);text-decoration:none;margin-left:20px;}
+nav a:hover{color:var(--gold);}
+.hero{padding:60px 40px 40px;max-width:1100px;margin:0 auto;}
+.badge{display:inline-flex;padding:5px 14px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.3);border-radius:20px;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,44px);font-weight:900;line-height:1.1;margin-bottom:12px;}
+h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:15px;color:var(--dim);max-width:600px;line-height:1.7;}
+.container{max-width:1100px;margin:0 auto;padding:0 40px 60px;}
+
+/* OFI SCORES */
+.ofi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:40px;}
+.ofi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.ofi-card.rate-driven{border-left:3px solid var(--red);}
+.ofi-card.balanced{border-left:3px solid var(--gold);}
+.ofi-card.stable{border-left:3px solid var(--green);}
+.oc-name{font-family:'Fraunces',serif;font-size:16px;font-weight:700;margin-bottom:4px;}
+.oc-segment{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;}
+.oc-ofi{font-family:'DM Mono',monospace;font-size:32px;font-weight:500;margin-bottom:8px;}
+.oc-bar-wrap{background:rgba(255,255,255,0.06);border-radius:4px;height:6px;margin-bottom:12px;}
+.oc-bar{height:100%;border-radius:4px;}
+.oc-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.oc-metric{text-align:center;}
+.oc-metric-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;}
+.oc-metric-label{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;}
+
+/* HEATMAP */
+.heatmap-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px;overflow-x:auto;}
+.section-title{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:16px;}
+table.heatmap{width:100%;border-collapse:collapse;font-size:12px;}
+table.heatmap th{padding:8px 10px;text-align:left;color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border);}
+table.heatmap td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,0.03);}
+.heat-cell{display:inline-block;padding:2px 8px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;}
+
+/* KEY FINDINGS */
+.findings{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.15);border-radius:12px;padding:24px;margin-bottom:24px;}
+.finding{padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;color:rgba(255,255,255,0.75);line-height:1.6;display:flex;gap:12px;}
+.finding:last-child{border:none;}
+
+.cta-row{display:flex;gap:12px;justify-content:center;margin:32px 0;flex-wrap:wrap;}
+.cta-btn{padding:12px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;}
+.cta-sec{padding:12px 24px;background:transparent;color:var(--gold);border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;}
+
+@media(max-width:768px){header,div.hero,.container{padding-left:20px;padding-right:20px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <nav>
+    <a href="/lender-trends.html">FHA Trends</a>
+    <a href="/approval-window.html">AWS</a>
+    <a href="/zai-one.html">Zai</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="badge">Behavioral Analysis · 2018–2024 · CFPB HMDA</div>
+  <h1>Which Lenders Collapse<br><em>When Rates Rise?</em></h1>
+  <p class="hero-sub">7-year behavioral panel of 11 major lenders. Refi dependency, purchase resilience, and cycle sensitivity — derived from CFPB HMDA data.</p>
+</div>
+
+<div class="container">
+
+  <div class="findings">
+    <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin-bottom:14px;color:var(--gold);">Key Findings</div>
+    <div class="finding"><span>🔴</span><strong>Freedom Mortgage (OFI 79.7)</strong> — most volatile lender in the dataset. Refi volume swung from 6,402 (2018) to 24,549 (2020) to 187 (2023). Extreme cycle dependency.</div>
+    <div class="finding"><span>🔴</span><strong>PennyMac (OFI 75.2)</strong> — refi machine. 41,211 refi denials in 2020 vs 871 in 2023. When rates rise, their volume collapses.</div>
+    <div class="finding"><span>🟢</span><strong>CrossCountry (OFI 31.3)</strong> — most stable lender. Purchase-focused across all 7 years. Least sensitive to rate cycles.</div>
+    <div class="finding"><span>📈</span><strong>UWM (OFI 51.2)</strong> — broker channel resilience. Purchase volume grew from 8,330 (2018) to 27,694 (2024) despite rate environment.</div>
+    <div class="finding"><span>⚠️</span><strong>Rocket (OFI 50.6)</strong> — refi machine transitioning. 111,618 refi denials in 2020, down to 3,595 in 2023. Adapting but still cycle-sensitive.</div>
+  </div>
+
+  <!-- OFI SCORES -->
+  <div class="section-title" style="margin-bottom:12px;">Lender Cycle Sensitivity Score</div>
+  <div class="ofi-grid" id="ofiGrid"></div>
+
+  <!-- HEATMAP -->
+  <div class="heatmap-wrap">
+    <div class="section-title">Refi Dependency Ratio — Year × Lender Heatmap</div>
+    <table class="heatmap" id="heatmapTable"></table>
+  </div>
+
+  <div class="cta-row">
+    <a href="/zai-one.html" class="cta-btn">Route Your File with Zai →</a>
+    <a href="/lender-trends.html" class="cta-sec">FHA Denial Rate Trends</a>
+    <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" class="cta-sec">Zai for Brokers — $49/mo</a>
+  </div>
+
+</div>
+
+<script>
+const LENDER_OFI = {
+  "CrossCountry":    {ofi:31.3, refi_vol:8.1,  purchase_sens:18.3, cash_instability:2.8,  segment:"Stable"},
+  "Guild Mortgage":  {ofi:36.8, refi_vol:11.2, purchase_sens:11.4, cash_instability:3.5,  segment:"Balanced"},
+  "Rocket":          {ofi:50.6, refi_vol:19.8, purchase_sens:8.3,  cash_instability:12.1, segment:"Balanced"},
+  "UWM":             {ofi:51.2, refi_vol:13.6, purchase_sens:22.4, cash_instability:5.9,  segment:"Balanced"},
+  "NewRez":          {ofi:55.6, refi_vol:20.4, purchase_sens:7.2,  cash_instability:18.3, segment:"Balanced"},
+  "loanDepot":       {ofi:56.1, refi_vol:15.2, purchase_sens:19.8, cash_instability:14.6, segment:"Balanced"},
+  "Wells Fargo":     {ofi:58.7, refi_vol:18.9, purchase_sens:17.6, cash_instability:10.2, segment:"Balanced"},
+  "Mr. Cooper":      {ofi:61.5, refi_vol:23.1, purchase_sens:15.1, cash_instability:19.8, segment:"Rate-Driven"},
+  "Planet Home":     {ofi:61.2, refi_vol:17.0, purchase_sens:33.3, cash_instability:9.8,  segment:"Rate-Driven"},
+  "PennyMac":        {ofi:75.2, refi_vol:25.3, purchase_sens:32.1, cash_instability:16.4, segment:"Rate-Driven"},
+  "Freedom Mortgage":{ofi:79.7, refi_vol:33.6, purchase_sens:13.7, cash_instability:28.9, segment:"Rate-Driven"},
+};
+
+const PANEL = [
+  {lender:"UWM",year:2018,purchase:8330,refi:1967,cash_out:4016},
+  {lender:"UWM",year:2019,purchase:10636,refi:6242,cash_out:7042},
+  {lender:"UWM",year:2020,purchase:11999,refi:19991,cash_out:8327},
+  {lender:"UWM",year:2021,purchase:20506,refi:20207,cash_out:16211},
+  {lender:"UWM",year:2022,purchase:25509,refi:5804,cash_out:16582},
+  {lender:"UWM",year:2023,purchase:28032,refi:2756,cash_out:14487},
+  {lender:"UWM",year:2024,purchase:27694,refi:10992,cash_out:19074},
+  {lender:"Rocket",year:2018,purchase:31466,refi:30817,cash_out:52130},
+  {lender:"Rocket",year:2019,purchase:28129,refi:40006,cash_out:55048},
+  {lender:"Rocket",year:2020,purchase:26438,refi:111618,cash_out:63193},
+  {lender:"Rocket",year:2021,purchase:26144,refi:83549,cash_out:80080},
+  {lender:"Rocket",year:2022,purchase:20787,refi:16427,cash_out:67549},
+  {lender:"Rocket",year:2023,purchase:21748,refi:3595,cash_out:38404},
+  {lender:"Rocket",year:2024,purchase:23018,refi:10064,cash_out:42181},
+  {lender:"CrossCountry",year:2018,purchase:1162,refi:191,cash_out:373},
+  {lender:"CrossCountry",year:2019,purchase:1136,refi:269,cash_out:409},
+  {lender:"CrossCountry",year:2020,purchase:2063,refi:864,cash_out:554},
+  {lender:"CrossCountry",year:2021,purchase:2749,refi:1101,cash_out:964},
+  {lender:"CrossCountry",year:2022,purchase:2538,refi:167,cash_out:689},
+  {lender:"CrossCountry",year:2023,purchase:2208,refi:86,cash_out:544},
+  {lender:"CrossCountry",year:2024,purchase:2678,refi:270,cash_out:542},
+  {lender:"Freedom Mortgage",year:2018,purchase:2380,refi:6402,cash_out:31285},
+  {lender:"Freedom Mortgage",year:2019,purchase:2532,refi:5937,cash_out:15017},
+  {lender:"Freedom Mortgage",year:2020,purchase:1831,refi:24549,cash_out:1385},
+  {lender:"Freedom Mortgage",year:2021,purchase:1568,refi:22404,cash_out:5918},
+  {lender:"Freedom Mortgage",year:2022,purchase:1273,refi:1990,cash_out:7458},
+  {lender:"Freedom Mortgage",year:2023,purchase:1409,refi:187,cash_out:6222},
+  {lender:"Freedom Mortgage",year:2024,purchase:2315,refi:1391,cash_out:8571},
+  {lender:"PennyMac",year:2018,purchase:843,refi:4981,cash_out:11926},
+  {lender:"PennyMac",year:2019,purchase:2001,refi:14826,cash_out:15369},
+  {lender:"PennyMac",year:2020,purchase:2314,refi:41211,cash_out:11334},
+  {lender:"PennyMac",year:2021,purchase:2084,refi:35631,cash_out:17401},
+  {lender:"PennyMac",year:2022,purchase:2863,refi:5217,cash_out:15468},
+  {lender:"PennyMac",year:2023,purchase:4806,refi:871,cash_out:9051},
+  {lender:"PennyMac",year:2024,purchase:4658,refi:2608,cash_out:5727},
+];
+
+// OFI Grid
+const grid = document.getElementById('ofiGrid');
+Object.entries(LENDER_OFI).sort((a,b) => a[1].ofi - b[1].ofi).forEach(([name, d]) => {
+  const color = d.segment === 'Stable' ? '#6bffb8' : d.segment === 'Rate-Driven' ? '#e8845a' : '#C8A84B';
+  const cls = d.segment === 'Stable' ? 'stable' : d.segment === 'Rate-Driven' ? 'rate-driven' : 'balanced';
+  grid.innerHTML += `<div class="ofi-card ${cls}">
+    <div class="oc-name">${name}</div>
+    <div class="oc-segment" style="color:${color};">${d.segment}</div>
+    <div class="oc-ofi" style="color:${color};">${d.ofi}</div>
+    <div class="oc-bar-wrap"><div class="oc-bar" style="width:${d.ofi}%;background:${color};"></div></div>
+    <div class="oc-metrics">
+      <div class="oc-metric"><div class="oc-metric-val" style="color:${color};">${d.refi_vol}%</div><div class="oc-metric-label">Refi Vol</div></div>
+      <div class="oc-metric"><div class="oc-metric-val">${d.purchase_sens}%</div><div class="oc-metric-label">Purchase Sens</div></div>
+      <div class="oc-metric"><div class="oc-metric-val">${d.cash_instability}%</div><div class="oc-metric-label">CashOut Instab</div></div>
+    </div>
+  </div>`;
+});
+
+// Heatmap — refi ratio by lender × year
+const lenders = ['CrossCountry','Guild Mortgage','UWM','Rocket','PennyMac','Freedom Mortgage','NewRez','Mr. Cooper','loanDepot','Wells Fargo','Planet Home'];
+const years = [2018,2019,2020,2021,2022,2023,2024];
+
+const refiData = {};
+PANEL.forEach(d => {
+  if(!refiData[d.lender]) refiData[d.lender] = {};
+  const total = d.purchase + d.refi + d.cash_out;
+  refiData[d.lender][d.year] = Math.round(d.refi/total*100);
+});
+
+const table = document.getElementById('heatmapTable');
+let html = '<tr><th>Lender</th>' + years.map(y => `<th>${y}</th>`).join('') + '</tr>';
+lenders.forEach(lender => {
+  html += `<tr><td style="font-weight:600;color:rgba(255,255,255,0.8);">${lender}</td>`;
+  years.forEach(year => {
+    const val = refiData[lender]?.[year] ?? '-';
+    const color = val > 50 ? '#e8845a' : val > 25 ? '#C8A84B' : '#6bffb8';
+    const bg = val > 50 ? 'rgba(232,132,90,0.15)' : val > 25 ? 'rgba(200,168,75,0.1)' : 'rgba(107,255,184,0.08)';
+    html += `<td><span class="heat-cell" style="color:${color};background:${bg};">${val}%</span></td>`;
+  });
+  html += '</tr>';
+});
+table.innerHTML = html;
+</script>
+</body>
+</html>
