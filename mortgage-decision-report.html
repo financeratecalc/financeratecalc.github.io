@@ -208,6 +208,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
     <div class="action-grid" id="actionPlan"></div>
   </div>
 
+  
+  <!-- URGENCY LAYER -->
+  <div class="report-section" style="border-color:rgba(200,168,75,0.2);background:rgba(200,168,75,0.04);">
+    <div class="rs-title" style="color:rgba(200,168,75,0.6);">Market Timing Signal</div>
+    <div id="urgencyLayer"></div>
+  </div>
   <!-- Rate Scenario -->
   <div class="report-section">
     <div class="rs-title">Rate Scenario Impact</div>
@@ -343,7 +349,7 @@ function showReport() {
       <span class="rank-fit ${fitClass}">${l.fit}</span>
     </div>`;
   });
-  document.getElementById('lenderRanking').innerHTML = rankHTML;
+  document.getElementById('lenderRanking').innerHTML = rankHTML + `<div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05);">Ranking reflects historical pattern strength only — not suitability or approval guidance. Lenders independently evaluate each application.</div>`;
 
   // OFI Signal
   const ofiColor = ofi.signal === 'OPEN' ? '#6bffb8' : ofi.signal === 'NARROWING' ? '#C8A84B' : '#e8845a';
@@ -372,6 +378,46 @@ function showReport() {
       <div class="ac-title" style="color:var(--red);">✗ Avoid Now</div>
       ${avoid.map(n => `<div class="ac-item">✗ ${n}</div>`).join('')}
     </div>`;
+
+
+  // Urgency layer
+  const urgencyEl = document.getElementById('urgencyLayer');
+  if(urgencyEl) {
+    const ofiScore = ofi.ofi;
+    const sens = incomeSens.factor;
+    
+    // Context — geçmiş dönemle karşılaştır
+    let historicalContext = '';
+    let urgencyLevel = '';
+    let urgencyColor = '';
+    
+    if(ofiScore < 35) {
+      urgencyLevel = 'Favorable Window';
+      urgencyColor = '#6bffb8';
+      historicalContext = 'Current market conditions are among the more favorable in the 2018–2024 dataset. Similar OFI levels historically correlated with higher approval volumes across most lender segments.';
+    } else if(ofiScore < 55) {
+      urgencyLevel = 'Moderate Conditions';
+      urgencyColor = '#C8A84B';
+      historicalContext = 'Current OFI is at moderate levels — comparable to 2018–2019 conditions. Historically, profiles similar to yours saw standard overlay application. No unusual urgency signal detected.';
+    } else {
+      urgencyLevel = 'Tighter Conditions';
+      urgencyColor = '#e8845a';
+      historicalContext = 'Current OFI is elevated. Historically, similar OFI levels (2022–2023 period) correlated with stricter overlay application across most lender segments — particularly for ' + (sens > 0.5 ? 'non-W2 income profiles.' : 'borderline credit profiles.');
+    }
+    
+    // Self-employed special note
+    const seNote = income === 'self_employed' || income === '1099' ? 
+      '<div style="margin-top:10px;padding:10px;background:rgba(232,132,90,0.08);border-radius:6px;font-size:12px;color:rgba(255,255,255,0.6);border:1px solid rgba(232,132,90,0.15);">⚠ Non-W2 income profiles show 2.7× higher sensitivity to OFI changes. Historically, similar profiles saw stronger outcomes during lower-OFI windows (2019, early 2020, 2021).</div>' : '';
+    
+    urgencyEl.innerHTML = \`
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:\${urgencyColor};">\${urgencyLevel}</div>
+      </div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:8px;">\${historicalContext}</div>
+      \${seNote}
+      <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:10px;">OFI \${ofiScore} · Based on historical HMDA volume patterns 2018–2024 · Not a prediction</div>
+    \`;
+  }
 
   // Rate Scenario
   document.getElementById('rateScenario').innerHTML = `
