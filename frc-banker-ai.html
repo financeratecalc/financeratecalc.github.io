@@ -216,7 +216,7 @@ YOUR JOB: Answer one question — "Which lender type should this file go to?"
 OUTPUT FORMAT — ALWAYS START WITH THIS, NOTHING BEFORE IT:
 
 ---
-👉 ZAI DECISION: [Best Lender DNA] — [Strong / Moderate / Weak] Approval Path
+👉 ZAI DECISION: [Better Fit Lender DNA] — [Strong / Moderate / Weak] Approval Path
 
 • [Reason 1 — most important]
 • [Reason 2]  
@@ -244,10 +244,10 @@ HMDA 2018-2024 FHA Denial Rate Trends (CFPB verified):
 Loan Purpose DNA (2018-2024 CFPB HMDA):
 - CrossCountry: Purchase specialist (76.7% purchase denials)
 - Guild: Purchase specialist (64.6%)
-- NewRez/Freedom/Mr.Cooper: Cash-out heavy (70-75%) — AVOID for cash-out
+- NewRez/Freedom/Mr.Cooper: Cash-out heavy (70-75%) — High denial ratio for cash-out
 - Rocket/loanDepot: Cash-out heavy (56-61%) — risky for cash-out
 - UWM/Planet Home: Balanced
-Routing: Cash-out → CrossCountry/Guild/Planet Home | Purchase → CrossCountry/UWM/Guild | Cash-out AVOID: NewRez/Freedom/Mr.Cooper/Rocket/loanDepot
+Routing: Cash-out → CrossCountry/Guild/Planet Home | Purchase → CrossCountry/UWM/Guild | High cash-out denial ratio: NewRez/Freedom/Mr.Cooper/Rocket/loanDepot
 
 Key trends (2018→2024):
 - CrossCountry: 8.6%→5.5% (most consistent FHA specialist, 7yr range 5-9%)
@@ -373,7 +373,7 @@ function addMessage(role, content){
     // ─── OUTCOME TRACKER ───────────────────────────────────────────────────────
     var txt_lower = bubble.innerText.toLowerCase();
     var hasLenderRouting = txt_lower.includes('uwm') || txt_lower.includes('pennymac') || 
-                           txt_lower.includes('approval probability') || txt_lower.includes('route') ||
+                           txt_lower.includes('approval fit score') || txt_lower.includes('route') ||
                            txt_lower.includes('wholesale') || txt_lower.includes('lender') && txt_lower.includes('%');
     
     if(hasLenderRouting){
@@ -623,7 +623,7 @@ function cleanZaiOutput(text) {
   text = text.replace(/Skip these\./gi, 'Lower profile fit for this scenario.');
   text = text.replace(/Not worth the application\./gi, 'Lower profile fit — prioritize better-matched lenders.');
   
-  // 4. Yüzde sayıları → Strong/Moderate/Weak (sadece approval probability context)
+  // 4. Yüzde sayıları → Strong/Moderate/Weak (sadece approval fit score context)
   text = text.replace(/Approval (odds|probability)[:\s]+(\d+[-–]\d+)%/gi, 
     function(m, p1, p2) {
       var avg = parseInt(p2);
