@@ -349,6 +349,19 @@ function unlockReport() {
     return;
   }
   localStorage.setItem('frc_email', email);
+  
+  // Formspree'ye gönder
+  fetch('https://formspree.io/f/mkoewrgp', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      email: email,
+      type: 'decision_report_lead',
+      profile: JSON.stringify(window._reportData || {}),
+      source: 'mortgage-decision-report'
+    })
+  }).catch(()=>{});
+  
   document.getElementById('emailGate').style.display = 'none';
   document.getElementById('reportSection').style.display = 'block';
   renderReport();
