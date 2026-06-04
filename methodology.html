@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Methodology | OFI, AWS & Lender DNA | FinanceRateCalc</title>
+<meta name="description" content="How FinanceRateCalc builds its mortgage intelligence signals — OFI model, AWS forecast, and HMDA lender data methodology. Full transparency on data sources and calculations.">
+<link rel="canonical" href="https://financeratecalc.com/methodology.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--navy:#0B132B;--gold:#C8A84B;--white:#fff;--dim:rgba(255,255,255,0.45);--border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--white);text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+nav a{font-size:13px;color:var(--dim);text-decoration:none;margin-left:20px;}
+nav a:hover{color:var(--gold);}
+.hero{padding:60px 40px 20px;max-width:800px;margin:0 auto;}
+.badge{display:inline-flex;padding:5px 14px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.3);border-radius:20px;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,40px);font-weight:900;line-height:1.1;margin-bottom:12px;}
+h1 em{font-style:italic;color:var(--gold);}
+.container{max-width:800px;margin:0 auto;padding:0 40px 60px;}
+.section{margin-bottom:40px;}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:12px;color:var(--gold);}
+p{font-size:15px;color:rgba(255,255,255,0.75);line-height:1.8;margin-bottom:12px;}
+.data-box{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:8px;padding:16px 20px;margin:16px 0;font-family:'DM Mono',monospace;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8;}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;}
+th{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);color:var(--dim);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:0.08em;}
+td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.7);}
+.disclaimer{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;padding:20px;margin-top:40px;font-size:12px;color:var(--dim);line-height:1.8;}
+@media(max-width:768px){header,div.hero,.container{padding-left:20px;padding-right:20px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <nav>
+    <a href="/ofi.html">OFI</a>
+    <a href="/approval-window.html">AWS</a>
+    <a href="/zai-one.html">Zai</a>
+    <a href="/lender-trends.html">Trends</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="badge">Transparency · Data Sources · Calculations</div>
+  <h1>Our <em>Methodology</em></h1>
+  <p style="color:var(--dim);font-size:15px;">Full transparency on how FinanceRateCalc builds its mortgage intelligence signals. Every number has a source. Every model has a formula.</p>
+</div>
+
+<div class="container">
+
+  <div class="section">
+    <h2>1. OFI — Overlay Friction Index</h2>
+    <p>OFI measures real-world lender tightness — the gap between official mortgage guidelines and actual underwriting behavior. It captures the "overlay layer" that lenders apply on top of FHA, VA, and conventional standards.</p>
+    <div class="data-box">
+      Model: OFI = 4.81 × 30yr_mortgage_rate + 20.17<br>
+      Correlation: r = 0.902<br>
+      Observations: n = 44 quarterly (2014Q1 – 2024Q4)<br>
+      Validation: Leave-One-Out MAE = 1.23<br>
+      Direction accuracy: 72.1%<br>
+      Current value: 47 (Q2 2026)
+    </div>
+    <p>The base model uses the 30-year fixed mortgage rate as the primary predictor, derived from FRED series MORTGAGE30US. Higher rates correlate strongly with tighter overlays — lenders become more selective as financing costs rise.</p>
+    <p><strong>State-level OFI</strong> applies regional modifiers based on delinquency rates, HPI trends, and local employment data from Bureau of Labor Statistics and CFPB state-level reports.</p>
+  </div>
+
+  <div class="section">
+    <h2>2. AWS — Approval Window Score</h2>
+    <p>AWS forecasts whether current market conditions favor mortgage submission — updated weekly via GitHub Actions using FRED API data.</p>
+    <div class="data-box">
+      Formula: AWS = base_score + trend_adjustment × income_sensitivity<br>
+      Base score: 100 − normalize(OFI, 20, 90)<br>
+      Trend adjustment: −delta_60d × sensitivity_coefficient<br>
+      <br>
+      Income sensitivity coefficients:<br>
+      W2:         0.3 (low sensitivity)<br>
+      Retirement: 0.2 (very low)<br>
+      SSDI:       0.5 (moderate)<br>
+      1099:       0.7 (high)<br>
+      Self-Employed: 0.8 (highest)
+    </div>
+    <p>The 6 forward-looking FRED indicators and their weights:</p>
+    <table>
+      <tr><th>Indicator</th><th>FRED Series</th><th>Weight</th><th>Lead Time</th></tr>
+      <tr><td>30yr Mortgage Rate Momentum</td><td>MORTGAGE30US</td><td>35%</td><td>0–4 weeks</td></tr>
+      <tr><td>Building Permits</td><td>PERMIT</td><td>20%</td><td>4–6 months</td></tr>
+      <tr><td>Housing Starts</td><td>HOUST</td><td>15%</td><td>2–3 months</td></tr>
+      <tr><td>Consumer Sentiment</td><td>UMCSENT</td><td>15%</td><td>1–3 months</td></tr>
+      <tr><td>Weekly Jobless Claims</td><td>ICSA</td><td>10%</td><td>1–2 weeks</td></tr>
+      <tr><td>Fed Funds Direction</td><td>FEDFUNDS</td><td>5%</td><td>Policy cycle</td></tr>
+    </table>
+    <p>AWS outputs a probabilistic signal — not a guarantee. Window states: OPEN / NARROWING / DETERIORATING / IMPROVING.</p>
+  </div>
+
+  <div class="section">
+    <h2>3. Lender DNA — HMDA Data</h2>
+    <p>All lender denial rates are calculated directly from CFPB HMDA Public LAR Snapshot data, manually verified via the HMDA Data Browser.</p>
+    <div class="data-box">
+      Source: CFPB HMDA Data Browser<br>
+      URL: ffiec.cfpb.gov/data-browser<br>
+      Years: 2018 – 2024 (7 years)<br>
+      Loan type filter: FHA only (loan_type = 2)<br>
+      Action taken: Denied (3) + Originated (1)<br>
+      Formula: Denial Rate = Denied ÷ (Denied + Originated)<br>
+      Verification: Each data point manually pulled and calculated
+    </div>
+    <p>Withdrawn applications and incomplete files are excluded. Only "Application denied" and "Loan Originated" are counted. This methodology matches standard HMDA analysis practice.</p>
+  </div>
+
+  <div class="section">
+    <h2>About the Founder</h2>
+    <p>FinanceRateCalc was built by Ziya Yetiş — 23 years in banking and mortgage, based in Bellview, TX. The OFI model, lender DNA analysis, and AWS framework are original work derived from publicly available federal data.</p>
+    <p>Contact: <a href="mailto:press@financeratecalc.com" style="color:var(--gold);">press@financeratecalc.com</a></p>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> FinanceRateCalc is an educational and analytical tool. OFI, AWS, and Zai outputs are statistical signals based on historical and current market data — not guarantees of mortgage approval or denial. Individual outcomes depend on many factors not captured by these models. This is not financial, legal, or mortgage advice. Always consult a licensed mortgage professional before making application decisions.
+  </div>
+
+</div>
+</body>
+</html>
