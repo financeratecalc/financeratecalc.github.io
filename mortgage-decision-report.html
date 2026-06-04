@@ -183,6 +183,18 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
   </ul>
 </div>
 
+
+<!-- EMAIL GATE -->
+<div id="emailGate" style="display:none;max-width:600px;margin:0 auto;padding:0 40px 60px;">
+  <div style="background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:16px;padding:40px;text-align:center;">
+    <div style="font-size:32px;margin-bottom:16px;">📋</div>
+    <h2 style="font-family:'Fraunces',serif;font-size:24px;font-weight:900;margin-bottom:8px;">Your Report Is Ready</h2>
+    <p style="font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:24px;">Enter your email to view your Mortgage Decision Report. No spam — one email with your results.</p>
+    <input type="email" id="gateEmail" placeholder="your@email.com" style="width:100%;max-width:320px;padding:12px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(200,168,75,0.3);border-radius:8px;color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto;">
+    <button onclick="unlockReport()" style="width:100%;max-width:320px;padding:14px;background:#C8A84B;color:#000;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">View My Report →</button>
+    <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:12px;">No credit check · No SSN · Educational purposes only</p>
+  </div>
+</div>
 <!-- REPORT -->
 <div class="report" id="reportSection">
   <div class="report-header">
@@ -319,7 +331,31 @@ function generateReport() {
 
 function showReport() {
   document.getElementById('processingSection').style.display = 'none';
+  
+  // Email gate — localStorage'da email var mı kontrol et
+  const savedEmail = localStorage.getItem('frc_email');
+  if(savedEmail) {
+    document.getElementById('reportSection').style.display = 'block';
+    renderReport();
+  } else {
+    document.getElementById('emailGate').style.display = 'block';
+  }
+}
+
+function unlockReport() {
+  const email = document.getElementById('gateEmail').value.trim();
+  if(!email || !email.includes('@')) {
+    document.getElementById('gateEmail').style.borderColor = '#e8845a';
+    return;
+  }
+  localStorage.setItem('frc_email', email);
+  document.getElementById('emailGate').style.display = 'none';
   document.getElementById('reportSection').style.display = 'block';
+  renderReport();
+  if(typeof gtag !== 'undefined') gtag('event', 'email_gate_completed', {event_label: 'report_unlock'});
+}
+
+function renderReport() {
 
   const {fico, purpose, income, state, loanType} = window._reportData;
   const ofi = OFI_DATA[state] || OFI_DATA.other;
