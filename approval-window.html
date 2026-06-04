@@ -95,9 +95,9 @@ h1 em{font-style:italic;color:var(--gold);}
 </header>
 
 <div class="hero">
-  <div class="badge">⏱ Mortgage Timing Intelligence</div>
-  <h1>Should You Apply<br><em>Now or Wait?</em></h1>
-  <p class="hero-sub">The Approval Window Score tells you when market conditions favor your mortgage application — based on OFI forecast, FRED economic data, and lender behavior.</p>
+  <div class="badge">📡 Mortgage Market Signal · Updated Weekly</div>
+  <h1>Mortgage Approval<br><em>Window Signal</em></h1>
+  <p class="hero-sub">The Approval Window Signal monitors current underwriting conditions and forward-looking indicators — helping brokers assess whether market conditions are opening or narrowing for their borrowers.</p>
 </div>
 
 <div class="container">
@@ -202,7 +202,7 @@ h1 em{font-style:italic;color:var(--gold);}
   </div>
 
   <div class="methodology">
-    <strong>Methodology:</strong> Approval Window Score (AWS) combines current OFI with forward-looking FRED indicators: 30-year mortgage rate momentum (35% weight), building permits (20%), housing starts (15%), consumer sentiment (15%), weekly jobless claims (10%), fed funds direction (5%). Income type sensitivity modifies the base score — self-employed profiles are 2.7× more sensitive to OFI changes than W2. OFI base model: OFI = 4.81 × rate + 20.17 (r=0.902, n=44). Forecast horizon: 60-90 days. Not financial advice. <a href="/methodology.html" style="color:rgba(200,168,75,0.4);">Full methodology →</a>
+    <strong>Methodology:</strong> Approval Window Score (AWS) combines current OFI with forward-looking FRED indicators: 30-year mortgage rate momentum (35% weight), building permits (20%), housing starts (15%), consumer sentiment (15%), weekly jobless claims (10%), fed funds direction (5%). Income type sensitivity modifies the base score — self-employed profiles are 2.7× more sensitive to OFI changes than W2. OFI base model: OFI = 4.81 × rate + 20.17 (r=0.902, n=44). Forecast horizon: 60-90 days. AWS is a probabilistic signal, not a guarantee. Market conditions change rapidly. Not financial advice. <a href="/methodology.html" style="color:rgba(200,168,75,0.4);">Full methodology →</a>
   </div>
 
 </div>
@@ -303,7 +303,7 @@ function updateAWS() {
   const aws = Math.max(0, Math.min(100, base + trendBonus));
   
   const color = aws >= 70 ? '#6bffb8' : aws >= 45 ? '#C8A84B' : '#e8845a';
-  const verdict = aws >= 70 ? 'Favorable Window' : aws >= 45 ? 'Neutral Window' : 'Unfavorable Window';
+  const verdict = aws >= 70 ? 'Window: OPEN' : aws >= 55 ? 'Window: NARROWING' : aws >= 40 ? 'Window: DETERIORATING' : 'Window: IMPROVING';
   
   document.getElementById('awsType').textContent = currentType;
   document.getElementById('awsScore').textContent = aws;
@@ -334,7 +334,13 @@ function updateAWS() {
   const recBorder = rec.urgency === 'HIGH' ? 'rgba(107,255,184,0.2)' : 'rgba(200,168,75,0.2)';
   document.getElementById('recBox').style.background = recColor;
   document.getElementById('recBox').style.borderColor = recBorder;
-  document.getElementById('recAction').textContent = rec.action;
+  // Soften recommendation language
+  const actionMap = {
+    'APPLY NOW': 'Window Signal: OPEN',
+    'WAIT 60 DAYS': 'Window Signal: NARROWING',
+    'WAIT 90 DAYS': 'Window Signal: DETERIORATING'
+  };
+  document.getElementById('recAction').textContent = actionMap[rec.action] || rec.action;
   document.getElementById('recReason').textContent = rec.reason;
   document.getElementById('recWindow').textContent = '⏱ ' + rec.window;
 }

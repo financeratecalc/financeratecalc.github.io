@@ -150,23 +150,23 @@ def get_recommendation(ofi_now, ofi_60, ofi_90):
     
     if delta_60 > 3:
         return {
-            "action": "APPLY NOW",
+            "action": "Window: OPEN",
             "urgency": "HIGH",
-            "reason": f"OFI forecast shows tightening in 60 days (+{delta_60:.1f}pp). Current window is favorable.",
+            "reason": f"Model estimates approval conditions may tighten over the next 60 days (+{delta_60:.1f}pp OFI). Current conditions appear favorable for most profiles.",
             "window": "Now — next 30 days"
         }
     elif delta_60 < -3:
         return {
-            "action": "WAIT 60 DAYS",
+            "action": "Window: NARROWING",
             "urgency": "LOW", 
-            "reason": f"Market conditions improving. OFI projected to ease by {abs(delta_60):.1f}pp in 60 days.",
+            "reason": f"Model estimates conditions may ease over the next 60-90 days ({abs(delta_60):.1f}pp OFI improvement projected). Waiting may improve approval odds for sensitive profiles.",
             "window": "60-90 days from now"
         }
     else:
         return {
-            "action": "APPLY NOW",
+            "action": "Window: OPEN",
             "urgency": "MODERATE",
-            "reason": "Market conditions stable. No significant change forecast.",
+            "reason": "Model detects no significant directional signal. Current conditions appear stable. Individual lender overlays may vary.",
             "window": "Current window is neutral"
         }
 
