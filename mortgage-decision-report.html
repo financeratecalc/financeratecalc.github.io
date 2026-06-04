@@ -368,15 +368,20 @@ function showReport() {
 
   // Action Plan
   const top2 = lenders.filter(l => l.fit === 'High').slice(0,2).map(l => l.name);
-  const avoid = lenders.filter(l => l.fit === 'Low').slice(0,2).map(l => l.name);
+  const lowFit = lenders.filter(l => l.fit === 'Low').slice(0,2);
+  const avoidHTML = lowFit.length > 0 
+    ? lowFit.map(l => `<div class="ac-item" style="font-size:12px;">⚠ ${l.name}<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">Higher historical denial ratio for this profile</div></div>`).join('')
+    : '<div style="font-size:12px;color:rgba(255,255,255,0.4);">No high-risk lenders identified for this profile.</div>';
+  
   document.getElementById('actionPlan').innerHTML = `
     <div class="action-card apply">
-      <div class="ac-title" style="color:var(--green);">✓ Apply To</div>
+      <div class="ac-title" style="color:var(--green);">✓ Higher Historical Fit</div>
       ${top2.map(n => `<div class="ac-item">→ ${n}</div>`).join('')}
+      ${top2.length === 0 ? '<div style="font-size:12px;color:rgba(255,255,255,0.4);">Broaden search criteria</div>' : ''}
     </div>
     <div class="action-card avoid">
-      <div class="ac-title" style="color:var(--red);">✗ Avoid Now</div>
-      ${avoid.map(n => `<div class="ac-item">✗ ${n}</div>`).join('')}
+      <div class="ac-title" style="color:var(--red);">⚠ Lower Historical Fit</div>
+      ${avoidHTML}
     </div>`;
 
 
