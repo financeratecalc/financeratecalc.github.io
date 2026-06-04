@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Get Your Mortgage Decision Report | FinanceRateCalc</title>
+<meta name="description" content="Why you were denied — and which lender will approve you instead. 60-second input. Instant lender ranking, approval probability, and timing recommendation.">
+<link rel="canonical" href="https://financeratecalc.com/mortgage-decision-report.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--navy:#0B132B;--gold:#C8A84B;--green:#6bffb8;--red:#e8845a;--white:#fff;--dim:rgba(255,255,255,0.45);--border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--white);text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+
+/* HERO */
+.hero{padding:60px 40px 40px;max-width:700px;margin:0 auto;text-align:center;}
+.badge{display:inline-flex;padding:5px 14px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.3);border-radius:20px;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,46px);font-weight:900;line-height:1.1;margin-bottom:16px;}
+h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:16px;color:var(--dim);line-height:1.7;margin-bottom:32px;}
+.trust-row{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;}
+.trust-item{font-size:12px;color:var(--dim);display:flex;align-items:center;gap:6px;}
+
+/* FORM */
+.form-wrap{max-width:600px;margin:0 auto;padding:0 40px 60px;}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;}
+.form-title{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:24px;}
+.field{margin-bottom:20px;}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.field select, .field input[type=text], .field input[type=email]{
+  width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);border:1px solid var(--border);
+  border-radius:8px;color:var(--white);font-size:14px;font-family:'DM Sans',sans-serif;
+  outline:none;transition:border-color 0.2s;
+}
+.field select:focus, .field input:focus{border-color:rgba(200,168,75,0.4);}
+.field select option{background:#0B132B;}
+.fico-display{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;color:var(--gold);text-align:center;margin:8px 0;}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--gold);cursor:pointer;}
+
+.submit-btn{width:100%;padding:16px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;transition:opacity 0.2s;}
+.submit-btn:hover{opacity:0.9;}
+.no-ssn{text-align:center;font-size:12px;color:var(--dim);margin-top:12px;}
+
+/* PROCESSING */
+.processing{display:none;text-align:center;padding:48px 32px;}
+.proc-title{font-family:'Fraunces',serif;font-size:24px;font-weight:900;margin-bottom:24px;color:var(--gold);}
+.proc-steps{list-style:none;text-align:left;max-width:300px;margin:0 auto 32px;}
+.proc-steps li{padding:8px 0;font-size:14px;color:var(--dim);display:flex;align-items:center;gap:10px;}
+.proc-steps li.done{color:var(--green);}
+.proc-steps li .dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0;}
+.proc-steps li.done .dot{background:var(--green);}
+.proc-steps li.active .dot{background:var(--gold);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* REPORT */
+.report{display:none;padding:0 40px 60px;max-width:700px;margin:0 auto;}
+.report-header{text-align:center;padding:32px 0 24px;}
+.report-title{font-family:'Fraunces',serif;font-size:28px;font-weight:900;margin-bottom:4px;}
+.report-meta{font-size:12px;color:var(--dim);font-family:'DM Mono',monospace;}
+
+.report-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;}
+.rs-title{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:16px;}
+
+/* Lender ranking */
+.lender-rank{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.lender-rank:last-child{border:none;}
+.rank-num{font-family:'Fraunces',serif;font-size:20px;font-weight:900;width:28px;color:var(--gold);}
+.rank-name{font-weight:700;font-size:14px;flex:1;}
+.rank-fit{font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;}
+.fit-high{background:rgba(107,255,184,0.1);color:var(--green);}
+.fit-med{background:rgba(200,168,75,0.1);color:var(--gold);}
+.fit-low{background:rgba(232,132,90,0.1);color:var(--red);}
+.rank-reason{font-size:12px;color:var(--dim);margin-top:3px;}
+
+/* Action plan */
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.action-card{border-radius:8px;padding:14px;}
+.action-card.apply{background:rgba(107,255,184,0.08);border:1px solid rgba(107,255,184,0.2);}
+.action-card.avoid{background:rgba(232,132,90,0.08);border:1px solid rgba(232,132,90,0.2);}
+.ac-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.ac-item{font-size:13px;padding:3px 0;}
+
+/* CTA */
+.report-cta{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:24px;text-align:center;margin-top:24px;}
+.report-cta h3{font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:8px;}
+.report-cta p{font-size:13px;color:var(--dim);margin-bottom:16px;}
+.cta-btn{display:inline-block;padding:12px 28px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;}
+
+@media(max-width:768px){.hero,.form-wrap,.report{padding-left:20px;padding-right:20px;} .action-grid{grid-template-columns:1fr;} header{padding:0 20px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">60 Seconds · No SSN Required</div>
+  <h1>Why You Were Denied —<br>And <em>Who Will Say Yes</em></h1>
+  <p class="hero-sub">Most mortgage denials are routing problems, not borrower problems. We analyze 11 major lenders using 7 years of federal HMDA data to find your best match.</p>
+  <div class="trust-row">
+    <div class="trust-item">✓ CFPB HMDA Data</div>
+    <div class="trust-item">✓ No SSN or credit pull</div>
+    <div class="trust-item">✓ 11 lenders analyzed</div>
+    <div class="trust-item">✓ Instant results</div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-wrap" id="formSection">
+  <div class="form-card">
+    <div class="form-title">Get Your Decision Report</div>
+
+    <div class="field">
+      <label>Credit Score Range</label>
+      <div class="fico-display" id="ficoDisplay">680</div>
+      <input type="range" id="ficoSlider" min="500" max="850" step="10" value="680" oninput="document.getElementById('ficoDisplay').textContent=this.value">
+    </div>
+
+    <div class="field">
+      <label>Loan Purpose</label>
+      <select id="loanPurpose">
+        <option value="purchase">Home Purchase</option>
+        <option value="refi">Refinance</option>
+        <option value="cash_out">Cash-Out Refinance</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Income Type</label>
+      <select id="incomeType">
+        <option value="W2">W2 Employee</option>
+        <option value="self_employed">Self-Employed</option>
+        <option value="1099">1099 / Contract</option>
+        <option value="ssdi">SSDI / Disability</option>
+        <option value="retirement">Retirement / Fixed Income</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>State</label>
+      <select id="state">
+        <option value="TX">Texas</option>
+        <option value="CA">California</option>
+        <option value="FL">Florida</option>
+        <option value="NY">New York</option>
+        <option value="NJ">New Jersey</option>
+        <option value="CO">Colorado</option>
+        <option value="other">Other State</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Loan Type</label>
+      <select id="loanType">
+        <option value="fha">FHA</option>
+        <option value="conventional">Conventional</option>
+        <option value="va">VA</option>
+      </select>
+    </div>
+
+    <button class="submit-btn" onclick="generateReport()">Generate My Decision Report →</button>
+    <div class="no-ssn">No SSN required · No credit check · Educational purposes only</div>
+  </div>
+</div>
+
+<!-- PROCESSING -->
+<div class="processing" id="processingSection">
+  <div class="proc-title">Analyzing Your Profile...</div>
+  <ul class="proc-steps" id="procSteps">
+    <li id="step1"><div class="dot"></div>Loading lender HMDA data...</li>
+    <li id="step2"><div class="dot"></div>Running OFI market analysis...</li>
+    <li id="step3"><div class="dot"></div>Calculating lender fit scores...</li>
+    <li id="step4"><div class="dot"></div>Running rate scenario model...</li>
+    <li id="step5"><div class="dot"></div>Generating decision report...</li>
+  </ul>
+</div>
+
+<!-- REPORT -->
+<div class="report" id="reportSection">
+  <div class="report-header">
+    <div class="report-title">Your Mortgage Decision Report</div>
+    <div class="report-meta" id="reportMeta"></div>
+  </div>
+
+  <!-- Lender Ranking -->
+  <div class="report-section">
+    <div class="rs-title">Lender Ranking — Best Match First</div>
+    <div id="lenderRanking"></div>
+  </div>
+
+  <!-- OFI Signal -->
+  <div class="report-section">
+    <div class="rs-title">Market Signal (OFI)</div>
+    <div id="ofiSignal"></div>
+  </div>
+
+  <!-- Action Plan -->
+  <div class="report-section">
+    <div class="rs-title">Your Action Plan</div>
+    <div class="action-grid" id="actionPlan"></div>
+  </div>
+
+  <!-- Rate Scenario -->
+  <div class="report-section">
+    <div class="rs-title">Rate Scenario Impact</div>
+    <div id="rateScenario"></div>
+  </div>
+
+  <!-- CTA -->
+  <div class="report-cta">
+    <h3>Are You a Broker?</h3>
+    <p>Get unlimited decision reports for all your clients — plus 7-year lender trend data and OFI weekly updates.</p>
+    <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" class="cta-btn">Zai for Brokers — $49/mo →</a>
+  </div>
+</div>
+
+<script>
+const LENDER_DATA = {
+  purchase: {
+    fha: [
+      {name:"CrossCountry", fit:"High", denial:5.5, reason:"Lowest FHA denial rate (5.5%), purchase specialist"},
+      {name:"Guild Mortgage", fit:"High", denial:7.1, reason:"FHA purchase specialist, 7-year consistency"},
+      {name:"UWM", fit:"High", denial:19.9, reason:"Largest wholesale FHA volume, strong purchase channel"},
+      {name:"Planet Home", fit:"Medium", denial:23.5, reason:"Balanced lender, moderate FHA approval"},
+      {name:"Freedom Mortgage", fit:"Medium", denial:24.4, reason:"High FHA volume, check overlays"},
+      {name:"Rocket", fit:"Low", denial:28.4, reason:"High denial rate, better for conventional"},
+    ],
+    conventional: [
+      {name:"UWM", fit:"High", denial:19.9, reason:"Strong purchase channel, wholesale pricing"},
+      {name:"CrossCountry", fit:"High", denial:5.5, reason:"Purchase specialist, low denial rate"},
+      {name:"Guild Mortgage", fit:"High", denial:7.1, reason:"Retail purchase strength"},
+      {name:"PennyMac", fit:"Medium", denial:26.6, reason:"Improving trend, competitive conventional"},
+      {name:"loanDepot", fit:"Medium", denial:37.0, reason:"Re-tightening — borderline profiles at risk"},
+      {name:"Wells Fargo", fit:"Low", denial:58.5, reason:"Very high denial rate, exiting FHA market"},
+    ]
+  },
+  cash_out: {
+    fha: [
+      {name:"CrossCountry", fit:"High", denial:5.5, reason:"Only 15.5% of denials are cash-out — low friction"},
+      {name:"Guild Mortgage", fit:"High", denial:7.1, reason:"27.5% cash-out — manageable"},
+      {name:"Planet Home", fit:"Medium", denial:23.5, reason:"Balanced 30% cash-out ratio"},
+      {name:"UWM", fit:"Medium", denial:19.9, reason:"33% cash-out — moderate friction"},
+      {name:"Rocket", fit:"Low", denial:28.4, reason:"50.8% of denials are cash-out — avoid"},
+      {name:"NewRez", fit:"Low", denial:47.8, reason:"72.6% cash-out — highest friction in dataset"},
+    ]
+  },
+  refi: {
+    fha: [
+      {name:"UWM", fit:"High", denial:19.9, reason:"Growing refi channel in purchase era"},
+      {name:"PennyMac", fit:"High", denial:26.6, reason:"Major improvement, strong refi infrastructure"},
+      {name:"CrossCountry", fit:"Medium", denial:5.5, reason:"Purchase focused but low overall denial"},
+      {name:"loanDepot", fit:"Medium", denial:37.0, reason:"Re-tightening trend — watch closely"},
+      {name:"Freedom Mortgage", fit:"Low", denial:24.4, reason:"Extremely volatile refi history"},
+      {name:"NewRez", fit:"Low", denial:47.8, reason:"High denial, unstable refi behavior"},
+    ]
+  }
+};
+
+const OFI_DATA = {
+  TX: {ofi:30, signal:"OPEN", note:"Texas market is favorable. Lenders are active and overlays are thin."},
+  CA: {ofi:62, signal:"NARROWING", note:"California market is tight. OFI above 60 — expect stricter overlays."},
+  FL: {ofi:44, signal:"MODERATE", note:"Florida is moderate. Standard overlays apply."},
+  NY: {ofi:71, signal:"DETERIORATING", note:"New York market is challenging. High OFI — time submissions carefully."},
+  NJ: {ofi:58, signal:"NARROWING", note:"New Jersey above national average. Overlays tighter than normal."},
+  CO: {ofi:38, signal:"OPEN", note:"Colorado favorable. Moderate OFI, good approval environment."},
+  other: {ofi:47, signal:"MODERATE", note:"National OFI is 47 — moderate market conditions."},
+};
+
+const INCOME_SENSITIVITY = {
+  W2: {label:"Low", factor:0.3, note:"W2 income is OFI-resilient. Timing matters less for you."},
+  self_employed: {label:"High", factor:0.8, note:"Self-employed profiles are 2.7× more sensitive to market conditions."},
+  "1099": {label:"High", factor:0.7, note:"Contract income triggers overlays in tight markets."},
+  ssdi: {label:"Moderate", factor:0.5, note:"SSDI gross-up eligibility varies by lender and OFI level."},
+  retirement: {label:"Low", factor:0.2, note:"Fixed income is stable across OFI levels."},
+};
+
+function generateReport() {
+  const fico = parseInt(document.getElementById('ficoSlider').value);
+  const purpose = document.getElementById('loanPurpose').value;
+  const income = document.getElementById('incomeType').value;
+  const state = document.getElementById('state').value;
+  const loanType = document.getElementById('loanType').value;
+
+  // Show processing
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('processingSection').style.display = 'block';
+
+  const steps = ['step1','step2','step3','step4','step5'];
+  let i = 0;
+  const interval = setInterval(() => {
+    if(i > 0) document.getElementById(steps[i-1]).className = 'done';
+    if(i < steps.length) {
+      document.getElementById(steps[i]).className = 'active';
+      i++;
+    } else {
+      clearInterval(interval);
+      setTimeout(showReport, 600);
+    }
+  }, 600);
+
+  window._reportData = {fico, purpose, income, state, loanType};
+}
+
+function showReport() {
+  document.getElementById('processingSection').style.display = 'none';
+  document.getElementById('reportSection').style.display = 'block';
+
+  const {fico, purpose, income, state, loanType} = window._reportData;
+  const ofi = OFI_DATA[state] || OFI_DATA.other;
+  const incomeSens = INCOME_SENSITIVITY[income];
+  const today = new Date().toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+
+  // Meta
+  document.getElementById('reportMeta').textContent = 
+    `Generated ${today} · FICO ${fico} · ${document.getElementById('loanPurpose').options[document.getElementById('loanPurpose').selectedIndex].text} · ${document.getElementById('state').options[document.getElementById('state').selectedIndex].text}`;
+
+  // Lender Ranking
+  const purposeKey = purpose === 'purchase' ? 'purchase' : purpose === 'cash_out' ? 'cash_out' : 'refi';
+  const typeKey = loanType === 'fha' ? 'fha' : 'conventional';
+  let lenders = (LENDER_DATA[purposeKey]?.[typeKey] || LENDER_DATA.purchase.fha).slice();
+
+  // FICO adjustment
+  if(fico < 580) lenders = lenders.map(l => ({...l, fit: l.fit === 'High' ? 'Medium' : 'Low', reason: l.reason + ' (FICO below 580 — check minimum requirements)'}));
+  else if(fico >= 720) lenders = lenders.map(l => ({...l, fit: l.fit === 'Low' ? 'Medium' : l.fit}));
+
+  let rankHTML = '';
+  lenders.forEach((l, idx) => {
+    const fitClass = l.fit === 'High' ? 'fit-high' : l.fit === 'Medium' ? 'fit-med' : 'fit-low';
+    rankHTML += `<div class="lender-rank">
+      <div class="rank-num">${idx+1}</div>
+      <div style="flex:1;">
+        <div class="rank-name">${l.name} <span style="font-size:11px;color:var(--dim);font-weight:400;">· ${l.denial}% FHA denial</span></div>
+        <div class="rank-reason">${l.reason}</div>
+      </div>
+      <span class="rank-fit ${fitClass}">${l.fit}</span>
+    </div>`;
+  });
+  document.getElementById('lenderRanking').innerHTML = rankHTML;
+
+  // OFI Signal
+  const ofiColor = ofi.signal === 'OPEN' ? '#6bffb8' : ofi.signal === 'NARROWING' ? '#C8A84B' : '#e8845a';
+  document.getElementById('ofiSignal').innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;">
+      <div style="font-family:'Fraunces',serif;font-size:36px;font-weight:900;color:${ofiColor};">${ofi.ofi}</div>
+      <div>
+        <div style="font-size:16px;font-weight:700;color:${ofiColor};">Window: ${ofi.signal}</div>
+        <div style="font-size:12px;color:var(--dim);">Current OFI Score</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:10px;">${ofi.note}</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.6);padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;">
+      <strong>Your income sensitivity:</strong> ${incomeSens.label} — ${incomeSens.note}
+    </div>`;
+
+  // Action Plan
+  const top2 = lenders.filter(l => l.fit === 'High').slice(0,2).map(l => l.name);
+  const avoid = lenders.filter(l => l.fit === 'Low').slice(0,2).map(l => l.name);
+  document.getElementById('actionPlan').innerHTML = `
+    <div class="action-card apply">
+      <div class="ac-title" style="color:var(--green);">✓ Apply To</div>
+      ${top2.map(n => `<div class="ac-item">→ ${n}</div>`).join('')}
+    </div>
+    <div class="action-card avoid">
+      <div class="ac-title" style="color:var(--red);">✗ Avoid Now</div>
+      ${avoid.map(n => `<div class="ac-item">✗ ${n}</div>`).join('')}
+    </div>`;
+
+  // Rate Scenario
+  document.getElementById('rateScenario').innerHTML = `
+    <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:12px;">Based on current rate environment (6.9%):</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div style="padding:12px;background:rgba(232,132,90,0.08);border-radius:8px;border:1px solid rgba(232,132,90,0.2);">
+        <div style="font-size:11px;color:var(--red);font-weight:700;text-transform:uppercase;margin-bottom:6px;">If rates +1% (8%)</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);">Freedom, PennyMac, Mr. Cooper likely to tighten overlays further. Submit to CrossCountry or Guild now.</div>
+      </div>
+      <div style="padding:12px;background:rgba(107,255,184,0.08);border-radius:8px;border:1px solid rgba(107,255,184,0.2);">
+        <div style="font-size:11px;color:var(--green);font-weight:700;text-transform:uppercase;margin-bottom:6px;">If rates -1% (6%)</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);">Rocket and PennyMac become more competitive. More lender options open up.</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.3);">
+      <a href="/rate-simulator.html" style="color:rgba(200,168,75,0.4);">Run full rate scenario simulator →</a>
+    </div>`;
+
+  if(typeof gtag !== 'undefined') gtag('event', 'report_generated', {event_label: `${document.getElementById('loanPurpose').value}_${document.getElementById('loanType').value}`});
+}
+</script>
+</body>
+</html>
