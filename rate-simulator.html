@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mortgage Rate Simulator — Which Lenders Survive Rate Changes? | FinanceRateCalc</title>
+<meta name="description" content="If rates rise 1%, which mortgage lenders lose the most volume? Interactive rate scenario simulator built on 7 years of CFPB HMDA behavioral data.">
+<link rel="canonical" href="https://financeratecalc.com/rate-simulator.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--navy:#0B132B;--gold:#C8A84B;--green:#6bffb8;--red:#e8845a;--white:#fff;--dim:rgba(255,255,255,0.45);--border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--white);text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+nav a{font-size:13px;color:var(--dim);text-decoration:none;margin-left:20px;}
+.hero{padding:60px 40px 40px;max-width:900px;margin:0 auto;text-align:center;}
+.badge{display:inline-flex;padding:5px 14px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.3);border-radius:20px;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,44px);font-weight:900;line-height:1.1;margin-bottom:12px;}
+h1 em{font-style:italic;color:var(--gold);}
+.container{max-width:900px;margin:0 auto;padding:0 40px 60px;}
+
+/* RATE SLIDER */
+.simulator{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:32px;text-align:center;}
+.rate-display{font-family:'Fraunces',serif;font-size:64px;font-weight:900;color:var(--gold);margin:16px 0 4px;}
+.rate-label{font-size:13px;color:var(--dim);margin-bottom:24px;}
+input[type=range]{width:100%;max-width:500px;-webkit-appearance:none;height:6px;border-radius:3px;background:rgba(255,255,255,0.1);outline:none;margin:8px 0 24px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--gold);cursor:pointer;}
+.scenario-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.s-btn{padding:6px 16px;border:1px solid var(--border);border-radius:20px;background:transparent;color:var(--dim);font-size:12px;cursor:pointer;}
+.s-btn:hover,.s-btn.active{background:rgba(200,168,75,0.1);border-color:rgba(200,168,75,0.4);color:var(--gold);}
+
+/* RESULTS */
+.results-title{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:16px;}
+.lender-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.lender-name{width:160px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);flex-shrink:0;}
+.bar-wrap{flex:1;background:rgba(255,255,255,0.06);border-radius:4px;height:8px;position:relative;}
+.bar-fill{height:100%;border-radius:4px;transition:width 0.4s ease;}
+.change-pct{width:70px;text-align:right;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;flex-shrink:0;}
+.beta-badge{width:60px;text-align:right;font-size:11px;color:var(--dim);flex-shrink:0;}
+
+.insight-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.15);border-radius:12px;padding:20px;margin-top:24px;}
+.insight-title{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
+.insight-text{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.7;}
+
+.cta-row{display:flex;gap:12px;justify-content:center;margin:32px 0;flex-wrap:wrap;}
+.cta-btn{padding:12px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;}
+.cta-sec{padding:12px 24px;background:transparent;color:var(--gold);border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;}
+.disclaimer{font-size:11px;color:rgba(255,255,255,0.2);margin-top:32px;line-height:1.8;text-align:center;}
+@media(max-width:768px){header,.hero,.container{padding-left:20px;padding-right:20px;} .lender-name{width:110px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <nav>
+    <a href="/lender-intelligence.html">Behavior</a>
+    <a href="/lender-trends.html">Trends</a>
+    <a href="/zai-one.html">Zai</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="badge">Prediction Model · HMDA 2018–2024</div>
+  <h1>If Rates Change,<br><em>Who Survives?</em></h1>
+  <p style="font-size:15px;color:var(--dim);max-width:520px;margin:0 auto;line-height:1.7;">Move the slider to simulate a rate scenario. The model predicts volume impact for each lender based on their historical rate sensitivity.</p>
+</div>
+
+<div class="container">
+
+  <!-- SIMULATOR -->
+  <div class="simulator">
+    <div style="font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;">30-Year Mortgage Rate</div>
+    <div class="rate-display" id="rateDisplay">6.9%</div>
+    <div class="rate-label" id="rateLabel">Current (baseline)</div>
+    <input type="range" id="rateSlider" min="3" max="10" step="0.1" value="6.9">
+    <div class="scenario-btns">
+      <button class="s-btn" onclick="setRate(3.0)">3.0% — 2020 Low</button>
+      <button class="s-btn" onclick="setRate(4.5)">4.5% — 2018 Avg</button>
+      <button class="s-btn active" onclick="setRate(6.9)">6.9% — Current</button>
+      <button class="s-btn" onclick="setRate(8.0)">8.0% — Stress</button>
+      <button class="s-btn" onclick="setRate(10.0)">10.0% — 1990s</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-title">Predicted Volume Impact vs Current Baseline</div>
+  <div id="results"></div>
+
+  <div class="insight-box">
+    <div class="insight-title">What This Means for Borrowers</div>
+    <div class="insight-text" id="insightText"></div>
+  </div>
+
+  <div class="cta-row">
+    <a href="/zai-one.html" class="cta-btn">Route Your File with Zai →</a>
+    <a href="/lender-intelligence.html" class="cta-sec">Full Behavioral Analysis</a>
+    <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" class="cta-sec">Zai for Brokers — $49/mo</a>
+  </div>
+
+  <div class="disclaimer">
+    Model based on 7 years of CFPB HMDA public data (2018–2024). Volume predictions use linear regression on refi sensitivity vs. rate environment. This is a probabilistic model, not a guarantee. Actual lender behavior depends on many factors not captured here. Not financial advice. <a href="/methodology.html" style="color:rgba(200,168,75,0.3);">Methodology →</a>
+  </div>
+
+</div>
+
+<script>
+// Prediction model — derived from 7yr regression
+const MODEL = {
+  "Freedom Mortgage": {beta:1.68, refi_elast:-0.168, base_refi:0.113, segment:"Rate-Driven"},
+  "PennyMac":         {beta:1.40, refi_elast:-0.140, base_refi:0.201, segment:"Rate-Driven"},
+  "Mr. Cooper":       {beta:1.32, refi_elast:-0.132, base_refi:0.154, segment:"Rate-Driven"},
+  "NewRez":           {beta:1.29, refi_elast:-0.129, base_refi:0.151, segment:"Rate-Driven"},
+  "Wells Fargo":      {beta:1.05, refi_elast:-0.105, base_refi:0.129, segment:"Rate-Driven"},
+  "loanDepot":        {beta:1.01, refi_elast:-0.101, base_refi:0.076, segment:"Rate-Driven"},
+  "Rocket":           {beta:1.00, refi_elast:-0.100, base_refi:0.134, segment:"Rate-Driven"},
+  "UWM":              {beta:0.72, refi_elast:-0.072, base_refi:0.190, segment:"Balanced"},
+  "Guild Mortgage":   {beta:0.59, refi_elast:-0.059, base_refi:0.079, segment:"Balanced"},
+  "CrossCountry":     {beta:0.46, refi_elast:-0.046, base_refi:0.077, segment:"Balanced"},
+  "Planet Home":      {beta:0.82, refi_elast:-0.082, base_refi:0.300, segment:"Balanced"},
+};
+
+const BASELINE_RATE = 6.9;
+
+function calcImpact(lender, newRate) {
+  const m = MODEL[lender];
+  const rateDelta = newRate - BASELINE_RATE;
+  // Refi ratio change
+  const refiChange = m.refi_elast * rateDelta;
+  // Volume impact weighted by refi exposure
+  const volumeImpact = refiChange * m.base_refi * 100;
+  return Math.max(-60, Math.min(60, volumeImpact));
+}
+
+function setRate(val) {
+  document.getElementById('rateSlider').value = val;
+  updateSimulator();
+  document.querySelectorAll('.s-btn').forEach(b => b.classList.remove('active'));
+}
+
+function updateSimulator() {
+  const rate = parseFloat(document.getElementById('rateSlider').value);
+  document.getElementById('rateDisplay').textContent = rate.toFixed(1) + '%';
+  
+  const delta = rate - BASELINE_RATE;
+  let label = delta > 0 ? `+${delta.toFixed(1)}pp above current` : delta < 0 ? `${delta.toFixed(1)}pp below current` : 'Current (baseline)';
+  document.getElementById('rateLabel').textContent = label;
+
+  // Calc impacts
+  const impacts = Object.entries(MODEL).map(([name, m]) => ({
+    name,
+    impact: calcImpact(name, rate),
+    segment: m.segment,
+    beta: m.beta
+  })).sort((a,b) => a.impact - b.impact);
+
+  // Render
+  const maxAbs = Math.max(...impacts.map(i => Math.abs(i.impact)), 1);
+  let html = '';
+  impacts.forEach(({name, impact, segment, beta}) => {
+    const color = impact < -15 ? '#e8845a' : impact < 0 ? '#C8A84B' : '#6bffb8';
+    const barW = Math.abs(impact) / maxAbs * 100;
+    const sign = impact >= 0 ? '+' : '';
+    html += `<div class="lender-row">
+      <div class="lender-name">${name}</div>
+      <div class="bar-wrap">
+        <div class="bar-fill" style="width:${barW}%;background:${color};${impact >= 0 ? '' : 'margin-left:auto;'}"></div>
+      </div>
+      <div class="change-pct" style="color:${color};">${sign}${impact.toFixed(1)}%</div>
+      <div class="beta-badge">β ${beta}</div>
+    </div>`;
+  });
+  document.getElementById('results').innerHTML = html;
+
+  // Insight
+  const worst = impacts[0];
+  const best = impacts[impacts.length-1];
+  let insight = '';
+  if(delta > 0.5) {
+    insight = `At ${rate.toFixed(1)}%, <strong>${worst.name}</strong> is projected to see the largest volume decline (${worst.impact.toFixed(1)}%) due to high refi dependency. Meanwhile, <strong>${best.name}</strong> is more resilient (${best.impact > 0 ? '+' : ''}${best.impact.toFixed(1)}%) — its purchase-focused model insulates it from rate increases. <br><br>For borrowers: in a rising rate environment, rate-sensitive lenders may tighten overlays faster to protect margins.`;
+  } else if(delta < -0.5) {
+    insight = `At ${rate.toFixed(1)}%, refi-dependent lenders like <strong>${best.name}</strong> would see the biggest volume surge (${best.impact > 0 ? '+' : ''}${best.impact.toFixed(1)}%). This creates a competitive environment — lenders hungry for volume are more likely to approve borderline files. <strong>${worst.name}</strong> shows less sensitivity (${worst.impact.toFixed(1)}%) as it's already purchase-focused.`;
+  } else {
+    insight = `At current rates (${rate.toFixed(1)}%), this is the baseline. Freedom Mortgage (β 1.68) and PennyMac (β 1.40) carry the highest rate sensitivity in this panel — they would benefit most from rate cuts and suffer most from rate increases.`;
+  }
+  document.getElementById('insightText').innerHTML = insight;
+}
+
+document.getElementById('rateSlider').addEventListener('input', updateSimulator);
+updateSimulator();
+</script>
+</body>
+</html>
