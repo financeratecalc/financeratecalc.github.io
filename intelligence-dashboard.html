@@ -87,6 +87,21 @@ td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.03);}
 
 <div class="container">
 
+  
+  <!-- FR DECISION INDEX — PRIMARY SCORE -->
+  <div id="frdiBox" style="background:rgba(11,19,43,0.8);border:2px solid rgba(200,168,75,0.3);border-radius:16px;padding:32px;margin-bottom:24px;text-align:center;">
+    <div style="font-size:11px;font-weight:700;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;">FR Decision Index — Primary Score</div>
+    <div id="frdiValue" style="font-family:'Fraunces',serif;font-size:80px;font-weight:900;line-height:1;color:var(--gold);">—</div>
+    <div id="frdiSignal" style="font-size:20px;font-weight:700;margin:8px 0;"></div>
+    <div id="frdiAction" style="font-size:14px;color:rgba(255,255,255,0.6);max-width:480px;margin:0 auto 20px;line-height:1.6;"></div>
+    
+    <!-- Top 3 Drivers -->
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;" id="frdiDrivers"></div>
+    
+    <div style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:16px;">
+      FRDI = MMI(35%) + MTI(30%) + MSI(20%) + OFI(15%) · 0–100 scale · Higher = better conditions
+    </div>
+  </div>
   <!-- BROKER SUMMARY -->
   <div class="broker-rec" id="brokerRec">
     <div>
@@ -165,6 +180,27 @@ function sigColor(sig) {
 }
 
 function renderDashboard(d) {
+
+  // FRDI render
+  if(d.FRDI) {
+    const frdi = d.FRDI;
+    document.getElementById('frdiValue').textContent = frdi.value;
+    document.getElementById('frdiValue').style.color = frdi.color;
+    document.getElementById('frdiBox').style.borderColor = frdi.color + '66';
+    document.getElementById('frdiSignal').textContent = frdi.signal;
+    document.getElementById('frdiSignal').style.color = frdi.color;
+    document.getElementById('frdiAction').textContent = frdi.action;
+    
+    if(frdi.top_drivers) {
+      document.getElementById('frdiDrivers').innerHTML = frdi.top_drivers.map(dr => `
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 16px;min-width:140px;">
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px;">${dr.name}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:${dr.impact==='positive'?'#6bffb8':'#e8845a'};">${dr.value}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.3);">Weight: ${dr.weight}</div>
+        </div>`).join('');
+    }
+  }
+
   // Broker summary
   const sig = d.SUMMARY?.overall_signal || 'BALANCED';
   const [cls, color] = sigColor(sig);
