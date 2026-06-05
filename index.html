@@ -252,6 +252,7 @@ footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0
         <span id="heroSignal" style="font-size:14px;font-weight:700;color:#C8A84B;">CAUTIOUS</span>
       </div>
       <div id="heroAction" style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:2px;">700+ FICO → submit · Borderline → wait</div>
+    <div id="heroConfHint" style="font-size:10px;color:rgba(107,255,184,0.45);margin-top:4px;">● Stable macro signals · Low volatility regime</div>
     </div>
     <div style="font-size:11px;color:rgba(200,168,75,0.5);white-space:nowrap;">View signal →</div>
   </a>
@@ -271,6 +272,11 @@ fetch('/_data/composite_metrics.json').then(r=>r.json()).then(d=>{
   document.getElementById('heroSignal').textContent = f.signal;
   document.getElementById('heroSignal').style.color = f.color;
   document.getElementById('heroAction').textContent = f.current_routing?.substring(0,55) + '...';
+  const hint = document.getElementById('heroConfHint');
+  if(hint && f.confidence_label && f.volatility && f.regime) {
+    hint.textContent = '● ' + f.confidence_label + ' confidence · ' + f.volatility + ' volatility · ' + f.regime + ' regime';
+    hint.style.color = f.confidence > 0.8 ? 'rgba(107,255,184,0.5)' : 'rgba(200,168,75,0.45)';
+  }
 }).catch(()=>{});
 </script>
 

@@ -111,6 +111,7 @@ h1 em{font-style:italic;color:var(--gold);}
     <div style="font-size:10px;font-weight:700;color:rgba(200,168,75,0.5);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:6px;">FR Decision Index — This Week</div>
     <div class="fw-score" id="frdiScore" style="color:var(--gold);">45</div>
     <div class="fw-signal" id="frdiSignal" style="color:var(--gold);">CAUTIOUS MODE</div>
+    <div id="frdiConfHint" style="font-size:11px;color:rgba(107,255,184,0.5);margin-bottom:6px;letter-spacing:0.03em;">● Stable macro signals · Low volatility regime</div>
     <div class="fw-action" id="frdiAction">Market is moderately tight. Prioritize high-FICO, W2 profiles. Hold borderline files 2-3 weeks.</div>
     <div class="fw-meta">
       <div class="fw-meta-item">
@@ -269,6 +270,11 @@ async function loadSignal() {
     document.getElementById('frdiSignal').textContent = frdi.signal + ' MODE';
     document.getElementById('frdiSignal').style.color = frdi.color;
     document.getElementById('frdiAction').textContent = frdi.action;
+    const ch = document.getElementById('frdiConfHint');
+    if(ch && frdi.confidence_label && frdi.volatility && frdi.regime) {
+      ch.textContent = '● ' + frdi.confidence_label + ' confidence · ' + frdi.volatility + ' volatility · ' + frdi.regime + ' regime';
+      ch.style.color = frdi.confidence > 0.8 ? 'rgba(107,255,184,0.5)' : 'rgba(200,168,75,0.45)';
+    }
     document.getElementById('frdiWidget').style.borderColor = frdi.color + '44';
     
     if(frdi.confidence) {
