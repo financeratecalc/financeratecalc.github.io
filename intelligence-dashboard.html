@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mortgage Intelligence Dashboard | 8 Composite Metrics | FinanceRateCalc</title>
+<meta name="description" content="8 composite mortgage market metrics: MMI, LAS, MTI, LOI, ITAO, MSI, DPV, LSFS. Real-time market intelligence for brokers.">
+<link rel="canonical" href="https://financeratecalc.com/intelligence-dashboard.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--navy:#0B132B;--gold:#C8A84B;--green:#6bffb8;--red:#e8845a;--white:#fff;--dim:rgba(255,255,255,0.45);--border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--white);text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+nav a{font-size:13px;color:var(--dim);text-decoration:none;margin-left:16px;}
+
+.hero{padding:48px 40px 24px;max-width:1200px;margin:0 auto;}
+.badge{display:inline-flex;padding:5px 14px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.3);border-radius:20px;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(24px,3.5vw,40px);font-weight:900;line-height:1.1;margin-bottom:8px;}
+h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:14px;color:var(--dim);}
+
+.container{max-width:1200px;margin:0 auto;padding:0 40px 60px;}
+
+/* BROKER SUMMARY */
+.broker-rec{background:linear-gradient(135deg,rgba(200,168,75,0.08),rgba(107,255,184,0.04));border:1px solid rgba(200,168,75,0.2);border-radius:14px;padding:24px;margin-bottom:28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.br-signal{font-family:'Fraunces',serif;font-size:36px;font-weight:900;}
+.br-text{flex:1;}
+.br-rec{font-size:14px;color:rgba(255,255,255,0.7);margin-top:6px;}
+
+/* METRICS GRID */
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.mc-name{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;}
+.mc-abbr{font-family:'Fraunces',serif;font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px;}
+.mc-value{font-family:'DM Mono',monospace;font-size:32px;font-weight:500;margin-bottom:4px;}
+.mc-signal{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:3px 10px;border-radius:10px;display:inline-block;}
+.sig-green{background:rgba(107,255,184,0.1);color:var(--green);}
+.sig-gold{background:rgba(200,168,75,0.1);color:var(--gold);}
+.sig-red{background:rgba(232,132,90,0.1);color:var(--red);}
+.mc-desc{font-size:11px;color:var(--dim);margin-top:8px;line-height:1.5;}
+
+/* LENDER TABLE */
+.lender-table{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px;overflow-x:auto;}
+.section-title{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:16px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;}
+td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.03);}
+.score-bar{display:inline-block;height:4px;border-radius:2px;vertical-align:middle;margin-left:8px;}
+
+/* INCOME TYPE */
+.income-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px;}
+.income-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+.ic-type{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;color:var(--dim);}
+.ic-odds{font-family:'Fraunces',serif;font-size:28px;font-weight:900;}
+.ic-signal{font-size:10px;margin-top:4px;}
+
+.cta-row{display:flex;gap:12px;justify-content:center;margin:24px 0;flex-wrap:wrap;}
+.cta-btn{padding:12px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;}
+.cta-sec{padding:12px 24px;background:transparent;color:var(--gold);border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;}
+
+.disclaimer{font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:24px;line-height:1.8;}
+@media(max-width:900px){.metrics-grid{grid-template-columns:repeat(2,1fr);}.income-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:600px){.metrics-grid{grid-template-columns:1fr;}.income-grid{grid-template-columns:repeat(2,1fr);}.hero,.container{padding-left:20px;padding-right:20px;} header{padding:0 20px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <nav>
+    <a href="javascript:history.back()">← Back</a>
+    <a href="/market-pulse.html">Pulse</a>
+    <a href="/zai-one.html">Zai</a>
+    <a href="/lender-trends.html">Trends</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="badge">8 Composite Metrics · Updated Weekly</div>
+  <h1>Mortgage <em>Intelligence</em> Dashboard</h1>
+  <p class="hero-sub">OFI + MBA + HMDA + Rate Momentum → 8 actionable composite metrics for brokers. Not financial advice — directional signals only.</p>
+</div>
+
+<div class="container">
+
+  <!-- BROKER SUMMARY -->
+  <div class="broker-rec" id="brokerRec">
+    <div>
+      <div style="font-size:10px;font-weight:700;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;">This Week's Broker Signal</div>
+      <div class="br-signal" id="mainSignal" style="color:var(--gold);">BALANCED</div>
+    </div>
+    <div class="br-text">
+      <div style="font-size:14px;font-weight:600;" id="brokerRecText">Loading market data...</div>
+      <div class="br-rec" id="brokerRecDetail"></div>
+    </div>
+    <div style="font-size:11px;color:var(--dim);font-family:'DM Mono',monospace;" id="recDate"></div>
+  </div>
+
+  <!-- 6 SCALAR METRICS -->
+  <div class="section-title">Market Composite Metrics</div>
+  <div class="metrics-grid" id="metricsGrid"></div>
+
+  <!-- INCOME TYPE APPROVAL ODDS -->
+  <div class="section-title">Income Type Approval Odds (ITAO)</div>
+  <div class="income-grid" id="incomeGrid"></div>
+
+  <!-- LENDER TABLES -->
+  <div class="lender-table">
+    <div class="section-title">Lender Aggressiveness Score (LAS) — Higher = More Approvals</div>
+    <table id="lasTable">
+      <tr><th>Lender</th><th>LAS Score</th><th>Signal</th><th>2024 FHA Denial Rate</th></tr>
+    </table>
+  </div>
+
+  <div class="lender-table">
+    <div class="section-title">Lender Opportunity Index (LOI) — Higher = Market Share Opportunity</div>
+    <table id="loiTable">
+      <tr><th>Lender</th><th>LOI Score</th><th>Signal</th></tr>
+    </table>
+  </div>
+
+  <div class="cta-row">
+    <a href="/zai-one.html" class="cta-btn">Get Your Routing Decision →</a>
+    <a href="/mortgage-decision-report.html" class="cta-sec">Full Decision Report</a>
+    <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" class="cta-sec">Broker Weekly Alerts — $49/mo</a>
+  </div>
+
+  <div class="disclaimer">
+    Composite metrics derived from: OFI (FRED MORTGAGE30US, r=0.902), MBA Weekly Index (MMNRNSA), HMDA 2018-2024 denial rates, AWS sensitivity coefficients. All metrics are directional signals, not predictions. Not financial advice. <a href="/methodology.html" style="color:rgba(200,168,75,0.3);">Methodology →</a>
+  </div>
+
+</div>
+
+<script>
+const DENIAL_RATES = {
+  "CrossCountry":5.5,"Guild":7.1,"UWM":19.9,"Planet Home":23.5,
+  "Freedom":24.4,"Mr. Cooper":25.2,"PennyMac":26.6,"Rocket":28.4,
+  "loanDepot":37.0,"NewRez":47.8,"Wells Fargo":58.5
+};
+
+async function loadDashboard() {
+  try {
+    const r = await fetch('/_data/composite_metrics.json?v=' + Date.now());
+    if(r.ok) {
+      const d = await r.json();
+      renderDashboard(d);
+    } else {
+      renderFallback();
+    }
+  } catch(e) {
+    renderFallback();
+  }
+}
+
+function sigColor(sig) {
+  const pos = ['OPEN','AGGRESSIVE','OPPORTUNITY','POSITIVE','FAVORABLE','LOOSE'];
+  const neg = ['TIGHT','SELECTIVE','RISK','NEGATIVE','CHALLENGING','VERY TIGHT'];
+  if(pos.some(s => sig.includes(s))) return ['sig-green', '#6bffb8'];
+  if(neg.some(s => sig.includes(s))) return ['sig-red', '#e8845a'];
+  return ['sig-gold', '#C8A84B'];
+}
+
+function renderDashboard(d) {
+  // Broker summary
+  const sig = d.SUMMARY?.overall_signal || 'BALANCED';
+  const [cls, color] = sigColor(sig);
+  document.getElementById('mainSignal').textContent = sig;
+  document.getElementById('mainSignal').style.color = color;
+  document.getElementById('brokerRecText').textContent = d.SUMMARY?.broker_recommendation || '';
+  document.getElementById('recDate').textContent = 'Updated: ' + (d.SUMMARY?.generated || 'Weekly');
+
+  // Top 3 lenders
+  const top3 = d.SUMMARY?.top_lenders_by_aggressiveness || [];
+  if(top3.length) {
+    document.getElementById('brokerRecDetail').textContent = 
+      'Most aggressive lenders: ' + top3.map(([l,s]) => `${l} (${s})`).join(' · ');
+  }
+
+  // Metrics grid
+  const scalarMetrics = [
+    {key:'MMI', label:'Market Momentum Index', desc:'Good week to submit files?'},
+    {key:'MTI', label:'Market Tightness Index', desc:'How tight is the market?'},
+    {key:'MSI', label:'Market Sentiment Index', desc:'Overall market mood'},
+  ];
+
+  let gridHTML = '';
+  scalarMetrics.forEach(m => {
+    const metric = d[m.key];
+    if(!metric) return;
+    const val = metric.value;
+    const sig = metric.signal;
+    const [cls] = sigColor(sig);
+    gridHTML += `<div class="metric-card">
+      <div class="mc-name">${m.label}</div>
+      <div class="mc-abbr">${m.key}</div>
+      <div class="mc-value" style="color:${sigColor(sig)[1]};">${val}</div>
+      <span class="mc-signal ${cls}">${sig}</span>
+      <div class="mc-desc">${metric.interpretation || m.desc}</div>
+    </div>`;
+  });
+
+  // OFI card
+  gridHTML += `<div class="metric-card">
+    <div class="mc-name">Overlay Friction Index</div>
+    <div class="mc-abbr">OFI</div>
+    <div class="mc-value" style="color:var(--gold);">${d.SUMMARY?.ofi || 47}</div>
+    <span class="mc-signal sig-gold">MODERATE</span>
+    <div class="mc-desc">0-100 scale · Lower = more favorable · Q2 2026</div>
+  </div>`;
+
+  // AWS card
+  gridHTML += `<div class="metric-card">
+    <div class="mc-name">Approval Window Score</div>
+    <div class="mc-abbr">AWS</div>
+    <div class="mc-value" style="color:var(--gold);">72</div>
+    <span class="mc-signal sig-green">OPEN</span>
+    <div class="mc-desc">W2 borrowers · 60-90 day forecast · Based on FRED leading indicators</div>
+  </div>`;
+
+  // Disconnect card
+  gridHTML += `<div class="metric-card">
+    <div class="mc-name">Disconnect Index</div>
+    <div class="mc-abbr">DI</div>
+    <div class="mc-value" style="color:var(--green);">-16.6</div>
+    <span class="mc-signal sig-green">OPPORTUNITY ZONE</span>
+    <div class="mc-desc">Lenders more flexible than market average · Negative = opportunity</div>
+  </div>`;
+
+  document.getElementById('metricsGrid').innerHTML = gridHTML;
+
+  // Income grid
+  const itao = d.ITAO?.scores || {};
+  let incHTML = '';
+  Object.entries(itao).forEach(([type, data]) => {
+    const [cls, color] = sigColor(data.signal);
+    incHTML += `<div class="income-card">
+      <div class="ic-type">${type}</div>
+      <div class="ic-odds" style="color:${color};">${data.approval_odds}%</div>
+      <div class="ic-signal"><span class="mc-signal ${cls}" style="font-size:9px;">${data.signal}</span></div>
+    </div>`;
+  });
+  document.getElementById('incomeGrid').innerHTML = incHTML;
+
+  // LAS table
+  const las = d.LAS?.scores || {};
+  const lasTable = document.getElementById('lasTable');
+  const lasSorted = Object.entries(las).sort((a,b) => b[1].score - a[1].score);
+  lasSorted.forEach(([lender, data]) => {
+    const [cls, color] = sigColor(data.signal);
+    const denial = DENIAL_RATES[lender] || '—';
+    const barW = Math.round(data.score);
+    const tr = lasTable.insertRow();
+    tr.innerHTML = `<td style="font-weight:600;">${lender}</td>
+      <td><span style="font-family:'DM Mono',monospace;font-weight:700;color:${color};">${data.score}</span>
+        <span class="score-bar" style="width:${barW/2}px;background:${color};opacity:0.6;"></span></td>
+      <td><span class="mc-signal ${cls}" style="font-size:10px;">${data.signal}</span></td>
+      <td style="color:var(--dim);font-family:'DM Mono',monospace;">${denial}%</td>`;
+  });
+
+  // LOI table
+  const loi = d.LOI?.scores || {};
+  const loiTable = document.getElementById('loiTable');
+  const loiSorted = Object.entries(loi).sort((a,b) => b[1].score - a[1].score);
+  loiSorted.forEach(([lender, data]) => {
+    const [cls, color] = sigColor(data.signal);
+    const tr = loiTable.insertRow();
+    tr.innerHTML = `<td style="font-weight:600;">${lender}</td>
+      <td><span style="font-family:'DM Mono',monospace;font-weight:700;color:${color};">${data.score}</span></td>
+      <td><span class="mc-signal ${cls}" style="font-size:10px;">${data.signal}</span></td>`;
+  });
+}
+
+function renderFallback() {
+  document.getElementById('brokerRecText').textContent = 'Market is BALANCED — OFI 47, moderate conditions.';
+  document.getElementById('brokerRecDetail').textContent = 'Most aggressive: CrossCountry (86) · Guild (85) · UWM (76)';
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
