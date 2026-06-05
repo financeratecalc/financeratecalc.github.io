@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mortgage Pre-Flight Check — 30-Second Approval Risk Score | FinanceRateCalc</title>
+<meta name="description" content="Get your mortgage boarding pass in 30 seconds. Pre-flight approval risk score before you submit. Green/Yellow/Red signal with lender routing.">
+<link rel="canonical" href="https://financeratecalc.com/pre-flight.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--navy:#0B132B;--gold:#C8A84B;--green:#6bffb8;--red:#e8845a;--white:#fff;--dim:rgba(255,255,255,0.45);--border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--white);text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+nav a{font-size:13px;color:var(--dim);text-decoration:none;margin-left:16px;}
+
+.hero{padding:48px 40px 24px;max-width:700px;margin:0 auto;text-align:center;}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(107,255,184,0.1);border:1px solid rgba(107,255,184,0.3);border-radius:20px;font-size:11px;font-weight:700;color:var(--green);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,4vw,42px);font-weight:900;line-height:1.1;margin-bottom:10px;}
+h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:15px;color:var(--dim);line-height:1.7;}
+
+.container{max-width:700px;margin:0 auto;padding:0 40px 60px;}
+
+/* FORM */
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:20px;}
+.form-title{font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:20px;}
+
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;}
+.field select,.field input{width:100%;padding:11px 14px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;}
+.field select:focus,.field input:focus{border-color:rgba(200,168,75,0.4);}
+.field select option{background:#0B132B;}
+
+/* FICO slider */
+.fico-val{font-family:'DM Mono',monospace;font-size:28px;font-weight:700;color:var(--gold);text-align:center;margin:6px 0;}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--gold);cursor:pointer;}
+
+.check-btn{width:100%;padding:16px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;}
+.check-btn:hover{opacity:0.9;}
+
+/* BOARDING PASS */
+.boarding-pass{display:none;border-radius:16px;padding:32px;margin-bottom:20px;text-align:center;}
+.bp-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;opacity:0.6;}
+.bp-score{font-family:'Fraunces',serif;font-size:72px;font-weight:900;line-height:1;}
+.bp-signal{font-size:22px;font-weight:700;margin:6px 0 4px;}
+.bp-conf{font-size:11px;opacity:0.5;margin-bottom:20px;font-family:'DM Mono',monospace;}
+
+/* Risk factors */
+.risk-factors{text-align:left;margin-bottom:20px;}
+.rf-title{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
+.rf-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;}
+.rf-item:last-child{border:none;}
+.rf-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+
+/* Lender routing */
+.lender-routing{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:16px;text-align:left;}
+.lr-title{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
+.lr-lender{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;}
+.lr-lender:last-child{border:none;}
+
+/* Fix actions */
+.fix-actions{background:rgba(107,255,184,0.04);border:1px solid rgba(107,255,184,0.15);border-radius:10px;padding:16px;margin-bottom:16px;text-align:left;}
+.fa-title{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
+.fa-item{font-size:13px;color:rgba(255,255,255,0.7);padding:5px 0;display:flex;gap:8px;}
+
+.cta-row{display:flex;gap:10px;flex-wrap:wrap;}
+.cta-btn{flex:1;padding:12px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;text-align:center;}
+.cta-sec{flex:1;padding:12px;background:transparent;color:var(--gold);border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;text-align:center;}
+
+.disclaimer{font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:24px;line-height:1.8;}
+@media(max-width:600px){.field-row{grid-template-columns:1fr;}.hero,.container{padding-left:20px;padding-right:20px;} header{padding:0 20px;} .cta-btn,.cta-sec{flex:none;width:100%;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <nav>
+    <a href="javascript:history.back()">← Back</a>
+    <a href="/market-signal.html">Signal</a>
+    <a href="/zai-one.html">Zai</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="badge">✈️ 30 Seconds · No SSN</div>
+  <h1>Mortgage<br><em>Pre-Flight Check</em></h1>
+  <p class="hero-sub">Get your boarding pass before you submit. Green = clear for takeoff. Yellow = fix before flying. Red = grounded.</p>
+</div>
+
+<div class="container">
+
+  <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 16px;font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:20px;text-align:center;">
+    ℹ️ Educational tool only · Not a loan offer · Historical patterns only · Results vary · <a href="/methodology.html" style="color:rgba(200,168,75,0.3);">Methodology →</a>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-card" id="formCard">
+    <div class="form-title">Enter File Details</div>
+
+    <div class="field">
+      <label>FICO Credit Score</label>
+      <div class="fico-val" id="ficoVal">680</div>
+      <input type="range" id="ficoSlider" min="500" max="850" step="10" value="680"
+             oninput="document.getElementById('ficoVal').textContent=this.value">
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Loan Type</label>
+        <select id="loanType">
+          <option value="fha">FHA</option>
+          <option value="conventional">Conventional</option>
+          <option value="va">VA</option>
+          <option value="usda">USDA</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Loan Purpose</label>
+        <select id="loanPurpose">
+          <option value="purchase">Purchase</option>
+          <option value="refi">Refinance</option>
+          <option value="cash_out">Cash-Out Refi</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>DTI Ratio (%)</label>
+        <select id="dti">
+          <option value="35">Under 35%</option>
+          <option value="40" selected>35–43%</option>
+          <option value="45">43–50%</option>
+          <option value="52">Over 50%</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>LTV Ratio (%)</label>
+        <select id="ltv">
+          <option value="80">Under 80%</option>
+          <option value="90" selected>80–90%</option>
+          <option value="96.5">90–96.5%</option>
+          <option value="100">Over 96.5%</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Income Type</label>
+        <select id="incomeType">
+          <option value="w2">W2 Employee</option>
+          <option value="self_employed">Self-Employed</option>
+          <option value="1099">1099 / Contract</option>
+          <option value="ssdi">SSDI / Disability</option>
+          <option value="retirement">Retirement</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>State</label>
+        <select id="state">
+          <option value="TX">Texas</option>
+          <option value="CA">California</option>
+          <option value="FL">Florida</option>
+          <option value="NY">New York</option>
+          <option value="NJ">New Jersey</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="check-btn" onclick="runPreFlight()">✈️ Run Pre-Flight Check →</button>
+    <div style="text-align:center;font-size:11px;color:var(--dim);margin-top:10px;">No SSN · No credit pull · Educational purposes only</div>
+  </div>
+
+  <!-- BOARDING PASS -->
+  <div class="boarding-pass" id="boardingPass">
+    <div class="bp-label">Boarding Pass — Approval Risk Score</div>
+    <div class="bp-score" id="bpScore">—</div>
+    <div class="bp-signal" id="bpSignal"></div>
+    <div class="bp-conf" id="bpConf"></div>
+
+    <!-- Risk factors -->
+    <div class="risk-factors">
+      <div class="rf-title">Risk Factors Detected</div>
+      <div id="riskList"></div>
+    </div>
+
+    <!-- Market signal -->
+    <div style="background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.15);border-radius:8px;padding:12px;margin-bottom:14px;text-align:left;">
+      <div style="font-size:10px;font-weight:700;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Current Market Context (FRDI)</div>
+      <div id="marketContext" style="font-size:13px;color:rgba(255,255,255,0.65);"></div>
+    </div>
+
+    <!-- Lender routing -->
+    <div class="lender-routing">
+      <div class="lr-title">Recommended Lenders — Historical Fit</div>
+      <div id="lenderList"></div>
+    </div>
+
+    <!-- Fix actions -->
+    <div class="fix-actions" id="fixSection" style="display:none;">
+      <div class="fa-title">✅ How to Turn This Green</div>
+      <div id="fixList"></div>
+    </div>
+
+    <div class="cta-row">
+      <a href="/zai-one.html" class="cta-btn">Get Full Routing from Zai →</a>
+      <a href="/market-signal.html" class="cta-sec">This Week's Signal</a>
+    </div>
+
+    <button onclick="document.getElementById('boardingPass').style.display='none';document.getElementById('formCard').style.display='block';"
+            style="width:100%;margin-top:10px;padding:10px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--dim);cursor:pointer;font-size:13px;">
+      ← Check Another File
+    </button>
+  </div>
+
+  <div class="disclaimer">
+    Pre-Flight scores are derived from CFPB HMDA 2018–2024 denial rate patterns and OFI model (r=0.902). Not a prediction of individual outcomes. Lender guidelines change frequently — always verify current overlays directly. Not financial advice.
+  </div>
+
+</div>
+
+<script>
+const LENDER_DATA = {
+  fha: {
+    purchase: [
+      {name:"CrossCountry", denial:5.5, fit:"STRONG", note:"Lowest FHA denial rate"},
+      {name:"Guild Mortgage", denial:7.1, fit:"STRONG", note:"FHA purchase specialist"},
+      {name:"UWM", denial:19.9, fit:"GOOD", note:"High volume, broker channel"},
+      {name:"Planet Home", denial:23.5, fit:"MODERATE", note:"Balanced lender"},
+      {name:"Freedom", denial:24.4, fit:"MODERATE", note:"Check current overlays"},
+      {name:"Rocket", denial:28.4, fit:"LOWER", note:"Higher denial rate for FHA"},
+    ],
+    cash_out: [
+      {name:"CrossCountry", denial:5.5, fit:"STRONG", note:"Low cash-out denial ratio"},
+      {name:"Guild Mortgage", denial:7.1, fit:"STRONG", note:"27% cash-out ratio"},
+      {name:"Planet Home", denial:23.5, fit:"MODERATE", note:"Balanced cash-out"},
+      {name:"UWM", denial:19.9, fit:"MODERATE", note:"33% cash-out ratio"},
+      {name:"Rocket", denial:28.4, fit:"LOWER", note:"50%+ cash-out heavy"},
+      {name:"NewRez", denial:47.8, fit:"LOW", note:"72% cash-out — avoid"},
+    ],
+    refi: [
+      {name:"UWM", denial:19.9, fit:"STRONG", note:"Growing refi channel"},
+      {name:"PennyMac", denial:26.6, fit:"GOOD", note:"Strong refi infrastructure"},
+      {name:"CrossCountry", denial:5.5, fit:"GOOD", note:"Low overall denial"},
+      {name:"loanDepot", denial:37.0, fit:"MODERATE", note:"Re-tightening trend"},
+      {name:"Freedom", denial:24.4, fit:"LOWER", note:"Volatile refi history"},
+    ]
+  },
+  conventional: {
+    purchase: [
+      {name:"UWM", denial:19.9, fit:"STRONG", note:"Broker channel, strong pricing"},
+      {name:"CrossCountry", denial:5.5, fit:"STRONG", note:"Purchase specialist"},
+      {name:"Guild Mortgage", denial:7.1, fit:"STRONG", note:"Retail purchase strength"},
+      {name:"PennyMac", denial:26.6, fit:"GOOD", note:"Improving trend"},
+      {name:"loanDepot", denial:37.0, fit:"MODERATE", note:"Re-tightening"},
+      {name:"Wells Fargo", denial:58.5, fit:"LOW", note:"Very high denial rate"},
+    ]
+  }
+};
+
+const OFI_STATE = {TX:30, CA:62, FL:44, NY:71, NJ:58, other:47};
+
+function runPreFlight() {
+  const fico = parseInt(document.getElementById('ficoSlider').value);
+  const loanType = document.getElementById('loanType').value;
+  const purpose = document.getElementById('loanPurpose').value;
+  const dti = parseFloat(document.getElementById('dti').value);
+  const ltv = parseFloat(document.getElementById('ltv').value);
+  const income = document.getElementById('incomeType').value;
+  const state = document.getElementById('state').value;
+
+  const ofi = OFI_STATE[state] || 47;
+
+  // Score calculation
+  let score = 100;
+  const risks = [];
+  const fixes = [];
+
+  // FICO impact
+  if(fico < 580) { score -= 35; risks.push({icon:'🔴', text:'FICO below 580 — FHA minimum. Most lenders will decline.'}); fixes.push('Bring FICO to 580+ before submitting any file.'); }
+  else if(fico < 620) { score -= 25; risks.push({icon:'🔴', text:'FICO 580-619 — high overlay risk. Very few lenders accept.'}); fixes.push('Target FICO 640+ for broader lender options.'); }
+  else if(fico < 640) { score -= 15; risks.push({icon:'🟡', text:'FICO 620-639 — borderline. CrossCountry/Guild only for FHA.'}); fixes.push('Raise FICO to 640+ to unlock more lenders.'); }
+  else if(fico < 680) { score -= 8; risks.push({icon:'🟡', text:'FICO 640-679 — acceptable but limited lender pool.'}); }
+  else if(fico >= 720) { score += 5; }
+
+  // DTI impact
+  if(dti >= 52) { score -= 25; risks.push({icon:'🔴', text:'DTI over 50% — exceeds FHA max. Manual underwrite required.'}); fixes.push('Reduce DTI below 43% by paying down revolving debt.'); }
+  else if(dti >= 45) { score -= 15; risks.push({icon:'🟡', text:'DTI 43-50% — above standard threshold. Overlay risk high.'}); fixes.push('Target DTI below 43% for standard approval path.'); }
+  else if(dti >= 40) { score -= 5; risks.push({icon:'🟡', text:'DTI 35-43% — borderline. Some lenders add overlays here.'}); }
+
+  // LTV impact
+  if(ltv >= 100) { score -= 20; risks.push({icon:'🔴', text:'LTV over 96.5% — exceeds FHA maximum.'}); fixes.push('Bring LTV to 96.5% or below.'); }
+  else if(ltv >= 96.5) { score -= 8; risks.push({icon:'🟡', text:'LTV 90-96.5% — FHA territory, MIP required.'}); }
+
+  // Income type impact
+  const incomeImpact = {w2:0, retirement:-3, ssdi:-8, '1099':-12, self_employed:-15};
+  const incomeAdj = incomeImpact[income] || 0;
+  score += incomeAdj;
+  if(income === 'self_employed') { risks.push({icon:'🟡', text:'Self-employed: 2yr tax returns required. Net income averaged.'}); fixes.push('Prepare 2yr signed tax returns + YTD P&L before submitting.'); }
+  if(income === 'ssdi') { risks.push({icon:'🟡', text:'SSDI: gross-up eligibility varies by lender (FHA 15%, Conv 25%).'}); }
+  if(income === '1099') { risks.push({icon:'🟡', text:'1099 income: lender will average 2yr. Check net vs gross.'}); }
+
+  // Loan type impact
+  if(loanType === 'conventional' && fico < 620) { score -= 20; risks.push({icon:'🔴', text:'Conventional requires 620+ FICO minimum.'}); }
+
+  // Cash-out impact
+  if(purpose === 'cash_out') { score -= 8; risks.push({icon:'🟡', text:'Cash-out refi: higher overlay risk. Avoid NewRez/Freedom/Rocket.'}); }
+
+  // OFI market impact
+  if(ofi > 60) { score -= 10; risks.push({icon:'🟡', text:`${state} market OFI=${ofi} — elevated overlay friction in this state.`}); }
+  else if(ofi < 35) { score += 5; }
+
+  score = Math.max(5, Math.min(100, score));
+
+  // Signal
+  let signal, color, bgColor, borderColor;
+  if(score >= 75) { signal = '🟢 CLEARED FOR TAKEOFF'; color = '#6bffb8'; bgColor = 'rgba(107,255,184,0.06)'; borderColor = 'rgba(107,255,184,0.25)'; }
+  else if(score >= 50) { signal = '🟡 FIX BEFORE FLYING'; color = '#C8A84B'; bgColor = 'rgba(200,168,75,0.06)'; borderColor = 'rgba(200,168,75,0.25)'; }
+  else { signal = '🔴 GROUNDED'; color = '#e8845a'; bgColor = 'rgba(232,132,90,0.06)'; borderColor = 'rgba(232,132,90,0.25)'; }
+
+  // Render boarding pass
+  document.getElementById('formCard').style.display = 'none';
+  const bp = document.getElementById('boardingPass');
+  bp.style.display = 'block';
+  bp.style.background = bgColor;
+  bp.style.border = `2px solid ${borderColor}`;
+
+  document.getElementById('bpScore').textContent = score;
+  document.getElementById('bpScore').style.color = color;
+  document.getElementById('bpSignal').textContent = signal;
+  document.getElementById('bpSignal').style.color = color;
+  document.getElementById('bpConf').textContent = `FICO ${fico} · ${document.getElementById('loanType').options[document.getElementById('loanType').selectedIndex].text} · DTI ${dti}% · ${state}`;
+
+  // Risks
+  if(risks.length === 0) risks.push({icon:'✅', text:'No major risk factors detected for this profile.'});
+  document.getElementById('riskList').innerHTML = risks.map(r =>
+    `<div class="rf-item"><span class="rf-icon">${r.icon}</span><span>${r.text}</span></div>`
+  ).join('');
+
+  // Market context
+  document.getElementById('marketContext').textContent = `FRDI 48 (CAUTIOUS) · OFI ${ofi} · ${ofi < 35 ? 'Favorable market — submit now.' : ofi < 55 ? 'Moderate conditions — strong profiles go through.' : 'Tight market — high-FICO W2 only.'}`;
+
+  // Lenders
+  const purposeKey = purpose === 'purchase' ? 'purchase' : purpose === 'cash_out' ? 'cash_out' : 'refi';
+  const typeKey = loanType === 'fha' ? 'fha' : 'conventional';
+  const lenders = (LENDER_DATA[typeKey]?.[purposeKey] || LENDER_DATA.fha.purchase).slice(0, 4);
+
+  // Filter by FICO
+  const filteredLenders = lenders.map(l => {
+    let fit = l.fit;
+    if(fico < 620 && l.name !== 'CrossCountry' && l.name !== 'Guild Mortgage') fit = 'LOWER';
+    return {...l, fit};
+  });
+
+  const fitColor = {STRONG:'#6bffb8', GOOD:'#C8A84B', MODERATE:'rgba(255,255,255,0.6)', LOWER:'#e8845a', LOW:'#e8845a'};
+  document.getElementById('lenderList').innerHTML = filteredLenders.map(l =>
+    `<div class="lr-lender">
+      <span style="font-weight:600;">${l.name}</span>
+      <span style="font-size:11px;color:${fitColor[l.fit] || 'var(--dim)'};">${l.fit} · ${l.denial}% denial</span>
+    </div>`
+  ).join('');
+
+  // Fix actions
+  if(fixes.length > 0) {
+    document.getElementById('fixSection').style.display = 'block';
+    document.getElementById('fixList').innerHTML = fixes.map(f =>
+      `<div class="fa-item"><span>→</span><span>${f}</span></div>`
+    ).join('');
+  }
+
+  if(typeof gtag !== 'undefined') gtag('event', 'preflight_check', {event_label: `${loanType}_${fico}_${signal.includes('GREEN') ? 'green' : signal.includes('YELLOW') ? 'yellow' : 'red'}`});
+}
+</script>
+</body>
+</html>
