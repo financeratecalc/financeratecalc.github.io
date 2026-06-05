@@ -1,0 +1,34 @@
+name: Market Pulse — Weekly Data Pipeline
+
+on:
+  schedule:
+    - cron: '0 11 * * 3'  # Her Çarşamba 11:00 UTC (MBA yayınından sonra)
+    - cron: '0 9 * * 1'   # Her Pazartesi 09:00 UTC (OFI update)
+  workflow_dispatch:
+
+jobs:
+  update-market-pulse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: pip install requests
+      
+      - name: Run Market Pulse Pipeline
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_AP }}
+        run: python scripts/market_pulse.py
+      
+      - name: Commit market pulse data
+        run: |
+          git config user.email "pulse-bot@financeratecalc.com"
+          git config user.name "Market Pulse Bot"
+          git add _data/market_pulse.json _data/market_pulse_prev.json || true
+          git diff --staged --quiet || git commit -m "Market pulse update $(date +%Y-%m-%d)"
+          git push

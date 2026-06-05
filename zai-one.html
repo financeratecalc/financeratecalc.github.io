@@ -375,6 +375,50 @@ function calcDTI() {
 
 
 
+
+var _feedbackOutcome = null;
+
+function submitFeedback(outcome) {
+  _feedbackOutcome = outcome;
+  if(outcome === 'approved') {
+    document.getElementById('feedbackNote').style.display = 'none';
+    sendFeedbackData();
+  } else if(outcome === 'approved_different' || outcome === 'denied') {
+    document.getElementById('feedbackNote').style.display = 'block';
+  } else {
+    document.getElementById('feedbackNote').style.display = 'none';
+    sendFeedbackData();
+  }
+}
+
+function sendFeedbackData() {
+  var lender = document.getElementById('feedbackLender') ? document.getElementById('feedbackLender').value : '';
+  var data = {
+    type: 'broker_feedback',
+    outcome: _feedbackOutcome,
+    actual_lender: lender,
+    routing_suggestion: document.getElementById('decisionCard') ? document.getElementById('decisionCard').innerText.substring(0, 200) : '',
+    timestamp: new Date().toISOString(),
+    source: 'zai-one'
+  };
+  
+  fetch('https://formspree.io/f/mkoewrgp', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  }).catch(() => {});
+  
+  document.getElementById('feedbackNote').style.display = 'none';
+  document.getElementById('feedbackThanks').style.display = 'block';
+  
+  if(typeof gtag !== 'undefined') gtag('event', 'broker_feedback', {event_label: _feedbackOutcome});
+}
+
+function showFeedback() {
+  var fs = document.getElementById('feedbackSection');
+  if(fs) fs.style.display = 'block';
+}
+
 function buildTrendRow(route) {
   const trendMap = {
     'FHA-Specialist': [

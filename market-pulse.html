@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mortgage Market Pulse | Weekly Signal | FinanceRateCalc</title>
+<meta name="description" content="Weekly mortgage market signal. MBA Applications Index, 30yr rate trend, OFI, and policy change alerts. Updated every Wednesday.">
+<link rel="canonical" href="https://financeratecalc.com/market-pulse.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--navy:#0B132B;--gold:#C8A84B;--green:#6bffb8;--red:#e8845a;--white:#fff;--dim:rgba(255,255,255,0.45);--border:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.04);}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:var(--white);text-decoration:none;}
+.logo em{font-style:italic;color:var(--gold);}
+nav a{font-size:13px;color:var(--dim);text-decoration:none;margin-left:20px;}
+nav a:hover{color:var(--gold);}
+
+.hero{padding:60px 40px 32px;max-width:1000px;margin:0 auto;text-align:center;}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(107,255,184,0.1);border:1px solid rgba(107,255,184,0.3);border-radius:20px;font-size:11px;font-weight:700;color:var(--green);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,44px);font-weight:900;line-height:1.1;margin-bottom:12px;}
+h1 em{font-style:italic;color:var(--gold);}
+.hero-sub{font-size:15px;color:var(--dim);line-height:1.7;}
+
+.container{max-width:1000px;margin:0 auto;padding:0 40px 60px;}
+
+/* MAIN SIGNAL */
+.signal-box{border-radius:16px;padding:32px;text-align:center;margin-bottom:24px;}
+.signal-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;opacity:0.6;}
+.signal-value{font-family:'Fraunces',serif;font-size:52px;font-weight:900;line-height:1;}
+.signal-note{font-size:14px;margin-top:12px;opacity:0.7;max-width:500px;margin-left:auto;margin-right:auto;}
+.signal-date{font-size:11px;font-family:'DM Mono',monospace;margin-top:8px;opacity:0.35;}
+
+/* METRICS GRID */
+.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;}
+.mc-label{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.mc-val{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;}
+.mc-change{font-size:12px;margin-top:4px;font-family:'DM Mono',monospace;}
+.up{color:var(--red);}
+.down{color:var(--green);}
+.mc-date{font-size:10px;color:rgba(255,255,255,0.2);margin-top:4px;}
+
+/* POLICY CHANGES */
+.alerts{margin-bottom:24px;}
+.alert{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;border-radius:10px;margin-bottom:10px;font-size:13px;}
+.alert.high{background:rgba(232,132,90,0.08);border:1px solid rgba(232,132,90,0.2);}
+.alert.medium{background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.2);}
+.alert-icon{font-size:16px;flex-shrink:0;}
+
+/* WHAT IT MEANS */
+.explainer{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px;}
+.exp-title{font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin-bottom:12px;color:var(--gold);}
+.exp-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;}
+.exp-row:last-child{border:none;}
+
+.cta-row{display:flex;gap:12px;justify-content:center;margin:24px 0;flex-wrap:wrap;}
+.cta-btn{padding:12px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;}
+.cta-sec{padding:12px 24px;background:transparent;color:var(--gold);border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;}
+
+.disclaimer{font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:32px;line-height:1.8;}
+@media(max-width:768px){header,.hero,.container{padding-left:20px;padding-right:20px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <nav>
+    <a href="javascript:history.back()">← Back</a>
+    <a href="/ofi.html">OFI</a>
+    <a href="/approval-window.html">AWS</a>
+    <a href="/zai-one.html">Zai</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="badge"><span class="live-dot"></span>Updated Weekly · Every Wednesday</div>
+  <h1>Mortgage Market<br><em>Pulse</em></h1>
+  <p class="hero-sub">Weekly signal combining MBA Applications Index, 30-year rate momentum, OFI, and policy change detection. Not a prediction — a directional signal.</p>
+</div>
+
+<div class="container">
+
+  <!-- MAIN SIGNAL -->
+  <div class="signal-box" id="signalBox" style="background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);">
+    <div class="signal-label">This Week's Market Signal</div>
+    <div class="signal-value" id="signalValue">Loading...</div>
+    <div class="signal-note" id="signalNote"></div>
+    <div class="signal-date" id="signalDate"></div>
+  </div>
+
+  <!-- POLICY CHANGE ALERTS -->
+  <div class="alerts" id="alertsSection" style="display:none;">
+    <div style="font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px;">⚠️ Policy Change Alerts This Week</div>
+    <div id="alertsList"></div>
+  </div>
+
+  <!-- METRICS -->
+  <div style="font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:12px;">Key Indicators</div>
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="mc-label">30yr Mortgage Rate</div>
+      <div class="mc-val" id="rate30">—</div>
+      <div class="mc-change" id="rate30chg"></div>
+      <div class="mc-date" id="rate30date"></div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">MBA Applications Index</div>
+      <div class="mc-val" id="mbaIdx">—</div>
+      <div class="mc-change" id="mbaChg"></div>
+      <div class="mc-date" id="mbaDate"></div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">OFI (National)</div>
+      <div class="mc-val" style="color:var(--gold);">47</div>
+      <div class="mc-change" style="color:var(--dim);">MODERATE</div>
+      <div class="mc-date">Q2 2026</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Building Permits</div>
+      <div class="mc-val" id="permits">—</div>
+      <div class="mc-change" style="color:var(--dim);">Leading indicator</div>
+      <div class="mc-date" id="permitsDate"></div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Jobless Claims</div>
+      <div class="mc-val" id="jobless">—</div>
+      <div class="mc-change" style="color:var(--dim);">Weekly</div>
+      <div class="mc-date" id="joblessDate"></div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-label">Consumer Sentiment</div>
+      <div class="mc-val" id="sentiment">—</div>
+      <div class="mc-change" style="color:var(--dim);">University of Michigan</div>
+      <div class="mc-date" id="sentimentDate"></div>
+    </div>
+  </div>
+
+  <!-- WHAT IT MEANS -->
+  <div class="explainer">
+    <div class="exp-title">What This Week's Signal Means</div>
+    <div class="exp-row">
+      <span style="color:var(--dim);">For W2 borrowers</span>
+      <span id="w2impact">Low sensitivity to current conditions</span>
+    </div>
+    <div class="exp-row">
+      <span style="color:var(--dim);">For self-employed</span>
+      <span id="seimpact">Monitor OFI — 2.7× more sensitive</span>
+    </div>
+    <div class="exp-row">
+      <span style="color:var(--dim);">For FHA purchase</span>
+      <span id="fhaimpact">CrossCountry/Guild best historical fit</span>
+    </div>
+    <div class="exp-row">
+      <span style="color:var(--dim);">Rate trend</span>
+      <span id="ratetrend">—</span>
+    </div>
+    <div class="exp-row">
+      <span style="color:var(--dim);">Next update</span>
+      <span style="color:var(--dim);font-family:'DM Mono',monospace;font-size:12px;">Every Wednesday after MBA release</span>
+    </div>
+  </div>
+
+  <div class="cta-row">
+    <a href="/approval-window.html" class="cta-btn">Check Your Approval Window →</a>
+    <a href="/zai-one.html" class="cta-sec">Get Lender Routing</a>
+    <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" class="cta-sec">Broker Weekly Alerts — $49/mo</a>
+  </div>
+
+  <div class="disclaimer">
+    Data sources: FRED API (MMNRNSA MBA Index, MORTGAGE30US, PERMIT, ICSA, UMCSENT), updated weekly. Market signal is a directional indicator, not a prediction. Not financial advice. <a href="/methodology.html" style="color:rgba(200,168,75,0.3);">Methodology →</a>
+  </div>
+
+</div>
+
+<script>
+async function loadPulse() {
+  try {
+    const r = await fetch('/_data/market_pulse.json?v=' + Date.now());
+    if(r.ok) {
+      const d = await r.json();
+      renderPulse(d);
+    } else {
+      useFallback();
+    }
+  } catch(e) {
+    useFallback();
+  }
+}
+
+function useFallback() {
+  document.getElementById('signalValue').textContent = 'STABLE';
+  document.getElementById('signalNote').textContent = 'Market data updates every Wednesday. Check back after MBA release.';
+  document.getElementById('signalDate').textContent = 'Live data pending — updated weekly';
+}
+
+function renderPulse(d) {
+  // Signal
+  const signal = d.market_signal?.signal || 'STABLE';
+  const signalColor = signal === 'EASING' ? '#6bffb8' : signal === 'TIGHTENING' ? '#e8845a' : '#C8A84B';
+  
+  document.getElementById('signalValue').textContent = signal;
+  document.getElementById('signalValue').style.color = signalColor;
+  document.getElementById('signalBox').style.borderColor = signalColor + '33';
+  document.getElementById('signalBox').style.background = signalColor + '08';
+  document.getElementById('signalNote').textContent = d.market_signal?.note || '';
+  
+  const gen = d.market_signal?.generated ? new Date(d.market_signal.generated).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'}) : '';
+  document.getElementById('signalDate').textContent = `Generated ${gen} · Source: FRED API + MBA Data`;
+
+  // Metrics
+  if(d.mortgage_rate) {
+    const r = d.mortgage_rate;
+    document.getElementById('rate30').textContent = r.current + '%';
+    const chgClass = r.change > 0 ? 'up' : 'down';
+    document.getElementById('rate30chg').innerHTML = `<span class="${chgClass}">${r.change > 0 ? '+' : ''}${r.change}% week-over-week</span>`;
+    document.getElementById('rate30date').textContent = r.date;
+    document.getElementById('ratetrend').textContent = r.change > 0.1 ? '📈 Rising — tighter conditions ahead' : r.change < -0.1 ? '📉 Falling — potential easing' : '➡️ Stable';
+  }
+
+  if(d.mba_index) {
+    const m = d.mba_index;
+    document.getElementById('mbaIdx').textContent = m.current.toFixed(0);
+    const chgClass = m.change_pct > 0 ? 'down' : 'up'; // More apps = easing
+    document.getElementById('mbaChg').innerHTML = `<span class="${chgClass}">${m.change_pct > 0 ? '+' : ''}${m.change_pct}% vs last week</span>`;
+    document.getElementById('mbaDate').textContent = m.date;
+  }
+
+  if(d.permits) {
+    document.getElementById('permits').textContent = (d.permits.current/1000).toFixed(0) + 'K';
+    document.getElementById('permitsDate').textContent = d.permits.date;
+  }
+
+  if(d.jobless_claims) {
+    document.getElementById('jobless').textContent = (d.jobless_claims.current/1000).toFixed(0) + 'K';
+    document.getElementById('joblessDate').textContent = d.jobless_claims.date;
+  }
+
+  if(d.consumer_sentiment) {
+    document.getElementById('sentiment').textContent = d.consumer_sentiment.current.toFixed(1);
+    document.getElementById('sentimentDate').textContent = d.consumer_sentiment.date;
+  }
+
+  // Policy changes
+  if(d.policy_changes && d.policy_changes.length > 0) {
+    document.getElementById('alertsSection').style.display = 'block';
+    const list = document.getElementById('alertsList');
+    list.innerHTML = d.policy_changes.map(c => `
+      <div class="alert ${c.severity.toLowerCase()}">
+        <span class="alert-icon">${c.severity === 'HIGH' ? '🔴' : '🟡'}</span>
+        <span>${c.message}</span>
+      </div>`).join('');
+  }
+
+  // Impact
+  if(signal === 'TIGHTENING') {
+    document.getElementById('seimpact').textContent = '⚠️ Higher friction — time submissions carefully';
+    document.getElementById('w2impact').textContent = 'Minor impact — proceed normally';
+  } else if(signal === 'EASING') {
+    document.getElementById('seimpact').textContent = '✅ Better conditions — good window to submit';
+    document.getElementById('w2impact').textContent = '✅ Favorable — lenders more active';
+  }
+}
+
+loadPulse();
+</script>
+</body>
+</html>
