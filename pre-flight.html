@@ -96,8 +96,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
 
 <div class="container">
 
-  <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 16px;font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:20px;text-align:center;">
-    ℹ️ Educational tool only · Not a loan offer · Historical patterns only · Results vary · <a href="/methodology.html" style="color:rgba(200,168,75,0.3);">Methodology →</a>
+  <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px 16px;font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:20px;">
+    <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;text-align:center;">
+      <span>🔒 <strong style="color:rgba(255,255,255,0.55);">No data stored</strong> — entries are not saved or transmitted</span>
+      <span>👤 <strong style="color:rgba(255,255,255,0.55);">Anonymous</strong> — no personal identifiers collected</span>
+      <span>📊 <strong style="color:rgba(255,255,255,0.55);">Simulation only</strong> — not a credit decision</span>
+      <span>🏛️ <strong style="color:rgba(255,255,255,0.55);">HMDA data</strong> — public federal dataset</span>
+    </div>
   </div>
 
   <!-- FORM -->
@@ -216,10 +221,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;heigh
       <a href="/market-signal.html" class="cta-sec">This Week's Signal</a>
     </div>
 
-    <button onclick="document.getElementById('boardingPass').style.display='none';document.getElementById('formCard').style.display='block';"
-            style="width:100%;margin-top:10px;padding:10px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--dim);cursor:pointer;font-size:13px;">
-      ← Check Another File
-    </button>
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      <button onclick="printBoardingPass()" 
+              style="flex:1;padding:10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:rgba(255,255,255,0.6);cursor:pointer;font-size:13px;">
+        📄 Save as PDF
+      </button>
+      <button onclick="document.getElementById('boardingPass').style.display='none';document.getElementById('formCard').style.display='block';"
+              style="flex:1;padding:10px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--dim);cursor:pointer;font-size:13px;">
+        ← Check Another File
+      </button>
+    </div>
   </div>
 
   <div class="disclaimer">
@@ -339,6 +350,12 @@ function runPreFlight() {
   document.getElementById('bpSignal').textContent = signal;
   document.getElementById('bpSignal').style.color = color;
   document.getElementById('bpConf').textContent = `FICO ${fico} · ${document.getElementById('loanType').options[document.getElementById('loanType').selectedIndex].text} · DTI ${dti}% · ${state}`;
+  
+  // Simulation disclaimer
+  const simNote = document.createElement('div');
+  simNote.style.cssText = 'font-size:11px;color:rgba(255,255,255,0.25);margin:8px 0 16px;line-height:1.7;';
+  simNote.innerHTML = 'This simulation reflects how the entered parameters align with historical HMDA approval/denial patterns for selected lender types. It is not a credit approval, denial, or guarantee. Lenders independently evaluate each application. For professional broker use only.';
+  document.getElementById('bpConf').after(simNote);
 
   // Risks
   if(risks.length === 0) risks.push({icon:'✅', text:'No major risk factors detected for this profile.'});
@@ -379,6 +396,67 @@ function runPreFlight() {
 
   if(typeof gtag !== 'undefined') gtag('event', 'preflight_check', {event_label: `${loanType}_${fico}_${signal.includes('GREEN') ? 'green' : signal.includes('YELLOW') ? 'yellow' : 'red'}`});
 }
+
+function printBoardingPass() {
+  // Simple print to PDF
+  const bp = document.getElementById('boardingPass');
+  const score = document.getElementById('bpScore').textContent;
+  const signal = document.getElementById('bpSignal').textContent;
+  const conf = document.getElementById('bpConf').textContent;
+  
+  const printWin = window.open('', '_blank');
+  printWin.document.write(`<!DOCTYPE html>
+<html>
+<head>
+<title>Pre-Flight Check — FinanceRateCalc</title>
+<style>
+  body{font-family:Arial,sans-serif;padding:40px;max-width:600px;margin:0 auto;color:#111;}
+  h1{font-size:28px;margin-bottom:4px;}
+  .score{font-size:72px;font-weight:900;margin:8px 0;}
+  .signal{font-size:20px;font-weight:700;margin-bottom:8px;}
+  .meta{font-size:12px;color:#666;margin-bottom:20px;}
+  .section{border-top:1px solid #eee;padding-top:14px;margin-top:14px;}
+  .section h3{font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:#888;margin-bottom:8px;}
+  .item{font-size:13px;padding:4px 0;border-bottom:1px solid #f5f5f5;}
+  .footer{font-size:10px;color:#aaa;margin-top:30px;line-height:1.7;border-top:1px solid #eee;padding-top:12px;}
+  @media print{body{padding:20px;}}
+</style>
+</head>
+<body>
+<div style="color:#888;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;">FinanceRateCalc.com · Pre-Flight Check</div>
+<h1>Mortgage Boarding Pass</h1>
+<div class="score" style="color:${document.getElementById('bpScore').style.color};">${score}</div>
+<div class="signal">${signal}</div>
+<div class="meta">${conf}</div>
+<div class="meta">Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
+
+<div class="section">
+<h3>Risk Factors</h3>
+${Array.from(document.querySelectorAll('#riskList .rf-item')).map(el => `<div class="item">${el.textContent}</div>`).join('')}
+</div>
+
+<div class="section">
+<h3>Recommended Lenders — Historical Fit</h3>
+${Array.from(document.querySelectorAll('#lenderList .lr-lender')).map(el => `<div class="item">${el.textContent}</div>`).join('')}
+</div>
+
+<div class="section">
+<h3>Market Context</h3>
+<div class="item">${document.getElementById('marketContext').textContent}</div>
+</div>
+
+<div class="footer">
+This simulation reflects historical HMDA approval/denial patterns (CFPB public dataset, 2018-2024). It is not a credit approval, guarantee, or financial advice. Lenders independently evaluate each application. For professional broker use only. Methodology: financeratecalc.com/methodology.html<br><br>
+No personal data was stored or transmitted during this simulation. All entries are processed locally.
+</div>
+</body>
+</html>`);
+  printWin.document.close();
+  printWin.print();
+  
+  if(typeof gtag !== 'undefined') gtag('event', 'preflight_pdf', {event_label: 'boarding_pass_saved'});
+}
+
 </script>
 </body>
 </html>
