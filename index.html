@@ -243,11 +243,36 @@ footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0
   <div class="hero-eyebrow">Mortgage Decision Intelligence · 23-Year Banker · Free · No SSN</div>
   <h1>Mortgage denial<br>doesn't mean<br><em>you don't qualify.</em></h1>
   <p class="hero-sub">FRC doesn't just model mortgage rules. It models how real-world lending behavior diverges from them — showing you the gap between written policy and actual decisions.</p>
+  <!-- FRDI SIGNAL WIDGET -->
+  <a href="/market-signal.html" style="display:inline-flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(200,168,75,0.25);border-radius:12px;padding:14px 22px;text-decoration:none;margin-bottom:24px;max-width:480px;">
+    <div style="text-align:left;">
+      <div style="font-size:10px;font-weight:700;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:3px;">This Week's Market Signal</div>
+      <div style="display:flex;align-items:baseline;gap:10px;">
+        <span id="heroFRDI" style="font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#C8A84B;">45</span>
+        <span id="heroSignal" style="font-size:14px;font-weight:700;color:#C8A84B;">CAUTIOUS</span>
+      </div>
+      <div id="heroAction" style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:2px;">700+ FICO → submit · Borderline → wait</div>
+    </div>
+    <div style="font-size:11px;color:rgba(200,168,75,0.5);white-space:nowrap;">View signal →</div>
+  </a>
+
   <div class="hero-ctas">
-    <a href="/denial-letter-decoder.html" class="btn-primary">🔍 Decode My Denial Letter</a>
-    <a href="/reverse-underwriter.html" class="btn-secondary">🔬 Analyze My Lender Category Fit</a>
+    <a href="/market-signal.html" class="btn-primary">📡 Which Files to Submit This Week</a>
+    <a href="/zai-one.html" class="btn-secondary">🎯 Get Lender Routing</a>
   </div>
 </section>
+
+<script>
+fetch('/_data/composite_metrics.json').then(r=>r.json()).then(d=>{
+  if(!d.FRDI) return;
+  const f = d.FRDI;
+  document.getElementById('heroFRDI').textContent = f.value;
+  document.getElementById('heroFRDI').style.color = f.color;
+  document.getElementById('heroSignal').textContent = f.signal;
+  document.getElementById('heroSignal').style.color = f.color;
+  document.getElementById('heroAction').textContent = f.current_routing?.substring(0,55) + '...';
+}).catch(()=>{});
+</script>
 
 <!-- STATS COUNTER -->
 <div class="stats">
