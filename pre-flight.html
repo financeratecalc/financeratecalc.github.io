@@ -410,6 +410,44 @@ function runPreFlight() {
   if(typeof gtag !== 'undefined') gtag('event', 'preflight_check', {event_label: `${loanType}_${fico}_${signal.includes('GREEN') ? 'green' : signal.includes('YELLOW') ? 'yellow' : 'red'}`});
 }
 
+
+// Dynamic market context
+async function loadMarketContext() {
+  try {
+    const r = await fetch('/_data/composite_metrics.json');
+    if(!r.ok) return;
+    const d = await r.json();
+    if(!d.FRDI) return;
+    const f = d.FRDI;
+    const ctx = document.getElementById('marketContext');
+    if(!ctx) return;
+    
+    const msgs = {
+      'STRONG BUY': 'Market OPEN — most profiles clear for takeoff this week',
+      'PROCEED': 'Market FAVORABLE — strong profiles likely to clear',
+      'CAUTIOUS': 'Market CAUTIOUS — fix issues before submitting borderline files',
+      'WAIT': 'Market TIGHT — only strongest profiles recommended this week'
+    };
+    
+    ctx.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:' + f.color + ';display:inline-block;"></span> ' + 
+      'FRDI ' + f.value + ' — ' + (msgs[f.signal] || f.signal);
+    ctx.style.borderColor = f.color + '44';
+    ctx.style.background = f.color + '0a';
+    ctx.style.color = f.color;
+    
+    // Dinamik hero mesaj
+    const sub = document.getElementById('heroSub');
+    if(sub && f.signal === 'CAUTIOUS') {
+      sub.textContent = 'Market is cautious this week. Run your files before submitting — catch issues early. Green = submit, Yellow = fix first, Red = hold.';
+    } else if(sub && f.signal === 'PROCEED') {
+      sub.textContent = 'Conditions are favorable this week. Run your files for a quick boarding pass. Most strong profiles should clear.';
+    } else if(sub && f.signal === 'WAIT') {
+      sub.textContent = 'Market is tight. Run Pre-Flight before submitting anything — borderline files face higher friction this week.';
+    }
+  } catch(e) {}
+}
+loadMarketContext();
+
 function sendOutcome(result) {
   const score = document.getElementById('bpScore').textContent;
   const signal = document.getElementById('bpSignal').textContent;
