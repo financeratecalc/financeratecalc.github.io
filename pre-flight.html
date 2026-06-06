@@ -379,6 +379,40 @@ function runPreFlight() {
   // Market context
   document.getElementById('marketContext').textContent = `FRDI 48 (CAUTIOUS) · OFI ${ofi} · ${ofi < 35 ? 'Favorable market — submit now.' : ofi < 55 ? 'Moderate conditions — strong profiles go through.' : 'Tight market — high-FICO W2 only.'}`;
 
+
+  // Borrower → Broker bridge
+  const bridgeSection = document.createElement('div');
+  bridgeSection.style.cssText = 'background:rgba(107,255,184,0.04);border:1px solid rgba(107,255,184,0.15);border-radius:10px;padding:16px;margin-bottom:14px;';
+  bridgeSection.innerHTML = `
+    <div style="font-size:11px;font-weight:700;color:rgba(107,255,184,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">🏦 Find a Specialist for This Profile</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:12px;line-height:1.6;">
+      ${score >= 75 ? 
+        'Your profile looks strong. A mortgage specialist can lock in the best rate for your situation.' :
+        score >= 50 ?
+        'Your file needs some fixes first. A specialist broker can help you navigate the overlays and find the right lender.' :
+        'This file has challenges. A specialist broker who knows overlay rules can find lenders where this profile still qualifies.'
+      }
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <a href="/zai-one.html?from=preflight" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.25);border-radius:8px;text-decoration:none;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#C8A84B;">Get Lender Routing with Zai</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);">Enter your full profile → Zai matches you to the right lender type</div>
+        </div>
+        <span style="font-size:18px;">→</span>
+      </a>
+      <a href="/denial-letter-decoder.html" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;text-decoration:none;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#fff;">Already Denied? Decode Your Letter</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);">Find out exactly why — and what to fix</div>
+        </div>
+        <span style="font-size:18px;">→</span>
+      </a>
+    </div>`;
+  
+  const lenderRoutingDiv = document.querySelector('.lender-routing');
+  if(lenderRoutingDiv) lenderRoutingDiv.before(bridgeSection);
+
   // Lenders
   const purposeKey = purpose === 'purchase' ? 'purchase' : purpose === 'cash_out' ? 'cash_out' : 'refi';
   const typeKey = loanType === 'fha' ? 'fha' : 'conventional';
