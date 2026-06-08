@@ -953,5 +953,17 @@ function toggleMic(){
   </div>
   <a href="/pre-flight.html" style="padding:10px 22px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;white-space:nowrap;">✈️ Pre-Flight Check →</a>
 </div>
+
+<script>
+function trackOutcome(outcome) {
+  if(typeof gtag !== 'undefined') {
+    gtag('event', 'banker_ai_outcome', {event_label: outcome});
+  }
+  // Visual feedback
+  document.querySelectorAll('.outcome-btn').forEach(b => b.style.opacity = '0.5');
+  event.target.style.opacity = '1';
+  event.target.style.borderColor = 'rgba(107,255,184,0.5)';
+}
+</script>
 </body>
 </html>

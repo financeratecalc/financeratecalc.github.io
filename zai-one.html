@@ -460,7 +460,9 @@ async function loadFRDI() {
         }
       }
     }
-  } catch(e) {}
+  } catch(e) {
+    document.getElementById('btn').disabled = false;
+    document.getElementById('btn').textContent = 'Get Routing Decision →';}
 }
 loadFRDI();
 
@@ -628,6 +630,7 @@ async function getDecision() {
   const ctx = document.getElementById('context').value;
 
   document.getElementById('btn').disabled = true;
+  document.getElementById('btn').textContent = 'Analyzing...';
   document.getElementById('empty').style.display = 'none';
   document.getElementById('decision').classList.remove('show');
   document.getElementById('loading').classList.add('show');
@@ -820,6 +823,8 @@ KILLER3: [approval killer #3 or N/A]\`;
     if(typeof gtag!=='undefined') gtag('event','zai_one_decision',{event_category:'conversion',event_label:route});
 
   } catch(e) {
+    document.getElementById('btn').disabled = false;
+    document.getElementById('btn').textContent = 'Get Routing Decision →';
     document.getElementById('loading').classList.remove('show');
     document.getElementById('empty').style.display='flex';
     alert('Error: '+e.message);
