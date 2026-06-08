@@ -578,10 +578,10 @@ function buildTrendRow(route) {
     const color = l.dir === 'improving' ? '#6bffb8' : l.dir === 'worsening' ? '#e8845a' : '#C8A84B';
     const arrow = l.dir === 'improving' ? '\u2193' : l.dir === 'worsening' ? '\u2191' : '\u2192';
     const changeStr = l.change > 0 ? '+'+l.change.toFixed(1) : l.change.toFixed(1);
-    return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px;">
-      <span style="color:rgba(255,255,255,0.6);">\${l.name}</span>
-      <span>\${l.r2018}% \u2192 <strong>\${l.r2024}%</strong> <span style="color:\${color};">\${arrow} \${changeStr}pp</span></span>
-    </div>`;
+    return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px;">' +
+      '<span style="color:rgba(255,255,255,0.6);">' + l.name + '</span>' +
+      '<span>' + l.r2018 + '% \u2192 <strong>' + l.r2024 + '%</strong> <span style="color:' + color + ';">' + arrow + ' ' + changeStr + 'pp</span></span>' +
+    '</div>';
   }).join('');
 }
 
@@ -622,15 +622,15 @@ function buildLenderScores(fico, dti, income, ofi, loanType) {
     const color = s.score >= 70 ? '#6bffb8' : s.score >= 45 ? '#C8A84B' : '#e8845a';
     const label = s.score >= 70 ? 'Strong' : s.score >= 45 ? 'Moderate' : 'Weak';
     const bar = Math.round(s.score);
-    return `<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-        <div style="font-size:12px;font-weight:600;">${s.name} <span style="font-size:10px;color:rgba(255,255,255,0.3);">${s.example}</span></div>
-        <div style="font-size:11px;font-weight:700;color:\${color};">\${label}</div>
-      </div>
-      <div style="background:rgba(255,255,255,0.06);border-radius:3px;height:4px;">
-        <div style="width:\${bar}%;background:\${color};height:100%;border-radius:3px;transition:width 0.8s;"></div>
-      </div>
-    </div>`;
+    return '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+        '<div style="font-size:12px;font-weight:600;">' + s.name + ' <span style="font-size:10px;color:rgba(255,255,255,0.3);">' + s.example + '</span></div>' +
+        '<div style="font-size:11px;font-weight:700;color:' + color + ';">' + label + '</div>' +
+      '</div>' +
+      '<div style="background:rgba(255,255,255,0.06);border-radius:3px;height:4px;">' +
+        '<div style="width:' + bar + '%;background:' + color + ';height:100%;border-radius:3px;transition:width 0.8s;"></div>' +
+      '</div>' +
+    '</div>';
   }).join('');
 }
 
