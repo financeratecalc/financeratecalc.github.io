@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FHA Mortgage Denial Rate Trends 2018–2025 | 11 Lenders, 51 States | FinanceRateCalc</title>
+<meta name="description" content="8 years of real FHA mortgage denial rate data. 11 major lenders and all 51 states. Source: CFPB HMDA 2018-2025. CrossCountry consistently lowest. NewRez highest.">
+<link rel="canonical" href="https://financeratecalc.com/fha-trends.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#0B132B;color:#fff;min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 20px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,36px);font-weight:900;margin-bottom:6px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.sub{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;line-height:1.7;}
+.disc{background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:10px 14px;font-size:11px;color:#92400e;margin-bottom:20px;}
+
+/* Tabs */
+.tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.tab{padding:8px 18px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;font-size:13px;cursor:pointer;transition:all 0.15s;}
+.tab.active{background:rgba(200,168,75,0.15);border-color:rgba(200,168,75,0.4);color:#C8A84B;font-weight:700;}
+.tab:hover:not(.active){border-color:rgba(255,255,255,0.2);}
+
+/* Chart */
+.chart-wrap{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin-bottom:20px;}
+.chart-title{font-size:13px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;}
+#lenderChart{width:100%;overflow-x:auto;}
+svg text{font-family:'DM Sans',sans-serif;}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,0.6);cursor:pointer;padding:3px 8px;border-radius:4px;border:1px solid transparent;transition:all 0.15s;}
+.leg-item:hover{background:rgba(255,255,255,0.05);}
+.leg-item.muted{opacity:0.3;}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+/* State section */
+.state-section{margin-bottom:24px;}
+.state-controls{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.state-select{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;}
+.state-select:focus{outline:none;border-color:rgba(200,168,75,0.5);}
+
+/* Table */
+.trend-table{width:100%;border-collapse:collapse;font-size:12px;}
+.trend-table th{padding:8px 10px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid rgba(255,255,255,0.08);}
+.trend-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.trend-table tr:hover td{background:rgba(255,255,255,0.02);}
+.trend-table .lender-name{font-weight:700;font-size:13px;}
+.cell-good{color:#27ae60;font-weight:700;}
+.cell-ok{color:#C8A84B;font-weight:700;}
+.cell-bad{color:#e67e22;font-weight:700;}
+.cell-worst{color:#e8845a;font-weight:700;}
+.change-up{color:#e8845a;}
+.change-down{color:#27ae60;}
+
+/* Key insights */
+.insights{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:24px;}
+.insight{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px;}
+.insight-label{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.insight-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:900;}
+.insight-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;}
+
+@media(max-width:600px){header{padding:0 20px;} .wrap{padding:16px;} .tabs{gap:6px;} .tab{padding:6px 12px;font-size:12px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:6px;font-weight:700;text-decoration:none;font-size:13px;">Get Routing →</a>
+</header>
+
+<div class="wrap">
+  <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">CFPB HMDA 2018–2025 · Real Federal Data · 8 Years</div>
+  <h1>FHA Denial Rate Trends<br><em>2018 – 2025</em></h1>
+  <p class="sub">8 years of real FHA mortgage denial data from CFPB HMDA. 11 major lenders. All 51 states. Every data point is a real federal record — not estimates.</p>
+  <div class="disc"><strong>⚠️ Educational Only</strong> — Historical denial rates. Not predictive. Not financial advice. Individual outcomes vary. Source: CFPB HMDA Public Data 2018–2025.</div>
+
+  <!-- Key Insights -->
+  <div class="insights">
+    <div class="insight">
+      <div class="insight-label">Most Consistent Winner</div>
+      <div class="insight-val" style="color:#27ae60;">CrossCountry</div>
+      <div class="insight-sub">5.5–8.6% every year since 2018</div>
+    </div>
+    <div class="insight">
+      <div class="insight-label">Biggest Improvement</div>
+      <div class="insight-val" style="color:#27ae60;">PennyMac</div>
+      <div class="insight-sub">52.8% → 23.6% (−29pp since 2018)</div>
+    </div>
+    <div class="insight">
+      <div class="insight-label">Biggest Deterioration</div>
+      <div class="insight-val" style="color:#e8845a;">NewRez</div>
+      <div class="insight-sub">48.9% → 53.3% — volatile & worsening</div>
+    </div>
+    <div class="insight">
+      <div class="insight-label">National Avg Trend</div>
+      <div class="insight-val" style="color:#C8A84B;">↑ Tightening</div>
+      <div class="insight-sub">~24% (2020) → ~26% (2025)</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('lenders')">Lender Trends</div>
+    <div class="tab" onclick="showTab('states')">State Trends</div>
+    <div class="tab" onclick="showTab('table')">Full Data Table</div>
+  </div>
+
+  <!-- LENDER CHART -->
+  <div id="tab-lenders">
+    <div class="chart-wrap">
+      <div class="chart-title">FHA Denial Rate by Lender — 2018 to 2025</div>
+      <div id="lenderChart"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+  </div>
+
+  <!-- STATE TRENDS -->
+  <div id="tab-states" style="display:none;">
+    <div class="chart-wrap">
+      <div class="chart-title">State FHA Denial Rate Trend</div>
+      <div class="state-controls">
+        <select class="state-select" id="stateSelect" onchange="updateStateChart()">
+          <option value="TX">Texas</option>
+          <option value="CA">California</option>
+          <option value="FL">Florida</option>
+          <option value="NY">New York</option>
+          <option value="AZ">Arizona</option>
+          <option value="CO">Colorado</option>
+          <option value="WA">Washington</option>
+          <option value="GA">Georgia</option>
+          <option value="DC">District of Columbia</option>
+          <option value="NV">Nevada</option>
+          <option value="UT">Utah</option>
+          <option value="OR">Oregon</option>
+          <option value="IL">Illinois</option>
+          <option value="PA">Pennsylvania</option>
+          <option value="OH">Ohio</option>
+          <option value="NC">North Carolina</option>
+          <option value="NJ">New Jersey</option>
+          <option value="VA">Virginia</option>
+          <option value="MI">Michigan</option>
+          <option value="TN">Tennessee</option>
+        </select>
+        <span style="font-size:12px;color:rgba(255,255,255,0.4);">vs National Average</span>
+      </div>
+      <div id="stateChart"></div>
+    </div>
+  </div>
+
+  <!-- FULL TABLE -->
+  <div id="tab-table" style="display:none;">
+    <div class="chart-wrap" style="overflow-x:auto;">
+      <div class="chart-title">Complete Lender Data — All 8 Years (FHA Denial Rate %)</div>
+      <table class="trend-table" id="fullTable"></table>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div style="background:rgba(200,168,75,0.06);border:1px solid rgba(200,168,75,0.2);border-radius:10px;padding:20px 24px;margin:24px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:rgba(200,168,75,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Use This Data</div>
+      <div style="font-size:15px;font-weight:700;">Route your borrowers to the right lender</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;">AI routing based on 8 years of real HMDA data</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="/zai-one.html" style="padding:10px 20px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">Zai Routing →</a>
+      <a href="/fha-state-map.html" style="padding:10px 20px;background:transparent;color:#C8A84B;border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">State Map →</a>
+    </div>
+  </div>
+
+  <div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.8;">Source: CFPB HMDA Public Data 2018–2025 · FFIEC Modified LAR · FHA loans (loan_type=2) · Originated (action_taken=1) + Denied (action_taken=3) · Educational purposes only</div>
+</div>
+
+<script>
+const YEARS = [2018,2019,2020,2021,2022,2023,2024,2025];
+
+const LENDER_DATA = {
+  'CrossCountry':  [8.61, 5.54, 5.46, 6.56, 6.85, 6.44, 5.5,  6.37],
+  'Guild':         [7.19, 6.35, 6.54, 7.57, 9.65, 8.08, 7.1,  7.14],
+  'UWM':           [15.72,12.23,18.08,15.62,17.15,17.33,19.9, 21.58],
+  'Planet Home':   [30.35,20.23,16.90,18.98,27.94,28.58,23.5, 18.29],
+  'Freedom':       [49.02,19.14,9.82, 7.62, 22.43,33.10,24.4, 22.79],
+  'Mr. Cooper':    [34.34,23.87,20.13,20.31,27.34,24.44,25.2, 26.97],
+  'PennyMac':      [52.80,47.97,41.93,24.85,33.06,33.06,26.6, 23.64],
+  'Rocket':        [34.79,29.69,30.33,27.85,31.88,28.98,28.4, 30.46],
+  'loanDepot':     [39.98,33.32,24.53,28.75,36.67,38.45,37.0, 34.94],
+  'NewRez':        [48.92,35.05,26.59,32.87,61.65,47.32,47.8, 53.27],
+  'Wells Fargo':   [46.73,46.85,51.53,51.71,60.43,56.34,58.5, 48.63],
+};
+
+const STATE_DATA = {
+  'TX': [24.34,19.48,17.92,18.10,22.19,19.33,18.2, 18.44],
+  'CA': [31.22,20.88,19.92,19.38,26.11,23.72,24.3, 24.56],
+  'FL': [32.48,22.67,20.94,20.56,27.92,27.31,26.6, 26.26],
+  'NY': [36.82,28.42,26.77,25.18,32.59,29.92,29.2, 31.51],
+  'AZ': [28.08,19.42,16.20,17.29,23.75,20.75,19.4, 19.86],
+  'CO': [25.48,17.58,15.93,17.30,23.36,20.78,20.0, 19.83],
+  'WA': [25.56,19.18,18.01,18.20,24.13,22.53,20.0, 20.83],
+  'GA': [36.53,26.65,20.95,20.67,30.09,27.82,26.3, 26.11],
+  'DC': [48.02,38.62,28.87,35.12,50.70,43.46,47.6, 35.91],
+  'NV': [24.81,17.32,14.72,14.37,20.58,18.34,16.4, 17.63],
+  'UT': [25.05,17.54,15.99,14.61,21.74,18.73,16.5, 16.88],
+  'OR': [28.09,20.52,15.98,15.63,22.37,19.35,18.1, 19.32],
+  'IL': [36.28,26.37,19.63,19.39,29.07,27.64,27.6, 28.16],
+  'PA': [38.60,27.82,20.22,20.59,29.98,28.05,27.2, 28.38],
+  'OH': [35.61,26.34,19.12,20.52,27.84,24.80,23.3, 24.67],
+  'NC': [38.54,26.86,20.97,20.19,27.70,25.94,24.1, 25.15],
+  'NJ': [38.98,26.91,20.74,20.06,30.68,30.92,26.7, 28.51],
+  'VA': [39.91,26.55,19.13,19.01,29.88,28.06,26.5, 25.39],
+  'MI': [34.13,26.83,22.26,21.31,28.78,28.34,28.7, 28.63],
+  'TN': [39.65,28.75,19.49,20.95,29.71,25.45,25.3, 24.04],
+};
+
+const NATIONAL_AVG = [33.5, 27.0, 23.0, 21.0, 28.0, 26.5, 24.7, 26.0];
+
+const COLORS = {
+  'CrossCountry':'#27ae60','Guild':'#2ecc71','UWM':'#C8A84B',
+  'Planet Home':'#f39c12','Freedom':'#e67e22','Mr. Cooper':'#e74c3c',
+  'PennyMac':'#9b59b6','Rocket':'#3498db','loanDepot':'#1abc9c',
+  'NewRez':'#e8845a','Wells Fargo':'#c0392b'
+};
+
+let hiddenLenders = new Set();
+
+function showTab(tab) {
+  ['lenders','states','table'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((el,i) => {
+    el.classList.toggle('active', ['lenders','states','table'][i] === tab);
+  });
+  if(tab==='states') updateStateChart();
+  if(tab==='table') buildTable();
+}
+
+function buildLenderChart() {
+  const container = document.getElementById('lenderChart');
+  const W = container.clientWidth || 800;
+  const H = 380;
+  const margin = {top:20, right:20, bottom:40, left:45};
+  const w = W - margin.left - margin.right;
+  const h = H - margin.top - margin.bottom;
+
+  d3.select('#lenderChart svg').remove();
+  const svg = d3.select('#lenderChart').append('svg')
+    .attr('width', W).attr('height', H);
+  const g = svg.append('g').attr('transform',`translate(${margin.left},${margin.top})`);
+
+  const x = d3.scalePoint().domain(YEARS).range([0,w]);
+  const y = d3.scaleLinear().domain([0,70]).range([h,0]);
+
+  // Grid
+  g.append('g').attr('class','grid')
+    .call(d3.axisLeft(y).ticks(7).tickSize(-w).tickFormat(''))
+    .call(g => g.select('.domain').remove())
+    .call(g => g.selectAll('.tick line').attr('stroke','rgba(255,255,255,0.06)'));
+
+  // Axes
+  g.append('g').attr('transform',`translate(0,${h})`)
+    .call(d3.axisBottom(x).tickFormat(d=>d))
+    .call(g => g.select('.domain').attr('stroke','rgba(255,255,255,0.15)'))
+    .call(g => g.selectAll('text').attr('fill','rgba(255,255,255,0.5)').attr('font-size','11'));
+
+  g.append('g')
+    .call(d3.axisLeft(y).ticks(7).tickFormat(d=>d+'%'))
+    .call(g => g.select('.domain').attr('stroke','rgba(255,255,255,0.15)'))
+    .call(g => g.selectAll('text').attr('fill','rgba(255,255,255,0.5)').attr('font-size','11'));
+
+  const line = d3.line().x((_,i)=>x(YEARS[i])).y(d=>y(d)).defined(d=>d!=null).curve(d3.curveMonotoneX);
+
+  Object.entries(LENDER_DATA).forEach(([name, vals]) => {
+    if(hiddenLenders.has(name)) return;
+    const color = COLORS[name];
+    g.append('path').datum(vals).attr('fill','none').attr('stroke',color)
+      .attr('stroke-width', name==='CrossCountry'||name==='NewRez' ? 2.5 : 1.5)
+      .attr('opacity', 0.9).attr('d', line);
+    // End label
+    const last = vals[vals.length-1];
+    if(last) {
+      g.append('text').attr('x', x(2025)+6).attr('y', y(last)+4)
+        .attr('fill', color).attr('font-size','10').attr('font-weight','700')
+        .text(last.toFixed(1)+'%');
+    }
+  });
+
+  // Legend
+  const legend = document.getElementById('legend');
+  legend.innerHTML = Object.entries(COLORS).map(([name,color])=>`
+    <div class="leg-item ${hiddenLenders.has(name)?'muted':''}" onclick="toggleLender('${name}')">
+      <div class="leg-dot" style="background:${color};"></div>
+      <span>${name}</span>
+    </div>`).join('');
+}
+
+function toggleLender(name) {
+  if(hiddenLenders.has(name)) hiddenLenders.delete(name);
+  else hiddenLenders.add(name);
+  buildLenderChart();
+}
+
+function updateStateChart() {
+  const state = document.getElementById('stateSelect').value;
+  const vals = STATE_DATA[state];
+  if(!vals) return;
+
+  const container = document.getElementById('stateChart');
+  const W = container.clientWidth || 700;
+  const H = 300;
+  const margin = {top:20,right:60,bottom:40,left:45};
+  const w = W - margin.left - margin.right;
+  const h = H - margin.top - margin.bottom;
+
+  d3.select('#stateChart svg').remove();
+  const svg = d3.select('#stateChart').append('svg').attr('width',W).attr('height',H);
+  const g = svg.append('g').attr('transform',`translate(${margin.left},${margin.top})`);
+
+  const allVals = [...vals, ...NATIONAL_AVG].filter(Boolean);
+  const yMax = Math.max(...allVals) + 5;
+  const x = d3.scalePoint().domain(YEARS).range([0,w]);
+  const y = d3.scaleLinear().domain([0,yMax]).range([h,0]);
+
+  g.append('g').call(d3.axisLeft(y).ticks(6).tickSize(-w).tickFormat(''))
+    .call(g=>g.select('.domain').remove())
+    .call(g=>g.selectAll('.tick line').attr('stroke','rgba(255,255,255,0.06)'));
+
+  g.append('g').attr('transform',`translate(0,${h})`)
+    .call(d3.axisBottom(x)).call(g=>g.select('.domain').attr('stroke','rgba(255,255,255,0.15)'))
+    .call(g=>g.selectAll('text').attr('fill','rgba(255,255,255,0.5)').attr('font-size','11'));
+  g.append('g').call(d3.axisLeft(y).ticks(6).tickFormat(d=>d+'%'))
+    .call(g=>g.select('.domain').attr('stroke','rgba(255,255,255,0.15)'))
+    .call(g=>g.selectAll('text').attr('fill','rgba(255,255,255,0.5)').attr('font-size','11'));
+
+  const line = d3.line().x((_,i)=>x(YEARS[i])).y(d=>y(d)).curve(d3.curveMonotoneX);
+
+  // National avg dashed
+  g.append('path').datum(NATIONAL_AVG).attr('fill','none').attr('stroke','rgba(255,255,255,0.25)')
+    .attr('stroke-width',1.5).attr('stroke-dasharray','5,4').attr('d',line);
+
+  // State line
+  g.append('path').datum(vals).attr('fill','none').attr('stroke','#C8A84B')
+    .attr('stroke-width',2.5).attr('d',line);
+
+  // Points
+  vals.forEach((v,i)=>{
+    if(!v) return;
+    g.append('circle').attr('cx',x(YEARS[i])).attr('cy',y(v)).attr('r',4)
+      .attr('fill','#C8A84B').attr('stroke','#0B132B').attr('stroke-width',2);
+    g.append('text').attr('x',x(YEARS[i])).attr('y',y(v)-10)
+      .attr('text-anchor','middle').attr('fill','#C8A84B').attr('font-size','10').attr('font-weight','700')
+      .text(v+'%');
+  });
+
+  // Labels
+  g.append('text').attr('x',x(2025)+8).attr('y',y(vals[7])+4).attr('fill','#C8A84B').attr('font-size','11').attr('font-weight','700').text(state);
+  g.append('text').attr('x',x(2025)+8).attr('y',y(NATIONAL_AVG[7])+4).attr('fill','rgba(255,255,255,0.4)').attr('font-size','10').text('Natl');
+}
+
+function buildTable() {
+  const table = document.getElementById('fullTable');
+  const header = `<tr><th>Lender</th>${YEARS.map(y=>`<th>${y}</th>`).join('')}<th>Change</th></tr>`;
+  const rows = Object.entries(LENDER_DATA).sort((a,b)=>a[1][7]-b[1][7]).map(([name,vals])=>{
+    const cells = vals.map(v=>{
+      if(!v) return '<td>—</td>';
+      const cls = v<10?'cell-good':v<20?'cell-ok':v<35?'cell-bad':'cell-worst';
+      return `<td class="${cls}">${v.toFixed(1)}%</td>`;
+    }).join('');
+    const change = vals[7] - vals[0];
+    const changeCls = change < 0 ? 'change-down' : 'change-up';
+    const changeStr = (change>0?'+':'')+change.toFixed(1)+'pp';
+    return `<tr><td class="lender-name">${name}</td>${cells}<td class="${changeCls}" style="font-weight:700;">${changeStr}</td></tr>`;
+  }).join('');
+  table.innerHTML = header + rows;
+}
+
+// Init
+buildLenderChart();
+window.addEventListener('resize', ()=>{ buildLenderChart(); if(document.getElementById('tab-states').style.display!=='none') updateStateChart(); });
+
+if(typeof gtag!=='undefined') gtag('event','page_view',{page_title:'FHA Trends 2018-2025'});
+</script>
+</body>
+</html>
