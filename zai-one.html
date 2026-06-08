@@ -11,7 +11,7 @@
 
 // HMDA 2024 Verified Lender Data
 
-// HMDA 2018-2024 Complete Trend Data — Source: CFPB HMDA Data Browser
+// HMDA 2018-2024 Complete Trend Data// Source: CFPB HMDA Data Browser
 const LENDER_TRENDS = {
   years: [2018, 2019, 2020, 2021, 2022, 2023, 2024],
   lenders: {
@@ -52,7 +52,7 @@ const LENDER_TRENDS = {
     }
   }
 };
- — Source: CFPB HMDA Data Browser
+// Source: CFPB HMDA Data Browser
 // All FHA denial rates calculated from public LAR data
 const HMDA_LENDERS = [
   {name:"CrossCountry Mortgage", denied:1342, originated:22994, rate:5.5, dna:"FHA-Specialist", note:"Lowest FHA denial rate among major lenders"},
@@ -745,9 +745,9 @@ KILLER3: [approval killer #3 or N/A]\`;
 
       <div class="d-reasons">
         <div class="d-reasons-title">Why This Route</div>
-        ${r1?`<div class="reason"><span class="rbullet">01</span>${r1}</div>`:''}
-        ${r2?`<div class="reason"><span class="rbullet">02</span>${r2}</div>`:''}
-        ${r3?`<div class="reason"><span class="rbullet">03</span>${r3}</div>`:''}
+        ${r1?'<div class="reason"><span class="rbullet">01</span>'+r1+'</div>':''}
+        ${r2?'<div class="reason"><span class="rbullet">02</span>'+r2+'</div>':''}
+        ${r3?'<div class="reason"><span class="rbullet">03</span>'+r3+'</div>':''}
       </div>
 
       <div class="d-grid">
@@ -775,39 +775,39 @@ KILLER3: [approval killer #3 or N/A]\`;
         ${buildLenderScores(_fico, _dti, _income, _ofi, _loan)}
       </div>
 
-      ${detail?`<div class="d-detail"><div class="d-detail-label">Broker Analysis</div><div class="d-detail-text">${detail}</div></div>`:''}
+      ${detail?'<div class="d-detail"><div class="d-detail-label">Broker Analysis</div><div class="d-detail-text">'+detail+'</div></div>':''}
 
-      ${(g('LENDER1_NAME'))?`
+      ${(g('LENDER1_NAME'))?'
       <div class="d-reasons" style="border-color:rgba(107,255,184,0.15);">
         <div class="d-reasons-title" style="color:rgba(107,255,184,0.5);">Why This Lender vs Others</div>
         <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
           <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <span style="font-size:13px;font-weight:700;color:#6bffb8;">✓ ${g('LENDER1_NAME')}</span>
+            <span style="font-size:13px;font-weight:700;color:#6bffb8;">✓ '+g('LENDER1_NAME')+'}</span>
             <span style="font-size:10px;color:rgba(107,255,184,0.5);font-weight:700;">BEST FIT</span>
           </div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.6);">${g('LENDER1_WHY')}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);">'+g('LENDER1_WHY')+'}</div>
         </div>
         <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
           <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <span style="font-size:13px;font-weight:700;color:#C8A84B;">~ ${g('LENDER2_NAME')}</span>
+            <span style="font-size:13px;font-weight:700;color:#C8A84B;">~ '+g('LENDER2_NAME')+'}</span>
             <span style="font-size:10px;color:rgba(200,168,75,0.5);font-weight:700;">BACKUP</span>
           </div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.6);">${g('LENDER2_WHY')}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);">'+g('LENDER2_WHY')+'}</div>
         </div>
         <div style="padding:8px 0;">
           <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <span style="font-size:13px;font-weight:700;color:#e8845a;">✗ ${g('LENDER3_NAME')}</span>
+            <span style="font-size:13px;font-weight:700;color:#e8845a;">✗ '+g('LENDER3_NAME')+'}</span>
             <span style="font-size:10px;color:rgba(232,132,90,0.5);font-weight:700;">AVOID</span>
           </div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.6);">${g('LENDER3_WHY')}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);">'+g('LENDER3_WHY')+'}</div>
         </div>
-      </div>`:''}
+      </div>':''}
 
-      ${(g('UWM_FIT'))?`
+      ${(g('UWM_FIT'))?'
       <div class="d-reasons" style="border-color:rgba(200,168,75,0.15);">
         <div class="d-reasons-title" style="color:rgba(200,168,75,0.5);">Lender Fit — HMDA 2024 FHA Denial Rates</div>
-        ${[
-          {name:'UWM', denial:'19.9%', fit:g('UWM_FIT'), dna:'FHA-Specialist'},
+        '+([
+          {name:'UWM', denial:'19.9%', fit:g('UWM_FIT'), dna:'FHA-Specialist')+',
           {name:'PennyMac', denial:'26.6%', fit:g('PENNYMAC_FIT'), dna:'Flexible-Conv'},
           {name:'Rocket', denial:'28.4%', fit:g('ROCKET_FIT'), dna:'Flexible-Conv'},
           {name:'Wells Fargo', denial:'58.5%', fit:g('WELLS_FIT'), dna:'Conservative'}
@@ -817,32 +817,32 @@ KILLER3: [approval killer #3 or N/A]\`;
           const barW=Math.round(denialNum);
           return \`<div style="padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-              <span style="font-size:12px;color:rgba(255,255,255,0.7);">\${l.name} <span style="font-size:10px;color:rgba(255,255,255,0.3);">\${l.dna}</span></span>
+              <span style="font-size:12px;color:rgba(255,255,255,0.7);">\'+(l.name)+' <span style="font-size:10px;color:rgba(255,255,255,0.3);">\'+(l.dna)+'</span></span>
               <div style="display:flex;align-items:center;gap:8px;">
-                <span style="font-size:11px;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace;">\${l.denial} denial</span>
-                <span style="font-size:11px;font-weight:700;color:\${color};">\${l.fit}</span>
+                <span style="font-size:11px;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace;">\'+(l.denial)+' denial</span>
+                <span style="font-size:11px;font-weight:700;color:\'+(color)+';">\'+(l.fit)+'</span>
               </div>
             </div>
             <div style="background:rgba(255,255,255,0.06);border-radius:3px;height:3px;">
-              <div style="width:\${barW}%;background:\${color};opacity:0.6;height:100%;border-radius:3px;"></div>
+              <div style="width:\'+(barW)+'%;background:\'+(color)+';opacity:0.6;height:100%;border-radius:3px;"></div>
             </div>
           </div>\`;
         }).join('')}
         <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;">Source: CFPB HMDA 2024 · <a href="/lender-trends.html" style="color:rgba(200,168,75,0.4);">7-year trends →</a></div>
-      </div>`:''}
+      </div>':''}
 
-      ${(g('OFI_IMPACT'))?`
+      ${(g('OFI_IMPACT'))?'
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div class="d-card" style="border-left:2px solid ${g('OFI_IMPACT')==='HIGH'?'#e8845a':g('OFI_IMPACT')==='MODERATE'?'#C8A84B':'#6bffb8'};">
+        <div class="d-card" style="border-left:2px solid '+(g('OFI_IMPACT')==='HIGH'?'#e8845a':g('OFI_IMPACT')==='MODERATE'?'#C8A84B':'#6bffb8')+';">
           <div class="dc-label">OFI Market Impact</div>
-          <div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:${g('OFI_IMPACT')==='HIGH'?'#e8845a':g('OFI_IMPACT')==='MODERATE'?'#C8A84B':'#6bffb8'};">${g('OFI_IMPACT')}</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">${g('OFI_IMPACT_WHY')}</div>
+          <div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:'+(g('OFI_IMPACT')==='HIGH'?'#e8845a':g('OFI_IMPACT')==='MODERATE'?'#C8A84B':'#6bffb8')+';">'+(g('OFI_IMPACT'))+'</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">'+(g('OFI_IMPACT_WHY'))+'</div>
         </div>
         <div class="d-card risk">
           <div class="dc-label">🚨 Approval Killers</div>
-          ${['KILLER1','KILLER2','KILLER3'].map(k=>g(k)&&g(k)!=='N/A'?`<div style="font-size:12px;color:rgba(232,132,90,0.9);padding:2px 0;">· ${g(k)}</div>`:'').join('')}
+          '+(['KILLER1','KILLER2','KILLER3'].map(k=>g(k)&&g(k)!=='N/A'?`<div style="font-size:12px;color:rgba(232,132,90,0.9);padding:2px 0;">· ${g(k))+'</div>`:'').join('')}
         </div>
-      </div>`:''}
+      </div>':''}
 
       <div class="legal">Not financial or legal advice. Educational only. Approval fit labels are estimates based on HMDA 2024 data — individual outcomes vary. Consult a licensed mortgage professional. <a href="/terms.html">Terms</a></div>
     `;
