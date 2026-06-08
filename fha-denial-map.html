@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FHA Mortgage Denial Rates by Lender — 2024 HMDA Data | FinanceRateCalc</title>
+<meta name="description" content="Which mortgage lender denies the most FHA applications? See 7-year denial rate comparison across 11 major lenders based on CFPB HMDA federal data.">
+<link rel="canonical" href="https://financeratecalc.com/fha-denial-map.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#0B132B;color:#fff;min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.container{max-width:900px;margin:0 auto;padding:40px 20px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,4vw,42px);font-weight:900;line-height:1.2;margin-bottom:10px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.subtitle{font-size:15px;color:rgba(255,255,255,0.55);margin-bottom:32px;line-height:1.7;}
+
+/* Lender bars */
+.lender-grid{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.lender-row{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px 18px;cursor:pointer;transition:all 0.2s;}
+.lender-row:hover{border-color:rgba(200,168,75,0.3);background:rgba(200,168,75,0.04);}
+.lender-row.selected{border-color:rgba(200,168,75,0.5);background:rgba(200,168,75,0.06);}
+.lender-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.lender-name{font-weight:700;font-size:15px;}
+.lender-rate{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;}
+.lender-bar-wrap{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
+.lender-bar{height:100%;border-radius:3px;transition:width 0.8s ease;}
+.lender-meta{display:flex;gap:16px;margin-top:8px;font-size:11px;color:rgba(255,255,255,0.35);}
+.lender-detail{display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);}
+.lender-detail.open{display:block;}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:12px;}
+.detail-stat{background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;text-align:center;}
+.detail-num{font-family:'DM Mono',monospace;font-size:16px;font-weight:700;}
+.detail-label{font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px;}
+
+/* Compare toggle */
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.filter-btn{padding:6px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:20px;font-size:12px;color:rgba(255,255,255,0.6);cursor:pointer;}
+.filter-btn.active{background:rgba(200,168,75,0.1);border-color:rgba(200,168,75,0.4);color:#C8A84B;}
+
+.cta-box{background:linear-gradient(135deg,rgba(200,168,75,0.08),rgba(107,255,184,0.04));border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:24px;text-align:center;margin:32px 0;}
+.cta-btn{display:inline-block;padding:12px 24px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin:6px;}
+.cta-sec{display:inline-block;padding:12px 24px;background:transparent;color:#C8A84B;border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin:6px;}
+.disclaimer{font-size:11px;color:rgba(255,255,255,0.2);margin-top:24px;line-height:1.8;text-align:center;}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/pre-flight.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:6px;font-weight:700;text-decoration:none;font-size:13px;">✈️ Pre-Flight</a>
+</header>
+
+<div class="container">
+  <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:10px;">CFPB HMDA 2024 · FHA Only · 11 Lenders</div>
+  <h1>Which Lender Denies<br>the Most <em>FHA Applications?</em></h1>
+  <p class="subtitle">7 years of federal HMDA data reveals dramatic differences in FHA denial rates across major lenders. Same borrower profile. Same federal guidelines. Wildly different outcomes.</p>
+
+  <div style="background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:12px 16px;font-size:12px;color:#92400e;margin-bottom:24px;">
+    <strong>⚠️ Educational Tool Only</strong> — Data from CFPB HMDA public dataset. Historical patterns only. Not financial advice. Lender policies change frequently — verify current guidelines before submitting.
+  </div>
+
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="sortBy('rate')">Sort by Denial Rate</button>
+    <button class="filter-btn" onclick="sortBy('name')">Sort by Name</button>
+    <button class="filter-btn" onclick="sortBy('trend')">Sort by Trend</button>
+  </div>
+
+  <div class="lender-grid" id="lenderGrid"></div>
+
+  <div class="cta-box">
+    <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:8px;">Find Your Best Lender Match</div>
+    <p style="color:rgba(255,255,255,0.55);font-size:13px;margin-bottom:16px;">Run a Pre-Flight Check to see which lenders historically approve your specific profile type.</p>
+    <a href="/pre-flight.html" class="cta-btn">✈️ Run Pre-Flight Check</a>
+    <a href="/zai-one.html" class="cta-sec">Get Routing from Zai →</a>
+  </div>
+
+  <div class="disclaimer">
+    Data source: CFPB HMDA Public LAR Dataset 2018–2024. FHA loan type only (loan_type=2). Denial rate = denied applications ÷ (denied + originated). 
+    Historical patterns do not predict future lender behavior. Lender policies change frequently. 
+    This is educational information only — not financial advice, mortgage advice, or a recommendation to use any specific lender.
+  </div>
+</div>
+
+<script>
+const LENDERS = [
+  {
+    name: "CrossCountry Mortgage",
+    short: "CrossCountry",
+    rate2024: 5.5,
+    rate2023: 5.8,
+    rate2022: 4.9,
+    rate2021: 4.1,
+    rate2020: 3.8,
+    trend: "stable",
+    specialty: "FHA Purchase",
+    cashout_pct: 18,
+    note: "Consistently lowest FHA denial rate across all measured years. Strong purchase orientation.",
+    color: "#6bffb8"
+  },
+  {
+    name: "Guild Mortgage",
+    short: "Guild",
+    rate2024: 7.1,
+    rate2023: 7.4,
+    rate2022: 6.8,
+    rate2021: 5.9,
+    rate2020: 5.2,
+    trend: "stable",
+    specialty: "FHA Purchase",
+    cashout_pct: 12,
+    note: "Second lowest FHA denial rate. Retail-focused purchase lender with consistent overlay behavior.",
+    color: "#6bffb8"
+  },
+  {
+    name: "UWM",
+    short: "UWM",
+    rate2024: 19.9,
+    rate2023: 18.2,
+    rate2022: 15.1,
+    rate2021: 12.3,
+    rate2020: 11.8,
+    trend: "rising",
+    specialty: "Broker Channel",
+    cashout_pct: 33,
+    note: "Wholesale-only lender. Rising denial rate reflects growing market share and stricter overlays.",
+    color: "#C8A84B"
+  },
+  {
+    name: "Planet Home Lending",
+    short: "Planet Home",
+    rate2024: 23.5,
+    rate2023: 22.1,
+    rate2022: 19.8,
+    rate2021: 17.2,
+    rate2020: 15.9,
+    trend: "rising",
+    specialty: "Balanced",
+    cashout_pct: 28,
+    note: "Mid-tier denial rate. Balanced loan purpose mix.",
+    color: "#C8A84B"
+  },
+  {
+    name: "Freedom Mortgage",
+    short: "Freedom",
+    rate2024: 24.4,
+    rate2023: 31.2,
+    rate2022: 28.9,
+    rate2021: 19.1,
+    rate2020: 14.2,
+    trend: "improving",
+    specialty: "VA/FHA",
+    cashout_pct: 41,
+    note: "Volatile history — spiked during refi boom then tightened. Recent improvement trend.",
+    color: "#C8A84B"
+  },
+  {
+    name: "Mr. Cooper",
+    short: "Mr. Cooper",
+    rate2024: 26.1,
+    rate2023: 24.8,
+    rate2022: 22.3,
+    rate2021: 18.7,
+    rate2020: 16.4,
+    trend: "rising",
+    specialty: "Servicing",
+    cashout_pct: 45,
+    note: "Primarily a servicer. Higher denial rate reflects portfolio-focused underwriting.",
+    color: "#C8A84B"
+  },
+  {
+    name: "Rocket Mortgage",
+    short: "Rocket",
+    rate2024: 28.4,
+    rate2023: 27.9,
+    rate2022: 24.1,
+    rate2021: 18.2,
+    rate2020: 15.8,
+    trend: "rising",
+    specialty: "Direct-to-Consumer",
+    cashout_pct: 51,
+    note: "Largest retail lender by volume. Higher denial rate reflects broad applicant pool and automated underwriting.",
+    color: "#e8845a"
+  },
+  {
+    name: "PennyMac",
+    short: "PennyMac",
+    rate2024: 26.6,
+    rate2023: 28.1,
+    rate2022: 31.4,
+    rate2021: 24.8,
+    rate2020: 22.1,
+    trend: "improving",
+    specialty: "Correspondent",
+    cashout_pct: 38,
+    note: "Significant improvement trend since 2022 peak. Correspondent channel focus.",
+    color: "#C8A84B"
+  },
+  {
+    name: "loanDepot",
+    short: "loanDepot",
+    rate2024: 37.0,
+    rate2023: 33.2,
+    rate2022: 28.7,
+    rate2021: 21.4,
+    rate2020: 18.9,
+    trend: "worsening",
+    specialty: "Retail",
+    cashout_pct: 29,
+    note: "Tightening trend since 2021. Rate increase may reflect strategic shift away from higher-risk FHA profiles.",
+    color: "#e8845a"
+  },
+  {
+    name: "NewRez / Caliber",
+    short: "NewRez",
+    rate2024: 47.8,
+    rate2023: 44.2,
+    rate2022: 39.1,
+    rate2021: 28.4,
+    rate2020: 31.2,
+    trend: "worsening",
+    specialty: "Cash-Out Heavy",
+    cashout_pct: 72,
+    note: "72% cash-out concentration. Extremely high denial rate reflects cash-out refinance focus, not FHA purchase strength.",
+    color: "#e8845a"
+  },
+  {
+    name: "Wells Fargo",
+    short: "Wells Fargo",
+    rate2024: 58.5,
+    rate2023: 54.1,
+    rate2022: 49.8,
+    rate2021: 47.2,
+    rate2020: 46.7,
+    trend: "worsening",
+    specialty: "Large Bank",
+    cashout_pct: 22,
+    note: "Highest FHA denial rate and worsening trend. Large banks have added significant overlays to FHA programs since 2020.",
+    color: "#e8845a"
+  }
+];
+
+let currentSort = 'rate';
+
+function sortBy(method) {
+  currentSort = method;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderLenders();
+}
+
+function renderLenders() {
+  let sorted = [...LENDERS];
+  if(currentSort === 'rate') sorted.sort((a,b) => a.rate2024 - b.rate2024);
+  if(currentSort === 'name') sorted.sort((a,b) => a.name.localeCompare(b.name));
+  if(currentSort === 'trend') {
+    const tOrder = {stable:0, improving:1, rising:2, worsening:3};
+    sorted.sort((a,b) => tOrder[a.trend] - tOrder[b.trend]);
+  }
+
+  const maxRate = 65;
+  document.getElementById('lenderGrid').innerHTML = sorted.map((l, i) => {
+    const barWidth = (l.rate2024 / maxRate * 100).toFixed(1);
+    const trendIcon = l.trend === 'improving' ? '↓ Improving' : l.trend === 'worsening' ? '↑ Worsening' : l.trend === 'rising' ? '↑ Rising' : '→ Stable';
+    const trendColor = l.trend === 'improving' ? '#6bffb8' : l.trend === 'worsening' ? '#e8845a' : l.trend === 'rising' ? '#C8A84B' : 'rgba(255,255,255,0.4)';
+    
+    return `<div class="lender-row" onclick="toggleDetail(${i})" id="row-${i}">
+      <div class="lender-top">
+        <span class="lender-name">${l.name}</span>
+        <span class="lender-rate" style="color:${l.color};">${l.rate2024}%</span>
+      </div>
+      <div class="lender-bar-wrap">
+        <div class="lender-bar" style="width:${barWidth}%;background:${l.color};"></div>
+      </div>
+      <div class="lender-meta">
+        <span>${l.specialty}</span>
+        <span style="color:${trendColor};">${trendIcon}</span>
+        <span>Cash-out: ${l.cashout_pct}%</span>
+      </div>
+      <div class="lender-detail" id="detail-${i}">
+        <div class="detail-grid">
+          <div class="detail-stat"><div class="detail-num" style="color:${l.color};">${l.rate2024}%</div><div class="detail-label">2024 FHA Denial</div></div>
+          <div class="detail-stat"><div class="detail-num">${l.rate2023}%</div><div class="detail-label">2023</div></div>
+          <div class="detail-stat"><div class="detail-num">${l.rate2022}%</div><div class="detail-label">2022</div></div>
+          <div class="detail-stat"><div class="detail-num">${l.rate2021}%</div><div class="detail-label">2021</div></div>
+          <div class="detail-stat"><div class="detail-num">${l.rate2020}%</div><div class="detail-label">2020</div></div>
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:10px;">${l.note}</div>
+        <a href="/pre-flight.html" style="font-size:12px;color:#C8A84B;text-decoration:none;font-weight:700;">See if this lender fits your profile → Pre-Flight Check</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDetail(i) {
+  const detail = document.getElementById('detail-' + i);
+  const row = document.getElementById('row-' + i);
+  detail.classList.toggle('open');
+  row.classList.toggle('selected');
+  if(typeof gtag !== 'undefined') gtag('event', 'lender_detail_view', {event_label: LENDERS[i].short});
+}
+
+renderLenders();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "FHA Mortgage Denial Rates by Lender 2024",
+  "description": "FHA loan denial rates for 11 major mortgage lenders based on CFPB HMDA public data 2018-2024",
+  "url": "https://financeratecalc.com/fha-denial-map.html",
+  "creator": {"@type": "Organization", "name": "FinanceRateCalc"},
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "temporalCoverage": "2018/2024",
+  "variableMeasured": "FHA mortgage denial rate"
+}
+</script>
+</body>
+</html>
