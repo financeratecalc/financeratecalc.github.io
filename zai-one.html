@@ -384,11 +384,11 @@ function buildFitTable(g) {
     return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;">' +
       '<span style="font-weight:600;">' + l.name + '</span>' +
       '<span>' + l.denial + ' denial rate</span>' +
-      '<span style="font-weight:700;color:' + color + ';">' + (l.fit||'—') + '</span>' +
+      '<span style="font-weight:700;color:' + color + ';">' + (l.fit||'\u2014') + '</span>' +
     '</div>';
   }).join('');
   return '<div class="d-reasons" style="border-color:rgba(200,168,75,0.15);">' +
-    '<div class="d-reasons-title" style="color:rgba(200,168,75,0.5);">Lender Fit — HMDA 2024 FHA Denial Rates</div>' +
+    '<div class="d-reasons-title" style="color:rgba(200,168,75,0.5);">Lender Fit \u2014 HMDA 2024 FHA Denial Rates</div>' +
     rows + '</div>';
 }
 
@@ -399,7 +399,7 @@ function buildLenderBlock(g) {
     '<div class="d-reasons-title" style="color:rgba(107,255,184,0.5);">Why This Lender vs Others</div>' +
     '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">' +
       '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
-        '<span style="font-size:13px;font-weight:700;color:#6bffb8;">✓ ' + l1 + '</span>' +
+        '<span style="font-size:13px;font-weight:700;color:#6bffb8;">\u2713 ' + l1 + '</span>' +
         '<span style="font-size:10px;color:rgba(107,255,184,0.5);font-weight:700;">BEST FIT</span>' +
       '</div>' +
       '<div style="font-size:12px;color:rgba(255,255,255,0.6);">' + g('LENDER1_WHY') + '</div>' +
@@ -413,7 +413,7 @@ function buildLenderBlock(g) {
     '</div>' +
     '<div style="padding:8px 0;">' +
       '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
-        '<span style="font-size:13px;font-weight:700;color:#e8845a;">✗ ' + g('LENDER3_NAME') + '</span>' +
+        '<span style="font-size:13px;font-weight:700;color:#e8845a;">\u2717 ' + g('LENDER3_NAME') + '</span>' +
         '<span style="font-size:10px;color:rgba(232,132,90,0.5);font-weight:700;">AVOID</span>' +
       '</div>' +
       '<div style="font-size:12px;color:rgba(255,255,255,0.6);">' + g('LENDER3_WHY') + '</div>' +
@@ -427,10 +427,10 @@ function toggleDTI() {
   var toggle = document.getElementById('dtiToggle');
   if(calc.style.display === 'none') {
     calc.style.display = 'block';
-    toggle.textContent = 'hide ↑';
+    toggle.textContent = 'hide \u2191';
   } else {
     calc.style.display = 'none';
-    toggle.textContent = 'calculate →';
+    toggle.textContent = 'calculate \u2192';
   }
 }
 
@@ -465,8 +465,8 @@ function calcDTI() {
 
   var color = dti < 43 ? '#6bffb8' : dti < 50 ? '#C8A84B' : '#e8845a';
   document.getElementById('dtiResult').innerHTML = 
-    'Est. housing: $' + Math.round(housing).toLocaleString() + '/mo &nbsp;·&nbsp; ' +
-    'Total debts: $' + Math.round(totalDebt).toLocaleString() + '/mo &nbsp;·&nbsp; ' +
+    'Est. housing: $' + Math.round(housing).toLocaleString() + '/mo &nbsp;\u00b7&nbsp; ' +
+    'Total debts: $' + Math.round(totalDebt).toLocaleString() + '/mo &nbsp;\u00b7&nbsp; ' +
     '<strong style="color:' + color + '">DTI: ' + dti + '%</strong>';
 }
 
@@ -517,7 +517,7 @@ function showFeedback() {
 }
 
 
-// FRDI değerini al ve göster
+// FRDI de\u011ferini al ve g\u00f6ster
 async function loadFRDI() {
   try {
     const r = await fetch('/_data/composite_metrics.json');
@@ -536,14 +536,14 @@ async function loadFRDI() {
               <div style="font-size:13px;font-weight:700;color:${d.FRDI.color};">${d.FRDI.signal}</div>
               <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:3px;">${d.FRDI.action}</div>
             </div>
-            <a href="/intelligence-dashboard.html" style="font-size:11px;color:rgba(200,168,75,0.5);text-decoration:none;">Full dashboard →</a>
+            <a href="/intelligence-dashboard.html" style="font-size:11px;color:rgba(200,168,75,0.5);text-decoration:none;">Full dashboard \u2192</a>
           </div>`;
         }
       }
     }
   } catch(e) {
     document.getElementById('btn').disabled = false;
-    document.getElementById('btn').textContent = 'Get Routing Decision →';}
+    document.getElementById('btn').textContent = 'Get Routing Decision \u2192';}
 }
 loadFRDI();
 
@@ -567,7 +567,7 @@ function buildTrendRow(route) {
     ]
   };
 
-  // route string'den DNA çıkar
+  // route string'den DNA \u00e7\u0131kar
   let dna = 'FHA-Specialist';
   if(route && route.includes('Conventional')) dna = 'Flexible-Conventional';
   if(route && route.includes('Portfolio')) dna = 'Portfolio-NonQM';
@@ -576,11 +576,11 @@ function buildTrendRow(route) {
   const lenders = trendMap[dna] || trendMap['FHA-Specialist'];
   return lenders.map(l => {
     const color = l.dir === 'improving' ? '#6bffb8' : l.dir === 'worsening' ? '#e8845a' : '#C8A84B';
-    const arrow = l.dir === 'improving' ? '↓' : l.dir === 'worsening' ? '↑' : '→';
+    const arrow = l.dir === 'improving' ? '\u2193' : l.dir === 'worsening' ? '\u2191' : '\u2192';
     const changeStr = l.change > 0 ? '+'+l.change.toFixed(1) : l.change.toFixed(1);
     return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px;">
       <span style="color:rgba(255,255,255,0.6);">\${l.name}</span>
-      <span>\${l.r2018}% → <strong>\${l.r2024}%</strong> <span style="color:\${color};">\${arrow} \${changeStr}pp</span></span>
+      <span>\${l.r2018}% \u2192 <strong>\${l.r2024}%</strong> <span style="color:\${color};">\${arrow} \${changeStr}pp</span></span>
     </div>`;
   }).join('');
 }
@@ -588,7 +588,7 @@ function buildTrendRow(route) {
 function buildLenderScores(fico, dti, income, ofi, loanType) {
   const f = parseInt(fico), d = parseFloat(dti), o = parseInt(ofi);
   
-  // Lender DNA scoring — nonlinear interactions
+  // Lender DNA scoring \u2014 nonlinear interactions
   const scores = [
     {
       name: 'FHA-Specialist',
@@ -642,14 +642,14 @@ function calcScore(fico, dti, income, ofi, type) {
     if(fico >= 640) score += 15;
     else if(fico >= 580) score += 8;
     else score -= 20;
-    // DTI — FHA allows 57%
+    // DTI \u2014 FHA allows 57%
     if(dti <= 43) score += 15;
     else if(dti <= 50) score += 10;
     else if(dti <= 57) score += 5;
     else score -= 15;
-    // Income type — FHA specialist loves self-employed
+    // Income type \u2014 FHA specialist loves self-employed
     if(['Self-Employed','SSDI','1099 / Contract'].includes(income)) score += 12;
-    // OFI — lower is better, self-employed amplified
+    // OFI \u2014 lower is better, self-employed amplified
     if(ofi <= 35) score += 10;
     else if(ofi <= 50) score += 5;
     else score -= 5;
@@ -701,7 +701,7 @@ function calcScore(fico, dti, income, ofi, type) {
 async function getDecision() {
   const fico = document.getElementById('fico').value;
   const dti = document.getElementById('dti').value;
-  // Validation — kırmızı highlight
+  // Validation \u2014 k\u0131rm\u0131z\u0131 highlight
   let valid = true;
   const ficoEl = document.getElementById('fico');
   const dtiEl = document.getElementById('dti');
@@ -746,11 +746,11 @@ async function getDecision() {
 const ofiNum = parseInt(ofi) || 47;
 const incomeType = income;
 const ofiSensitivity = {
-  'Self-Employed': ofiNum > 45 ? 'HIGH — self-employed profiles face amplified overlay friction in tight markets' : 'MODERATE — self-employed income acceptable in this market',
-  'SSDI': ofiNum > 50 ? 'HIGH — SSDI income faces extra scrutiny in high-OFI states' : 'LOW — SSDI gross-up favorable in this market',
-  '1099 / Contract': ofiNum > 48 ? 'HIGH — contract income triggers overlays in tight markets' : 'MODERATE',
-  'W2': ofiNum > 55 ? 'MODERATE — even W2 faces friction in high-OFI states' : 'LOW — W2 income OFI-resilient',
-  'Retirement': 'LOW — retirement income stable across OFI levels'
+  'Self-Employed': ofiNum > 45 ? 'HIGH \u2014 self-employed profiles face amplified overlay friction in tight markets' : 'MODERATE \u2014 self-employed income acceptable in this market',
+  'SSDI': ofiNum > 50 ? 'HIGH \u2014 SSDI income faces extra scrutiny in high-OFI states' : 'LOW \u2014 SSDI gross-up favorable in this market',
+  '1099 / Contract': ofiNum > 48 ? 'HIGH \u2014 contract income triggers overlays in tight markets' : 'MODERATE',
+  'W2': ofiNum > 55 ? 'MODERATE \u2014 even W2 faces friction in high-OFI states' : 'LOW \u2014 W2 income OFI-resilient',
+  'Retirement': 'LOW \u2014 retirement income stable across OFI levels'
 };
 const ofiSignal = ofiSensitivity[income] || 'MODERATE';
 
@@ -759,39 +759,39 @@ FICO: ${fico} | DTI: ${dti}% | Loan: ${loanType} | Income: ${income} | State: ${
 Context: ${ctx||'none'}
 Market: OFI 47 Q2 2026 (moderate-tightening)
 
-OFI × Income Interaction: ${ofiSignal}
+OFI \u00d7 Income Interaction: ${ofiSignal}
 HMDA verified lenders: UWM 19.9%, PennyMac 26.6%, Rocket 28.4%, loanDepot 37.0%, Wells Fargo 58.5%
 
 Key interactions to model:
-- FICO ${fico} + ${income} income = [nonlinear risk — address specifically]
+- FICO ${fico} + ${income} income = [nonlinear risk \u2014 address specifically]
 - DTI ${dti}% at OFI ${ofi} = [overlay friction level]
 - ${loanType} + ${income} = [program-specific friction]
 
 Respond ONLY in this exact format:
 ROUTE: [FHA-Specialist / Flexible-Conventional / Portfolio-NonQM / Conservative-Bank]
 FIT: [Strong / Moderate / Weak]
-R1: [specific FICO+income interaction — not generic]
+R1: [specific FICO+income interaction \u2014 not generic]
 R2: [DTI+OFI interaction]
-R3: [state OFI ${ofi} vs national 47 — specific impact]
+R3: [state OFI ${ofi} vs national 47 \u2014 specific impact]
 RISK: [primary risk one sentence]
 DOCS: [2-3 docs comma separated]
-SUBMIT: [better fit lender DNA with example — use HMDA data if citing specific lender]
-LOWER: [lower fit DNA — why this profile is a mismatch]
-OFI: [OFI ${ofi} × ${income} interaction — one specific insight]
-DETAIL: [4-5 sentence broker analysis — address nonlinear interactions, score erosion risk, submission strategy]
+SUBMIT: [better fit lender DNA with example \u2014 use HMDA data if citing specific lender]
+LOWER: [lower fit DNA \u2014 why this profile is a mismatch]
+OFI: [OFI ${ofi} \u00d7 ${income} interaction \u2014 one specific insight]
+DETAIL: [4-5 sentence broker analysis \u2014 address nonlinear interactions, score erosion risk, submission strategy]
 LENDER1_NAME: [better fit lender name from HMDA data]
 LENDER1_WHY: [one specific reason this lender fits this exact profile]
 LENDER2_NAME: [second better fit lender]
 LENDER2_WHY: [one specific reason]
-LENDER3_NAME: [lender with higher denial rate for this profile — verify current guidelines]
+LENDER3_NAME: [lender with higher denial rate for this profile \u2014 verify current guidelines]
 LENDER3_WHY: [specific reason to avoid for this profile]
-UWM_FIT: [Strong / Moderate / Weak — based on profile vs UWM's 19.9% FHA denial rate]
-PENNYMAC_FIT: [Strong / Moderate / Weak — based on profile vs PennyMac's 26.6% FHA denial rate]
-ROCKET_FIT: [Strong / Moderate / Weak — based on profile vs Rocket's 28.4% FHA denial rate]
-WELLS_FIT: [Strong / Moderate / Weak — based on profile vs Wells Fargo's 58.5% FHA denial rate]
-OFI_IMPACT: [LOW / MODERATE / HIGH — based on income type × OFI interaction]
+UWM_FIT: [Strong / Moderate / Weak \u2014 based on profile vs UWM's 19.9% FHA denial rate]
+PENNYMAC_FIT: [Strong / Moderate / Weak \u2014 based on profile vs PennyMac's 26.6% FHA denial rate]
+ROCKET_FIT: [Strong / Moderate / Weak \u2014 based on profile vs Rocket's 28.4% FHA denial rate]
+WELLS_FIT: [Strong / Moderate / Weak \u2014 based on profile vs Wells Fargo's 58.5% FHA denial rate]
+OFI_IMPACT: [LOW / MODERATE / HIGH \u2014 based on income type \u00d7 OFI interaction]
 OFI_IMPACT_WHY: [one sentence why]
-KILLER1: [approval killer #1 — specific to this profile]
+KILLER1: [approval killer #1 \u2014 specific to this profile]
 KILLER2: [approval killer #2]
 KILLER3: [approval killer #3 or N/A]`;
 
@@ -828,22 +828,22 @@ KILLER3: [approval killer #3 or N/A]`;
       </div>
 
       <div class="d-grid">
-        <div class="d-card risk"><div class="dc-label">Primary Risk</div><div class="dc-val">${risk||'—'}</div></div>
-        <div class="d-card docs"><div class="dc-label">Required Docs</div><div class="dc-val">${docs||'—'}</div></div>
+        <div class="d-card risk"><div class="dc-label">Primary Risk</div><div class="dc-val">${risk||'\u2014'}</div></div>
+        <div class="d-card docs"><div class="dc-label">Required Docs</div><div class="dc-val">${docs||'\u2014'}</div></div>
         <div class="d-card submit"><div class="dc-label">Submit To</div><div class="dc-val">${submit||route}</div></div>
-        <div class="d-card lower"><div class="dc-label">Lower Profile Fit</div><div class="dc-val">${lower||'—'}</div></div>
+        <div class="d-card lower"><div class="dc-label">Lower Profile Fit</div><div class="dc-val">${lower||'\u2014'}</div></div>
       </div>
 
       <div class="d-ofi">
-        <div class="d-ofi-text">${ofiLine||state+' — OFI '+ofi}</div>
+        <div class="d-ofi-text">${ofiLine||state+' \u2014 OFI '+ofi}</div>
         <div class="d-ofi-num">OFI ${ofi}</div>
       </div>
 
       <div class="d-reasons" style="border-color:rgba(200,168,75,0.15);">
-        <div class="d-reasons-title" style="color:rgba(200,168,75,0.5);">7-Year Lender Trend (HMDA 2018–2024)</div>
+        <div class="d-reasons-title" style="color:rgba(200,168,75,0.5);">7-Year Lender Trend (HMDA 2018\u20132024)</div>
         ${buildTrendRow(route)}
         <div style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:8px;">
-          <a href="/lender-trends.html" style="color:rgba(200,168,75,0.4);">View full trend data →</a>
+          <a href="/lender-trends.html" style="color:rgba(200,168,75,0.4);">View full trend data \u2192</a>
         </div>
       </div>
 
@@ -858,7 +858,7 @@ KILLER3: [approval killer #3 or N/A]`;
       ${buildOFIBlock(g)}
 
 
-      <div class="legal">Not financial or legal advice. Educational only. Approval fit labels are estimates based on HMDA 2024 data — individual outcomes vary. Consult a licensed mortgage professional. <a href="/terms.html">Terms</a></div>
+      <div class="legal">Not financial or legal advice. Educational only. Approval fit labels are estimates based on HMDA 2024 data \u2014 individual outcomes vary. Consult a licensed mortgage professional. <a href="/terms.html">Terms</a></div>
     `;
 
     document.getElementById('loading').classList.remove('show');
@@ -868,16 +868,16 @@ KILLER3: [approval killer #3 or N/A]`;
 
   } catch(e) {
     document.getElementById('btn').disabled = false;
-    document.getElementById('btn').textContent = 'Get Routing Decision →';
+    document.getElementById('btn').textContent = 'Get Routing Decision \u2192';
     document.getElementById('loading').classList.remove('show');
     document.getElementById('empty').style.display='flex';
     document.getElementById('btn').disabled = false;
-    document.getElementById('btn').textContent = 'Get Routing Decision →';
+    document.getElementById('btn').textContent = 'Get Routing Decision \u2192';
     document.getElementById('loading').classList.remove('show');
-    // Error mesajı
+    // Error mesaj\u0131
     const errDiv = document.createElement('div');
     errDiv.style.cssText = 'background:rgba(232,132,90,0.08);border:1px solid rgba(232,132,90,0.3);border-radius:8px;padding:14px;margin-top:16px;font-size:13px;color:#e8845a;';
-    errDiv.innerHTML = '⚠️ Connection issue. Please try again in a moment.';
+    errDiv.innerHTML = '\u26a0\ufe0f Connection issue. Please try again in a moment.';
     document.getElementById('decision').innerHTML = '';
     document.getElementById('decision').appendChild(errDiv);
     document.getElementById('decision').classList.add('show');
