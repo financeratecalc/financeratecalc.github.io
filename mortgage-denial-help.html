@@ -158,7 +158,34 @@ p{font-size:15px;color:rgba(255,255,255,0.75);line-height:1.8;margin-bottom:16px
     var result = diagnose(answers);
     document.getElementById('diagResult').style.display = 'block';
     document.getElementById('diagResult').innerHTML = result;
-    if(typeof gtag !== 'undefined') gtag('event', 'denial_diagnosis', {event_label: answers.fico + '_' + answers.dti});
+    // GA4 — granüler loglama
+    if(typeof gtag !== 'undefined') {
+      gtag('event', 'denial_diagnosis_completed', {
+        'denial_factor': factor,
+        'fico_range': answers.fico,
+        'dti_range': answers.dti,
+        'income_type': answers.income,
+        'loan_type': answers.loan,
+        'confidence': m.confidence,
+        'fixable': m.fixable
+      });
+    }
+    
+    // Formspree — aggregate denial intelligence
+    fetch('https://formspree.io/f/mkoewrgp', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        type: 'denial_diagnosis',
+        factor: factor,
+        fico: answers.fico,
+        dti: answers.dti,
+        income: answers.income,
+        loan: answers.loan,
+        confidence: m.confidence,
+        timestamp: new Date().toISOString()
+      })
+    }).catch(()=>{});
   }
 
   function diagnose(a) {
