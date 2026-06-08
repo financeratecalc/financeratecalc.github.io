@@ -56,17 +56,17 @@ const LENDER_TRENDS = {
 // Source: CFPB HMDA Data Browser
 // All FHA denial rates calculated from public LAR data
 const HMDA_LENDERS = [
-  {name:"CrossCountry Mortgage", denied:1342, originated:22994, rate:5.5, dna:"FHA-Specialist", note:"Lowest FHA denial rate among major lenders"},
-  {name:"Guild Mortgage", denied:1375, originated:17932, rate:7.1, dna:"FHA-Specialist", note:"FHA purchase specialist"},
-  {name:"UWM", denied:18484, originated:74402, rate:19.9, dna:"FHA-Specialist", note:"Largest wholesale FHA volume"},
-  {name:"Planet Home Lending", denied:997, originated:3246, rate:23.5, dna:"FHA-Specialist", note:"Regional FHA specialist"},
-  {name:"Freedom Mortgage", denied:7488, originated:23149, rate:24.4, dna:"FHA-Specialist", note:"High FHA volume, overlays apply"},
-  {name:"Mr. Cooper", denied:1862, originated:5517, rate:25.2, dna:"Flexible-Conventional", note:"Servicer-focused, moderate FHA"},
-  {name:"PennyMac", denied:5466, originated:15078, rate:26.6, dna:"Flexible-Conventional", note:"Correspondent channel strength"},
-  {name:"Rocket Mortgage", denied:26429, originated:66721, rate:28.4, dna:"Flexible-Conventional", note:"High volume, stricter overlays"},
-  {name:"loanDepot", denied:12339, originated:20996, rate:37.0, dna:"Conservative-Bank", note:"Retail-focused, tighter guidelines"},
-  {name:"NewRez", denied:8804, originated:9596, rate:47.8, dna:"Conservative-Bank", note:"High denial rate, overlay-heavy"},
-  {name:"Wells Fargo", denied:1197, originated:848, rate:58.5, dna:"Conservative-Bank", note:"Retail bank, very strict FHA overlays"},
+  {name:"CrossCountry Mortgage", denied:1342, originated:22994, rate:6.37, dna:"FHA-Specialist", note:"Lowest FHA denial rate among major lenders"},
+  {name:"Guild Mortgage", denied:1375, originated:17932, rate:7.14, dna:"FHA-Specialist", note:"FHA purchase specialist"},
+  {name:"UWM", denied:18484, originated:74402, rate:21.58, dna:"FHA-Specialist", note:"Largest wholesale FHA volume"},
+  {name:"Planet Home Lending", denied:997, originated:3246, rate:18.29, dna:"FHA-Specialist", note:"Regional FHA specialist"},
+  {name:"Freedom Mortgage", denied:7488, originated:23149, rate:22.79, dna:"FHA-Specialist", note:"High FHA volume, overlays apply"},
+  {name:"Mr. Cooper", denied:1862, originated:5517, rate:26.97, dna:"Flexible-Conventional", note:"Servicer-focused, moderate FHA"},
+  {name:"PennyMac", denied:5466, originated:15078, rate:23.64, dna:"Flexible-Conventional", note:"Correspondent channel strength"},
+  {name:"Rocket Mortgage", denied:26429, originated:66721, rate:30.46, dna:"Flexible-Conventional", note:"High volume, stricter overlays"},
+  {name:"loanDepot", denied:12339, originated:20996, rate:34.94, dna:"Conservative-Bank", note:"Retail-focused, tighter guidelines"},
+  {name:"NewRez", denied:8804, originated:9596, rate:53.27, dna:"Conservative-Bank", note:"High denial rate, overlay-heavy"},
+  {name:"Wells Fargo", denied:1197, originated:848, rate:48.63, dna:"Conservative-Bank", note:"Retail bank, very strict FHA overlays"},
 ];
 
 </script>
@@ -388,7 +388,7 @@ function buildFitTable(g) {
     '</div>';
   }).join('');
   return '<div class="d-reasons" style="border-color:rgba(200,168,75,0.15);">' +
-    '<div class="d-reasons-title" style="color:rgba(200,168,75,0.5);">Lender Fit \u2014 HMDA 2024 FHA Denial Rates</div>' +
+    '<div class="d-reasons-title" style="color:rgba(200,168,75,0.5);">Lender Fit \u2014 HMDA 2025 FHA Denial Rates</div>' +
     rows + '</div>';
 }
 
@@ -592,13 +592,13 @@ function buildLenderScores(fico, dti, income, ofi, loanType) {
   const scores = [
     {
       name: 'FHA-Specialist',
-      example: 'UWM 19.9% denial',
+      example: 'UWM 21.58% denial',
       score: calcScore(f, d, income, o, 'fha'),
       best: ['Self-Employed','SSDI','1099 / Contract']
     },
     {
       name: 'Flexible-Conventional',
-      example: 'PennyMac 26.6%',
+      example: 'PennyMac 23.64%',
       score: calcScore(f, d, income, o, 'conv'),
       best: ['W2','Retirement']
     },
@@ -610,7 +610,7 @@ function buildLenderScores(fico, dti, income, ofi, loanType) {
     },
     {
       name: 'Conservative-Bank',
-      example: 'Wells Fargo 58.5%',
+      example: 'Wells Fargo 48.63%',
       score: calcScore(f, d, income, o, 'conservative'),
       best: ['W2','Retirement']
     }
@@ -760,7 +760,7 @@ Context: ${ctx||'none'}
 Market: OFI 47 Q2 2026 (moderate-tightening)
 
 OFI \u00d7 Income Interaction: ${ofiSignal}
-HMDA verified lenders: UWM 19.9%, PennyMac 26.6%, Rocket 28.4%, loanDepot 37.0%, Wells Fargo 58.5%
+HMDA verified lenders: UWM 21.58%, PennyMac 23.64%, Rocket 30.46%, loanDepot 34.94%, Wells Fargo 48.63%
 
 Key interactions to model:
 - FICO ${fico} + ${income} income = [nonlinear risk \u2014 address specifically]
