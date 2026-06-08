@@ -353,3 +353,23 @@ document.getElementById('bottomList').innerHTML = sorted.slice(-6).reverse().map
 </script>
 </body>
 </html>
+
+<script>
+// State labels — manual coordinates
+const _LBLS = {"AL":[590,405],"AK":[110,515],"AZ":[170,385],"AR":[545,370],"CA":[110,315],"CO":[280,315],"CT":[775,230],"DE":[752,265],"FL":[630,480],"GA":[627,400],"HI":[240,545],"ID":[185,235],"IL":[562,307],"IN":[597,297],"IA":[517,257],"KS":[430,325],"KY":[625,327],"LA":[542,435],"ME":[810,172],"MD":[720,282],"MA":[785,207],"MI":[610,225],"MN":[482,202],"MS":[560,412],"MO":[525,332],"MT":[245,195],"NE":[410,282],"NV":[130,285],"NH":[782,185],"NJ":[750,252],"NM":[255,380],"NY":[720,225],"NC":[692,347],"ND":[415,187],"OH":[640,285],"OK":[440,370],"OR":[130,222],"PA":[702,255],"RI":[802,222],"SC":[670,382],"SD":[415,235],"TN":[612,360],"TX":[402,400],"UT":[212,307],"VT":[765,184],"VA":[702,312],"WA":[127,175],"WV":[677,300],"WI":[540,225],"WY":[302,255],"DC":[731,288]};
+const _SVG = document.getElementById('usMap');
+const _SMALL = ['CT','DE','RI','DC','NH','VT','NJ','MD'];
+Object.entries(_LBLS).forEach(([abbr,lp]) => {
+  const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x',lp[0]);
+  t.setAttribute('y',lp[1]+4);
+  t.setAttribute('text-anchor','middle');
+  t.setAttribute('font-size',_SMALL.includes(abbr)?'6':'8');
+  t.setAttribute('font-family','DM Sans,Arial,sans-serif');
+  t.setAttribute('font-weight','700');
+  t.setAttribute('fill','rgba(0,0,0,0.85)');
+  t.setAttribute('pointer-events','none');
+  t.textContent=abbr;
+  _SVG.appendChild(t);
+});
+</script>
