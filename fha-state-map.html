@@ -3,64 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FHA Mortgage Approval Climate by State — 2024 | FinanceRateCalc</title>
-<meta name="description" content="Interactive US map showing FHA mortgage approval difficulty by state. OFI scores, lender overlay patterns. Which states are easiest to get approved?">
+<title>FHA Mortgage Approval Climate by State 2024 | FinanceRateCalc</title>
+<meta name="description" content="Interactive US map: FHA mortgage approval difficulty by state. Real HMDA 2024 data, 346,262 records, 11 lenders. Which states are easiest to get approved?">
 <link rel="canonical" href="https://financeratecalc.com/fha-state-map.html">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:#0B132B;color:#fff;min-height:100vh;}
 header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
 .logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
 .logo em{font-style:italic;color:#C8A84B;}
-.container{max-width:1100px;margin:0 auto;padding:28px 20px;}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px;}
 h1{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,36px);font-weight:900;margin-bottom:6px;}
 h1 em{font-style:italic;color:#C8A84B;}
-.subtitle{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:14px;}
-.disclaimer{background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:10px 14px;font-size:11px;color:#92400e;margin-bottom:14px;}
-.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;align-items:center;}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,0.6);}
-.legend-dot{width:14px;height:10px;border-radius:2px;}
+.sub{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:14px;}
+.disc{background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:10px 14px;font-size:11px;color:#92400e;margin-bottom:14px;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;align-items:center;font-size:11px;}
+.li{display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.6);}
+.ld{width:14px;height:10px;border-radius:2px;}
 
-/* Map */
-.map-wrap{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:18px;}
-#map-container{width:100%;position:relative;}
-#map-container svg{width:100%;height:auto;}
-.state{cursor:pointer;stroke:#0B132B;stroke-width:0.5;}
-.state:hover{stroke:#C8A84B;stroke-width:1.5;filter:brightness(1.2);}
-.state.active{stroke:#C8A84B;stroke-width:2;}
+/* MAP */
+.map-box{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;margin-bottom:16px;position:relative;}
+#map{width:100%;height:auto;}
+.state{cursor:pointer;stroke:#0B132B;stroke-width:0.5;transition:opacity 0.15s;}
+.state:hover{opacity:0.75;stroke:#C8A84B;stroke-width:1.5;}
+.state.sel{stroke:#C8A84B;stroke-width:2;}
+.state-label{font-size:8px;font-family:'DM Sans',sans-serif;font-weight:700;fill:rgba(0,0,0,0.75);pointer-events:none;text-anchor:middle;}
 
 /* Tooltip */
-#tooltip{position:fixed;background:rgba(11,19,43,0.97);border:1px solid rgba(200,168,75,0.5);border-radius:8px;padding:10px 14px;pointer-events:none;display:none;z-index:999;}
-#tooltip .tt-state{font-weight:700;font-size:14px;margin-bottom:3px;}
-#tooltip .tt-ofi{font-family:'DM Mono',monospace;font-size:24px;font-weight:900;line-height:1;}
-#tooltip .tt-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;}
+#tip{position:fixed;background:rgba(11,19,43,0.97);border:1px solid rgba(200,168,75,0.4);border-radius:8px;padding:10px 14px;pointer-events:none;display:none;z-index:999;min-width:150px;}
+#tip .tn{font-weight:700;font-size:13px;margin-bottom:3px;}
+#tip .to{font-family:'DM Mono',monospace;font-size:20px;font-weight:900;}
+#tip .tl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;}
 
 /* Detail */
-.detail-panel{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;margin-bottom:18px;display:none;}
-.detail-panel.show{display:block;}
-.dp-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
-.dp-name{font-family:'Fraunces',serif;font-size:22px;font-weight:900;}
-.dp-ofi{font-family:'DM Mono',monospace;font-size:38px;font-weight:900;}
-.dp-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:12px;}
-.dp-stat{background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;}
-.dp-stat-lbl{font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;}
-.dp-stat-val{font-size:14px;font-weight:700;}
-.dp-text{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:12px;}
-.dp-cta{display:flex;gap:8px;flex-wrap:wrap;}
-.btn-gold{padding:9px 16px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:12px;}
-.btn-outline{padding:9px 16px;background:transparent;color:#C8A84B;border:1px solid rgba(200,168,75,0.4);border-radius:7px;font-weight:700;text-decoration:none;font-size:12px;}
+.detail{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:18px;margin-bottom:16px;display:none;}
+.detail.on{display:block;}
+.dh{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.dt{font-family:'Fraunces',serif;font-size:20px;font-weight:900;}
+.do{font-family:'DM Mono',monospace;font-size:34px;font-weight:900;}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:12px;}
+.dstat{background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;}
+.dsl{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;}
+.dsv{font-size:14px;font-weight:700;}
+.dins{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:12px;}
+.dcta{display:flex;gap:8px;flex-wrap:wrap;}
+.db{padding:9px 16px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:12px;}
+.ds{padding:9px 16px;background:transparent;color:#C8A84B;border:1px solid rgba(200,168,75,0.4);border-radius:7px;font-weight:700;text-decoration:none;font-size:12px;}
 
 /* Rankings */
-.rank-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
-.rank-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px;}
-.rank-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
-.rank-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
-.rank-item:last-child{border:none;}
-@media(max-width:600px){.rank-row{grid-template-columns:1fr;} header{padding:0 20px;} .container{padding:16px;}}
+.ranks{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.rcard{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px;}
+.rt{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
+.ri{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+.ri:last-child{border:none;}
+@media(max-width:600px){.ranks{grid-template-columns:1fr;} header{padding:0 20px;} .wrap{padding:16px;}}
 </style>
 </head>
 <body>
@@ -69,307 +70,241 @@ h1 em{font-style:italic;color:#C8A84B;}
   <a href="/pre-flight.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:6px;font-weight:700;text-decoration:none;font-size:13px;">✈️ Pre-Flight</a>
 </header>
 
-<div id="tooltip">
-  <div class="tt-state" id="ttState"></div>
-  <div class="tt-ofi" id="ttOFI"></div>
-  <div class="tt-label" id="ttLabel"></div>
-</div>
+<div id="tip"><div class="tn" id="ttn"></div><div class="to" id="tto"></div><div class="tl" id="ttl"></div><div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;" id="tts"></div></div>
 
-<div class="container">
-  <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">OFI State Intelligence · Q2 2026</div>
+<div class="wrap">
+  <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">HMDA 2024 · 346,262 FHA Records · 11 Lenders</div>
   <h1>FHA Mortgage Approval<br><em>Climate by State</em></h1>
-  <p class="subtitle">Click any state to see overlay friction score, lender fit, and approval climate. Lower OFI = easier approval environment.</p>
-  <div class="disclaimer"><strong>⚠️ Educational Only</strong> — OFI scores are composite estimates. Not financial advice. Lender policies change frequently.</div>
-
+  <p class="sub">Real federal data. Click any state for details. Lower OFI = easier approval environment.</p>
+  <div class="disc"><strong>⚠️ Educational Only</strong> — OFI scores derived from CFPB HMDA 2024 actual FHA denial rates. Not financial advice. Individual outcomes vary.</div>
   <div class="legend">
-    <span style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:700;">OFI CLIMATE:</span>
-    <div class="legend-item"><div class="legend-dot" style="background:#27ae60;"></div>0–35 Favorable</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#f39c12;"></div>36–55 Moderate</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#e67e22;"></div>56–75 Tight</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#c0392b;"></div>76+ Very Tight</div>
+    <span style="font-weight:700;color:rgba(255,255,255,0.4);">OFI:</span>
+    <div class="li"><div class="ld" style="background:#27ae60;"></div>≤35 Favorable</div>
+    <div class="li"><div class="ld" style="background:#C8A84B;"></div>36–50 Moderate</div>
+    <div class="li"><div class="ld" style="background:#e67e22;"></div>51–65 Tight</div>
+    <div class="li"><div class="ld" style="background:#c0392b;"></div>66+ Very Tight</div>
   </div>
 
-  <div class="map-wrap">
-    <div id="map-container"></div>
+  <div class="map-box">
+    <svg id="map" viewBox="0 0 975 610"></svg>
   </div>
 
-  <div class="detail-panel" id="detailPanel">
-    <div class="dp-row">
-      <div>
-        <div class="dp-name" id="dpName"></div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px;">Overlay Friction Index — Q2 2026</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;">OFI Score</div>
-        <div class="dp-ofi" id="dpOFI"></div>
-        <div style="font-size:11px;font-weight:700;margin-top:1px;" id="dpLabel"></div>
-      </div>
+  <div class="detail" id="detail">
+    <div class="dh">
+      <div><div class="dt" id="dname"></div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">HMDA 2024 FHA Data</div></div>
+      <div style="text-align:right;"><div style="font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:2px;">OFI Score</div><div class="do" id="dofi"></div><div style="font-size:10px;font-weight:700;margin-top:2px;" id="dlbl"></div></div>
     </div>
-    <div class="dp-stats" id="dpStats"></div>
-    <div class="dp-text" id="dpText"></div>
-    <div class="dp-cta">
-      <a href="/pre-flight.html" class="btn-gold">✈️ Pre-Flight for This State</a>
-      <a href="/zai-one.html" class="btn-outline">Get Lender Routing →</a>
+    <div class="dgrid" id="dgrid"></div>
+    <div class="dins" id="dins"></div>
+    <div class="dcta">
+      <a href="/pre-flight.html" class="db">✈️ Pre-Flight for This State</a>
+      <a href="/zai-one.html" class="ds">Lender Routing →</a>
     </div>
   </div>
 
-  <div class="rank-row">
-    <div class="rank-box">
-      <div class="rank-title" style="color:#27ae60;">✅ Most Favorable States</div>
-      <div id="topList"></div>
-    </div>
-    <div class="rank-box">
-      <div class="rank-title" style="color:#e8845a;">⚠️ Tightest Markets</div>
-      <div id="bottomList"></div>
-    </div>
+  <div class="ranks">
+    <div class="rcard"><div class="rt" style="color:#27ae60;">✅ Most Favorable</div><div id="top5"></div></div>
+    <div class="rcard"><div class="rt" style="color:#e8845a;">⚠️ Tightest Markets</div><div id="bot5"></div></div>
   </div>
 
-  <div style="text-align:center;margin-bottom:20px;">
+  <div style="text-align:center;margin-bottom:16px;">
     <a href="/pre-flight.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.3);border-radius:10px;text-decoration:none;color:#C8A84B;font-weight:700;font-size:13px;">✈️ Run Pre-Flight for Your State — Free, 30 Seconds</a>
   </div>
+  <div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.8;">Source: CFPB HMDA 2024 Public Dataset · 346,262 FHA records · 11 major lenders · OFI normalized to national average (24.7% denial = OFI 47). Educational purposes only.</div>
 </div>
 
 <script>
-const OFI = {
-  AL:40,AK:45,AZ:33,AR:37,CA:51,CO:36,CT:60,DE:48,FL:42,GA:38,
-  HI:62,ID:32,IL:46,IN:38,IA:36,KS:38,KY:39,LA:43,ME:49,MD:52,
-  MA:54,MI:44,MN:48,MS:42,MO:41,MT:36,NE:37,NV:35,NH:50,NJ:58,
-  NM:40,NY:55,NC:39,ND:33,OH:43,OK:36,OR:50,PA:45,RI:53,SC:40,
-  SD:33,TN:40,TX:35,UT:31,VT:61,VA:50,WA:38,WV:57,WI:52,WY:33,DC:85
-};
+const OFI = {"NV":31,"UT":31,"ID":33,"WY":33,"OR":34,"TX":35,"AZ":37,"CO":38,"WA":38,"NM":42,"MT":42,"AK":43,"KY":43,"ME":43,"OH":44,"NC":46,"MO":46,"CA":46,"SC":47,"MA":47,"SD":47,"MN":48,"RI":48,"TN":48,"IN":49,"NH":49,"KS":49,"AL":50,"GA":50,"VA":51,"FL":51,"NJ":51,"PA":52,"WI":52,"IL":53,"ND":54,"DE":54,"MI":55,"LA":55,"NY":56,"MD":57,"NE":57,"WV":57,"IA":57,"MS":57,"AR":58,"HI":59,"CT":59,"OK":59,"VT":61,"DC":85};
 
 const INFO = {
-  AL:{lender:'CrossCountry',fha:'Medium',insight:'Alabama favorable OFI. Birmingham and Huntsville most active with FHA specialist competition.'},
-  AK:{lender:'CrossCountry',fha:'Low',insight:'Alaska moderate OFI but small lender pool. Strong W2 government employment favored.'},
-  AZ:{lender:'CrossCountry',fha:'High',insight:'Arizona very favorable. Active purchase market with multiple FHA specialists. Boise-like growth in Phoenix.'},
-  AR:{lender:'CrossCountry',fha:'Medium',insight:'Arkansas favorable OFI with affordable housing. Light overlays for standard profiles.'},
-  CA:{lender:'CrossCountry',fha:'Very High',insight:'California above-average OFI. High prices push files toward high-balance. Self-employed face significant friction. Northern CA tighter than Southern CA.'},
-  CO:{lender:'UWM',fha:'Medium',insight:'Colorado at favorable/moderate boundary. Higher home prices push conforming limits. Lender competition keeps overlays manageable.'},
-  CT:{lender:'Guild',fha:'Low',insight:'Connecticut tight territory. Attorney state with high costs, declining population affecting lender appetite.'},
-  DE:{lender:'CrossCountry',fha:'Low',insight:'Delaware moderate OFI. Small market but favorable regulatory environment.'},
-  FL:{lender:'CrossCountry',fha:'Very High',insight:'Florida high FHA volume with moderate friction. Condo restrictions add complexity for FHA — non-warrantable condo is hidden friction.'},
-  GA:{lender:'CrossCountry',fha:'High',insight:'Georgia strong FHA volume. Atlanta MSA drives activity with competitive overlay environment.'},
-  HI:{lender:'CrossCountry',fha:'Low',insight:'Hawaii tight OFI from extremely high prices and limited lender competition. FHA limits often insufficient.'},
-  ID:{lender:'CrossCountry',fha:'Medium',insight:'Idaho very favorable OFI. Strong FHA purchase market. Boise growth driving volume with active lender competition.'},
-  IL:{lender:'CrossCountry',fha:'High',insight:'Illinois near national average. Chicago drives FHA volume. SSDI and 1099 face amplified friction at this OFI level.'},
-  IN:{lender:'UWM',fha:'Medium',insight:'Indiana benefits from UWM wholesale dominance. Low OFI with strong broker channel activity.'},
-  IA:{lender:'UWM',fha:'Low',insight:'Iowa favorable OFI with affordable housing. Strong agricultural W2 economy.'},
-  KS:{lender:'CrossCountry',fha:'Low',insight:'Kansas low OFI with affordable housing. Limited overlay friction for standard profiles.'},
-  KY:{lender:'UWM',fha:'Medium',insight:'Kentucky favorable OFI. Louisville most active. Strong W2 manufacturing sector.'},
-  LA:{lender:'CrossCountry',fha:'Medium',insight:'Louisiana moderate OFI. Hurricane risk adds insurance to DTI. New Orleans more complex than rest of state.'},
-  ME:{lender:'Guild',fha:'Low',insight:'Maine moderate-tight OFI. Seasonal market with limited lender competition. Attorney state adds friction.'},
-  MD:{lender:'CrossCountry',fha:'Medium',insight:'Maryland OFI elevated by DC metro. Baltimore more favorable than DC suburbs.'},
-  MA:{lender:'Guild',fha:'Medium',insight:'Massachusetts tight territory. Boston high prices + strict overlays. Non-W2 borrowers face significant headwinds.'},
-  MI:{lender:'UWM',fha:'High',insight:'Michigan benefits from UWM headquarters. Wholesale channel dominance keeps broker routing options strong.'},
-  MN:{lender:'Guild',fha:'Medium',insight:'Minnesota slightly above national average. Strong economy but seasonal market affects approval windows.'},
-  MS:{lender:'CrossCountry',fha:'Medium',insight:'Mississippi moderate OFI. SSDI income prevalent — route to FHA specialists.'},
-  MO:{lender:'CrossCountry',fha:'Medium',insight:'Missouri favorable OFI. Kansas City and St. Louis show strong FHA specialist competition.'},
-  MT:{lender:'Guild',fha:'Low',insight:'Montana favorable OFI. Limited competition but overlays are light. Rural properties need extra verification.'},
-  NE:{lender:'CrossCountry',fha:'Low',insight:'Nebraska favorable OFI with strong W2 economy. Omaha drives most FHA volume.'},
-  NV:{lender:'Guild',fha:'Medium',insight:'Nevada below national average. Las Vegas drives high FHA demand with competitive lender overlays.'},
-  NH:{lender:'Guild',fha:'Low',insight:'New Hampshire moderate-tight OFI. Attorney state with high costs. Boston metro spillover market.'},
-  NJ:{lender:'CrossCountry',fha:'Medium',insight:'New Jersey elevated OFI. High property taxes, attorney state, strict overlays. DTI heavily impacted by tax burden.'},
-  NM:{lender:'CrossCountry',fha:'Medium',insight:'New Mexico favorable OFI. USDA and VA complement FHA in rural areas. Albuquerque most active.'},
-  NY:{lender:'CrossCountry',fha:'High',insight:'New York significantly elevated. NYC extreme overlay friction — condo restrictions, attorney state, high costs. Upstate NY much more favorable.'},
-  NC:{lender:'Guild',fha:'High',insight:'North Carolina growing FHA market with improving approval rates. Multiple FHA-specialist lenders active.'},
-  ND:{lender:'UWM',fha:'Low',insight:'North Dakota very favorable OFI. Energy W2 income creates strength. Limited pool — use wholesale channel.'},
-  OH:{lender:'UWM',fha:'High',insight:'Ohio moderate OFI with strong FHA purchase activity. Midwest lender competition keeps overlays in check.'},
-  OK:{lender:'CrossCountry',fha:'Medium',insight:'Oklahoma favorable OFI. Energy sector W2 income strong compensating factor. OKC and Tulsa most active.'},
-  OR:{lender:'CrossCountry',fha:'Medium',insight:'Oregon above average. Portland market tightness. Self-employed face amplified overlay risk.'},
-  PA:{lender:'PennyMac',fha:'High',insight:'Pennsylvania near national OFI average. Philadelphia and Pittsburgh show different overlay patterns.'},
-  RI:{lender:'Guild',fha:'Low',insight:'Rhode Island elevated OFI. Smallest state with limited lender competition. Attorney state.'},
-  SC:{lender:'CrossCountry',fha:'Medium',insight:'South Carolina favorable OFI. Charleston and Columbia driving FHA volume growth.'},
-  SD:{lender:'UWM',fha:'Low',insight:'South Dakota low OFI. No state income tax. Limited local lenders — wholesale preferred.'},
-  TN:{lender:'UWM',fha:'Medium',insight:'Tennessee moderate OFI with active Nashville and Memphis markets. W2 standard profiles see good rates.'},
-  TX:{lender:'CrossCountry',fha:'High',insight:'Texas lowest OFI nationally. High FHA volume, competitive lender environment, minimal overlay friction. W2 with 620+ FICO face almost no state-level friction.'},
-  UT:{lender:'UWM',fha:'Medium',insight:'Utah matches Texas for lowest OFI. Strong purchase market with consistent lender appetite.'},
-  VT:{lender:'Guild',fha:'Low',insight:'Vermont above-average OFI. Very small market with limited lender options. Attorney state costs add friction.'},
-  VA:{lender:'CrossCountry',fha:'Medium',insight:'Virginia at national OFI average. Northern VA (DC metro) has tighter overlays than rest of state. VA loans dominate military markets.'},
-  WA:{lender:'CrossCountry',fha:'Medium',insight:'Washington slightly above average. High prices push conforming limits. Seattle dominated by jumbo/high-balance.'},
-  WV:{lender:'CrossCountry',fha:'Low',insight:'West Virginia moderate OFI but limited lender pool. Rural areas have significant access constraints.'},
-  WI:{lender:'UWM',fha:'Medium',insight:'Wisconsin benefits from UWM proximity. Moderate OFI with active FHA purchase market.'},
-  WY:{lender:'Guild',fha:'Low',insight:'Wyoming favorable OFI. Tiny market — route to national FHA specialists.'},
-  DC:{lender:'CrossCountry',fha:'Low',insight:'DC highest OFI nationally. Extreme prices, strict condo requirements, attorney state costs. Only the strongest profiles recommended.'}
+  AL:{l:'Guild',r:26.0,bl:6.9,ins:'Alabama moderate OFI. Birmingham and Huntsville most active. Guild leads with 6.9% FHA denial rate.'},
+  AK:{l:'Guild',r:22.4,bl:3.6,ins:'Alaska favorable OFI. Guild leads. Strong W2 government employment favored.'},
+  AZ:{l:'CrossCountry',r:19.4,bl:4.1,ins:'Arizona very favorable. CrossCountry leads at 4.1%. Active purchase market with multiple FHA specialists.'},
+  AR:{l:'CrossCountry',r:30.1,bl:6.1,ins:'Arkansas moderate OFI. CrossCountry leads at 6.1%. Affordable housing with light overlays for standard profiles.'},
+  CA:{l:'CrossCountry',r:24.3,bl:2.6,ins:'California near national average. CrossCountry leads at 2.6%. High prices push to high-balance. Self-employed face overlay friction.'},
+  CO:{l:'CrossCountry',r:20.0,bl:2.1,ins:'Colorado favorable. CrossCountry leads at 2.1%. Higher home prices push conforming limits but lender competition keeps overlays manageable.'},
+  CT:{l:'CrossCountry',r:31.0,bl:5.9,ins:'Connecticut tight territory. Attorney state with high costs. Limited lender competition.'},
+  DE:{l:'Guild',r:28.3,bl:9.3,ins:'Delaware moderate OFI. Small market but manageable regulatory environment.'},
+  FL:{l:'CrossCountry',r:26.6,bl:5.8,ins:'Florida near national average. CrossCountry leads at 5.8%. Very high FHA volume. Condo restrictions add hidden friction.'},
+  GA:{l:'CrossCountry',r:26.3,bl:7.6,ins:'Georgia near national average. CrossCountry leads at 7.6%. Atlanta MSA drives volume with competitive environment.'},
+  HI:{l:'Guild',r:30.7,bl:12.0,ins:'Hawaii tight OFI. Very high home prices, limited lender competition. FHA limits often insufficient.'},
+  ID:{l:'CrossCountry',r:17.5,bl:0.0,ins:'Idaho very favorable. CrossCountry denial rate essentially 0% in this data. Strong FHA purchase market.'},
+  IL:{l:'CrossCountry',r:27.6,bl:8.3,ins:'Illinois slightly above average. CrossCountry leads at 8.3%. Chicago drives volume. SSDI/1099 face amplified friction.'},
+  IN:{l:'CrossCountry',r:25.6,bl:9.2,ins:'Indiana near national average. CrossCountry leads at 9.2%. Strong UWM wholesale presence.'},
+  IA:{l:'CrossCountry',r:29.9,bl:4.8,ins:'Iowa moderate OFI. CrossCountry leads at 4.8%. Affordable housing with strong W2 economy.'},
+  KS:{l:'Guild',r:25.9,bl:5.3,ins:'Kansas near national average. Guild leads at 5.3%. Affordable housing with light overlays.'},
+  KY:{l:'CrossCountry',r:22.5,bl:9.3,ins:'Kentucky favorable OFI. CrossCountry leads. Louisville market most active. Strong W2 manufacturing.'},
+  LA:{l:'CrossCountry',r:28.8,bl:8.3,ins:'Louisiana moderate OFI. Hurricane risk adds insurance costs to DTI. New Orleans more complex.'},
+  ME:{l:'CrossCountry',r:22.7,bl:5.6,ins:'Maine favorable OFI. CrossCountry leads at 5.6%. Seasonal market, attorney state adds some friction.'},
+  MD:{l:'CrossCountry',r:29.6,bl:6.0,ins:'Maryland moderate-tight. CrossCountry leads at 6.0%. DC metro influence elevates overlays in suburbs.'},
+  MA:{l:'CrossCountry',r:24.8,bl:7.0,ins:'Massachusetts near average. CrossCountry leads at 7.0%. Boston high prices + strict overlays. Non-W2 face headwinds.'},
+  MI:{l:'Guild',r:28.7,bl:6.9,ins:'Michigan slightly above average. Guild leads at 6.9%. UWM headquarters drives wholesale channel strength.'},
+  MN:{l:'CrossCountry',r:25.2,bl:5.2,ins:'Minnesota near average. CrossCountry leads at 5.2%. Strong economy but seasonal market affects windows.'},
+  MS:{l:'CrossCountry',r:30.0,bl:4.6,ins:'Mississippi moderate OFI. CrossCountry leads at 4.6%. SSDI income prevalent — route to FHA specialists.'},
+  MO:{l:'Guild',r:24.2,bl:3.4,ins:'Missouri near average. Guild leads at 3.4%. Kansas City and St. Louis show strong FHA specialist competition.'},
+  MT:{l:'Guild',r:22.2,bl:7.2,ins:'Montana favorable OFI. Guild leads at 7.2%. Limited competition but overlays are light.'},
+  NE:{l:'CrossCountry',r:29.6,bl:4.8,ins:'Nebraska moderate OFI. CrossCountry leads at 4.8%. Strong W2 economy, Omaha drives volume.'},
+  NV:{l:'Guild',r:16.4,bl:3.6,ins:'Nevada lowest OFI nationally. Guild leads at 3.6%. Las Vegas drives high demand with competitive overlays.'},
+  NH:{l:'CrossCountry',r:25.6,bl:5.8,ins:'New Hampshire near average. CrossCountry leads at 5.8%. Attorney state with Boston metro spillover.'},
+  NJ:{l:'CrossCountry',r:26.7,bl:6.7,ins:'New Jersey slightly above average. CrossCountry leads at 6.7%. High property taxes and attorney state requirements add friction.'},
+  NM:{l:'CrossCountry',r:21.9,bl:2.5,ins:'New Mexico favorable. CrossCountry leads at 2.5%. USDA and VA complement FHA in rural areas.'},
+  NY:{l:'CrossCountry',r:29.2,bl:7.0,ins:'New York moderate-tight. CrossCountry leads at 7.0%. NYC extreme overlay friction — condo rules, attorney state. Upstate much more favorable.'},
+  NC:{l:'CrossCountry',r:24.1,bl:4.3,ins:'North Carolina near average. CrossCountry leads at 4.3%. Growing FHA market with improving rates.'},
+  ND:{l:'UWM',r:28.2,bl:15.7,ins:'North Dakota moderate OFI. UWM leads at 15.7%. Energy economy creates W2 strength. Small market — use wholesale.'},
+  OH:{l:'CrossCountry',r:23.3,bl:3.9,ins:'Ohio favorable. CrossCountry leads at 3.9%. Strong FHA purchase activity, Midwest lender competition keeps overlays in check.'},
+  OK:{l:'Guild',r:31.1,bl:8.2,ins:'Oklahoma moderate-tight. Guild leads at 8.2%. Energy sector W2 income is strong compensating factor.'},
+  OR:{l:'CrossCountry',r:18.1,bl:1.8,ins:'Oregon very favorable. CrossCountry leads at just 1.8%. Portland market activity with multiple FHA specialists.'},
+  PA:{l:'CrossCountry',r:27.2,bl:5.6,ins:'Pennsylvania slightly above average. CrossCountry leads at 5.6%. Philadelphia and Pittsburgh show different overlay patterns.'},
+  RI:{l:'Guild',r:25.3,bl:4.6,ins:'Rhode Island near average. Guild leads at 4.6%. Small state, attorney state adds friction.'},
+  SC:{l:'CrossCountry',r:24.6,bl:6.9,ins:'South Carolina near average. CrossCountry leads at 6.9%. Charleston and Columbia driving FHA growth.'},
+  SD:{l:'CrossCountry',r:24.9,bl:0.0,ins:'South Dakota near average. CrossCountry denial rate 0% — strong specialist fit. Small market, wholesale channel preferred.'},
+  TN:{l:'CrossCountry',r:25.3,bl:10.1,ins:'Tennessee near average. CrossCountry leads at 10.1%. Active Nashville and Memphis markets.'},
+  TX:{l:'CrossCountry',r:18.2,bl:4.1,ins:'Texas very favorable. CrossCountry leads at 4.1%. High FHA volume, competitive lender environment, low overlay friction. W2 borrowers with 620+ FICO ideal.'},
+  UT:{l:'CrossCountry',r:16.5,bl:3.8,ins:'Utah second-lowest OFI. CrossCountry leads at 3.8%. Strong purchase market with consistent lender appetite.'},
+  VT:{l:'UWM',r:32.3,bl:13.0,ins:'Vermont tight territory. Very small market, limited lender options. Attorney state costs add friction.'},
+  VA:{l:'CrossCountry',r:26.5,bl:5.6,ins:'Virginia near average. CrossCountry leads at 5.6%. Northern VA DC metro has tighter overlays than rest of state.'},
+  WA:{l:'CrossCountry',r:20.0,bl:3.6,ins:'Washington favorable. CrossCountry leads at 3.6%. High prices push conforming limits. Seattle dominated by jumbo/high-balance.'},
+  WV:{l:'Guild',r:29.7,bl:4.0,ins:'West Virginia moderate-tight. Guild leads at 4.0%. Limited lender pool — rural areas have access constraints.'},
+  WI:{l:'CrossCountry',r:27.2,bl:6.6,ins:'Wisconsin slightly above average. CrossCountry leads at 6.6%. UWM proximity benefits wholesale channel.'},
+  WY:{l:'CrossCountry',r:17.5,bl:1.1,ins:'Wyoming very favorable. CrossCountry leads at 1.1%. Small market — route to national specialists.'},
+  DC:{l:'UWM',r:47.6,bl:22.5,ins:'DC has the highest OFI nationally. 47.6% FHA denial rate. Extreme prices, strict condo requirements, attorney state. Only strongest profiles.'},
 };
 
-function getColor(ofi) {
-  if(ofi<=35) return '#27ae60';
-  if(ofi<=55) return '#f39c12';
-  if(ofi<=75) return '#e67e22';
+function ofiColor(o){
+  if(o<=35) return '#27ae60';
+  if(o<=50) return '#C8A84B';
+  if(o<=65) return '#e67e22';
   return '#c0392b';
 }
-function getLabel(ofi) {
-  if(ofi<=35) return 'FAVORABLE';
-  if(ofi<=55) return 'MODERATE';
-  if(ofi<=75) return 'TIGHT';
+function ofiLabel(o){
+  if(o<=35) return 'FAVORABLE';
+  if(o<=50) return 'MODERATE';
+  if(o<=65) return 'TIGHT';
   return 'VERY TIGHT';
 }
 
-// Load US map from CDN
+// Rankings
+const sorted = Object.entries(OFI).sort((a,b)=>a[1]-b[1]);
+document.getElementById('top5').innerHTML = sorted.slice(0,6).map(([s,o])=>
+  `<div class="ri"><span style="font-weight:600;">${INFO[s]?.ins?.split('.')[0]?.split(',')[0] || s}</span><span style="color:#27ae60;font-family:monospace;font-weight:700;">${o}</span></div>`
+).join('');
+document.getElementById('bot5').innerHTML = sorted.slice(-5).reverse().map(([s,o])=>
+  `<div class="ri"><span style="font-weight:600;">${INFO[s]?.ins?.split('.')[0]?.split(',')[0] || s}</span><span style="color:#e8845a;font-family:monospace;font-weight:700;">${o}</span></div>`
+).join('');
+
+// Build rankings with state names
+const stateNames = {"AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","FL":"Florida","GA":"Georgia","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming","DC":"District of Columbia"};
+
+document.getElementById('top5').innerHTML = sorted.slice(0,6).map(([s,o])=>
+  `<div class="ri"><span style="font-weight:600;">${stateNames[s]||s}</span><span style="color:#27ae60;font-family:monospace;font-weight:700;">${o}</span></div>`
+).join('');
+document.getElementById('bot5').innerHTML = sorted.slice(-5).reverse().map(([s,o])=>
+  `<div class="ri"><span style="font-weight:600;">${stateNames[s]||s}</span><span style="color:#e8845a;font-family:monospace;font-weight:700;">${o}</span></div>`
+).join('');
+
+// D3 Map
+const svg = d3.select('#map');
+const projection = d3.geoAlbersUsa().scale(1280).translate([487.5, 305]);
+const path = d3.geoPath().projection(projection);
+
+let selectedState = null;
+
 fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json')
   .then(r => r.json())
   .then(us => {
-    const w = document.getElementById('map-container').offsetWidth || 900;
-    const h = Math.round(w * 0.62);
-    
-    const svg = d3.select('#map-container')
-      .append('svg')
-      .attr('viewBox', '0 0 960 600')
-      .attr('preserveAspectRatio', 'xMidYMid meet');
-
-    const projection = d3.geoAlbersUsa()
-      .scale(1280)
-      .translate([480, 300]);
-
-    const path = d3.geoPath().projection(projection);
-    
-    // FIPS to abbr mapping
-    const fipsToAbbr = {
-      '01':'AL','02':'AK','04':'AZ','05':'AR','06':'CA','08':'CO','09':'CT',
-      '10':'DE','11':'DC','12':'FL','13':'GA','15':'HI','16':'ID','17':'IL',
-      '18':'IN','19':'IA','20':'KS','21':'KY','22':'LA','23':'ME','24':'MD',
-      '25':'MA','26':'MI','27':'MN','28':'MS','29':'MO','30':'MT','31':'NE',
-      '32':'NV','33':'NH','34':'NJ','35':'NM','36':'NY','37':'NC','38':'ND',
-      '39':'OH','40':'OK','41':'OR','42':'PA','44':'RI','45':'SC','46':'SD',
-      '47':'TN','48':'TX','49':'UT','50':'VT','51':'VA','53':'WA','54':'WV',
-      '55':'WI','56':'WY'
-    };
-
     const states = topojson.feature(us, us.objects.states);
-    
+    const stateMesh = topojson.mesh(us, us.objects.states, (a,b)=>a!==b);
+
+    // FIPS to abbr mapping
+    const fips = {"01":"AL","02":"AK","04":"AZ","05":"AR","06":"CA","08":"CO","09":"CT","10":"DE","11":"DC","12":"FL","13":"GA","15":"HI","16":"ID","17":"IL","18":"IN","19":"IA","20":"KS","21":"KY","22":"LA","23":"ME","24":"MD","25":"MA","26":"MI","27":"MN","28":"MS","29":"MO","30":"MT","31":"NE","32":"NV","33":"NH","34":"NJ","35":"NM","36":"NY","37":"NC","38":"ND","39":"OH","40":"OK","41":"OR","42":"PA","44":"RI","45":"SC","46":"SD","47":"TN","48":"TX","49":"UT","50":"VT","51":"VA","53":"WA","54":"WV","55":"WI","56":"WY"};
+
+    // States
     svg.selectAll('.state')
       .data(states.features)
-      .enter()
-      .append('path')
+      .enter().append('path')
       .attr('class', 'state')
       .attr('d', path)
       .attr('fill', d => {
-        const abbr = fipsToAbbr[String(d.id).padStart(2,'0')];
-        return abbr && OFI[abbr] ? getColor(OFI[abbr]) : '#1a2744';
+        const abbr = fips[String(d.id).padStart(2,'0')];
+        const ofi = OFI[abbr];
+        return ofi ? ofiColor(ofi) : '#2a3a5a';
       })
-      .attr('id', d => {
-        const abbr = fipsToAbbr[String(d.id).padStart(2,'0')];
-        return abbr ? 'state-'+abbr : null;
-      })
-      .on('mouseover', function(event, d) {
-        const abbr = fipsToAbbr[String(d.id).padStart(2,'0')];
+      .on('mouseenter', function(event, d) {
+        const abbr = fips[String(d.id).padStart(2,'0')];
         if(!abbr || !OFI[abbr]) return;
         const ofi = OFI[abbr];
-        const color = getColor(ofi);
-        document.getElementById('ttState').textContent = (INFO[abbr]?.name || abbr);
-        document.getElementById('ttOFI').textContent = ofi;
-        document.getElementById('ttOFI').style.color = color;
-        document.getElementById('ttLabel').textContent = getLabel(ofi);
-        document.getElementById('ttLabel').style.color = color;
-        document.getElementById('tooltip').style.display = 'block';
+        const color = ofiColor(ofi);
+        d3.select('#ttn').text(stateNames[abbr]||abbr);
+        d3.select('#tto').text(ofi).style('color', color);
+        d3.select('#ttl').text(ofiLabel(ofi)).style('color', color);
+        d3.select('#tts').text('Denial rate: '+(INFO[abbr]?.r||'?')+'%');
+        d3.select('#tip').style('display','block');
       })
       .on('mousemove', function(event) {
-        document.getElementById('tooltip').style.left = (event.clientX+14)+'px';
-        document.getElementById('tooltip').style.top = (event.clientY-50)+'px';
+        d3.select('#tip').style('left',(event.clientX+14)+'px').style('top',(event.clientY-44)+'px');
       })
-      .on('mouseout', function() {
-        document.getElementById('tooltip').style.display = 'none';
+      .on('mouseleave', function() {
+        d3.select('#tip').style('display','none');
       })
       .on('click', function(event, d) {
-        const abbr = fipsToAbbr[String(d.id).padStart(2,'0')];
-        if(abbr) showDetail(abbr);
+        const abbr = fips[String(d.id).padStart(2,'0')];
+        if(!abbr) return;
+        svg.selectAll('.state').classed('sel', false);
+        d3.select(this).classed('sel', true);
+        showDetail(abbr);
+        if(typeof gtag!=='undefined') gtag('event','state_map_click',{event_label:abbr});
       });
 
-    // State labels for larger states
-    const largeStates = ['TX','CA','MT','AZ','NM','CO','WY','OR','WA','UT','NV','ID'];
-    svg.selectAll('.state-label')
-      .data(states.features.filter(d => {
-        const abbr = fipsToAbbr[String(d.id).padStart(2,'0')];
-        return largeStates.includes(abbr);
-      }))
-      .enter()
-      .append('text')
-      .attr('class', 'state-label')
-      .attr('transform', d => {
-        const c = path.centroid(d);
-        return 'translate('+c+')';
-      })
-      .attr('text-anchor', 'middle')
-      .attr('dy', '4')
-      .attr('font-size', '9')
-      .attr('font-weight', '700')
-      .attr('fill', 'rgba(0,0,0,0.65)')
-      .attr('pointer-events', 'none')
-      .text(d => fipsToAbbr[String(d.id).padStart(2,'0')] || '');
-  })
-  .catch(err => {
-    document.getElementById('map-container').innerHTML = 
-      '<div style="padding:40px;text-align:center;color:rgba(255,255,255,0.4);">Map loading... <a href="#rankings" style="color:#C8A84B;">See rankings below</a></div>';
-  });
+    // State borders
+    svg.append('path')
+      .datum(stateMesh)
+      .attr('fill','none')
+      .attr('stroke','#0B132B')
+      .attr('stroke-width','0.5')
+      .attr('d', path);
 
-// Need topojson
-const topoScript = document.createElement('script');
-topoScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js';
-document.head.appendChild(topoScript);
+    // State labels
+    states.features.forEach(d => {
+      const abbr = fips[String(d.id).padStart(2,'0')];
+      if(!abbr) return;
+      const centroid = path.centroid(d);
+      if(!centroid || isNaN(centroid[0])) return;
+      
+      // Small states — skip label (too tiny)
+      const skip = ['RI','CT','DE','NJ','NH','VT','MA','MD','DC'];
+      if(skip.includes(abbr)) return;
+      
+      svg.append('text')
+        .attr('class','state-label')
+        .attr('x', centroid[0])
+        .attr('y', centroid[1]+4)
+        .text(abbr);
+    });
+  })
+  .catch(e => console.error('Map load error:', e));
 
 function showDetail(abbr) {
   const ofi = OFI[abbr];
   const info = INFO[abbr];
   if(!ofi || !info) return;
-  
-  const color = getColor(ofi);
-  const stateName = info.name || abbr;
-  
-  d3.selectAll('.state').classed('active', false);
-  d3.select('#state-'+abbr).classed('active', true);
-  
-  document.getElementById('dpName').textContent = stateName;
-  document.getElementById('dpOFI').textContent = ofi;
-  document.getElementById('dpOFI').style.color = color;
-  document.getElementById('dpLabel').textContent = getLabel(ofi) + ' MARKET';
-  document.getElementById('dpLabel').style.color = color;
-  document.getElementById('dpText').textContent = info.insight;
-  
+  const color = ofiColor(ofi);
   const diff = ofi - 47;
-  document.getElementById('dpStats').innerHTML =
-    '<div class="dp-stat"><div class="dp-stat-lbl">OFI Score</div><div class="dp-stat-val" style="color:'+color+';">'+ofi+' / 100</div></div>' +
-    '<div class="dp-stat"><div class="dp-stat-lbl">vs National (47)</div><div class="dp-stat-val" style="color:'+(diff<=0?'#27ae60':'#e8845a')+';">'+(diff<=0?Math.abs(diff)+' pts easier':diff+' pts tighter')+'</div></div>' +
-    '<div class="dp-stat"><div class="dp-stat-lbl">FHA Volume</div><div class="dp-stat-val">'+info.fha+'</div></div>' +
-    '<div class="dp-stat"><div class="dp-stat-lbl">Best Lender Fit</div><div class="dp-stat-val">'+info.lender+'</div></div>';
   
-  document.getElementById('detailPanel').classList.add('show');
-  document.getElementById('detailPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
+  document.getElementById('dname').textContent = stateNames[abbr] || abbr;
+  document.getElementById('dofi').textContent = ofi;
+  document.getElementById('dofi').style.color = color;
+  document.getElementById('dlbl').textContent = ofiLabel(ofi) + ' MARKET';
+  document.getElementById('dlbl').style.color = color;
+  document.getElementById('dins').textContent = info.ins;
+  document.getElementById('dgrid').innerHTML =
+    `<div class="dstat"><div class="dsl">OFI Score</div><div class="dsv" style="color:${color};">${ofi}/100</div></div>` +
+    `<div class="dstat"><div class="dsl">vs National (47)</div><div class="dsv" style="color:${diff<=0?'#27ae60':'#e8845a'};">${diff<=0?(Math.abs(diff)+' pts easier'):(diff+' pts tighter')}</div></div>` +
+    `<div class="dstat"><div class="dsl">FHA Denial Rate</div><div class="dsv">${info.r}%</div></div>` +
+    `<div class="dstat"><div class="dsl">Best Lender</div><div class="dsv">${info.l} (${info.bl}%)</div></div>`;
   
-  if(typeof gtag!=='undefined') gtag('event','state_map_click',{event_label:abbr});
+  document.getElementById('detail').classList.add('on');
+  document.getElementById('detail').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-
-// Add state names to INFO
-const stateNames = {AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',DC:'District of Columbia'};
-Object.keys(INFO).forEach(k => { if(stateNames[k]) INFO[k].name = stateNames[k]; });
-
-// Rankings
-const sorted = Object.entries(OFI).sort((a,b)=>a[1]-b[1]);
-document.getElementById('topList').innerHTML = sorted.slice(0,6).map(([abbr,ofi]) =>
-  '<div class="rank-item"><span style="font-weight:600;">'+stateNames[abbr]+'</span><span style="color:#27ae60;font-family:monospace;font-weight:700;">'+ofi+'</span></div>'
-).join('');
-document.getElementById('bottomList').innerHTML = sorted.slice(-6).reverse().map(([abbr,ofi]) =>
-  '<div class="rank-item"><span style="font-weight:600;">'+stateNames[abbr]+'</span><span style="color:#e8845a;font-family:monospace;font-weight:700;">'+ofi+'</span></div>'
-).join('');
 </script>
 </body>
 </html>
-
-<script>
-// State labels — manual coordinates
-const _LBLS = {"AL":[590,405],"AK":[110,515],"AZ":[170,385],"AR":[545,370],"CA":[110,315],"CO":[280,315],"CT":[775,230],"DE":[752,265],"FL":[630,480],"GA":[627,400],"HI":[240,545],"ID":[185,235],"IL":[562,307],"IN":[597,297],"IA":[517,257],"KS":[430,325],"KY":[625,327],"LA":[542,435],"ME":[810,172],"MD":[720,282],"MA":[785,207],"MI":[610,225],"MN":[482,202],"MS":[560,412],"MO":[525,332],"MT":[245,195],"NE":[410,282],"NV":[130,285],"NH":[782,185],"NJ":[750,252],"NM":[255,380],"NY":[720,225],"NC":[692,347],"ND":[415,187],"OH":[640,285],"OK":[440,370],"OR":[130,222],"PA":[702,255],"RI":[802,222],"SC":[670,382],"SD":[415,235],"TN":[612,360],"TX":[402,400],"UT":[212,307],"VT":[765,184],"VA":[702,312],"WA":[127,175],"WV":[677,300],"WI":[540,225],"WY":[302,255],"DC":[731,288]};
-const _SVG = document.getElementById('usMap');
-const _SMALL = ['CT','DE','RI','DC','NH','VT','NJ','MD'];
-Object.entries(_LBLS).forEach(([abbr,lp]) => {
-  const t = document.createElementNS('http://www.w3.org/2000/svg','text');
-  t.setAttribute('x',lp[0]);
-  t.setAttribute('y',lp[1]+4);
-  t.setAttribute('text-anchor','middle');
-  t.setAttribute('font-size',_SMALL.includes(abbr)?'6':'8');
-  t.setAttribute('font-family','DM Sans,Arial,sans-serif');
-  t.setAttribute('font-weight','700');
-  t.setAttribute('fill','rgba(0,0,0,0.85)');
-  t.setAttribute('pointer-events','none');
-  t.textContent=abbr;
-  _SVG.appendChild(t);
-});
-</script>
