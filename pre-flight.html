@@ -587,6 +587,13 @@ Need a second opinion on your loan file? Ask your broker to run a Pre-Flight at:
   printWin.document.close();
   printWin.print();
   
+  // preflight_completed event
+  if(typeof gtag !== 'undefined') gtag('event', 'preflight_completed', {
+    'score': score,
+    'signal': signal,
+    'loan_type': loanType,
+    'income_type': income
+  });
   if(typeof gtag !== 'undefined') gtag('event', 'preflight_pdf', {event_label: 'boarding_pass_saved'});
 }
 
