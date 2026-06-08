@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FHA Mortgage Approval Climate by State — 2024 | FinanceRateCalc</title>
+<meta name="description" content="Interactive map showing FHA mortgage approval difficulty by state. Based on OFI scores, HMDA data, and lender overlay patterns. Which states are easiest to get approved?">
+<link rel="canonical" href="https://financeratecalc.com/fha-state-map.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#0B132B;color:#fff;min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.container{max-width:1100px;margin:0 auto;padding:32px 20px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(24px,3.5vw,38px);font-weight:900;margin-bottom:8px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.subtitle{font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:24px;line-height:1.7;}
+.disclaimer{background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:12px 16px;font-size:11px;color:#92400e;margin-bottom:24px;}
+
+/* Legend */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;align-items:center;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,0.6);}
+.legend-dot{width:12px;height:12px;border-radius:3px;}
+
+/* State grid */
+.state-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:32px;}
+.state-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;position:relative;}
+.state-card:hover{transform:translateY(-2px);border-color:rgba(200,168,75,0.4);}
+.state-card.selected{border-color:rgba(200,168,75,0.6);background:rgba(200,168,75,0.08);}
+.state-abbr{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;margin-bottom:4px;}
+.state-name{font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:8px;}
+.state-ofi{font-family:'DM Mono',monospace;font-size:22px;font-weight:900;}
+.state-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;}
+.state-bar{height:3px;border-radius:2px;margin-top:8px;background:rgba(255,255,255,0.1);}
+.state-bar-fill{height:100%;border-radius:2px;}
+
+/* Detail panel */
+.detail-panel{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:24px;margin-bottom:32px;display:none;}
+.detail-panel.show{display:block;}
+.dp-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.dp-title{font-family:'Fraunces',serif;font-size:24px;font-weight:900;}
+.dp-ofi{font-family:'DM Mono',monospace;font-size:40px;font-weight:900;}
+.dp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:16px;}
+.dp-stat{background:rgba(255,255,255,0.04);border-radius:8px;padding:12px;}
+.dp-stat-label{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;}
+.dp-stat-val{font-size:16px;font-weight:700;}
+.dp-insight{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:14px;}
+.dp-cta{display:flex;gap:10px;flex-wrap:wrap;}
+.dp-btn{padding:10px 18px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;}
+.dp-sec{padding:10px 18px;background:transparent;color:#C8A84B;border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;}
+
+/* Top/Bottom lists */
+.rank-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;}
+.rank-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:18px;}
+.rank-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
+.rank-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;}
+.rank-item:last-child{border:none;}
+
+@media(max-width:600px){.rank-grid{grid-template-columns:1fr;}.state-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));} header{padding:0 20px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/pre-flight.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:6px;font-weight:700;text-decoration:none;font-size:13px;">✈️ Pre-Flight</a>
+</header>
+
+<div class="container">
+  <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">OFI State Intelligence · Updated Q2 2026</div>
+  <h1>FHA Mortgage Approval<br><em>Climate by State</em></h1>
+  <p class="subtitle">OFI (Overlay Friction Index) measures how tight lender overlays are in each state. Lower = easier approval environment. Based on HMDA data, MBA state applications, and lender overlay patterns.</p>
+
+  <div class="disclaimer">
+    <strong>⚠️ Educational Tool Only</strong> — OFI scores are composite estimates based on historical HMDA patterns, MBA state data, and lender behavior. Not a prediction of individual outcomes. Not financial advice. Lender policies change frequently.
+  </div>
+
+  <div class="legend">
+    <span style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:700;">OFI CLIMATE:</span>
+    <div class="legend-item"><div class="legend-dot" style="background:#6bffb8;"></div>0-35 Favorable</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#C8A84B;"></div>36-55 Moderate</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e8845a;"></div>56-75 Tight</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#c0392b;"></div>76+ Very Tight</div>
+  </div>
+
+  <!-- Detail panel -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="dp-header">
+      <div>
+        <div class="dp-title" id="dpTitle">—</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px;" id="dpSubtitle">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:2px;">OFI Score</div>
+        <div class="dp-ofi" id="dpOFI">—</div>
+        <div style="font-size:12px;font-weight:700;" id="dpLabel">—</div>
+      </div>
+    </div>
+    <div class="dp-grid" id="dpGrid"></div>
+    <div class="dp-insight" id="dpInsight"></div>
+    <div class="dp-cta">
+      <a href="/pre-flight.html" class="dp-btn">✈️ Run Pre-Flight for This State</a>
+      <a href="/zai-one.html" class="dp-sec">Get Lender Routing →</a>
+    </div>
+  </div>
+
+  <!-- State grid -->
+  <div class="state-grid" id="stateGrid"></div>
+
+  <!-- Rankings -->
+  <div class="rank-grid">
+    <div class="rank-card">
+      <div class="rank-title" style="color:#6bffb8;">✅ Most Favorable States</div>
+      <div id="topStates"></div>
+    </div>
+    <div class="rank-card">
+      <div class="rank-title" style="color:#e8845a;">⚠️ Tightest Markets</div>
+      <div id="bottomStates"></div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin:24px 0;">
+    <a href="/pre-flight.html" style="display:inline-flex;align-items:center;gap:10px;padding:14px 28px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.3);border-radius:10px;text-decoration:none;color:#C8A84B;font-weight:700;font-size:14px;">
+      ✈️ Run Pre-Flight Check for Your State — 30 Seconds
+    </a>
+  </div>
+
+  <div style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.8;margin-top:16px;">
+    OFI scores are composite estimates derived from CFPB HMDA regional denial rates, MBA weekly state application data, and lender overlay behavior patterns. Scores updated quarterly. Individual lender policies vary independently. Educational purposes only.
+  </div>
+</div>
+
+<script>
+const STATES = [
+  {abbr:'TX', name:'Texas', ofi:30, pop:28000000, fha_vol:'High', top_lender:'CrossCountry', insight:'Texas has the lowest OFI nationally. High FHA volume, competitive lender environment, and relatively low overlay friction make it one of the most approval-friendly states. W2 borrowers with 620+ FICO face minimal state-level friction.'},
+  {abbr:'UT', name:'Utah', ofi:30, pop:3400000, fha_vol:'Medium', top_lender:'UWM', insight:'Utah matches Texas for lowest OFI. Strong purchase market with consistent lender appetite. FHA specialists like CrossCountry and Guild perform well here.'},
+  {abbr:'AZ', name:'Arizona', ofi:33, pop:7200000, fha_vol:'High', top_lender:'CrossCountry', insight:'Arizona maintains a favorable approval climate. Active purchase market with multiple FHA specialists competing for volume. Borderline profiles have good routing options.'},
+  {abbr:'NV', name:'Nevada', ofi:35, pop:3100000, fha_vol:'Medium', top_lender:'Guild', insight:'Nevada OFI remains below national average. Las Vegas market drives high FHA demand with competitive lender overlays.'},
+  {abbr:'CO', name:'Colorado', ofi:36, pop:5800000, fha_vol:'Medium', top_lender:'UWM', insight:'Colorado sits at the favorable/moderate boundary. Higher home prices push more borrowers toward FHA limits. Lender competition keeps overlays manageable.'},
+  {abbr:'GA', name:'Georgia', ofi:38, pop:10900000, fha_vol:'High', top_lender:'CrossCountry', insight:'Georgia benefits from strong FHA volume and multiple specialist lenders. Atlanta MSA drives most activity with competitive overlay environment.'},
+  {abbr:'NC', name:'North Carolina', ofi:39, pop:10600000, fha_vol:'High', top_lender:'Guild', insight:'North Carolina has a growing FHA market with improving approval rates. Multiple FHA-specialist lenders active in this market.'},
+  {abbr:'TN', name:'Tennessee', ofi:40, pop:7000000, fha_vol:'Medium', top_lender:'UWM', insight:'Tennessee maintains moderate OFI with active Nashville and Memphis markets. W2 borrowers with standard profiles see good approval rates.'},
+  {abbr:'FL', name:'Florida', ofi:42, pop:22600000, fha_vol:'Very High', top_lender:'CrossCountry', insight:'Florida has very high FHA volume but moderate overlay friction. Condo restrictions add complexity for FHA. Non-warrantable condo issues are a hidden friction source.'},
+  {abbr:'OH', name:'Ohio', ofi:43, pop:11800000, fha_vol:'High', top_lender:'UWM', insight:'Ohio maintains moderate OFI with strong FHA purchase activity. Midwest lender competition keeps overlays in check for standard profiles.'},
+  {abbr:'MI', name:'Michigan', ofi:44, pop:10000000, fha_vol:'High', top_lender:'UWM', insight:'Michigan benefits from UWM headquarters presence. Wholesale channel dominance keeps broker routing options strong.'},
+  {abbr:'PA', name:'Pennsylvania', ofi:45, pop:12900000, fha_vol:'High', top_lender:'PennyMac', insight:'Pennsylvania sits near national OFI average. Philadelphia and Pittsburgh markets show different overlay patterns. Borderline profiles should target FHA specialists.'},
+  {abbr:'IL', name:'Illinois', ofi:46, pop:12600000, fha_vol:'High', top_lender:'CrossCountry', insight:'Illinois tracks near national OFI average. Chicago market drives most FHA volume. SSDI and 1099 borrowers face amplified friction near this OFI level.'},
+  {abbr:'VA', name:'Virginia', ofi:47, pop:8700000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'Virginia sits exactly at national OFI average. Northern Virginia (DC metro) has tighter overlays than rest of state. VA loans dominate military markets.'},
+  {abbr:'WA', name:'Washington', ofi:48, pop:7700000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'Washington state slightly above national average. High home prices push conforming limits. Jumbo and high-balance loans dominate Seattle market.'},
+  {abbr:'MN', name:'Minnesota', ofi:48, pop:5700000, fha_vol:'Medium', top_lender:'Guild', insight:'Minnesota sits slightly above national average. Strong economy but tight winter market seasonality affects approval windows.'},
+  {abbr:'OR', name:'Oregon', ofi:50, pop:4200000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'Oregon OFI reflects Portland market tightness. High home prices relative to FHA limits create friction. Self-employed borrowers face amplified overlay risk.'},
+  {abbr:'CA', name:'California', ofi:51, pop:39500000, fha_vol:'Very High', top_lender:'CrossCountry', insight:'California OFI is above average despite high FHA volume. High home prices push more files toward high-balance and jumbo. Self-employed borrowers face significant overlay friction. Northern CA tighter than Southern CA.'},
+  {abbr:'MD', name:'Maryland', ofi:52, pop:6200000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'Maryland OFI elevated by DC metro influence. Montgomery and Prince George counties show tighter overlays. Baltimore market more favorable than DC suburbs.'},
+  {abbr:'MA', name:'Massachusetts', ofi:54, pop:7000000, fha_vol:'Medium', top_lender:'Guild', insight:'Massachusetts sits in tight territory. Boston market high prices + strict lender overlays. FHA loan limits help but self-employed and non-W2 borrowers face headwinds.'},
+  {abbr:'WI', name:'Wisconsin', ofi:44, pop:5900000, fha_vol:'Medium', top_lender:'UWM', insight:'Wisconsin benefits from UWM proximity. Moderate OFI with active FHA purchase market. Milwaukee and Madison show different overlay patterns.'},
+  {abbr:'MO', name:'Missouri', ofi:41, pop:6200000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'Missouri maintains favorable OFI. Kansas City and St. Louis markets show strong FHA specialist lender competition.'},
+  {abbr:'IN', name:'Indiana', ofi:38, pop:6800000, fha_vol:'Medium', top_lender:'UWM', insight:'Indiana benefits from UWM wholesale dominance. Low OFI with strong broker channel activity.'},
+  {abbr:'NY', name:'New York', ofi:55, pop:19300000, fha_vol:'High', top_lender:'CrossCountry', insight:'New York OFI is significantly elevated. NYC market has extreme overlay friction — condo restrictions, attorney state costs, and strict lender overlays compound. Upstate NY significantly more favorable than NYC metro.'},
+  {abbr:'NJ', name:'New Jersey', ofi:58, pop:9300000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'New Jersey has elevated OFI from high property taxes, attorney state requirements, and strict lender overlays. DTI calculations impacted by high tax burden. 1099 and self-employed borrowers face highest friction.'},
+  {abbr:'CT', name:'Connecticut', ofi:60, pop:3600000, fha_vol:'Low', top_lender:'Guild', insight:'Connecticut sits in tight territory. Attorney state with high costs, declining population affecting lender appetite. Limited FHA specialist competition.'},
+  {abbr:'HI', name:'Hawaii', ofi:62, pop:1400000, fha_vol:'Low', top_lender:'CrossCountry', insight:'Hawaii has tight OFI driven by extremely high home prices and limited lender competition. FHA loan limits often insufficient. Strong W2 borrowers fare better.'},
+  {abbr:'DC', name:'District of Columbia', ofi:80, pop:700000, fha_vol:'Low', top_lender:'CrossCountry', insight:'DC has the highest OFI nationally. Extreme home prices, strict condo approval requirements, attorney state costs, and limited FHA-friendly inventory combine for maximum friction. Only strongest profiles recommended.'},
+  {abbr:'AK', name:'Alaska', ofi:45, pop:733000, fha_vol:'Low', top_lender:'CrossCountry', insight:'Alaska moderate OFI but small lender pool. Rural and Native American areas have limited lender options. Strong W2 with government employment favored.'},
+  {abbr:'MT', name:'Montana', ofi:36, pop:1100000, fha_vol:'Low', top_lender:'Guild', insight:'Montana favorable OFI with limited competition. Rural areas may have fewer lender options but overlays are light.'},
+  {abbr:'ID', name:'Idaho', ofi:32, pop:1900000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'Idaho has very favorable OFI. Strong FHA purchase market with active specialist lenders. Boise market growth driving volume.'},
+  {abbr:'WY', name:'Wyoming', ofi:34, pop:580000, fha_vol:'Low', top_lender:'Guild', insight:'Wyoming favorable OFI but tiny market. Limited lender competition — route to national specialists.'},
+  {abbr:'SD', name:'South Dakota', ofi:33, pop:890000, fha_vol:'Low', top_lender:'UWM', insight:'South Dakota low OFI. No state income tax attracts borrowers. Limited local lenders — wholesale channel preferred.'},
+  {abbr:'ND', name:'North Dakota', ofi:33, pop:780000, fha_vol:'Low', top_lender:'UWM', insight:'North Dakota very favorable OFI. Energy economy creates W2 borrower strength. Limited lender pool — use wholesale.'},
+  {abbr:'NE', name:'Nebraska', ofi:37, pop:2000000, fha_vol:'Low', top_lender:'CrossCountry', insight:'Nebraska favorable OFI with strong W2 economy. Omaha market drives most FHA volume.'},
+  {abbr:'KS', name:'Kansas', ofi:38, pop:2900000, fha_vol:'Low', top_lender:'CrossCountry', insight:'Kansas low OFI with affordable housing. Limited overlay friction for standard profiles.'},
+  {abbr:'OK', name:'Oklahoma', ofi:36, pop:4000000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'Oklahoma favorable OFI. Energy sector W2 income strong compensating factor. Oklahoma City and Tulsa markets most active.'},
+  {abbr:'AR', name:'Arkansas', ofi:37, pop:3000000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'Arkansas favorable OFI with affordable housing market. Limited lender competition but overlays remain light.'},
+  {abbr:'LA', name:'Louisiana', ofi:43, pop:4600000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'Louisiana moderate OFI. Hurricane risk adds insurance costs to DTI. New Orleans market more complex than rest of state.'},
+  {abbr:'MS', name:'Mississippi', ofi:42, pop:3000000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'Mississippi moderate OFI. Affordable housing and active FHA market. SSDI income prevalent — route to FHA specialists.'},
+  {abbr:'AL', name:'Alabama', ofi:40, pop:5000000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'Alabama favorable OFI with strong FHA purchase activity. Birmingham and Huntsville markets most active.'},
+  {abbr:'SC', name:'South Carolina', ofi:40, pop:5100000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'South Carolina favorable OFI with growing market. Charleston and Columbia driving FHA volume growth.'},
+  {abbr:'KY', name:'Kentucky', ofi:39, pop:4500000, fha_vol:'Medium', top_lender:'UWM', insight:'Kentucky favorable OFI. Louisville market most active. Strong W2 manufacturing sector.'},
+  {abbr:'WV', name:'West Virginia', ofi:44, pop:1800000, fha_vol:'Low', top_lender:'CrossCountry', insight:'West Virginia moderate OFI but limited lender pool. Rural areas have significant access constraints.'},
+  {abbr:'ME', name:'Maine', ofi:49, pop:1400000, fha_vol:'Low', top_lender:'Guild', insight:'Maine moderate-tight OFI. Seasonal market with limited lender competition. Attorney state adds friction.'},
+  {abbr:'VT', name:'Vermont', ofi:51, pop:650000, fha_vol:'Low', top_lender:'Guild', insight:'Vermont above-average OFI. Very small market with limited lender options. Attorney state costs.'},
+  {abbr:'NH', name:'New Hampshire', ofi:50, pop:1400000, fha_vol:'Low', top_lender:'Guild', insight:'New Hampshire moderate-tight OFI. Attorney state with high costs. Boston metro spillover market.'},
+  {abbr:'RI', name:'Rhode Island', ofi:53, pop:1100000, fha_vol:'Low', top_lender:'Guild', insight:'Rhode Island elevated OFI. Smallest state with limited lender competition. Attorney state with compliance costs.'},
+  {abbr:'DE', name:'Delaware', ofi:48, pop:990000, fha_vol:'Low', top_lender:'CrossCountry', insight:'Delaware moderate OFI. Small market but favorable regulatory environment. Limited local lender competition.'},
+  {abbr:'NM', name:'New Mexico', ofi:40, pop:2100000, fha_vol:'Medium', top_lender:'CrossCountry', insight:'New Mexico favorable OFI. USDA and VA options complement FHA in rural areas. Albuquerque market most active.'},
+  {abbr:'IA', name:'Iowa', ofi:36, pop:3200000, fha_vol:'Low', top_lender:'UWM', insight:'Iowa favorable OFI with affordable housing. Strong agricultural W2 and salaried economy.'},
+];
+
+function getColor(ofi) {
+  if(ofi <= 35) return '#6bffb8';
+  if(ofi <= 55) return '#C8A84B';
+  if(ofi <= 75) return '#e8845a';
+  return '#c0392b';
+}
+
+function getLabel(ofi) {
+  if(ofi <= 35) return 'FAVORABLE';
+  if(ofi <= 55) return 'MODERATE';
+  if(ofi <= 75) return 'TIGHT';
+  return 'VERY TIGHT';
+}
+
+function renderStates() {
+  const sorted = [...STATES].sort((a,b) => a.ofi - b.ofi);
+  const grid = document.getElementById('stateGrid');
+  
+  grid.innerHTML = sorted.map(s => {
+    const color = getColor(s.ofi);
+    const label = getLabel(s.ofi);
+    const barW = Math.round(s.ofi / 100 * 100);
+    return `<div class="state-card" onclick="showDetail('${s.abbr}')" id="card-${s.abbr}">
+      <div class="state-abbr" style="color:${color};">${s.abbr}</div>
+      <div class="state-name">${s.name}</div>
+      <div class="state-ofi" style="color:${color};">${s.ofi}</div>
+      <div class="state-label" style="color:${color};">${label}</div>
+      <div class="state-bar"><div class="state-bar-fill" style="width:${barW}%;background:${color};"></div></div>
+    </div>`;
+  }).join('');
+
+  // Top 5 / Bottom 5
+  const top5 = sorted.slice(0,5);
+  const bottom5 = sorted.slice(-5).reverse();
+  
+  document.getElementById('topStates').innerHTML = top5.map(s =>
+    `<div class="rank-item">
+      <span style="font-weight:700;">${s.name}</span>
+      <span style="color:#6bffb8;font-family:'DM Mono',monospace;font-weight:700;">${s.ofi}</span>
+    </div>`
+  ).join('');
+  
+  document.getElementById('bottomStates').innerHTML = bottom5.map(s =>
+    `<div class="rank-item">
+      <span style="font-weight:700;">${s.name}</span>
+      <span style="color:#e8845a;font-family:'DM Mono',monospace;font-weight:700;">${s.ofi}</span>
+    </div>`
+  ).join('');
+}
+
+function showDetail(abbr) {
+  const s = STATES.find(x => x.abbr === abbr);
+  if(!s) return;
+  
+  document.querySelectorAll('.state-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('card-'+abbr).classList.add('selected');
+  
+  const color = getColor(s.ofi);
+  const label = getLabel(s.ofi);
+  
+  document.getElementById('dpTitle').textContent = s.name;
+  document.getElementById('dpSubtitle').textContent = `Overlay Friction Index — Q2 2026`;
+  document.getElementById('dpOFI').textContent = s.ofi;
+  document.getElementById('dpOFI').style.color = color;
+  document.getElementById('dpLabel').textContent = label + ' MARKET';
+  document.getElementById('dpLabel').style.color = color;
+  document.getElementById('dpInsight').textContent = s.insight;
+  
+  document.getElementById('dpGrid').innerHTML = `
+    <div class="dp-stat">
+      <div class="dp-stat-label">OFI Score</div>
+      <div class="dp-stat-val" style="color:${color};">${s.ofi} / 100</div>
+    </div>
+    <div class="dp-stat">
+      <div class="dp-stat-label">vs. National (47)</div>
+      <div class="dp-stat-val" style="color:${s.ofi < 47 ? '#6bffb8' : '#e8845a'};">${s.ofi < 47 ? (47-s.ofi)+' pts easier' : (s.ofi-47)+' pts tighter'}</div>
+    </div>
+    <div class="dp-stat">
+      <div class="dp-stat-label">FHA Volume</div>
+      <div class="dp-stat-val">${s.fha_vol}</div>
+    </div>
+    <div class="dp-stat">
+      <div class="dp-stat-label">Top Lender Fit</div>
+      <div class="dp-stat-val">${s.top_lender}</div>
+    </div>`;
+  
+  const panel = document.getElementById('detailPanel');
+  panel.classList.add('show');
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+  
+  if(typeof gtag !== 'undefined') gtag('event', 'state_map_click', {event_label: abbr});
+}
+
+renderStates();
+</script>
+</body>
+</html>
