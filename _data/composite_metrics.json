@@ -5,112 +5,97 @@
     "color": "#C8A84B",
     "action": "Selective submissions recommended. Strong profiles only.",
     "confidence": 0.82,
-    "components": {
-      "MMI": 52,
-      "MTI": 44,
-      "MSI": 48,
-      "OFI": 47
-    }
+    "top_drivers": [
+      {
+        "name": "OFI",
+        "value": "47",
+        "weight": "15%",
+        "impact": "neutral"
+      },
+      {
+        "name": "Rate Momentum",
+        "value": "5.1%",
+        "weight": "30%",
+        "impact": "negative"
+      },
+      {
+        "name": "MBA Index",
+        "value": "188",
+        "weight": "35%",
+        "impact": "positive"
+      }
+    ]
   },
   "MMI": {
     "name": "Market Momentum Index",
     "value": 52,
     "signal": "BALANCED",
-    "interpretation": "MMI 52 \u2014 Market balanced, selective approach recommended",
-    "components": {
-      "OFI": 47,
-      "MBA_index": 188,
-      "rate_momentum": 5.1
-    }
+    "interpretation": "MMI 52 \u2014 Market balanced. W2 borrowers have favorable window."
   },
   "MTI": {
     "name": "Market Tightness Index",
     "value": 44,
     "signal": "MODERATE",
-    "interpretation": "MTI 44 \u2014 Moderate tightness. W2 borrowers favorable."
+    "interpretation": "MTI 44 \u2014 Moderate tightness. Borderline profiles face friction."
   },
   "MSI": {
-    "name": "Market Stress Index",
+    "name": "Market Sentiment Index",
     "value": 48,
     "signal": "NEUTRAL",
-    "interpretation": "MSI 48 \u2014 Neutral stress. No significant distress signals."
-  },
-  "DPV": {
-    "name": "Denial Pattern Velocity",
-    "value": 26.0,
-    "signal": "ELEVATED",
-    "interpretation": "National FHA denial rate 26% (2025 HMDA) \u2014 elevated vs 2020 low of 23%"
-  },
-  "LSFS": {
-    "name": "Lender Submission Fitness Score",
-    "value": 71,
-    "signal": "MODERATE",
-    "interpretation": "Average lender fitness 71/100. CrossCountry & Guild best fit."
+    "interpretation": "MSI 48 \u2014 Neutral sentiment. No significant distress signals."
   },
   "LAS": {
     "name": "Lender Aggressiveness Score",
-    "description": "How aggressively is this lender approving FHA loans? Based on 2025 HMDA data.",
+    "description": "How aggressively is this lender approving FHA? Based on 2025 HMDA.",
     "scores": {
       "CrossCountry": {
         "score": 93,
-        "signal": "AGGRESSIVE",
-        "denial_2025": 6.37
+        "signal": "AGGRESSIVE"
       },
       "Guild": {
         "score": 92,
-        "signal": "AGGRESSIVE",
-        "denial_2025": 7.14
-      },
-      "UWM": {
-        "score": 78,
-        "signal": "BALANCED",
-        "denial_2025": 21.58
+        "signal": "AGGRESSIVE"
       },
       "Planet Home": {
         "score": 81,
-        "signal": "AGGRESSIVE",
-        "denial_2025": 18.29
+        "signal": "AGGRESSIVE"
+      },
+      "UWM": {
+        "score": 78,
+        "signal": "BALANCED"
       },
       "Freedom": {
         "score": 77,
-        "signal": "BALANCED",
-        "denial_2025": 22.79
-      },
-      "Mr. Cooper": {
-        "score": 73,
-        "signal": "BALANCED",
-        "denial_2025": 26.97
+        "signal": "BALANCED"
       },
       "PennyMac": {
         "score": 76,
-        "signal": "BALANCED",
-        "denial_2025": 23.64
+        "signal": "BALANCED"
+      },
+      "Mr. Cooper": {
+        "score": 73,
+        "signal": "BALANCED"
       },
       "Rocket": {
         "score": 69,
-        "signal": "CAUTIOUS",
-        "denial_2025": 30.46
+        "signal": "CAUTIOUS"
       },
       "loanDepot": {
         "score": 65,
-        "signal": "CAUTIOUS",
-        "denial_2025": 34.94
-      },
-      "NewRez": {
-        "score": 47,
-        "signal": "TIGHT",
-        "denial_2025": 53.27
+        "signal": "CAUTIOUS"
       },
       "Wells Fargo": {
         "score": 51,
-        "signal": "TIGHT",
-        "denial_2025": 48.63
+        "signal": "TIGHT"
+      },
+      "NewRez": {
+        "score": 47,
+        "signal": "TIGHT"
       }
     }
   },
   "LOI": {
     "name": "Lender Opportunity Index",
-    "description": "Market share opportunity based on volume vs denial rate trends.",
     "scores": {
       "CrossCountry": {
         "score": 88,
@@ -162,33 +147,35 @@
     "name": "Income Type Approval Odds",
     "scores": {
       "W2": {
-        "score": 78,
+        "approval_odds": 78,
         "signal": "FAVORABLE",
-        "note": "Most lender-friendly income type"
-      },
-      "Self-Employed": {
-        "score": 54,
-        "signal": "MODERATE",
-        "note": "2-year history + bank statements required"
-      },
-      "SSDI": {
-        "score": 61,
-        "signal": "MODERATE",
-        "note": "Gross-up beneficial at OFI 47"
-      },
-      "1099/Contract": {
-        "score": 49,
-        "signal": "CAUTIOUS",
-        "note": "Overlay risk elevated in tight markets"
+        "note": "Most lender-friendly"
       },
       "Retirement": {
-        "score": 72,
+        "approval_odds": 72,
         "signal": "FAVORABLE",
-        "note": "Stable income, lender-friendly"
+        "note": "Stable income"
+      },
+      "SSDI": {
+        "approval_odds": 61,
+        "signal": "MODERATE",
+        "note": "Gross-up beneficial"
+      },
+      "Self-Employed": {
+        "approval_odds": 54,
+        "signal": "MODERATE",
+        "note": "2yr history required"
+      },
+      "1099/Contract": {
+        "approval_odds": 49,
+        "signal": "CAUTIOUS",
+        "note": "Overlay risk elevated"
       }
     }
   },
   "SUMMARY": {
+    "overall_signal": "CAUTIOUS",
+    "broker_recommendation": "Market tightening \u2014 route to CrossCountry/Guild for borderline profiles. Avoid NewRez/Wells Fargo.",
     "top_lenders_by_aggressiveness": [
       [
         "CrossCountry",
@@ -203,7 +190,8 @@
         81
       ]
     ],
-    "data_source": "CFPB HMDA 2025 \u2014 399,179 FHA records",
-    "last_updated": "June 2026"
+    "ofi": 47,
+    "generated": "June 2026",
+    "data_source": "CFPB HMDA 2025 \u2014 399,179 FHA records"
   }
 }
