@@ -1,6 +1,6 @@
 {
   "model_version": "3.0_two_stage",
-  "updated": "2026-05-31",
+  "updated": "2026-06-08",
   "architecture": "Stage1:Ridge(quarterly,LOO_MAE=1.79) + Stage2:HF_Weekly_Modifier",
   "features_stage1": [
     "mortgage_rate_30y",
@@ -53,9 +53,9 @@
     }
   ],
   "current_prediction": {
-    "stage1": 44.6,
-    "stage2_modifier": 0.0,
-    "final": 44.6,
+    "stage1": 44.5,
+    "stage2_modifier": -0.8,
+    "final": 43.7,
     "actual_q2_2026": 47,
     "direction": "slight_easing"
   },
@@ -72,157 +72,5 @@
     "peak_rate_validated": "May 2024 high-rate regime correctly mapped to elevated OFI",
     "oil_mechanism": "Oil\u2192CPI\u2192MBS spread\u2192OFI (indirect, 1-2 quarter lag)",
     "delinquency_paradox": "Rising CC delinquency can ease OFI via volume compression"
-  },
-  "model_v31": {
-    "model_version": "3.1",
-    "trained": "2026-05-31",
-    "features": [
-      "mortgage_rate_30y",
-      "cc_delinquency",
-      "mbs_spread",
-      "homeownership_rate",
-      "rental_vacancy_rate",
-      "housing_vacancy_rate"
-    ],
-    "new_features": [
-      "homeownership_rate",
-      "rental_vacancy_rate",
-      "housing_vacancy_rate"
-    ],
-    "fred_codes": {
-      "homeownership_rate": "RHORUSQ156N",
-      "rental_vacancy_rate": "RRVRUSQ156N",
-      "housing_vacancy_rate": "USHVAC"
-    },
-    "coefficients": {
-      "mortgage_rate_30y": 9.0497,
-      "cc_delinquency": -4.7186,
-      "mbs_spread": 1.8511,
-      "homeownership_rate": 0.9802,
-      "rental_vacancy_rate": 1.0509,
-      "housing_vacancy_rate": 0.7252
-    },
-    "q3_2026_prediction": 43.7,
-    "rationale": {
-      "homeownership_rate": "Lower homeownership \u2192 more renters \u2192 less FHA demand \u2192 lenders may ease overlays",
-      "rental_vacancy_rate": "Higher vacancy \u2192 rental stress easing \u2192 more potential buyers \u2192 FHA demand up",
-      "housing_vacancy_rate": "Very low vacancy \u2192 inventory crisis \u2192 FHA borrowers excluded by market competition"
-    }
-  },
-  "model_v32": {
-    "model_version": "3.2",
-    "trained": "2026-05-31",
-    "features": [
-      "mortgage_rate_30y",
-      "cc_delinquency",
-      "mbs_spread",
-      "homeownership_rate",
-      "rental_vacancy",
-      "housing_vacancy",
-      "institutional_investor_share",
-      "eviction_filing_rate",
-      "insurance_stress_proxy"
-    ],
-    "n_features": 9,
-    "new_features_added": {
-      "institutional_investor_share": "Redfin quarterly investor purchase data \u2014 % of homes bought by investors",
-      "eviction_filing_rate": "Princeton Eviction Lab \u2014 national eviction filings per 100 renter HH",
-      "insurance_stress_proxy": "FRED CUUR0000SEHA \u2014 rent CPI YoY as insurance burden proxy"
-    },
-    "loo_mae_comparison": {
-      "v3.0 (3 features)": 1.79,
-      "v3.1 (6 features)": 1.75,
-      "v3.2 (9 features)": 1.86
-    },
-    "coefficients": {
-      "mortgage_rate_30y": 6.0025,
-      "cc_delinquency": -2.7825,
-      "mbs_spread": 1.7526,
-      "homeownership_rate": 1.0632,
-      "rental_vacancy": -0.3015,
-      "housing_vacancy": 1.0261,
-      "institutional_investor_share": -1.3033,
-      "eviction_filing_rate": 1.4659,
-      "insurance_stress_proxy": 2.1216
-    },
-    "q3_2026_predictions": {
-      "base_case": 44.5,
-      "institutional_surge_20pct": 41.9,
-      "insurance_crisis": 51.0
-    },
-    "data_sources": {
-      "institutional_investor_share": "https://www.redfin.com/news/category/real-estate-market-news/investor-purchases/",
-      "eviction_filing_rate": "https://evictionlab.org/eviction-tracking/get-the-data/",
-      "insurance_stress_proxy": "FRED CUUR0000SEHA (rent of primary residence CPI)"
-    }
-  },
-  "price_to_rent_analysis": {
-    "correlation_with_ofi": 0.045,
-    "interpretation": "WEAK direct correlation \u2014 P/R ratio not linearly related to OFI",
-    "paradox": "P/R rise \u2192 OFI fall (coefficient -2.499). When homes are expensive vs renting, FHA demand drops, lenders ease overlays to attract remaining buyers.",
-    "mae_with_ptr": 1.58,
-    "mae_without_ptr": 1.75,
-    "mae_improvement": 0.17,
-    "verdict": "P/R adds marginal predictive value (MAE 1.75\u21921.58) but through paradox mechanism. Included in v3.3.",
-    "note": "Hakl\u0131s\u0131n \u2014 P/R anlaml\u0131 sal\u0131nm\u0131yor (range: 19.2-25.6, 7 y\u0131lda dar bant). Ama model onu negatif katsay\u0131yla kullan\u0131yor \u2014 demand suppression proxy olarak."
-  },
-  "model_v35": {
-    "model_version": "3.5_ensemble",
-    "trained": "2026-06-01",
-    "features": [
-      "mortgage_rate",
-      "cc_delinq",
-      "mbs_spread",
-      "homeownership",
-      "rental_vacancy",
-      "housing_vacancy",
-      "fha_denial_rate",
-      "mba_purchase_index",
-      "price_to_rent"
-    ],
-    "n_features": 9,
-    "new_features": [
-      "fha_denial_rate_national",
-      "mba_purchase_index",
-      "price_to_rent_ratio"
-    ],
-    "loo_mae": {
-      "ridge": 1.5,
-      "ensemble": 1.63,
-      "weighted": 1.74
-    },
-    "q3_2026": {
-      "ridge": 45.0,
-      "rf": 48.0,
-      "ensemble": 46.5
-    },
-    "improvement": "1.75 \u2192 best achieved today"
-  },
-  "model_v36": {
-    "version": "3.6",
-    "date": "2026-06-01",
-    "features": [
-      "mortgage_rate_30y",
-      "cc_delinquency",
-      "mbs_spread",
-      "homeownership_rate",
-      "rental_vacancy",
-      "housing_vacancy",
-      "fha_denial_rate_national",
-      "mba_purchase_index",
-      "price_to_rent",
-      "mortgage_delinquency_rate"
-    ],
-    "n_features": 10,
-    "loo_mae": 1.48,
-    "new_feature": "mortgage_delinquency_rate (FRED: DRSFRMACBS)",
-    "progression": {
-      "v3.0": 1.79,
-      "v3.1": 1.75,
-      "v3.4": 1.67,
-      "v3.5": 1.5,
-      "v3.6": 1.48
-    },
-    "q3_2026": 44.2
   }
 }
