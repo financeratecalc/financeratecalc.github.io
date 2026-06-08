@@ -347,6 +347,79 @@ header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;al
 </div>
 
 <script>
+function buildOFIBlock(g) {
+  const impact = g('OFI_IMPACT');
+  if(!impact) return '';
+  const color = impact==='LOW'?'#6bffb8':impact==='HIGH'?'#e8845a':'#C8A84B';
+  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">' +
+    '<div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:12px;text-align:center;">' +
+      '<div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">OFI Market Impact</div>' +
+      '<div style="font-size:20px;font-weight:700;color:' + color + ';">' + impact + '</div>' +
+      '<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">' + g('OFI_IMPACT_WHY') + '</div>' +
+    '</div>' +
+    '<div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:12px;">' +
+      '<div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Approval Killers</div>' +
+      '<div style="font-size:11px;color:rgba(255,255,255,0.6);line-height:1.6;">' +
+        (g('KILLER1')?'1. '+g('KILLER1')+'<br>':'') +
+        (g('KILLER2')?'2. '+g('KILLER2')+'<br>':'') +
+        (g('KILLER3')&&g('KILLER3')!=='N/A'?'3. '+g('KILLER3'):'') +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function buildFitTable(g) {
+  const uwm = g('UWM_FIT');
+  if(!uwm) return '';
+  const lenders = [
+    {name:'UWM', denial:'19.9%', fit:uwm, dna:'FHA-Specialist'},
+    {name:'PennyMac', denial:'26.6%', fit:g('PENNYMAC_FIT'), dna:'Flexible-Conv'},
+    {name:'Rocket', denial:'28.4%', fit:g('ROCKET_FIT'), dna:'Flexible-Conv'},
+    {name:'Wells Fargo', denial:'58.5%', fit:g('WELLS_FIT'), dna:'Conservative'}
+  ];
+  const fitColor = {Strong:'#6bffb8', Moderate:'#C8A84B', Weak:'#e8845a'};
+  let rows = lenders.map(l => {
+    const color = fitColor[l.fit] || 'rgba(255,255,255,0.4)';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;">' +
+      '<span style="font-weight:600;">' + l.name + '</span>' +
+      '<span>' + l.denial + ' denial rate</span>' +
+      '<span style="font-weight:700;color:' + color + ';">' + (l.fit||'—') + '</span>' +
+    '</div>';
+  }).join('');
+  return '<div class="d-reasons" style="border-color:rgba(200,168,75,0.15);">' +
+    '<div class="d-reasons-title" style="color:rgba(200,168,75,0.5);">Lender Fit — HMDA 2024 FHA Denial Rates</div>' +
+    rows + '</div>';
+}
+
+function buildLenderBlock(g) {
+  const l1 = g('LENDER1_NAME');
+  if(!l1) return '';
+  return '<div class="d-reasons" style="border-color:rgba(107,255,184,0.15);">' +
+    '<div class="d-reasons-title" style="color:rgba(107,255,184,0.5);">Why This Lender vs Others</div>' +
+    '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
+        '<span style="font-size:13px;font-weight:700;color:#6bffb8;">✓ ' + l1 + '</span>' +
+        '<span style="font-size:10px;color:rgba(107,255,184,0.5);font-weight:700;">BEST FIT</span>' +
+      '</div>' +
+      '<div style="font-size:12px;color:rgba(255,255,255,0.6);">' + g('LENDER1_WHY') + '</div>' +
+    '</div>' +
+    '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
+        '<span style="font-size:13px;font-weight:700;color:#C8A84B;">~ ' + g('LENDER2_NAME') + '</span>' +
+        '<span style="font-size:10px;color:rgba(200,168,75,0.5);font-weight:700;">BACKUP</span>' +
+      '</div>' +
+      '<div style="font-size:12px;color:rgba(255,255,255,0.6);">' + g('LENDER2_WHY') + '</div>' +
+    '</div>' +
+    '<div style="padding:8px 0;">' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
+        '<span style="font-size:13px;font-weight:700;color:#e8845a;">✗ ' + g('LENDER3_NAME') + '</span>' +
+        '<span style="font-size:10px;color:rgba(232,132,90,0.5);font-weight:700;">AVOID</span>' +
+      '</div>' +
+      '<div style="font-size:12px;color:rgba(255,255,255,0.6);">' + g('LENDER3_WHY') + '</div>' +
+    '</div>' +
+  '</div>';
+}
+
 
 function toggleDTI() {
   var calc = document.getElementById('dtiCalc');
@@ -477,7 +550,7 @@ function buildTrendRow(route) {
   const trendMap = {
     'FHA-Specialist': [
       {name:'CrossCountry', r2018:8.6, r2024:5.5, change:-3.1, dir:'improving'},
-      {name:'UWM', r2018:15.7, r2024:19.9, change:+4.2, dir:'worsening'},
+      {name:'UWM', r2018:15.7, r2024:19.9, change:4.2, dir:'worsening'},
       {name:'Freedom', r2018:49.0, r2024:24.4, change:-24.6, dir:'improving'},
     ],
     'Flexible-Conventional': [
@@ -488,7 +561,7 @@ function buildTrendRow(route) {
       {name:'PennyMac', r2018:52.8, r2024:26.6, change:-26.2, dir:'improving'},
     ],
     'Conservative-Bank': [
-      {name:'Wells Fargo', r2018:46.7, r2024:58.5, change:+11.8, dir:'worsening'},
+      {name:'Wells Fargo', r2018:46.7, r2024:58.5, change:11.8, dir:'worsening'},
       {name:'loanDepot', r2018:40.0, r2024:37.0, change:-3.0, dir:'stable'},
     ]
   };
@@ -504,10 +577,10 @@ function buildTrendRow(route) {
     const color = l.dir === 'improving' ? '#6bffb8' : l.dir === 'worsening' ? '#e8845a' : '#C8A84B';
     const arrow = l.dir === 'improving' ? '↓' : l.dir === 'worsening' ? '↑' : '→';
     const changeStr = l.change > 0 ? '+'+l.change.toFixed(1) : l.change.toFixed(1);
-    return \`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px;">
+    return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px;">
       <span style="color:rgba(255,255,255,0.6);">\${l.name}</span>
       <span>\${l.r2018}% → <strong>\${l.r2024}%</strong> <span style="color:\${color};">\${arrow} \${changeStr}pp</span></span>
-    </div>\`;
+    </div>`;
   }).join('');
 }
 
@@ -548,7 +621,7 @@ function buildLenderScores(fico, dti, income, ofi, loanType) {
     const color = s.score >= 70 ? '#6bffb8' : s.score >= 45 ? '#C8A84B' : '#e8845a';
     const label = s.score >= 70 ? 'Strong' : s.score >= 45 ? 'Moderate' : 'Weak';
     const bar = Math.round(s.score);
-    return \`<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+    return `<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
         <div style="font-size:12px;font-weight:600;">${s.name} <span style="font-size:10px;color:rgba(255,255,255,0.3);">${s.example}</span></div>
         <div style="font-size:11px;font-weight:700;color:\${color};">\${label}</div>
@@ -556,7 +629,7 @@ function buildLenderScores(fico, dti, income, ofi, loanType) {
       <div style="background:rgba(255,255,255,0.06);border-radius:3px;height:4px;">
         <div style="width:\${bar}%;background:\${color};height:100%;border-radius:3px;transition:width 0.8s;"></div>
       </div>
-    </div>\`;
+    </div>`;
   }).join('');
 }
 
@@ -680,7 +753,7 @@ const ofiSensitivity = {
 };
 const ofiSignal = ofiSensitivity[income] || 'MODERATE';
 
-const prompt = \`Borrower routing analysis:
+const prompt = `Borrower routing analysis:
 FICO: ${fico} | DTI: ${dti}% | Loan: ${loanType} | Income: ${income} | State: ${state} OFI ${ofi} | Denied by: ${denied==='none'?'none':denied}
 Context: ${ctx||'none'}
 Market: OFI 47 Q2 2026 (moderate-tightening)
@@ -719,7 +792,7 @@ OFI_IMPACT: [LOW / MODERATE / HIGH — based on income type × OFI interaction]
 OFI_IMPACT_WHY: [one sentence why]
 KILLER1: [approval killer #1 — specific to this profile]
 KILLER2: [approval killer #2]
-KILLER3: [approval killer #3 or N/A]\`;
+KILLER3: [approval killer #3 or N/A]`;
 
   try {
     const res = await fetch('https://frc-api.ziyetis.workers.dev/v1/messages',{
@@ -779,73 +852,10 @@ KILLER3: [approval killer #3 or N/A]\`;
       </div>
 
       ${detail?'<div class="d-detail"><div class="d-detail-label">Broker Analysis</div><div class="d-detail-text">'+detail+'</div></div>':''}
+      ${buildLenderBlock(g)}
+      ${buildFitTable(g)}
+      ${buildOFIBlock(g)}
 
-      ${(g('LENDER1_NAME'))?'
-      <div class="d-reasons" style="border-color:rgba(107,255,184,0.15);">
-        <div class="d-reasons-title" style="color:rgba(107,255,184,0.5);">Why This Lender vs Others</div>
-        <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <span style="font-size:13px;font-weight:700;color:#6bffb8;">✓ '+g('LENDER1_NAME')+'}</span>
-            <span style="font-size:10px;color:rgba(107,255,184,0.5);font-weight:700;">BEST FIT</span>
-          </div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.6);">'+g('LENDER1_WHY')+'}</div>
-        </div>
-        <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <span style="font-size:13px;font-weight:700;color:#C8A84B;">~ '+g('LENDER2_NAME')+'}</span>
-            <span style="font-size:10px;color:rgba(200,168,75,0.5);font-weight:700;">BACKUP</span>
-          </div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.6);">'+g('LENDER2_WHY')+'}</div>
-        </div>
-        <div style="padding:8px 0;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-            <span style="font-size:13px;font-weight:700;color:#e8845a;">✗ '+g('LENDER3_NAME')+'}</span>
-            <span style="font-size:10px;color:rgba(232,132,90,0.5);font-weight:700;">AVOID</span>
-          </div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.6);">'+g('LENDER3_WHY')+'}</div>
-        </div>
-      </div>':''}
-
-      ${(g('UWM_FIT'))?'
-      <div class="d-reasons" style="border-color:rgba(200,168,75,0.15);">
-        <div class="d-reasons-title" style="color:rgba(200,168,75,0.5);">Lender Fit — HMDA 2024 FHA Denial Rates</div>
-        '+([
-          {name:'UWM', denial:'19.9%', fit:g('UWM_FIT'), dna:'FHA-Specialist')+',
-          {name:'PennyMac', denial:'26.6%', fit:g('PENNYMAC_FIT'), dna:'Flexible-Conv'},
-          {name:'Rocket', denial:'28.4%', fit:g('ROCKET_FIT'), dna:'Flexible-Conv'},
-          {name:'Wells Fargo', denial:'58.5%', fit:g('WELLS_FIT'), dna:'Conservative'}
-        ].map(l=>{
-          const color=l.fit==='Strong'?'#6bffb8':l.fit==='Moderate'?'#C8A84B':'#e8845a';
-          const denialNum=parseFloat(l.denial);
-          const barW=Math.round(denialNum);
-          return \`<div style="padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-              <span style="font-size:12px;color:rgba(255,255,255,0.7);">\'+(l.name)+' <span style="font-size:10px;color:rgba(255,255,255,0.3);">\'+(l.dna)+'</span></span>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <span style="font-size:11px;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace;">\'+(l.denial)+' denial</span>
-                <span style="font-size:11px;font-weight:700;color:\'+(color)+';">\'+(l.fit)+'</span>
-              </div>
-            </div>
-            <div style="background:rgba(255,255,255,0.06);border-radius:3px;height:3px;">
-              <div style="width:\'+(barW)+'%;background:\'+(color)+';opacity:0.6;height:100%;border-radius:3px;"></div>
-            </div>
-          </div>\`;
-        }).join('')}
-        <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;">Source: CFPB HMDA 2024 · <a href="/lender-trends.html" style="color:rgba(200,168,75,0.4);">7-year trends →</a></div>
-      </div>':''}
-
-      ${(g('OFI_IMPACT'))?'
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div class="d-card" style="border-left:2px solid '+(g('OFI_IMPACT')==='HIGH'?'#e8845a':g('OFI_IMPACT')==='MODERATE'?'#C8A84B':'#6bffb8')+';">
-          <div class="dc-label">OFI Market Impact</div>
-          <div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:'+(g('OFI_IMPACT')==='HIGH'?'#e8845a':g('OFI_IMPACT')==='MODERATE'?'#C8A84B':'#6bffb8')+';">'+(g('OFI_IMPACT'))+'</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">'+(g('OFI_IMPACT_WHY'))+'</div>
-        </div>
-        <div class="d-card risk">
-          <div class="dc-label">🚨 Approval Killers</div>
-          '+(['KILLER1','KILLER2','KILLER3'].map(k=>g(k)&&g(k)!=='N/A'?`<div style="font-size:12px;color:rgba(232,132,90,0.9);padding:2px 0;">· ${g(k))+'</div>`:'').join('')}
-        </div>
-      </div>':''}
 
       <div class="legal">Not financial or legal advice. Educational only. Approval fit labels are estimates based on HMDA 2024 data — individual outcomes vary. Consult a licensed mortgage professional. <a href="/terms.html">Terms</a></div>
     `;
