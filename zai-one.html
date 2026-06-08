@@ -666,8 +666,8 @@ async function getDecision() {
   document.getElementById('loading').classList.add('show');
 
   // OFI x Borrower Type Interaction Matrix
-const ofiNum = parseInt('${ofi}') || 47;
-const incomeType = '${income}';
+const ofiNum = parseInt(ofi) || 47;
+const incomeType = income;
 const ofiSensitivity = {
   'Self-Employed': ofiNum > 45 ? 'HIGH — self-employed profiles face amplified overlay friction in tight markets' : 'MODERATE — self-employed income acceptable in this market',
   'SSDI': ofiNum > 50 ? 'HIGH — SSDI income faces extra scrutiny in high-OFI states' : 'LOW — SSDI gross-up favorable in this market',
@@ -675,14 +675,14 @@ const ofiSensitivity = {
   'W2': ofiNum > 55 ? 'MODERATE — even W2 faces friction in high-OFI states' : 'LOW — W2 income OFI-resilient',
   'Retirement': 'LOW — retirement income stable across OFI levels'
 };
-const ofiSignal = ofiSensitivity['${income}'] || 'MODERATE';
+const ofiSignal = ofiSensitivity[income] || 'MODERATE';
 
 const prompt = \`Borrower routing analysis:
 FICO: ${fico} | DTI: ${dti}% | Loan: ${loanType} | Income: ${income} | State: ${state} OFI ${ofi} | Denied by: ${denied==='none'?'none':denied}
 Context: ${ctx||'none'}
 Market: OFI 47 Q2 2026 (moderate-tightening)
 
-OFI × Income Interaction: \${ofiSignal}
+OFI × Income Interaction: ${ofiSignal}
 HMDA verified lenders: UWM 19.9%, PennyMac 26.6%, Rocket 28.4%, loanDepot 37.0%, Wells Fargo 58.5%
 
 Key interactions to model:
