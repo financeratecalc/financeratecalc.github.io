@@ -69,6 +69,163 @@ p{font-size:15px;color:rgba(255,255,255,0.75);line-height:1.8;margin-bottom:16px
     <strong>Example:</strong> FHA minimum FICO is 580. But most lenders require 620, 640, or even 680 internally. They don't advertise this. You submit. You wait. You get denied. Now your credit score dropped from the hard pull.
   </div>
 
+  
+  <h2>Why Were YOU Denied?</h2>
+  <p>Answer 4 questions. Get your most likely denial factor in 10 seconds.</p>
+
+  <div id="diagnosisTool" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:24px;margin:20px 0;">
+    
+    <!-- Step 1 -->
+    <div id="step1">
+      <div style="font-size:11px;color:rgba(200,168,75,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Question 1 of 4</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:16px;">What was your credit score range?</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button onclick="selectAnswer('fico','under580')" class="diag-btn">Below 580</button>
+        <button onclick="selectAnswer('fico','580620')" class="diag-btn">580 – 620</button>
+        <button onclick="selectAnswer('fico','620680')" class="diag-btn">620 – 680</button>
+        <button onclick="selectAnswer('fico','over680')" class="diag-btn">Above 680</button>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="step2" style="display:none;">
+      <div style="font-size:11px;color:rgba(200,168,75,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Question 2 of 4</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:16px;">What was your DTI (debt-to-income) ratio?</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button onclick="selectAnswer('dti','under43')" class="diag-btn">Under 43%</button>
+        <button onclick="selectAnswer('dti','4350')" class="diag-btn">43% – 50%</button>
+        <button onclick="selectAnswer('dti','over50')" class="diag-btn">Over 50%</button>
+        <button onclick="selectAnswer('dti','unknown')" class="diag-btn">I don't know</button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="step3" style="display:none;">
+      <div style="font-size:11px;color:rgba(200,168,75,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Question 3 of 4</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:16px;">What was your income type?</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button onclick="selectAnswer('income','w2')" class="diag-btn">W2 (salaried employee)</button>
+        <button onclick="selectAnswer('income','self')" class="diag-btn">Self-employed / 1099</button>
+        <button onclick="selectAnswer('income','ssdi')" class="diag-btn">SSDI / Disability income</button>
+        <button onclick="selectAnswer('income','retirement')" class="diag-btn">Retirement / Fixed income</button>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div id="step4" style="display:none;">
+      <div style="font-size:11px;color:rgba(200,168,75,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Question 4 of 4</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:16px;">What loan type were you applying for?</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button onclick="selectAnswer('loan','fha')" class="diag-btn">FHA</button>
+        <button onclick="selectAnswer('loan','conventional')" class="diag-btn">Conventional</button>
+        <button onclick="selectAnswer('loan','va')" class="diag-btn">VA</button>
+        <button onclick="selectAnswer('loan','other')" class="diag-btn">Other / Not sure</button>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="diagResult" style="display:none;"></div>
+  </div>
+
+  <style>
+  .diag-btn{padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#fff;font-size:14px;cursor:pointer;text-align:left;transition:all 0.15s;}
+  .diag-btn:hover{background:rgba(200,168,75,0.1);border-color:rgba(200,168,75,0.3);}
+  .diag-btn.selected{background:rgba(200,168,75,0.15);border-color:rgba(200,168,75,0.5);}
+  </style>
+
+  <script>
+  var answers = {};
+  var currentStep = 1;
+
+  function selectAnswer(key, val) {
+    answers[key] = val;
+    document.querySelectorAll('#step' + currentStep + ' .diag-btn').forEach(b => b.classList.remove('selected'));
+    event.target.classList.add('selected');
+    
+    setTimeout(function() {
+      currentStep++;
+      if(currentStep <= 4) {
+        document.getElementById('step' + (currentStep-1)).style.display = 'none';
+        document.getElementById('step' + currentStep).style.display = 'block';
+      } else {
+        showResult();
+      }
+    }, 400);
+  }
+
+  function showResult() {
+    document.getElementById('step4').style.display = 'none';
+    var result = diagnose(answers);
+    document.getElementById('diagResult').style.display = 'block';
+    document.getElementById('diagResult').innerHTML = result;
+    if(typeof gtag !== 'undefined') gtag('event', 'denial_diagnosis', {event_label: answers.fico + '_' + answers.dti});
+  }
+
+  function diagnose(a) {
+    var factor = '';
+    var explanation = '';
+    var action = '';
+    var color = '#e8845a';
+
+    if(a.fico === 'under580') {
+      factor = 'Credit Score Below FHA Minimum';
+      explanation = 'FHA requires a minimum 580 FICO score. Below that, no federally-backed mortgage is available without a 10% down payment. This is the most likely reason for your denial.';
+      action = 'Focus on credit repair before reapplying. A 580+ score unlocks FHA. A 620+ score opens most lender overlays.';
+      color = '#e8845a';
+    } else if(a.fico === '580620' && a.income !== 'w2') {
+      factor = 'Credit Score + Income Type Combination';
+      explanation = 'Your credit score (580-620) combined with non-W2 income creates an overlay risk cluster. Most lenders require 640+ for self-employed or SSDI borrowers even if FHA allows 580.';
+      action = 'Try FHA specialists with lower overlays. CrossCountry and Guild historically approve this combination more often than others.';
+      color = '#C8A84B';
+    } else if(a.dti === 'over50') {
+      factor = 'Debt-to-Income Ratio Too High';
+      explanation = 'A DTI over 50% exceeds FHA maximum (57% with compensating factors). Most lenders add overlays requiring DTI under 43-45%. This is a hard stop for most automated underwriting systems.';
+      action = 'Reduce monthly debt obligations before reapplying. Paying off one installment account can significantly improve DTI.';
+      color = '#e8845a';
+    } else if(a.dti === '4350' && a.fico === '580620') {
+      factor = 'DTI + Credit Score Overlay Combination';
+      explanation = 'Your DTI (43-50%) combined with a borderline credit score (580-620) triggers most lender overlays. Neither factor alone would cause denial — together they hit the threshold.';
+      action = 'Run a Pre-Flight Check to find lenders whose historical overlay patterns accept this combination.';
+      color = '#C8A84B';
+    } else if(a.income === 'self') {
+      factor = 'Self-Employment Income Documentation';
+      explanation = 'Self-employed borrowers face 2.7x higher friction than W2 borrowers under current market conditions. Lenders average 2 years of net income — if your write-offs are high, your qualifying income may be much lower than your gross income.';
+      action = 'Ensure 2 years of tax returns show consistent or rising net income. Some lenders offer bank statement loans if write-offs are too high.';
+      color = '#C8A84B';
+    } else if(a.income === 'ssdi') {
+      factor = 'Income Type Overlay (SSDI/Disability Income)';
+      explanation = 'SSDI income qualifies for FHA gross-up (typically 15% added to the base amount). However, not all lenders apply this consistently. Some have overlays that effectively disqualify SSDI-primary borrowers.';
+      action = 'Ask specifically which lenders accept SSDI gross-up at the lender level, not just FHA guidelines. CrossCountry and Guild have better historical records here.';
+      color = '#C8A84B';
+    } else if(a.fico === 'over680' && a.dti === 'under43') {
+      factor = 'Likely a Lender Overlay Issue';
+      explanation = 'With a 680+ FICO and DTI under 43%, you meet standard FHA and conventional guidelines. Your denial was most likely caused by a lender-specific overlay — an internal rule not disclosed publicly. The same file may be approved elsewhere.';
+      action = 'This is exactly the scenario where switching lenders solves the problem. Run a Pre-Flight Check or use Zai to find historically compatible lenders.';
+      color = '#6bffb8';
+    } else {
+      factor = 'Multiple Contributing Factors';
+      explanation = 'Your profile has a combination of factors that may have triggered lender overlays. Without seeing your actual denial letter, it's hard to pinpoint the exact reason.';
+      action = 'Decode your denial letter for the specific reason, then run a Pre-Flight Check to find lenders who historically approve similar profiles.';
+      color = '#C8A84B';
+    }
+
+    return '<div style="text-align:left;">' +
+      '<div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Most Likely Denial Factor</div>' +
+      '<div style="font-size:18px;font-weight:700;color:' + color + ';margin-bottom:12px;">' + factor + '</div>' +
+      '<div style="font-size:14px;color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:16px;">' + explanation + '</div>' +
+      '<div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:14px;margin-bottom:16px;">' +
+      '<div style="font-size:11px;color:rgba(107,255,184,0.7);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Recommended Next Step</div>' +
+      '<div style="font-size:13px;color:rgba(255,255,255,0.7);">' + action + '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;">' +
+      '<a href="/pre-flight.html" style="padding:10px 18px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">✈️ Run Pre-Flight Check</a>' +
+      '<a href="/denial-letter-decoder.html" style="padding:10px 18px;background:transparent;color:#C8A84B;border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">Decode My Denial Letter</a>' +
+      '</div>' +
+      '<div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:12px;">Educational analysis only. Not financial advice. Individual outcomes vary.</div>' +
+      '</div>';
+  }
+  </script>
+
   <h2>The Lender You Chose Matters More Than You Think</h2>
   <table class="lender-table">
     <tr><th>Lender</th><th>2024 FHA Denial Rate</th><th>Trend</th></tr>
