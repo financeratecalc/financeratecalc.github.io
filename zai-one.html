@@ -217,11 +217,15 @@ header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;al
     <div class="grid2">
       <div class="field">
         <label>FICO Score</label>
-        <input type="number" id="fico" placeholder="612" min="300" max="850">
+        <input type="number" id="fico" placeholder="e.g. 640" min="300" max="850" 
+           oninput="this.style.borderColor='';this.style.boxShadow='';document.getElementById('ficoError').style.display='none'">
+        <div id="ficoError" style="display:none;color:#e8845a;font-size:12px;margin-top:4px;">⚠️ Please enter your credit score (300–850)</div>
       </div>
       <div class="field">
         <label>DTI % <span id="dtiToggle" onclick="toggleDTI()" style="color:var(--gold);cursor:pointer;font-size:10px;text-transform:none;letter-spacing:0;margin-left:4px;">calculate →</span></label>
-        <input type="number" id="dti" placeholder="48 (or calculate →)" min="0" max="70">
+        <input type="number" id="dti" placeholder="e.g. 43" min="0" max="100"
+           oninput="this.style.borderColor='';this.style.boxShadow='';document.getElementById('dtiError').style.display='none'">
+        <div id="dtiError" style="display:none;color:#e8845a;font-size:12px;margin-top:4px;">⚠️ Please enter your DTI ratio (e.g. 43 for 43%)</div>
       </div>
     </div>
 
@@ -620,7 +624,33 @@ function calcScore(fico, dti, income, ofi, type) {
 async function getDecision() {
   const fico = document.getElementById('fico').value;
   const dti = document.getElementById('dti').value;
-  if(!fico||!dti){alert('Please enter FICO and DTI.');return;}
+  // Validation — kırmızı highlight
+  let valid = true;
+  const ficoEl = document.getElementById('fico');
+  const dtiEl = document.getElementById('dti');
+  
+  ficoEl.style.borderColor = '';
+  dtiEl.style.borderColor = '';
+  document.getElementById('ficoError').style.display = 'none';
+  document.getElementById('dtiError').style.display = 'none';
+  
+  if(!fico || fico < 300 || fico > 850) {
+    ficoEl.style.borderColor = '#e8845a';
+    ficoEl.style.boxShadow = '0 0 0 2px rgba(232,132,90,0.2)';
+    document.getElementById('ficoError').style.display = 'block';
+    valid = false;
+  }
+  if(!dti || dti < 1 || dti > 100) {
+    dtiEl.style.borderColor = '#e8845a';
+    dtiEl.style.boxShadow = '0 0 0 2px rgba(232,132,90,0.2)';
+    document.getElementById('dtiError').style.display = 'block';
+    valid = false;
+  }
+  if(!valid) {
+    // Scroll to first error
+    ficoEl.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
 
   const loanType = document.getElementById('loanType').value;
   const income = document.getElementById('incomeType').value;
@@ -827,7 +857,16 @@ KILLER3: [approval killer #3 or N/A]\`;
     document.getElementById('btn').textContent = 'Get Routing Decision →';
     document.getElementById('loading').classList.remove('show');
     document.getElementById('empty').style.display='flex';
-    alert('Error: '+e.message);
+    document.getElementById('btn').disabled = false;
+    document.getElementById('btn').textContent = 'Get Routing Decision →';
+    document.getElementById('loading').classList.remove('show');
+    // Error mesajı
+    const errDiv = document.createElement('div');
+    errDiv.style.cssText = 'background:rgba(232,132,90,0.08);border:1px solid rgba(232,132,90,0.3);border-radius:8px;padding:14px;margin-top:16px;font-size:13px;color:#e8845a;';
+    errDiv.innerHTML = '⚠️ Connection issue. Please try again in a moment.';
+    document.getElementById('decision').innerHTML = '';
+    document.getElementById('decision').appendChild(errDiv);
+    document.getElementById('decision').classList.add('show');
   }
   document.getElementById('btn').disabled=false;
 }
