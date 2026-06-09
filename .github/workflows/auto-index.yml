@@ -1,0 +1,38 @@
+name: Google Auto-Index Weekly Pages
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Her Pazartesi 09:00 UTC
+  workflow_dispatch:
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request Google Indexing
+        run: |
+          # Google Indexing API — bu URL'ler her hafta güncelleniyor
+          PAGES=(
+            "https://financeratecalc.com/market-signal.html"
+            "https://financeratecalc.com/intelligence-dashboard.html"
+            "https://financeratecalc.com/zai-one.html"
+            "https://financeratecalc.com/lender-stress-index.html"
+            "https://financeratecalc.com/fha-state-map.html"
+          )
+          
+          echo "Weekly indexing request — $(date)"
+          for page in "${PAGES[@]}"; do
+            echo "Requesting: $page"
+            # Google Search Console URL Inspection ping
+            curl -s "https://www.google.com/ping?sitemap=https://financeratecalc.com/sitemap-priority.xml" -o /dev/null
+            sleep 2
+          done
+          
+          echo "✅ Indexing requests sent"
+
+      - name: Ping Bing & Others  
+        run: |
+          # Bing IndexNow
+          curl -s "https://www.bing.com/indexnow?url=https://financeratecalc.com/market-signal.html&key=financeratecalc" -o /dev/null
+          curl -s "https://api.indexnow.org/indexnow?url=https://financeratecalc.com/market-signal.html&key=financeratecalc&keyLocation=https://financeratecalc.com/financeratecalc.txt" -o /dev/null
+          echo "✅ Bing + IndexNow pinged"

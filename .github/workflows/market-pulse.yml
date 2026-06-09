@@ -32,3 +32,9 @@ jobs:
           git add _data/market_pulse.json _data/market_pulse_prev.json || true
           git diff --staged --quiet || git commit -m "Market pulse update $(date +%Y-%m-%d)"
           git push
+
+      - name: Ping search engines
+        run: |
+          curl -s "https://www.google.com/ping?sitemap=https://financeratecalc.com/sitemap-priority.xml" -o /dev/null
+          curl -s "https://www.bing.com/ping?sitemap=https://financeratecalc.com/sitemap-priority.xml" -o /dev/null
+          echo "✅ Search engines pinged"
