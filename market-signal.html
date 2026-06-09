@@ -319,5 +319,26 @@ async function loadSignal() {
 }
 loadSignal();
 </script>
+<div id="trendsWidget" style="display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 16px;margin-bottom:14px;"></div>
+<script>
+// Load trends signal
+fetch('/_data/trends_signal.json?v=' + Date.now())
+  .then(r => r.ok ? r.json() : null)
+  .then(d => {
+    if(!d) return;
+    const el = document.getElementById('trendsWidget');
+    if(!el) return;
+    const signal = d.analysis.market_signal;
+    const color = signal === 'HIGH_DEMAND' ? '#27ae60' : signal === 'LOW_DEMAND' ? '#e8845a' : '#C8A84B';
+    const spikes = d.analysis.spikes || [];
+    el.innerHTML = 
+      '<div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Search Trends · W' + d.week?.split('W')[1] + '</div>' +
+      '<div style="font-size:13px;font-weight:700;color:' + color + ';margin-bottom:6px;">' + d.analysis.signal_text + '</div>' +
+      (spikes.length ? '<div style="font-size:11px;color:rgba(255,255,255,0.4);">Spikes: ' + spikes.map(s => s[0] + ' +' + s[1] + '%').join(', ') + '</div>' : '') +
+      '<div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:4px;">Top: ' + (d.analysis.top_keyword || '—') + '</div>';
+    el.style.display = 'block';
+  }).catch(() => {});
+</script>
+
 </body>
 </html>

@@ -1,0 +1,33 @@
+name: Google Trends Signal Tracker
+
+on:
+  schedule:
+    - cron: '0 7 * * 1'  # Her Pazartesi 07:00 UTC — piyasa açılmadan önce
+  workflow_dispatch:
+
+jobs:
+  track-trends:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pytrends requests
+
+      - name: Run Trends Tracker
+        run: |
+          cd $GITHUB_WORKSPACE
+          python scripts/trends_tracker.py
+
+      - name: Commit results
+        run: |
+          git config user.email "pipeline@financeratecalc.com"
+          git config user.name "Trends Pipeline"
+          git add _data/trends_signal.json market-signal.html
+          git diff --staged --quiet || git commit -m "Auto: Weekly trends signal update $(date +%Y-%m-%d)"
+          git push
