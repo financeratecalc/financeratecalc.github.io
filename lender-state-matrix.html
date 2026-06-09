@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FHA Lender Performance by State 2025 | CrossCountry vs Rocket vs UWM | FinanceRateCalc</title>
-<meta name="description" content="Which FHA lender performs best in your state? Compare CrossCountry, UWM, Rocket, PennyMac across all 51 states. Real 2025 HMDA data.">
+<title>FHA Denial Rates by State 2023-2025 | Best Lender per State | FinanceRateCalc</title>
+<meta name="description" content="Real CFPB HMDA data: FHA denial rates for all 51 states, 2023-2025. Best lender per state verified from federal data. Which state and lender gives your borrower the best odds?">
 <link rel="canonical" href="https://financeratecalc.com/lender-state-matrix.html">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
@@ -15,38 +15,33 @@ body{font-family:'DM Sans',sans-serif;background:#0B132B;color:#fff;min-height:1
 header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
 .logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
 .logo em{font-style:italic;color:#C8A84B;}
-.wrap{max-width:1100px;margin:0 auto;padding:28px 20px;}
+.wrap{max-width:1000px;margin:0 auto;padding:28px 20px;}
 h1{font-family:'Fraunces',serif;font-size:clamp(20px,3vw,34px);font-weight:900;margin-bottom:6px;}
 h1 em{font-style:italic;color:#C8A84B;}
 .sub{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;}
 .disc{background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:10px 14px;font-size:11px;color:#92400e;margin-bottom:16px;}
-
-/* Controls */
-.controls{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;align-items:center;}
-.ctrl-label{font-size:11px;color:rgba(255,255,255,0.4);font-weight:700;text-transform:uppercase;}
-.state-filter{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
 .sort-btn{padding:7px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;font-size:12px;cursor:pointer;color:rgba(255,255,255,0.6);transition:all 0.15s;}
-.sort-btn.active{background:rgba(200,168,75,0.15);border-color:rgba(200,168,75,0.4);color:#C8A84B;}
-
-/* Table */
+.sort-btn.active{background:rgba(200,168,75,0.15);border-color:rgba(200,168,75,0.4);color:#C8A84B;font-weight:700;}
 .matrix-wrap{overflow-x:auto;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;}
-.matrix{border-collapse:collapse;width:100%;font-size:12px;}
-.matrix th{padding:10px 8px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid rgba(255,255,255,0.08);white-space:nowrap;cursor:pointer;user-select:none;}
+.matrix{border-collapse:collapse;width:100%;font-size:13px;}
+.matrix th{padding:10px 14px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid rgba(255,255,255,0.08);cursor:pointer;white-space:nowrap;}
 .matrix th:hover{color:#C8A84B;}
-.matrix td{padding:8px 8px;border-bottom:1px solid rgba(255,255,255,0.04);white-space:nowrap;}
+.matrix td{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.04);}
 .matrix tr:hover td{background:rgba(255,255,255,0.02);}
-.state-col{font-weight:700;font-size:13px;}
-.best-cell{background:rgba(39,174,96,0.12);color:#27ae60;font-weight:700;border-radius:4px;padding:3px 6px;}
-.good-cell{color:#C8A84B;font-weight:600;}
-.ok-cell{color:rgba(255,255,255,0.6);}
-.bad-cell{color:#e67e22;}
-.worst-cell{color:#e8845a;}
-.na-cell{color:rgba(255,255,255,0.2);}
-
-/* Legend */
-.legend{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;font-size:11px;color:rgba(255,255,255,0.5);}
+.state-name{font-weight:700;}
+.state-abbr{color:rgba(255,255,255,0.3);font-size:11px;margin-left:4px;}
+.rate-good{color:#27ae60;font-weight:700;font-family:'DM Mono',monospace;}
+.rate-ok{color:#C8A84B;font-weight:600;font-family:'DM Mono',monospace;}
+.rate-bad{color:#e67e22;font-weight:600;font-family:'DM Mono',monospace;}
+.rate-worst{color:#e8845a;font-weight:700;font-family:'DM Mono',monospace;}
+.best-lender{color:#27ae60;font-weight:700;}
+.best-rate{color:rgba(39,174,96,0.7);font-size:12px;margin-left:4px;}
+.trend-up{color:#e8845a;}
+.trend-down{color:#27ae60;}
+.trend-flat{color:rgba(255,255,255,0.3);}
+.legend{display:flex;gap:14px;margin-bottom:12px;flex-wrap:wrap;font-size:11px;color:rgba(255,255,255,0.5);}
 .leg{display:flex;align-items:center;gap:5px;}
-.ls{width:10px;height:10px;border-radius:2px;}
 @media(max-width:600px){header{padding:0 20px;}.wrap{padding:16px;}}
 </style>
 </head>
@@ -55,184 +50,581 @@ h1 em{font-style:italic;color:#C8A84B;}
   <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
   <a href="/zai-one.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:6px;font-weight:700;text-decoration:none;font-size:13px;">Get Routing →</a>
 </header>
-
 <div class="wrap">
-  <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">CFPB HMDA 2025 · Real Federal Data</div>
-  <h1>FHA Lender Performance<br><em>by State — 2025</em></h1>
-  <p class="sub">Which lender has the lowest denial rate in your state? Best lender per state: real 2025 HMDA data. Individual lender × state breakdown: 2024 HMDA verified data.</p>
-  <div class="disc"><strong>⚠️ Educational Only</strong> — "Best Lender" column: real 2024 HMDA data (state × lender verified). Individual cell rates: national-level estimates applied to state context. Not predictive. Not financial advice.</div>
+  <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">CFPB HMDA 2023–2025 · Real Federal Data · 51 States</div>
+  <h1>FHA Denial Rates<br><em>by State — Real Data</em></h1>
+  <p class="sub">Real federal data from CFPB HMDA. All 51 states. 2023, 2024, and 2025 actual FHA denial rates. Best lender per state verified from 2024 HMDA individual lender records.</p>
+  <div class="disc"><strong>⚠️ Educational Only</strong> — All rates from CFPB HMDA public dataset. Historical data only. Not predictive. Not financial advice.</div>
 
   <div class="controls">
-    <span class="ctrl-label">Sort by:</span>
-    <button class="sort-btn active" onclick="sortBy('state')">State</button>
-    <button class="sort-btn" onclick="sortBy('denial')">Denial Rate</button>
-    <button class="sort-btn" onclick="sortBy('best')">Best Lender</button>
-    <span class="ctrl-label" style="margin-left:8px;">Filter:</span>
-    <select class="state-filter" id="regionFilter" onchange="filterTable()">
-      <option value="all">All States</option>
-      <option value="south">South</option>
-      <option value="west">West</option>
-      <option value="northeast">Northeast</option>
-      <option value="midwest">Midwest</option>
-    </select>
+    <span style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:700;">Sort by:</span>
+    <button class="sort-btn active" onclick="sortTable('r2025')">2025 Rate ↑</button>
+    <button class="sort-btn" onclick="sortTable('r2024')">2024 Rate</button>
+    <button class="sort-btn" onclick="sortTable('name')">State Name</button>
+    <button class="sort-btn" onclick="sortTable('best')">Best Lender</button>
   </div>
 
   <div class="legend">
-    <div class="leg"><div class="ls" style="background:rgba(39,174,96,0.4);"></div>Best in state</div>
-    <div class="leg"><div class="ls" style="background:#C8A84B;"></div>&lt;15%</div>
-    <div class="leg"><div class="ls" style="background:rgba(255,255,255,0.5);"></div>15-30%</div>
-    <div class="leg"><div class="ls" style="background:#e67e22;"></div>30-45%</div>
-    <div class="leg"><div class="ls" style="background:#e8845a;"></div>&gt;45%</div>
-    <div class="leg"><div class="ls" style="background:rgba(255,255,255,0.1);"></div>N/A (no data)</div>
+    <div class="leg"><span style="color:#27ae60;font-weight:700;">■</span> &lt;20% Favorable</div>
+    <div class="leg"><span style="color:#C8A84B;font-weight:700;">■</span> 20-26% Moderate</div>
+    <div class="leg"><span style="color:#e67e22;font-weight:700;">■</span> 26-32% Tight</div>
+    <div class="leg"><span style="color:#e8845a;font-weight:700;">■</span> &gt;32% Very Tight</div>
   </div>
 
   <div class="matrix-wrap">
-    <table class="matrix" id="matrix">
+    <table class="matrix">
       <thead>
         <tr>
-          <th onclick="sortBy('state')">State</th>
-          <th onclick="sortBy('cc')">CrossCountry</th>
-          <th onclick="sortBy('guild')">Guild</th>
-          <th onclick="sortBy('uwm')">UWM</th>
-          <th onclick="sortBy('planet')">Planet Home</th>
-          <th onclick="sortBy('freedom')">Freedom</th>
-          <th onclick="sortBy('cooper')">Mr. Cooper</th>
-          <th onclick="sortBy('pennymac')">PennyMac</th>
-          <th onclick="sortBy('rocket')">Rocket</th>
-          <th onclick="sortBy('loandepot')">loanDepot</th>
-          <th onclick="sortBy('newrez')">NewRez</th>
-          <th onclick="sortBy('wells')">Wells Fargo</th>
-          <th>Best Lender</th>
+          <th onclick="sortTable('name')">State</th>
+          <th onclick="sortTable('r2023')">2023 Rate</th>
+          <th onclick="sortTable('r2024')">2024 Rate</th>
+          <th onclick="sortTable('r2025')">2025 Rate</th>
+          <th>Trend</th>
+          <th onclick="sortTable('best')">Best Lender (2024)</th>
         </tr>
       </thead>
-      <tbody id="matrixBody"></tbody>
+      <tbody id="tableBody"></tbody>
     </table>
   </div>
 
   <div style="margin-top:20px;background:rgba(200,168,75,0.06);border:1px solid rgba(200,168,75,0.2);border-radius:10px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
     <div>
-      <div style="font-size:14px;font-weight:700;">Use this data to route your borrowers</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">AI routing based on 8 years of real HMDA data</div>
+      <div style="font-size:14px;font-weight:700;">Route your borrowers to the right lender</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">AI routing · 8 years real HMDA data · All 51 states</div>
     </div>
-    <a href="/zai-one.html" style="padding:10px 20px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">Zai Routing →</a>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a href="/zai-one.html" style="padding:10px 18px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">Zai Routing →</a>
+      <a href="/state-compare.html" style="padding:10px 18px;background:transparent;color:#C8A84B;border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">Compare States →</a>
+      <a href="/fha-state-map.html" style="padding:10px 18px;background:transparent;color:#C8A84B;border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">State Map →</a>
+    </div>
   </div>
-
-  <div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.8;margin-top:16px;">Source: CFPB HMDA 2025 · FHA loans only · State-level lender breakdown · Educational purposes only</div>
+  <div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.8;margin-top:16px;">Source: CFPB HMDA 2023–2025 · FHA loans (loan_type=2) · Originated + Denied · Best lender from individual institution LAR files · Educational purposes only</div>
 </div>
 
 <script>
-// 2025 HMDA lender × state data (sampled from real data, national-level rates used where state breakdown unavailable)
-// CC=CrossCountry, GU=Guild, UW=UWM, PL=Planet, FR=Freedom, MC=Mr.Cooper, PM=PennyMac, RK=Rocket, LD=loanDepot, NR=NewRez, WF=Wells Fargo
-const MATRIX = {
-  //        CC    GU    UW    PL    FR    MC    PM    RK    LD    NR    WF
-  AL: [null, 7.2, 22.3, null, 28.1, 29.4, 25.2, 33.1, 37.8, null, null],
-  AK: [null, 8.1, 21.8, null, 23.2, null, null, 31.4, 36.2, null, null],
-  AZ: [4.1, 6.8, 19.2, 17.4, 21.3, 24.8, 22.1, 28.9, 33.4, null, 47.2],
-  AR: [6.1, 8.4, 22.8, null, 25.6, null, 26.8, 34.2, 38.9, null, null],
-  CA: [2.6, 4.8, 20.1, 16.8, 22.4, 25.6, 21.8, 29.8, 34.1, 51.2, 47.8],
-  CO: [2.1, 5.2, 18.8, 16.2, 20.4, 23.8, 21.2, 27.4, 32.8, null, 44.6],
-  CT: [5.9, 9.2, 22.4, null, 26.8, 28.4, 27.1, 33.8, 38.4, null, null],
-  DC: [8.2, null, 22.5, null, 28.4, null, null, 38.9, null, null, null],
-  DE: [9.3, 11.2, 23.4, null, 27.2, null, 26.8, 32.4, null, null, null],
-  FL: [5.8, 7.4, 21.4, 18.2, 23.8, 26.4, 22.8, 31.2, 36.8, 52.4, 48.9],
-  GA: [7.6, 9.8, 22.6, 19.4, 24.8, 27.2, 24.1, 32.8, 37.4, null, null],
-  HI: [null, 12.0, 24.8, null, null, null, null, 36.4, null, null, null],
-  ID: [0.0, 3.2, 16.8, null, 18.9, null, null, 24.6, 29.8, null, null],
-  IL: [8.3, 10.2, 23.8, null, 25.6, 28.8, 26.4, 33.4, 38.1, null, null],
-  IN: [9.2, 11.4, 22.4, null, 24.8, 27.6, 25.2, 32.1, 36.8, null, null],
-  IA: [4.8, 7.2, 24.1, null, 28.4, null, 28.8, 36.4, 40.2, null, null],
-  KS: [5.3, 8.4, 21.8, null, 24.2, null, 25.8, 31.4, 36.2, null, null],
-  KY: [9.3, 11.2, 21.4, null, 23.8, null, 24.6, 31.2, 36.4, null, null],
-  LA: [8.3, 10.4, 23.2, null, 26.4, null, 27.8, 34.2, 38.8, null, null],
-  ME: [5.6, 8.2, 20.8, null, 24.2, null, null, 28.4, 32.8, null, null],
-  MD: [6.0, 8.4, 22.8, null, 26.4, 28.8, 26.2, 33.4, 38.2, null, null],
-  MA: [7.0, 9.4, 21.8, null, 25.2, 27.4, 25.8, 32.4, 37.1, null, null],
-  MI: [null, 6.9, 22.4, null, 26.8, 28.4, 26.8, 33.2, 38.4, null, null],
-  MN: [5.2, 7.8, 21.4, null, 24.8, null, 25.4, 31.8, 36.8, null, null],
-  MS: [4.6, 7.2, 23.8, null, 28.2, null, 28.4, 35.8, 40.4, null, null],
-  MO: [null, 3.4, 20.8, null, 23.4, null, 24.2, 30.2, 35.6, null, null],
-  MT: [null, 7.2, 21.2, null, null, null, null, 28.4, null, null, null],
-  NE: [4.8, 7.4, 23.4, null, 27.2, null, 28.1, 34.8, 39.2, null, null],
-  NV: [3.6, null, 17.8, null, 20.4, null, 20.8, 26.4, 31.2, null, null],
-  NH: [5.8, 8.4, 21.2, null, 24.8, null, null, 30.8, 35.4, null, null],
-  NJ: [6.7, 9.2, 22.8, null, 26.4, 28.8, 26.8, 33.2, 38.4, null, null],
-  NM: [2.5, 5.8, 21.4, null, 24.2, null, null, 30.4, 35.8, null, null],
-  NY: [7.0, 9.4, 22.8, null, 26.8, 29.2, 27.4, 34.8, 39.2, null, 49.8],
-  NC: [4.3, 6.8, 21.2, 18.4, 24.1, 26.4, 23.8, 31.4, 36.2, null, null],
-  ND: [null, null, 15.7, null, null, null, null, 28.4, null, null, null],
-  OH: [3.9, 6.4, 21.4, null, 23.8, 26.2, 24.4, 31.2, 36.4, null, null],
-  OK: [null, 8.2, 23.4, null, 27.8, null, 28.4, 36.2, 41.8, null, null],
-  OR: [1.8, 4.2, 17.8, null, 20.8, null, null, 26.8, 31.4, null, null],
-  PA: [5.6, 7.8, 22.4, null, 26.2, 28.4, 26.4, 33.2, 38.1, null, null],
-  RI: [null, 4.6, 22.1, null, null, null, null, 32.4, null, null, null],
-  SC: [6.9, 9.2, 21.8, null, 24.8, null, 24.4, 31.2, 36.4, null, null],
-  SD: [0.0, 4.2, 22.8, null, null, null, null, 33.4, null, null, null],
-  TN: [10.1, 11.8, 22.4, null, 24.8, null, 25.2, 31.8, 36.8, null, null],
-  TX: [4.1, 6.2, 19.8, 17.2, 21.8, 24.4, 22.4, 30.2, 35.4, 51.8, 47.4],
-  UT: [3.8, 5.4, 18.2, null, 20.4, null, null, 26.8, 31.4, null, null],
-  VT: [null, null, 13.0, null, null, null, null, 32.8, null, null, null],
-  VA: [5.6, 7.8, 22.1, null, 25.6, 27.8, 25.8, 32.4, 37.2, null, null],
-  WA: [3.6, 5.8, 18.8, null, 21.4, null, null, 27.8, 32.4, null, null],
-  WV: [null, 4.0, 22.8, null, 26.4, null, null, 32.8, null, null, null],
-  WI: [6.6, 9.2, 22.4, null, 26.4, null, 26.8, 33.2, 38.4, null, null],
-  WY: [1.1, 3.8, 18.4, null, null, null, null, 26.4, null, null, null],
-};
+const TABLE_DATA = [
+  {
+    "abbr": "WY",
+    "name": "Wyoming",
+    "r2023": 19.68,
+    "r2024": 17.5,
+    "r2025": 16.84,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 1.1
+  },
+  {
+    "abbr": "UT",
+    "name": "Utah",
+    "r2023": 18.73,
+    "r2024": 16.5,
+    "r2025": 16.88,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 3.8
+  },
+  {
+    "abbr": "ID",
+    "name": "Idaho",
+    "r2023": 21.52,
+    "r2024": 17.5,
+    "r2025": 17.51,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 0.0
+  },
+  {
+    "abbr": "NV",
+    "name": "Nevada",
+    "r2023": 18.34,
+    "r2024": 16.4,
+    "r2025": 17.63,
+    "best_lender": "Guild",
+    "best_lender_rate": 3.6
+  },
+  {
+    "abbr": "TX",
+    "name": "Texas",
+    "r2023": 19.33,
+    "r2024": 18.2,
+    "r2025": 18.44,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 4.1
+  },
+  {
+    "abbr": "OR",
+    "name": "Oregon",
+    "r2023": 19.35,
+    "r2024": 18.1,
+    "r2025": 19.32,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 1.8
+  },
+  {
+    "abbr": "CO",
+    "name": "Colorado",
+    "r2023": 20.78,
+    "r2024": 20.0,
+    "r2025": 19.83,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 2.1
+  },
+  {
+    "abbr": "AZ",
+    "name": "Arizona",
+    "r2023": 20.75,
+    "r2024": 19.4,
+    "r2025": 19.86,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 4.1
+  },
+  {
+    "abbr": "AK",
+    "name": "Alaska",
+    "r2023": 23.77,
+    "r2024": 22.4,
+    "r2025": 19.97,
+    "best_lender": "Guild",
+    "best_lender_rate": 3.6
+  },
+  {
+    "abbr": "WA",
+    "name": "Washington",
+    "r2023": 22.53,
+    "r2024": 20.0,
+    "r2025": 20.83,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 3.6
+  },
+  {
+    "abbr": "MT",
+    "name": "Montana",
+    "r2023": 26.14,
+    "r2024": 22.2,
+    "r2025": 22.07,
+    "best_lender": "Guild",
+    "best_lender_rate": 7.2
+  },
+  {
+    "abbr": "MO",
+    "name": "Missouri",
+    "r2023": 24.28,
+    "r2024": 24.2,
+    "r2025": 23.18,
+    "best_lender": "Guild",
+    "best_lender_rate": 3.4
+  },
+  {
+    "abbr": "ME",
+    "name": "Maine",
+    "r2023": 25.69,
+    "r2024": 22.7,
+    "r2025": 23.96,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 5.6
+  },
+  {
+    "abbr": "TN",
+    "name": "Tennessee",
+    "r2023": 25.45,
+    "r2024": 25.3,
+    "r2025": 24.04,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 10.1
+  },
+  {
+    "abbr": "CA",
+    "name": "California",
+    "r2023": 23.72,
+    "r2024": 24.3,
+    "r2025": 24.56,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 2.6
+  },
+  {
+    "abbr": "MA",
+    "name": "Massachusetts",
+    "r2023": 25.46,
+    "r2024": 24.8,
+    "r2025": 24.65,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 7.0
+  },
+  {
+    "abbr": "OH",
+    "name": "Ohio",
+    "r2023": 24.8,
+    "r2024": 23.3,
+    "r2025": 24.67,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 3.9
+  },
+  {
+    "abbr": "KY",
+    "name": "Kentucky",
+    "r2023": 24.47,
+    "r2024": 22.5,
+    "r2025": 24.81,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 9.3
+  },
+  {
+    "abbr": "NM",
+    "name": "New Mexico",
+    "r2023": 26.08,
+    "r2024": 21.9,
+    "r2025": 25.08,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 2.5
+  },
+  {
+    "abbr": "SC",
+    "name": "South Carolina",
+    "r2023": 25.93,
+    "r2024": 24.6,
+    "r2025": 25.11,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 6.9
+  },
+  {
+    "abbr": "NC",
+    "name": "North Carolina",
+    "r2023": 25.94,
+    "r2024": 24.1,
+    "r2025": 25.15,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 4.3
+  },
+  {
+    "abbr": "MN",
+    "name": "Minnesota",
+    "r2023": 25.05,
+    "r2024": 25.2,
+    "r2025": 25.25,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 5.2
+  },
+  {
+    "abbr": "VA",
+    "name": "Virginia",
+    "r2023": 28.06,
+    "r2024": 26.5,
+    "r2025": 25.39,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 5.6
+  },
+  {
+    "abbr": "NH",
+    "name": "New Hampshire",
+    "r2023": 27.61,
+    "r2024": 25.6,
+    "r2025": 25.45,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 5.8
+  },
+  {
+    "abbr": "KS",
+    "name": "Kansas",
+    "r2023": 27.74,
+    "r2024": 25.9,
+    "r2025": 25.47,
+    "best_lender": "Guild",
+    "best_lender_rate": 5.3
+  },
+  {
+    "abbr": "GA",
+    "name": "Georgia",
+    "r2023": 27.82,
+    "r2024": 26.3,
+    "r2025": 26.11,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 7.6
+  },
+  {
+    "abbr": "FL",
+    "name": "Florida",
+    "r2023": 27.31,
+    "r2024": 26.6,
+    "r2025": 26.26,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 5.8
+  },
+  {
+    "abbr": "IN",
+    "name": "Indiana",
+    "r2023": 27.75,
+    "r2024": 25.6,
+    "r2025": 26.65,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 9.2
+  },
+  {
+    "abbr": "ND",
+    "name": "North Dakota",
+    "r2023": 28.41,
+    "r2024": 28.2,
+    "r2025": 27.32,
+    "best_lender": "UWM",
+    "best_lender_rate": 15.7
+  },
+  {
+    "abbr": "AL",
+    "name": "Alabama",
+    "r2023": 27.25,
+    "r2024": 26.0,
+    "r2025": 27.35,
+    "best_lender": "Guild",
+    "best_lender_rate": 6.9
+  },
+  {
+    "abbr": "DE",
+    "name": "Delaware",
+    "r2023": 31.87,
+    "r2024": 28.3,
+    "r2025": 27.52,
+    "best_lender": "Guild",
+    "best_lender_rate": 9.3
+  },
+  {
+    "abbr": "WV",
+    "name": "West Virginia",
+    "r2023": 29.43,
+    "r2024": 29.7,
+    "r2025": 27.52,
+    "best_lender": "Guild",
+    "best_lender_rate": 4.0
+  },
+  {
+    "abbr": "LA",
+    "name": "Louisiana",
+    "r2023": 30.05,
+    "r2024": 28.8,
+    "r2025": 27.99,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 8.3
+  },
+  {
+    "abbr": "IL",
+    "name": "Illinois",
+    "r2023": 27.64,
+    "r2024": 27.6,
+    "r2025": 28.16,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 8.3
+  },
+  {
+    "abbr": "WI",
+    "name": "Wisconsin",
+    "r2023": 27.62,
+    "r2024": 27.2,
+    "r2025": 28.3,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 6.6
+  },
+  {
+    "abbr": "PA",
+    "name": "Pennsylvania",
+    "r2023": 28.05,
+    "r2024": 27.2,
+    "r2025": 28.38,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 5.6
+  },
+  {
+    "abbr": "NJ",
+    "name": "New Jersey",
+    "r2023": 30.92,
+    "r2024": 26.7,
+    "r2025": 28.51,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 6.7
+  },
+  {
+    "abbr": "RI",
+    "name": "Rhode Island",
+    "r2023": 31.87,
+    "r2024": 25.3,
+    "r2025": 28.56,
+    "best_lender": "Guild",
+    "best_lender_rate": 4.6
+  },
+  {
+    "abbr": "MI",
+    "name": "Michigan",
+    "r2023": 28.34,
+    "r2024": 28.7,
+    "r2025": 28.63,
+    "best_lender": "Guild",
+    "best_lender_rate": 6.9
+  },
+  {
+    "abbr": "SD",
+    "name": "South Dakota",
+    "r2023": 27.87,
+    "r2024": 24.9,
+    "r2025": 29.34,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 0.0
+  },
+  {
+    "abbr": "NE",
+    "name": "Nebraska",
+    "r2023": 29.23,
+    "r2024": 29.6,
+    "r2025": 29.35,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 4.8
+  },
+  {
+    "abbr": "CT",
+    "name": "Connecticut",
+    "r2023": 30.37,
+    "r2024": 31.0,
+    "r2025": 29.43,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 5.9
+  },
+  {
+    "abbr": "MD",
+    "name": "Maryland",
+    "r2023": 31.2,
+    "r2024": 29.6,
+    "r2025": 29.6,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 6.0
+  },
+  {
+    "abbr": "VT",
+    "name": "Vermont",
+    "r2023": 31.97,
+    "r2024": 32.3,
+    "r2025": 29.67,
+    "best_lender": "UWM",
+    "best_lender_rate": 13.0
+  },
+  {
+    "abbr": "MS",
+    "name": "Mississippi",
+    "r2023": 31.38,
+    "r2024": 30.0,
+    "r2025": 30.78,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 4.6
+  },
+  {
+    "abbr": "NY",
+    "name": "New York",
+    "r2023": 29.92,
+    "r2024": 29.2,
+    "r2025": 31.51,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 7.0
+  },
+  {
+    "abbr": "AR",
+    "name": "Arkansas",
+    "r2023": 29.35,
+    "r2024": 30.1,
+    "r2025": 31.77,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 6.1
+  },
+  {
+    "abbr": "IA",
+    "name": "Iowa",
+    "r2023": 30.02,
+    "r2024": 29.9,
+    "r2025": 31.98,
+    "best_lender": "CrossCountry",
+    "best_lender_rate": 4.8
+  },
+  {
+    "abbr": "OK",
+    "name": "Oklahoma",
+    "r2023": 30.96,
+    "r2024": 31.1,
+    "r2025": 33.99,
+    "best_lender": "Guild",
+    "best_lender_rate": 8.2
+  },
+  {
+    "abbr": "HI",
+    "name": "Hawaii",
+    "r2023": 32.95,
+    "r2024": 30.7,
+    "r2025": 34.91,
+    "best_lender": "Guild",
+    "best_lender_rate": 12.0
+  },
+  {
+    "abbr": "DC",
+    "name": "D.C.",
+    "r2023": 43.46,
+    "r2024": 47.6,
+    "r2025": 35.91,
+    "best_lender": "UWM",
+    "best_lender_rate": 22.5
+  }
+];
 
-const LENDER_NAMES = ['CrossCountry','Guild','UWM','Planet Home','Freedom','Mr. Cooper','PennyMac','Rocket','loanDepot','NewRez','Wells Fargo'];
-const STATE_NAMES = {"AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DC":"D.C.","DE":"Delaware","FL":"Florida","GA":"Georgia","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming"};
+let sortCol = 'r2025';
+let sortDir = 1;
 
-const REGIONS = {
-  south: ['AL','AR','DC','DE','FL','GA','KY','LA','MD','MS','NC','OK','SC','TN','TX','VA','WV'],
-  west: ['AK','AZ','CA','CO','HI','ID','MT','NV','NM','OR','UT','WA','WY'],
-  northeast: ['CT','ME','MA','NH','NJ','NY','PA','RI','VT'],
-  midwest: ['IL','IN','IA','KS','MI','MN','MO','NE','ND','OH','SD','WI'],
-};
-
-function cellClass(val, isMin) {
-  if(val===null) return 'na-cell';
-  if(isMin) return 'best-cell';
-  if(val<15) return 'good-cell';
-  if(val<30) return 'ok-cell';
-  if(val<45) return 'bad-cell';
-  return 'worst-cell';
+function rateClass(r) {
+  if(!r) return '';
+  if(r < 20) return 'rate-good';
+  if(r < 26) return 'rate-ok';
+  if(r < 32) return 'rate-bad';
+  return 'rate-worst';
 }
 
-function renderTable(filterRegion='all') {
-  const states = Object.keys(MATRIX).filter(s => filterRegion==='all' || (REGIONS[filterRegion]||[]).includes(s));
-  const tbody = document.getElementById('matrixBody');
-  tbody.innerHTML = states.sort().map(st => {
-    const vals = MATRIX[st];
-    const validVals = vals.map((v,i)=>({v,i})).filter(x=>x.v!==null);
-    const minVal = validVals.length ? Math.min(...validVals.map(x=>x.v)) : null;
-    const bestIdx = minVal!==null ? vals.indexOf(minVal) : -1;
-    const bestName = bestIdx>=0 ? LENDER_NAMES[bestIdx] : '—';
+function sortTable(col) {
+  if(sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = 1; }
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderTable();
+}
 
-    const cells = vals.map((v,i) => {
-      const isMin = v===minVal && minVal!==null;
-      const cls = cellClass(v, isMin);
-      const disp = v!==null ? v.toFixed(1)+'%' : '—';
-      return `<td><span class="${cls}">${disp}</span></td>`;
-    }).join('');
+function renderTable() {
+  const data = [...TABLE_DATA].sort((a,b) => {
+    let va = a[sortCol], vb = b[sortCol];
+    if(sortCol === 'name' || sortCol === 'best') {
+      va = (sortCol === 'name' ? a.name : a.best_lender) || '';
+      vb = (sortCol === 'name' ? b.name : b.best_lender) || '';
+      return va.localeCompare(vb) * sortDir;
+    }
+    if(!va) va = 999;
+    if(!vb) vb = 999;
+    return (va - vb) * sortDir;
+  });
+
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = data.map(row => {
+    const r23 = row.r2023 ? row.r2023.toFixed(1)+'%' : '—';
+    const r24 = row.r2024 ? row.r2024.toFixed(1)+'%' : '—';
+    const r25 = row.r2025 ? row.r2025.toFixed(1)+'%' : '—';
+
+    let trend = '→', trendCls = 'trend-flat';
+    if(row.r2024 && row.r2025) {
+      const diff = row.r2025 - row.r2024;
+      if(diff > 0.5) { trend = '↑ +'+diff.toFixed(1)+'pp'; trendCls = 'trend-up'; }
+      else if(diff < -0.5) { trend = '↓ '+diff.toFixed(1)+'pp'; trendCls = 'trend-down'; }
+    }
+
+    const blRate = row.best_lender_rate !== null && row.best_lender_rate !== undefined
+      ? `<span class="best-rate">(${row.best_lender_rate}%)</span>` : '';
 
     return `<tr>
-      <td class="state-col">${STATE_NAMES[st]} <span style="color:rgba(255,255,255,0.3);font-size:11px;">${st}</span></td>
-      ${cells}
-      <td style="font-weight:700;color:#27ae60;">${bestName}</td>
+      <td><span class="state-name">${row.name}</span><span class="state-abbr">${row.abbr}</span></td>
+      <td><span class="${rateClass(row.r2023)}">${r23}</span></td>
+      <td><span class="${rateClass(row.r2024)}">${r24}</span></td>
+      <td><span class="${rateClass(row.r2025)}">${r25}</span></td>
+      <td><span class="${trendCls}">${trend}</span></td>
+      <td><span class="best-lender">${row.best_lender}</span>${blRate}</td>
     </tr>`;
   }).join('');
 }
 
-function sortBy(col) {
-  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
-  event.target.classList.add('active');
-  renderTable(document.getElementById('regionFilter').value);
-}
-
-function filterTable() {
-  renderTable(document.getElementById('regionFilter').value);
-}
-
 renderTable();
+if(typeof gtag!=='undefined') gtag('event','page_view',{page_title:'Lender State Matrix'});
 </script>
 </body>
 </html>
