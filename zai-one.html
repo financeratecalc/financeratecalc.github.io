@@ -392,35 +392,65 @@ function buildFitTable(g) {
     rows + '</div>';
 }
 
+
+const LSI_SCORES = {
+  'CrossCountry':{lsi:6,label:'Stable',color:'#27ae60'},
+  'Guild':{lsi:21,label:'Stable',color:'#27ae60'},
+  'PennyMac':{lsi:17,label:'Stable',color:'#27ae60'},
+  'Rocket':{lsi:16,label:'Stable',color:'#27ae60'},
+  'UWM':{lsi:30,label:'Reactive',color:'#C8A84B'},
+  'Mr. Cooper':{lsi:32,label:'Reactive',color:'#C8A84B'},
+  'Planet Home':{lsi:38,label:'Reactive',color:'#C8A84B'},
+  'Wells Fargo':{lsi:29,label:'Reactive',color:'#C8A84B'},
+  'loanDepot':{lsi:44,label:'Reactive',color:'#C8A84B'},
+  'Freedom':{lsi:50,label:'Reactive',color:'#C8A84B'},
+  'NewRez':{lsi:57,label:'High Risk',color:'#e8845a'},
+};
+function getLSI(name) {
+  if(!name) return null;
+  const n = name.toLowerCase();
+  for(const [k,v] of Object.entries(LSI_SCORES)) {
+    if(n.includes(k.toLowerCase().split(' ')[0])) return v;
+  }
+  return null;
+}
+function lsiTag(name) {
+  const l = getLSI(name);
+  if(!l) return '';
+  return '<span style="font-size:10px;font-weight:700;color:'+l.color+';background:'+l.color+'18;border:1px solid '+l.color+'44;padding:2px 7px;border-radius:10px;margin-left:6px;">LSI '+l.lsi+' · '+l.label+'</span>';
+}
+
 function buildLenderBlock(g) {
   const l1 = g('LENDER1_NAME');
   if(!l1) return '';
   return '<div class="d-reasons" style="border-color:rgba(107,255,184,0.15);">' +
-    '<div class="d-reasons-title" style="color:rgba(107,255,184,0.5);">Why This Lender vs Others</div>' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+      '<div class="d-reasons-title" style="color:rgba(107,255,184,0.5);margin:0;">Lender Routing · OFI 57</div>' +
+      '<a href="/lender-stress-index.html" style="font-size:10px;color:rgba(200,168,75,0.4);text-decoration:none;">LSI →</a>' +
+    '</div>' +
     '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">' +
-      '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
-        '<span style="font-size:13px;font-weight:700;color:#6bffb8;">\u2713 ' + l1 + '</span>' +
-        '<span style="font-size:10px;color:rgba(107,255,184,0.5);font-weight:700;">BEST FIT</span>' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:4px;">' +
+        '<span style="font-size:13px;font-weight:700;color:#6bffb8;">✓ ' + l1 + '</span>' +
+        '<div>' + lsiTag(l1) + '<span style="font-size:10px;color:rgba(107,255,184,0.5);font-weight:700;margin-left:6px;">BEST FIT</span></div>' +
       '</div>' +
       '<div style="font-size:12px;color:rgba(255,255,255,0.6);">' + g('LENDER1_WHY') + '</div>' +
     '</div>' +
     '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">' +
-      '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:4px;">' +
         '<span style="font-size:13px;font-weight:700;color:#C8A84B;">~ ' + g('LENDER2_NAME') + '</span>' +
-        '<span style="font-size:10px;color:rgba(200,168,75,0.5);font-weight:700;">BACKUP</span>' +
+        '<div>' + lsiTag(g('LENDER2_NAME')) + '<span style="font-size:10px;color:rgba(200,168,75,0.5);font-weight:700;margin-left:6px;">BACKUP</span></div>' +
       '</div>' +
       '<div style="font-size:12px;color:rgba(255,255,255,0.6);">' + g('LENDER2_WHY') + '</div>' +
     '</div>' +
     '<div style="padding:8px 0;">' +
-      '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
-        '<span style="font-size:13px;font-weight:700;color:#e8845a;">\u2717 ' + g('LENDER3_NAME') + '</span>' +
-        '<span style="font-size:10px;color:rgba(232,132,90,0.5);font-weight:700;">AVOID</span>' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:4px;">' +
+        '<span style="font-size:13px;font-weight:700;color:#e8845a;">✗ ' + g('LENDER3_NAME') + '</span>' +
+        '<div>' + lsiTag(g('LENDER3_NAME')) + '<span style="font-size:10px;color:rgba(232,132,90,0.5);font-weight:700;margin-left:6px;">AVOID</span></div>' +
       '</div>' +
       '<div style="font-size:12px;color:rgba(255,255,255,0.6);">' + g('LENDER3_WHY') + '</div>' +
     '</div>' +
   '</div>';
 }
-
 
 function toggleDTI() {
   var calc = document.getElementById('dtiCalc');
