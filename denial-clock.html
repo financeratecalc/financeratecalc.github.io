@@ -92,6 +92,7 @@ header{padding:0 32px;height:52px;display:flex;align-items:center;justify-conten
   <div class="live"><div class="dot"></div>live</div>
 
   <div class="hook">An FHA borrower was denied<br><strong>every 4 minutes today.</strong></div>
+  <div style="font-size:clamp(12px,1.8vw,15px);color:rgba(255,255,255,0.25);margin-top:10px;margin-bottom:4px;font-style:italic;">Some of them never should have been.</div>
   <div class="since-open" id="sinceOpen">Since you opened this page: <span id="sinceCount">0</span> more denials.</div>
 
   <div class="clock-wrap">
@@ -114,12 +115,12 @@ header{padding:0 32px;height:52px;display:flex;align-items:center;justify-conten
   <div class="manifesto">
     <p class="m-line"><strong>A denial is not always a qualification problem.</strong></p>
     <p class="m-line">Same borrower. Same income. Same credit score.<br><em>CrossCountry denies 6.37%.</em> <em>NewRez denies 53.27%.</em></p>
-    <p class="m-line">The difference is not the borrower.<br><strong>It's the lender.</strong></p>
+    <p class="m-line" style="font-size:clamp(16px,2.5vw,22px);color:#fff;font-family:'Fraunces',serif;font-weight:700;margin-top:16px;line-height:1.5;">The difference is not the borrower.<br>It's the lender.</p>
   </div>
 
   <div class="cta-section">
-    <a href="/zai-one.html" class="cta-primary">Would your file pass elsewhere? →</a>
-    <a href="/lender-stress-index.html" class="cta-secondary">See which lenders stay stable when markets tighten</a>
+    <a href="/zai-one.html" class="cta-primary" onclick="if(typeof gtag!=='undefined')gtag('event','clock_to_zai_click',{event_category:'funnel',event_label:'primary_cta'})">Would your file pass elsewhere? →</a>
+    <a href="/lender-stress-index.html" class="cta-secondary" onclick="if(typeof gtag!=='undefined')gtag('event','clock_to_lsi_click',{event_category:'funnel',event_label:'secondary_cta'})">See which lenders stay stable when markets tighten</a>
   </div>
 
   <div class="share-row">
@@ -208,6 +209,28 @@ function copyShare() {
 
 tick();
 setInterval(tick, 500);
+
+// Funnel tracking
+let scrolled50 = false, scrolled100 = false;
+window.addEventListener('scroll', () => {
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  if(pct > 50 && !scrolled50) {
+    scrolled50 = true;
+    if(typeof gtag !== 'undefined') gtag('event','clock_scroll_50',{event_category:'engagement'});
+  }
+  if(pct > 90 && !scrolled100) {
+    scrolled100 = true;
+    if(typeof gtag !== 'undefined') gtag('event','clock_scroll_100',{event_category:'engagement'});
+  }
+});
+
+// Time on page
+let timeStart = Date.now();
+window.addEventListener('beforeunload', () => {
+  const sec = Math.round((Date.now() - timeStart) / 1000);
+  if(typeof gtag !== 'undefined') gtag('event','clock_time_on_page',{event_category:'engagement',value:sec});
+});
+
 if(typeof gtag !== 'undefined') gtag('event','page_view',{page_title:'Denial Clock'});
 </script>
 </body>
