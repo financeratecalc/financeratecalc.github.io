@@ -4,11 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Lender Stress Index (LSI) — How Lenders Behave When Markets Tighten | FinanceRateCalc</title>
-<meta name="description" content="LSI measures how aggressively each lender restricts FHA approvals when market friction rises. CrossCountry LSI 6 (Stable). NewRez LSI 57 (Reactive). Based on 8 years of HMDA data.">
+<meta name="description" content="LSI shows how each lender behaves when market friction rises. CrossCountry remains stable. NewRez becomes dramatically more restrictive. Based on 8 years of real HMDA data.">
 <link rel="canonical" href="https://financeratecalc.com/lender-stress-index.html">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -16,65 +15,61 @@ body{font-family:'DM Sans',sans-serif;background:#0B132B;color:#fff;min-height:1
 header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
 .logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
 .logo em{font-style:italic;color:#C8A84B;}
-.wrap{max-width:1000px;margin:0 auto;padding:32px 20px;}
-h1{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,38px);font-weight:900;margin-bottom:6px;}
+.wrap{max-width:900px;margin:0 auto;padding:32px 20px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,38px);font-weight:900;margin-bottom:8px;}
 h1 em{font-style:italic;color:#C8A84B;}
-.sub{font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:20px;line-height:1.7;}
-.disc{background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:10px 14px;font-size:11px;color:#92400e;margin-bottom:24px;}
+.sub{font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:20px;line-height:1.7;max-width:640px;}
+.disc{background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:10px 14px;font-size:11px;color:#92400e;margin-bottom:28px;}
 
-/* OFI bar */
-.ofi-bar{background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
-.ofi-val{font-family:'Fraunces',serif;font-size:48px;font-weight:900;color:#C8A84B;line-height:1;}
-.ofi-info{flex:1;}
-.ofi-label{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;}
-.ofi-signal{font-size:18px;font-weight:700;color:#C8A84B;}
-.ofi-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;}
+/* Routing box — hero */
+.routing-box{background:rgba(11,19,43,0.8);border:2px solid rgba(200,168,75,0.3);border-radius:14px;padding:24px;margin-bottom:32px;}
+.rb-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;}
+.rb-ofi{font-family:'DM Mono',monospace;font-size:13px;color:rgba(200,168,75,0.7);}
+.rb-ofi span{font-size:28px;font-weight:900;color:#C8A84B;font-family:'Fraunces',serif;}
+.rb-stress{font-size:13px;font-weight:700;color:#e8845a;background:rgba(232,132,90,0.1);border:1px solid rgba(232,132,90,0.3);padding:6px 14px;border-radius:20px;}
+.rb-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.rb-col{padding:16px;border-radius:10px;}
+.rb-col.go{background:rgba(39,174,96,0.07);border:1px solid rgba(39,174,96,0.2);}
+.rb-col.wait{background:rgba(232,132,90,0.07);border:1px solid rgba(232,132,90,0.2);}
+.rb-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
+.rb-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;}
+.rb-item:last-child{border:none;}
+.rb-rank{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.3);width:18px;}
+.rb-lsi{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;margin-left:auto;}
 
-/* LSI Cards */
-.lsi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:32px;}
-.lsi-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:18px;transition:border-color 0.2s;cursor:pointer;}
-.lsi-card:hover{border-color:rgba(200,168,75,0.3);}
-.lsi-card.stable{border-left:3px solid #27ae60;}
-.lsi-card.reactive{border-left:3px solid #C8A84B;}
-.lsi-card.stressed{border-left:3px solid #e8845a;}
+/* OFI slider */
+.slider-wrap{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:18px 20px;margin-bottom:28px;}
+.slider-label{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px;}
+.slider-label strong{color:#C8A84B;}
+input[type=range]{width:100%;accent-color:#C8A84B;margin-bottom:8px;}
+.slider-marks{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace;}
 
-.lc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
-.lc-name{font-weight:700;font-size:16px;}
-.lc-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:3px 8px;border-radius:20px;}
-.badge-stable{background:rgba(39,174,96,0.15);color:#27ae60;border:1px solid rgba(39,174,96,0.3);}
-.badge-reactive{background:rgba(200,168,75,0.15);color:#C8A84B;border:1px solid rgba(200,168,75,0.3);}
-.badge-stressed{background:rgba(232,132,90,0.15);color:#e8845a;border:1px solid rgba(232,132,90,0.3);}
+/* Lender cards — simplified */
+.lender-list{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+.lc{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px 18px;transition:border-color 0.15s;}
+.lc:hover{border-color:rgba(200,168,75,0.2);}
+.lc.stable{border-left:3px solid #27ae60;}
+.lc.reactive{border-left:3px solid #C8A84B;}
+.lc-name{font-weight:700;font-size:14px;width:130px;flex-shrink:0;}
+.lc-lsi{font-family:'Fraunces',serif;font-size:28px;font-weight:900;width:52px;flex-shrink:0;line-height:1;}
+.lc-bar-wrap{flex:1;min-width:80px;}
+.lc-bar-bg{background:rgba(255,255,255,0.06);border-radius:3px;height:5px;}
+.lc-bar-fill{height:100%;border-radius:3px;transition:width 0.6s;}
+.lc-behavior{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.5;flex:2;}
+.lc-badge{font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 8px;border-radius:12px;white-space:nowrap;flex-shrink:0;}
+.badge-s{background:rgba(39,174,96,0.12);color:#27ae60;border:1px solid rgba(39,174,96,0.25);}
+.badge-r{background:rgba(200,168,75,0.12);color:#C8A84B;border:1px solid rgba(200,168,75,0.25);}
 
-.lsi-score-wrap{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.lsi-score{font-family:'DM Mono',monospace;font-size:36px;font-weight:900;line-height:1;}
-.lsi-bar-wrap{flex:1;}
-.lsi-bar-bg{background:rgba(255,255,255,0.06);border-radius:4px;height:6px;}
-.lsi-bar-fill{height:100%;border-radius:4px;transition:width 0.8s;}
+/* Method */
+.method{font-size:11px;color:rgba(255,255,255,0.3);line-height:1.8;padding:16px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:20px;}
 
-.lc-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
-.lc-metric{background:rgba(255,255,255,0.03);border-radius:6px;padding:8px;}
-.lc-metric-label{font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px;}
-.lc-metric-val{font-family:'DM Mono',monospace;font-size:14px;font-weight:700;}
-
-.lc-behavior{font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;padding:10px;background:rgba(255,255,255,0.02);border-radius:6px;}
-.lc-behavior strong{color:rgba(255,255,255,0.8);}
-
-/* Signal box */
-.signal-box{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin-bottom:28px;}
-.signal-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;}
-.signal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.signal-section{padding:14px;border-radius:8px;}
-.signal-section.green{background:rgba(39,174,96,0.08);border:1px solid rgba(39,174,96,0.2);}
-.signal-section.red{background:rgba(232,132,90,0.08);border:1px solid rgba(232,132,90,0.2);}
-.signal-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
-.signal-item{font-size:13px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
-.signal-item:last-child{border:none;}
-
-/* Methodology */
-.method{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:18px;margin-bottom:24px;font-size:12px;color:rgba(255,255,255,0.5);line-height:1.8;}
-.method strong{color:rgba(255,255,255,0.7);}
-
-@media(max-width:600px){header{padding:0 20px;}.wrap{padding:16px;}.signal-grid{grid-template-columns:1fr;}.ofi-val{font-size:36px;}}
+@media(max-width:600px){
+  header{padding:0 20px;}.wrap{padding:16px;}
+  .rb-grid{grid-template-columns:1fr;}
+  .lc{flex-wrap:wrap;}
+  .lc-name{width:auto;}
+  .lc-behavior{width:100%;}
+}
 </style>
 </head>
 <body>
@@ -84,152 +79,148 @@ h1 em{font-style:italic;color:#C8A84B;}
 </header>
 
 <div class="wrap">
-  <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">FinanceRateCalc Original Research · HMDA 2018–2025</div>
+  <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;">FinanceRateCalc Original · HMDA 2018–2025</div>
   <h1>Lender Stress Index<br><em>(LSI)</em></h1>
-  <p class="sub">Some lenders become dramatically more restrictive when market friction rises. Others remain remarkably stable. LSI measures this behavior — so you can route smarter when markets tighten.</p>
-  <div class="disc"><strong>⚠️ Educational Only</strong> — LSI derived from CFPB HMDA 2018–2025 data. Statistical correlation, not prediction. Not financial advice.</div>
+  <p class="sub">Not a quality ranking. A behavior model. LSI measures how each lender responds when market friction rises — so you know where to submit today.</p>
+  <div class="disc"><strong>⚠️ Educational Only</strong> — LSI derived from CFPB HMDA 2018–2025. Statistical pattern, not prediction. Individual outcomes vary. Not financial advice.</div>
 
-  <!-- Current OFI -->
-  <div class="ofi-bar">
-    <div class="ofi-val">57</div>
-    <div class="ofi-info">
-      <div class="ofi-label">Current Market OFI — Q2 2026</div>
-      <div class="ofi-signal">HIGH FRICTION</div>
-      <div class="ofi-sub">Above historical average (47). Highly OFI-sensitive lenders are tightening overlays now.</div>
+  <!-- Live routing box -->
+  <div class="routing-box">
+    <div class="rb-header">
+      <div class="rb-ofi">Current Market OFI <span id="ofiDisplay">57</span></div>
+      <div class="rb-stress" id="stressLabel">Market Stress: HIGH</div>
     </div>
-    <a href="/ofi.html" style="padding:10px 18px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.3);border-radius:8px;color:#C8A84B;font-weight:700;text-decoration:none;font-size:12px;">OFI Explained →</a>
+    <div class="rb-grid" id="routingGrid"></div>
   </div>
 
-  <!-- Current Market Signal -->
-  <div class="signal-box">
-    <div class="signal-title">Current Routing Signal — OFI 57 (High Friction)</div>
-    <div class="signal-grid">
-      <div class="signal-section green">
-        <div class="signal-section-title" style="color:#27ae60;">✅ Most Stable — Submit First</div>
-        <div class="signal-item">1. <strong>CrossCountry</strong> — LSI 6, barely reacts to OFI</div>
-        <div class="signal-item">2. <strong>Guild</strong> — LSI 21, consistent performer</div>
-        <div class="signal-item">3. <strong>PennyMac</strong> — LSI 17, low volatility</div>
-      </div>
-      <div class="signal-section red">
-        <div class="signal-section-title" style="color:#e8845a;">⚠️ Most Reactive — Use Caution</div>
-        <div class="signal-item">1. <strong>NewRez</strong> — LSI 57, denial spikes with OFI</div>
-        <div class="signal-item">2. <strong>Freedom</strong> — LSI 50, volatile history</div>
-        <div class="signal-item">3. <strong>loanDepot</strong> — LSI 44, OFI-sensitive</div>
-      </div>
+  <!-- OFI Slider -->
+  <div class="slider-wrap">
+    <div class="slider-label">Adjust OFI to see how routing changes: <strong id="sliderVal">OFI 57 — Current</strong></div>
+    <input type="range" min="20" max="80" value="57" id="ofiSlider" oninput="updateOFI(this.value)">
+    <div class="slider-marks">
+      <span>20 — Easy</span><span>35</span><span>47 — Avg</span><span>60</span><span>80 — Very Tight</span>
     </div>
   </div>
 
-  <!-- LSI Cards -->
-  <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;">All Lenders — Sorted by LSI (Low = More Stable)</div>
-  <div class="lsi-grid" id="lsiGrid"></div>
+  <!-- Lender list -->
+  <div style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">All Lenders — Sorted by Current LSI</div>
+  <div class="lender-list" id="lenderList"></div>
 
-  <!-- Methodology -->
+  <!-- CTA -->
+  <div style="background:rgba(200,168,75,0.06);border:1px solid rgba(200,168,75,0.2);border-radius:10px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+    <div>
+      <div style="font-size:14px;font-weight:700;">Route your file to a stable lender now</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">AI routing · 8 years HMDA · OFI-adjusted</div>
+    </div>
+    <a href="/zai-one.html" style="padding:10px 20px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">Zai Routing →</a>
+  </div>
+
   <div class="method">
-    <strong>How LSI is calculated:</strong> Three components from 8 years of CFPB HMDA data (2018–2025):<br>
-    <strong>OFI Sensitivity (45%)</strong> — Pearson correlation between annual market OFI and lender denial rate. CrossCountry r=0.01 vs NewRez r=0.84.<br>
-    <strong>Denial Volatility (30%)</strong> — Coefficient of variation across 8 years. How much does this lender's denial rate swing year to year?<br>
-    <strong>Current Overlay Risk (25%)</strong> — Linear regression: at OFI=57, how far above national average is this lender's predicted denial rate?<br><br>
-    <strong>Data source:</strong> CFPB HMDA 2018–2025 · 11 lenders · 51 states · FHA loans only · Not financial advice · Educational purposes only
+    <strong>What LSI measures:</strong> How much does this lender's FHA denial rate rise when market OFI increases? Based on 8 years × 11 lenders × 51 states of CFPB HMDA data. LSI is not a quality score — a lender with LSI 6 may still have a higher denial rate than one with LSI 57. It measures <em>sensitivity to market conditions</em>, not absolute performance. Source: CFPB HMDA 2018–2025 · Educational purposes only.
   </div>
 
-  <div style="text-align:center;margin:16px 0 24px;">
-    <a href="/pre-flight.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.3);border-radius:10px;text-decoration:none;color:#C8A84B;font-weight:700;font-size:13px;">✈️ Run Pre-Flight — Route to Stable Lenders</a>
-  </div>
-
-  <div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.8;">LSI is a FinanceRateCalc original composite metric. Not affiliated with any lender. Not a rating or recommendation. Educational purposes only.</div>
+  <div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.8;">LSI is a FinanceRateCalc original composite metric. Not affiliated with any lender. Not a rating or recommendation.</div>
 </div>
 
 <script>
-const LSI_DATA = [
-  {name:'CrossCountry', lsi:6,  sens:1,  vol:18, overlay:-18.8, denial:6.5,  trend:-0.9,
-   behavior:'When OFI rises, <strong>CrossCountry barely reacts</strong>. Denial rate has stayed 5–9% across all market conditions since 2018. The most OFI-resilient lender in the dataset.'},
-  {name:'PennyMac',     lsi:17, sens:9,  vol:28, overlay:+9.7,  denial:24.5, trend:-3.0,
-   behavior:'Low OFI sensitivity but moderate historical volatility. <strong>Significantly improved</strong> from 52% denial in 2018 to 24% in 2025. Trending better.'},
-  {name:'Rocket',       lsi:16, sens:26, vol:6,  overlay:+5.6,  denial:31.0, trend:+2.1,
-   behavior:'Surprisingly <strong>low OFI sensitivity</strong> for a large lender. Very stable year-to-year. Higher absolute denial rate but consistent behavior.'},
-  {name:'Guild',        lsi:21, sens:37, vol:15, overlay:-16.8, denial:8.6,  trend:+0.0,
-   behavior:'<strong>Low absolute denial rate</strong> (7–9%) with moderate OFI sensitivity. Performs well across market cycles. Strong FHA specialist profile.'},
-  {name:'Wells Fargo',  lsi:29, sens:28, vol:10, overlay:+27.5, denial:47.2, trend:-9.9,
-   behavior:'Low OFI sensitivity but <strong>very high absolute denial rate</strong>. High overlay risk regardless of market. Significantly improved in 2025 vs 2024.'},
-  {name:'UWM',          lsi:30, sens:54, vol:20, overlay:-8.9,  denial:21.8, trend:+1.7,
-   behavior:'<strong>Moderate OFI sensitivity</strong>. Denial rate creeping up since 2020. Wholesale channel; broker relationships matter here.'},
-  {name:'Mr. Cooper',   lsi:32, sens:58, vol:16, overlay:+1.3,  denial:25.8, trend:+1.8,
-   behavior:'<strong>Moderate-high OFI sensitivity</strong>. Servicer-focused with moderate FHA appetite. Performance tracks market conditions fairly closely.'},
-  {name:'Planet Home',  lsi:38, sens:69, vol:24, overlay:-0.0,  denial:18.4, trend:-5.2,
-   behavior:'<strong>OFI-reactive</strong> but improving rapidly — down from 28% in 2022 to 18% in 2025. Regional FHA specialist with significant market-cycle swings.'},
-  {name:'loanDepot',    lsi:44, sens:74, vol:10, overlay:+15.1, denial:37.8, trend:-2.1,
-   behavior:'<strong>Highly OFI-sensitive</strong>. Bottomed at 24% denial in 2020, now back to 35-38% as market tightened. Avoid for borderline profiles when OFI is elevated.'},
-  {name:'Freedom',      lsi:50, sens:66, vol:56, overlay:+6.1,  denial:24.2, trend:-1.6,
-   behavior:'<strong>Most volatile lender</strong> in the dataset. 49% denial in 2018 → 8% in 2021 → back to 33% in 2023. COVID-era FHA specialist. Highly unpredictable.'},
-  {name:'NewRez',       lsi:57, sens:84, vol:23, overlay:+24.5, denial:52.3, trend:+5.5,
-   behavior:'<strong>Highest OFI sensitivity</strong> of all 11 lenders. Denial rate spikes with market tightening — hit 62% in 2022 during rate surge. Currently 53% and worsening. Avoid.'},
+const BASE_OFI = 57;
+const LENDERS = [
+  {name:'CrossCountry', lsi:6,  sens:1,  behavior:'Remains relatively stable during high-friction market periods.'},
+  {name:'Rocket',       lsi:16, sens:26, behavior:'Surprisingly stable for its size — low sensitivity to market conditions.'},
+  {name:'PennyMac',     lsi:17, sens:9,  behavior:'Remains relatively stable during high-friction market periods.'},
+  {name:'Guild',        lsi:21, sens:37, behavior:'Slightly more cautious when markets tighten, but historically consistent.'},
+  {name:'Wells Fargo',  lsi:29, sens:28, behavior:'High absolute denial rate regardless of market conditions.'},
+  {name:'UWM',          lsi:30, sens:54, behavior:'Becomes moderately more restrictive as market friction increases.'},
+  {name:'Mr. Cooper',   lsi:32, sens:58, behavior:'Becomes moderately more restrictive as market friction increases.'},
+  {name:'Planet Home',  lsi:38, sens:69, behavior:'Historically becomes more restrictive as market friction increases.'},
+  {name:'loanDepot',    lsi:44, sens:74, behavior:'Historically becomes significantly more restrictive when market friction rises.'},
+  {name:'Freedom',      lsi:50, sens:66, behavior:'Most volatile lender in the dataset — behavior hard to predict in stress periods.'},
+  {name:'NewRez',       lsi:57, sens:84, behavior:'Historically becomes dramatically more restrictive as market friction increases.'},
 ];
+
+function calcLSI(base, sens, ofi) {
+  const diff = (ofi - BASE_OFI) / 10;
+  return Math.max(1, Math.min(99, Math.round(base + sens * 0.12 * diff)));
+}
 
 function lsiColor(lsi) {
   if(lsi <= 25) return '#27ae60';
-  if(lsi <= 60) return '#C8A84B';
+  if(lsi <= 55) return '#C8A84B';
   return '#e8845a';
 }
-function lsiClass(lsi) {
-  if(lsi <= 25) return 'stable';
-  if(lsi <= 60) return 'reactive';
-  return 'stressed';
-}
-function badgeClass(lsi) {
-  if(lsi <= 25) return 'badge-stable';
-  if(lsi <= 60) return 'badge-reactive';
-  return 'badge-stressed';
-}
-function badgeLabel(lsi) {
-  if(lsi <= 25) return '🟢 STABLE';
-  if(lsi <= 60) return '🟡 REACTIVE';
-  return '🔴 HIGH STRESS';
+
+function stressLabel(ofi) {
+  if(ofi <= 30) return {text:'Market Stress: LOW', color:'#27ae60'};
+  if(ofi <= 45) return {text:'Market Stress: MODERATE', color:'#C8A84B'};
+  if(ofi <= 60) return {text:'Market Stress: HIGH', color:'#e8845a'};
+  return {text:'Market Stress: VERY HIGH', color:'#c0392b'};
 }
 
-const grid = document.getElementById('lsiGrid');
-grid.innerHTML = [...LSI_DATA].sort((a,b)=>a.lsi-b.lsi).map(d => {
-  const color = lsiColor(d.lsi);
-  const trendStr = d.trend > 0.3 ? `<span style="color:#e8845a;">↑ +${d.trend}pp vs 2024</span>` :
-                   d.trend < -0.3 ? `<span style="color:#27ae60;">↓ ${d.trend}pp vs 2024</span>` :
-                   `<span style="color:rgba(255,255,255,0.3);">→ stable</span>`;
+function updateOFI(ofi) {
+  ofi = parseInt(ofi);
+  document.getElementById('ofiDisplay').textContent = ofi;
 
-  return `<div class="lsi-card ${lsiClass(d.lsi)}" onclick="if(typeof gtag!=='undefined')gtag('event','lsi_card_click',{event_label:'${d.name}'})">
-    <div class="lc-header">
-      <div class="lc-name">${d.name}</div>
-      <span class="lc-badge ${badgeClass(d.lsi)}">${badgeLabel(d.lsi)}</span>
-    </div>
-    <div class="lsi-score-wrap">
-      <div class="lsi-score" style="color:${color};">${d.lsi}</div>
-      <div class="lsi-bar-wrap">
-        <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;">LSI / 100</div>
-        <div class="lsi-bar-bg"><div class="lsi-bar-fill" style="width:${d.lsi}%;background:${color};"></div></div>
-      </div>
-    </div>
-    <div class="lc-metrics">
-      <div class="lc-metric">
-        <div class="lc-metric-label">OFI Sensitivity</div>
-        <div class="lc-metric-val" style="color:${lsiColor(d.sens)};">${d.sens}</div>
-      </div>
-      <div class="lc-metric">
-        <div class="lc-metric-label">Volatility</div>
-        <div class="lc-metric-val" style="color:${lsiColor(d.vol)};">${d.vol}</div>
-      </div>
-      <div class="lc-metric">
-        <div class="lc-metric-label">2025 Denial</div>
-        <div class="lc-metric-val" style="color:${lsiColor(d.lsi)};">${d.denial}%</div>
-      </div>
-    </div>
-    <div class="lc-metrics" style="margin-bottom:10px;">
-      <div class="lc-metric" style="grid-column:1/-1;">
-        <div class="lc-metric-label">Trend vs 2024</div>
-        <div style="font-size:13px;margin-top:2px;">${trendStr}</div>
-      </div>
-    </div>
-    <div class="lc-behavior">${d.behavior}</div>
-  </div>`;
-}).join('');
+  const sl = stressLabel(ofi);
+  const slEl = document.getElementById('stressLabel');
+  slEl.textContent = sl.text;
+  slEl.style.color = sl.color;
+  slEl.style.borderColor = sl.color + '44';
+  slEl.style.background = sl.color + '11';
 
-if(typeof gtag!=='undefined') gtag('event','page_view',{page_title:'Lender Stress Index'});
+  let label = 'Current';
+  if(ofi < 57) label = '▼ Easier than now';
+  else if(ofi > 57) label = '▲ Tighter than now';
+  if(ofi === 47) label = 'Historical Average';
+  document.getElementById('sliderVal').textContent = `OFI ${ofi} — ${label}`;
+
+  // Recalculate and re-sort
+  const sorted = [...LENDERS].map(l => ({...l, currentLSI: calcLSI(l.lsi, l.sens, ofi)}))
+    .sort((a,b) => a.currentLSI - b.currentLSI);
+
+  // Routing box
+  const top3 = sorted.slice(0,3);
+  const bot3 = sorted.slice(-3).reverse();
+  document.getElementById('routingGrid').innerHTML = `
+    <div class="rb-col go">
+      <div class="rb-col-title" style="color:#27ae60;">✅ Submit First</div>
+      ${top3.map((l,i)=>`<div class="rb-item">
+        <span class="rb-rank">${i+1}.</span>
+        <span style="font-weight:700;">${l.name}</span>
+        <span class="rb-lsi" style="color:#27ae60;">LSI ${l.currentLSI}</span>
+      </div>`).join('')}
+    </div>
+    <div class="rb-col wait">
+      <div class="rb-col-title" style="color:#e8845a;">⚠️ Use Caution</div>
+      ${bot3.map((l,i)=>`<div class="rb-item">
+        <span class="rb-rank">${11-i}.</span>
+        <span style="font-weight:700;">${l.name}</span>
+        <span class="rb-lsi" style="color:#e8845a;">LSI ${l.currentLSI}</span>
+      </div>`).join('')}
+    </div>`;
+
+  // Lender list
+  document.getElementById('lenderList').innerHTML = sorted.map(l => {
+    const color = lsiColor(l.currentLSI);
+    const cls = l.currentLSI <= 25 ? 'stable' : 'reactive';
+    const badge = l.currentLSI <= 25
+      ? '<span class="lc-badge badge-s">🟢 Stable</span>'
+      : l.currentLSI <= 55
+      ? '<span class="lc-badge badge-r">🟡 Reactive</span>'
+      : '<span class="lc-badge" style="background:rgba(232,132,90,0.12);color:#e8845a;border:1px solid rgba(232,132,90,0.25);">🔴 High Risk</span>';
+    return `<div class="lc ${cls}">
+      <div class="lc-name">${l.name}</div>
+      <div class="lc-lsi" style="color:${color};">${l.currentLSI}</div>
+      <div class="lc-bar-wrap">
+        <div class="lc-bar-bg"><div class="lc-bar-fill" style="width:${l.currentLSI}%;background:${color};"></div></div>
+      </div>
+      <div class="lc-behavior">${l.behavior}</div>
+      ${badge}
+    </div>`;
+  }).join('');
+}
+
+updateOFI(57);
+if(typeof gtag!=='undefined') gtag('event','page_view',{page_title:'LSI'});
 </script>
 </body>
 </html>
