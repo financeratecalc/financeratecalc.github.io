@@ -136,7 +136,7 @@ header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;al
 
 .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0.2;}
 .empty-arrow{font-size:40px;margin-bottom:12px;}
-.empty-text{font-family:'DM Mono',monospace;font-size:13px;line-height:1.8;}
+.empty-text{font-family:DM Mono,monospace;font-size:13px;line-height:1.8;}
 
 .loading{display:none;align-items:center;gap:12px;padding:20px 0;color:var(--dim);font-size:14px;}
 .loading.show{display:flex;}
@@ -151,7 +151,7 @@ header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;al
 .d-header{padding:22px 24px;border:1px solid rgba(200,168,75,0.3);border-radius:12px;background:rgba(200,168,75,0.05);}
 .d-label{font-size:10px;font-weight:700;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px;}
 .d-route{font-family:'Fraunces',serif;font-size:24px;font-weight:900;line-height:1.1;margin-bottom:10px;}
-.d-fit{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;}
+.d-fit{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;font-family:DM Mono,monospace;}
 .fit-strong{background:rgba(107,255,184,0.1);color:var(--green);border:1px solid rgba(107,255,184,0.25);}
 .fit-moderate{background:rgba(200,168,75,0.1);color:var(--gold);border:1px solid rgba(200,168,75,0.3);}
 .fit-weak{background:rgba(232,132,90,0.1);color:var(--red);border:1px solid rgba(232,132,90,0.25);}
@@ -160,7 +160,7 @@ header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;al
 .d-reasons-title{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
 .reason{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6;color:rgba(255,255,255,0.8);}
 .reason:last-child{border:none;padding-bottom:0;}
-.rbullet{color:var(--gold);font-family:'DM Mono',monospace;font-size:11px;flex-shrink:0;margin-top:2px;}
+.rbullet{color:var(--gold);font-family:DM Mono,monospace;font-size:11px;flex-shrink:0;margin-top:2px;}
 
 .d-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .d-card{padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;}
@@ -406,6 +406,47 @@ function buildFitTable(g) {
     rows + '</div>';
 }
 
+
+
+// 8-year HMDA evidence data
+const LENDER_EVIDENCE = {
+  'CrossCountry': {denial_range:'5.5–8.6%',lsi:6,lsi_label:'Stable',ofi_corr:0.01,consistency:'HIGH',worst_year:2018,worst_denial:8.6,note:'Least OFI-reactive lender in 8-year dataset.'},
+  'Guild': {denial_range:'6.4–9.7%',lsi:21,lsi_label:'Stable',ofi_corr:0.37,consistency:'HIGH',worst_year:2022,worst_denial:9.7,note:'Consistently low denial rate across all market cycles.'},
+  'UWM': {denial_range:'15.6–21.6%',lsi:30,lsi_label:'Reactive',ofi_corr:0.54,consistency:'MODERATE',worst_year:2025,worst_denial:21.6,note:'Moderate OFI sensitivity. Rising trend since 2020.'},
+  'PennyMac': {denial_range:'23.6–52.8%',lsi:17,lsi_label:'Stable',ofi_corr:-0.09,consistency:'IMPROVING',worst_year:2018,worst_denial:52.8,note:'Dramatic improvement: 52.8% (2018) to 23.6% (2025).'},
+  'Rocket': {denial_range:'27.9–34.8%',lsi:16,lsi_label:'Stable',ofi_corr:0.26,consistency:'MODERATE',worst_year:2018,worst_denial:34.8,note:'Surprisingly stable for its size. Low OFI sensitivity.'},
+  'Freedom': {denial_range:'7.6–49.0%',lsi:50,lsi_label:'Reactive',ofi_corr:0.66,consistency:'LOW',worst_year:2018,worst_denial:49.0,note:'Most volatile lender. Range 7.6%–49%. Unpredictable.'},
+  'Mr. Cooper': {denial_range:'20.1–34.3%',lsi:32,lsi_label:'Reactive',ofi_corr:0.58,consistency:'MODERATE',worst_year:2018,worst_denial:34.3,note:'Moderate OFI sensitivity. Tracks market conditions closely.'},
+  'Planet Home': {denial_range:'16.9–30.4%',lsi:38,lsi_label:'Reactive',ofi_corr:0.69,consistency:'MODERATE',worst_year:2018,worst_denial:30.4,note:'Improving rapidly. Down from 30% to 18% since 2022.'},
+  'loanDepot': {denial_range:'24.5–39.9%',lsi:44,lsi_label:'Reactive',ofi_corr:0.74,consistency:'LOW',worst_year:2018,worst_denial:39.9,note:'High OFI sensitivity. Denial rises significantly when market tightens.'},
+  'NewRez': {denial_range:'26.6–61.7%',lsi:57,lsi_label:'High Risk',ofi_corr:0.84,consistency:'LOW',worst_year:2022,worst_denial:61.7,note:'Highest OFI sensitivity. Hit 61.7% denial during 2022 rate surge.'},
+  'Wells Fargo': {denial_range:'46.7–60.4%',lsi:29,lsi_label:'Reactive',ofi_corr:0.28,consistency:'LOW',worst_year:2022,worst_denial:60.4,note:'High absolute denial rate regardless of market conditions.'}
+};
+
+function buildEvidenceLayer(lsi_data, lenderName) {
+  let ev = null;
+  for(const [key, val] of Object.entries(LENDER_EVIDENCE)) {
+    if(lenderName && lenderName.toLowerCase().includes(key.toLowerCase().split(' ')[0])) {
+      ev = val; break;
+    }
+  }
+  if(!ev) return '';
+  const corrLabel = ev.ofi_corr < 0.2 ? 'Market-independent' : ev.ofi_corr < 0.5 ? 'Low sensitivity' : ev.ofi_corr < 0.7 ? 'Moderate' : 'High sensitivity';
+  const lsiColor = ev.lsi <= 25 ? '#27ae60' : ev.lsi <= 55 ? '#C8A84B' : '#e8845a';
+  const cColor = ev.consistency === 'HIGH' || ev.consistency === 'IMPROVING' ? '#27ae60' : ev.consistency === 'MODERATE' ? '#C8A84B' : '#e8845a';
+  return '<div style="margin-top:10px;padding:10px 12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;">' +
+    '<div style="font-size:10px;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;display:flex;justify-content:space-between;">' +
+      '<span>Why this lender? · HMDA 2018–2025</span><span style="color:rgba(255,255,255,0.12);font-style:italic;">Not a guarantee</span>' +
+    '</div>' +
+    '<div style="display:flex;flex-direction:column;gap:5px;font-size:12px;">' +
+      '<div style="display:flex;align-items:center;gap:8px;"><span style="color:rgba(255,255,255,0.25);width:16px;">■</span><span style="color:rgba(255,255,255,0.4);width:76px;">Stability</span><span style="color:'+lsiColor+';font-weight:700;font-family:DM Mono,monospace;width:48px;">LSI '+ev.lsi+'</span><span style="color:rgba(255,255,255,0.3);font-size:11px;">'+ev.lsi_label+' — '+(ev.ofi_corr < 0.2 ? 'barely reacts to market' : ev.ofi_corr < 0.5 ? 'low market sensitivity' : 'tracks market conditions')+'</span></div>' +
+      '<div style="display:flex;align-items:center;gap:8px;"><span style="color:rgba(255,255,255,0.25);width:16px;">■</span><span style="color:rgba(255,255,255,0.4);width:76px;">8-yr range</span><span style="color:rgba(255,255,255,0.7);font-weight:700;font-family:DM Mono,monospace;width:48px;">'+ev.denial_range+'</span><span style="color:rgba(255,255,255,0.3);font-size:11px;">denial rate across all cycles</span></div>' +
+      '<div style="display:flex;align-items:center;gap:8px;"><span style="color:rgba(255,255,255,0.25);width:16px;">■</span><span style="color:rgba(255,255,255,0.4);width:76px;">OFI match</span><span style="color:rgba(255,255,255,0.7);font-weight:700;font-family:DM Mono,monospace;width:48px;">r='+ev.ofi_corr.toFixed(2)+'</span><span style="color:rgba(255,255,255,0.3);font-size:11px;">'+corrLabel+'</span></div>' +
+      '<div style="display:flex;align-items:center;gap:8px;"><span style="color:rgba(255,255,255,0.25);width:16px;">■</span><span style="color:rgba(255,255,255,0.4);width:76px;">Consistency</span><span style="color:'+cColor+';font-weight:700;font-family:DM Mono,monospace;width:48px;">'+ev.consistency+'</span><span style="color:rgba(255,255,255,0.3);font-size:11px;">worst: '+ev.worst_year+' at '+ev.worst_denial+'%</span></div>' +
+    '</div>' +
+    '<div style="margin-top:7px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.05);font-size:11px;color:rgba(255,255,255,0.25);font-style:italic;">'+ev.note+'</div>' +
+  '</div>';
+}
 
 const LSI_SCORES = {
   'CrossCountry':{lsi:6,label:'Stable',color:'#27ae60'},
