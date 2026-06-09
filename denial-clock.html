@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>The American Mortgage Denial Clock — Real-Time FHA Rejections | FRC Intelligence</title>
-<meta name="description" content="Since January 1, 2025, over 103,022 Americans have been denied FHA mortgages. That's 282 people per day. 11.7 per hour. Watch it happen in real time.">
-<meta name="keywords" content="mortgage denial statistics, FHA denial rate 2025, mortgage rejection real time, HMDA 2025 data">
-<meta name="robots" content="index, follow">
-<meta property="og:title" content="The American Mortgage Denial Clock">
-<meta property="og:description" content="282 Americans denied FHA mortgages every day. Watch it happen in real time. Source: CFPB HMDA 2025.">
+<title>The American Mortgage Denial Clock | FRC Intelligence</title>
+<meta name="description" content="An FHA mortgage application is denied every 4 minutes in America. Watch it happen. Source: CFPB HMDA 2025 — 103,022 denials.">
+<meta name="keywords" content="mortgage denial clock, FHA denial rate 2025, mortgage rejection statistics, HMDA 2025">
+<meta name="robots" content="index, follow, max-snippet:-1">
+<meta property="og:title" content="An FHA borrower was denied every 4 minutes today.">
+<meta property="og:description" content="Since you opened this page, more Americans have been denied FHA mortgages. A denial is not always a qualification problem. Watch it happen.">
 <meta property="og:url" content="https://financeratecalc.com/denial-clock.html">
-<meta property="og:type" content="website">
 <link rel="canonical" href="https://financeratecalc.com/denial-clock.html">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
@@ -18,252 +17,198 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;min-height:100vh;display:flex;flex-direction:column;}
-
-header{padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
-.logo{font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:#fff;text-decoration:none;}
+header{padding:0 32px;height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);}
+.logo{font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:rgba(255,255,255,0.6);text-decoration:none;}
 .logo em{font-style:italic;color:#C8A84B;}
 
-.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;}
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px 32px;text-align:center;}
 
-.eyebrow{font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.2em;margin-bottom:20px;}
+/* Live pulse */
+.live{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:rgba(232,132,90,0.5);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:28px;}
+.dot{width:7px;height:7px;border-radius:50%;background:#e8845a;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.7);}}
 
-.clock-label{font-family:'Fraunces',serif;font-size:clamp(18px,3vw,26px);font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:16px;line-height:1.4;}
-.clock-label strong{color:#fff;}
+/* Hook — ana cümle */
+.hook{font-family:'Fraunces',serif;font-size:clamp(18px,3.5vw,30px);font-weight:700;color:rgba(255,255,255,0.45);line-height:1.4;margin-bottom:8px;}
+.hook strong{color:#fff;}
+
+/* Since you opened */
+.since-open{font-size:clamp(13px,2vw,16px);color:rgba(255,255,255,0.3);margin-bottom:32px;height:24px;}
+.since-open span{color:#e8845a;font-weight:700;font-family:'DM Mono',monospace;}
 
 /* Ana sayaç */
-.clock-wrap{margin:20px 0 32px;}
-.clock{display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;}
-.digit-group{display:flex;gap:2px;}
-.digit{background:rgba(232,132,90,0.08);border:1px solid rgba(232,132,90,0.2);border-radius:6px;width:clamp(36px,7vw,64px);height:clamp(50px,10vw,88px);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:clamp(22px,5vw,52px);font-weight:700;color:#e8845a;position:relative;overflow:hidden;transition:all 0.1s;}
-.digit.flip{background:rgba(232,132,90,0.15);border-color:rgba(232,132,90,0.4);}
-.sep{font-family:'DM Mono',monospace;font-size:clamp(18px,4vw,40px);color:rgba(232,132,90,0.3);padding:0 2px;align-self:center;}
+.clock-wrap{margin-bottom:12px;}
+.clock{display:flex;align-items:center;justify-content:center;gap:3px;flex-wrap:wrap;}
+.digit{background:rgba(232,132,90,0.07);border:1px solid rgba(232,132,90,0.15);border-radius:7px;width:clamp(38px,7vw,66px);height:clamp(52px,10vw,90px);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:clamp(24px,5vw,54px);font-weight:700;color:#e8845a;transition:background 0.15s,border-color 0.15s;}
+.digit.flip{background:rgba(232,132,90,0.18);border-color:rgba(232,132,90,0.5);}
+.sep{font-family:'DM Mono',monospace;font-size:clamp(20px,4vw,44px);color:rgba(232,132,90,0.2);padding:0 2px;align-self:center;margin-bottom:4px;}
+.clock-sub{font-size:12px;color:rgba(255,255,255,0.2);font-family:'DM Mono',monospace;margin-bottom:36px;}
+.clock-sub span{color:rgba(232,132,90,0.4);}
 
-.since{font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:40px;font-family:'DM Mono',monospace;}
-.since span{color:rgba(232,132,90,0.6);}
-
-/* Ticker stats */
-.stats-row{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;}
-.stat{text-align:center;}
-.stat-num{font-family:'DM Mono',monospace;font-size:clamp(20px,3vw,32px);font-weight:700;color:#e8845a;}
-.stat-num.green{color:#27ae60;}
-.stat-label{font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
+/* İki sayaç yan yana */
+.dual-stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;max-width:520px;width:100%;margin:0 auto 40px;border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;}
+.ds{padding:20px;background:rgba(255,255,255,0.02);}
+.ds:first-child{border-right:1px solid rgba(255,255,255,0.06);}
+.ds-num{font-family:'DM Mono',monospace;font-size:clamp(22px,4vw,36px);font-weight:700;margin-bottom:4px;}
+.ds-num.red{color:#e8845a;}
+.ds-num.amber{color:#C8A84B;}
+.ds-label{font-size:11px;color:rgba(255,255,255,0.3);line-height:1.5;}
+.ds-sub{font-size:10px;color:rgba(255,255,255,0.15);margin-top:6px;font-style:italic;}
 
 /* Manifesto */
-.manifesto{max-width:640px;margin:0 auto 48px;padding:0 20px;}
-.manifesto p{font-size:15px;color:rgba(255,255,255,0.5);line-height:1.9;margin-bottom:12px;}
-.manifesto p strong{color:#fff;}
-.manifesto p em{color:#C8A84B;font-style:normal;}
+.manifesto{max-width:580px;margin:0 auto 40px;padding:0 20px;}
+.m-line{font-size:clamp(14px,2vw,16px);color:rgba(255,255,255,0.4);line-height:1.9;margin-bottom:8px;}
+.m-line strong{color:rgba(255,255,255,0.85);}
+.m-line em{color:#C8A84B;font-style:normal;}
 
-/* Bottom CTA */
-.cta-section{border-top:1px solid rgba(255,255,255,0.06);padding:32px 20px;text-align:center;}
-.cta-text{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px;}
-.cta-text strong{color:#C8A84B;}
-.cta-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;}
+/* CTA — giriş kapısı */
+.cta-section{max-width:520px;width:100%;margin:0 auto 32px;padding:0 20px;}
+.cta-primary{display:block;width:100%;padding:16px;background:#C8A84B;color:#000;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;text-align:center;margin-bottom:10px;}
+.cta-secondary{display:block;width:100%;padding:12px;background:transparent;color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.1);border-radius:10px;font-size:13px;text-decoration:none;text-align:center;}
 
 /* Share */
-.share-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
-.share-btn{padding:8px 18px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;border:none;}
-.share-copy{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1);}
-.share-tw{background:rgba(29,161,242,0.1);color:#1da1f2;border:1px solid rgba(29,161,242,0.2);}
-.share-li{background:rgba(0,119,181,0.1);color:#0077b5;border:1px solid rgba(0,119,181,0.2);}
+.share-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;}
+.sbtn{padding:8px 16px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;border:none;font-family:'DM Sans',sans-serif;}
+.s-copy{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.08);}
+.s-tw{background:rgba(29,161,242,0.08);color:#1da1f2;border:1px solid rgba(29,161,242,0.15);}
+.s-li{background:rgba(0,119,181,0.08);color:#0077b5;border:1px solid rgba(0,119,181,0.15);}
 
-.source{font-size:10px;color:rgba(255,255,255,0.15);margin-top:24px;line-height:1.8;}
+.source{font-size:10px;color:rgba(255,255,255,0.12);text-align:center;line-height:1.9;padding:0 20px 28px;}
 
-/* Pulse dot */
-.live{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:rgba(232,132,90,0.6);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
-.dot{width:6px;height:6px;border-radius:50%;background:#e8845a;animation:pulse 1.5s infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.8);}}
-
-@media(max-width:600px){header{padding:0 20px;}.digit{width:36px;height:50px;}.sep{font-size:20px;}}
+@media(max-width:480px){
+  header{padding:0 16px;}
+  .dual-stats{grid-template-columns:1fr;}
+  .ds:first-child{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06);}
+}
 </style>
 </head>
 <body>
 <header>
   <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
-  <a href="/zai-one.html" style="padding:7px 14px;background:#C8A84B;color:#000;border-radius:6px;font-weight:700;text-decoration:none;font-size:12px;">Route Your File →</a>
+  <a href="/zai-one.html" style="padding:6px 14px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.25);color:#C8A84B;border-radius:6px;font-weight:700;text-decoration:none;font-size:12px;">Check your file →</a>
 </header>
 
 <div class="hero">
-  <div class="eyebrow">FRC Intelligence · CFPB HMDA 2025</div>
+  <div class="live"><div class="dot"></div>live</div>
 
-  <div class="live"><div class="dot"></div> Live counter</div>
-
-  <div class="clock-label">Americans denied an FHA mortgage<br><strong>since January 1, 2025</strong></div>
+  <div class="hook">An FHA borrower was denied<br><strong>every 4 minutes today.</strong></div>
+  <div class="since-open" id="sinceOpen">Since you opened this page: <span id="sinceCount">0</span> more denials.</div>
 
   <div class="clock-wrap">
     <div class="clock" id="clock"></div>
   </div>
+  <div class="clock-sub">denied since <span>January 1, 2025</span> &nbsp;·&nbsp; <span id="perDay">282</span>/day &nbsp;·&nbsp; <span id="perHour">11.7</span>/hour</div>
 
-  <div class="since">
-    <span id="perDay">282</span> per day &nbsp;·&nbsp;
-    <span id="perHour">11.7</span> per hour &nbsp;·&nbsp;
-    <span id="perMin">0.20</span> per minute
-  </div>
-
-  <div class="stats-row">
-    <div class="stat">
-      <div class="stat-num" id="todayCount">0</div>
-      <div class="stat-label">Denied today</div>
+  <div class="dual-stats">
+    <div class="ds">
+      <div class="ds-num red" id="totalDenied">103,022</div>
+      <div class="ds-label">Denied in 2025<br>Source: CFPB HMDA</div>
     </div>
-    <div class="stat">
-      <div class="stat-num" id="thisHour">0</div>
-      <div class="stat-label">This hour</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num green" id="crossCountry">0</div>
-      <div class="stat-label">CrossCountry would approve</div>
+    <div class="ds">
+      <div class="ds-num amber" id="recoverable">41,387</div>
+      <div class="ds-label">Potentially recoverable<br>with a different lender</div>
+      <div class="ds-sub">Based on historical lender behavior differences</div>
     </div>
   </div>
 
   <div class="manifesto">
-    <p>These are not statistics. These are <strong>282 families per day</strong> told no.</p>
-    <p>Same federal guidelines. Same FHA rules. Yet <em>CrossCountry denies 6.37%</em> of applicants while <em>NewRez denies 53.27%</em>. A 47-point gap that most borrowers never see — until it's too late.</p>
-    <p><strong>The difference is not the borrower. It's the lender.</strong></p>
+    <p class="m-line"><strong>A denial is not always a qualification problem.</strong></p>
+    <p class="m-line">Same borrower. Same income. Same credit score.<br><em>CrossCountry denies 6.37%.</em> <em>NewRez denies 53.27%.</em></p>
+    <p class="m-line">The difference is not the borrower.<br><strong>It's the lender.</strong></p>
   </div>
 
   <div class="cta-section">
-    <div class="cta-text">Don't be the next number on this clock.<br><strong>Route your file to a stable lender in 10 seconds.</strong></div>
-    <div class="cta-buttons">
-      <a href="/zai-one.html" style="padding:12px 28px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;">Get Routing Decision →</a>
-      <a href="/lender-stress-index.html" style="padding:12px 20px;background:transparent;color:#C8A84B;border:1px solid rgba(200,168,75,0.3);border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;">See Lender Stability →</a>
-    </div>
+    <a href="/zai-one.html" class="cta-primary">Would your file pass elsewhere? →</a>
+    <a href="/lender-stress-index.html" class="cta-secondary">See which lenders stay stable when markets tighten</a>
+  </div>
 
-    <div class="share-row">
-      <button class="share-btn share-copy" onclick="copyShare()" id="copyShareBtn">📋 Copy stat</button>
-      <a class="share-btn share-tw" href="#" id="twitterShare" target="_blank">𝕏 Tweet this</a>
-      <a class="share-btn share-li" href="#" id="linkedinShare" target="_blank">in Share</a>
-    </div>
+  <div class="share-row">
+    <button class="sbtn s-copy" onclick="copyShare()" id="copyBtn">📋 Copy stat</button>
+    <a class="sbtn s-tw" id="twBtn" href="#" target="_blank">𝕏 Tweet</a>
+    <a class="sbtn s-li" id="liBtn" href="#" target="_blank">in Share</a>
+  </div>
 
-    <div class="source">
-      Source: CFPB HMDA 2025 Public Dataset · 103,022 FHA denials · 399,179 total FHA applications · 11 major lenders<br>
-      Counter calculates elapsed time since Jan 1, 2025 00:00:00 UTC · Educational purposes only · Not financial advice
-    </div>
+  <div class="source">
+    Source: CFPB HMDA 2025 · 103,022 FHA denials · 399,179 total records · 11 lenders · 51 states<br>
+    "Potentially recoverable" = estimated files that fall within CrossCountry/Guild approval parameters<br>
+    Counter calculates elapsed time since Jan 1 2025 00:00 UTC · Educational only · Not financial advice
   </div>
 </div>
 
 <script>
-// Gerçek HMDA 2025 verileri
-const TOTAL_DENIALS_2025 = 103022;
 const YEAR_START = new Date('2025-01-01T00:00:00Z').getTime();
-const DENIALS_PER_MS = TOTAL_DENIALS_2025 / (365 * 24 * 60 * 60 * 1000);
-const DENIALS_PER_DAY = 282.25;
-const DENIALS_PER_HOUR = 11.76;
-const DENIALS_PER_MIN = 0.196;
-// CrossCountry'nin 6.37% denial rate'i → %93.63 approval
-// NewRez 53.27% → vs CrossCountry farkı: 46.9pp
-// Reddedilenlerin kaçı CrossCountry'de onaylanırdı?
-const CC_WOULD_APPROVE_PCT = 0.469; // yaklaşık
+const TOTAL = 103022;
+const PER_MS = TOTAL / (365 * 24 * 60 * 60 * 1000);
+const RECOVERABLE_PCT = 0.4017; // 41,387 / 103,022
+const PAGE_OPEN = Date.now();
 
 function getCount() {
-  const now = Date.now();
-  const elapsed = now - YEAR_START;
-  return Math.floor(elapsed * DENIALS_PER_MS);
+  return Math.floor((Date.now() - YEAR_START) * PER_MS);
 }
 
-function getTodayCount() {
-  const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const elapsed = Date.now() - todayStart;
-  return Math.floor(elapsed * DENIALS_PER_MS);
-}
-
-function getThisHourCount() {
-  const now = new Date();
-  const hourStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours()).getTime();
-  const elapsed = Date.now() - hourStart;
-  return Math.floor(elapsed * DENIALS_PER_MS);
-}
-
-function formatNumber(n) {
-  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+function fmt(n) {
+  return Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 function renderClock(count) {
-  const str = count.toString().padStart(7, '0');
-  const digits = str.split('');
-  const container = document.getElementById('clock');
-
-  // Milyon + binler + yüzler + onlar + birler
+  const s = count.toString().padStart(7, '0');
   let html = '';
-  digits.forEach((d, i) => {
-    if(i === 1 || i === 4) {
-      html += `<span class="sep">,</span>`;
-    }
+  s.split('').forEach((d, i) => {
+    if(i === 1 || i === 4) html += `<span class="sep">,</span>`;
     html += `<div class="digit" id="d${i}">${d}</div>`;
   });
-  container.innerHTML = html;
+  document.getElementById('clock').innerHTML = html;
 }
 
-let lastDigits = '';
-function updateClock() {
+let lastStr = '';
+function tick() {
   const count = getCount();
   const str = count.toString().padStart(7, '0');
 
-  if(str !== lastDigits) {
-    // Flash değişen digit
-    str.split('').forEach((d, i) => {
-      if(lastDigits[i] !== d) {
-        const el = document.getElementById('d' + i);
-        if(el) {
-          el.classList.add('flip');
-          el.textContent = d;
-          setTimeout(() => el && el.classList.remove('flip'), 200);
-        }
+  if(!lastStr) { renderClock(count); lastStr = str; }
+
+  str.split('').forEach((d, i) => {
+    if(lastStr[i] !== d) {
+      const el = document.getElementById('d' + i);
+      if(el) {
+        el.classList.add('flip');
+        el.textContent = d;
+        setTimeout(() => el && el.classList.remove('flip'), 200);
       }
-    });
-    if(!lastDigits) renderClock(count);
-    lastDigits = str;
-  }
+    }
+  });
+  lastStr = str;
 
-  // Alt sayaçlar
-  const today = getTodayCount();
-  const hour = getThisHourCount();
-  const cc = Math.floor(count * CC_WOULD_APPROVE_PCT);
+  // Since open
+  const sinceOpen = Math.floor((Date.now() - PAGE_OPEN) * PER_MS * 10) / 10;
+  document.getElementById('sinceCount').textContent = sinceOpen.toFixed(1);
 
-  document.getElementById('todayCount').textContent = formatNumber(today);
-  document.getElementById('thisHour').textContent = formatNumber(hour);
-  document.getElementById('crossCountry').textContent = formatNumber(cc);
+  // Recoverable
+  document.getElementById('recoverable').textContent = fmt(count * RECOVERABLE_PCT);
+  document.getElementById('totalDenied').textContent = fmt(count);
 
-  // Share metni güncelle
-  updateShareLinks(count);
-}
-
-function updateShareLinks(count) {
-  const text = `${formatNumber(count)} Americans have been denied FHA mortgages since Jan 1, 2025. That's 282 per day. CrossCountry denies 6.37%. NewRez denies 53.27%. The difference is the lender. financeratecalc.com/denial-clock.html`;
-
-  document.getElementById('twitterShare').href = 
-    `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-  
-  document.getElementById('linkedinShare').href = 
-    `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://financeratecalc.com/denial-clock.html')}`;
+  // Share links
+  const text = `An FHA borrower is denied every 4 minutes in America.\n\n${fmt(count)} denied since Jan 1, 2025.\n${fmt(count * RECOVERABLE_PCT)} may have qualified elsewhere.\n\nA denial is not always a qualification problem.\nfinanceratecalc.com/denial-clock.html`;
+  document.getElementById('twBtn').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+  document.getElementById('liBtn').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://financeratecalc.com/denial-clock.html')}`;
 }
 
 function copyShare() {
   const count = getCount();
-  const text = `${formatNumber(count)} Americans denied FHA mortgages in 2025.\n282 per day. 11.7 per hour.\nCrossCountry: 6.37% denial rate.\nNewRez: 53.27% denial rate.\nThe difference is the lender.\nfinanceratecalc.com/denial-clock.html`;
-  
+  const text = `An FHA borrower is denied every 4 minutes in America.\n\n${fmt(count)} denied since Jan 1, 2025.\n${fmt(count * RECOVERABLE_PCT)} may have qualified elsewhere.\n\n"A denial is not always a qualification problem."\n\nData: CFPB HMDA 2025\nfinanceratecalc.com/denial-clock.html`;
   navigator.clipboard.writeText(text).catch(() => {
     const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
   });
-  
-  const btn = document.getElementById('copyShareBtn');
+  const btn = document.getElementById('copyBtn');
   btn.textContent = '✓ Copied!';
-  setTimeout(() => btn.textContent = '📋 Copy stat', 2000);
-  
-  if(typeof gtag !== 'undefined') gtag('event', 'share_clock', {event_label: 'copy'});
+  setTimeout(() => btn.textContent = '📋 Copy stat', 2500);
+  if(typeof gtag !== 'undefined') gtag('event','share_clock',{event_label:'copy'});
 }
 
-// Init
-renderClock(getCount());
-updateClock();
-setInterval(updateClock, 500);
-
-if(typeof gtag !== 'undefined') gtag('event', 'page_view', {page_title: 'Denial Clock'});
+tick();
+setInterval(tick, 500);
+if(typeof gtag !== 'undefined') gtag('event','page_view',{page_title:'Denial Clock'});
 </script>
 </body>
 </html>
