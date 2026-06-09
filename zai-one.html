@@ -448,6 +448,57 @@ function buildEvidenceLayer(lsi_data, lenderName) {
   '</div>';
 }
 
+
+// 9+2 STRUCTURE — validated via BIC model selection, LOYO ρ=0.894, label-randomization p<0.0001
+const CURRENT_OFI = 57;
+const LENDER_CLASS = {
+  'CrossCountry': {cls:'CORE', badge:'Stable Core', color:'#27ae60', note:null},
+  'Guild':        {cls:'CORE', badge:'Stable Core', color:'#27ae60', note:null},
+  'UWM':          {cls:'CORE', badge:'Stable Core', color:'#27ae60', note:'2026 watchlist: rising trend (+6.8pp above 8-yr avg)'},
+  'Planet Home':  {cls:'CORE', badge:'Stable Core', color:'#27ae60', note:null},
+  'Mr. Cooper':   {cls:'CORE', badge:'Stable Core', color:'#27ae60', note:null},
+  'Rocket':       {cls:'CORE', badge:'Stable Core', color:'#27ae60', note:null},
+  'loanDepot':    {cls:'CORE', badge:'Stable Core', color:'#27ae60', note:null},
+  'PennyMac':     {cls:'TREND', badge:'Improving Trend', color:'#27ae60', note:'Denial rate improved from 52.8% (2018) to 23.6% (2025). Historical average overstates current risk.'},
+  'Wells Fargo':  {cls:'CHAOS', badge:'Unpredictable', color:'#e8845a', note:'Behavior uncorrelated with market conditions. FHA volume down 63% since 2019 — possible exit strategy.'},
+  'Freedom':      {cls:'REGIME', badge:'Regime-Sensitive', color:'#C8A84B', note:'Denial behavior couples directly to market friction. Current OFI ' + 57 + ' is above safe threshold (50).'},
+  'NewRez':       {cls:'REGIME', badge:'Regime-Sensitive', color:'#C8A84B', note:'Highest market-coupling in 8-yr dataset (r=0.84). Hit 61.7% denial during 2022 friction spike.'}
+};
+
+function getLenderClass(name) {
+  if(!name) return null;
+  const n = name.toLowerCase();
+  for(const [k,v] of Object.entries(LENDER_CLASS)) {
+    if(n.includes(k.toLowerCase().split(' ')[0])) return {key:k, ...v};
+  }
+  return null;
+}
+
+// Regime gate: OFI > 50 → Freedom & NewRez kapısı kapalı
+function regimeGateWarning(name) {
+  const lc = getLenderClass(name);
+  if(!lc) return '';
+  if(lc.cls === 'REGIME' && CURRENT_OFI > 50) {
+    return '<div style="margin-top:8px;padding:8px 12px;background:rgba(232,132,90,0.06);border:1px solid rgba(232,132,90,0.25);border-radius:7px;font-size:11px;color:#e8845a;">⚠ <strong>Regime gate active:</strong> Current market friction (OFI ' + CURRENT_OFI + ') exceeds this lender\'s stability threshold. Historical data shows elevated denial risk in this condition. Consider a Stable Core lender for time-sensitive files.</div>';
+  }
+  if(lc.cls === 'CHAOS') {
+    return '<div style="margin-top:8px;padding:8px 12px;background:rgba(232,132,90,0.06);border:1px solid rgba(232,132,90,0.25);border-radius:7px;font-size:11px;color:#e8845a;">⚠ <strong>Reliability flag:</strong> ' + lc.note + '</div>';
+  }
+  if(lc.cls === 'TREND') {
+    return '<div style="margin-top:8px;padding:8px 12px;background:rgba(39,174,96,0.05);border:1px solid rgba(39,174,96,0.2);border-radius:7px;font-size:11px;color:#27ae60;">↗ <strong>Trend note:</strong> ' + lc.note + '</div>';
+  }
+  if(lc.note) {
+    return '<div style="margin-top:8px;padding:8px 12px;background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:7px;font-size:11px;color:rgba(200,168,75,0.8);">◉ ' + lc.note + '</div>';
+  }
+  return '';
+}
+
+function classTag(name) {
+  const lc = getLenderClass(name);
+  if(!lc) return '';
+  return '<span style="font-size:10px;font-weight:700;color:'+lc.color+';background:'+lc.color+'14;border:1px solid '+lc.color+'33;padding:2px 7px;border-radius:10px;margin-left:6px;">'+lc.badge+'</span>';
+}
+
 const LSI_SCORES = {
   'CrossCountry':{lsi:6,label:'Stable',color:'#27ae60'},
   'Guild':{lsi:21,label:'Stable',color:'#27ae60'},
@@ -486,24 +537,27 @@ function buildLenderBlock(g) {
     '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:4px;">' +
         '<span style="font-size:13px;font-weight:700;color:#6bffb8;">✓ ' + l1 + '</span>' +
-        '<div>' + lsiTag(l1) + '<span style="font-size:10px;color:rgba(107,255,184,0.5);font-weight:700;margin-left:6px;">BEST FIT</span></div>' +
+        '<div>' + lsiTag(l1) + classTag(l1) + '<span style="font-size:10px;color:rgba(107,255,184,0.5);font-weight:700;margin-left:6px;">BEST FIT</span></div>' +
       '</div>' +
       '<div style="font-size:12px;color:rgba(255,255,255,0.6);">' + g('LENDER1_WHY') + '</div>' +
+    regimeGateWarning(l1) +
     buildEvidenceLayer(l1, g('LENDER1_NAME')) +
     '</div>' +
     '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:4px;">' +
         '<span style="font-size:13px;font-weight:700;color:#C8A84B;">~ ' + g('LENDER2_NAME') + '</span>' +
-        '<div>' + lsiTag(g('LENDER2_NAME')) + '<span style="font-size:10px;color:rgba(200,168,75,0.5);font-weight:700;margin-left:6px;">BACKUP</span></div>' +
+        '<div>' + lsiTag(g('LENDER2_NAME')) + classTag(g('LENDER2_NAME')) + '<span style="font-size:10px;color:rgba(200,168,75,0.5);font-weight:700;margin-left:6px;">BACKUP</span></div>' +
       '</div>' +
       '<div style="font-size:12px;color:rgba(255,255,255,0.6);">' + g('LENDER2_WHY') + '</div>' +
+    regimeGateWarning(g('LENDER2_NAME')) +
     '</div>' +
     '<div style="padding:8px 0;">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:4px;">' +
         '<span style="font-size:13px;font-weight:700;color:#e8845a;">✗ ' + g('LENDER3_NAME') + '</span>' +
-        '<div>' + lsiTag(g('LENDER3_NAME')) + '<span style="font-size:10px;color:rgba(232,132,90,0.5);font-weight:700;margin-left:6px;">AVOID</span></div>' +
+        '<div>' + lsiTag(g('LENDER3_NAME')) + classTag(g('LENDER3_NAME')) + '<span style="font-size:10px;color:rgba(232,132,90,0.5);font-weight:700;margin-left:6px;">AVOID</span></div>' +
       '</div>' +
       '<div style="font-size:12px;color:rgba(255,255,255,0.6);">' + g('LENDER3_WHY') + '</div>' +
+    regimeGateWarning(g('LENDER3_NAME')) +
     '</div>' +
   '</div>';
 }
@@ -1115,6 +1169,9 @@ KILLER3: [approval killer #3 or N/A]`;
 </div>
 <div style="text-align:center;margin-top:8px;font-size:11px;color:rgba(255,255,255,0.25);">
   <a href="/denial-clock.html" style="color:rgba(232,132,90,0.5);text-decoration:none;">🔴 282 Americans denied FHA today — see the clock</a>
+</div>
+<div style="text-align:center;padding:12px;font-size:11px;color:rgba(255,255,255,0.2);">
+  Routing logic based on <a href="/fha-lending-structure-research.html" style="color:rgba(200,168,75,0.5);text-decoration:none;">The 9+2 Structure of FHA Lending</a> — 8-year HMDA study
 </div>
 </body>
 </html>
