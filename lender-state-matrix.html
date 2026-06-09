@@ -62,15 +62,15 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 
   <div class="controls">
     <span class="ctrl-label">Year:</span>
-    <select class="ctrl" id="yearSel" onchange="render()">
-      <option value="2025">2025</option>
-      <option value="2024">2024</option>
-      <option value="2023">2023</option>
-      <option value="2022">2022</option>
-      <option value="2021">2021</option>
-      <option value="2020">2020</option>
-      <option value="2019">2019</option>
-      <option value="2018">2018</option>
+    <select class="ctrl" id="yearSel" onchange="checkYearAccess(this.value)">
+      <option value="2025">2025 ✓ Free</option>
+      <option value="2024">2024 ✓ Free</option>
+      <option value="2023">2023 🔒 Pro</option>
+      <option value="2022">2022 🔒 Pro</option>
+      <option value="2021">2021 🔒 Pro</option>
+      <option value="2020">2020 🔒 Pro</option>
+      <option value="2019">2019 🔒 Pro</option>
+      <option value="2018">2018 🔒 Pro</option>
     </select>
     <span class="ctrl-label" style="margin-left:8px;">Sort by:</span>
     <select class="ctrl" id="sortSel" onchange="render()">
@@ -94,7 +94,12 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     <div class="leg"><span class="best">■</span> Best in state</div>
   </div>
 
-  <div class="matrix-wrap">
+  <div id="lockMsg" style="display:none;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.3);border-radius:10px;padding:16px 20px;margin-bottom:12px;text-align:center;">
+  <div style="font-size:14px;font-weight:700;margin-bottom:6px;">🔒 2018–2023 Historical Data — Pro Only</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:12px;">8-year trend analysis requires FRC Intelligence Pro subscription.</div>
+  <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" style="padding:9px 20px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Unlock All Years — $49/month →</a>
+</div>
+<div class="matrix-wrap">
     <table id="tbl"></table>
   </div>
 
@@ -129,6 +134,19 @@ function rateClass(r) {
 function fmt(r) {
   if(r===null||r===undefined) return '—';
   return r.toFixed(1)+'%';
+}
+
+
+function checkYearAccess(year) {
+  const freeYears = ['2024','2025'];
+  if(!freeYears.includes(year)) {
+    document.getElementById('lockMsg').style.display = 'block';
+    document.getElementById('yearSel').value = '2024';
+    render();
+    return;
+  }
+  document.getElementById('lockMsg').style.display = 'none';
+  render();
 }
 
 async function render() {

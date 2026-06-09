@@ -319,12 +319,24 @@ header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;al
     </div>
 
     <button class="submit-btn" onclick="getDecision()" id="btn">Get Routing Decision →</button>
+    <div id="limitBadge" style="text-align:center;font-size:11px;margin-top:8px;"></div>
 
     <div class="market-signal">
       <div class="ms-label">Market OFI Signal</div>
       <div class="ms-num">47</div>
       <div class="ms-sub">Q2 2026 — Moderate, Re-tightening</div>
     </div>
+
+    
+<div style="background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.15);border-radius:10px;padding:16px 20px;margin:16px 0;">
+  <div style="font-size:11px;font-weight:700;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">📊 Weekly LSI Alert — Free</div>
+  <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:10px;">Every Monday: market OFI change + which lenders shifted stability. No spam.</div>
+  <div style="display:flex;gap:8px;">
+    <input type="email" id="alertEmail" placeholder="your@email.com" style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:8px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;">
+    <button onclick="subscribeAlert()" style="padding:8px 16px;background:#C8A84B;color:#000;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:13px;">Subscribe</button>
+  </div>
+  <div id="alertMsg" style="font-size:11px;color:rgba(107,255,184,0.7);margin-top:6px;display:none;">✓ Subscribed! First alert next Monday.</div>
+</div>
 
     <div class="gumroad-cta">
       <p>Unlimited routing decisions for licensed brokers</p>
@@ -576,6 +588,21 @@ async function loadFRDI() {
     document.getElementById('btn').textContent = 'Get Routing Decision \u2192';}
 }
 loadFRDI();
+updateLimitUI();
+
+function subscribeAlert() {
+  const email = document.getElementById('alertEmail').value;
+  if(!email || !email.includes('@')) return;
+  fetch('https://formspree.io/f/mkoewrgp', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({type:'lsi_alert_signup', email:email, source:'zai-one', ofi:47})
+  }).catch(()=>{});
+  document.getElementById('alertMsg').style.display='block';
+  document.getElementById('alertEmail').value='';
+  if(typeof gtag!=='undefined') gtag('event','lsi_alert_signup',{event_label:email});
+}
+
 
 function buildTrendRow(route) {
   const trendMap = {
@@ -728,7 +755,54 @@ function calcScore(fico, dti, income, ofi, type) {
   return Math.max(5, Math.min(95, score));
 }
 
+
+// Daily limit — 3 free decisions per day
+const ZAI_LIMIT = 3;
+function getUsageToday() {
+  const today = new Date().toDateString();
+  const stored = localStorage.getItem('zai_usage');
+  if(!stored) return {count:0, date:today};
+  const data = JSON.parse(stored);
+  if(data.date !== today) return {count:0, date:today};
+  return data;
+}
+function incrementUsage() {
+  const usage = getUsageToday();
+  usage.count++;
+  localStorage.setItem('zai_usage', JSON.stringify(usage));
+  return usage.count;
+}
+function checkLimit() {
+  const usage = getUsageToday();
+  return usage.count < ZAI_LIMIT;
+}
+function updateLimitUI() {
+  const usage = getUsageToday();
+  const remaining = Math.max(0, ZAI_LIMIT - usage.count);
+  const el = document.getElementById('limitBadge');
+  if(el) {
+    if(remaining > 0) {
+      el.innerHTML = '<span style="color:rgba(107,255,184,0.7);">' + remaining + ' free decision' + (remaining===1?'':'s') + ' remaining today</span>';
+    } else {
+      el.innerHTML = '<span style="color:#e8845a;">Daily limit reached — <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" style="color:#C8A84B;font-weight:700;">Unlock unlimited →</a></span>';
+    }
+  }
+}
+
 async function getDecision() {
+  // Check daily limit
+  if(!checkLimit()) {
+    document.getElementById('empty').style.display='none';
+    document.getElementById('decision').innerHTML = `
+      <div style="background:rgba(200,168,75,0.08);border:2px solid rgba(200,168,75,0.3);border-radius:12px;padding:28px;text-align:center;">
+        <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:8px;">Daily Limit Reached</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:20px;">You've used your 3 free routing decisions for today.</div>
+        <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" style="display:inline-block;padding:12px 28px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">Unlock Unlimited — $49/month →</a>
+        <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:12px;">Resets daily at midnight · Cancel anytime</div>
+      </div>`;
+    document.getElementById('decision').classList.add('show');
+    return;
+  }
   const fico = document.getElementById('fico').value;
   const dti = document.getElementById('dti').value;
   // Validation \u2014 k\u0131rm\u0131z\u0131 highlight
@@ -896,6 +970,8 @@ KILLER3: [approval killer #3 or N/A]`;
     document.getElementById('decision').classList.add('show');
 
     if(typeof gtag!=='undefined') gtag('event','zai_one_decision',{event_category:'conversion',event_label:route});
+    incrementUsage();
+    updateLimitUI();
 
   } catch(e) {
     document.getElementById('btn').disabled = false;
