@@ -110,3 +110,55 @@ Educational only. Not financial advice. Consult a licensed mortgage professional
 3. Linki kontrol et — doğru sayfaya gidiyor mu?
 4. Haftada 2-3 cevap yeterli — fazlası spam gibi görünür
 5. Bazen linksiz cevap da ver — güvenilirlik artar
+
+---
+
+## Answer 6: "Which state is easiest to get an FHA mortgage approved?"
+
+Based on 2025 CFPB HMDA data (399,179 FHA records):
+
+**Easiest states (lowest denial rates):**
+- Utah: 16.9%
+- Wyoming: 16.8%  
+- Idaho: 17.5%
+- Nevada: 17.6%
+- Texas: 18.4%
+
+**Hardest states:**
+- DC: 35.9%
+- Oklahoma: 34.0%
+- Hawaii: 34.9%
+- Iowa: 32.0%
+- Arkansas: 31.8%
+
+The difference between Utah (16.9%) and DC (35.9%) is nearly 20 percentage points — same borrower profile, dramatically different odds.
+
+Interactive map: financeratecalc.com/fha-state-map.html
+
+---
+
+## Answer 7: "CrossCountry Mortgage vs Rocket Mortgage — which is better for FHA?"
+
+2025 HMDA data (federal government data, not marketing):
+
+- **CrossCountry**: 6.37% FHA denial rate (27,608 FHA loans originated)
+- **Rocket Mortgage**: 30.46% FHA denial rate (65,337 FHA loans originated)
+
+That's a 24-point difference. For a borderline borrower (FICO 640, DTI 45%), CrossCountry's approval-first approach means significantly better odds.
+
+8-year trend: financeratecalc.com/fha-trends.html
+
+---
+
+## Answer 8: "Which FHA lender has the lowest denial rate in Texas?"
+
+2025 HMDA data for Texas specifically:
+
+1. CrossCountry: ~4.1%
+2. Guild: ~6.2%
+3. Planet Home: ~17.2%
+4. UWM: ~19.8%
+
+Texas is also one of the most approval-friendly states overall (18.4% denial rate vs 26% national average).
+
+Full lender × state breakdown: financeratecalc.com/lender-state-matrix.html

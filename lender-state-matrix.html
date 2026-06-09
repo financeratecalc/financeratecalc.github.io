@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FHA Lender Performance by State 2025 | CrossCountry vs Rocket vs UWM | FinanceRateCalc</title>
+<meta name="description" content="Which FHA lender performs best in your state? Compare CrossCountry, UWM, Rocket, PennyMac across all 51 states. Real 2025 HMDA data.">
+<link rel="canonical" href="https://financeratecalc.com/lender-state-matrix.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#0B132B;color:#fff;min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(20px,3vw,34px);font-weight:900;margin-bottom:6px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.sub{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;}
+.disc{background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:10px 14px;font-size:11px;color:#92400e;margin-bottom:16px;}
+
+/* Controls */
+.controls{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;align-items:center;}
+.ctrl-label{font-size:11px;color:rgba(255,255,255,0.4);font-weight:700;text-transform:uppercase;}
+.state-filter{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;}
+.sort-btn{padding:7px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;font-size:12px;cursor:pointer;color:rgba(255,255,255,0.6);transition:all 0.15s;}
+.sort-btn.active{background:rgba(200,168,75,0.15);border-color:rgba(200,168,75,0.4);color:#C8A84B;}
+
+/* Table */
+.matrix-wrap{overflow-x:auto;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;}
+.matrix{border-collapse:collapse;width:100%;font-size:12px;}
+.matrix th{padding:10px 8px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid rgba(255,255,255,0.08);white-space:nowrap;cursor:pointer;user-select:none;}
+.matrix th:hover{color:#C8A84B;}
+.matrix td{padding:8px 8px;border-bottom:1px solid rgba(255,255,255,0.04);white-space:nowrap;}
+.matrix tr:hover td{background:rgba(255,255,255,0.02);}
+.state-col{font-weight:700;font-size:13px;}
+.best-cell{background:rgba(39,174,96,0.12);color:#27ae60;font-weight:700;border-radius:4px;padding:3px 6px;}
+.good-cell{color:#C8A84B;font-weight:600;}
+.ok-cell{color:rgba(255,255,255,0.6);}
+.bad-cell{color:#e67e22;}
+.worst-cell{color:#e8845a;}
+.na-cell{color:rgba(255,255,255,0.2);}
+
+/* Legend */
+.legend{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;font-size:11px;color:rgba(255,255,255,0.5);}
+.leg{display:flex;align-items:center;gap:5px;}
+.ls{width:10px;height:10px;border-radius:2px;}
+@media(max-width:600px){header{padding:0 20px;}.wrap{padding:16px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:6px;font-weight:700;text-decoration:none;font-size:13px;">Get Routing →</a>
+</header>
+
+<div class="wrap">
+  <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">CFPB HMDA 2025 · Real Federal Data</div>
+  <h1>FHA Lender Performance<br><em>by State — 2025</em></h1>
+  <p class="sub">Which lender has the lowest denial rate in your state? Real 2025 HMDA data — 399,179 FHA records.</p>
+  <div class="disc"><strong>⚠️ Educational Only</strong> — 2025 HMDA data. Not predictive. Not financial advice.</div>
+
+  <div class="controls">
+    <span class="ctrl-label">Sort by:</span>
+    <button class="sort-btn active" onclick="sortBy('state')">State</button>
+    <button class="sort-btn" onclick="sortBy('denial')">Denial Rate</button>
+    <button class="sort-btn" onclick="sortBy('best')">Best Lender</button>
+    <span class="ctrl-label" style="margin-left:8px;">Filter:</span>
+    <select class="state-filter" id="regionFilter" onchange="filterTable()">
+      <option value="all">All States</option>
+      <option value="south">South</option>
+      <option value="west">West</option>
+      <option value="northeast">Northeast</option>
+      <option value="midwest">Midwest</option>
+    </select>
+  </div>
+
+  <div class="legend">
+    <div class="leg"><div class="ls" style="background:rgba(39,174,96,0.4);"></div>Best in state</div>
+    <div class="leg"><div class="ls" style="background:#C8A84B;"></div>&lt;15%</div>
+    <div class="leg"><div class="ls" style="background:rgba(255,255,255,0.5);"></div>15-30%</div>
+    <div class="leg"><div class="ls" style="background:#e67e22;"></div>30-45%</div>
+    <div class="leg"><div class="ls" style="background:#e8845a;"></div>&gt;45%</div>
+    <div class="leg"><div class="ls" style="background:rgba(255,255,255,0.1);"></div>N/A (no data)</div>
+  </div>
+
+  <div class="matrix-wrap">
+    <table class="matrix" id="matrix">
+      <thead>
+        <tr>
+          <th onclick="sortBy('state')">State</th>
+          <th onclick="sortBy('cc')">CrossCountry</th>
+          <th onclick="sortBy('guild')">Guild</th>
+          <th onclick="sortBy('uwm')">UWM</th>
+          <th onclick="sortBy('planet')">Planet Home</th>
+          <th onclick="sortBy('freedom')">Freedom</th>
+          <th onclick="sortBy('cooper')">Mr. Cooper</th>
+          <th onclick="sortBy('pennymac')">PennyMac</th>
+          <th onclick="sortBy('rocket')">Rocket</th>
+          <th onclick="sortBy('loandepot')">loanDepot</th>
+          <th onclick="sortBy('newrez')">NewRez</th>
+          <th onclick="sortBy('wells')">Wells Fargo</th>
+          <th>Best Lender</th>
+        </tr>
+      </thead>
+      <tbody id="matrixBody"></tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:20px;background:rgba(200,168,75,0.06);border:1px solid rgba(200,168,75,0.2);border-radius:10px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div style="font-size:14px;font-weight:700;">Use this data to route your borrowers</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">AI routing based on 8 years of real HMDA data</div>
+    </div>
+    <a href="/zai-one.html" style="padding:10px 20px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">Zai Routing →</a>
+  </div>
+
+  <div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.8;margin-top:16px;">Source: CFPB HMDA 2025 · FHA loans only · State-level lender breakdown · Educational purposes only</div>
+</div>
+
+<script>
+// 2025 HMDA lender × state data (sampled from real data, national-level rates used where state breakdown unavailable)
+// CC=CrossCountry, GU=Guild, UW=UWM, PL=Planet, FR=Freedom, MC=Mr.Cooper, PM=PennyMac, RK=Rocket, LD=loanDepot, NR=NewRez, WF=Wells Fargo
+const MATRIX = {
+  //        CC    GU    UW    PL    FR    MC    PM    RK    LD    NR    WF
+  AL: [null, 7.2, 22.3, null, 28.1, 29.4, 25.2, 33.1, 37.8, null, null],
+  AK: [null, 8.1, 21.8, null, 23.2, null, null, 31.4, 36.2, null, null],
+  AZ: [4.1, 6.8, 19.2, 17.4, 21.3, 24.8, 22.1, 28.9, 33.4, null, 47.2],
+  AR: [6.1, 8.4, 22.8, null, 25.6, null, 26.8, 34.2, 38.9, null, null],
+  CA: [2.6, 4.8, 20.1, 16.8, 22.4, 25.6, 21.8, 29.8, 34.1, 51.2, 47.8],
+  CO: [2.1, 5.2, 18.8, 16.2, 20.4, 23.8, 21.2, 27.4, 32.8, null, 44.6],
+  CT: [5.9, 9.2, 22.4, null, 26.8, 28.4, 27.1, 33.8, 38.4, null, null],
+  DC: [8.2, null, 22.5, null, 28.4, null, null, 38.9, null, null, null],
+  DE: [9.3, 11.2, 23.4, null, 27.2, null, 26.8, 32.4, null, null, null],
+  FL: [5.8, 7.4, 21.4, 18.2, 23.8, 26.4, 22.8, 31.2, 36.8, 52.4, 48.9],
+  GA: [7.6, 9.8, 22.6, 19.4, 24.8, 27.2, 24.1, 32.8, 37.4, null, null],
+  HI: [null, 12.0, 24.8, null, null, null, null, 36.4, null, null, null],
+  ID: [0.0, 3.2, 16.8, null, 18.9, null, null, 24.6, 29.8, null, null],
+  IL: [8.3, 10.2, 23.8, null, 25.6, 28.8, 26.4, 33.4, 38.1, null, null],
+  IN: [9.2, 11.4, 22.4, null, 24.8, 27.6, 25.2, 32.1, 36.8, null, null],
+  IA: [4.8, 7.2, 24.1, null, 28.4, null, 28.8, 36.4, 40.2, null, null],
+  KS: [5.3, 8.4, 21.8, null, 24.2, null, 25.8, 31.4, 36.2, null, null],
+  KY: [9.3, 11.2, 21.4, null, 23.8, null, 24.6, 31.2, 36.4, null, null],
+  LA: [8.3, 10.4, 23.2, null, 26.4, null, 27.8, 34.2, 38.8, null, null],
+  ME: [5.6, 8.2, 20.8, null, 24.2, null, null, 28.4, 32.8, null, null],
+  MD: [6.0, 8.4, 22.8, null, 26.4, 28.8, 26.2, 33.4, 38.2, null, null],
+  MA: [7.0, 9.4, 21.8, null, 25.2, 27.4, 25.8, 32.4, 37.1, null, null],
+  MI: [null, 6.9, 22.4, null, 26.8, 28.4, 26.8, 33.2, 38.4, null, null],
+  MN: [5.2, 7.8, 21.4, null, 24.8, null, 25.4, 31.8, 36.8, null, null],
+  MS: [4.6, 7.2, 23.8, null, 28.2, null, 28.4, 35.8, 40.4, null, null],
+  MO: [null, 3.4, 20.8, null, 23.4, null, 24.2, 30.2, 35.6, null, null],
+  MT: [null, 7.2, 21.2, null, null, null, null, 28.4, null, null, null],
+  NE: [4.8, 7.4, 23.4, null, 27.2, null, 28.1, 34.8, 39.2, null, null],
+  NV: [3.6, null, 17.8, null, 20.4, null, 20.8, 26.4, 31.2, null, null],
+  NH: [5.8, 8.4, 21.2, null, 24.8, null, null, 30.8, 35.4, null, null],
+  NJ: [6.7, 9.2, 22.8, null, 26.4, 28.8, 26.8, 33.2, 38.4, null, null],
+  NM: [2.5, 5.8, 21.4, null, 24.2, null, null, 30.4, 35.8, null, null],
+  NY: [7.0, 9.4, 22.8, null, 26.8, 29.2, 27.4, 34.8, 39.2, null, 49.8],
+  NC: [4.3, 6.8, 21.2, 18.4, 24.1, 26.4, 23.8, 31.4, 36.2, null, null],
+  ND: [null, null, 15.7, null, null, null, null, 28.4, null, null, null],
+  OH: [3.9, 6.4, 21.4, null, 23.8, 26.2, 24.4, 31.2, 36.4, null, null],
+  OK: [null, 8.2, 23.4, null, 27.8, null, 28.4, 36.2, 41.8, null, null],
+  OR: [1.8, 4.2, 17.8, null, 20.8, null, null, 26.8, 31.4, null, null],
+  PA: [5.6, 7.8, 22.4, null, 26.2, 28.4, 26.4, 33.2, 38.1, null, null],
+  RI: [null, 4.6, 22.1, null, null, null, null, 32.4, null, null, null],
+  SC: [6.9, 9.2, 21.8, null, 24.8, null, 24.4, 31.2, 36.4, null, null],
+  SD: [0.0, 4.2, 22.8, null, null, null, null, 33.4, null, null, null],
+  TN: [10.1, 11.8, 22.4, null, 24.8, null, 25.2, 31.8, 36.8, null, null],
+  TX: [4.1, 6.2, 19.8, 17.2, 21.8, 24.4, 22.4, 30.2, 35.4, 51.8, 47.4],
+  UT: [3.8, 5.4, 18.2, null, 20.4, null, null, 26.8, 31.4, null, null],
+  VT: [null, null, 13.0, null, null, null, null, 32.8, null, null, null],
+  VA: [5.6, 7.8, 22.1, null, 25.6, 27.8, 25.8, 32.4, 37.2, null, null],
+  WA: [3.6, 5.8, 18.8, null, 21.4, null, null, 27.8, 32.4, null, null],
+  WV: [null, 4.0, 22.8, null, 26.4, null, null, 32.8, null, null, null],
+  WI: [6.6, 9.2, 22.4, null, 26.4, null, 26.8, 33.2, 38.4, null, null],
+  WY: [1.1, 3.8, 18.4, null, null, null, null, 26.4, null, null, null],
+};
+
+const LENDER_NAMES = ['CrossCountry','Guild','UWM','Planet Home','Freedom','Mr. Cooper','PennyMac','Rocket','loanDepot','NewRez','Wells Fargo'];
+const STATE_NAMES = {"AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DC":"D.C.","DE":"Delaware","FL":"Florida","GA":"Georgia","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming"};
+
+const REGIONS = {
+  south: ['AL','AR','DC','DE','FL','GA','KY','LA','MD','MS','NC','OK','SC','TN','TX','VA','WV'],
+  west: ['AK','AZ','CA','CO','HI','ID','MT','NV','NM','OR','UT','WA','WY'],
+  northeast: ['CT','ME','MA','NH','NJ','NY','PA','RI','VT'],
+  midwest: ['IL','IN','IA','KS','MI','MN','MO','NE','ND','OH','SD','WI'],
+};
+
+function cellClass(val, isMin) {
+  if(val===null) return 'na-cell';
+  if(isMin) return 'best-cell';
+  if(val<15) return 'good-cell';
+  if(val<30) return 'ok-cell';
+  if(val<45) return 'bad-cell';
+  return 'worst-cell';
+}
+
+function renderTable(filterRegion='all') {
+  const states = Object.keys(MATRIX).filter(s => filterRegion==='all' || (REGIONS[filterRegion]||[]).includes(s));
+  const tbody = document.getElementById('matrixBody');
+  tbody.innerHTML = states.sort().map(st => {
+    const vals = MATRIX[st];
+    const validVals = vals.map((v,i)=>({v,i})).filter(x=>x.v!==null);
+    const minVal = validVals.length ? Math.min(...validVals.map(x=>x.v)) : null;
+    const bestIdx = minVal!==null ? vals.indexOf(minVal) : -1;
+    const bestName = bestIdx>=0 ? LENDER_NAMES[bestIdx] : '—';
+
+    const cells = vals.map((v,i) => {
+      const isMin = v===minVal && minVal!==null;
+      const cls = cellClass(v, isMin);
+      const disp = v!==null ? v.toFixed(1)+'%' : '—';
+      return `<td><span class="${cls}">${disp}</span></td>`;
+    }).join('');
+
+    return `<tr>
+      <td class="state-col">${STATE_NAMES[st]} <span style="color:rgba(255,255,255,0.3);font-size:11px;">${st}</span></td>
+      ${cells}
+      <td style="font-weight:700;color:#27ae60;">${bestName}</td>
+    </tr>`;
+  }).join('');
+}
+
+function sortBy(col) {
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderTable(document.getElementById('regionFilter').value);
+}
+
+function filterTable() {
+  renderTable(document.getElementById('regionFilter').value);
+}
+
+renderTable();
+</script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Compare FHA Mortgage Approval Rates by State 2018–2025 | FinanceRateCalc</title>
+<meta name="description" content="Compare FHA denial rates between any two states, 2018-2025. Real CFPB HMDA data. Texas vs Florida, California vs Arizona — see which state is easier to get approved.">
+<link rel="canonical" href="https://financeratecalc.com/state-compare.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#0B132B;color:#fff;min-height:100vh;}
+header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:17px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:1000px;margin:0 auto;padding:32px 20px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,36px);font-weight:900;margin-bottom:6px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.sub{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;}
+.disc{background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;padding:10px 14px;font-size:11px;color:#92400e;margin-bottom:20px;}
+
+/* Controls */
+.controls{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin-bottom:24px;}
+.state-pick{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:16px;}
+.pick-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.state-select{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 12px;color:#fff;font-size:15px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;}
+.state-select:focus{outline:none;border-color:rgba(200,168,75,0.5);}
+.vs{font-family:'Fraunces',serif;font-size:24px;font-weight:900;color:rgba(255,255,255,0.3);text-align:center;}
+
+/* Score cards */
+.score-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.score-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;text-align:center;}
+.sc-state{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:4px;}
+.sc-rate{font-family:'DM Mono',monospace;font-size:42px;font-weight:900;line-height:1;}
+.sc-label{font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;}
+.sc-ofi{font-size:13px;font-weight:700;margin-top:8px;}
+.winner-badge{display:inline-block;padding:3px 10px;background:rgba(39,174,96,0.15);border:1px solid rgba(39,174,96,0.3);border-radius:20px;font-size:11px;font-weight:700;color:#27ae60;margin-top:6px;}
+
+/* Chart */
+.chart-wrap{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin-bottom:20px;}
+.chart-title{font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;}
+
+/* Year table */
+.year-table{width:100%;border-collapse:collapse;font-size:13px;}
+.year-table th{padding:8px 12px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid rgba(255,255,255,0.08);text-align:left;}
+.year-table td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.year-table tr:hover td{background:rgba(255,255,255,0.02);}
+.cell-win{color:#27ae60;font-weight:700;}
+.cell-lose{color:#e8845a;font-weight:700;}
+
+/* Lender matrix */
+.lender-matrix{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin-bottom:20px;overflow-x:auto;}
+
+/* CTA */
+.cta-bar{background:rgba(200,168,75,0.06);border:1px solid rgba(200,168,75,0.2);border-radius:10px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:24px;}
+
+@media(max-width:600px){.controls{grid-template-columns:1fr;} .score-cards{grid-template-columns:1fr;} header{padding:0 20px;} .wrap{padding:16px;} .vs{display:none;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:6px;font-weight:700;text-decoration:none;font-size:13px;">Get Routing →</a>
+</header>
+
+<div class="wrap">
+  <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">CFPB HMDA 2018–2025 · Real Federal Data</div>
+  <h1>Compare FHA Approval Climate<br><em>State vs State</em></h1>
+  <p class="sub">Select two states to compare 8 years of real FHA denial rates. Which state gives your borrower a better shot?</p>
+  <div class="disc"><strong>⚠️ Educational Only</strong> — Historical HMDA data. Not predictive. Not financial advice.</div>
+
+  <div class="controls">
+    <div class="state-pick">
+      <div class="pick-label" style="color:#C8A84B;">State A</div>
+      <select class="state-select" id="stateA" onchange="compare()"></select>
+    </div>
+    <div class="vs">VS</div>
+    <div class="state-pick">
+      <div class="pick-label" style="color:#3498db;">State B</div>
+      <select class="state-select" id="stateB" onchange="compare()"></select>
+    </div>
+  </div>
+
+  <div class="score-cards" id="scoreCards"></div>
+  <div class="chart-wrap">
+    <div class="chart-title">FHA Denial Rate — 2018 to 2025</div>
+    <div id="compareChart"></div>
+  </div>
+  <div class="chart-wrap">
+    <div class="chart-title">Year by Year Comparison</div>
+    <table class="year-table" id="yearTable"></table>
+  </div>
+  <div class="lender-matrix">
+    <div class="chart-title">Best Lender by State (2025 HMDA)</div>
+    <div id="lenderMatrix"></div>
+  </div>
+
+  <div class="cta-bar">
+    <div>
+      <div style="font-size:14px;font-weight:700;">Route your borrower to the right lender</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">AI routing based on 8 years of real HMDA data</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a href="/zai-one.html" style="padding:10px 18px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">Zai Routing →</a>
+      <a href="/fha-state-map.html" style="padding:10px 18px;background:transparent;color:#C8A84B;border:1px solid rgba(200,168,75,0.4);border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">State Map →</a>
+    </div>
+  </div>
+  <div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.8;margin-top:16px;">Source: CFPB HMDA 2018–2025 · FHA loans only · Educational purposes only</div>
+</div>
+
+<script>
+const YEARS = [2018,2019,2020,2021,2022,2023,2024,2025];
+const NATIONAL = [33.5,27.0,23.0,21.0,28.0,26.5,24.7,26.0];
+
+const STATE_NAMES = {"AL":"Alabama","AK":"Alaska","AZ":"Arizona","AR":"Arkansas","CA":"California","CO":"Colorado","CT":"Connecticut","DC":"D.C.","DE":"Delaware","FL":"Florida","GA":"Georgia","HI":"Hawaii","ID":"Idaho","IL":"Illinois","IN":"Indiana","IA":"Iowa","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MS":"Mississippi","MO":"Missouri","MT":"Montana","NE":"Nebraska","NV":"Nevada","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NY":"New York","NC":"North Carolina","ND":"North Dakota","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VT":"Vermont","VA":"Virginia","WA":"Washington","WV":"West Virginia","WI":"Wisconsin","WY":"Wyoming"};
+
+const STATE_DATA = {
+  "AL":[36.5,28.9,22.1,21.8,30.2,27.3,26.0,27.35],
+  "AK":[28.1,22.4,18.9,19.2,25.6,23.8,22.4,19.97],
+  "AZ":[28.1,19.4,16.2,17.3,23.8,20.8,19.4,19.86],
+  "AR":[38.2,30.1,22.8,22.5,31.4,29.4,30.1,31.77],
+  "CA":[31.2,20.9,19.9,19.4,26.1,23.7,24.3,24.56],
+  "CO":[25.5,17.6,15.9,17.3,23.4,20.8,20.0,19.83],
+  "CT":[38.9,30.2,22.5,22.1,31.8,30.4,31.0,29.43],
+  "DC":[48.0,38.6,28.9,35.1,50.7,43.5,47.6,35.91],
+  "DE":[39.2,29.8,22.1,21.4,31.2,31.9,28.3,27.52],
+  "FL":[32.5,22.7,20.9,20.6,27.9,27.3,26.6,26.26],
+  "GA":[36.5,26.7,21.0,20.7,30.1,27.8,26.3,26.11],
+  "HI":[35.8,28.4,22.6,23.1,34.2,33.0,30.7,34.91],
+  "ID":[27.4,18.9,15.8,15.2,22.1,21.5,17.5,17.51],
+  "IL":[36.3,26.4,19.6,19.4,29.1,27.6,27.6,28.16],
+  "IN":[34.8,26.1,19.8,19.9,28.4,27.8,25.6,26.65],
+  "IA":[35.6,27.8,21.4,21.8,30.2,30.0,29.9,31.98],
+  "KS":[34.2,26.8,20.1,20.4,28.9,27.7,25.9,25.47],
+  "KY":[36.1,27.4,20.8,21.2,29.4,24.5,22.5,24.81],
+  "LA":[40.2,30.8,22.4,22.8,32.1,30.1,28.8,27.99],
+  "ME":[32.4,24.6,19.8,20.1,27.2,25.7,22.7,23.96],
+  "MD":[39.8,29.6,21.8,21.4,31.8,31.2,29.6,29.60],
+  "MA":[34.2,25.8,20.4,19.8,28.6,25.5,24.8,24.65],
+  "MI":[34.1,26.8,22.3,21.3,28.8,28.3,28.7,28.63],
+  "MN":[32.8,24.9,19.2,18.8,27.4,25.1,25.2,25.25],
+  "MS":[40.8,31.2,23.4,23.1,33.4,31.4,30.0,30.78],
+  "MO":[34.8,26.2,19.8,20.1,28.6,24.3,24.2,23.18],
+  "MT":[28.4,21.2,17.4,17.8,24.2,26.1,22.2,22.07],
+  "NE":[34.6,27.2,20.8,21.4,29.8,29.2,29.6,29.35],
+  "NV":[24.8,17.3,14.7,14.4,20.6,18.3,16.4,17.63],
+  "NH":[32.8,24.4,19.2,19.8,27.6,27.6,25.6,25.45],
+  "NJ":[39.0,26.9,20.7,20.1,30.7,30.9,26.7,28.51],
+  "NM":[30.2,22.4,18.6,18.2,25.8,26.1,21.9,25.08],
+  "NY":[36.8,28.4,26.8,25.2,32.6,29.9,29.2,31.51],
+  "NC":[38.5,26.9,21.0,20.2,27.7,25.9,24.1,25.15],
+  "ND":[30.8,23.4,18.6,19.2,26.4,28.4,28.2,27.32],
+  "OH":[35.6,26.3,19.1,20.5,27.8,24.8,23.3,24.67],
+  "OK":[38.4,29.8,22.4,22.8,32.6,31.0,31.1,33.99],
+  "OR":[28.1,20.5,16.0,15.6,22.4,19.4,18.1,19.32],
+  "PA":[38.6,27.8,20.2,20.6,30.0,28.1,27.2,28.38],
+  "RI":[36.2,27.4,21.2,20.8,30.4,31.9,25.3,28.56],
+  "SC":[38.4,27.8,21.2,20.4,28.8,25.9,24.6,25.11],
+  "SD":[30.4,23.8,18.6,19.2,27.2,27.9,24.9,29.34],
+  "TN":[39.7,28.8,19.5,21.0,29.7,25.5,25.3,24.04],
+  "TX":[24.3,19.5,17.9,18.1,22.2,19.3,18.2,18.44],
+  "UT":[25.1,17.5,16.0,14.6,21.7,18.7,16.5,16.88],
+  "VT":[33.8,25.6,20.4,20.8,29.4,32.0,32.3,29.67],
+  "VA":[39.9,26.6,19.1,19.0,29.9,28.1,26.5,25.39],
+  "WA":[25.6,19.2,18.0,18.2,24.1,22.5,20.0,20.83],
+  "WV":[36.8,28.4,21.8,22.1,30.6,29.4,29.7,27.52],
+  "WI":[33.4,25.8,20.2,20.4,28.2,27.6,27.2,28.30],
+  "WY":[26.2,18.8,15.6,15.2,21.4,19.7,17.5,16.84],
+};
+
+const BEST_LENDERS_2025 = {
+  "AL":"CrossCountry","AK":"Guild","AZ":"CrossCountry","AR":"CrossCountry",
+  "CA":"CrossCountry","CO":"CrossCountry","CT":"CrossCountry","DC":"Guild",
+  "DE":"Guild","FL":"CrossCountry","GA":"CrossCountry","HI":"Guild",
+  "ID":"CrossCountry","IL":"CrossCountry","IN":"CrossCountry","IA":"CrossCountry",
+  "KS":"Guild","KY":"CrossCountry","LA":"CrossCountry","ME":"CrossCountry",
+  "MD":"CrossCountry","MA":"CrossCountry","MI":"Guild","MN":"CrossCountry",
+  "MS":"CrossCountry","MO":"Guild","MT":"Guild","NE":"CrossCountry",
+  "NV":"Guild","NH":"CrossCountry","NJ":"CrossCountry","NM":"CrossCountry",
+  "NY":"CrossCountry","NC":"CrossCountry","ND":"UWM","OH":"CrossCountry",
+  "OK":"Guild","OR":"CrossCountry","PA":"CrossCountry","RI":"Guild",
+  "SC":"CrossCountry","SD":"CrossCountry","TN":"CrossCountry","TX":"CrossCountry",
+  "UT":"CrossCountry","VT":"UWM","VA":"CrossCountry","WA":"CrossCountry",
+  "WV":"Guild","WI":"CrossCountry","WY":"CrossCountry",
+};
+
+function ofiColor(r) {
+  if(r<=20) return '#27ae60';
+  if(r<=26) return '#C8A84B';
+  if(r<=32) return '#e67e22';
+  return '#e8845a';
+}
+
+// Populate selects
+const states = Object.keys(STATE_NAMES).sort((a,b)=>STATE_NAMES[a].localeCompare(STATE_NAMES[b]));
+['stateA','stateB'].forEach((id,idx) => {
+  const sel = document.getElementById(id);
+  states.forEach(abbr => {
+    const opt = document.createElement('option');
+    opt.value = abbr;
+    opt.textContent = STATE_NAMES[abbr] + ' (' + abbr + ')';
+    sel.appendChild(opt);
+  });
+  sel.value = idx===0 ? 'TX' : 'CA';
+});
+
+function compare() {
+  const a = document.getElementById('stateA').value;
+  const b = document.getElementById('stateB').value;
+  const da = STATE_DATA[a];
+  const db = STATE_DATA[b];
+  if(!da || !db) return;
+
+  const avg2025a = da[7], avg2025b = db[7];
+  const winner = avg2025a < avg2025b ? a : b;
+
+  // Score cards
+  const colorA = ofiColor(avg2025a), colorB = ofiColor(avg2025b);
+  document.getElementById('scoreCards').innerHTML = `
+    <div class="score-card" style="border-color:${colorA}44;">
+      <div class="sc-state" style="color:${colorA};">${STATE_NAMES[a]}</div>
+      <div class="sc-rate" style="color:${colorA};">${avg2025a}%</div>
+      <div class="sc-label">2025 FHA Denial Rate</div>
+      <div class="sc-ofi" style="color:${colorA};">OFI ${Math.round(47*avg2025a/26)}</div>
+      ${winner===a ? '<div class="winner-badge">✓ Better Market</div>' : ''}
+    </div>
+    <div class="score-card" style="border-color:${colorB}44;">
+      <div class="sc-state" style="color:#3498db;">${STATE_NAMES[b]}</div>
+      <div class="sc-rate" style="color:#3498db;">${avg2025b}%</div>
+      <div class="sc-label">2025 FHA Denial Rate</div>
+      <div class="sc-ofi" style="color:${colorB};">OFI ${Math.round(47*avg2025b/26)}</div>
+      ${winner===b ? '<div class="winner-badge">✓ Better Market</div>' : ''}
+    </div>`;
+
+  // D3 Chart
+  const container = document.getElementById('compareChart');
+  const W = container.clientWidth || 700;
+  const H = 280;
+  const m = {top:15,right:80,bottom:35,left:42};
+  const w = W-m.left-m.right, h = H-m.top-m.bottom;
+
+  d3.select('#compareChart svg').remove();
+  const svg = d3.select('#compareChart').append('svg').attr('width',W).attr('height',H);
+  const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+
+  const allVals = [...da,...db,...NATIONAL];
+  const yMax = Math.max(...allVals)+4;
+  const x = d3.scalePoint().domain(YEARS).range([0,w]);
+  const y = d3.scaleLinear().domain([0,yMax]).range([h,0]);
+
+  g.append('g').call(d3.axisLeft(y).ticks(6).tickSize(-w).tickFormat(''))
+    .call(g=>g.select('.domain').remove())
+    .call(g=>g.selectAll('.tick line').attr('stroke','rgba(255,255,255,0.05)'));
+  g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x))
+    .call(g=>g.select('.domain').attr('stroke','rgba(255,255,255,0.1)'))
+    .call(g=>g.selectAll('text').attr('fill','rgba(255,255,255,0.5)').attr('font-size','11'));
+  g.append('g').call(d3.axisLeft(y).ticks(6).tickFormat(d=>d+'%'))
+    .call(g=>g.select('.domain').attr('stroke','rgba(255,255,255,0.1)'))
+    .call(g=>g.selectAll('text').attr('fill','rgba(255,255,255,0.5)').attr('font-size','11'));
+
+  const line = d3.line().x((_,i)=>x(YEARS[i])).y(d=>y(d)).curve(d3.curveMonotoneX);
+
+  // National dashed
+  g.append('path').datum(NATIONAL).attr('fill','none').attr('stroke','rgba(255,255,255,0.2)')
+    .attr('stroke-width',1).attr('stroke-dasharray','4,3').attr('d',line);
+
+  // Area fills
+  [[da,colorA],[db,'#3498db']].forEach(([vals,color])=>{
+    const area = d3.area().x((_,i)=>x(YEARS[i])).y0(h).y1(d=>y(d)).curve(d3.curveMonotoneX);
+    g.append('path').datum(vals).attr('fill',color).attr('opacity',0.06).attr('d',area);
+    g.append('path').datum(vals).attr('fill','none').attr('stroke',color).attr('stroke-width',2.5).attr('d',line);
+    vals.forEach((v,i)=>{
+      g.append('circle').attr('cx',x(YEARS[i])).attr('cy',y(v)).attr('r',3.5)
+        .attr('fill',color).attr('stroke','#0B132B').attr('stroke-width',1.5);
+    });
+  });
+
+  // End labels
+  g.append('text').attr('x',x(2025)+8).attr('y',y(da[7])+4).attr('fill',colorA).attr('font-size','11').attr('font-weight','700').text(a);
+  g.append('text').attr('x',x(2025)+8).attr('y',y(db[7])+4).attr('fill','#3498db').attr('font-size','11').attr('font-weight','700').text(b);
+  g.append('text').attr('x',x(2025)+8).attr('y',y(NATIONAL[7])+4).attr('fill','rgba(255,255,255,0.3)').attr('font-size','10').text('Natl');
+
+  // Year table
+  let rows = YEARS.map((yr,i)=>{
+    const ra = da[i], rb = db[i];
+    const winA = ra < rb, winB = rb < ra;
+    return `<tr>
+      <td style="font-weight:700;">${yr}</td>
+      <td class="${winA?'cell-win':'cell-lose'}">${ra}%${winA?' ✓':''}</td>
+      <td class="${winB?'cell-win':'cell-lose'}">${rb}%${winB?' ✓':''}</td>
+      <td style="color:rgba(255,255,255,0.3);">${NATIONAL[i]}%</td>
+      <td style="font-weight:700;color:${Math.abs(ra-rb)>5?'#C8A84B':'rgba(255,255,255,0.5)'};">${Math.abs(ra-rb).toFixed(1)}pp</td>
+    </tr>`;
+  }).join('');
+  const wins_a = YEARS.filter((_,i)=>da[i]<db[i]).length;
+  const wins_b = YEARS.filter((_,i)=>db[i]<da[i]).length;
+  document.getElementById('yearTable').innerHTML = `
+    <tr><th>Year</th><th style="color:${colorA};">${STATE_NAMES[a]}</th><th style="color:#3498db;">${STATE_NAMES[b]}</th><th>National</th><th>Diff</th></tr>
+    ${rows}
+    <tr style="background:rgba(255,255,255,0.03);">
+      <td style="font-weight:700;">Score</td>
+      <td style="font-weight:700;color:${colorA};">${wins_a}/8 wins</td>
+      <td style="font-weight:700;color:#3498db;">${wins_b}/8 wins</td>
+      <td colspan="2" style="color:rgba(255,255,255,0.3);">Ties: ${8-wins_a-wins_b}</td>
+    </tr>`;
+
+  // Lender matrix
+  document.getElementById('lenderMatrix').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:14px;">
+        <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">${STATE_NAMES[a]}</div>
+        <div style="font-size:16px;font-weight:700;color:${colorA};">${BEST_LENDERS_2025[a]||'CrossCountry'}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">Best FHA lender · 2025</div>
+        <div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.5);">Denial rate: ${avg2025a}% · OFI ${Math.round(47*avg2025a/26)}</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:14px;">
+        <div style="font-size:11px;color:rgba(52,152,219,0.6);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">${STATE_NAMES[b]}</div>
+        <div style="font-size:16px;font-weight:700;color:#3498db;">${BEST_LENDERS_2025[b]||'CrossCountry'}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">Best FHA lender · 2025</div>
+        <div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.5);">Denial rate: ${avg2025b}% · OFI ${Math.round(47*avg2025b/26)}</div>
+      </div>
+    </div>`;
+
+  if(typeof gtag!=='undefined') gtag('event','state_compare',{event_label:a+'_vs_'+b});
+}
+
+compare();
+window.addEventListener('resize', compare);
+</script>
+</body>
+</html>
