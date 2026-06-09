@@ -256,127 +256,13 @@ function askSuggestion(el){
 function hideGreeting(){var g=document.getElementById('greeting');if(g)g.style.display='none';var s=document.getElementById('suggestions');if(s)s.style.display='none';}
 function addMessage(role, content){
   hideGreeting();
-  var wrap=document.getElementById('chatWrap');
-  var div=document.createElement('div');
-  div.className='msg '+role;
-  
-  var avatar=document.createElement('div');
-  avatar.className='msg-avatar';
-  avatar.textContent=role==='ai'?'Z':'You';
-  
-  var contentDiv=document.createElement('div');
-  contentDiv.className='msg-content';
-  
-  var name=document.createElement('div');
-  name.className='msg-name';
-  name.textContent=role==='ai'?'Zai · FRC Banker AI':'You';
-  
-  var bubble=document.createElement('div');
-  bubble.className='msg-bubble';
-  bubble.innerHTML=formatMessage(content);
-  
-  contentDiv.appendChild(name);
-  contentDiv.appendChild(bubble);
-
-  // Action buttons for AI messages — Claude-like minimal icons
-  if(role==='ai'){
-    var actions=document.createElement('div');
-    actions.style.cssText='display:flex;gap:4px;margin-top:8px;align-items:center;opacity:0;transition:opacity 0.15s;';
-    contentDiv.addEventListener('mouseenter',function(){actions.style.opacity='1';});
-    contentDiv.addEventListener('mouseleave',function(){actions.style.opacity='0';});
-
-    // Thumbs up
-    var yBtn=document.createElement('button');
-    yBtn.title='Helpful';
-    yBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>';
-    yBtn.style.cssText='padding:4px;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;border-radius:4px;display:flex;align-items:center;transition:color 0.15s;';
-    yBtn.onmouseover=function(){this.style.color='rgba(107,255,184,0.8)';};
-    yBtn.onmouseout=function(){this.style.color=this.dataset.active?'#6bffb8':'rgba(255,255,255,0.3)';};
-    yBtn.onclick=function(){
-      fetch('https://formspree.io/f/mkoewrgp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'feedback',rating:'helpful'})});
-      this.style.color='#6bffb8';this.dataset.active='1';this.disabled=true;nBtn.disabled=true;
-    };
-    actions.appendChild(yBtn);
-
-    // Thumbs down
-    var nBtn=document.createElement('button');
-    nBtn.title='Not helpful';
-    nBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>';
-    nBtn.style.cssText='padding:4px;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;border-radius:4px;display:flex;align-items:center;transition:color 0.15s;';
-    nBtn.onmouseover=function(){this.style.color='rgba(255,107,107,0.8)';};
-    nBtn.onmouseout=function(){this.style.color=this.dataset.active?'#ff6b6b':'rgba(255,255,255,0.3)';};
-    nBtn.onclick=function(){
-      fetch('https://formspree.io/f/mkoewrgp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'feedback',rating:'not_helpful'})});
-      this.style.color='#ff6b6b';this.dataset.active='1';this.disabled=true;yBtn.disabled=true;
-    };
-    actions.appendChild(nBtn);
-
-    // Copy
-    var copyBtn=document.createElement('button');
-    copyBtn.title='Copy';
-    copyBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-    copyBtn.style.cssText='padding:4px;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;border-radius:4px;display:flex;align-items:center;transition:color 0.15s;';
-    copyBtn.onmouseover=function(){this.style.color='rgba(255,255,255,0.7)';};
-    copyBtn.onmouseout=function(){this.style.color='rgba(255,255,255,0.3)';};
-    copyBtn.onclick=function(){
-      navigator.clipboard.writeText(bubble.innerText);
-      copyBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6bffb8" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
-      setTimeout(function(){copyBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';},2000);
-    };
-    actions.appendChild(copyBtn);
-
-    // ─── OUTCOME TRACKER ───────────────────────────────────────────────────────
-    var txt_lower = bubble.innerText.toLowerCase();
-    var hasLenderRouting = txt_lower.includes('uwm') || txt_lower.includes('pennymac') || 
-                           txt_lower.includes('approval fit score') || txt_lower.includes('route') ||
-                           txt_lower.includes('wholesale') || txt_lower.includes('lender') && txt_lower.includes('%');
-    
-    if(hasLenderRouting){
-      var dot2=document.createElement('span');
-      dot2.style.cssText='color:rgba(255,255,255,0.1);';dot2.textContent='·';
-      actions.appendChild(dot2);
-
-      var outcomeWrap = document.createElement('div');
-      outcomeWrap.style.cssText='margin-top:10px;width:100%;background:rgba(200,164,74,0.04);border:1px solid rgba(200,164,74,0.15);border-radius:8px;padding:12px 14px;';
-      
-      outcomeWrap.innerHTML = `
-        <div style="font-size:10px;color:#c8a44a;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Did this work? Track your outcome →</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button onclick="trackOutcome('approved', this)" style="padding:6px 14px;background:rgba(107,255,184,0.1);border:1px solid rgba(107,255,184,0.25);color:#6bffb8;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;">✓ Approved!</button>
-          <button onclick="trackOutcome('denied', this)" style="padding:6px 14px;background:rgba(255,107,107,0.07);border:1px solid rgba(255,107,107,0.2);color:#ff6b6b;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;">✗ Still denied</button>
-          <button onclick="trackOutcome('pending', this)" style="padding:6px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;">⏳ Still in process</button>
-        </div>
-        <div id="outcomeThank" style="display:none;font-size:11px;color:rgba(255,255,255,0.4);margin-top:8px;">Thank you — your outcome helps validate OFI's predictions. <a href="/ofi-track-record.html" style="color:#c8a44a;">See live track record →</a></div>
-      `;
-      
-      contentDiv.appendChild(outcomeWrap);
-    }
-
-    contentDiv.appendChild(actions);
-  }
-
-  div.appendChild(avatar);
-  div.appendChild(contentDiv);
-  wrap.appendChild(div);
-  setTimeout(function(){
-    var lastMsg = wrap.lastElementChild;
-    if(lastMsg) lastMsg.scrollIntoView({behavior:'instant', block:'end'});
-
-  }, 100);
-  // Legal note — sadece AI mesajlarına
-  if(role === 'ai') {
-    var legalNote = document.createElement('div');
-    legalNote.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.2);margin-top:12px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);line-height:1.6;';
-    legalNote.innerHTML = '⚠️ Not financial or legal advice. Educational purposes only. Approval probabilities are statistical estimates based on HMDA data — individual outcomes vary. Consult a licensed mortgage professional. <a href="/terms.html" style="color:rgba(255,255,255,0.2);">Terms</a>';
-    bubble.appendChild(legalNote);
-  }
-  
-  // Scroll to bottom — single clean scroll
-  setTimeout(function(){
-    window.scrollTo({top: document.body.scrollHeight, behavior: 'instant'});
-  }, 100);
-  
-  return bubble;
+  var box = document.getElementById('chatMessages');
+  var div = document.createElement('div');
+  div.className = 'msg ' + (role === 'ai' ? 'assistant' : 'user');
+  div.innerHTML = formatMessage(content);
+  box.appendChild(div);
+  scrollToBottom();
+  return div;
 }
 
 function formatMessage(text){
@@ -899,15 +785,7 @@ function toggleMic(){
 </script>
 
 <div style="background:linear-gradient(135deg,rgba(200,168,75,0.08),rgba(107,255,184,0.04));border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:20px 24px;margin:32px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-  <div>
-    <div style="font-size:11px;font-weight:700;color:rgba(200,168,75,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Are You a Mortgage Broker?</div>
-    <div style="font-size:15px;font-weight:700;color:#fff;">Run a Pre-Flight Check on your files</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px;">30 seconds · Green/Yellow/Red · PDF boarding pass · No SSN</div>
-  </div>
-  <a href="/pre-flight.html" style="padding:10px 22px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;white-space:nowrap;">✈️ Pre-Flight Check →</a>
-</div>
-
-<script>
+  <script>
 function trackOutcome(outcome) {
   if(typeof gtag !== 'undefined') {
     gtag('event', 'banker_ai_outcome', {event_label: outcome});
