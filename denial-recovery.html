@@ -57,6 +57,36 @@ select option{background:#0d1a2e;}
 .data-note{margin-top:20px;font-size:12px;color:rgba(255,255,255,0.25);line-height:1.7;text-align:center;padding:14px;}
 .hidden{display:none;}
 </style>
+
+<script>
+// FRC FUNNEL TRACKING
+window.frcFunnel = {
+  step: function(name, data) {
+    if(typeof gtag !== 'undefined') {
+      gtag('event', 'funnel_step', {
+        step_name: name,
+        page: location.pathname,
+        ...data
+      });
+    }
+    // LocalStorage'a da yaz — session boyunca hangi adımları geçti
+    try {
+      var steps = JSON.parse(localStorage.getItem('frc_funnel') || '[]');
+      steps.push({step:name, time:Date.now(), ...data});
+      if(steps.length > 10) steps = steps.slice(-10);
+      localStorage.setItem('frc_funnel', JSON.stringify(steps));
+    } catch(e) {}
+  },
+  // Önceki adımları oku
+  path: function() {
+    try { return JSON.parse(localStorage.getItem('frc_funnel') || '[]'); }
+    catch(e) { return []; }
+  }
+};
+
+// Sayfa yükleme eventi
+window.frcFunnel.step('page_view', {page: location.pathname});
+</script>
 </head>
 <body>
 <header>
@@ -67,7 +97,7 @@ select option{background:#0d1a2e;}
 <div class="hero">
   <div class="eyebrow">Denial Recovery · FRC Intelligence</div>
   <h1>A denial is a routing problem,<br>not a verdict.</h1>
-  <div class="hero-sub">Select where you were denied and your profile. See your recovery pathway — which lenders approve borrowers who were rejected elsewhere, based on 3 million real FHA applications.</div>
+  <div class="hero-sub">Select where you were denied and your profile. Based on 8 years of HMDA data, see how borrowers with similar profiles have performed at other lenders. A denial is often a routing problem, not a verdict.</div>
 </div>
 
 <div class="form-card">
@@ -139,7 +169,7 @@ select option{background:#0d1a2e;}
     <div style="font-size:13px;color:rgba(255,255,255,0.35);margin-top:6px;" id="deniedContext"></div>
   </div>
   
-  <div class="recovery-label">Your recovery pathway</div>
+  <div class="recovery-label">How similar profiles performed at other lenders</div>
   <div id="lenderRows"></div>
   
   <div class="next-steps" id="nextSteps"></div>
@@ -201,7 +231,7 @@ function calcRecovery(){
     if(CURRENT_OFI > 70) adj *= 1.15;
     if(d.watch) adj *= 1.08;
     adj = Math.min(adj, 95);
-    const recovery = Math.max(5, Math.round(100 - adj));
+    const recovery = Math.max(5, Math.round(100 - adj)); // Profile performance estimate, not individual prediction
     results.push({lender, recovery, flag:null, originated:d.originated});
   });
   
@@ -210,7 +240,7 @@ function calcRecovery(){
   document.getElementById('deniedName').textContent = LENDER_LABELS[denied_at] || denied_at;
   const deniedRate = LENDER_DATA[denied_at]?.denial_8yr;
   document.getElementById('deniedContext').textContent = deniedRate
-    ? `${deniedRate}% 8-year denial rate — ${Math.round((1-deniedRate/100)*100)}% of applicants were approved`
+    ? `${deniedRate}% 8-year denial rate — ${Math.round((1-deniedRate/100)*100)}% historical FHA approval rate`
     : 'Not listed in our dataset';
   
   const top = results.filter(r=>!r.flag)[0];
@@ -247,8 +277,8 @@ function calcRecovery(){
   `;
   
   document.getElementById('dataNote').innerHTML = `
-    Data: CFPB HMDA 2018–2025 · 3,075,654 FHA originations · Recovery estimates based on lender denial rate adjusted for borrower profile and current market conditions (OFI ${CURRENT_OFI})<br>
-    These are statistical estimates, not guarantees. Individual underwriting varies. Consult a licensed mortgage professional.<br>
+    Data: CFPB HMDA 2018–2025 · 3,075,654 FHA originations<br>
+    <strong>Methodology note:</strong> These figures show how historically similar borrower profiles have performed at each lender — based on 8-year denial rate patterns adjusted for FICO tier, DTI range, income type, and current market friction. HMDA does not track individual borrowers across lenders; these are statistical performance estimates for similar profiles, not predictions of your specific outcome. Consult a licensed mortgage professional before reapplying.<br>
     <a href="/locus-of-control.html" style="color:rgba(200,168,75,0.5);text-decoration:none;">Why 71% of denials aren't the borrower's fault →</a>
   `;
   
@@ -260,6 +290,16 @@ function calcRecovery(){
 
 
 <div style="max-width:680px;margin:16px auto 0;padding:12px 24px;font-size:12px;color:rgba(255,255,255,0.25);">Related: <a href="/approval-twin.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Approval Twin →</a> &nbsp;|&nbsp; <a href="/locus-of-control.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">71% Not Your Fault →</a> &nbsp;|&nbsp; <a href="/zai-one.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Full Routing →</a></div>
+
+<!-- FUNNEL_NEXT -->
+<div style="max-width:560px;margin:32px auto 24px;padding:0 20px;">
+  <a href="/zai-one.html" style="display:block;background:rgba(200,168,75,0.04);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:20px 24px;text-decoration:none;" onmouseover="this.style.borderColor='rgba(200,168,75,0.5)'" onmouseout="this.style.borderColor='rgba(200,168,75,0.2)'">
+    <div style="font-size:10px;color:rgba(200,168,75,0.5);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:6px;">Next step</div>
+    <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;">Get a full routing decision</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.5;">Ready to reapply? Zai will give you a complete lender recommendation with evidence — specific to your file.</div>
+    <div style="font-size:13px;color:#C8A84B;font-weight:700;margin-top:10px;">Continue →</div>
+  </a>
+</div>
 <!-- ZAI_PILL -->
 <a href="/zai-one.html" onclick="if(typeof gtag!=='undefined')gtag('event','zai_pill_click',{event_label:'/denial-recovery.html'})" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;align-items:center;gap:7px;padding:11px 20px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.4);">⚡ Route a file</a>
 

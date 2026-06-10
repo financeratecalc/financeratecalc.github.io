@@ -62,6 +62,36 @@ strong{color:#fff;}
 .legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,0.4);}
 .legend-dot{width:10px;height:10px;border-radius:2px;}
 </style>
+
+<script>
+// FRC FUNNEL TRACKING
+window.frcFunnel = {
+  step: function(name, data) {
+    if(typeof gtag !== 'undefined') {
+      gtag('event', 'funnel_step', {
+        step_name: name,
+        page: location.pathname,
+        ...data
+      });
+    }
+    // LocalStorage'a da yaz — session boyunca hangi adımları geçti
+    try {
+      var steps = JSON.parse(localStorage.getItem('frc_funnel') || '[]');
+      steps.push({step:name, time:Date.now(), ...data});
+      if(steps.length > 10) steps = steps.slice(-10);
+      localStorage.setItem('frc_funnel', JSON.stringify(steps));
+    } catch(e) {}
+  },
+  // Önceki adımları oku
+  path: function() {
+    try { return JSON.parse(localStorage.getItem('frc_funnel') || '[]'); }
+    catch(e) { return []; }
+  }
+};
+
+// Sayfa yükleme eventi
+window.frcFunnel.step('page_view', {page: location.pathname});
+</script>
 </head>
 <body>
 <header>

@@ -219,6 +219,36 @@ header{background:rgba(11,19,43,0.97);padding:0 40px;height:60px;display:flex;al
   "offers": {"@type":"Offer","price":"0","priceCurrency":"USD","description":"3 free routing decisions per day"},
   "provider": {"@type":"Organization","name":"FRC Intelligence","url":"https://financeratecalc.com"}
 }</script>
+
+<script>
+// FRC FUNNEL TRACKING
+window.frcFunnel = {
+  step: function(name, data) {
+    if(typeof gtag !== 'undefined') {
+      gtag('event', 'funnel_step', {
+        step_name: name,
+        page: location.pathname,
+        ...data
+      });
+    }
+    // LocalStorage'a da yaz — session boyunca hangi adımları geçti
+    try {
+      var steps = JSON.parse(localStorage.getItem('frc_funnel') || '[]');
+      steps.push({step:name, time:Date.now(), ...data});
+      if(steps.length > 10) steps = steps.slice(-10);
+      localStorage.setItem('frc_funnel', JSON.stringify(steps));
+    } catch(e) {}
+  },
+  // Önceki adımları oku
+  path: function() {
+    try { return JSON.parse(localStorage.getItem('frc_funnel') || '[]'); }
+    catch(e) { return []; }
+  }
+};
+
+// Sayfa yükleme eventi
+window.frcFunnel.step('page_view', {page: location.pathname});
+</script>
 </head>
 <body>
 <header>
@@ -1166,6 +1196,16 @@ KILLER3: [approval killer #3 or N/A]`;
 }
 </script>
 
+
+<!-- FUNNEL_NEXT -->
+<div style="max-width:560px;margin:32px auto 24px;padding:0 20px;">
+  <a href="/approval-twin.html" style="display:block;background:rgba(200,168,75,0.04);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:20px 24px;text-decoration:none;" onmouseover="this.style.borderColor='rgba(200,168,75,0.5)'" onmouseout="this.style.borderColor='rgba(200,168,75,0.2)'">
+    <div style="font-size:10px;color:rgba(200,168,75,0.5);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:6px;">Next step</div>
+    <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;">See how borrowers like you did</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.5;">After your routing decision — see how historically similar profiles performed across all 11 lenders.</div>
+    <div style="font-size:13px;color:#C8A84B;font-weight:700;margin-top:10px;">Continue →</div>
+  </a>
+</div>
 <!-- ZAI_PILL -->
 <a href="/zai-one.html" style="display:none"></a>
 
@@ -2392,6 +2432,16 @@ Always add: "These estimates are based on historical HMDA approval rates — not
 }
 </script>
 
+
+<!-- FUNNEL_NEXT -->
+<div style="max-width:560px;margin:32px auto 24px;padding:0 20px;">
+  <a href="/approval-twin.html" style="display:block;background:rgba(200,168,75,0.04);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:20px 24px;text-decoration:none;" onmouseover="this.style.borderColor='rgba(200,168,75,0.5)'" onmouseout="this.style.borderColor='rgba(200,168,75,0.2)'">
+    <div style="font-size:10px;color:rgba(200,168,75,0.5);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:6px;">Next step</div>
+    <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;">See how borrowers like you did</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.5;">After your routing decision — see how historically similar profiles performed across all 11 lenders.</div>
+    <div style="font-size:13px;color:#C8A84B;font-weight:700;margin-top:10px;">Continue →</div>
+  </a>
+</div>
 <!-- ZAI_PILL -->
 <a href="/zai-one.html" style="display:none"></a>
 

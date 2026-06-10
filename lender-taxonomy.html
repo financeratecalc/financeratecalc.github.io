@@ -66,6 +66,36 @@ strong{color:#fff;}
 .chaos-header{background:rgba(232,132,90,0.08);}
 .chaos-badge{background:rgba(232,132,90,0.15);color:#e8845a;}
 </style>
+
+<script>
+// FRC FUNNEL TRACKING
+window.frcFunnel = {
+  step: function(name, data) {
+    if(typeof gtag !== 'undefined') {
+      gtag('event', 'funnel_step', {
+        step_name: name,
+        page: location.pathname,
+        ...data
+      });
+    }
+    // LocalStorage'a da yaz — session boyunca hangi adımları geçti
+    try {
+      var steps = JSON.parse(localStorage.getItem('frc_funnel') || '[]');
+      steps.push({step:name, time:Date.now(), ...data});
+      if(steps.length > 10) steps = steps.slice(-10);
+      localStorage.setItem('frc_funnel', JSON.stringify(steps));
+    } catch(e) {}
+  },
+  // Önceki adımları oku
+  path: function() {
+    try { return JSON.parse(localStorage.getItem('frc_funnel') || '[]'); }
+    catch(e) { return []; }
+  }
+};
+
+// Sayfa yükleme eventi
+window.frcFunnel.step('page_view', {page: location.pathname});
+</script>
 </head>
 <body>
 <header>
