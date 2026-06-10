@@ -177,158 +177,101 @@ footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0
 </head>
 <body>
 
-<header style="padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.95);backdrop-filter:blur(8px);z-index:100;">
+<header style="height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.97);backdrop-filter:blur(8px);z-index:100;">
   <a href="/index.html" style="font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;">Finance<em style="font-style:italic;color:#C8A84B;">Rate</em>Calc</a>
-  <div style="display:flex;align-items:center;gap:18px;">
-    <a href="/tools.html" style="font-size:13px;color:rgba(255,255,255,0.45);text-decoration:none;">All tools</a>
-    <a href="/zai-one.html" style="font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;">All tools →</a>
-  </div>
+  <a href="/tools.html" style="font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;">All tools</a>
 </header>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-eyebrow">FRC Intelligence · 8 Years of Federal HMDA Data</div>
-  <h1>An FHA borrower was denied<br><em>every 4 minutes today.</em></h1>
+<main style="max-width:640px;margin:0 auto;padding:64px 24px 80px;text-align:center;">
 
-  <!-- LIVE MINI COUNTER -->
-  <a href="/denial-clock.html" style="display:inline-block;text-decoration:none;margin:18px 0 10px;" onclick="if(typeof gtag!=='undefined')gtag('event','home_clock_click')">
-    <div style="display:flex;align-items:center;gap:10px;justify-content:center;">
-      <span style="width:8px;height:8px;border-radius:50%;background:#e8845a;animation:heropulse 1.5s infinite;"></span>
-      <span id="heroClockNum" style="font-family:'DM Mono',monospace;font-size:clamp(28px,6vw,46px);font-weight:700;color:#e8845a;letter-spacing:0.04em;">—</span>
-    </div>
-    <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px;">denied since January 1, 2025 — counting live · Source: CFPB HMDA →</div>
+  <div style="font-size:11px;color:rgba(200,168,75,0.5);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:20px;">FRC Intelligence · CFPB HMDA 2025</div>
+
+  <h1 style="font-family:'Fraunces',serif;font-size:clamp(28px,5vw,42px);font-weight:900;line-height:1.2;margin-bottom:28px;">An FHA borrower was denied<br>every 4 minutes today.</h1>
+
+  <!-- LIVE COUNTER -->
+  <a href="/denial-clock.html" style="text-decoration:none;display:inline-block;margin-bottom:6px;">
+    <div id="heroCount" style="font-family:'DM Mono',monospace;font-size:clamp(40px,9vw,72px);font-weight:700;color:#e8845a;letter-spacing:0.03em;line-height:1;">—</div>
   </a>
-  <style>@keyframes heropulse{0%,100%{opacity:1;}50%{opacity:0.3;}}</style>
-  <script>
-  (function(){
-    var START = new Date('2025-01-01T00:00:00Z').getTime();
-    var PER_MS = 103022 / (365*24*60*60*1000);
-    function fmt(n){return Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');}
-    function tick(){var el=document.getElementById('heroClockNum');if(el)el.textContent=fmt((Date.now()-START)*PER_MS);}
-    tick(); setInterval(tick, 800);
-  })();
-  </script>
+  <div style="font-size:12px;color:rgba(255,255,255,0.25);margin-bottom:40px;">denied since Jan 1, 2025 · <span style="color:rgba(232,132,90,0.5);">counting live</span> · Source: CFPB HMDA</div>
 
-  <p class="hero-sub" style="max-width:520px;margin-left:auto;margin-right:auto;">Same federal guidelines. Same country. One lender denies 6.37% — another denies 53.27%.<br><strong style="color:#fff;">The difference is not the borrower. It's the lender.</strong></p>
+  <p style="font-size:16px;color:rgba(255,255,255,0.5);line-height:1.8;margin-bottom:10px;">Same federal guidelines. Same country.<br>One lender denies 6.37% — another 53.27%.</p>
+  <p style="font-size:18px;font-weight:700;color:#fff;margin-bottom:36px;">The difference is not the borrower.<br>It's the lender.</p>
 
-  <div style="margin-top:8px;">
-    <a href="/zai-one.html" style="display:inline-block;padding:15px 34px;background:#C8A84B;color:#000;border-radius:10px;font-weight:700;text-decoration:none;font-size:15px;" onclick="if(typeof gtag!=='undefined')gtag('event','home_zai_click')">Would your file pass elsewhere? →</a>
-    <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:8px;">Free · takes 60 seconds · no SSN required</div>
-    <div style="margin-top:10px;"><a href="/denial-clock.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;">or watch the full clock →</a></div>
-  </div>
-</section>
-<!-- DISCOVERY_CARDS -->
-<section style="max-width:920px;margin:0 auto;padding:36px 24px;">
-  <div style="font-size:11px;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:0.15em;text-align:center;margin-bottom:20px;">Explore the system</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;">
-    <a href="/fha-state-map.html" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='rgba(200,168,75,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
-      <div style="font-size:20px;margin-bottom:8px;">🗺️</div>
+  <a href="/zai-one.html" style="display:inline-block;padding:16px 40px;background:#C8A84B;color:#000;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;" onclick="if(typeof gtag!=='undefined')gtag('event','home_zai_click')">Would your file pass elsewhere? →</a>
+  <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:10px;">Free · 60 seconds · no SSN required</div>
+  <div style="margin-top:14px;"><a href="/denial-clock.html" style="font-size:12px;color:rgba(255,255,255,0.25);text-decoration:none;">or watch the full clock →</a></div>
+
+</main>
+
+<!-- DISCOVERY CARDS -->
+<section style="max-width:860px;margin:0 auto;padding:0 24px 64px;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
+    <a href="/fha-state-map.html" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px;text-decoration:none;display:block;" onmouseover="this.style.borderColor='rgba(200,168,75,0.35)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+      <div style="font-size:20px;margin-bottom:10px;">🗺️</div>
       <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;">Where you apply matters</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">Utah: 16.9% denial. DC: 35.9%. Same loan, same rules — see your state.</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);line-height:1.6;">Utah 16.9% vs DC 35.9% — same loan, opposite odds.</div>
     </a>
-    <a href="/lender-stress-index.html" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='rgba(200,168,75,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
-      <div style="font-size:20px;margin-bottom:8px;">📊</div>
+    <a href="/lender-stress-index.html" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px;text-decoration:none;display:block;" onmouseover="this.style.borderColor='rgba(200,168,75,0.35)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+      <div style="font-size:20px;margin-bottom:10px;">📊</div>
       <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;">Who you apply with matters more</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">Some lenders panic when markets tighten. Some never move. We measured all 11.</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);line-height:1.6;">Some lenders panic in tight markets. Some never move.</div>
     </a>
-    <a href="/fha-lending-structure-research.html" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='rgba(200,168,75,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
-      <div style="font-size:20px;margin-bottom:8px;">🔬</div>
+    <a href="/fha-lending-structure-research.html" style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px;text-decoration:none;display:block;" onmouseover="this.style.borderColor='rgba(200,168,75,0.35)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+      <div style="font-size:20px;margin-bottom:10px;">🔬</div>
       <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;">The proof</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;">8 years, 2.9M records, one law: no crisis has ever changed the lender hierarchy.</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);line-height:1.6;">8 years · 2.9M records · hierarchy never changed.</div>
     </a>
   </div>
 </section>
 
-<script>
-fetch('/_data/composite_metrics.json').then(r=>r.json()).then(d=>{
-  if(!d.FRDI) return;
-  const f = d.FRDI;
-  document.getElementById('heroFRDI').textContent = f.value;
-  document.getElementById('heroFRDI').style.color = f.color;
-  document.getElementById('heroSignal').textContent = f.signal;
-  document.getElementById('heroSignal').style.color = f.color;
-  document.getElementById('heroAction').textContent = f.current_routing?.substring(0,55) + '...';
-  const hint = document.getElementById('heroConfHint');
-  if(hint && f.confidence_label && f.volatility && f.regime) {
-    hint.textContent = '● ' + f.confidence_label + ' confidence · ' + f.volatility + ' volatility · ' + f.regime + ' regime';
-    hint.style.color = f.confidence > 0.8 ? 'rgba(107,255,184,0.5)' : 'rgba(200,168,75,0.45)';
-  }
-}).catch(()=>{});
-</script>
-
-<!-- FRC Intelligence Pricing -->
-<div style="background:rgba(11,19,43,0.95);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:32px;margin:40px 0;max-width:800px;margin-left:auto;margin-right:auto;">
-  <div style="text-align:center;margin-bottom:28px;">
-    <div style="font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">FRC Intelligence</div>
-    <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:900;">Free vs Pro</div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-    <!-- Free -->
-    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;">
-      <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Free</div>
-      <div style="font-family:'Fraunces',serif;font-size:32px;font-weight:900;margin-bottom:16px;">$0</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:2;">
-        ✓ Zai routing — 3 decisions/day<br>
-        ✓ OFI market signal<br>
-        ✓ State map (2025)<br>
-        ✓ Lender matrix (2024–2025)<br>
-        ✓ Pre-Flight check<br>
-        ✗ Case history<br>
-        ✗ Historical data (2018–2023)<br>
-        ✗ Weekly LSI alerts<br>
-        ✗ Unlimited routing
-      </div>
+<!-- PRICING -->
+<section style="max-width:640px;margin:0 auto;padding:0 24px 80px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;">
+      <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:8px;">Free</div>
+      <div style="font-size:26px;font-weight:900;color:#fff;margin-bottom:12px;">$0</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.35);line-height:1.8;">3 routing decisions/day<br>Denial Clock<br>State Map<br>LSI data</div>
     </div>
-    <!-- Pro -->
-    <div style="background:rgba(200,168,75,0.06);border:2px solid rgba(200,168,75,0.3);border-radius:12px;padding:20px;position:relative;">
-      <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#C8A84B;color:#000;font-size:10px;font-weight:700;padding:3px 12px;border-radius:10px;white-space:nowrap;">MOST POPULAR</div>
-      <div style="font-size:14px;font-weight:700;color:#C8A84B;margin-bottom:4px;">Pro</div>
-      <div style="font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#C8A84B;margin-bottom:16px;">$49<span style="font-size:14px;font-weight:400;color:rgba(255,255,255,0.4)">/mo</span></div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.7);line-height:2;">
-        ✓ <strong>Unlimited</strong> Zai routing<br>
-        ✓ OFI + FRDI + LSI — all metrics<br>
-        ✓ State map — all years<br>
-        ✓ <strong>Full 2018–2025</strong> lender matrix<br>
-        ✓ Pre-Flight PDF boarding pass<br>
-        ✓ <strong>Case history</strong> — last 30 decisions<br>
-        ✓ <strong>Weekly LSI alert</strong> email<br>
-        ✓ <strong>Unlimited</strong> routing decisions<br>
-        ✓ Priority support
-      </div>
-      <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" style="display:block;margin-top:16px;padding:12px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;text-align:center;">Start Free Trial →</a>
+    <div style="background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.25);border-radius:12px;padding:24px;">
+      <div style="font-size:13px;font-weight:700;color:#C8A84B;margin-bottom:8px;">Pro</div>
+      <div style="font-size:26px;font-weight:900;color:#fff;margin-bottom:12px;">$49<span style="font-size:14px;font-weight:400;color:rgba(255,255,255,0.4)">/mo</span></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.8;margin-bottom:16px;">Unlimited routing<br>Full lender matrix<br>Weekly LSI alert<br>Evidence reports</div>
+      <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" style="display:block;padding:10px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;text-align:center;">Get Pro →</a>
     </div>
   </div>
-  <div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.2);margin-top:16px;">Cancel anytime · No SSN required · Built by a 23-year banker</div>
-</div>
+</section>
 
 <!-- FOOTER -->
-<footer style="border-top:1px solid rgba(255,255,255,0.07);margin-top:48px;padding:36px 24px 90px;background:rgba(0,0,0,0.25);">
-  <div style="max-width:920px;margin:0 auto;text-align:center;">
-    <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:rgba(255,255,255,0.7);margin-bottom:6px;">Finance<em style="font-style:italic;color:#C8A84B;">Rate</em>Calc</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:22px;">The difference is not the borrower. It's the lender.</div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:center;margin-bottom:22px;">
-      <a href="/zai-one.html" style="font-size:12px;color:rgba(255,255,255,0.45);text-decoration:none;">Zai Routing</a>
-      <a href="/denial-clock.html" style="font-size:12px;color:rgba(255,255,255,0.45);text-decoration:none;">Denial Clock</a>
-      <a href="/lender-stress-index.html" style="font-size:12px;color:rgba(255,255,255,0.45);text-decoration:none;">Lender Stress Index</a>
-      <a href="/fha-state-map.html" style="font-size:12px;color:rgba(255,255,255,0.45);text-decoration:none;">State Map</a>
-      <a href="/fha-lending-structure-research.html" style="font-size:12px;color:rgba(255,255,255,0.45);text-decoration:none;">Research</a>
-      <a href="/methodology.html" style="font-size:12px;color:rgba(255,255,255,0.45);text-decoration:none;">Methodology</a>
-      <a href="/tools.html" style="font-size:12px;color:rgba(255,255,255,0.45);text-decoration:none;">All Tools</a>
-      <a href="/about.html" style="font-size:12px;color:rgba(255,255,255,0.45);text-decoration:none;">About</a>
+<footer style="border-top:1px solid rgba(255,255,255,0.06);padding:32px 24px 40px;">
+  <div style="max-width:640px;margin:0 auto;text-align:center;">
+    <div style="display:flex;flex-wrap:wrap;gap:6px 20px;justify-content:center;margin-bottom:16px;">
+      <a href="/zai-one.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;">Zai</a>
+      <a href="/denial-clock.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;">Denial Clock</a>
+      <a href="/lender-stress-index.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;">LSI</a>
+      <a href="/fha-state-map.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;">State Map</a>
+      <a href="/fha-lending-structure-research.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;">Research</a>
+      <a href="/tools.html" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;">All Tools</a>
     </div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.05);">
-      <a href="/terms.html" style="font-size:11px;color:rgba(255,255,255,0.3);text-decoration:none;">Terms</a>
-      <a href="/privacy.html" style="font-size:11px;color:rgba(255,255,255,0.3);text-decoration:none;">Privacy</a>
-      <a href="/refund.html" style="font-size:11px;color:rgba(255,255,255,0.3);text-decoration:none;">Refund</a>
-      <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" style="font-size:11px;color:rgba(200,168,75,0.6);text-decoration:none;font-weight:700;">Pro — $49/mo →</a>
-      <a href="mailto:press@financeratecalc.com" style="font-size:11px;color:rgba(255,255,255,0.3);text-decoration:none;">press@financeratecalc.com</a>
+    <div style="display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.05);">
+      <a href="/terms.html" style="font-size:11px;color:rgba(255,255,255,0.2);text-decoration:none;">Terms</a>
+      <a href="/privacy.html" style="font-size:11px;color:rgba(255,255,255,0.2);text-decoration:none;">Privacy</a>
+      <a href="/refund.html" style="font-size:11px;color:rgba(255,255,255,0.2);text-decoration:none;">Refund</a>
+      <a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" style="font-size:11px;color:rgba(200,168,75,0.5);text-decoration:none;font-weight:700;">Pro $49/mo →</a>
     </div>
-    <div style="font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;">© 2026 FinanceRateCalc · All data from public CFPB HMDA federal records · Educational only — not financial advice</div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.15);">© 2026 FinanceRateCalc · CFPB HMDA public data · Educational only · Not financial advice</div>
   </div>
 </footer>
 
-
-
+<script>
+(function(){
+  var S = new Date('2025-01-01T00:00:00Z').getTime();
+  var R = 103022/(365*24*60*60*1000);
+  function fmt(n){return Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+  var el = document.getElementById('heroCount');
+  function tick(){if(el) el.textContent = fmt((Date.now()-S)*R);}
+  tick(); setInterval(tick,800);
+})();
+</script>
 
 </body>
 </html>
