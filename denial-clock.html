@@ -83,6 +83,28 @@ header{padding:0 32px;height:52px;display:flex;align-items:center;justify-conten
 </style>
 </head>
 <body>
+<!-- EMAIL_STRIP -->
+<div id="emailStrip" style="background:rgba(200,168,75,0.08);border-bottom:1px solid rgba(200,168,75,0.2);padding:8px 20px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-size:12px;">
+  <span style="color:rgba(255,255,255,0.6);">📊 Weekly LSI Alert — free. Every Monday: which lenders shifted.</span>
+  <form onsubmit="submitEmail(event)" style="display:flex;gap:6px;">
+    <input type="email" id="emailInput" placeholder="your@email.com" required style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:6px 12px;color:#fff;font-size:12px;width:180px;outline:none;">
+    <button type="submit" style="padding:6px 14px;background:#C8A84B;color:#000;border:none;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;">Subscribe</button>
+    <a href="/privacy.html" style="font-size:10px;color:rgba(255,255,255,0.2);text-decoration:none;">Privacy</a> <button type="button" onclick="document.getElementById('emailStrip').style.display='none';localStorage.setItem('strip_closed','1')" style="background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;line-height:1;">×</button>
+  </form>
+</div>
+<script>
+if(localStorage.getItem('strip_closed')||localStorage.getItem('email_subscribed')){
+  var s=document.getElementById('emailStrip');if(s)s.style.display='none';
+}
+function submitEmail(e){
+  e.preventDefault();
+  var em=document.getElementById('emailInput').value;
+  fetch('https://formspree.io/f/mkoewrgp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,source:'lsi_alert_strip',page:location.pathname})});
+  localStorage.setItem('email_subscribed','1');
+  document.getElementById('emailStrip').innerHTML='<span style="color:#C8A84B;font-weight:700;">✓ Subscribed. First alert Monday.</span>';
+  setTimeout(function(){var s=document.getElementById('emailStrip');if(s)s.style.display='none';},3000);
+}
+</script>
 <header>
   <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
   <a href="/zai-one.html" style="padding:6px 14px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.25);color:#C8A84B;border-radius:6px;font-weight:700;text-decoration:none;font-size:12px;">Check your file →</a>
