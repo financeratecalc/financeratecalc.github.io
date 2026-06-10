@@ -169,6 +169,7 @@ window.frcFunnel.step('page_view', {page: location.pathname});
     <div style="font-size:13px;color:rgba(255,255,255,0.35);margin-top:6px;" id="deniedContext"></div>
   </div>
   
+  <div id="shadowClassification"></div>
   <div class="recovery-label">How similar profiles performed at other lenders</div>
   <div id="lenderRows"></div>
   
@@ -242,6 +243,29 @@ function calcRecovery(){
   document.getElementById('deniedContext').textContent = deniedRate
     ? `${deniedRate}% 8-year denial rate — ${Math.round((1-deniedRate/100)*100)}% historical FHA approval rate`
     : 'Not listed in our dataset';
+
+  // SHADOW APPROVAL CLASSIFICATION
+  // Lenders with denial rates materially above market benchmark (adj 27.4%) → possible shadow
+  const SHADOW_THRESHOLD = 27.4 * 1.5; // risk-adjusted benchmark
+  const isShadow = deniedRate && deniedRate > SHADOW_THRESHOLD;
+  const shadowDiv = document.getElementById('shadowClassification');
+  if(shadowDiv) {
+    if(isShadow) {
+      shadowDiv.innerHTML = `<div style="background:rgba(232,132,90,0.06);border:1px solid rgba(232,132,90,0.2);border-radius:10px;padding:14px 18px;margin-bottom:20px;">
+        <div style="font-size:10px;color:rgba(232,132,90,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;">Recovery classification</div>
+        <div style="font-size:16px;font-weight:700;color:#e8845a;margin-bottom:6px;">Possible Shadow Approval</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;">${LENDER_LABELS[denied_at]} had a ${deniedRate}% denial rate — materially higher than the market benchmark in an environment where some lenders denied fewer than 10% of similar applicants. Your denial occurred where substantially better outcomes were simultaneously available in the same market.</div>
+        <div style="margin-top:10px;"><a href="/shadow-approval.html" style="font-size:12px;color:rgba(232,132,90,0.7);text-decoration:none;">What is a Shadow Approval? →</a></div>
+      </div>`;
+    } else {
+      shadowDiv.innerHTML = `<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px 18px;margin-bottom:20px;">
+        <div style="font-size:10px;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;">Recovery classification</div>
+        <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.6);">Market-rate denial</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.35);line-height:1.6;">${LENDER_LABELS[denied_at]}'s denial rate is near the market benchmark. The routing opportunity exists, but the denial itself falls within typical market ranges.</div>
+      </div>`;
+    }
+  }
+  if(typeof gtag!=='undefined') gtag('event','shadow_classification',{lender:denied_at, is_shadow:isShadow});
   
   const top = results.filter(r=>!r.flag)[0];
   let html = '';
