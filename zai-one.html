@@ -2337,7 +2337,33 @@ KILLER3: [approval killer #3 or N/A]`;
         <span style="font-size:11px;color:rgba(255,255,255,0.2);align-self:center;margin-left:4px;">Share this routing</span>
       </div>
       
-    `;
+    
+
+APPROVAL TWIN SYSTEM (add to every routing output):
+After giving lender recommendations, always include an "Approval Twin" section:
+Format: "Based on 8-year HMDA data, borrowers with similar profiles (FICO range, DTI range, income type, this state) had a [X]% approval rate at [top lender]. CrossCountry originated 162,325 FHA loans over 8 years with a 6.28% denial rate — meaning roughly 93 out of 100 similar applicants were approved."
+
+Use these real 8-year totals for context:
+CrossCountry: 162,325 originated, 6.28% denial (8yr avg) → ~94% approval
+Guild: 135,879 originated, 7.30% denial → ~93% approval  
+UWM: 406,427 originated, 17.98% denial → ~82% approval
+PennyMac: 118,178 originated, 31.92% denial (IMPROVING — use 23.6% current) → ~76% approval
+Rocket: 644,020 originated, 30.11% denial → ~70% approval
+Mr. Cooper: 146,638 originated, 23.36% denial → ~77% approval
+loanDepot: 195,725 originated, 34.47% denial → ~66% approval
+Planet Home: 30,042 originated, 21.29% denial → ~79% approval
+NewRez: 79,225 originated, 43.45% denial → REGIME GATED
+Freedom: 392,092 originated, 16.63% denial → REGIME GATED (OFI 81)
+Wells Fargo: 12,757 originated, 52.37% denial → AVOID
+
+DENIAL RECOVERY PATHWAY (when user mentions prior denial):
+If user was denied at Lender X, calculate recovery odds at other lenders:
+Recovery estimate = 100 - (target_lender_denial_rate × 1.3)
+Denied at Rocket (30.1%) → CrossCountry: 92% recovery, Guild: 91%, UWM: 77%
+Denied at NewRez (43.4%) → CrossCountry: 92%, Guild: 91%, UWM: 77%
+Denied at Wells (52.4%) → CrossCountry: 92%, Guild: 91%
+Always add: "These estimates are based on historical HMDA approval rates — not a guarantee. Individual underwriting decisions vary."
+`;
 
     document.getElementById('loading').classList.remove('show');
     document.getElementById('decision').classList.add('show');

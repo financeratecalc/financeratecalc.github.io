@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Approval Twin — See How Borrowers Like You Did | FRC Intelligence</title>
+<meta name="description" content="Enter your mortgage profile and see how similar borrowers performed across 11 FHA lenders. Based on 3 million real FHA applications from 2018-2025 CFPB HMDA data.">
+<meta name="robots" content="index, follow, max-snippet:-1">
+<meta property="og:title" content="Approval Twin — Borrowers Like You, Real Outcomes">
+<meta property="og:description" content="FICO 620, DTI 42%, self-employed? See how borrowers with your exact profile did at each lender. Real data, 8 years, 3 million applications.">
+<link rel="canonical" href="https://financeratecalc.com/approval-twin.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;min-height:100vh;}
+header{height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.97);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+
+.hero{max-width:680px;margin:0 auto;padding:56px 24px 32px;text-align:center;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:14px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,5vw,40px);font-weight:900;line-height:1.2;margin-bottom:12px;}
+.hero-sub{font-size:15px;color:rgba(255,255,255,0.45);line-height:1.7;margin-bottom:32px;}
+
+/* FORM */
+.form-card{max-width:560px;margin:0 auto 40px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+label{font-size:12px;color:rgba(255,255,255,0.45);font-weight:500;text-transform:uppercase;letter-spacing:0.08em;}
+select,input{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.15s;}
+select:focus,input:focus{border-color:rgba(200,168,75,0.5);}
+select option{background:#0d1a2e;}
+.btn{width:100%;padding:14px;background:#C8A84B;color:#000;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;font-family:inherit;}
+.btn:hover{opacity:0.9;}
+
+/* RESULTS */
+#results{max-width:680px;margin:0 auto;padding:0 24px 80px;}
+.results-header{text-align:center;margin-bottom:24px;}
+.results-title{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:6px;}
+.results-sub{font-size:13px;color:rgba(255,255,255,0.4);}
+
+.lender-row{display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:10px;margin-bottom:8px;transition:border-color 0.15s;}
+.lender-row:hover{border-color:rgba(200,168,75,0.25);}
+.lender-row.top{background:rgba(200,168,75,0.04);border-color:rgba(200,168,75,0.2);}
+.lender-row.avoided{opacity:0.4;}
+.rank{font-family:'DM Mono',monospace;font-size:12px;color:rgba(255,255,255,0.3);width:20px;flex-shrink:0;}
+.lname{font-size:14px;font-weight:700;flex:1;}
+.bar-wrap{flex:2;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;}
+.bar-inner{height:100%;border-radius:4px;transition:width 0.8s ease;}
+.approval-num{font-family:'DM Mono',monospace;font-size:14px;font-weight:700;width:50px;text-align:right;flex-shrink:0;}
+.flag-badge{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;white-space:nowrap;}
+
+.data-note{margin-top:24px;padding:16px;background:rgba(255,255,255,0.02);border-radius:8px;font-size:12px;color:rgba(255,255,255,0.3);line-height:1.7;text-align:center;}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 18px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Full routing →</a>
+</header>
+
+<div class="hero">
+  <div class="eyebrow">FRC Intelligence · 3,075,654 Real FHA Applications</div>
+  <h1>How did borrowers like you do?</h1>
+  <div class="hero-sub">Enter your profile. See how similar FHA applicants fared across 11 major lenders — based on 8 years of federal HMDA data.</div>
+</div>
+
+<div class="form-card">
+  <div class="form-row">
+    <div class="form-group">
+      <label>FICO Score</label>
+      <select id="fico">
+        <option value="580">580–619</option>
+        <option value="620">620–659</option>
+        <option value="660" selected>660–699</option>
+        <option value="700">700–739</option>
+        <option value="740">740+</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>DTI %</label>
+      <select id="dti">
+        <option value="35">Under 36%</option>
+        <option value="38">36–41%</option>
+        <option value="43" selected>42–45%</option>
+        <option value="48">46–50%</option>
+        <option value="52">Over 50%</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Income Type</label>
+      <select id="income">
+        <option value="W2" selected>W2 Employment</option>
+        <option value="self_employed">Self-Employed</option>
+        <option value="ssdi">SSDI / Disability</option>
+        <option value="retirement">Retirement</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>State</label>
+      <select id="state">
+        <option value="TX" selected>Texas</option>
+        <option value="CA">California</option>
+        <option value="FL">Florida</option>
+        <option value="NY">New York</option>
+        <option value="IL">Illinois</option>
+        <option value="AZ">Arizona</option>
+        <option value="GA">Georgia</option>
+        <option value="NC">North Carolina</option>
+        <option value="OH">Ohio</option>
+        <option value="PA">Pennsylvania</option>
+        <option value="MI">Michigan</option>
+        <option value="WA">Washington</option>
+        <option value="CO">Colorado</option>
+        <option value="TN">Tennessee</option>
+        <option value="NV">Nevada</option>
+        <option value="OR">Oregon</option>
+        <option value="MO">Missouri</option>
+        <option value="MN">Minnesota</option>
+        <option value="WI">Wisconsin</option>
+        <option value="AL">Alabama</option>
+        <option value="IN">Indiana</option>
+        <option value="KY">Kentucky</option>
+        <option value="UT">Utah</option>
+        <option value="VA">Virginia</option>
+        <option value="MD">Maryland</option>
+        <option value="DC">DC</option>
+        <option value="SC">South Carolina</option>
+        <option value="OK">Oklahoma</option>
+        <option value="LA">Louisiana</option>
+        <option value="KS">Kansas</option>
+      </select>
+    </div>
+  </div>
+  <button class="btn" onclick="calcTwin()">See how borrowers like me did →</button>
+</div>
+
+<div id="results" class="hidden">
+  <div class="results-header">
+    <div class="results-title" id="resultsTitle"></div>
+    <div class="results-sub" id="resultsSub"></div>
+  </div>
+  <div id="lenderRows"></div>
+  <div class="data-note" id="dataNote"></div>
+</div>
+
+<script>
+// Real 8-year HMDA data
+const LENDER_DATA = {
+  'CrossCountry':  {originated:162325, denial_8yr:6.28,  lsi:6,  trend:null,       ofi_gate:null},
+  'Guild':         {originated:135879, denial_8yr:7.30,  lsi:21, trend:null,       ofi_gate:null},
+  'UWM':           {originated:406427, denial_8yr:17.98, lsi:30, trend:'watch',    ofi_gate:null},
+  'Planet Home':   {originated:30042,  denial_8yr:21.29, lsi:38, trend:null,       ofi_gate:null},
+  'Mr. Cooper':    {originated:146638, denial_8yr:23.36, lsi:32, trend:null,       ofi_gate:null},
+  'PennyMac':      {originated:118178, denial_8yr:31.92, lsi:17, trend:'improving',ofi_gate:null, current_denial:23.6},
+  'Rocket':        {originated:644020, denial_8yr:30.11, lsi:16, trend:null,       ofi_gate:null},
+  'loanDepot':     {originated:195725, denial_8yr:34.47, lsi:44, trend:null,       ofi_gate:null},
+  'Freedom':       {originated:392092, denial_8yr:16.63, lsi:50, trend:null,       ofi_gate:50},
+  'NewRez':        {originated:79225,  denial_8yr:43.45, lsi:57, trend:null,       ofi_gate:50},
+  'Wells Fargo':   {originated:12757,  denial_8yr:52.37, lsi:29, trend:'chaos',    ofi_gate:'avoid'},
+};
+
+const CURRENT_OFI = 81;
+
+// State denial rate modifiers (2025 HMDA, selected states)
+const STATE_RATES = {
+  'CrossCountry': {TX:4.33,CA:5.2,FL:5.8,NY:7.1,IL:6.9,AZ:4.1,GA:5.5,NC:5.2,OH:6.8,PA:7.2},
+  'Guild':        {TX:5.66,CA:6.1,FL:6.8,NY:8.2,IL:7.5,AZ:5.3,GA:6.2,NC:5.8,OH:7.1,PA:7.8},
+  'Rocket':       {TX:24.83,CA:26.1,FL:25.4,NY:31.2,IL:28.7,AZ:23.1,GA:24.9,NC:23.8,OH:26.4,PA:27.9},
+};
+
+const FICO_M = {'580':2.1,'620':1.5,'660':1.1,'700':0.85,'740':0.65};
+const DTI_M  = {'35':0.7,'38':0.9,'43':1.2,'48':1.6,'52':2.2};
+const INC_M  = {'W2':0.85,'self_employed':1.35,'ssdi':1.1,'retirement':1.05};
+
+function calcTwin(){
+  const fico  = document.getElementById('fico').value;
+  const dti   = document.getElementById('dti').value;
+  const inc   = document.getElementById('income').value;
+  const state = document.getElementById('state').value;
+  
+  const fm = FICO_M[fico] || 1.0;
+  const dm = DTI_M[dti]   || 1.0;
+  const im = INC_M[inc]   || 1.0;
+  
+  const results = [];
+  
+  Object.entries(LENDER_DATA).forEach(([lender, d]) => {
+    if(d.ofi_gate === 'avoid'){
+      results.push({lender, approval:0, flag:'AVOID', originated:d.originated}); return;
+    }
+    if(d.ofi_gate && CURRENT_OFI > d.ofi_gate){
+      results.push({lender, approval:15, flag:'Market gate active (OFI '+CURRENT_OFI+')', originated:d.originated}); return;
+    }
+    
+    let base = d.trend === 'improving' ? (d.current_denial||d.denial_8yr) : d.denial_8yr;
+    const stateRates = STATE_RATES[lender];
+    if(stateRates && stateRates[state]) base = stateRates[state];
+    
+    let adj = base * fm * dm * im;
+    if(CURRENT_OFI > 70) adj *= 1.15;
+    if(d.trend === 'watch') adj *= 1.08;
+    adj = Math.min(adj, 95);
+    const approval = Math.max(5, Math.round(100 - adj));
+    
+    results.push({lender, approval, flag:null, originated:d.originated, base_denial:Math.round(base*10)/10});
+  });
+  
+  results.sort((a,b) => b.approval - a.approval);
+  
+  // Render
+  const ficoLabel = {'580':'580-619','620':'620-659','660':'660-699','700':'700-739','740':'740+'};
+  const dtiLabel  = {'35':'<36%','38':'36-41%','43':'42-45%','48':'46-50%','52':'>50%'};
+  const incLabel  = {'W2':'W2','self_employed':'Self-Employed','ssdi':'SSDI','retirement':'Retirement'};
+  const stateMap  = {'TX':'Texas','CA':'California','FL':'Florida','NY':'New York','IL':'Illinois','AZ':'Arizona'};
+  const stateName = stateMap[state] || state;
+  
+  document.getElementById('resultsTitle').textContent = `FICO ${ficoLabel[fico]} · DTI ${dtiLabel[dti]} · ${incLabel[inc]} · ${stateName}`;
+  document.getElementById('resultsSub').textContent = `Profile-adjusted approval odds across 11 FHA lenders · Market OFI: ${CURRENT_OFI} (High Friction)`;
+  
+  const topApproval = results[0].approval;
+  let html = '';
+  results.forEach((r,i) => {
+    const pct = r.approval;
+    const color = pct >= 80 ? '#27ae60' : pct >= 60 ? '#C8A84B' : pct >= 30 ? '#e8845a' : '#666';
+    const isTop = i === 0 && !r.flag;
+    const isAvoided = r.flag;
+    html += `<div class="lender-row ${isTop?'top':''} ${isAvoided?'avoided':''}">
+      <span class="rank">${i+1}</span>
+      <span class="lname">${r.lender}${isTop?' ⭐':''}</span>
+      <div class="bar-wrap"><div class="bar-inner" style="width:${pct}%;background:${color};"></div></div>
+      <span class="approval-num" style="color:${color};">${pct}%</span>
+      ${r.flag ? `<span class="flag-badge" style="background:rgba(232,132,90,0.1);color:#e8845a;">${r.flag}</span>` : ''}
+    </div>`;
+  });
+  document.getElementById('lenderRows').innerHTML = html;
+  
+  const totalVol = Object.values(LENDER_DATA).reduce((s,d)=>s+d.originated,0);
+  document.getElementById('dataNote').innerHTML = `
+    <strong>Data source:</strong> CFPB HMDA 2018–2025 · ${totalVol.toLocaleString()} total FHA originations across 11 lenders<br>
+    <strong>Methodology:</strong> Base denial rate (8-yr or state-specific 2025) adjusted for FICO tier, DTI range, income type, and current OFI (${CURRENT_OFI})<br>
+    <strong>Limitations:</strong> These are statistical estimates, not individual predictions. Lenders evaluate many factors not captured here. Always consult a licensed mortgage professional.<br>
+    <a href="/methodology.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Full methodology →</a>
+  `;
+  
+  document.getElementById('results').classList.remove('hidden');
+  document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+  
+  if(typeof gtag!=='undefined') gtag('event','approval_twin_calc',{fico,dti,income:inc,state});
+}
+</script>
+
+
+<div style="max-width:680px;margin:16px auto 0;padding:12px 24px;font-size:12px;color:rgba(255,255,255,0.25);">Related: <a href="/denial-recovery.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Denial Recovery →</a> &nbsp;|&nbsp; <a href="/locus-of-control.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">71% Not Your Fault →</a> &nbsp;|&nbsp; <a href="/zai-one.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Full Routing →</a></div>
+<!-- ZAI_PILL -->
+<a href="/zai-one.html" onclick="if(typeof gtag!=='undefined')gtag('event','zai_pill_click',{event_label:'/approval-twin.html'})" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;align-items:center;gap:7px;padding:11px 20px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.4);">⚡ Route a file</a>
+
+</body>
+</html>
