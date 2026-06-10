@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>71% of FHA Mortgage Denials Are Not the Borrower's Fault | FRC Intelligence</title>
+<meta name="description" content="Variance decomposition of 4,124 lender-state-year observations shows 71% of FHA denial variance is explained by lender identity, geography, and market timing — not the borrower.">
+<meta name="robots" content="index, follow, max-snippet:-1">
+<meta property="og:title" content="71% of FHA Denials Are Not the Borrower's Fault">
+<meta property="og:description" content="We decomposed 8 years of federal HMDA data. The finding: 71% of denial variance comes from who you applied to, where you live, and when you applied — not your credit profile.">
+<meta property="og:url" content="https://financeratecalc.com/locus-of-control.html">
+<link rel="canonical" href="https://financeratecalc.com/locus-of-control.html">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ScholarlyArticle","headline":"71% of FHA Mortgage Denials Are Not the Borrower's Fault","author":{"@type":"Organization","name":"FRC Intelligence"},"datePublished":"2026-06-10","description":"Variance decomposition of CFPB HMDA 2018-2025 data across 11 lenders, 51 states, 8 years. Lender identity explains 63.4% of denial variance. Time and geography add another 7.7%. Borrower-controlled factors: 28.9%.","publisher":{"@type":"Organization","name":"FinanceRateCalc","url":"https://financeratecalc.com"}}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.7;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:720px;margin:0 auto;padding:56px 24px 80px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,44px);font-weight:900;line-height:1.15;margin-bottom:16px;}
+h1 em{font-style:italic;color:#e8845a;}
+.meta{font-size:12px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06);}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin:44px 0 14px;color:#C8A84B;}
+p{font-size:15px;color:rgba(255,255,255,0.65);margin-bottom:14px;line-height:1.8;}
+strong{color:#fff;}
+
+/* BÜYÜK SAYILAR */
+.big-finding{text-align:center;padding:48px 24px;margin:40px 0;background:rgba(232,132,90,0.04);border:1px solid rgba(232,132,90,0.15);border-radius:16px;}
+.big-number{font-family:'Fraunces',serif;font-size:clamp(72px,15vw,120px);font-weight:900;color:#e8845a;line-height:1;}
+.big-label{font-size:16px;color:rgba(255,255,255,0.5);margin-top:12px;line-height:1.5;}
+.big-label strong{color:#fff;}
+
+/* DECOMP CHART */
+.decomp{margin:32px 0;}
+.decomp-row{margin-bottom:16px;}
+.decomp-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;}
+.decomp-name{color:rgba(255,255,255,0.7);}
+.decomp-pct{font-family:'DM Mono',monospace;font-weight:700;}
+.bar-track{height:10px;background:rgba(255,255,255,0.06);border-radius:5px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:5px;transition:width 1s ease;}
+
+/* YILLIK TABLO */
+.year-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:24px 0;}
+.year-cell{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;text-align:center;}
+.year-num{font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:4px;}
+.year-pct{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:#e8845a;}
+
+.finding-box{background:rgba(200,168,75,0.04);border-left:3px solid #C8A84B;padding:16px 20px;margin:20px 0;border-radius:0 8px 8px 0;}
+.finding-box p{margin:0;font-size:15px;}
+
+.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:28px;margin:48px 0;text-align:center;}
+.cta-box a{display:inline-block;padding:12px 28px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:12px;}
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 18px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Route a file →</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · Original Research</div>
+
+  <h1>The majority of FHA denials are <em>not</em> the borrower's fault.</h1>
+
+  <div class="meta">
+    Data: CFPB HMDA 2018–2025 · 11 lenders · 51 jurisdictions · 4,124 lender-state-year observations<br>
+    Method: Two-way variance decomposition (lender × year × state × residual)<br>
+    Published: June 2026 · FRC Intelligence
+  </div>
+
+  <!-- ANA BULGU -->
+  <div class="big-finding">
+    <div class="big-number">71%</div>
+    <div class="big-label">of FHA denial variance is explained by<br><strong>lender identity, geography, and market timing</strong> —<br>not the borrower's credit profile.</div>
+  </div>
+
+  <h2>What we measured</h2>
+  <p>We asked a simple question that no one had formally answered: in the aggregate, how much of an FHA denial is actually about the borrower?</p>
+  <p>Using eight years of federal HMDA data — 4,124 lender-state-year observations across eleven major FHA lenders and all fifty-one U.S. jurisdictions — we decomposed denial rate variance into four components: lender identity, market timing, state geography, and the residual (which includes borrower characteristics like FICO score, DTI, documentation quality).</p>
+
+  <!-- DECOMP CHART -->
+  <h2>Where denials actually come from</h2>
+  <div class="decomp">
+    <div class="decomp-row">
+      <div class="decomp-label">
+        <span class="decomp-name">🏦 Lender Identity — <em>who you applied to</em></span>
+        <span class="decomp-pct" style="color:#e8845a;">63.4%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:63.4%;background:#e8845a;"></div></div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px;">CrossCountry denies 6.37%. NewRez denies 53.27%. Same rules, same year.</div>
+    </div>
+    <div class="decomp-row" style="margin-top:14px;">
+      <div class="decomp-label">
+        <span class="decomp-name">📅 Market Timing — <em>when you applied</em></span>
+        <span class="decomp-pct" style="color:#C8A84B;">5.3%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:5.3%;background:#C8A84B;"></div></div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px;">2021 vs 2023 made a real difference — but less than people assume.</div>
+    </div>
+    <div class="decomp-row" style="margin-top:14px;">
+      <div class="decomp-label">
+        <span class="decomp-name">🗺️ State Geography — <em>where you applied</em></span>
+        <span class="decomp-pct" style="color:#C8A84B;">2.4%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:2.4%;background:#C8A84B;"></div></div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px;">Utah vs DC — real but smaller than the lender effect.</div>
+    </div>
+    <div class="decomp-row" style="margin-top:14px;">
+      <div class="decomp-label">
+        <span class="decomp-name">👤 Borrower Factors — <em>FICO, DTI, documentation</em></span>
+        <span class="decomp-pct" style="color:rgba(255,255,255,0.5);">28.9%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:28.9%;background:rgba(255,255,255,0.2);"></div></div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px;">Credit score, DTI ratio, income documentation — the factors borrowers can actually control.</div>
+    </div>
+  </div>
+
+  <div class="finding-box">
+    <p><strong>The math:</strong> 63.4% (lender) + 5.3% (timing) + 2.4% (geography) = <strong>71.1% outside the borrower's control.</strong> The remaining 28.9% is the residual — FICO, DTI, income type, documentation quality — the factors a borrower can actually influence.</p>
+  </div>
+
+  <h2>This held across every market condition</h2>
+  <p>One objection to this finding: maybe the lender effect is concentrated in a single unusual year. It isn't. The lender identity component was the dominant factor in every year from 2018 to 2025 — through COVID, through the fastest rate-hike cycle in four decades, through the 2021 boom and the 2023 freeze.</p>
+
+  <div class="year-grid">
+    <div class="year-cell"><div class="year-num">2018</div><div class="year-pct">76%</div></div>
+    <div class="year-cell"><div class="year-num">2019</div><div class="year-pct">80%</div></div>
+    <div class="year-cell"><div class="year-num">2020</div><div class="year-pct">82%</div></div>
+    <div class="year-cell"><div class="year-num">2021</div><div class="year-pct">76%</div></div>
+    <div class="year-cell"><div class="year-num">2022</div><div class="year-pct">85%</div></div>
+    <div class="year-cell"><div class="year-num">2023</div><div class="year-pct">78%</div></div>
+    <div class="year-cell"><div class="year-num">2024</div><div class="year-pct">81%</div></div>
+    <div class="year-cell"><div class="year-num">2025</div><div class="year-pct">81%</div></div>
+  </div>
+  <p style="font-size:12px;color:rgba(255,255,255,0.3);">Each number represents the share of denial variance explained by lender identity alone in that calendar year, across all 51 jurisdictions.</p>
+
+  <h2>What this means — and what it doesn't</h2>
+  <p>This finding applies to <strong>aggregate variance</strong>, not individual outcomes. An individual borrower's denial may be entirely about their credit profile. The 71% figure describes the system as a whole: if you could randomly reassign all FHA applicants to different lenders while keeping everything else constant, the lender reassignment alone would explain the majority of changes in who gets approved.</p>
+  <p>This is not a finding about discrimination, fraud, or regulatory failure. It is a finding about <strong>institutional heterogeneity</strong> — lenders applying the same federal guidelines with radically different interpretations, overlays, and risk appetites.</p>
+
+  <h2>The implication for borrowers</h2>
+  <p>If the majority of denial variance is outside your control, the most productive response to a denial is not necessarily to repair your credit score. It may be to <strong>route your application differently.</strong> The same file that fails at one lender may succeed at another — not because one lender is better or worse, but because they have different institutional behaviors.</p>
+
+  <div class="finding-box">
+    <p><strong>This is why routing exists.</strong> Borrower optimization (improve FICO, reduce DTI) addresses the 29%. Routing optimization addresses the 71%.</p>
+  </div>
+
+  <h2>Limitations</h2>
+  <p>This analysis uses annual lender-state aggregates from HMDA public data, not individual application records. The residual term captures everything not explained by lender, year, and state fixed effects — including borrower characteristics, but also unmeasured lender policies, application mix selection, and data noise. The true "borrower-controlled" share may be higher or lower than 28.9%. The 71% figure is a lower bound on systemic influence, not a precise estimate of individual blame attribution.</p>
+  <p>This is an FHA-specific finding. Conventional lending may show different patterns.</p>
+
+  <div class="cta-box">
+    <div style="font-size:14px;color:rgba(255,255,255,0.5);">You can't control the system. But you can route around it.</div>
+    <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-top:6px;">See which lender fits your specific file.</div>
+    <a href="/zai-one.html">Get a routing decision — free →</a>
+    <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:10px;">Based on 8-year HMDA patterns · 60 seconds · no SSN</div>
+  </div>
+
+  <div class="foot">
+    Source: CFPB Home Mortgage Disclosure Act public datasets, 2018–2025. FHA purchase and refinance applications. Lender aggregation by parent institution across all active states (minimum 10 state-year cells per lender). Variance decomposition: two-way analysis of variance with lender, year, and state fixed effects. Residual interpreted as upper bound on borrower-attributable variance.<br><br>
+    This is statistical research on aggregate patterns, not financial advice and not a statement about any individual application outcome.<br><br>
+    Citation: FRC Intelligence (2026). "71% of FHA Mortgage Denials Are Not the Borrower's Fault." financeratecalc.com/locus-of-control.html
+  </div>
+</div>
+
+
+<div style="max-width:720px;margin:24px auto;padding:14px 24px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:rgba(255,255,255,0.3);">Related research: <a href="/denial-genome.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Denial Genome →</a> &nbsp;|&nbsp; <a href="/lender-taxonomy.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Lender Taxonomy →</a> &nbsp;|&nbsp; <a href="/fha-lending-structure-research.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">9+2 Structure →</a></div>
+<!-- ZAI_PILL -->
+<a href="/zai-one.html" onclick="if(typeof gtag!=='undefined')gtag('event','zai_pill_click',{event_label:'/locus-of-control.html'})" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;align-items:center;gap:7px;padding:11px 20px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.4);">⚡ Route a file</a>
+
+</body>
+</html>

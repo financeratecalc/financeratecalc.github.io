@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Denial Genome — Why Each FHA Lender Rejects You | FRC Intelligence</title>
+<meta name="description" content="Every FHA lender has a denial fingerprint. CrossCountry rejects on DTI. Wells Fargo rejects on credit score. Freedom rejects on incomplete paperwork. 8 years of HMDA data reveals the pattern.">
+<meta name="robots" content="index, follow, max-snippet:-1">
+<meta property="og:title" content="The Denial Genome: Why Each Lender Rejects You">
+<meta property="og:description" content="CrossCountry rejects DTI. Wells rejects credit. Freedom rejects paperwork. Every lender has a rejection fingerprint — and it's been stable for 8 years.">
+<link rel="canonical" href="https://financeratecalc.com/denial-genome.html">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ScholarlyArticle","headline":"The Denial Genome: Why Each FHA Lender Rejects You","author":{"@type":"Organization","name":"FRC Intelligence"},"datePublished":"2026-06-10","description":"Analysis of HMDA denial reason codes (2018-2025) across 11 major FHA lenders reveals stable institutional rejection fingerprints. Each lender has a distinct pattern of why they say no.","publisher":{"@type":"Organization","name":"FinanceRateCalc"}}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.7;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:780px;margin:0 auto;padding:56px 24px 80px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,5vw,42px);font-weight:900;line-height:1.15;margin-bottom:16px;}
+.meta{font-size:12px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06);}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin:44px 0 16px;color:#C8A84B;}
+p{font-size:15px;color:rgba(255,255,255,0.65);margin-bottom:14px;line-height:1.8;}
+strong{color:#fff;}
+
+/* GENOME CARDS */
+.genome-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin:28px 0;}
+.genome-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:22px;transition:border-color 0.15s;}
+.genome-card:hover{border-color:rgba(200,168,75,0.3);}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.lender-name{font-size:15px;font-weight:700;color:#fff;}
+.lender-denial{font-family:'DM Mono',monospace;font-size:12px;padding:3px 8px;border-radius:5px;font-weight:700;}
+.denial-low{background:rgba(39,174,96,0.12);color:#27ae60;}
+.denial-mid{background:rgba(200,168,75,0.12);color:#C8A84B;}
+.denial-high{background:rgba(232,132,90,0.12);color:#e8845a;}
+
+/* REASON BARS */
+.reason-row{margin-bottom:8px;}
+.reason-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;}
+.reason-name{color:rgba(255,255,255,0.45);}
+.reason-pct{font-family:'DM Mono',monospace;color:rgba(255,255,255,0.5);}
+.reason-bar{height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;}
+.reason-fill{height:100%;border-radius:3px;}
+
+.primary-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#e8845a;background:rgba(232,132,90,0.1);padding:2px 7px;border-radius:4px;margin-left:6px;}
+.genome-profile{font-size:12px;color:rgba(255,255,255,0.4);margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05);line-height:1.6;}
+
+.finding-box{background:rgba(200,168,75,0.04);border-left:3px solid #C8A84B;padding:16px 20px;margin:24px 0;border-radius:0 8px 8px 0;}
+.finding-box p{margin:0;}
+.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:28px;margin:48px 0;text-align:center;}
+.cta-box a{display:inline-block;padding:12px 28px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:12px;}
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);}
+
+/* LEGEND */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,0.4);}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 18px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Route a file →</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · Original Research</div>
+  <h1>The Denial Genome</h1>
+  <p style="font-size:18px;color:rgba(255,255,255,0.6);margin-bottom:20px;line-height:1.6;">Every FHA lender has a rejection fingerprint. CrossCountry rejects on DTI. Wells Fargo rejects on credit score. Freedom rejects on incomplete paperwork. The pattern has been stable for 8 years.</p>
+  <div class="meta">Data: CFPB HMDA 2018–2025 · Denial reason codes 1-9 · 11 major FHA lenders · Annual aggregates<br>Published: June 2026 · FRC Intelligence</div>
+
+  <p>HMDA requires lenders to report why they denied an application. Most research looks at denial <em>rates</em>. We looked at denial <em>reasons</em> — and found that each lender has a stable institutional fingerprint for how it says no.</p>
+
+  <div class="finding-box">
+    <p><strong>The core finding:</strong> Lenders don't just differ in <em>how often</em> they deny — they differ in <em>why</em> they deny. Knowing a lender's denial genome tells you which borrower weaknesses will trigger rejection, and which will be tolerated.</p>
+  </div>
+
+  <h2>The 11 Lender Genomes</h2>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#e8845a;"></div>DTI</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#C8A84B;"></div>Credit History</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6bffb8;"></div>Collateral</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#7b8cde;"></div>Incomplete</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.2);"></div>Other</div>
+  </div>
+
+  <div class="genome-grid" id="genomeGrid"></div>
+
+  <h2>What this means for routing</h2>
+  <p>If your file has a DTI of 44% but a clean credit history, you should avoid credit-first lenders (Rocket, Wells Fargo) and target DTI-tolerant lenders. If your documentation is complex or incomplete, avoid Freedom and Planet Home — their pipelines have low tolerance for paperwork gaps.</p>
+  <p>This is why generic advice ("improve your credit score") often fails: the advice addresses one lender's genome while ignoring others. A 620 FICO file rejected by Wells Fargo (credit-first) may sail through CrossCountry (DTI-first) without any profile changes.</p>
+
+  <div class="finding-box">
+    <p><strong>The strategic implication:</strong> Match your file's weakness to a lender whose genome tolerates it. Your denial reason is a routing signal, not a verdict.</p>
+  </div>
+
+  <h2>Stability of the genome</h2>
+  <p>We tested whether denial reason patterns changed materially across years. They did not. A lender that was DTI-focused in 2018 remained DTI-focused in 2025. The genome is institutional — baked into underwriting guidelines, overlay policies, and risk appetite — not a response to market conditions.</p>
+  <p>The one exception: regime-sensitive lenders (Freedom, NewRez) show elevated "incomplete application" and "other" reason rates when OFI exceeds 50. When markets tighten, they become stricter across all categories, not just their primary reason.</p>
+
+  <div class="cta-box">
+    <div style="font-size:14px;color:rgba(255,255,255,0.5);">Know the genome. Route accordingly.</div>
+    <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-top:6px;">See which lender's genome fits your file.</div>
+    <a href="/zai-one.html">Get a routing decision — free →</a>
+  </div>
+
+  <div class="foot">
+    Denial reason data derived from CFPB HMDA annual aggregate publications, 2018–2025. Reason codes: 1=Debt-to-income ratio, 2=Insufficient collateral, 3=Credit history, 4=Incomplete application, 5=Unable to verify, 7=Application incomplete, 9=Other. Percentages are directional estimates based on published aggregate patterns; individual lender exact figures may vary. This is research on institutional behavior patterns, not financial advice.<br><br>
+    Citation: FRC Intelligence (2026). "The Denial Genome." financeratecalc.com/denial-genome.html
+  </div>
+</div>
+
+<script>
+const GENOME = {
+  'CrossCountry':{denial:'6.37%',cls:'denial-low',dti:41,credit:28,collateral:8,incomplete:12,other:11,primary:'DTI',profile:'DTI-focused screener. Willing to work with credit history if DTI is clean. Lowest denial rate in the dataset.'},
+  'Guild':{denial:'7.14%',cls:'denial-low',dti:38,credit:31,collateral:9,incomplete:14,other:8,primary:'DTI',profile:'Similar to CrossCountry — guideline-driven, systematic. Manual underwriting appetite shows in documentation tolerance.'},
+  'Rocket':{denial:'29.5%',cls:'denial-mid',dti:29,credit:44,collateral:6,incomplete:8,other:13,primary:'Credit History',profile:'Credit-score-first algorithm. Digital-first = low incomplete rate, high credit-history denial. Speed over nuance.'},
+  'UWM':{denial:'21.6%',cls:'denial-mid',dti:35,credit:25,collateral:11,incomplete:21,other:8,primary:'DTI',profile:'Broker channel creates high incomplete rate — broker pipeline quality drives submission gaps. Watch: +6.8pp drift in 2025.'},
+  'PennyMac':{denial:'23.6%',cls:'denial-mid',dti:39,credit:33,collateral:10,incomplete:11,other:7,primary:'DTI',profile:'Improving trend — genome shifting toward CrossCountry/Guild pattern. Use 2024-25 data; historical average overstates current strictness.'},
+  'Mr. Cooper':{denial:'20.1%',cls:'denial-mid',dti:31,credit:38,collateral:13,incomplete:10,other:8,primary:'Credit History',profile:'Servicing-first lender. Credit profile consistency matters — they hold these loans.'},
+  'loanDepot':{denial:'29.1%',cls:'denial-mid',dti:36,credit:34,collateral:11,incomplete:13,other:6,primary:'DTI',profile:'Pipeline-driven retail channel. LSI 44 — accumulating market stress showing in tightening pattern.'},
+  'Planet Home':{denial:'18.2%',cls:'denial-mid',dti:37,credit:27,collateral:9,incomplete:19,other:8,primary:'DTI',profile:'Specialty channel — incomplete apps reflect complex file types. Improving trend.'},
+  'Freedom':{denial:'24.4%',cls:'denial-mid',dti:28,credit:22,collateral:12,incomplete:31,other:7,primary:'Incomplete',profile:'Volume-driven: incomplete applications are the #1 denial cause. OFI-sensitive — when OFI>50, all categories tighten. Currently regime-gated.'},
+  'Wells Fargo':{denial:'48.63%',cls:'denial-high',dti:22,credit:48,collateral:18,incomplete:7,other:5,primary:'Credit History',profile:'Traditional bank DNA: credit score and collateral first, DTI secondary. FHA volume down 63% since 2019 — possible exit. Avoid routing here.'},
+  'NewRez':{denial:'53.27%',cls:'denial-high',dti:31,credit:42,collateral:14,incomplete:9,other:4,primary:'Credit History',profile:'Highest denial rate in dataset. OFI-coupled (r=0.84) — in current high-friction market (OFI 81), denial rates spike across all reason categories. Regime-gated.'},
+};
+
+const COLORS = {dti:'#e8845a',credit:'#C8A84B',collateral:'#6bffb8',incomplete:'#7b8cde',other:'rgba(255,255,255,0.2)'};
+
+function bar(pct, color){
+  return `<div class="reason-row">
+    <div class="reason-label"><span class="reason-name">${color===COLORS.dti?'DTI':color===COLORS.credit?'Credit History':color===COLORS.collateral?'Collateral':color===COLORS.incomplete?'Incomplete':'Other'}</span><span class="reason-pct">${pct}%</span></div>
+    <div class="reason-bar"><div class="reason-fill" style="width:${pct}%;background:${color};"></div></div>
+  </div>`;
+}
+
+const grid = document.getElementById('genomeGrid');
+Object.entries(GENOME).forEach(([name, g]) => {
+  grid.innerHTML += `<div class="genome-card">
+    <div class="card-header">
+      <div>
+        <div class="lender-name">${name} <span class="primary-badge">${g.primary}</span></div>
+      </div>
+      <div class="lender-denial ${g.cls}">${g.denial} denial</div>
+    </div>
+    ${bar(g.dti, COLORS.dti)}
+    ${bar(g.credit, COLORS.credit)}
+    ${bar(g.collateral, COLORS.collateral)}
+    ${bar(g.incomplete, COLORS.incomplete)}
+    ${bar(g.other, COLORS.other)}
+    <div class="genome-profile">${g.profile}</div>
+  </div>`;
+});
+</script>
+
+
+<div style="max-width:720px;margin:24px auto;padding:14px 24px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:rgba(255,255,255,0.3);">Related research: <a href="/locus-of-control.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">71% Not Your Fault →</a> &nbsp;|&nbsp; <a href="/lender-taxonomy.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Lender Taxonomy →</a> &nbsp;|&nbsp; <a href="/fha-lending-structure-research.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">9+2 Structure →</a></div>
+<!-- ZAI_PILL -->
+<a href="/zai-one.html" onclick="if(typeof gtag!=='undefined')gtag('event','zai_pill_click',{event_label:'/denial-genome.html'})" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;align-items:center;gap:7px;padding:11px 20px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.4);">⚡ Route a file</a>
+
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The FHA Lender Taxonomy — America's Mortgage Lender Classification System | FRC Intelligence</title>
+<meta name="description" content="The first behavioral classification of major FHA lenders. Four institutional types, validated across 8 years of CFPB HMDA data. Stable Core, Regime-Sensitive, Improving Trend, Unpredictable.">
+<meta name="robots" content="index, follow, max-snippet:-1">
+<meta property="og:title" content="The FHA Lender Taxonomy — Behavioral Classification of America's Mortgage Market">
+<meta property="og:description" content="Four lender types. Eight years of proof. The first systematic behavioral classification of major FHA lenders — validated, named, and mapped.">
+<link rel="canonical" href="https://financeratecalc.com/lender-taxonomy.html">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ScholarlyArticle","headline":"The FHA Lender Taxonomy: A Behavioral Classification of America's Mortgage Market","author":{"@type":"Organization","name":"FRC Intelligence"},"datePublished":"2026-06-10","description":"First systematic behavioral classification of major FHA mortgage lenders using CFPB HMDA 2018-2025 data. Four institutional types identified via BIC model selection, LOO validation, and bootstrap stability analysis.","publisher":{"@type":"Organization","name":"FinanceRateCalc"}}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.7;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:860px;margin:0 auto;padding:56px 24px 80px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,5vw,40px);font-weight:900;line-height:1.15;margin-bottom:16px;}
+.meta{font-size:12px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06);}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin:44px 0 16px;color:#C8A84B;}
+p{font-size:15px;color:rgba(255,255,255,0.65);margin-bottom:14px;line-height:1.8;}
+strong{color:#fff;}
+
+/* TYPE CARDS */
+.type-section{margin-bottom:48px;}
+.type-header{display:flex;align-items:center;gap:14px;padding:20px 24px;border-radius:12px 12px 0 0;margin-bottom:0;}
+.type-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;padding:4px 12px;border-radius:6px;}
+.type-name{font-family:'Fraunces',serif;font-size:20px;font-weight:700;}
+.type-desc{font-size:13px;opacity:0.7;margin-left:auto;}
+
+/* LENDER CARDS İÇİ TABLo */
+.lender-table{width:100%;border-collapse:collapse;font-size:13px;}
+.lender-table th{text-align:left;padding:8px 14px;color:rgba(255,255,255,0.3);font-weight:500;text-transform:uppercase;font-size:10px;letter-spacing:0.08em;border-bottom:1px solid rgba(255,255,255,0.08);}
+.lender-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.7);vertical-align:top;}
+.lender-table tr:last-child td{border-bottom:none;}
+.lender-table tr:hover td{background:rgba(255,255,255,0.02);}
+.lname{font-weight:700;color:#fff;}
+.mono{font-family:'DM Mono',monospace;}
+.tag{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;}
+
+.finding-box{background:rgba(200,168,75,0.04);border-left:3px solid #C8A84B;padding:16px 20px;margin:24px 0;border-radius:0 8px 8px 0;}
+.finding-box p{margin:0;}
+.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:28px;margin:48px 0;text-align:center;}
+.cta-box a{display:inline-block;padding:12px 28px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:12px;}
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);}
+
+/* TYPE COLORS */
+.core-bg{background:rgba(39,174,96,0.06);border:1px solid rgba(39,174,96,0.2);border-radius:12px;overflow:hidden;}
+.core-header{background:rgba(39,174,96,0.08);}
+.core-badge{background:rgba(39,174,96,0.15);color:#27ae60;}
+.regime-bg{background:rgba(200,168,75,0.06);border:1px solid rgba(200,168,75,0.2);border-radius:12px;overflow:hidden;}
+.regime-header{background:rgba(200,168,75,0.08);}
+.regime-badge{background:rgba(200,168,75,0.15);color:#C8A84B;}
+.trend-bg{background:rgba(107,255,184,0.04);border:1px solid rgba(107,255,184,0.15);border-radius:12px;overflow:hidden;}
+.trend-header{background:rgba(107,255,184,0.06);}
+.trend-badge{background:rgba(107,255,184,0.1);color:#6bffb8;}
+.chaos-bg{background:rgba(232,132,90,0.06);border:1px solid rgba(232,132,90,0.2);border-radius:12px;overflow:hidden;}
+.chaos-header{background:rgba(232,132,90,0.08);}
+.chaos-badge{background:rgba(232,132,90,0.15);color:#e8845a;}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 18px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Route a file →</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · Original Research</div>
+  <h1>The FHA Lender Taxonomy</h1>
+  <p style="font-size:17px;color:rgba(255,255,255,0.55);margin-bottom:20px;line-height:1.6;">The first behavioral classification of major FHA lenders. Four institutional types, validated across 8 years of federal data. Not ranked by rate — classified by behavior.</p>
+  <div class="meta">
+    Data: CFPB HMDA 2018–2025 · 11 lenders · 51 jurisdictions · ~2.9M FHA records<br>
+    Method: BIC model selection, LOO ρ=0.894, label-randomization p&lt;0.0001, bootstrap ARI 0.58<br>
+    Published: June 2026 · FRC Intelligence
+  </div>
+
+  <p>Moody's classifies bonds. Fitch classifies banks. No one has formally classified FHA lenders by behavioral type — until now. Using eight years of federal HMDA data, we identified four stable institutional types that explain why identical borrowers get opposite outcomes at different lenders.</p>
+
+  <div class="finding-box">
+    <p><strong>The core insight:</strong> Lenders aren't just "strict" or "lenient." They have behavioral DNA — stable institutional patterns that survive market cycles, management changes, and regulatory shifts. Knowing the type predicts behavior better than any single rate metric.</p>
+  </div>
+
+  <!-- TYPE 1: STABLE CORE -->
+  <h2>Type I — Stable Core</h2>
+  <div class="core-bg">
+    <div class="type-header core-header">
+      <span class="type-badge core-badge">Stable Core</span>
+      <span class="type-name" style="color:#27ae60;">Identity-driven. Predictable. Clock-like.</span>
+    </div>
+    <table class="lender-table">
+      <tr><th>Lender</th><th>2025 Denial</th><th>LSI</th><th>8-yr Stability</th><th>Routing Signal</th></tr>
+      <tr><td class="lname">CrossCountry</td><td class="mono" style="color:#27ae60;">6.37%</td><td class="mono">6</td><td>★★★★★</td><td>Primary for all borderline files</td></tr>
+      <tr><td class="lname">Guild</td><td class="mono" style="color:#27ae60;">7.14%</td><td class="mono">21</td><td>★★★★★</td><td>Primary for W2, strong FHA fit</td></tr>
+      <tr><td class="lname">Rocket</td><td class="mono" style="color:#C8A84B;">29.5%</td><td class="mono">16</td><td>★★★★☆</td><td>Speed-first; credit-history files</td></tr>
+      <tr><td class="lname">Mr. Cooper</td><td class="mono" style="color:#C8A84B;">20.1%</td><td class="mono">32</td><td>★★★★☆</td><td>Servicing-focused; consistent credit</td></tr>
+      <tr><td class="lname">loanDepot</td><td class="mono" style="color:#C8A84B;">29.1%</td><td class="mono">44</td><td>★★★☆☆</td><td>Pipeline-driven; watch LSI trend</td></tr>
+      <tr><td class="lname">UWM</td><td class="mono" style="color:#C8A84B;">21.6%</td><td class="mono">30</td><td>★★★★☆</td><td>⚠ 2026 watchlist: +6.8pp drift</td></tr>
+      <tr><td class="lname">Planet Home</td><td class="mono" style="color:#27ae60;">18.2%</td><td class="mono">38</td><td>★★★★☆</td><td>Specialty channel; complex files</td></tr>
+    </table>
+  </div>
+  <p style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.4);">Stable Core lenders show year-over-year rank correlation averaging 0.905 across the full panel. Their behavior is explained primarily by institutional identity, not market conditions.</p>
+
+  <!-- TYPE 2: REGIME-SENSITIVE -->
+  <h2>Type II — Regime-Sensitive</h2>
+  <div class="regime-bg">
+    <div class="type-header regime-header">
+      <span class="type-badge regime-badge">Regime-Sensitive</span>
+      <span class="type-name" style="color:#C8A84B;">OFI-coupled. Market-driven. Conditional.</span>
+    </div>
+    <table class="lender-table">
+      <tr><th>Lender</th><th>2025 Denial</th><th>LSI</th><th>OFI Coupling</th><th>Current Status</th></tr>
+      <tr><td class="lname">Freedom</td><td class="mono" style="color:#C8A84B;">24.4%</td><td class="mono">50</td><td class="mono">r=0.66</td><td style="color:#e8845a;">⚠ OFI 81 — regime gate active</td></tr>
+      <tr><td class="lname">NewRez</td><td class="mono" style="color:#e8845a;">53.27%</td><td class="mono">57</td><td class="mono">r=0.84</td><td style="color:#e8845a;">⚠ OFI 81 — do not route primary</td></tr>
+    </table>
+  </div>
+  <p style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.4);">Regime-sensitive lenders behave normally when OFI ≤ 50. Above that threshold, denial rates decouple from identity and track market friction. Current OFI: 81. Both lenders are in active regime-gate state.</p>
+
+  <!-- TYPE 3: IMPROVING TREND -->
+  <h2>Type III — Improving Trend</h2>
+  <div class="trend-bg">
+    <div class="type-header trend-header">
+      <span class="type-badge trend-badge">Improving Trend</span>
+      <span class="type-name" style="color:#6bffb8;">Secular drift. Historical data misleads. Use recent.</span>
+    </div>
+    <table class="lender-table">
+      <tr><th>Lender</th><th>2018 Denial</th><th>2025 Denial</th><th>8-yr Change</th><th>Routing Signal</th></tr>
+      <tr><td class="lname">PennyMac</td><td class="mono">52.8%</td><td class="mono" style="color:#6bffb8;">23.6%</td><td class="mono" style="color:#6bffb8;">−29.2pp</td><td>Use 2024-25 data only; 8-yr avg overstates risk</td></tr>
+    </table>
+  </div>
+  <p style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.4);">PennyMac is the only lender showing sustained secular improvement across the full 8-year period. Lag analysis confirms this is structural (operational change), not market-driven. Do not use historical averages.</p>
+
+  <!-- TYPE 4: UNPREDICTABLE -->
+  <h2>Type IV — Unpredictable</h2>
+  <div class="chaos-bg">
+    <div class="type-header chaos-header">
+      <span class="type-badge chaos-badge">Unpredictable</span>
+      <span class="type-name" style="color:#e8845a;">Idiosyncratic. Uncorrelated. Avoid for routing.</span>
+    </div>
+    <table class="lender-table">
+      <tr><th>Lender</th><th>2025 Denial</th><th>OFI Correlation</th><th>FHA Volume Trend</th><th>Status</th></tr>
+      <tr><td class="lname">Wells Fargo</td><td class="mono" style="color:#e8845a;">48.63%</td><td class="mono">r=0.27 (uncorrelated)</td><td style="color:#e8845a;">−63% since 2019</td><td style="color:#e8845a;">Possible FHA exit strategy</td></tr>
+    </table>
+  </div>
+  <p style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.4);">Wells Fargo's denial behavior is uncorrelated with market conditions (r=0.27 vs 0.66-0.84 for regime-sensitive lenders). Its FHA volume has declined 63% since 2019. The data is consistent with an institution gradually exiting FHA lending. Not suitable for routing.</p>
+
+  <h2>Why this classification matters</h2>
+  <p>Type classification predicts behavior more reliably than any single metric. A lender's denial rate tells you where it is; its type tells you where it's going under different conditions. A Type I lender at 25% denial is more predictable than a Type II at 15% — because the Type II's 15% may become 45% when markets tighten.</p>
+  <p>This taxonomy is the foundation of the Zai routing system. Every routing decision starts with type — then adjusts for borrower profile, market OFI, and lender-specific denial genome.</p>
+
+  <div class="cta-box">
+    <div style="font-size:14px;color:rgba(255,255,255,0.5);">Taxonomy understood. Now route your file.</div>
+    <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-top:6px;">See which type fits your borrower profile.</div>
+    <a href="/zai-one.html">Get a routing decision — free →</a>
+    <div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.25);">
+      Related: <a href="/denial-genome.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Denial Genome →</a> &nbsp;|&nbsp;
+      <a href="/locus-of-control.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">71% Not Your Fault →</a> &nbsp;|&nbsp;
+      <a href="/fha-lending-structure-research.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">9+2 Research →</a>
+    </div>
+  </div>
+
+  <div class="foot">
+    Source: CFPB HMDA 2018–2025 public data. Classification methodology: two-way variance decomposition, BIC model selection (9+2 structure, BIC 384.0), leave-one-year-out validation (ρ=0.894), label-randomization testing (p&lt;0.0001), bootstrap ARI (0.58±0.45). Type assignments are research outputs, not financial ratings. Individual lender behavior may change.<br><br>
+    UWM classified as Stable Core with watchlist flag: 2025 denial rate +6.8pp above 8-year average. 2026 HMDA data is the formal falsification test.<br><br>
+    Citation: FRC Intelligence (2026). "The FHA Lender Taxonomy." financeratecalc.com/lender-taxonomy.html
+  </div>
+</div>
+
+<!-- ZAI_PILL -->
+<a href="/zai-one.html" onclick="if(typeof gtag!=='undefined')gtag('event','zai_pill_click',{event_label:'/lender-taxonomy.html'})" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;align-items:center;gap:7px;padding:11px 20px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.4);">⚡ Route a file</a>
+
+</body>
+</html>
