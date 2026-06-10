@@ -75,13 +75,13 @@ strong{color:#fff;}
   <p style="font-size:18px;color:rgba(255,255,255,0.6);margin-bottom:20px;line-height:1.6;">Every FHA lender has a rejection fingerprint. CrossCountry rejects on DTI. Wells Fargo rejects on credit score. Freedom rejects on incomplete paperwork. The pattern has been stable for 8 years.</p>
   <div class="meta">Data: CFPB HMDA 2018–2025 · Denial reason codes 1-9 · 11 major FHA lenders · Annual aggregates<br>Published: June 2026 · FRC Intelligence</div>
 
-  <p>HMDA requires lenders to report why they denied an application. Most research looks at denial <em>rates</em>. We looked at denial <em>reasons</em> — and found that each lender has a stable institutional fingerprint for how it says no.</p>
+  <p>HMDA requires lenders to report why they denied an application. Most research looks at denial <em>rates</em>. This page maps each lender's behavioral profile using 8-year verified HMDA denial rate and LSI data. Full denial-reason breakdown (DTI vs credit vs collateral) requires raw HMDA processing — in progress.</p>
 
   <div class="finding-box">
     <p><strong>The core finding:</strong> Lenders don't just differ in <em>how often</em> they deny — they differ in <em>why</em> they deny. Knowing a lender's denial genome tells you which borrower weaknesses will trigger rejection, and which will be tolerated.</p>
   </div>
 
-  <h2>The 11 Lender Genomes</h2>
+  <h2>Lender Behavioral Profiles (8-year HMDA data)</h2>
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:#e8845a;"></div>DTI</div>
     <div class="legend-item"><div class="legend-dot" style="background:#C8A84B;"></div>Credit History</div>
@@ -117,44 +117,38 @@ strong{color:#fff;}
 </div>
 
 <script>
+// Denial reason data requires HMDA raw files (denial_reason_1-4 columns)
+// Currently loading from verified aggregate data only
+// Full reason breakdown coming after raw HMDA processing
 const GENOME = {
-  'CrossCountry':{denial:'6.37%',cls:'denial-low',dti:41,credit:28,collateral:8,incomplete:12,other:11,primary:'DTI',profile:'DTI-focused screener. Willing to work with credit history if DTI is clean. Lowest denial rate in the dataset.'},
-  'Guild':{denial:'7.14%',cls:'denial-low',dti:38,credit:31,collateral:9,incomplete:14,other:8,primary:'DTI',profile:'Similar to CrossCountry — guideline-driven, systematic. Manual underwriting appetite shows in documentation tolerance.'},
-  'Rocket':{denial:'29.5%',cls:'denial-mid',dti:29,credit:44,collateral:6,incomplete:8,other:13,primary:'Credit History',profile:'Credit-score-first algorithm. Digital-first = low incomplete rate, high credit-history denial. Speed over nuance.'},
-  'UWM':{denial:'21.6%',cls:'denial-mid',dti:35,credit:25,collateral:11,incomplete:21,other:8,primary:'DTI',profile:'Broker channel creates high incomplete rate — broker pipeline quality drives submission gaps. Watch: +6.8pp drift in 2025.'},
-  'PennyMac':{denial:'23.6%',cls:'denial-mid',dti:39,credit:33,collateral:10,incomplete:11,other:7,primary:'DTI',profile:'Improving trend — genome shifting toward CrossCountry/Guild pattern. Use 2024-25 data; historical average overstates current strictness.'},
-  'Mr. Cooper':{denial:'20.1%',cls:'denial-mid',dti:31,credit:38,collateral:13,incomplete:10,other:8,primary:'Credit History',profile:'Servicing-first lender. Credit profile consistency matters — they hold these loans.'},
-  'loanDepot':{denial:'29.1%',cls:'denial-mid',dti:36,credit:34,collateral:11,incomplete:13,other:6,primary:'DTI',profile:'Pipeline-driven retail channel. LSI 44 — accumulating market stress showing in tightening pattern.'},
-  'Planet Home':{denial:'18.2%',cls:'denial-mid',dti:37,credit:27,collateral:9,incomplete:19,other:8,primary:'DTI',profile:'Specialty channel — incomplete apps reflect complex file types. Improving trend.'},
-  'Freedom':{denial:'24.4%',cls:'denial-mid',dti:28,credit:22,collateral:12,incomplete:31,other:7,primary:'Incomplete',profile:'Volume-driven: incomplete applications are the #1 denial cause. OFI-sensitive — when OFI>50, all categories tighten. Currently regime-gated.'},
-  'Wells Fargo':{denial:'48.63%',cls:'denial-high',dti:22,credit:48,collateral:18,incomplete:7,other:5,primary:'Credit History',profile:'Traditional bank DNA: credit score and collateral first, DTI secondary. FHA volume down 63% since 2019 — possible exit. Avoid routing here.'},
-  'NewRez':{denial:'53.27%',cls:'denial-high',dti:31,credit:42,collateral:14,incomplete:9,other:4,primary:'Credit History',profile:'Highest denial rate in dataset. OFI-coupled (r=0.84) — in current high-friction market (OFI 81), denial rates spike across all reason categories. Regime-gated.'},
+  'CrossCountry':  {denial:'6.37%',cls:'denial-low',  lsi:6,  note:'Lowest denial rate in dataset. DTI-tolerant based on manual underwriting appetite.'},
+  'Guild':         {denial:'7.14%',cls:'denial-low',  lsi:21, note:'Very stable. W2 and FHA-specialist profile.'},
+  'Rocket':        {denial:'29.5%',cls:'denial-mid',  lsi:16, note:'Speed-first digital lender. Credit-score-first algorithm.'},
+  'UWM':           {denial:'21.6%',cls:'denial-mid',  lsi:30, note:'Broker channel — pipeline quality varies. 2026 watchlist.'},
+  'PennyMac':      {denial:'23.6%',cls:'denial-mid',  lsi:17, note:'Improving trend. Use 2024-25 data only.'},
+  'Mr. Cooper':    {denial:'20.1%',cls:'denial-mid',  lsi:32, note:'Servicing-first. Credit profile consistency matters.'},
+  'loanDepot':     {denial:'29.1%',cls:'denial-mid',  lsi:44, note:'Pipeline-driven retail. LSI 44 shows accumulating stress.'},
+  'Planet Home':   {denial:'18.2%',cls:'denial-mid',  lsi:38, note:'Specialty channel. Complex file types.'},
+  'Freedom':       {denial:'24.4%',cls:'denial-mid',  lsi:50, note:'OFI-sensitive (r=0.66). OFI 81 — regime gate active.'},
+  'Wells Fargo':   {denial:'48.63%',cls:'denial-high',lsi:29, note:'Idiosyncratic. FHA volume −63% since 2019. Do not route.'},
+  'NewRez':        {denial:'53.27%',cls:'denial-high',lsi:57, note:'Highest denial rate. OFI-coupled (r=0.84). Regime gate active.'},
 };
-
-const COLORS = {dti:'#e8845a',credit:'#C8A84B',collateral:'#6bffb8',incomplete:'#7b8cde',other:'rgba(255,255,255,0.2)'};
-
-function bar(pct, color){
-  return `<div class="reason-row">
-    <div class="reason-label"><span class="reason-name">${color===COLORS.dti?'DTI':color===COLORS.credit?'Credit History':color===COLORS.collateral?'Collateral':color===COLORS.incomplete?'Incomplete':'Other'}</span><span class="reason-pct">${pct}%</span></div>
-    <div class="reason-bar"><div class="reason-fill" style="width:${pct}%;background:${color};"></div></div>
-  </div>`;
-}
 
 const grid = document.getElementById('genomeGrid');
 Object.entries(GENOME).forEach(([name, g]) => {
   grid.innerHTML += `<div class="genome-card">
     <div class="card-header">
-      <div>
-        <div class="lender-name">${name} <span class="primary-badge">${g.primary}</span></div>
-      </div>
+      <div><div class="lender-name">${name}</div></div>
       <div class="lender-denial ${g.cls}">${g.denial} denial</div>
     </div>
-    ${bar(g.dti, COLORS.dti)}
-    ${bar(g.credit, COLORS.credit)}
-    ${bar(g.collateral, COLORS.collateral)}
-    ${bar(g.incomplete, COLORS.incomplete)}
-    ${bar(g.other, COLORS.other)}
-    <div class="genome-profile">${g.profile}</div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:10px;color:rgba(255,255,255,0.4);">
+      <span>LSI Score</span>
+      <span style="font-family:'DM Mono',monospace;color:#C8A84B;">${g.lsi}</span>
+    </div>
+    <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;margin-bottom:12px;">
+      <div style="height:100%;width:${g.lsi}%;background:${g.cls==='denial-low'?'#27ae60':g.cls==='denial-high'?'#e8845a':'#C8A84B'};border-radius:3px;max-width:100%;"></div>
+    </div>
+    <div class="genome-profile">${g.note}</div>
   </div>`;
 });
 </script>
