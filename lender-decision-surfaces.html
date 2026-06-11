@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lender Decision Surfaces — The Topology of FHA Denial | FRC Intelligence</title>
+<meta name="description" content="Six lenders' denial decision surfaces mapped from 106,014 loan-level FHA records: DTI 36-49 × CLTV bands. Cliffs at DTI 45 and CLTV 85 — and one lender with no cliffs at all.">
+<meta name="robots" content="index, follow, max-snippet:-1">
+<meta property="og:title" content="Lender Decision Surfaces — The Topology of FHA Denial">
+<meta property="og:description" content="Same borrower, different lender, different surface. Heatmaps from 106K real 2025 FHA applications reveal where each lender's hidden cliffs sit.">
+<meta property="og:url" content="https://financeratecalc.com/lender-decision-surfaces.html">
+<link rel="canonical" href="https://financeratecalc.com/lender-decision-surfaces.html">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ScholarlyArticle","headline":"Lender Decision Surfaces: The Topology of FHA Denial","author":{"@type":"Organization","name":"FRC Intelligence"},"datePublished":"2026-06-11","description":"DTI×CLTV denial heatmaps for six major FHA lenders from CFPB loan-level HMDA 2025, documenting lender-specific overlay cliffs (DTI 44→45, CLTV 85) and a null-signature counterexample.","publisher":{"@type":"Organization","name":"FinanceRateCalc"}}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script>window.frcFunnel={step:function(n,d){if(typeof gtag!=='undefined')gtag('event','funnel_step',{step_name:n,page:location.pathname,...(d||{})});}};window.frcFunnel.step('page_view');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.7;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:860px;margin:0 auto;padding:56px 24px 80px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,5vw,42px);font-weight:900;line-height:1.15;margin-bottom:16px;}
+h1 em{font-style:italic;color:#e8845a;}
+.meta{font-size:12px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;margin-bottom:36px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.06);}
+h2{font-family:'Fraunces',serif;font-size:21px;font-weight:700;margin:40px 0 12px;color:#C8A84B;}
+p{font-size:15px;color:rgba(255,255,255,0.65);margin-bottom:14px;line-height:1.8;}
+strong{color:#fff;}
+.lmap{margin:26px 0;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px;}
+.lname{font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-bottom:4px;}
+.ltag{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:12px;}
+.grid{display:grid;grid-template-columns:54px repeat(14,1fr);gap:2px;font-family:'DM Mono',monospace;}
+.cell{aspect-ratio:1.5;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(0,0,0,0.75);font-weight:700;}
+.axis{font-size:9px;color:rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;}
+.axis.y{justify-content:flex-end;padding-right:6px;}
+.nullcell{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.15);}
+.legend{display:flex;gap:14px;align-items:center;margin:18px 0 6px;font-size:11px;color:rgba(255,255,255,0.4);flex-wrap:wrap;}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:4px;}
+.finding-box{background:rgba(200,168,75,0.04);border-left:3px solid #C8A84B;padding:14px 18px;margin:22px 0;border-radius:0 8px 8px 0;}
+.finding-box p{margin:0;font-size:14px;}
+.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:26px;margin:44px 0;text-align:center;}
+.cta-box a.btn{display:inline-block;padding:12px 26px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:10px;}
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:44px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.06);}
+@media(max-width:640px){.cell{font-size:7px;}.grid{grid-template-columns:44px repeat(14,1fr);}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 18px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Route a file →</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · Loan-Level Research · June 2026</div>
+  <h1>Every lender has a hidden map.<br><em>We drew six of them.</em></h1>
+  <div class="meta">
+    Data: CFPB HMDA loan-level 2025 · 106,014 FHA applications with exact-integer DTI (36–49) and reported CLTV<br>
+    Cells: denial rate per DTI × CLTV band · cells under 50 applications masked (gray)<br>
+    Validated against 2023 data for cliff-location stability
+  </div>
+
+  <p>Underwriting is described as rules or models. Loan-level federal data shows it is a <strong>surface</strong> — and each lender's surface has its own topology: cliffs where denial jumps discontinuously, plateaus where nothing matters, and in one case, no cliffs at all.</p>
+
+  <div class="legend">
+    <span><span class="sw" style="background:#27ae60;"></span>0–10%</span>
+    <span><span class="sw" style="background:#9fc057;"></span>10–20%</span>
+    <span><span class="sw" style="background:#C8A84B;"></span>20–35%</span>
+    <span><span class="sw" style="background:#e8845a;"></span>35–60%</span>
+    <span><span class="sw" style="background:#d44;"></span>60%+</span>
+    <span><span class="sw" style="background:rgba(255,255,255,0.06);"></span>n&lt;50</span>
+  </div>
+
+  <div id="maps"></div>
+
+  <h2>What the surfaces show</h2>
+  <p><strong>The DTI-45 cliff.</strong> Four of six lenders show a discontinuous jump between DTI 44 and 45 — stable in location across 2023–2025 even as overall denial levels moved. CrossCountry's cliff sits one step right, at 46: its own institutional line, three years running.</p>
+  <p><strong>The CLTV-85 wall.</strong> Above 85% CLTV, denial explodes for most lenders — Rocket barely accepts files there at all. Part of this is FHA program mechanics (cash-out LTV cap), but the lender-to-lender difference inside the same band is behavioral: in 2025, Guild denied 18% of the 85–89 band while Rocket denied 83%.</p>
+  <p><strong>The null signature.</strong> Mr. Cooper's surface is flat on both axes — no DTI cliff, no CLTV wall, denial 4–14% everywhere. This is the strongest evidence the cliffs are institutional choices rather than data artifacts: if the cliffs came from FHA rules alone, every lender would show them.</p>
+
+  <div class="finding-box">
+    <p><strong>Practical reading:</strong> a file at DTI 46 or CLTV 87 is not "unfinanceable" — it is unfinanceable <em>at lenders whose surface has a cliff there</em>. The same file sits on a flat region of another lender's map. Routing is geometry.</p>
+  </div>
+
+  <h2>Honest limitations</h2>
+  <p>Mr. Cooper's flatness may partly reflect portfolio composition (streamline-refi-heavy pipelines underwrite DTI/LTV differently) — flat surface is a verified observation, "overlay-free philosophy" is an interpretation. The CLTV-85 jump includes product-eligibility mechanics, not pure overlay. DTI is only reported as exact integers in the 36–49 window, so the surface is mapped where federal data permits. FHA only; conventional surfaces may differ.</p>
+
+  <div class="cta-box">
+    <div style="font-size:14px;color:rgba(255,255,255,0.5);">Your file sits somewhere on these maps.</div>
+    <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-top:6px;">Find the lender whose surface is flat where you stand.</div>
+    <a class="btn" href="/zai-one.html" onclick="if(typeof gtag!=='undefined')gtag('event','funnel_step',{step_name:'surfaces_to_zai'})">Get a routing decision — free →</a>
+  </div>
+
+  <div class="foot">
+    Source: CFPB HMDA loan-level modified LAR 2025 (cliff locations validated on 2023). FHA first and subordinate lien products, actions originated/denied. DTI: exact integers 36–49 per HMDA public-file disclosure rules. CLTV bands include financed upfront MIP, which places standard FHA purchases near 98 (the 97+ row). Cells with fewer than 50 applications are masked. Full matrices: _data/decision_surfaces_2025.json. Statistical research on aggregate lender behavior, not financial advice.<br><br>
+    Citation: FRC Intelligence (2026). "Lender Decision Surfaces." financeratecalc.com/lender-decision-surfaces.html
+  </div>
+</div>
+
+<div style="max-width:860px;margin:24px auto;padding:14px 24px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:rgba(255,255,255,0.3);">Related research: <a href="/shadow-approval.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Shadow Approvals →</a> &nbsp;|&nbsp; <a href="/market-that-doesnt-react.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">The Market That Doesn't React →</a> &nbsp;|&nbsp; <a href="/locus-of-control.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">71% Not Your Fault →</a></div>
+
+<script>
+const DATA = {"date":"2026-06-11","year":2025,"source":"CFPB HMDA loan-level FHA, exact-integer DTI 36-49 \u00d7 CLTV bands, min cell n=50","dti_axis":[36,37,38,39,40,41,42,43,44,45,46,47,48,49],"cltv_bands":["70-79","80-84","85-89","90-94","95-96","97+"],"surfaces":{"Rocket":[[13.2,10.9,12.3,12.7,13.0,10.7,10.7,10.5,4.5,14.6,11.8,9.2,9.9,7.7],[23.5,26.2,27.3,21.7,17.0,21.2,15.3,25.0,11.3,34.8,null,null,null,27.8],[null,null,null,null,null,null,null,null,50.0,null,null,null,null,null],[null,null,null,null,null,null,null,null,94.1,null,96.2,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null]],"Guild":[[4.1,3.8,3.4,3.0,2.9,4.0,2.9,3.0,2.2,4.6,2.7,3.3,3.0,1.9],[6.1,4.1,6.1,5.2,3.7,4.0,3.6,3.9,3.8,6.8,5.6,4.3,4.1,1.5],[18.5,17.6,12.2,15.0,14.3,15.2,11.4,10.8,11.3,22.1,14.2,13.2,9.8,5.5],[37.1,31.0,32.5,34.3,28.8,25.5,28.1,28.0,22.6,39.1,28.6,30.4,18.1,18.0],[null,null,null,50.9,null,null,52.8,null,50.9,58.2,41.8,54.4,46.2,55.6],[76.2,72.5,80.4,76.6,70.2,70.8,70.1,69.5,72.6,75.7,65.6,66.7,64.8,58.8]],"PennyMac":[[15.0,11.0,12.5,9.9,13.7,11.3,11.8,8.8,4.9,7.3,8.7,9.1,5.7,3.4],[19.2,17.8,23.0,19.8,16.9,19.4,16.4,13.0,9.5,19.1,23.2,17.3,15.3,9.4],[36.6,53.8,42.2,44.8,45.3,40.1,45.5,36.4,30.8,37.8,43.3,38.4,36.7,19.2],[80.9,76.1,79.0,76.3,81.9,77.8,73.6,75.7,74.4,78.3,72.6,70.9,75.2,62.8],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[97.9,98.1,96.2,98.3,96.0,97.1,95.3,97.4,96.8,96.4,96.9,97.3,96.9,93.9]],"Freedom":[[10.8,9.2,8.3,8.3,7.6,6.4,6.9,3.2,3.2,7.6,6.5,7.9,6.2,3.3],[21.3,20.3,10.7,11.1,16.5,12.7,9.3,5.4,4.2,12.8,23.2,10.3,12.1,5.3],[null,null,null,null,null,53.7,38.5,null,null,23.6,21.3,28.9,24.2,15.1],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,92.2,null,88.0,null,96.1,83.0,null,null,96.1,84.3,92.6]],"MrCooper":[[6.4,7.4,4.5,6.1,5.3,5.6,5.7,4.5,7.6,4.8,3.9,6.4,9.5,3.8],[11.8,3.8,7.0,8.0,9.9,3.1,12.9,10.5,9.9,6.8,8.9,9.1,8.9,7.3],[11.4,13.7,8.9,12.1,9.9,7.5,13.7,10.9,4.5,9.0,10.8,7.0,10.3,6.4],[16.7,9.1,13.2,20.9,21.8,19.1,18.2,12.2,14.4,15.7,13.8,9.2,8.7,6.8],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,46.0,null,null,47.6,null,null,null,null,54.0,50.8,49.1,50.9,54.3]],"CrossCountry":[[4.7,3.1,5.4,2.3,2.1,4.7,3.1,3.5,3.1,0.8,17.3,8.1,8.8,5.6],[6.5,3.7,9.2,5.6,4.4,9.8,2.2,3.4,3.7,3.1,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null]]}};
+const ORDER = ['MrCooper','Guild','CrossCountry','PennyMac','Freedom','Rocket'];
+const TAGS = {
+  'MrCooper':'The null signature — flat on both axes, all three years',
+  'Guild':'Low plateau with an eroding DTI-45 cliff',
+  'CrossCountry':'Cliff one step right: DTI 46, three years running',
+  'PennyMac':'Growing DTI-45 cliff (+5.2pp → +11.0pp since 2023)',
+  'Freedom':'Deep pre-cliff dip — files curated to just under the line',
+  'Rocket':'Persistent DTI-45 cliff; barely operates above CLTV 85'
+};
+function color(v){
+  if(v===null) return null;
+  if(v<10) return '#27ae60';
+  if(v<20) return '#9fc057';
+  if(v<35) return '#C8A84B';
+  if(v<60) return '#e8845a';
+  return '#d44';
+}
+const wrap = document.getElementById('maps');
+ORDER.forEach(l=>{
+  const grid = DATA.surfaces[l];
+  let html = '<div class="lmap"><div class="lname">'+(l==='MrCooper'?'Mr. Cooper':l)+'</div><div class="ltag">'+TAGS[l]+'</div><div class="grid">';
+  html += '<div class="axis y">CLTV</div>';
+  DATA.dti_axis.forEach(d=>{ html += '<div class="axis">'+d+'</div>'; });
+  for(let b=DATA.cltv_bands.length-1;b>=0;b--){
+    html += '<div class="axis y">'+DATA.cltv_bands[b]+'</div>';
+    grid[b].forEach(v=>{
+      if(v===null) html += '<div class="cell nullcell">·</div>';
+      else html += '<div class="cell" style="background:'+color(v)+';">'+Math.round(v)+'</div>';
+    });
+  }
+  html += '</div></div>';
+  wrap.innerHTML += html;
+});
+</script>
+
+<!-- ZAI_PILL -->
+<a href="/zai-one.html" onclick="if(typeof gtag!=='undefined')gtag('event','zai_pill_click',{event_label:'/lender-decision-surfaces.html'})" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;align-items:center;gap:7px;padding:11px 20px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.4);">⚡ Route a file</a>
+
+</body>
+</html>
