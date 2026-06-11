@@ -128,9 +128,41 @@ header{
 </header>
 
 <div class="hero">
+  <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.2);border-radius:20px;padding:5px 14px;margin-bottom:16px;">
+    <span style="font-size:13px;font-weight:700;color:var(--gold);">⚡ Zai</span>
+    <span style="font-size:11px;color:rgba(255,255,255,0.4);">FHA Routing Engine</span>
+  </div>
   <h1>Which FHA lender fits your file?</h1>
   <p>Not ads. Not commissions. Federal data.</p>
   <p class="trust-line">8 years · 11 lenders · 3,075,654 FHA applications</p>
+</div>
+
+<!-- DTI CALCULATOR MODAL -->
+<div id="dtiModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#0d1a2e;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:28px;max-width:420px;width:100%;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;">Calculate your DTI</div>
+      <button onclick="closeDTICalc()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;">✕</button>
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:16px;">Monthly gross income (before taxes)</div>
+    <input id="dti_income" type="number" placeholder="e.g. 5000" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;margin-bottom:14px;">
+    <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px;">Monthly debts (minimum payments)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <input id="dti_mortgage" type="number" placeholder="Est. mortgage" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;">
+      <input id="dti_car" type="number" placeholder="Car loan" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;">
+      <input id="dti_cards" type="number" placeholder="Credit cards" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;">
+      <input id="dti_other" type="number" placeholder="Other debts" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;">
+    </div>
+    <div id="dti_result" style="display:none;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.2);border-radius:10px;padding:14px;margin-bottom:14px;text-align:center;">
+      <div style="font-size:12px;color:rgba(200,168,75,0.6);margin-bottom:4px;">Your DTI</div>
+      <div id="dti_number" style="font-family:'DM Mono',monospace;font-size:32px;font-weight:700;color:#C8A84B;"></div>
+      <div id="dti_verdict" style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button onclick="calcDTI()" style="padding:12px;background:rgba(200,168,75,0.15);color:#C8A84B;border:1px solid rgba(200,168,75,0.3);border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;">Calculate</button>
+      <button onclick="useDTI()" id="useDTIBtn" style="display:none;padding:12px;background:#C8A84B;color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;">Use this DTI →</button>
+    </div>
+  </div>
 </div>
 
 <div class="form-wrap">
@@ -142,7 +174,7 @@ header{
         <input id="fico" type="number" placeholder="e.g. 640" min="300" max="850">
       </div>
       <div class="field">
-        <label>DTI %</label>
+        <label>DTI % <button type="button" onclick="showDTICalc()" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;font-family:inherit;font-weight:600;padding:0;margin-left:4px;">Calculate →</button></label>
         <input id="dti" type="number" placeholder="e.g. 42" min="1" max="70">
       </div>
     </div>
@@ -365,6 +397,32 @@ Provide routing analysis per format.`;
         <button onclick="resetForm()" style="margin-top:14px;padding:10px 20px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;">Try again</button>
       </div>`;
   }
+}
+
+
+function showDTICalc(){
+  document.getElementById('dtiModal').style.display='flex';
+}
+function closeDTICalc(){
+  document.getElementById('dtiModal').style.display='none';
+}
+function calcDTI(){
+  const income = parseFloat(document.getElementById('dti_income').value)||0;
+  if(!income){alert('Enter your monthly income first.');return;}
+  const debts = ['dti_mortgage','dti_car','dti_cards','dti_other']
+    .reduce((s,id)=>s+(parseFloat(document.getElementById(id).value)||0),0);
+  const dti = Math.round((debts/income)*100);
+  document.getElementById('dti_number').textContent = dti+'%';
+  // verdict calculated below
+  document.getElementById('dti_verdict').textContent = dti<=36?'✅ Strong — most lenders':dti<=43?'⚠️ Moderate — CrossCountry/Guild OK':dti<=50?'⚠️ High — limited lenders':'❌ Very high — few options';
+  document.getElementById('dti_result').style.display='block';
+  document.getElementById('useDTIBtn').style.display='block';
+  document.getElementById('useDTIBtn').dataset.dti=dti;
+}
+function useDTI(){
+  const dti = document.getElementById('useDTIBtn').dataset.dti;
+  document.getElementById('dti').value=dti;
+  closeDTICalc();
 }
 
 function resetForm() {
