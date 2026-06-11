@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Market That Doesn't React — FHA Application Flow Ignores Denial Rates | FRC Intelligence</title>
+<meta name="description" content="Across 77 lender-year transitions in federal HMDA data, FHA application flow shows zero statistical response to lender denial behavior. The single variable that most determines outcomes does not move the market.">
+<meta name="robots" content="index, follow, max-snippet:-1">
+<meta property="og:title" content="The Market That Doesn't React">
+<meta property="og:description" content="A lender can deny half its applicants and lose no market share. We measured it: flow elasticity to denial rates is statistically zero across 8 years of federal data.">
+<meta property="og:url" content="https://financeratecalc.com/market-that-doesnt-react.html">
+<meta property="og:type" content="article">
+<link rel="canonical" href="https://financeratecalc.com/market-that-doesnt-react.html">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ScholarlyArticle","headline":"The Market That Doesn't React: Zero Flow Elasticity in FHA Lending","author":{"@type":"Organization","name":"FRC Intelligence"},"datePublished":"2026-06-11","description":"OLS analysis of 77 lender-year transitions (CFPB HMDA 2018-2025) finds market share changes are statistically unresponsive to prior-year denial rates (slope +0.0047, p=0.883).","publisher":{"@type":"Organization","name":"FinanceRateCalc","url":"https://financeratecalc.com"}}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script>
+window.frcFunnel={step:function(n,d){if(typeof gtag!=='undefined')gtag('event','funnel_step',{step_name:n,page:location.pathname,...d});try{var s=JSON.parse(localStorage.getItem('frc_funnel')||'[]');s.push({step:n,time:Date.now()});if(s.length>10)s=s.slice(-10);localStorage.setItem('frc_funnel',JSON.stringify(s));}catch(e){}}};
+window.frcFunnel.step('page_view');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.7;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:720px;margin:0 auto;padding:56px 24px 80px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,44px);font-weight:900;line-height:1.15;margin-bottom:16px;}
+h1 em{font-style:italic;color:#e8845a;}
+.meta{font-size:12px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06);}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin:44px 0 14px;color:#C8A84B;}
+p{font-size:15px;color:rgba(255,255,255,0.65);margin-bottom:14px;line-height:1.8;}
+strong{color:#fff;}
+.big-finding{text-align:center;padding:44px 24px;margin:40px 0;background:rgba(232,132,90,0.04);border:1px solid rgba(232,132,90,0.15);border-radius:16px;}
+.big-number{font-family:'DM Mono',monospace;font-size:clamp(40px,9vw,72px);font-weight:700;color:#e8845a;line-height:1;}
+.big-label{font-size:16px;color:rgba(255,255,255,0.5);margin-top:14px;line-height:1.6;}
+.big-label strong{color:#fff;}
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:13px;}
+th{text-align:left;padding:8px 12px;color:rgba(255,255,255,0.3);font-weight:500;text-transform:uppercase;font-size:10px;letter-spacing:0.08em;border-bottom:1px solid rgba(255,255,255,0.1);}
+td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.7);}
+.mono{font-family:'DM Mono',monospace;}
+.finding-box{background:rgba(200,168,75,0.04);border-left:3px solid #C8A84B;padding:16px 20px;margin:24px 0;border-radius:0 8px 8px 0;}
+.finding-box p{margin:0;font-size:15px;}
+.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:28px;margin:48px 0;text-align:center;}
+.cta-box a.btn{display:inline-block;padding:12px 28px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:12px;}
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 18px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Route a file →</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · Original Research · June 2026</div>
+
+  <h1>The market that <em>doesn't react.</em></h1>
+
+  <div class="meta">
+    Data: CFPB HMDA 2018–2025 · 11 lenders · 77 lender-year transitions · 3,075,654 FHA applications<br>
+    Method: OLS — year-over-year market share change vs. prior-year denial rate<br>
+    Computation archived and reproducible
+  </div>
+
+  <p>In a functioning consumer market, the single biggest cost drives the flow. Airlines with high prices lose passengers. Restaurants with bad ratings lose tables. For a mortgage applicant, the single biggest cost is the probability of being denied — it determines whether the transaction happens at all, and our research shows lender identity explains <a href="/locus-of-control.html" style="color:rgba(200,168,75,0.7);">63% of denial variance</a>.</p>
+  <p>So we asked the obvious question nobody had tested: <strong>does FHA application flow respond to lender denial behavior?</strong></p>
+
+  <div class="big-finding">
+    <div class="big-number">+0.0047</div>
+    <div class="big-label">market-share points gained per point of denial rate.<br><strong>Statistically zero</strong> (p = 0.883, 77 transitions, 8 years).<br>The flow does not react.</div>
+  </div>
+
+  <h2>What zero looks like in practice</h2>
+  <table>
+    <tr><th>Group</th><th>2025 denial behavior</th><th>Share 2018</th><th>Share 2025</th></tr>
+    <tr><td>Best two lenders (CrossCountry, Guild)</td><td class="mono">6.4% / 7.1%</td><td class="mono">9.4%</td><td class="mono">13.0%</td></tr>
+    <tr><td>Worst two lenders (NewRez, Wells Fargo)</td><td class="mono">53.3% / 48.6%</td><td class="mono">5.4%</td><td class="mono">6.3%</td></tr>
+  </table>
+  <p>The two most approval-friendly lenders in America carried a 30–40 point denial advantage for eight consecutive years — and gained <strong>3.7 points of share</strong>. The two strictest lenders, one of which denies more than half of its FHA applicants, <strong>lost nothing</strong>. A lender can deny one in two borrowers and keep its customers coming.</p>
+
+  <div class="finding-box">
+    <p><strong>The implication:</strong> borrowers are not choosing lenders. They are being assigned — by advertising budgets, broker relationships, servicer transfers, and geographic accident. The assignment process is statistically blind to the one variable that most determines whether they get a home.</p>
+  </div>
+
+  <h2>Why this matters</h2>
+  <p>This is the mechanism beneath everything else we've measured. It explains why the <a href="/fha-lending-structure-research.html" style="color:rgba(200,168,75,0.7);">9+2 hierarchy</a> never converges, why <a href="/shadow-approval.html" style="color:rgba(200,168,75,0.7);">Shadow Approvals</a> persist year after year, and why a denial says more about routing than about the borrower. Markets self-correct when information moves buyers. This one doesn't — the information exists in public federal data, but no actor in the transaction has the incentive or capacity to bring it into the borrower's decision. So the inefficiency freezes in place, for eight years and counting.</p>
+
+  <h2>Limitations — read these</h2>
+  <p>This is an aggregate finding, not a borrower-level one. Part of the zero could reflect capacity or channel constraints at low-denial lenders rather than pure information failure, and applicant pool composition is not held constant across lenders. The elasticity describes the market's behavior as a system; it does not prove any individual chose wrongly. A loan-level conditional test (CFPB raw HMDA) is the next step and is planned.</p>
+
+  <div class="cta-box">
+    <div style="font-size:14px;color:rgba(255,255,255,0.5);">The market won't route you to the right lender.</div>
+    <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-top:6px;">So route yourself.</div>
+    <a class="btn" href="/zai-one.html" onclick="if(typeof gtag!=='undefined')gtag('event','funnel_step',{step_name:'noreact_to_zai'})">Get a routing decision — free →</a>
+  </div>
+
+  <div class="foot">
+    Source: CFPB Home Mortgage Disclosure Act public datasets, 2018–2025, 11 major FHA lenders. Regression: Δ market share (pp) ~ prior-year denial rate (pp); slope +0.0047, r = 0.017, p = 0.883, n = 77 lender-year transitions; lender-years under 1,000 applications excluded. Data archive: _data/flow_elasticity.json. Statistical research on aggregate market behavior; not financial advice.<br><br>
+    Citation: FRC Intelligence (2026). "The Market That Doesn't React." financeratecalc.com/market-that-doesnt-react.html
+  </div>
+</div>
+
+<div style="max-width:720px;margin:24px auto;padding:14px 24px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:rgba(255,255,255,0.3);">Related research: <a href="/shadow-approval.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Shadow Approvals →</a> &nbsp;|&nbsp; <a href="/locus-of-control.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">71% Not Your Fault →</a> &nbsp;|&nbsp; <a href="/fha-lending-structure-research.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">The 9+2 Structure →</a></div>
+
+<!-- ZAI_PILL -->
+<a href="/zai-one.html" onclick="if(typeof gtag!=='undefined')gtag('event','zai_pill_click',{event_label:'/market-that-doesnt-react.html'})" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;align-items:center;gap:7px;padding:11px 20px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.4);">⚡ Route a file</a>
+
+</body>
+</html>
