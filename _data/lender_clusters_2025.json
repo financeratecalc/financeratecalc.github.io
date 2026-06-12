@@ -1,0 +1,53 @@
+{
+  "date": "2026-06-11",
+  "source": "CFPB HMDA loan-level FHA 2023-2025, 75 lenders with valid cliff vectors all 3 years",
+  "method": "KMeans clustering on cliff-geometry space (DTI_cliff \u00d7 CLTV_cliff), NOT denial level. StandardScaler + silhouette-optimal k=3.",
+  "key_finding": "Archetype persistence 81% across 3 years: lender underwriting geometry is a stable institutional property, not a market-condition artifact",
+  "archetypes": {
+    "FLAT": {
+      "n_lenders": 54,
+      "dti_cliff_pp": 0.0,
+      "cltv_cliff_pp": 1.6,
+      "examples": [
+        "Guild",
+        "MrCooper"
+      ],
+      "description": "Consistent low denial across DTI and CLTV bands \u2014 no overlay cliffs detectable"
+    },
+    "CLTV_dominant": {
+      "n_lenders": 13,
+      "dti_cliff_pp": -2.2,
+      "cltv_cliff_pp": 38.8,
+      "examples": [
+        "Rocket",
+        "Freedom",
+        "CrossCountry"
+      ],
+      "description": "Sharp denial jump at CLTV 85 \u2014 profile-dependent cliff, stable across years"
+    },
+    "CLTV_dominant_severe": {
+      "n_lenders": 8,
+      "dti_cliff_pp": 2.6,
+      "cltv_cliff_pp": 50.2,
+      "examples": [
+        "PennyMac (2 of 3 years)"
+      ],
+      "description": "Extreme CLTV sensitivity \u2014 highest cliff magnitude in dataset"
+    }
+  },
+  "persistence": {
+    "same_archetype_all_3_years": "61/75 = 81%",
+    "same_archetype_at_least_2_years": "73/75 = 97%",
+    "known_lenders_stable": [
+      "Guild",
+      "MrCooper",
+      "Rocket",
+      "Freedom",
+      "CrossCountry"
+    ],
+    "known_lenders_partial": [
+      "PennyMac (switched k2\u2192k3 in 2023)"
+    ]
+  },
+  "limitation": "DTI cliff not captured in this vector (integer-DTI coverage limits variance); CLTV geometry dominates. Cliff-space clustering cannot distinguish FLAT from DTI-dominant lenders."
+}
