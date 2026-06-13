@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lender Fit Fingerprint — Your Mortgage DNA | FRC Intelligence</title>
+<meta name="description" content="Enter your mortgage profile. Get your unique Lender Fit Fingerprint — a personalized code showing which lender geometries match your profile, based on 8 years of federal data.">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="What's your Lender Fit Fingerprint?">
+<meta property="og:description" content="Every mortgage profile has a fingerprint. Find yours — free, no SSN, based on 8 years of CFPB data.">
+<meta property="og:url" content="https://financeratecalc.com/fingerprint.html">
+<link rel="canonical" href="https://financeratecalc.com/fingerprint.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;min-height:100vh;}
+header{padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.96);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.hero{text-align:center;padding:52px 24px 32px;max-width:600px;margin:0 auto;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:14px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,44px);font-weight:900;line-height:1.15;margin-bottom:10px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.sub{font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:6px;}
+.trust{font-size:11px;color:rgba(255,255,255,0.2);font-family:'DM Mono',monospace;}
+
+.form-wrap{max-width:480px;margin:0 auto;padding:0 20px 60px;}
+.form-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:11px;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.1em;}
+.field input,.field select{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.15s;}
+.field input:focus,.field select:focus{border-color:rgba(200,168,75,0.5);}
+.field select option{background:#0d1a2e;}
+.field input::placeholder{color:rgba(255,255,255,0.2);}
+.btn{width:100%;margin-top:20px;padding:14px;background:#C8A84B;color:#000;border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:opacity 0.15s;}
+.btn:hover{opacity:0.88;}
+.disc{margin-top:12px;font-size:11px;color:rgba(255,255,255,0.2);text-align:center;}
+
+/* RESULT */
+#result{max-width:520px;margin:0 auto;padding:0 20px 80px;display:none;}
+.fp-card{background:rgba(255,255,255,0.02);border:1px solid rgba(200,168,75,0.25);border-radius:20px;padding:32px 28px;text-align:center;margin-bottom:16px;}
+.fp-label{font-size:11px;color:rgba(200,168,75,0.5);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:12px;}
+.fp-code{font-family:'DM Mono',monospace;font-size:clamp(22px,5vw,32px);font-weight:700;color:#C8A84B;letter-spacing:0.12em;margin-bottom:18px;}
+.fp-desc{font-size:14px;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:20px;}
+
+/* Radar */
+.radar-wrap{margin:0 auto 20px;width:200px;height:200px;}
+canvas#radar{width:200px;height:200px;}
+
+.archetype-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:16px;}
+.arch-flat{background:rgba(39,174,96,0.12);color:#27ae60;border:1px solid rgba(39,174,96,0.3);}
+.arch-cltv{background:rgba(232,132,90,0.12);color:#e8845a;border:1px solid rgba(232,132,90,0.3);}
+.arch-severe{background:rgba(212,68,68,0.12);color:#d44;border:1px solid rgba(212,68,68,0.3);}
+
+.share-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px;}
+.share-btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.share-copy{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);}
+.share-tw{background:rgba(29,161,242,0.15);color:#1da1f2;}
+.share-li{background:rgba(0,119,181,0.15);color:#0077b5;}
+.share-wa{background:rgba(37,211,102,0.15);color:#25d366;}
+
+.lender-row{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+.lender-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);}
+.lender-name{font-size:14px;font-weight:600;}
+.lender-geo{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;}
+.lender-tag{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;}
+.tag-flat{background:rgba(39,174,96,0.12);color:#27ae60;}
+.tag-cltv{background:rgba(232,132,90,0.12);color:#e8845a;}
+
+.next-card{background:rgba(200,168,75,0.04);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:20px 24px;margin-top:12px;text-align:center;}
+.next-card a.btn2{display:inline-block;padding:11px 24px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:10px;}
+
+@media(max-width:480px){.row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Full routing →</a>
+</header>
+
+<div class="hero">
+  <div class="eyebrow">FRC Intelligence</div>
+  <h1>Your mortgage<br><em>Lender Fit Fingerprint</em></h1>
+  <p class="sub">Every profile has a geometry. Find yours.</p>
+  <p class="trust">8 years · 3,075,654 FHA applications · no SSN</p>
+</div>
+
+<div class="form-wrap">
+  <div class="form-card">
+    <div class="row">
+      <div class="field">
+        <label>FICO Score</label>
+        <input id="fico" type="number" placeholder="e.g. 640" min="300" max="850">
+      </div>
+      <div class="field">
+        <label>DTI %</label>
+        <input id="dti" type="number" placeholder="e.g. 42" min="1" max="70">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>CLTV %</label>
+        <input id="cltv" type="number" placeholder="e.g. 87" min="50" max="105">
+      </div>
+      <div class="field">
+        <label>State</label>
+        <select id="state">
+          <option value="">Select...</option>
+          <option>TX</option><option>CA</option><option>FL</option><option>NY</option>
+          <option>IL</option><option>AZ</option><option>GA</option><option>NC</option>
+          <option>OH</option><option>PA</option><option>MI</option><option>WA</option>
+          <option>CO</option><option>TN</option><option>NV</option><option>OR</option>
+          <option>MO</option><option>MN</option><option>WI</option><option>AL</option>
+          <option>IN</option><option>KY</option><option>UT</option><option>VA</option>
+          <option>MD</option><option>SC</option><option>OK</option><option>LA</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn" onclick="generateFingerprint()">Generate my Fingerprint →</button>
+    <p class="disc">No credit pull · Takes 20 seconds · Based on federal HMDA data</p>
+  </div>
+</div>
+
+<div id="result">
+  <div class="fp-card">
+    <div class="fp-label">Your Lender Fit Fingerprint</div>
+    <div class="fp-code" id="fpCode">LFF-····-····-····</div>
+    <div id="archetypeBadge"></div>
+    <div class="radar-wrap"><canvas id="radar" width="200" height="200"></canvas></div>
+    <div class="fp-desc" id="fpDesc"></div>
+    <div class="share-row">
+      <button class="share-btn share-copy" onclick="copyFP()">📋 Copy code</button>
+      <a class="share-btn share-tw" id="shareTw" href="#" target="_blank">𝕏 Share</a>
+      <a class="share-btn share-li" id="shareLi" href="#" target="_blank">in Share</a>
+      <a class="share-btn share-wa" id="shareWa" href="#" target="_blank">💬 WhatsApp</a>
+    </div>
+  </div>
+
+  <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px 22px;margin-bottom:12px;">
+    <div style="font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Lender geometry match</div>
+    <div class="lender-row" id="lenderRow"></div>
+  </div>
+
+  <div class="next-card">
+    <div style="font-size:14px;color:rgba(255,255,255,0.5);">Want the full routing analysis?</div>
+    <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-top:4px;">Zai maps your full decision surface.</div>
+    <a class="btn2" href="/zai-one.html">Get full routing →</a>
+  </div>
+</div>
+
+<script>
+// Deterministic hash: same input always same fingerprint
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function toHex4(s, offset) {
+  return s.slice(offset, offset+4).toUpperCase();
+}
+
+// Cliff geometry logic (from real HMDA data)
+function getGeometry(dti, cltv) {
+  const dtiCliff = dti >= 45;
+  const cltvWall = cltv >= 85;
+  if (!dtiCliff && !cltvWall) return 'FLAT';
+  if (cltvWall && cltv >= 95) return 'CLTV-SEVERE';
+  if (cltvWall) return 'CLTV-DOMINANT';
+  return 'DTI-SENSITIVE';
+}
+
+function getArchetypeInfo(geo) {
+  const map = {
+    'FLAT': {
+      label: '⬜ Flat Surface', cls: 'arch-flat',
+      desc: 'Your profile sits in a low-cliff zone. Most lenders have a flat decision surface here — institutional barriers are minimal at this DTI and CLTV combination.',
+      lenders: [
+        {name:'Guild Mortgage', geo:'FLAT — consistent low denial, 3yr stable', tag:'tag-flat'},
+        {name:'Mr. Cooper', geo:'FLAT — null cliff signature, no DTI or CLTV walls', tag:'tag-flat'},
+        {name:'CrossCountry', geo:'FLAT — cliff at DTI 46 only, below your range', tag:'tag-flat'},
+      ],
+      radar: [85, 88, 90]
+    },
+    'DTI-SENSITIVE': {
+      label: '⚠️ DTI Threshold Zone', cls: 'arch-cltv',
+      desc: 'Your DTI sits near or above 45 — a known institutional cliff for several lenders. Some lenders show a sharp denial jump here. Routing to flat-surface lenders reduces cliff exposure.',
+      lenders: [
+        {name:'Guild Mortgage', geo:'FLAT — no DTI cliff detected', tag:'tag-flat'},
+        {name:'Mr. Cooper', geo:'FLAT — null signature on both axes', tag:'tag-flat'},
+        {name:'PennyMac', geo:'CLTV-dominant — watch CLTV, DTI moderate', tag:'tag-cltv'},
+      ],
+      radar: [72, 65, 80]
+    },
+    'CLTV-DOMINANT': {
+      label: '🧱 CLTV Wall Zone', cls: 'arch-cltv',
+      desc: 'Your CLTV is above 85 — a hard institutional wall for several major lenders. Rocket shows a +54.9pp denial jump at this boundary. Flat-surface lenders (Guild, Mr. Cooper) show minimal sensitivity here.',
+      lenders: [
+        {name:'Guild Mortgage', geo:'FLAT — +12pp CLTV-85 jump vs Rocket +55pp', tag:'tag-flat'},
+        {name:'Mr. Cooper', geo:'FLAT — +1.7pp CLTV-85 jump (lowest observed)', tag:'tag-flat'},
+        {name:'PennyMac', geo:'CLTV-dominant — +24.7pp jump, moderate', tag:'tag-cltv'},
+      ],
+      radar: [55, 70, 68]
+    },
+    'CLTV-SEVERE': {
+      label: '🔴 High-Risk Zone', cls: 'arch-severe',
+      desc: 'CLTV above 95 places this profile in a zone of extreme lender divergence. Some lenders deny 90%+ here; others remain accessible. Routing precision is critical at this boundary.',
+      lenders: [
+        {name:'Mr. Cooper', geo:'FLAT — most consistent in high-CLTV band', tag:'tag-flat'},
+        {name:'Guild Mortgage', geo:'FLAT — lower cliff than peers above CLTV 95', tag:'tag-flat'},
+        {name:'UWM', geo:'Moderate — volume lender, broader tolerance', tag:'tag-cltv'},
+      ],
+      radar: [38, 55, 52]
+    }
+  };
+  return map[geo] || map['FLAT'];
+}
+
+function drawRadar(scores) {
+  const canvas = document.getElementById('radar');
+  const ctx = canvas.getContext('2d');
+  const cx=100, cy=100, R=75;
+  ctx.clearRect(0,0,200,200);
+  const labels=['Approval\nFit','Stability','Surface\nSafety'];
+  const angles=[-Math.PI/2, -Math.PI/2+2*Math.PI/3, -Math.PI/2+4*Math.PI/3];
+  // grid
+  for(let r=0.25;r<=1;r+=0.25){
+    ctx.beginPath();
+    angles.forEach((a,i)=>{
+      const x=cx+R*r*Math.cos(a), y=cy+R*r*Math.sin(a);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.closePath();
+    ctx.strokeStyle='rgba(255,255,255,0.08)';
+    ctx.stroke();
+  }
+  // axes
+  angles.forEach(a=>{
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));
+    ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.stroke();
+  });
+  // data
+  ctx.beginPath();
+  scores.forEach((s,i)=>{
+    const r=s/100, x=cx+R*r*Math.cos(angles[i]), y=cy+R*r*Math.sin(angles[i]);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle='rgba(200,168,75,0.25)';ctx.fill();
+  ctx.strokeStyle='#C8A84B';ctx.lineWidth=2;ctx.stroke();
+  // labels
+  ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='10px DM Sans';ctx.textAlign='center';
+  labels.forEach((l,i)=>{
+    const r=1.18, x=cx+R*r*Math.cos(angles[i]), y=cy+R*r*Math.sin(angles[i]);
+    l.split('\n').forEach((line,li)=>ctx.fillText(line, x, y+li*13-5));
+  });
+}
+
+async function generateFingerprint() {
+  const fico = document.getElementById('fico').value.trim();
+  const dti = parseInt(document.getElementById('dti').value) || 0;
+  const cltv = parseFloat(document.getElementById('cltv').value) || 0;
+  const state = document.getElementById('state').value;
+  if (!dti || !cltv || !state) { alert('Please fill DTI, CLTV, and state.'); return; }
+
+  // Deterministic fingerprint from profile
+  const profileStr = `${Math.round(dti/5)*5}-${Math.round(cltv/5)*5}-${state}`;
+  const hash = await sha256(profileStr);
+  const code = `LFF-${toHex4(hash,0)}-${toHex4(hash,4)}-${toHex4(hash,8)}`;
+
+  const geo = getGeometry(dti, cltv);
+  const info = getArchetypeInfo(geo);
+
+  // Update UI
+  document.getElementById('fpCode').textContent = code;
+  document.getElementById('archetypeBadge').innerHTML =
+    `<div class="archetype-badge ${info.cls}">${info.label}</div>`;
+  document.getElementById('fpDesc').textContent = info.desc;
+
+  drawRadar(info.radar);
+
+  const lenderHtml = info.lenders.map(l=>`
+    <div class="lender-item">
+      <div>
+        <div class="lender-name">${l.name}</div>
+        <div class="lender-geo">${l.geo}</div>
+      </div>
+      <span class="lender-tag ${l.tag}">Fit</span>
+    </div>`).join('');
+  document.getElementById('lenderRow').innerHTML = lenderHtml;
+
+  // Share links
+  const shareText = `My Lender Fit Fingerprint: ${code} (${info.label.replace(/[⬜⚠️🧱🔴]/g,'').trim()}) — financeratecalc.com/fingerprint.html`;
+  const url = encodeURIComponent('https://financeratecalc.com/fingerprint.html');
+  const txt = encodeURIComponent(shareText);
+  document.getElementById('shareTw').href = `https://twitter.com/intent/tweet?text=${txt}&url=${url}`;
+  document.getElementById('shareLi').href = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+  document.getElementById('shareWa').href = `https://wa.me/?text=${txt}%20${url}`;
+
+  document.querySelector('.form-wrap').style.display = 'none';
+  document.getElementById('result').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  if(typeof gtag!=='undefined') gtag('event','fingerprint_generated',{geometry:geo, code});
+  window._fpCode = code;
+}
+
+function copyFP() {
+  navigator.clipboard?.writeText(window._fpCode || '').then(()=>{
+    const btn = document.querySelector('.share-copy');
+    btn.textContent = '✅ Copied!';
+    setTimeout(()=>btn.textContent='📋 Copy code', 2000);
+  });
+}
+</script>
+
+<a href="/zai-one.html" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;align-items:center;gap:7px;padding:10px 18px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.35);">⚡ Full routing</a>
+
+</body>
+</html>
