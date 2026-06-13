@@ -174,7 +174,7 @@ header{
         <input id="fico" type="number" placeholder="e.g. 640" min="300" max="850">
       </div>
       <div class="field">
-        <label>DTI % <button type="button" onclick="showDTICalc()" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;font-family:inherit;font-weight:600;padding:0;margin-left:4px;">Calculate →</button></label>
+        <label>DTI % <button type="button" onclick="autoCalcDTI()" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;font-family:inherit;font-weight:600;padding:0;margin-left:4px;">Calculate →</button></label>
         <input id="dti" type="number" placeholder="e.g. 42" min="1" max="70">
       </div>
     </div>
@@ -210,6 +210,16 @@ header{
       </div>
     </div>
 
+    <div class="row">
+      <div class="field">
+        <label>Home price ($) <span style="font-size:10px;color:rgba(255,255,255,0.3);">optional</span></label>
+        <input id="homePrice" type="number" placeholder="e.g. 280000">
+      </div>
+      <div class="field">
+        <label>Down payment ($) <span style="font-size:10px;color:rgba(255,255,255,0.3);">optional</span></label>
+        <input id="downpayment" type="number" placeholder="e.g. 10000">
+      </div>
+    </div>
     <div class="row">
       <div class="field">
         <label>Loan Type</label>
@@ -407,6 +417,15 @@ Provide routing analysis per format.`;
 }
 
 
+
+function autoCalcDTI() {
+  const hp = parseFloat(document.getElementById('homePrice')?.value) || 0;
+  const dp = parseFloat(document.getElementById('downpayment')?.value) || 0;
+  if (hp > 0 && dp >= 0) {
+    document.getElementById('dti_mortgage').value = Math.round((hp - dp) * 0.007);
+  }
+  showDTICalc();
+}
 function showDTICalc(){
   document.getElementById('dtiModal').style.display='flex';
 }

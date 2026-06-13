@@ -93,19 +93,25 @@ canvas#radar{width:200px;height:200px;}
   <div class="form-card">
     <div class="row">
       <div class="field">
-        <label>FICO Score</label>
-        <input id="fico" type="number" placeholder="e.g. 640" min="300" max="850">
+        <label>Monthly gross income ($)</label>
+        <input id="income" type="number" placeholder="e.g. 5000" min="500">
       </div>
       <div class="field">
-        <label>DTI %</label>
-        <input id="dti" type="number" placeholder="e.g. 42" min="1" max="70">
+        <label>Monthly debt payments ($)</label>
+        <input id="debts" type="number" placeholder="e.g. 400" min="0">
       </div>
     </div>
     <div class="row">
       <div class="field">
-        <label>CLTV %</label>
-        <input id="cltv" type="number" placeholder="e.g. 87" min="50" max="105">
+        <label>Home price ($)</label>
+        <input id="homePrice" type="number" placeholder="e.g. 280000" min="50000">
       </div>
+      <div class="field">
+        <label>Down payment ($)</label>
+        <input id="downpayment" type="number" placeholder="e.g. 10000" min="0">
+      </div>
+    </div>
+    <div class="row">
       <div class="field">
         <label>State</label>
         <select id="state">
@@ -262,12 +268,17 @@ function drawRadar(scores) {
 }
 
 async function generateFingerprint() {
-  const fico = document.getElementById('fico').value.trim();
-  const dti = parseInt(document.getElementById('dti').value) || 0;
-  const cltv = parseFloat(document.getElementById('cltv').value) || 0;
+  const income = parseFloat(document.getElementById('income').value) || 0;
+  const debts = parseFloat(document.getElementById('debts').value) || 0;
+  const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
+  const downpayment = parseFloat(document.getElementById('downpayment').value) || 0;
   const state = document.getElementById('state').value;
-  if (!dti || !cltv || !state) { alert('Please fill DTI, CLTV, and state.'); return; }
+  if (!income || !homePrice || !state) { alert('Please fill in income, home price, and state.'); return; }
+  const estMortgage = (homePrice - downpayment) * 0.007; // ~rough P&I estimate
+  const dti = Math.min(Math.round((debts + estMortgage) / income * 100), 70);
+  const cltv = Math.min(Math.round((homePrice - downpayment) / homePrice * 100), 105);
 
+  // Show calculated values
   // Deterministic fingerprint from profile
   const profileStr = `${Math.round(dti/5)*5}-${Math.round(cltv/5)*5}-${state}`;
   const hash = await sha256(profileStr);
