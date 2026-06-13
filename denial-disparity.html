@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Denial Disparity Report 2025 — Same Profile, 64-Point Gap | FRC Intelligence</title>
+<meta name="description" content="In the high-risk FHA profile (DTI 44+, CLTV 90+), MrCooper denies 33pp below market average. Rocket denies 31pp above. Same borrower, 64-point spread. Measured from 8,795 loan-level records.">
+<meta name="robots" content="index, follow, max-snippet:-1">
+<meta property="og:title" content="Same borrower. 64-point denial gap. Depends on the lender.">
+<meta property="og:description" content="FRC Intelligence measured denial disparity across 6 major FHA lenders in 2025. MrCooper: -33pp vs market. Rocket: +31pp. The gap is 64 points.">
+<meta property="og:url" content="https://financeratecalc.com/denial-disparity.html">
+<link rel="canonical" href="https://financeratecalc.com/denial-disparity.html">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ScholarlyArticle","headline":"Denial Disparity Report 2025: Same FHA Profile, 64-Point Gap","author":{"@type":"Organization","name":"FRC Intelligence"},"datePublished":"2026-06-11","description":"Loan-level HMDA 2025 analysis: in the high-risk FHA profile (DTI 44+, CLTV 90+), denial rates range from 26.7% to 91.2% across 6 lenders — a 64.5pp spread on the same borrower profile.","publisher":{"@type":"Organization","name":"FinanceRateCalc"}}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.7;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:720px;margin:0 auto;padding:56px 24px 80px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,5vw,42px);font-weight:900;line-height:1.15;margin-bottom:16px;}
+h1 em{font-style:italic;color:#e8845a;}
+.meta{font-size:12px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;margin-bottom:36px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.06);}
+h2{font-family:'Fraunces',serif;font-size:21px;font-weight:700;margin:40px 0 12px;color:#C8A84B;}
+p{font-size:15px;color:rgba(255,255,255,0.65);margin-bottom:14px;line-height:1.8;}
+strong{color:#fff;}
+
+/* Big stat */
+.big-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0;}
+.big-stat{text-align:center;padding:28px 20px;border-radius:14px;}
+.award{background:rgba(39,174,96,0.06);border:1px solid rgba(39,174,96,0.2);}
+.worst{background:rgba(212,68,68,0.06);border:1px solid rgba(212,68,68,0.2);}
+.big-num{font-family:'DM Mono',monospace;font-size:clamp(32px,7vw,52px);font-weight:700;line-height:1;}
+.award .big-num{color:#27ae60;}
+.worst .big-num{color:#d44;}
+.big-lender{font-size:14px;font-weight:700;margin-top:8px;}
+.big-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;line-height:1.5;}
+
+/* Bar chart */
+.bar-section{margin:28px 0;}
+.group-label{font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;font-family:'DM Mono',monospace;}
+.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.bar-name{font-size:13px;font-weight:600;width:110px;flex-shrink:0;}
+.bar-track{flex:1;height:28px;background:rgba(255,255,255,0.04);border-radius:6px;overflow:hidden;position:relative;}
+.bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:12px;font-weight:700;color:rgba(0,0,0,0.7);transition:width 0.8s ease;}
+.bar-disp{font-size:12px;font-family:'DM Mono',monospace;width:72px;text-align:right;flex-shrink:0;}
+.disp-pos{color:#e8845a;}
+.disp-neg{color:#27ae60;}
+.market-line{border-top:1px dashed rgba(255,255,255,0.2);margin:16px 0 6px;padding-top:8px;font-size:11px;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace;}
+
+.finding-box{background:rgba(200,168,75,0.04);border-left:3px solid #C8A84B;padding:14px 18px;margin:22px 0;border-radius:0 8px 8px 0;}
+.finding-box p{margin:0;font-size:14px;}
+
+.award-row{display:flex;gap:12px;margin:24px 0;flex-wrap:wrap;}
+.award-badge{padding:14px 20px;border-radius:12px;flex:1;min-width:200px;}
+.award-badge.gold{background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.25);}
+.award-badge.red{background:rgba(212,68,68,0.08);border:1px solid rgba(212,68,68,0.2);}
+.award-icon{font-size:22px;margin-bottom:6px;}
+.award-title{font-size:11px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;}
+.award-name{font-size:18px;font-weight:700;font-family:'Fraunces',serif;}
+.award-desc{font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;line-height:1.5;}
+
+.caveat{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px 18px;margin:24px 0;}
+.caveat p{margin:0;font-size:12px;color:rgba(255,255,255,0.35);line-height:1.7;}
+
+.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:26px;margin:40px 0;text-align:center;}
+.cta-box a.btn{display:inline-block;padding:12px 26px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:10px;}
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:44px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.06);}
+@media(max-width:480px){.big-wrap{grid-template-columns:1fr;}.bar-name{width:80px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 18px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Route a file →</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · Denial Disparity Report · 2025</div>
+  <h1>Same borrower.<br><em>64-point gap.</em></h1>
+  <div class="meta">
+    Data: CFPB HMDA loan-level 2025 · 6 major FHA lenders · 8,795 high-risk applications<br>
+    Method: Denial rate per lender vs weighted market average of same 6 lenders<br>
+    Profile: DTI 44+, CLTV 90+ · exact-integer DTI, numeric CLTV · actions originated/denied
+  </div>
+
+  <p>In the high-risk FHA profile — DTI at or above 44, CLTV at or above 90 — six major lenders face the same borrowers. The market average denial rate is <strong>59.9%</strong>. What each lender does with that profile varies by 64 percentage points.</p>
+
+  <div class="big-wrap">
+    <div class="big-stat award">
+      <div class="big-num">−33pp</div>
+      <div class="big-lender">Mr. Cooper</div>
+      <div class="big-sub">26.7% denial vs 59.9% market<br>Lowest disparity observed</div>
+    </div>
+    <div class="big-stat worst">
+      <div class="big-num">+31pp</div>
+      <div class="big-lender">Rocket Mortgage</div>
+      <div class="big-sub">91.2% denial vs 59.9% market<br>Highest disparity observed</div>
+    </div>
+  </div>
+
+  <h2>High-risk profile — full disparity table</h2>
+  <p style="font-size:13px;color:rgba(255,255,255,0.4);">DTI 44+, CLTV 90+ · Market average: 59.9% · 8,795 total applications</p>
+
+  <div class="bar-section" id="highRisk"></div>
+
+  <h2>Mid-risk profile</h2>
+  <p style="font-size:13px;color:rgba(255,255,255,0.4);">DTI 36-43, CLTV 80-89 · Market average: 12.7% · 20,040 total applications</p>
+
+  <div class="bar-section" id="midRisk"></div>
+
+  <div class="finding-box">
+    <p>The gap widens as profile risk increases. In the mid-risk band, the spread between best and worst is 30 points. In the high-risk band, it expands to 64 points. Risk amplifies lender divergence — it doesn't smooth it.</p>
+  </div>
+
+  <h2>2025 Disparity Awards — within this 6-lender sample</h2>
+
+  <div class="award-row">
+    <div class="award-badge gold">
+      <div class="award-icon">🏆</div>
+      <div class="award-title">Lowest Disparity 2025</div>
+      <div class="award-name">Mr. Cooper</div>
+      <div class="award-desc">−33.3pp vs market in high-risk profile.<br>Consistent flat surface across all risk bands.</div>
+    </div>
+    <div class="award-badge red">
+      <div class="award-icon">📉</div>
+      <div class="award-title">Highest Disparity 2025</div>
+      <div class="award-name">Rocket Mortgage</div>
+      <div class="award-desc">+31.2pp vs market in high-risk profile.<br>91.2% denial rate at DTI 44+, CLTV 90+.</div>
+    </div>
+  </div>
+
+  <div class="caveat">
+    <p><strong>Scope note:</strong> Market average here is the weighted average of these 6 lenders only — not the full FHA market. Disparity is measured against observable risk variables (DTI, CLTV) available in HMDA; credit score is masked in the public file and cannot be controlled. These awards reflect loan-level patterns within this sample, not regulatory findings.</p>
+  </div>
+
+  <div class="cta-box">
+    <div style="font-size:14px;color:rgba(255,255,255,0.5);">Where does your file sit on these surfaces?</div>
+    <div style="font-family:'Fraunces',serif;font-size:19px;font-weight:700;margin-top:6px;">Zai maps your profile against each lender's geometry.</div>
+    <a class="btn" href="/zai-one.html" onclick="if(typeof gtag!=='undefined')gtag('event','funnel_step',{step_name:'disparity_to_zai'})">Get a routing decision — free →</a>
+  </div>
+
+  <div class="foot">
+    Source: CFPB HMDA loan-level modified LAR 2025. FHA (derived_loan_product = 2 or 32), actions originated (1) or denied (3). DTI filter: exact integers (HMDA reports integers 36-49; high-risk = 44+). CLTV: numeric, high-risk = 90+. Six lenders: CrossCountry (LEI 549300LBCBNR1OT00651), Freedom (549300AG64NHILB7ZP05), Guild (549300FGXN1K3HLB1R50), Mr. Cooper (5493003GQDUH26DNNH17), PennyMac (549300HW662MN1WU8550), Rocket (RVDPPPGHCGZ40J4VQ731). Full data: _data/denial_disparity_2025.json. Statistical research; not financial advice.<br><br>
+    Citation: FRC Intelligence (2026). "Denial Disparity Report 2025." financeratecalc.com/denial-disparity.html
+  </div>
+</div>
+
+<div style="max-width:720px;margin:24px auto;padding:14px 24px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:rgba(255,255,255,0.3);">
+  Related: <a href="/lender-decision-surfaces.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Decision Surfaces →</a> &nbsp;|&nbsp;
+  <a href="/shadow-approval.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Shadow Approvals →</a> &nbsp;|&nbsp;
+  <a href="/market-that-doesnt-react.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Market That Doesn't React →</a>
+</div>
+
+<script>
+const HIGH = [
+  {name:'Mr. Cooper', rate:26.7, disp:-33.3},
+  {name:'Guild', rate:42.5, disp:-17.4},
+  {name:'CrossCountry', rate:65.6, disp:5.6},
+  {name:'Freedom', rate:85.0, disp:25.0},
+  {name:'PennyMac', rate:88.8, disp:28.8},
+  {name:'Rocket', rate:91.2, disp:31.2},
+];
+const MID = [
+  {name:'Guild', rate:7.4, disp:-5.3},
+  {name:'MrCooper', rate:9.7, disp:-2.9},
+  {name:'CrossCountry', rate:10.3, disp:-2.4},
+  {name:'Freedom', rate:21.7, disp:9.0},
+  {name:'PennyMac', rate:27.6, disp:14.9},
+  {name:'Rocket', rate:37.8, disp:25.2},
+];
+
+function color(rate) {
+  if(rate < 20) return '#27ae60';
+  if(rate < 40) return '#9fc057';
+  if(rate < 60) return '#C8A84B';
+  if(rate < 80) return '#e8845a';
+  return '#d44';
+}
+
+function renderBars(data, containerId) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = data.map(d => `
+    <div class="bar-row">
+      <div class="bar-name">${d.name}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${d.rate}%;background:${color(d.rate)}">
+          ${d.rate}%
+        </div>
+      </div>
+      <div class="bar-disp ${d.disp > 0 ? 'disp-pos' : 'disp-neg'}">${d.disp > 0 ? '+' : ''}${d.disp}pp</div>
+    </div>
+  `).join('') + `<div class="market-line">── Market average</div>`;
+}
+
+renderBars(HIGH, 'highRisk');
+renderBars(MID, 'midRisk');
+</script>
+
+<a href="/zai-one.html" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;align-items:center;gap:7px;padding:10px 18px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.35);">⚡ Route a file</a>
+
+</body>
+</html>
