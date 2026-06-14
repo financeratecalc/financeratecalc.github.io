@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hidden Rejection Cost Calculator — What a Denial Really Costs You | FRC Intelligence</title>
+<meta name="description" content="A mortgage denial costs more than you think. Rate lock loss, time delay, credit inquiry impact, re-application fees, and opportunity cost. Calculate your real denial cost.">
+<meta property="og:title" content="What did your mortgage denial actually cost you?">
+<meta property="og:description" content="Rate lock lost. Time lost. Credit pulled again. Opportunity missed. Calculate the true cost of a mortgage denial — in dollars.">
+<meta property="og:url" content="https://financeratecalc.com/rejection-cost.html">
+<meta property="og:image" content="https://financeratecalc.com/og-two-doors.svg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://financeratecalc.com/rejection-cost.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;min-height:100vh;}
+header{padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.96);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+
+.hero{text-align:center;padding:52px 24px 28px;max-width:600px;margin:0 auto;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:14px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,5vw,42px);font-weight:900;line-height:1.15;margin-bottom:12px;}
+h1 em{font-style:italic;color:#e8845a;}
+.sub{font-size:15px;color:rgba(255,255,255,0.5);line-height:1.7;}
+
+.calc-wrap{max-width:520px;margin:0 auto;padding:0 20px 60px;}
+.section{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:22px;margin-bottom:14px;}
+.section-title{font-size:12px;color:rgba(200,168,75,0.7);text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-bottom:14px;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;}
+.field input,.field select{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.15s;}
+.field input:focus,.field select:focus{border-color:rgba(200,168,75,0.4);}
+.field input::placeholder{color:rgba(255,255,255,0.2);}
+.field select option{background:#0d1a2e;}
+.hint{font-size:10px;color:rgba(255,255,255,0.2);margin-top:3px;line-height:1.4;}
+
+.btn{width:100%;padding:14px;background:#C8A84B;color:#000;border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:6px;}
+.btn:hover{opacity:0.88;}
+
+/* RESULT */
+#result{max-width:520px;margin:0 auto;padding:0 20px 80px;display:none;}
+.total-card{text-align:center;padding:36px 24px;background:rgba(232,132,90,0.06);border:1.5px solid rgba(232,132,90,0.2);border-radius:18px;margin-bottom:16px;}
+.total-label{font-size:12px;color:rgba(232,132,90,0.6);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px;}
+.total-amount{font-family:'DM Mono',monospace;font-size:clamp(44px,10vw,72px);font-weight:700;color:#e8845a;line-height:1;}
+.total-sub{font-size:14px;color:rgba(255,255,255,0.4);margin-top:10px;line-height:1.6;}
+
+.breakdown{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;margin-bottom:14px;}
+.breakdown-title{font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;}
+.cost-row{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-top:1px solid rgba(255,255,255,0.05);gap:12px;}
+.cost-row:first-of-type{border-top:none;}
+.cost-name{font-size:13px;font-weight:600;flex:1;}
+.cost-desc{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;line-height:1.4;}
+.cost-amount{font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:#e8845a;flex-shrink:0;}
+.cost-zero{color:rgba(255,255,255,0.25);}
+
+.insight-box{background:rgba(200,168,75,0.04);border-left:3px solid #C8A84B;padding:14px 18px;margin-bottom:14px;border-radius:0 8px 8px 0;}
+.insight-box p{font-size:14px;color:rgba(255,255,255,0.6);margin:0;line-height:1.7;}
+.insight-box strong{color:#fff;}
+
+.share-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0;}
+.sbtn{padding:9px 16px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.s-cp{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);}
+.s-tw{background:rgba(29,161,242,0.15);color:#1da1f2;}
+.s-wa{background:rgba(37,211,102,0.15);color:#25d366;}
+
+.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:22px;margin-top:6px;text-align:center;}
+.cta-box a{display:inline-block;padding:11px 24px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:8px;}
+
+.method-note{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;padding:0 20px 50px;max-width:520px;margin:0 auto;text-align:center;}
+
+@media(max-width:480px){.row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Avoid the denial →</a>
+</header>
+
+<div class="hero">
+  <div class="eyebrow">FRC Intelligence · Hidden Cost Analysis</div>
+  <h1>What did your denial<br><em>actually cost you?</em></h1>
+  <p class="sub">The lender said no. But the real cost isn't the rejection — it's everything that follows. Rate lock. Time. Credit. Opportunity. Calculate it.</p>
+</div>
+
+<div class="calc-wrap">
+
+  <div class="section">
+    <div class="section-title">Your loan</div>
+    <div class="row">
+      <div class="field">
+        <label>Loan amount ($)</label>
+        <input id="loanAmt" type="number" placeholder="e.g. 280000">
+      </div>
+      <div class="field">
+        <label>Interest rate at time (%)</label>
+        <input id="rateAtTime" type="number" placeholder="e.g. 6.8" step="0.1">
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Time cost</div>
+    <div class="row">
+      <div class="field">
+        <label>Weeks lost to denial + re-apply</label>
+        <input id="weeksLost" type="number" placeholder="e.g. 8" min="1" max="52">
+        <div class="hint">Typical: 6-12 weeks between denial and new approval</div>
+      </div>
+      <div class="field">
+        <label>Your hourly value ($)</label>
+        <input id="hourlyRate" type="number" placeholder="e.g. 35">
+        <div class="hint">Gross income ÷ 2080 hours</div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px;">
+      <div class="field">
+        <label>Hours spent on re-application</label>
+        <input id="hoursSpent" type="number" placeholder="e.g. 12" min="1">
+        <div class="hint">Gathering docs, calls, new application</div>
+      </div>
+      <div class="field">
+        <label>Temporary housing cost ($/mo)</label>
+        <input id="tempHousing" type="number" placeholder="e.g. 0">
+        <div class="hint">Extra rent if you had to stay longer</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Rate & market cost</div>
+    <div class="row">
+      <div class="field">
+        <label>Rate when re-approved (%)</label>
+        <input id="rateAfter" type="number" placeholder="e.g. 7.1" step="0.1">
+        <div class="hint">If rates moved during the delay</div>
+      </div>
+      <div class="field">
+        <label>Rate lock fee paid ($)</label>
+        <input id="rateLockFee" type="number" placeholder="e.g. 500">
+        <div class="hint">Lock extension or new lock cost</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Transaction costs</div>
+    <div class="row">
+      <div class="field">
+        <label>Appraisal fee (lost) ($)</label>
+        <input id="appraisalFee" type="number" placeholder="e.g. 500">
+      </div>
+      <div class="field">
+        <label>Application / credit pull fee ($)</label>
+        <input id="appFee" type="number" placeholder="e.g. 50">
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px;">
+      <div class="field">
+        <label>Inspection fee (lost) ($)</label>
+        <input id="inspectionFee" type="number" placeholder="e.g. 400">
+      </div>
+      <div class="field">
+        <label>Other fees lost ($)</label>
+        <input id="otherFees" type="number" placeholder="e.g. 0">
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Opportunity cost</div>
+    <div class="row">
+      <div class="field">
+        <label>Home price change during delay ($)</label>
+        <input id="priceChange" type="number" placeholder="e.g. 5000">
+        <div class="hint">Positive = home got more expensive</div>
+      </div>
+      <div class="field">
+        <label>Rent paid during delay ($/mo)</label>
+        <input id="rentDuringDelay" type="number" placeholder="e.g. 1800">
+      </div>
+    </div>
+  </div>
+
+  <button class="btn" onclick="calculate()">Calculate my true denial cost →</button>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <div class="total-card">
+    <div class="total-label">Total hidden cost of your denial</div>
+    <div class="total-amount" id="totalAmt">$0</div>
+    <div class="total-sub" id="totalSub"></div>
+  </div>
+
+  <div class="breakdown">
+    <div class="breakdown-title">Cost breakdown</div>
+    <div id="costRows"></div>
+  </div>
+
+  <div class="insight-box" id="insightBox">
+    <p></p>
+  </div>
+
+  <div class="share-row">
+    <button class="sbtn s-cp" onclick="copyResult()">📋 Copy</button>
+    <a class="sbtn s-tw" id="twBtn" href="#" target="_blank">𝕏 Share</a>
+    <a class="sbtn s-wa" id="waBtn" href="#" target="_blank">💬 WhatsApp</a>
+  </div>
+
+  <div class="cta-box">
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);">Next denial is avoidable.</div>
+    <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;margin-top:4px;">Route to the right lender before you apply.</div>
+    <a href="/zai-one.html">Get a routing decision — free →</a>
+  </div>
+</div>
+
+<div class="method-note">
+  Rate cost methodology: rate differential × loan amount × 30-year present value factor.
+  Time cost: hours × hourly rate. Temporary housing: monthly cost × (weeks lost / 4.3).
+  Opportunity cost: home price change + rent paid during delay. All inputs user-supplied.
+  This is a cost estimation tool — not financial advice.
+  <br><br>
+  Related: <a href="/second-door.html" style="color:rgba(200,168,75,0.5);">Find your second door →</a> &nbsp;|&nbsp;
+  <a href="/shadow-approval.html" style="color:rgba(200,168,75,0.5);">Was it a Shadow Approval? →</a>
+</div>
+
+<script>
+function fmt(n){return '$'+Math.round(n).toLocaleString();}
+
+let _shareText='';
+
+function calculate(){
+  const loan     = parseFloat(document.getElementById('loanAmt').value)||0;
+  const r1       = parseFloat(document.getElementById('rateAtTime').value)||0;
+  const r2       = parseFloat(document.getElementById('rateAfter').value)||0;
+  const weeks    = parseFloat(document.getElementById('weeksLost').value)||0;
+  const hourly   = parseFloat(document.getElementById('hourlyRate').value)||0;
+  const hours    = parseFloat(document.getElementById('hoursSpent').value)||0;
+  const tempHous = parseFloat(document.getElementById('tempHousing').value)||0;
+  const lockFee  = parseFloat(document.getElementById('rateLockFee').value)||0;
+  const appr     = parseFloat(document.getElementById('appraisalFee').value)||0;
+  const appFee   = parseFloat(document.getElementById('appFee').value)||0;
+  const insp     = parseFloat(document.getElementById('inspectionFee').value)||0;
+  const other    = parseFloat(document.getElementById('otherFees').value)||0;
+  const priceChg = parseFloat(document.getElementById('priceChange').value)||0;
+  const rent     = parseFloat(document.getElementById('rentDuringDelay').value)||0;
+
+  if(!loan){alert('Please enter your loan amount.');return;}
+
+  // Rate cost: PV of extra interest over 30 years
+  const rateDiff = Math.max(0, r2 - r1) / 100;
+  const monthlyExtra = loan * rateDiff / 12;
+  // NPV at 30 years (simplified: 360 payments)
+  const rateCost = monthlyExtra * 360 * 0.55; // discount factor ~0.55 for 30yr NPV
+
+  // Time cost
+  const timeCost = (hours * hourly) + (tempHous * weeks / 4.3);
+
+  // Transaction costs
+  const transactionCost = lockFee + appr + appFee + insp + other;
+
+  // Opportunity cost
+  const months = weeks / 4.3;
+  const oppCost = priceChg + (rent * months);
+
+  const total = rateCost + timeCost + transactionCost + oppCost;
+
+  const costs = [
+    {name:'Rate increase cost', desc:`${r1>0&&r2>0?`${r1}% → ${r2}%`:'Rate differential'} over 30 years (NPV estimate)`, amt: rateCost},
+    {name:'Time & labor cost', desc:`${hours} hours × ${fmt(hourly)}/hr + ${weeks} weeks temporary housing`, amt: timeCost},
+    {name:'Lost transaction fees', desc:'Appraisal, application, inspection, other non-refundable fees', amt: transactionCost},
+    {name:'Opportunity cost', desc:'Home price appreciation + rent paid during delay', amt: oppCost},
+  ];
+
+  document.getElementById('totalAmt').textContent = fmt(total);
+  document.getElementById('totalSub').textContent =
+    `Across ${weeks} weeks of delay on a ${fmt(loan)} loan.${r2>r1?` Rate moved from ${r1}% to ${r2}%.`:''}`;
+
+  document.getElementById('costRows').innerHTML = costs.map(c=>`
+    <div class="cost-row">
+      <div>
+        <div class="cost-name">${c.name}</div>
+        <div class="cost-desc">${c.desc}</div>
+      </div>
+      <div class="cost-amount ${c.amt<1?'cost-zero':''}">${c.amt>=1?fmt(c.amt):'—'}</div>
+    </div>`).join('');
+
+  // Insight
+  let insight = '';
+  if(rateCost > total * 0.5){
+    insight = `<strong>Rate movement is your biggest loss.</strong> A ${(r2-r1).toFixed(2)}% rate increase on a ${fmt(loan)} loan costs ${fmt(rateCost)} in extra interest over 30 years — not upfront, but compounded. This is the cost most borrowers never see.`;
+  } else if(oppCost > total * 0.4){
+    insight = `<strong>The home got more expensive while you waited.</strong> Market appreciation during your denial delay added ${fmt(priceChg)} to the purchase price — money that compounds across the life of your loan.`;
+  } else {
+    insight = `<strong>The hidden cost is real but distributed.</strong> No single line item looks catastrophic — but ${fmt(total)} across fees, time, and rate movement adds up. This is why routing to the right lender before applying matters.`;
+  }
+  document.getElementById('insightBox').querySelector('p').innerHTML = insight;
+
+  // Share
+  _shareText = `My mortgage denial cost me ${fmt(total)}.\n\nRate increase: ${fmt(rateCost)}\nTime & labor: ${fmt(timeCost)}\nFees lost: ${fmt(transactionCost)}\nOpportunity: ${fmt(oppCost)}\n\nCalculate yours:`;
+  const url = 'https://financeratecalc.com/rejection-cost.html';
+  document.getElementById('twBtn').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(_shareText+'\n'+url)}`;
+  document.getElementById('waBtn').href = `https://wa.me/?text=${encodeURIComponent(_shareText+'\n'+url)}`;
+
+  document.querySelector('.calc-wrap').style.display='none';
+  document.querySelector('.hero').style.display='none';
+  document.getElementById('result').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(typeof gtag!=='undefined') gtag('event','rejection_cost_calculated',{total:Math.round(total),weeks,loan});
+}
+
+function copyResult(){
+  navigator.clipboard?.writeText(_shareText+'\nhttps://financeratecalc.com/rejection-cost.html').then(()=>{
+    const b=document.querySelector('.s-cp');b.textContent='✅ Copied!';
+    setTimeout(()=>b.textContent='📋 Copy',2000);
+  });
+}
+</script>
+
+<a href="/zai-one.html" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;align-items:center;gap:7px;padding:10px 18px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.35);">⚡ Avoid the denial</a>
+
+</body>
+</html>
