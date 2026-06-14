@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The CLTV 85 Trap — What Happens Above 85% LTV | FRC Intelligence</title>
+<meta name="description" content="CLTV 84.9% vs 85.1% — one number changes everything. At 85, Rocket's denial rate jumps 55 points. Mr. Cooper: 1.7 points. See where you stand.">
+<meta property="og:title" content="The CLTV 85 Trap — Above this number, everything changes.">
+<meta property="og:description" content="Rocket's denial rate jumps +55pp at CLTV 85. Mr. Cooper: +1.7pp. Same home, one number apart, two completely different outcomes.">
+<meta property="og:url" content="https://financeratecalc.com/cltv-85-trap.html">
+<meta property="og:image" content="https://financeratecalc.com/og-two-doors.svg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://financeratecalc.com/cltv-85-trap.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;min-height:100vh;}
+header{padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.96);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:680px;margin:0 auto;padding:52px 24px 80px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:14px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,5vw,42px);font-weight:900;line-height:1.15;margin-bottom:14px;}
+h1 em{font-style:italic;color:#e8845a;}
+p{font-size:15px;color:rgba(255,255,255,0.6);margin-bottom:14px;line-height:1.8;}
+strong{color:#fff;}
+h2{font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin:32px 0 12px;color:#C8A84B;}
+
+.cltv-input{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:24px;margin:24px 0;}
+.cltv-disp{font-family:'DM Mono',monospace;font-size:52px;font-weight:700;text-align:center;margin:8px 0;transition:color 0.3s;}
+input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:rgba(255,255,255,0.1);outline:none;margin:12px 0;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#C8A84B;cursor:pointer;}
+.range-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace;}
+.wall-line{text-align:center;font-size:12px;margin:8px 0;font-family:'DM Mono',monospace;}
+
+.lender-bars{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
+.lb-row{display:flex;align-items:center;gap:10px;}
+.lb-name{font-size:12px;font-weight:600;width:120px;flex-shrink:0;}
+.lb-track{flex:1;height:22px;background:rgba(255,255,255,0.04);border-radius:4px;overflow:hidden;}
+.lb-fill{height:100%;border-radius:4px;transition:width 0.4s,background 0.4s;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;color:rgba(0,0,0,0.7);}
+.lb-pct{font-family:'DM Mono',monospace;font-size:12px;width:40px;text-align:right;flex-shrink:0;transition:color 0.3s;}
+
+.cliff-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:13px;}
+.cliff-table th{text-align:left;padding:8px 10px;color:rgba(255,255,255,0.3);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid rgba(255,255,255,0.08);}
+.cliff-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);}
+
+.finding-box{background:rgba(200,168,75,0.04);border-left:3px solid #C8A84B;padding:14px 18px;margin:22px 0;border-radius:0 8px 8px 0;}
+.finding-box p{margin:0;font-size:14px;color:rgba(255,255,255,0.65);}
+.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:22px;margin:28px 0;text-align:center;}
+.cta-box a{display:inline-block;padding:11px 24px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:8px;}
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:32px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.06);}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Route my file →</a>
+</header>
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · CLTV Cliff Analysis · 2023–2025</div>
+  <h1>The CLTV 85<br><em>Trap</em></h1>
+  <p>At CLTV 84%, Rocket Mortgage denies about 30% of FHA applicants with your profile. At CLTV 86%, that number jumps to 84%. <strong>Same home. Two percent more borrowed. Completely different outcome.</strong></p>
+  <p>Slide to your CLTV. See what happens at the wall.</p>
+
+  <div class="cltv-input">
+    <div class="cltv-disp" id="cltvDisp">82%</div>
+    <input type="range" id="cltvSlider" min="70" max="97" value="82" oninput="updateCLTV(this.value)">
+    <div class="range-labels"><span>70%</span><span>80%</span><span>85%</span><span>90%</span><span>97%</span></div>
+    <div class="wall-line" id="wallLine"></div>
+    <div class="lender-bars" id="lenderBars"></div>
+  </div>
+
+  <h2>The jump at CLTV 85 — 3-year verified</h2>
+  <p>These are real numbers from CFPB HMDA loan-level data, 2023 and 2025. The cliff didn't move.</p>
+  <table class="cliff-table">
+    <thead><tr><th>Lender</th><th>80–84% denial</th><th>85–89% denial</th><th>Jump</th><th>2023</th><th>2025</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Mr. Cooper</strong></td><td>4.8%</td><td>5.8%</td><td style="color:#27ae60">+1.0pp</td><td>+2.3pp</td><td>+1.7pp</td></tr>
+      <tr><td><strong>Guild</strong></td><td>10.8%</td><td>28.5%</td><td style="color:#C8A84B">+17.7pp</td><td>+21.4pp</td><td>+12.0pp</td></tr>
+      <tr><td><strong>CrossCountry</strong></td><td>15.1%</td><td>87.0%</td><td style="color:#d44">+71.9pp</td><td>+71.5pp</td><td>+47.5pp</td></tr>
+      <tr><td><strong>Freedom</strong></td><td>23.3%</td><td>67.7%</td><td style="color:#d44">+44.3pp</td><td>+64.5pp</td><td>+28.2pp</td></tr>
+      <tr><td><strong>PennyMac</strong></td><td>20.5%</td><td>54.0%</td><td style="color:#e8845a">+33.5pp</td><td>+40.2pp</td><td>+24.7pp</td></tr>
+      <tr><td><strong>Rocket</strong></td><td>29.5%</td><td>84.9%</td><td style="color:#d44">+55.4pp</td><td>+46.0pp</td><td>+54.9pp</td></tr>
+    </tbody>
+  </table>
+
+  <div class="finding-box">
+    <p><strong>Mr. Cooper is the exception, not the rule.</strong> Its CLTV-85 jump is +1.7pp — virtually nothing. Every other lender shows a wall of 12–72 points. The wall is not an FHA rule. It's a lender overlay — an internal policy. And it's different at every institution. This is what "decision surface geometry" means in practice.</p>
+  </div>
+
+  <div class="cta-box">
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);">Your CLTV is what it is. Your lender choice isn't.</div>
+    <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;margin-top:4px;">Route to a lender with a flat surface above 85.</div>
+    <a href="/zai-one.html">Get a routing decision — free →</a>
+  </div>
+
+  <div class="foot">
+    Data: CFPB HMDA loan-level modified LAR 2023 and 2025. FHA products. CLTV bands: 80–84 vs 85–89. Jump = denial rate difference between bands. 2024 data also verified (CrossCountry +71.9pp, Rocket +55.4pp). Note: part of the CLTV-85 jump reflects FHA product eligibility mechanics (cash-out LTV cap 80% since 2019) — but inter-lender differences within the same band are behavioral. Not financial advice.
+    <br><br>Related: <a href="/lender-decision-surfaces.html" style="color:rgba(200,168,75,0.5);">Full decision surfaces →</a> &nbsp;|&nbsp; <a href="/two-doors.html" style="color:rgba(200,168,75,0.5);">Two doors →</a>
+  </div>
+</div>
+<script>
+const LENDERS=[
+  {name:'Mr. Cooper', below:{70:3,75:4,80:5,82:5,84:5,85:6,87:6,90:7,95:8,97:9}, above:{85:6,87:7,90:8}, color:'#27ae60'},
+  {name:'Guild',      below:{70:5,75:7,80:10,82:11,84:12,85:28,87:30,90:38,95:55,97:65}, above:{}, color:'#9fc057'},
+  {name:'CrossCountry',below:{70:8,75:10,80:14,82:15,84:16,85:82,87:83,90:84,95:90,97:92}, above:{}, color:'#C8A84B'},
+  {name:'Freedom',    below:{70:12,75:16,80:22,82:23,84:24,85:65,87:66,90:72,95:85,97:88}, above:{}, color:'#e8845a'},
+  {name:'PennyMac',   below:{70:12,75:16,80:20,82:21,84:22,85:52,87:54,90:62,95:80,97:85}, above:{}, color:'#d07040'},
+  {name:'Rocket',     below:{70:18,75:22,80:28,82:30,84:31,85:84,87:85,90:88,95:92,97:94}, above:{}, color:'#d44'},
+];
+
+function getRate(l,cltv){
+  const keys=Object.keys(l.below).map(Number).sort((a,b)=>a-b);
+  let best=keys[0];
+  for(const k of keys) if(k<=cltv) best=k;
+  return l.below[best]||20;
+}
+
+function barColor(r){
+  if(r<15) return '#27ae60';
+  if(r<30) return '#9fc057';
+  if(r<50) return '#C8A84B';
+  if(r<70) return '#e8845a';
+  return '#d44';
+}
+
+function updateCLTV(v){
+  v=parseInt(v);
+  const el=document.getElementById('cltvDisp');
+  el.textContent=v+'%';
+  el.style.color=v<85?'#27ae60':v<90?'#e8845a':'#d44';
+  document.getElementById('wallLine').innerHTML=v<85
+    ? `<span style="color:rgba(255,255,255,0.3)">Wall is at 85% — you are ${85-v} points below it</span>`
+    : v===85
+    ? '<span style="color:#e8845a">⚠️ You are exactly at the wall</span>'
+    : `<span style="color:#d44">🧱 You are ${v-85} points above the CLTV 85 wall</span>`;
+  document.getElementById('lenderBars').innerHTML=LENDERS.map(l=>{
+    const r=getRate(l,v);
+    return `<div class="lb-row">
+      <div class="lb-name">${l.name}</div>
+      <div class="lb-track"><div class="lb-fill" style="width:${r}%;background:${barColor(r)}">${r}%</div></div>
+      <div class="lb-pct" style="color:${barColor(r)}">${r}%</div>
+    </div>`;
+  }).join('');
+  if(typeof gtag!=='undefined') gtag('event','cltv_slider',{cltv:v});
+}
+updateCLTV(82);
+</script>
+<a href="/zai-one.html" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;align-items:center;gap:7px;padding:10px 18px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.35);">⚡ Route my file</a>
+</body>
+</html>

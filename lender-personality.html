@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lender Personality Test — Which Lender Type Matches Your Profile? | FRC Intelligence</title>
+<meta name="description" content="Not all lenders are the same. Some are flat. Some have cliffs. Some are regime-sensitive. Find which lender archetype matches your mortgage profile.">
+<meta property="og:title" content="Lender Personality Test — Find your lender match">
+<meta property="og:description" content="4 lender archetypes. Which one fits your FHA profile? Based on 3 years of real HMDA data — not ads.">
+<meta property="og:url" content="https://financeratecalc.com/lender-personality.html">
+<meta property="og:image" content="https://financeratecalc.com/og-two-doors.svg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://financeratecalc.com/lender-personality.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;min-height:100vh;}
+header{padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.96);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:600px;margin:0 auto;padding:52px 24px 80px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:14px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,5vw,40px);font-weight:900;line-height:1.15;margin-bottom:14px;}
+h1 em{font-style:italic;color:#C8A84B;}
+p{font-size:15px;color:rgba(255,255,255,0.6);margin-bottom:14px;line-height:1.8;}
+
+/* Quiz */
+.q-wrap{margin:24px 0;}
+.q-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:22px;margin-bottom:14px;}
+.q-num{font-size:10px;color:rgba(200,168,75,0.5);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.q-text{font-size:15px;font-weight:600;margin-bottom:14px;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:8px;}
+.opt{padding:10px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);cursor:pointer;font-size:14px;color:rgba(255,255,255,0.6);transition:all 0.15s;text-align:left;background:transparent;font-family:inherit;width:100%;}
+.opt:hover{border-color:rgba(200,168,75,0.4);color:#fff;}
+.opt.selected{border-color:#C8A84B;background:rgba(200,168,75,0.08);color:#fff;}
+.btn{width:100%;padding:14px;background:#C8A84B;color:#000;border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:6px;display:none;}
+
+/* Result */
+#result{display:none;}
+.archetype-card{border-radius:18px;padding:32px 24px;text-align:center;margin-bottom:16px;}
+.arch-icon{font-size:52px;margin-bottom:12px;}
+.arch-type{font-size:11px;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;font-weight:600;}
+.arch-name{font-family:'Fraunces',serif;font-size:28px;font-weight:900;margin-bottom:10px;}
+.arch-desc{font-size:14px;line-height:1.7;opacity:0.75;}
+.match-lenders{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px;margin-bottom:12px;}
+.ml-title{font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
+.ml-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid rgba(255,255,255,0.05);}
+.ml-row:first-of-type{border-top:none;}
+.ml-name{font-size:13px;font-weight:600;}
+.ml-tag{font-size:11px;padding:3px 10px;border-radius:10px;font-weight:600;}
+.share-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0;}
+.sbtn{padding:9px 16px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.s-cp{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);}
+.s-tw{background:rgba(29,161,242,0.15);color:#1da1f2;}
+.s-wa{background:rgba(37,211,102,0.15);color:#25d366;}
+.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:22px;margin-top:12px;text-align:center;}
+.cta-box a{display:inline-block;padding:11px 24px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:8px;}
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:32px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.06);}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Full routing →</a>
+</header>
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · Archetype Analysis</div>
+  <h1>The Lender<br><em>Personality Test</em></h1>
+  <p>4 lender archetypes. Not all lenders are the same — some are flat, some have sharp cliffs, some follow the market. Answer 4 questions. Find your match.</p>
+
+  <div class="q-wrap" id="quiz">
+    <div class="q-card">
+      <div class="q-num">Question 1 of 4</div>
+      <div class="q-text">What is your DTI?</div>
+      <div class="options">
+        <button class="opt" onclick="answer(0,'A')">Under 40% — comfortable</button>
+        <button class="opt" onclick="answer(0,'B')">40–43% — near the line</button>
+        <button class="opt" onclick="answer(0,'C')">44–46% — in the cliff zone</button>
+        <button class="opt" onclick="answer(0,'D')">47%+ — high DTI</button>
+      </div>
+    </div>
+    <div class="q-card">
+      <div class="q-num">Question 2 of 4</div>
+      <div class="q-text">What is your CLTV?</div>
+      <div class="options">
+        <button class="opt" onclick="answer(1,'A')">Under 80% — strong equity</button>
+        <button class="opt" onclick="answer(1,'B')">80–84% — just under the wall</button>
+        <button class="opt" onclick="answer(1,'C')">85–94% — above the CLTV wall</button>
+        <button class="opt" onclick="answer(1,'D')">95%+ — maximum LTV</button>
+      </div>
+    </div>
+    <div class="q-card">
+      <div class="q-num">Question 3 of 4</div>
+      <div class="q-text">Which best describes your income?</div>
+      <div class="options">
+        <button class="opt" onclick="answer(2,'A')">Salaried W2 — stable and documented</button>
+        <button class="opt" onclick="answer(2,'B')">Commission or bonus-heavy</button>
+        <button class="opt" onclick="answer(2,'C')">Self-employed / 1099</button>
+        <button class="opt" onclick="answer(2,'D')">Retirement / SSDI / other fixed</button>
+      </div>
+    </div>
+    <div class="q-card">
+      <div class="q-num">Question 4 of 4</div>
+      <div class="q-text">What matters most to you in a lender?</div>
+      <div class="options">
+        <button class="opt" onclick="answer(3,'A')">Predictability — same rules every time</button>
+        <button class="opt" onclick="answer(3,'B')">Flexibility — willing to look at the full picture</button>
+        <button class="opt" onclick="answer(3,'C')">Speed — close fast</button>
+        <button class="opt" onclick="answer(3,'D')">Low rates — best pricing wins</button>
+      </div>
+    </div>
+    <button class="btn" id="submitBtn" onclick="showResult()">See my lender match →</button>
+  </div>
+
+  <div id="result">
+    <div class="archetype-card" id="archCard">
+      <div class="arch-icon" id="archIcon"></div>
+      <div class="arch-type" id="archType"></div>
+      <div class="arch-name" id="archName"></div>
+      <div class="arch-desc" id="archDesc"></div>
+    </div>
+    <div class="match-lenders">
+      <div class="ml-title">Best lender matches for your profile</div>
+      <div id="matchRows"></div>
+    </div>
+    <div class="share-row">
+      <button class="sbtn s-cp" onclick="copyResult()">📋 Copy</button>
+      <a class="sbtn s-tw" id="twBtn" href="#" target="_blank">𝕏 Share</a>
+      <a class="sbtn s-wa" id="waBtn" href="#" target="_blank">💬 WhatsApp</a>
+    </div>
+    <div class="cta-box">
+      <div style="font-size:13px;color:rgba(255,255,255,0.4);">Want a full routing analysis?</div>
+      <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;margin-top:4px;">Zai routes your file to the right lender.</div>
+      <a href="/zai-one.html">Get full routing — free →</a>
+    </div>
+    <button onclick="location.reload()" style="width:100%;margin-top:12px;padding:11px;background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-family:inherit;font-size:13px;cursor:pointer;">← Retake the test</button>
+  </div>
+
+  <div class="foot">
+    Archetypes based on 3-year cliff-geometry analysis (CFPB HMDA loan-level 2023–2025, 75 lenders). FLAT archetype = no detectable DTI or CLTV cliff. CLTV-DOMINANT = sharp jump at CLTV 85. REGIME-SENSITIVE = behavior changes with market conditions. STABLE CORE = consistent low denial across all profiles. 81% archetype persistence across 3 years. Not financial advice.
+  </div>
+</div>
+
+<script>
+const answers = [null,null,null,null];
+const ARCHETYPES = {
+  FLAT:{
+    icon:'⬜', type:'Archetype: Flat Surface', name:'The Consistent Lender',
+    color:'#27ae60', bg:'rgba(39,174,96,0.07)', border:'rgba(39,174,96,0.25)',
+    desc:'Your profile fits lenders with no detectable cliffs — consistent denial rates across DTI and CLTV ranges. These lenders underwrite the whole file, not the threshold. 81% of lenders in this archetype stayed flat for 3 consecutive years.',
+    lenders:[
+      {name:'Mr. Cooper', note:'Null cliff signature — no DTI or CLTV wall detected', tag:'Best fit', color:'#27ae60'},
+      {name:'Guild Mortgage', note:'Low and stable denial, eroding cliff', tag:'Strong fit', color:'#9fc057'},
+    ]
+  },
+  CLTV:{
+    icon:'🧱', type:'Archetype: CLTV Wall', name:'The LTV-Sensitive Lender',
+    color:'#e8845a', bg:'rgba(232,132,90,0.07)', border:'rgba(232,132,90,0.25)',
+    desc:'Your profile sits near the CLTV-85 wall — where several lenders show sharp denial jumps. Rocket shows a +55pp jump above 85%. Mr. Cooper shows +1.7pp. Same borrower, different door.',
+    lenders:[
+      {name:'Mr. Cooper', note:'Lowest CLTV-85 jump (+1.7pp) — stays flat above the wall', tag:'Best fit', color:'#27ae60'},
+      {name:'Guild Mortgage', note:'+12pp CLTV-85 jump — moderate', tag:'Good fit', color:'#9fc057'},
+      {name:'Rocket', note:'+55pp CLTV-85 jump — avoid above 85', tag:'Avoid', color:'#d44'},
+    ]
+  },
+  DTI:{
+    icon:'⚠️', type:'Archetype: DTI Cliff', name:'The Threshold Lender',
+    color:'#C8A84B', bg:'rgba(200,168,75,0.07)', border:'rgba(200,168,75,0.25)',
+    desc:'Your DTI is in or near the cliff zone (44-46%). Most lenders show a sharp jump here. CrossCountry\'s cliff sits at 45→46 (one step later). Mr. Cooper shows almost no cliff at all.',
+    lenders:[
+      {name:'Mr. Cooper', note:'No DTI cliff — flat surface across 36-49 range', tag:'Best fit', color:'#27ae60'},
+      {name:'CrossCountry', note:'Cliff at 45→46 — one step later than most', tag:'Good fit', color:'#9fc057'},
+      {name:'Rocket', note:'Cliff at 44→45 — +15pp jump', tag:'Risky', color:'#e8845a'},
+    ]
+  },
+  REGIME:{
+    icon:'📈', type:'Archetype: Regime-Sensitive', name:'The Market-Following Lender',
+    color:'#C8A84B', bg:'rgba(200,168,75,0.06)', border:'rgba(200,168,75,0.2)',
+    desc:'Your profile works best with lenders whose behavior is predictable over time. Regime-sensitive lenders (like Rocket) changed dramatically 2023→2025. Stable Core lenders (Guild, Mr. Cooper) stayed consistent.',
+    lenders:[
+      {name:'Guild Mortgage', note:'Stable Core — behavior unchanged 2023-2025', tag:'Best fit', color:'#27ae60'},
+      {name:'Mr. Cooper', note:'Stable Core — 81% archetype persistence', tag:'Best fit', color:'#27ae60'},
+      {name:'Freedom', note:'Regime-sensitive — eased 2023→2025', tag:'Watch', color:'#C8A84B'},
+    ]
+  }
+};
+
+function answer(q, val){
+  answers[q]=val;
+  const cards=document.querySelectorAll('.q-card');
+  cards[q].querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  event.target.classList.add('selected');
+  if(answers.every(a=>a!==null)) document.getElementById('submitBtn').style.display='block';
+}
+
+function showResult(){
+  // Score: DTI cliff risk, CLTV risk, income complexity, preference
+  const dti=answers[0], cltv=answers[1], income=answers[2], pref=answers[3];
+  let arch='FLAT';
+  if(cltv==='C'||cltv==='D') arch='CLTV';
+  else if(dti==='C'||dti==='D') arch='DTI';
+  else if(pref==='A'||income==='A') arch='REGIME';
+  else arch='FLAT';
+
+  const a=ARCHETYPES[arch];
+  document.getElementById('archCard').style.background=a.bg;
+  document.getElementById('archCard').style.border=`1.5px solid ${a.border}`;
+  document.getElementById('archIcon').textContent=a.icon;
+  document.getElementById('archType').textContent=a.type;
+  document.getElementById('archType').style.color=a.color;
+  document.getElementById('archName').textContent=a.name;
+  document.getElementById('archName').style.color=a.color;
+  document.getElementById('archDesc').textContent=a.desc;
+
+  document.getElementById('matchRows').innerHTML=a.lenders.map(l=>`
+    <div class="ml-row">
+      <div><div class="ml-name">${l.name}</div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">${l.note}</div></div>
+      <span class="ml-tag" style="background:${l.color}22;color:${l.color}">${l.tag}</span>
+    </div>`).join('');
+
+  const shareT=`My lender archetype: ${a.name} (${a.type})\n\nBased on my DTI, CLTV, and income profile — FRC Intelligence matched me to ${a.lenders[0].name}.\n\nFind your lender match:`;
+  const url='https://financeratecalc.com/lender-personality.html';
+  document.getElementById('twBtn').href=`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareT+'\n'+url)}`;
+  document.getElementById('waBtn').href=`https://wa.me/?text=${encodeURIComponent(shareT+'\n'+url)}`;
+  window._shareT=shareT+'\n'+url;
+
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('result').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(typeof gtag!=='undefined') gtag('event','personality_result',{arch});
+}
+
+function copyResult(){
+  navigator.clipboard?.writeText(window._shareT).then(()=>{
+    const b=document.querySelector('.s-cp');b.textContent='✅ Copied!';
+    setTimeout(()=>b.textContent='📋 Copy',2000);
+  });
+}
+</script>
+<a href="/zai-one.html" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;align-items:center;gap:7px;padding:10px 18px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.35);">⚡ Full routing</a>
+</body>
+</html>

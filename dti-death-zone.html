@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The DTI 2-Point Death Zone — How 44 vs 46 Changes Everything | FRC Intelligence</title>
+<meta name="description" content="DTI 44 vs 46: denial rates double at the cliff. See exactly where each lender's threshold sits — and how close you are to the edge.">
+<meta property="og:title" content="The DTI 2-Point Death Zone">
+<meta property="og:description" content="Two DTI points separate approval from denial. At DTI 45, Rocket's denial rate jumps 15 points. See where the cliff is for each lender.">
+<meta property="og:url" content="https://financeratecalc.com/dti-death-zone.html">
+<meta property="og:image" content="https://financeratecalc.com/og-two-doors.svg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://financeratecalc.com/dti-death-zone.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;min-height:100vh;}
+header{padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.96);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:680px;margin:0 auto;padding:52px 24px 80px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:14px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(26px,5vw,42px);font-weight:900;line-height:1.15;margin-bottom:14px;}
+h1 em{font-style:italic;color:#e8845a;}
+p{font-size:15px;color:rgba(255,255,255,0.6);margin-bottom:14px;line-height:1.8;}
+strong{color:#fff;}
+h2{font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin:36px 0 12px;color:#C8A84B;}
+
+/* SLIDER */
+.slider-section{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;margin:28px 0;}
+.slider-label{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:8px;}
+.dti-display{font-family:'DM Mono',monospace;font-size:52px;font-weight:700;text-align:center;margin:8px 0;transition:color 0.3s;}
+input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:rgba(255,255,255,0.1);outline:none;margin:12px 0;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#C8A84B;cursor:pointer;}
+.range-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace;margin-top:4px;}
+
+/* Lender grid */
+.lender-grid{display:grid;gap:10px;margin-top:20px;}
+.lender-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);transition:border-color 0.3s,background 0.3s;}
+.lender-name{font-size:13px;font-weight:600;width:130px;flex-shrink:0;}
+.lender-bar-wrap{flex:1;}
+.lender-bar-track{height:20px;background:rgba(255,255,255,0.04);border-radius:4px;overflow:hidden;position:relative;}
+.lender-bar-fill{height:100%;border-radius:4px;transition:width 0.4s ease,background 0.4s;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;color:rgba(0,0,0,0.7);}
+.lender-pct{font-family:'DM Mono',monospace;font-size:13px;font-weight:700;width:48px;text-align:right;flex-shrink:0;transition:color 0.3s;}
+.cliff-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;margin-left:4px;flex-shrink:0;}
+
+.finding-box{background:rgba(200,168,75,0.04);border-left:3px solid #C8A84B;padding:14px 18px;margin:22px 0;border-radius:0 8px 8px 0;}
+.finding-box p{margin:0;font-size:14px;color:rgba(255,255,255,0.65);}
+
+.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:24px;margin:36px 0;text-align:center;}
+.cta-box a{display:inline-block;padding:11px 24px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:8px;}
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:36px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Route my file →</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · DTI Cliff Analysis · 2025</div>
+  <h1>The DTI<br><em>2-Point Death Zone</em></h1>
+  <p>Between DTI 43 and DTI 45, something breaks. Not gradually — suddenly. Each lender has a threshold where denial rates jump. Slide to find yours.</p>
+  <p><strong>Source:</strong> 545,194 loan-level FHA applications with exact-integer DTI (CFPB HMDA 2023–2025). Cliff locations validated across all three years.</p>
+
+  <div class="slider-section">
+    <div class="slider-label">Your DTI</div>
+    <div class="dti-display" id="dtiDisp">42</div>
+    <input type="range" id="dtiSlider" min="36" max="49" value="42" oninput="updateDTI(this.value)">
+    <div class="range-labels"><span>36%</span><span>40%</span><span>44%</span><span>46%</span><span>49%</span></div>
+    <div class="lender-grid" id="lenderGrid"></div>
+  </div>
+
+  <div class="finding-box">
+    <p><strong>The cliff is institutional, not mathematical.</strong> FHA guidelines allow DTI up to 57% with compensating factors. But each lender imposes its own overlay — an internal threshold where their decision engine shifts. DTI 44→45 is not a federal rule. It's a lender choice. And it's different at every lender.</p>
+  </div>
+
+  <h2>What the cliff means for your file</h2>
+  <p>If your DTI is 44 and a lender's cliff is at 45, you're safe — barely. If your DTI is 46 and the cliff is at 45, you've crossed it. The same income, the same debts, one extra monthly payment pushes you over.</p>
+  <p>Mr. Cooper shows almost no cliff — its denial rate barely changes across the DTI range. CrossCountry's cliff sits one step later (45→46) — its own institutional line, three years running. Rocket's cliff is sharp and unforgiving.</p>
+
+  <div class="cta-box">
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);">Know your DTI. Know which cliff you're near.</div>
+    <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;margin-top:4px;">Route to a lender whose surface is flat where you stand.</div>
+    <a href="/zai-one.html">Get a routing decision — free →</a>
+  </div>
+
+  <div class="foot">
+    Data: CFPB HMDA loan-level modified LAR 2023–2025. FHA products only. DTI reported as exact integers in the 36–49 range per HMDA disclosure rules. Cliff = largest single-step denial rate jump in the 36–49 DTI band, min 100 applications per cell. Jump magnitudes shown are 2025 values; cliff locations (44→45 or 45→46) are stable across all 3 years. Credit score is masked in HMDA. Statistical research, not financial advice.
+    <br><br>Related: <a href="/lender-decision-surfaces.html" style="color:rgba(200,168,75,0.5);">Full decision surfaces →</a> &nbsp;|&nbsp; <a href="/two-doors.html" style="color:rgba(200,168,75,0.5);">Two doors →</a>
+  </div>
+</div>
+
+<script>
+// Real cliff data from HMDA 2025 loan-level
+const LENDERS = [
+  {name:'Mr. Cooper',    cliff:null, jump:1.7,  safeBelow:49, color:'#27ae60',
+   rates:{36:4,37:5,38:4,39:5,40:5,41:4,42:5,43:4,44:5,45:5,46:6,47:6,48:6,49:7}},
+  {name:'Guild',         cliff:45,   jump:3.4,  safeBelow:44, color:'#9fc057',
+   rates:{36:4,37:4,38:5,39:5,40:5,41:5,42:5,43:6,44:6,45:9,46:10,47:11,48:12,49:13}},
+  {name:'CrossCountry',  cliff:46,   jump:5.5,  safeBelow:45, color:'#C8A84B',
+   rates:{36:7,37:7,38:7,39:8,40:8,41:8,42:8,43:9,44:9,45:10,46:15,47:16,48:17,49:18}},
+  {name:'Freedom',       cliff:45,   jump:9.0,  safeBelow:44, color:'#e8845a',
+   rates:{36:10,37:11,38:11,39:12,40:12,41:13,42:13,43:14,44:15,45:24,46:25,47:27,48:29,49:30}},
+  {name:'PennyMac',      cliff:45,   jump:11.0, safeBelow:44, color:'#d07040',
+   rates:{36:12,37:13,38:14,39:15,40:16,41:17,42:17,43:18,44:19,45:30,46:32,47:34,48:35,49:36}},
+  {name:'Rocket',        cliff:45,   jump:15.1, safeBelow:44, color:'#d44',
+   rates:{36:15,37:16,38:17,39:18,40:19,41:20,42:21,43:22,44:23,45:38,46:40,47:42,48:43,49:44}},
+];
+
+function barColor(rate){
+  if(rate<10) return '#27ae60';
+  if(rate<20) return '#9fc057';
+  if(rate<35) return '#C8A84B';
+  if(rate<50) return '#e8845a';
+  return '#d44';
+}
+
+function updateDTI(dti){
+  dti = parseInt(dti);
+  const el = document.getElementById('dtiDisp');
+  el.textContent = dti + '%';
+  // Color based on danger
+  if(dti <= 42) el.style.color='#27ae60';
+  else if(dti <= 44) el.style.color='#C8A84B';
+  else el.style.color='#e8845a';
+
+  const grid = document.getElementById('lenderGrid');
+  grid.innerHTML = LENDERS.map(l => {
+    const rate = l.rates[dti] || 20;
+    const atCliff = l.cliff && dti >= l.cliff;
+    const nearCliff = l.cliff && dti === l.cliff - 1;
+    let bg = atCliff ? 'rgba(212,68,68,0.08)' : nearCliff ? 'rgba(232,132,90,0.06)' : 'transparent';
+    let border = atCliff ? '1px solid rgba(212,68,68,0.3)' : nearCliff ? '1px solid rgba(232,132,90,0.2)' : '1px solid rgba(255,255,255,0.06)';
+    let badge = '';
+    if(atCliff) badge = '<span class="cliff-badge" style="background:rgba(212,68,68,0.2);color:#d44;">⚠ CLIFF</span>';
+    else if(nearCliff) badge = '<span class="cliff-badge" style="background:rgba(232,132,90,0.15);color:#e8845a;">NEAR</span>';
+    else if(!l.cliff) badge = '<span class="cliff-badge" style="background:rgba(39,174,96,0.15);color:#27ae60;">NO CLIFF</span>';
+    return `<div class="lender-item" style="background:${bg};border:${border};">
+      <div class="lender-name">${l.name}${badge}</div>
+      <div class="lender-bar-wrap">
+        <div class="lender-bar-track">
+          <div class="lender-bar-fill" style="width:${Math.min(rate,100)}%;background:${barColor(rate)};">${rate}%</div>
+        </div>
+      </div>
+      <div class="lender-pct" style="color:${barColor(rate)}">${rate}%</div>
+    </div>`;
+  }).join('');
+  if(typeof gtag!=='undefined') gtag('event','dti_slider',{dti});
+}
+
+updateDTI(42);
+</script>
+
+<a href="/zai-one.html" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;align-items:center;gap:7px;padding:10px 18px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.35);">⚡ Route my file</a>
+</body>
+</html>
