@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Test Your Lender — How Does Your Bank Treat Borrowers Like You? | FRC Intelligence</title>
+<meta name="description" content="Enter your lender, DTI, and CLTV. See exactly how your lender treats borrowers with your profile — vs market average. Real 2025 HMDA data.">
+<meta property="og:title" content="Test Your Lender — Does your bank treat you fairly?">
+<meta property="og:description" content="Rocket denied 91.2% of high-risk FHA profiles. Mr. Cooper: 26.7%. Same borrower. Enter your lender and profile. See where you stand.">
+<meta property="og:url" content="https://financeratecalc.com/test-your-lender.html">
+<link rel="canonical" href="https://financeratecalc.com/test-your-lender.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;min-height:100vh;}
+header{padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.96);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.hero{text-align:center;padding:52px 24px 32px;max-width:580px;margin:0 auto;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:14px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,6vw,46px);font-weight:900;line-height:1.1;margin-bottom:12px;}
+h1 em{font-style:italic;color:#e8845a;}
+.sub{font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:6px;}
+.trust{font-size:11px;color:rgba(255,255,255,0.2);font-family:'DM Mono',monospace;}
+.form-wrap{max-width:460px;margin:0 auto;padding:0 20px 60px;}
+.form-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px;}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.field label{font-size:11px;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.1em;}
+.field select,.field input{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:11px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.15s;}
+.field select:focus,.field input:focus{border-color:rgba(200,168,75,0.5);}
+.field select option{background:#0d1a2e;}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn{width:100%;margin-top:6px;padding:14px;background:#C8A84B;color:#000;border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;}
+.btn:hover{opacity:0.88;}
+
+/* RESULT */
+#result{max-width:480px;margin:0 auto;padding:0 20px 80px;display:none;}
+.verdict-card{border-radius:18px;padding:30px 24px;text-align:center;margin-bottom:14px;}
+.verdict-good{background:rgba(39,174,96,0.07);border:1.5px solid rgba(39,174,96,0.25);}
+.verdict-warn{background:rgba(232,132,90,0.07);border:1.5px solid rgba(232,132,90,0.25);}
+.verdict-bad{background:rgba(212,68,68,0.07);border:1.5px solid rgba(212,68,68,0.25);}
+.verdict-icon{font-size:40px;margin-bottom:10px;}
+.verdict-lender{font-size:12px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;}
+.verdict-rate{font-family:'DM Mono',monospace;font-size:clamp(36px,9vw,60px);font-weight:700;line-height:1;}
+.verdict-good .verdict-rate{color:#27ae60;}
+.verdict-warn .verdict-rate{color:#C8A84B;}
+.verdict-bad .verdict-rate{color:#d44;}
+.verdict-label{font-size:13px;color:rgba(255,255,255,0.5);margin-top:6px;}
+.verdict-disp{font-size:18px;font-weight:700;margin-top:14px;}
+.verdict-good .verdict-disp{color:#27ae60;}
+.verdict-warn .verdict-disp{color:#C8A84B;}
+.verdict-bad .verdict-disp{color:#e8845a;}
+.verdict-desc{font-size:14px;color:rgba(255,255,255,0.55);margin-top:10px;line-height:1.7;}
+
+.share-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0;}
+.sbtn{padding:9px 16px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.s-cp{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);}
+.s-tw{background:rgba(29,161,242,0.15);color:#1da1f2;}
+.s-wa{background:rgba(37,211,102,0.15);color:#25d366;}
+
+.market-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;margin-bottom:14px;}
+.market-title{font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;}
+.lender-bar{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.lbar-name{font-size:12px;font-weight:600;width:100px;flex-shrink:0;}
+.lbar-track{flex:1;height:22px;background:rgba(255,255,255,0.04);border-radius:5px;overflow:hidden;}
+.lbar-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:700;color:rgba(0,0,0,0.7);}
+.lbar-pct{font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,0.5);width:36px;text-align:right;flex-shrink:0;}
+
+.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:22px;margin-top:12px;text-align:center;}
+.cta-box a{display:inline-block;padding:11px 24px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:8px;}
+.foot-note{font-size:11px;color:rgba(255,255,255,0.2);text-align:center;padding:0 20px 50px;max-width:480px;margin:0 auto;line-height:1.7;}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Full routing →</a>
+</header>
+
+<div class="hero">
+  <div class="eyebrow">FRC Intelligence · 2025 HMDA Data</div>
+  <h1>Does your lender<br><em>treat you fairly?</em></h1>
+  <p class="sub">Enter your lender and profile. See how they treat borrowers like you — vs the market.</p>
+  <p class="trust">Real 2025 federal data · No SSN · 30 seconds</p>
+</div>
+
+<div class="form-wrap">
+  <div class="form-card">
+    <div class="field">
+      <label>Your lender</label>
+      <select id="lender">
+        <option value="">Select your lender...</option>
+        <option value="MrCooper">Mr. Cooper</option>
+        <option value="Guild">Guild Mortgage</option>
+        <option value="CrossCountry">CrossCountry Mortgage</option>
+        <option value="Freedom">Freedom Mortgage</option>
+        <option value="PennyMac">PennyMac</option>
+        <option value="Rocket">Rocket Mortgage</option>
+      </select>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Monthly income ($)</label>
+        <input id="income" type="number" placeholder="e.g. 5500">
+      </div>
+      <div class="field">
+        <label>Monthly debts ($)</label>
+        <input id="debts" type="number" placeholder="e.g. 500">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Home price ($)</label>
+        <input id="homePrice" type="number" placeholder="e.g. 300000">
+      </div>
+      <div class="field">
+        <label>Down payment ($)</label>
+        <input id="down" type="number" placeholder="e.g. 10000">
+      </div>
+    </div>
+    <button class="btn" onclick="testLender()">Test this lender →</button>
+  </div>
+</div>
+
+<div id="result">
+  <div id="verdictCard" class="verdict-card">
+    <div class="verdict-icon" id="vIcon"></div>
+    <div class="verdict-lender" id="vLender"></div>
+    <div class="verdict-rate" id="vRate"></div>
+    <div class="verdict-label" id="vLabel"></div>
+    <div class="verdict-disp" id="vDisp"></div>
+    <div class="verdict-desc" id="vDesc"></div>
+  </div>
+
+  <div class="share-row">
+    <button class="sbtn s-cp" onclick="copyResult()">📋 Copy result</button>
+    <a class="sbtn s-tw" id="twBtn" href="#" target="_blank">𝕏 Share</a>
+    <a class="sbtn s-wa" id="waBtn" href="#" target="_blank">💬 WhatsApp</a>
+  </div>
+
+  <div class="market-card">
+    <div class="market-title" id="marketTitle">All lenders — your risk profile</div>
+    <div id="marketBars"></div>
+  </div>
+
+  <div class="cta-box">
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);">Want Zai to route you to the right lender?</div>
+    <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;margin-top:4px;">Get a full routing decision.</div>
+    <a href="/zai-one.html">Route my file — free →</a>
+  </div>
+</div>
+
+<div class="foot-note">
+  Denial rates from CFPB HMDA loan-level 2025. High-risk profile (DTI 44+, CLTV 90+): market average 59.9%.
+  Mid-risk (DTI 36-43, CLTV 80-89): market average 12.7%. Rates reflect observed outcomes for borrowers
+  with similar DTI and CLTV. Credit score is masked in HMDA. Statistical research, not financial advice.
+</div>
+
+<script>
+const LENDER_DATA = {
+  high: {
+    market: 59.9,
+    lenders: {
+      MrCooper:    {rate: 26.7, disp: -33.3},
+      Guild:       {rate: 42.5, disp: -17.4},
+      CrossCountry:{rate: 65.6, disp:  +5.6},
+      Freedom:     {rate: 85.0, disp: +25.0},
+      PennyMac:    {rate: 88.8, disp: +28.8},
+      Rocket:      {rate: 91.2, disp: +31.2},
+    }
+  },
+  mid: {
+    market: 12.7,
+    lenders: {
+      Guild:       {rate:  7.4, disp:  -5.3},
+      MrCooper:    {rate:  9.7, disp:  -2.9},
+      CrossCountry:{rate: 10.3, disp:  -2.4},
+      Freedom:     {rate: 21.7, disp:  +9.0},
+      PennyMac:    {rate: 27.6, disp: +14.9},
+      Rocket:      {rate: 37.8, disp: +25.2},
+    }
+  }
+};
+
+const LENDER_NAMES = {
+  MrCooper:'Mr. Cooper', Guild:'Guild Mortgage', CrossCountry:'CrossCountry',
+  Freedom:'Freedom Mortgage', PennyMac:'PennyMac', Rocket:'Rocket Mortgage'
+};
+
+function barColor(r){
+  if(r<20) return '#27ae60';
+  if(r<40) return '#9fc057';
+  if(r<60) return '#C8A84B';
+  if(r<80) return '#e8845a';
+  return '#d44';
+}
+
+let _shareText = '';
+
+function testLender(){
+  const lender = document.getElementById('lender').value;
+  const income = parseFloat(document.getElementById('income').value)||0;
+  const debts = parseFloat(document.getElementById('debts').value)||0;
+  const hp = parseFloat(document.getElementById('homePrice').value)||0;
+  const dp = parseFloat(document.getElementById('down').value)||0;
+  if(!lender||!income||!hp){alert('Please fill in lender, income, and home price.');return;}
+
+  const est = (hp-dp)*0.007;
+  const dti = Math.min(Math.round((debts+est)/income*100),70);
+  const cltv = Math.min(Math.round((hp-dp)/hp*100),105);
+  const zone = (dti>=44 && cltv>=90) ? 'high' : 'mid';
+  const zoneData = LENDER_DATA[zone];
+  const d = zoneData.lenders[lender];
+  const name = LENDER_NAMES[lender];
+  const disp = d.disp;
+
+  // Verdict
+  let icon, cls, dispText, desc;
+  if(disp <= -10){
+    icon='✅'; cls='verdict-good';
+    dispText = `${disp.toFixed(1)}pp below market`;
+    desc = `${name} treats borrowers with your profile significantly better than the market average. This lender's historical denial rate for similar profiles is ${d.rate}% — well below the ${zoneData.market}% market average.`;
+  } else if(disp <= 10){
+    icon='⚪'; cls='verdict-warn';
+    dispText = `${disp>0?'+':''}${disp.toFixed(1)}pp vs market`;
+    desc = `${name} is near the market average for your profile. Denial rate: ${d.rate}% vs ${zoneData.market}% market average. Worth comparing with top performers.`;
+  } else {
+    icon='⚠️'; cls='verdict-bad';
+    dispText = `+${disp.toFixed(1)}pp above market`;
+    desc = `${name} denies borrowers with your profile at a rate ${disp.toFixed(1)} points above market average. Denial rate: ${d.rate}% vs ${zoneData.market}% market. Based on 2025 HMDA data, similar profiles have historically fared better at other lenders.`;
+  }
+
+  document.getElementById('verdictCard').className = `verdict-card ${cls}`;
+  document.getElementById('vIcon').textContent = icon;
+  document.getElementById('vLender').textContent = name;
+  document.getElementById('vRate').textContent = d.rate + '%';
+  document.getElementById('vLabel').textContent = `denial rate for profiles like yours`;
+  document.getElementById('vDisp').textContent = dispText;
+  document.getElementById('vDesc').textContent = desc;
+
+  // Market bars
+  const zLabel = zone==='high' ? 'DTI 44+, CLTV 90+' : 'DTI 36-43, CLTV 80-89';
+  document.getElementById('marketTitle').textContent = `All lenders — ${zLabel} profile`;
+  const sorted = Object.entries(zoneData.lenders).sort((a,b)=>a[1].rate-b[1].rate);
+  document.getElementById('marketBars').innerHTML = sorted.map(([k,v])=>`
+    <div class="lender-bar">
+      <div class="lbar-name" style="${k===lender?'color:#C8A84B;font-weight:700;':''}">${LENDER_NAMES[k]}</div>
+      <div class="lbar-track">
+        <div class="lbar-fill" style="width:${v.rate}%;background:${barColor(v.rate)};">${v.rate}%</div>
+      </div>
+      <div class="lbar-pct">${v.disp>0?'+':''}${v.disp}pp</div>
+    </div>`).join('');
+
+  // Share
+  _shareText = `I tested ${name} on FRC Intelligence.\n\nDenial rate for my profile: ${d.rate}%\nMarket average: ${zoneData.market}%\nDisparity: ${disp>0?'+':''}${disp.toFixed(1)}pp\n\nTest your lender:`;
+  const url = 'https://financeratecalc.com/test-your-lender.html';
+  document.getElementById('twBtn').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(_shareText+'\n'+url)}`;
+  document.getElementById('waBtn').href = `https://wa.me/?text=${encodeURIComponent(_shareText+'\n'+url)}`;
+
+  document.querySelector('.form-wrap').style.display='none';
+  document.querySelector('.hero').style.display='none';
+  document.getElementById('result').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(typeof gtag!=='undefined') gtag('event','lender_tested',{lender,zone,disp});
+}
+
+function copyResult(){
+  navigator.clipboard?.writeText(_shareText+'\nhttps://financeratecalc.com/test-your-lender.html').then(()=>{
+    const b=document.querySelector('.s-cp'); b.textContent='✅ Copied!';
+    setTimeout(()=>b.textContent='📋 Copy result',2000);
+  });
+}
+</script>
+<a href="/zai-one.html" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;align-items:center;gap:7px;padding:10px 18px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.35);">⚡ Full routing</a>
+</body>
+</html>
