@@ -419,7 +419,7 @@ Provide routing analysis per format.`;
     if(typeof gtag!=='undefined') gtag('event','routing_complete',{top_lender:top, fico, dti, income, state});
 
     // Profile-aware cross-links
-    showRelatedPages(parseInt(dti), parseFloat(cltv)||0, parseInt(age)||0);
+    try { showRelatedPages(parseInt(dti), parseFloat(cltv)||0, parseInt(age)||0); } catch(_ignored) {}
 
   } catch(err) {
     document.getElementById('resultInner').innerHTML = `
