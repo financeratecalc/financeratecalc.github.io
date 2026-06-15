@@ -164,7 +164,7 @@
           <li class="muted">CSV bulk upload</li>
           <li class="muted">Broker dashboard</li>
         </ul>
-        <button class="cta-btn cta-pro" onclick="openModal('pro')">Get Pro →</button>
+        <a href="https://buy.stripe.com/test_7sY9AUaKS5ou7bw8hQ4ZG00" class="cta-btn cta-pro" target="_blank" rel="noopener">Get Pro →</a>
       </div>
 
       <!-- BROKER -->
@@ -182,7 +182,7 @@
           <li>Weekly broker market briefing</li>
           <li>Priority support</li>
         </ul>
-        <button class="cta-btn cta-broker" onclick="openModal('broker')">Get Broker Suite →</button>
+        <a href="https://buy.stripe.com/test_aFa00k6uCaIO7bwbu24ZG01" class="cta-btn cta-broker" target="_blank" rel="noopener">Get Broker Suite →</a>
       </div>
     </div>
 
@@ -249,17 +249,7 @@
     </div>
   </div>
 
-  <!-- CHECKOUT MODAL -->
-  <div class="modal-bg" id="modalBg" onclick="closeModal(event)">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModalDirect()">✕</button>
-      <h3 id="modalTitle">Get Pro</h3>
-      <p id="modalDesc">Enter your email to continue to secure checkout.</p>
-      <input type="email" id="modalEmail" placeholder="your@email.com" />
-      <div class="modal-error" id="modalError"></div>
-      <div class="modal-loading" id="modalLoading">Preparing checkout...</div>
-      <button class="modal-cta" id="modalBtn" onclick="startCheckout()">Continue to checkout →</button>
-      <div style="text-align:center;margin-top:16px;font-size:12px;color:rgba(255,255,255,0.25);">Powered by Stripe · Secure · Cancel anytime</div>
+  
     </div>
   </div>
 
@@ -276,11 +266,8 @@
     monthly: { pro: '$49<span>/mo</span>', broker: '$149<span>/mo</span>', proNote: 'Billed monthly · cancel anytime', brokerNote: 'Billed monthly · cancel anytime' },
     yearly:  { pro: '$490<span>/yr</span>', broker: '$1,490<span>/yr</span>', proNote: 'Save 2 months vs monthly', brokerNote: 'Save 2 months vs monthly' }
   };
-  let currentTerm = 'monthly';
-  let currentPlan = 'pro';
 
   function setTerm(term) {
-    currentTerm = term;
     document.getElementById('btnMonthly').classList.toggle('active', term === 'monthly');
     document.getElementById('btnYearly').classList.toggle('active', term === 'yearly');
     document.getElementById('proPrice').innerHTML = prices[term].pro;
@@ -288,73 +275,6 @@
     document.getElementById('proNote').textContent = prices[term].proNote;
     document.getElementById('brokerNote').textContent = prices[term].brokerNote;
   }
-
-  // Modal
-  function openModal(plan) {
-    currentPlan = plan;
-    const isProPlan = plan === 'pro';
-    document.getElementById('modalTitle').textContent = isProPlan ? 'Get FRC Pro' : 'Get Broker Suite';
-    document.getElementById('modalDesc').textContent = isProPlan
-      ? 'Unlimited routing · Full lender matrix · Weekly LSI alert'
-      : 'Everything in Pro · Broker dashboard · White-label reports';
-    document.getElementById('modalBg').classList.add('open');
-    document.getElementById('modalEmail').focus();
-  }
-
-  function closeModal(e) {
-    if (e.target === document.getElementById('modalBg')) closeModalDirect();
-  }
-  function closeModalDirect() {
-    document.getElementById('modalBg').classList.remove('open');
-    document.getElementById('modalError').style.display = 'none';
-    document.getElementById('modalEmail').value = '';
-  }
-
-  async function startCheckout() {
-    const email = document.getElementById('modalEmail').value.trim();
-    if (!email || !email.includes('@')) {
-      document.getElementById('modalError').textContent = 'Please enter a valid email address.';
-      document.getElementById('modalError').style.display = 'block';
-      return;
-    }
-
-    document.getElementById('modalBtn').style.display = 'none';
-    document.getElementById('modalLoading').style.display = 'block';
-    document.getElementById('modalError').style.display = 'none';
-
-    // Plan ID mapping — will be updated with real Stripe price IDs after seed
-    const planMap = {
-      'pro-monthly': 'price_1Tih18IXB0DhVRzl9eJyGQjb',
-      'pro-yearly': 'price_1Tih18IXB0DhVRzlIiM4pyQm',
-      'broker-monthly': 'price_1Tih19IXB0DhVRzlEC1Dk1yv',
-      'broker-yearly': 'price_1Tih19IXB0DhVRzl5BxkPYPj',
-    };
-    const priceKey = currentPlan + '-' + currentTerm;
-
-    try {
-      const resp = await fetch('https://' + location.hostname + '/api/stripe/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, priceId: planMap[priceKey] })
-      });
-      const data = await resp.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error(data.error || 'Could not create checkout session');
-      }
-    } catch(err) {
-      document.getElementById('modalLoading').style.display = 'none';
-      document.getElementById('modalBtn').style.display = 'block';
-      document.getElementById('modalError').textContent = 'Something went wrong. Please try again.';
-      document.getElementById('modalError').style.display = 'block';
-    }
-  }
-
-  // Enter key in email field
-  document.getElementById('modalEmail').addEventListener('keydown', e => {
-    if (e.key === 'Enter') startCheckout();
-  });
-  </script>
+</script>
   </body>
   </html>
