@@ -276,166 +276,228 @@ header{
 <button class="zai-pill" id="resetBtn" onclick="resetForm()">← New profile</button>
 
 <script>
-  var ZAI_API = 'https://frc-api.ziyetis.workers.dev/v1/messages';
+var ZAI_API = 'https://frc-api.ziyetis.workers.dev/v1/messages';
 
-  var ZAI_SYSTEM = 'You are Zai, the topological interpretation engine of FinanceRateCalc.com.' +
-    ' PARADIGM: Shape-Space Economics. You map the structural geometry of institutional underwriting behavior.' +
-    ' EMPIRICAL BASE (verified, loan-level HMDA 2018-2025):' +
-    ' 1. LENDER HETEROGENEITY (p<0.0001): Controlling for State+DTI+LTV, outcome is a function of lender identity. Rocket was -2.4pp vs Guild in 2023, +19.1pp in 2025.' +
-    ' 2. SHADOW APPROVALS: 208,961 excess denials 2018-2025 (28% of all denials).' +
-    ' 3. MARKET INERTIA (p=0.326): Low-denial lenders do NOT gain market share.' +
-    ' 4. DTI CLIFF PERMANENCE: DTI 44-45 is an institutional code, stable 3 years. CrossCountry cliff at 45-46. MrCooper: no cliff.' +
-    ' 5. CLTV-85 WALL: Denial explodes above CLTV 85. Rocket +54.9pp jump in 2025. MrCooper +1.7pp.' +
-    ' 6. ARCHETYPE PERSISTENCE 81%: FLAT (Guild, MrCooper), CLTV-DOMINANT (Rocket, Freedom, CrossCountry), CLTV-SEVERE (8 lenders).' +
-    ' CURRENT MARKET: OFI 81 = high friction. Wells Fargo: do not route (52% denial). NewRez: do not route primary. Freedom: use cautiously.' +
-    ' DENIAL RATES (8yr): CrossCountry 6.3% | Guild 7.3% | UWM 18.0% | Freedom 16.6% | MrCooper 23.4% | PennyMac 23.6% | Rocket 30.1% | loanDepot 34.5% | NewRez 43.5% | Wells 52.4%' +
-    ' PRODUCE THIS EXACT FORMAT (no markdown, no headers):' +
-    ' TOP_LENDER: [name]' +
-    ' TOP_LENDER_WHY: [1-2 sentences]' +
-    ' SECOND_LENDER: [name]' +
-    ' SECOND_LENDER_WHY: [1 sentence]' +
-    ' HIGH_DENIAL1: [name]' +
-    ' HIGH_DENIAL1_WHY: [1 sentence]' +
-    ' HIGH_DENIAL2: [name]' +
-    ' HIGH_DENIAL2_WHY: [1 sentence]' +
-    ' KILLER1: [risk]' +
-    ' KILLER2: [risk]' +
-    ' KILLER3: [risk or N/A]' +
-    ' HARD RULES: NEVER say will be approved or denied. NEVER say best lender. Tone: calm, strategic, field intelligence.';
+var ZAI_SYSTEM = [
+  'You are Zai, the FHA mortgage routing engine of FinanceRateCalc.com.',
+  'DENIAL RATES (8yr HMDA 2018-2025): CrossCountry 6.3% | Guild 7.3% | UWM 18.0% | Freedom 16.6% | MrCooper 23.4% | PennyMac 23.6% | Rocket 30.1% | loanDepot 34.5% | NewRez 43.5% | Wells 52.4%.',
+  'CURRENT: OFI 81 HIGH FRICTION. Wells Fargo: do not route (FHA exit). NewRez: do not route primary.',
+  'DTI CLIFF at 44-45: Rocket +15pp, PennyMac +11pp, MrCooper +1.4pp (flat). CrossCountry cliff at 45-46.',
+  'CLTV-85 WALL: Rocket +55pp, CrossCountry +48pp, Guild +12pp, MrCooper +1.7pp.',
+  'PRODUCE EXACTLY THIS FORMAT (no markdown):',
+  'TOP_LENDER: [name]',
+  'TOP_LENDER_WHY: [1-2 sentences specific to this profile]',
+  'SECOND_LENDER: [name]',
+  'SECOND_LENDER_WHY: [1 sentence]',
+  'HIGH_DENIAL1: [name]',
+  'HIGH_DENIAL1_WHY: [1 sentence]',
+  'HIGH_DENIAL2: [name]',
+  'HIGH_DENIAL2_WHY: [1 sentence]',
+  'KILLER1: [top risk for this profile]',
+  'KILLER2: [second risk]',
+  'KILLER3: [third risk or N/A]',
+  'TWIN_NOTE: [1 sentence about similar borrower performance at top lender]',
+  'RULES: Never say will be approved or denied. Never say best lender or give financial advice. Tone: calm, strategic, evidence-based.'
+].join(' ');
 
-  function getRouting() {
-    var fico = document.getElementById('fico').value.trim();
-    var dti = document.getElementById('dti').value.trim();
-    var income = document.getElementById('income').value;
-    var state = document.getElementById('state').value;
-    var loanType = document.getElementById('loanType').value;
-    var denied = document.getElementById('denied').value;
+function getRouting() {
+  var fico = document.getElementById('fico').value.trim();
+  var dti = document.getElementById('dti').value.trim();
+  var income = document.getElementById('income').value;
+  var state = document.getElementById('state').value;
+  var loanType = document.getElementById('loanType').value;
+  var denied = document.getElementById('denied').value;
 
-    if (!fico || !dti || !income || !state) {
-      alert('Please fill in all fields: FICO, DTI, Income, and State.');
-      return;
-    }
-    if (parseFloat(fico) < 300 || parseFloat(fico) > 850) { alert('FICO must be between 300 and 850.'); return; }
-    if (parseFloat(dti) < 1 || parseFloat(dti) > 70) { alert('DTI must be between 1 and 70.'); return; }
+  if (!fico || !dti || !income || !state) {
+    alert('Please fill in all fields: FICO, DTI, Income, and State.');
+    return;
+  }
+  if (parseInt(dti) < 1 || parseInt(dti) > 70) {
+    alert('DTI must be between 1 and 70.');
+    return;
+  }
 
-    var formWrap = document.querySelector('.form-wrap');
-    var resultDiv = document.getElementById('result');
-    var resultInner = document.getElementById('resultInner');
+  var resultEl = document.getElementById('result');
+  var resultInner = document.getElementById('resultInner');
+  if (!resultEl || !resultInner) return;
 
-    if (formWrap) formWrap.style.display = 'none';
-    if (resultDiv) resultDiv.style.display = 'block';
-    if (resultInner) resultInner.innerHTML = '<div class="loading">Analyzing your profile<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>';
+  resultEl.style.display = 'block';
+  resultInner.innerHTML = '<div class="result-card"><div class="loading">Analyzing your profile<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div></div>';
 
-    try { window.frcFunnel.step('routing_submitted', {fico: fico, dti: dti, income: income, state: state}); } catch(e) {}
+  if (window.frcFunnel) window.frcFunnel.step('routing_submitted', {fico: fico, dti: dti, income: income, state: state});
 
-    var userPrompt = 'Profile: FICO ' + fico + ' | DTI ' + dti + '% | ' + income + ' income | ' + state + ' | ' + loanType +
-      (denied !== 'none' ? ' | Previously denied by: ' + denied : '') +
-      '
-Market: OFI 81 (high friction, Q2 2026)
-Provide routing analysis per format.';
+  var userPrompt = 'Profile: FICO ' + fico + ' | DTI ' + dti + '% | Income $' + income + '/mo | State: ' + state + ' | Loan type: ' + loanType + (denied !== 'none' ? ' | Previously denied by: ' + denied : '') + '. Analyze this FHA profile and provide routing guidance.';
 
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', ZAI_API, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('x-api-key', 'frc-proxy');
-    xhr.timeout = 30000;
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', ZAI_API, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('x-api-key', 'frc-proxy');
+  xhr.timeout = 30000;
 
-    xhr.onload = function() {
-      try {
-        var resp = JSON.parse(xhr.responseText);
-        var txt = (resp.content && resp.content[0] && resp.content[0].text) ? resp.content[0].text : '';
-        if (!txt) throw new Error('Empty response from routing engine');
-
-        function g(k) {
-          var re = new RegExp(k + ':\s*(.+)');
-          var m = txt.match(re);
-          return m ? m[1].trim() : '';
+  xhr.onload = function() {
+    try {
+      var data = JSON.parse(xhr.responseText);
+      var text = '';
+      if (data.content && data.content.length > 0) {
+        for (var i = 0; i < data.content.length; i++) {
+          if (data.content[i].type === 'text') text += data.content[i].text;
         }
-
-        var top = g('TOP_LENDER');
-        var topWhy = g('TOP_LENDER_WHY');
-        var second = g('SECOND_LENDER');
-        var secondWhy = g('SECOND_LENDER_WHY');
-        var avoid1 = g('HIGH_DENIAL1');
-        var avoid1Why = g('HIGH_DENIAL1_WHY');
-        var avoid2 = g('HIGH_DENIAL2');
-        var avoid2Why = g('HIGH_DENIAL2_WHY');
-        var k1 = g('KILLER1');
-        var k2 = g('KILLER2');
-        var k3 = g('KILLER3');
-
-        var html = '<div class="result-card"><div class="result-label">Best fit for your profile</div>' +
-          '<div class="lender-name">' + (top || 'See analysis') + '</div>' +
-          '<div class="lender-why">' + topWhy + '</div></div>';
-
-        if (second) {
-          html += '<div class="result-card"><div class="result-label">Strong backup</div>' +
-            '<div class="lender-name" style="font-size:22px;">' + second + '</div>' +
-            '<div class="lender-why">' + secondWhy + '</div></div>';
-        }
-
-        if (avoid1 || avoid2) {
-          html += '<div class="result-card"><div class="result-label">Avoid for this profile</div>';
-          if (avoid1) html += '<div class="avoid-row"><span class="avoid-name">' + avoid1 + '</span><span class="avoid-why">' + avoid1Why + '</span></div>';
-          if (avoid2) html += '<div class="avoid-row"><span class="avoid-name">' + avoid2 + '</span><span class="avoid-why">' + avoid2Why + '</span></div>';
-          html += '</div>';
-        }
-
-        if (k1) {
-          html += '<div class="killers"><div style="font-size:11px;color:var(--orange);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Watch out for</div>';
-          html += '<div class="killer-item"><span class="killer-num">1.</span><span>' + k1 + '</span></div>';
-          if (k2) html += '<div class="killer-item"><span class="killer-num">2.</span><span>' + k2 + '</span></div>';
-          if (k3 && k3 !== 'N/A') html += '<div class="killer-item"><span class="killer-num">3.</span><span>' + k3 + '</span></div>';
-          html += '</div>';
-        }
-
-        if (denied !== 'none') {
-          html += '<div style="background:rgba(232,132,90,0.04);border:1px solid rgba(232,132,90,0.15);border-radius:12px;padding:14px 18px;margin-bottom:12px;">' +
-            '<div style="font-size:10px;color:rgba(232,132,90,0.6);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;">Recovery classification</div>' +
-            '<div style="font-size:15px;font-weight:700;color:var(--orange);margin-bottom:4px;">Possible Shadow Approval</div>' +
-            '<div style="font-size:12px;color:var(--muted);">Your denial at ' + denied + ' occurred in a market where materially lower denial rates were simultaneously observed. ' +
-            '<a href="/shadow-approval.html" style="color:rgba(232,132,90,0.7);">What is a Shadow Approval? \u2192</a></div></div>';
-        }
-
-        if (resultInner) resultInner.innerHTML = html;
-        var resetBtn = document.getElementById('resetBtn');
-        if (resetBtn) resetBtn.style.display = 'flex';
-        try { window.frcFunnel.step('routing_result_shown', {top_lender: top}); } catch(e) {}
-        try { if(typeof gtag !== 'undefined') gtag('event', 'routing_complete', {top_lender: top, fico: fico, dti: dti}); } catch(e) {}
-        try {
-          var hp = parseFloat(document.getElementById('homePrice') ? document.getElementById('homePrice').value : 0) || 0;
-          var dp = parseFloat(document.getElementById('downpayment') ? document.getElementById('downpayment').value : 0) || 0;
-          var cltv = hp > 0 ? ((hp - dp) / hp * 100) : 0;
-          showRelatedPages(parseInt(dti), cltv, 0);
-        } catch(e) {}
-      } catch(parseErr) {
-        if (resultInner) resultInner.innerHTML = '<div class="result-card"><div class="result-label">Analysis error</div><div class="lender-why">Could not parse routing response. Please try again.</div><button onclick="resetForm()" style="margin-top:14px;padding:10px 20px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;">Try again</button></div>';
       }
-    };
 
-    xhr.onerror = function() {
-      if (resultInner) resultInner.innerHTML = '<div class="result-card"><div class="result-label">Connection issue</div><div class="lender-why">Could not reach routing engine. Check your connection and try again.</div><button onclick="resetForm()" style="margin-top:14px;padding:10px 20px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;">Try again</button></div>';
-    };
+      function g(key) {
+        var re = new RegExp(key + ':\\s*(.+)');
+        var m = text.match(re);
+        return m ? m[1].trim() : '';
+      }
 
-    xhr.ontimeout = function() {
-      if (resultInner) resultInner.innerHTML = '<div class="result-card"><div class="result-label">Timeout</div><div class="lender-why">Routing engine took too long. Please try again in a moment.</div><button onclick="resetForm()" style="margin-top:14px;padding:10px 20px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;">Try again</button></div>';
-    };
+      var top = g('TOP_LENDER');
+      var topWhy = g('TOP_LENDER_WHY');
+      var second = g('SECOND_LENDER');
+      var secondWhy = g('SECOND_LENDER_WHY');
+      var hd1 = g('HIGH_DENIAL1');
+      var hd1Why = g('HIGH_DENIAL1_WHY');
+      var hd2 = g('HIGH_DENIAL2');
+      var hd2Why = g('HIGH_DENIAL2_WHY');
+      var k1 = g('KILLER1');
+      var k2 = g('KILLER2');
+      var k3 = g('KILLER3');
+      var twin = g('TWIN_NOTE');
 
-    xhr.send(JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 600,
-      system: ZAI_SYSTEM,
-      messages: [{role: 'user', content: userPrompt}]
-    }));
+      var html = '<div class="result-card">' +
+        '<div class="result-label">Best fit for your profile</div>' +
+        '<div class="lender-name">' + (top || 'See below') + '</div>' +
+        '<div class="lender-why">' + topWhy + '</div>' +
+        (twin ? '<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);font-size:12px;color:rgba(255,255,255,0.4);">' + twin + '</div>' : '') +
+        '</div>';
+
+      if (second) {
+        html += '<div class="result-card">' +
+          '<div class="result-label">Strong backup</div>' +
+          '<div class="lender-name" style="font-size:22px;">' + second + '</div>' +
+          '<div class="lender-why">' + secondWhy + '</div>' +
+          '</div>';
+      }
+
+      if (hd1 || hd2) {
+        html += '<div class="result-card">' +
+          '<div class="result-label">Higher denial rate for this profile</div>' +
+          (hd1 ? '<div class="avoid-row"><span class="avoid-name">' + hd1 + '</span><span class="avoid-why">' + hd1Why + '</span></div>' : '') +
+          (hd2 ? '<div class="avoid-row"><span class="avoid-name">' + hd2 + '</span><span class="avoid-why">' + hd2Why + '</span></div>' : '') +
+          '</div>';
+      }
+
+      if (k1) {
+        html += '<div class="killers">' +
+          '<div style="font-size:11px;color:var(--orange);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Profile risk factors</div>' +
+          '<div class="killer-item"><span class="killer-num">1.</span><span>' + k1 + '</span></div>' +
+          (k2 ? '<div class="killer-item"><span class="killer-num">2.</span><span>' + k2 + '</span></div>' : '') +
+          (k3 && k3 !== 'N/A' ? '<div class="killer-item"><span class="killer-num">3.</span><span>' + k3 + '</span></div>' : '') +
+          '</div>';
+      }
+
+      if (denied !== 'none') {
+        html += '<div style="background:rgba(232,132,90,0.04);border:1px solid rgba(232,132,90,0.15);border-radius:12px;padding:14px;margin-top:8px;">' +
+          '<div style="font-size:10px;color:rgba(232,132,90,0.6);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Shadow Approval Signal</div>' +
+          '<div style="font-size:15px;font-weight:700;color:var(--orange);margin-bottom:4px;">Possible Shadow Approval</div>' +
+          '<div style="font-size:12px;color:var(--muted);">Your denial at ' + denied + ' occurred in a market where better rates exist. This may be a Shadow Approval.</div>' +
+          '</div>';
+      }
+
+      resultInner.innerHTML = html;
+
+      document.getElementById('resetBtn').style.display = 'flex';
+      if (window.frcFunnel) window.frcFunnel.step('routing_result_shown', {top_lender: top});
+      if (typeof gtag !== 'undefined') gtag('event', 'routing_complete', {top_lender: top, fico: fico, dti: dti, state: state});
+
+      showRelatedPages(parseInt(dti), 0, 0);
+
+    } catch(parseErr) {
+      resultInner.innerHTML = '<div class="result-card"><div class="result-label">Parse error</div><div class="lender-why">Could not parse response. Please try again.</div></div>';
+    }
+  };
+
+  xhr.onerror = function() {
+    resultInner.innerHTML = '<div class="result-card"><div class="result-label">Connection issue</div><div class="lender-why">Could not reach routing engine. Please try again in a moment.</div><button onclick="resetForm()" style="margin-top:14px;padding:10px 20px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;">Try again</button></div>';
+  };
+
+  xhr.ontimeout = function() {
+    resultInner.innerHTML = '<div class="result-card"><div class="result-label">Timeout</div><div class="lender-why">Routing engine took too long. Please try again.</div></div>';
+  };
+
+  xhr.send(JSON.stringify({
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 600,
+    system: ZAI_SYSTEM,
+    messages: [{role: 'user', content: userPrompt}]
+  }));
+}
+
+function showDTICalc() {
+  document.getElementById('dtiModal').style.display = 'flex';
+}
+
+function autoCalcDTI() {
+  var hp = parseFloat(document.getElementById('homePrice') ? document.getElementById('homePrice').value : 0) || 0;
+  var dp = parseFloat(document.getElementById('downpayment') ? document.getElementById('downpayment').value : 0) || 0;
+  if (hp > 0) document.getElementById('dti_mortgage').value = Math.round((hp - dp) * 0.007);
+  showDTICalc();
+}
+
+function showRelatedPages(dti, cltv, age) {
+  var links = [];
+  if (dti >= 42 && dti <= 47) {
+    links.push({url: '/dti-death-zone.html', icon: '&#9888;', title: 'DTI 2-Point Death Zone', desc: 'Your DTI ' + dti + '% is near the institutional cliff.'});
   }
-
-  function autoCalcDTI() {
-    var hp = parseFloat(document.getElementById('homePrice') ? document.getElementById('homePrice').value : 0) || 0;
-    var dp = parseFloat(document.getElementById('downpayment') ? document.getElementById('downpayment').value : 0) || 0;
-    if (hp > 0) document.getElementById('dti_mortgage').value = Math.round((hp - dp) * 0.007);
-    showDTICalc();
+  if (dti >= 44) {
+    links.push({url: '/two-doors.html', icon: '&#128682;', title: 'Two Doors', desc: 'See the 64-point gap between best and worst lender for high-risk profiles.'});
   }
-  </script>
+  links.push({url: '/geographic-lottery.html', icon: '&#128506;', title: 'Geographic Lottery', desc: 'How does your state compare to the national FHA average?'});
+  links.push({url: '/test-your-lender.html', icon: '&#128269;', title: 'Test Your Lender', desc: 'See exactly how your lender treats profiles like yours.'});
+
+  var container = document.getElementById('relatedPages');
+  var linksEl = document.getElementById('relatedLinks');
+  if (!container || !linksEl) return;
+
+  linksEl.innerHTML = links.slice(0, 3).map(function(l) {
+    return '<a href="' + l.url + '" style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;margin-bottom:6px;">' +
+      '<span style="font-size:16px;flex-shrink:0;margin-top:1px;">' + l.icon + '</span>' +
+      '<div><div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:2px;">' + l.title + '</div>' +
+      '<div style="font-size:11px;color:rgba(255,255,255,0.35);line-height:1.5;">' + l.desc + '</div></div>' +
+      '</a>';
+  }).join('');
+  container.style.display = 'block';
+}
+
+function closeDTICalc() {
+  document.getElementById('dtiModal').style.display = 'none';
+}
+
+function calcDTI() {
+  var income = parseFloat(document.getElementById('dti_income').value) || 0;
+  var debts = ['dti_mortgage','dti_car','dti_cards','dti_other'].reduce(function(sum, id) {
+    return sum + (parseFloat(document.getElementById(id).value) || 0);
+  }, 0);
+  var dtiVal = income > 0 ? Math.round((debts / income) * 100) : 0;
+  document.getElementById('dti_number').textContent = dtiVal + '%';
+  var verdict = dtiVal <= 36 ? 'Strong — most lenders' : dtiVal <= 43 ? 'Moderate — CrossCountry/Guild OK' : dtiVal <= 50 ? 'High — limited lenders' : 'Very high — few options';
+  document.getElementById('dti_verdict').textContent = verdict;
+  document.getElementById('dti_result').style.display = 'block';
+  document.getElementById('useDTIBtn').dataset.dti = dtiVal;
+}
+
+function useDTI() {
+  var dti = document.getElementById('useDTIBtn').dataset.dti;
+  document.getElementById('dti').value = dti;
+  closeDTICalc();
+}
+
+function resetForm() {
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('resultInner').innerHTML = '';
+  document.getElementById('resetBtn').style.display = 'none';
+  document.getElementById('relatedPages').style.display = 'none';
+}
+</script>
 
 </body>
 </html>
