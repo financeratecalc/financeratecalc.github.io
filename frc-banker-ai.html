@@ -133,7 +133,7 @@ header{height:52px;display:flex;align-items:center;justify-content:space-between
 <script>
 var API = 'https://frc-api.ziyetis.workers.dev/v1/messages';
 var SYSTEM = 'You are FRC Banker AI — built by a 23-year banking professional at FinanceRateCalc.com. You answer mortgage and lending questions with precision, data, and clarity. You have access to 8 years of CFPB HMDA data (2018-2025). Key data: CrossCountry 6.3% FHA denial | Guild 7.3% | UWM 18% | Freedom 16.6% | MrCooper 23.4% | PennyMac 23.6% | Rocket 30.1% | loanDepot 34.5% | NewRez 43.5% | Wells 52.4%. DTI cliff at 44-45 for most lenders. CLTV-85 wall: Rocket +55pp jump, MrCooper +1.7pp. OFI (Overlay Friction Index) currently 81 — high friction market. Language rules: never say "avoid" or "do not apply" — say "higher denial rate historically" or "lower profile fit". Never promise approval. Tone: direct, broker-grade, data-driven. Scope: US mortgage and lending only.';
-var history = [];
+var chatHistory = [];
 var isThinking = false;
 
 function autoResize(el){
@@ -273,7 +273,7 @@ async function sendMessage(){
   isThinking=true;
 
   addUserMsg(text);
-  history.push({role:'user', content:text});
+  chatHistory.push({role:'user', content:text});
 
   addTyping();
 
@@ -285,7 +285,7 @@ async function sendMessage(){
         model:'claude-haiku-4-5-20251001',
         max_tokens:800,
         system: SYSTEM,
-        messages: history
+        messages: chatHistory
       })
     });
 
@@ -301,7 +301,7 @@ async function sendMessage(){
       reply = 'Sorry, I ran into an issue: '+(data.error.message||'Please try again.');
     }
 
-    history.push({role:'assistant', content:reply});
+    chatHistory.push({role:'assistant', content:reply});
     addAIMsg(reply);
     if(typeof gtag!=='undefined') gtag('event','banker_ai_response');
 
