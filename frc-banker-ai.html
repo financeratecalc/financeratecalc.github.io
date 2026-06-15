@@ -14,7 +14,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
-body{font-family:'DM Sans',-apple-system,sans-serif;background:#262624;color:#eee9e2;display:flex;flex-direction:column;}
+body{font-family:'DM Sans',-apple-system,sans-serif;background:#060d1f;color:#fff;display:flex;flex-direction:column;}
 
 /* HEADER — minimal, Claude gibi */
 .top{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;}
@@ -29,13 +29,13 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:#262624;color:#ee
 /* GREETING — Claude'un boş hali */
 .greeting{text-align:center;padding:60px 16px 24px;}
 .greeting .star{font-size:30px;color:#C8A84B;margin-bottom:14px;}
-.greeting h1{font-family:'Fraunces',serif;font-size:clamp(22px,4vw,30px);font-weight:700;color:#eee9e2;margin-bottom:8px;}
+.greeting h1{font-family:'Fraunces',serif;font-size:clamp(22px,4vw,30px);font-weight:700;color:#fff;margin-bottom:8px;}
 .greeting p{font-size:14px;color:rgba(238,233,226,0.45);}
 
 /* MESAJLAR — Claude: kullanıcı bubble'da, asistan düz metin */
 .msg{line-height:1.7;font-size:15px;word-wrap:break-word;}
-.msg.user{align-self:flex-end;max-width:85%;background:#3a3a37;border-radius:18px;padding:12px 18px;color:#eee9e2;}
-.msg.assistant{align-self:stretch;color:#eee9e2;padding:0 2px;}
+.msg.user{align-self:flex-end;max-width:85%;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.15);border-radius:14px;padding:12px 18px;color:#fff;}
+.msg.assistant{align-self:stretch;color:#fff;padding:0 2px;}
 .msg.assistant strong{color:#fff;}
 .msg.assistant code{background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:5px;font-size:13px;}
 .msg.assistant .legal{font-size:11px;color:rgba(238,233,226,0.3);margin-top:10px;font-style:italic;}
@@ -50,13 +50,13 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:#262624;color:#ee
 /* SUGGESTIONS — chip'ler */
 #suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:4px 16px 12px;max-width:720px;margin:0 auto;}
 #suggestions button{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(238,233,226,0.65);border-radius:18px;padding:9px 16px;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.15s;}
-#suggestions button:hover{border-color:rgba(200,168,75,0.5);color:#eee9e2;}
+#suggestions button:hover{border-color:rgba(200,168,75,0.5);color:#fff;}
 
 /* INPUT — Claude'un alt kutusu */
-.input-zone{flex-shrink:0;padding:10px 16px 18px;background:linear-gradient(transparent,#262624 30%);}
+.input-zone{flex-shrink:0;padding:10px 16px 18px;background:linear-gradient(transparent,#060d1f 30%);}
 .input-box{max-width:720px;margin:0 auto;background:#30302e;border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:12px 14px 12px 20px;display:flex;align-items:flex-end;gap:10px;transition:border-color 0.15s;box-shadow:0 4px 24px rgba(0,0,0,0.25);}
 .input-box:focus-within{border-color:rgba(200,168,75,0.45);}
-#userInput{flex:1;background:transparent;border:none;outline:none;color:#eee9e2;font-size:15px;font-family:inherit;resize:none;max-height:160px;line-height:1.5;padding:4px 0;}
+#userInput{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:15px;font-family:inherit;resize:none;max-height:160px;line-height:1.5;padding:4px 0;}
 #userInput::placeholder{color:rgba(238,233,226,0.3);}
 #sendBtn{width:36px;height:36px;border-radius:50%;background:#C8A84B;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity 0.15s;font-size:16px;color:#000;}
 #sendBtn:disabled{opacity:0.3;cursor:default;}
@@ -64,9 +64,9 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:#262624;color:#ee
 .input-note{max-width:720px;margin:8px auto 0;text-align:center;font-size:11px;color:rgba(238,233,226,0.25);}
 
 /* KEY SCREEN korunsun ama aynı temada */
-#key-screen{position:fixed;inset:0;background:#262624;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+#key-screen{position:fixed;inset:0;background:#060d1f;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
 #key-screen .kbox{max-width:380px;width:100%;text-align:center;}
-#key-screen input{width:100%;background:#30302e;border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:12px 16px;color:#eee9e2;font-size:14px;margin:14px 0;outline:none;}
+#key-screen input{width:100%;background:#30302e;border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:12px 16px;color:#fff;font-size:14px;margin:14px 0;outline:none;}
 #key-screen button{width:100%;padding:12px;background:#C8A84B;color:#000;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;}
 
 @media(max-width:600px){.msg.user{max-width:92%;}#chatMessages{padding:20px 14px 32px;}}
@@ -260,6 +260,34 @@ function addMessage(role, content){
   var div = document.createElement('div');
   div.className = 'msg ' + (role === 'ai' ? 'assistant' : 'user');
   div.innerHTML = formatMessage(content);
+
+  if (role === 'assistant') {
+    var actions = document.createElement('div');
+    actions.style.cssText = 'display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;';
+
+    var copyBtn = document.createElement('button');
+    copyBtn.textContent = 'Copy';
+    copyBtn.style.cssText = 'padding:5px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);font-size:12px;cursor:pointer;font-family:inherit;';
+    copyBtn.onclick = (function(text) {
+      return function() {
+        navigator.clipboard && navigator.clipboard.writeText(text).then(function() {
+          copyBtn.textContent = '✅ Copied';
+          setTimeout(function(){ copyBtn.textContent = 'Copy'; }, 2000);
+        });
+      };
+    })(content);
+
+    var twBtn = document.createElement('a');
+    twBtn.textContent = 'Share on X';
+    twBtn.target = '_blank';
+    twBtn.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(content.substring(0, 240) + '... via financeratecalc.com/frc-banker-ai.html');
+    twBtn.style.cssText = 'padding:5px 12px;border-radius:6px;border:1px solid rgba(29,161,242,0.3);background:rgba(29,161,242,0.08);color:#1da1f2;font-size:12px;text-decoration:none;font-family:inherit;';
+
+    actions.appendChild(copyBtn);
+    actions.appendChild(twBtn);
+    div.appendChild(actions);
+  }
+
   box.appendChild(div);
   scrollToBottom();
   return div;
