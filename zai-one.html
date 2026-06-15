@@ -328,7 +328,13 @@ async async function getRouting() {
   const loanType = document.getElementById('loanType').value;
   const denied = document.getElementById('denied').value;
 
-  if (!fico || !dti || !income || !state) {
+  // Compute cltv and age from form fields (with safe fallbacks)
+    const homePriceVal = parseFloat(document.getElementById('homePrice')?.value || '0');
+    const downPaymentVal = parseFloat(document.getElementById('downpayment')?.value || '0');
+    const cltv = homePriceVal > 0 ? ((homePriceVal - downPaymentVal) / homePriceVal * 100).toFixed(1) : 0;
+    const age = 0; // not collected in this form version
+
+    if (!fico || !dti || !income || !state) {
     alert('Please fill in all fields.');
     return;
   }
