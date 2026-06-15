@@ -4,828 +4,320 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FRC Banker AI — 23-Year Banking Expert | FinanceRateCalc</title>
-<meta name="description" content="Ask a 23-year banking professional anything about mortgages, credit scores, refinancing, or home buying. Free AI-powered mortgage advisor.">
+<meta name="description" content="Ask a 23-year banking professional anything about mortgages, credit scores, refinancing, or home buying.">
 <link rel="canonical" href="https://financeratecalc.com/frc-banker-ai.html">
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <meta property="og:title" content="FRC Banker AI — Ask a 23-Year Banking Expert Anything">
-<meta property="og:image" content="https://financeratecalc.com/og-image.png">
+<meta property="og:url" content="https://financeratecalc.com/frc-banker-ai.html">
+<meta property="og:image" content="https://financeratecalc.com/og-two-doors.svg">
 <meta name="twitter:card" content="summary_large_image">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,700;0,900;1,900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;}
-body{font-family:'DM Sans',-apple-system,sans-serif;background:#060d1f;color:#fff;display:flex;flex-direction:column;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;display:flex;flex-direction:column;}
 
-/* HEADER — minimal, Claude gibi */
-.top{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;}
-.top a.logo{font-family:'Fraunces',serif;font-size:14px;font-weight:900;color:rgba(238,233,226,0.85);text-decoration:none;}
-.top a.logo em{font-style:italic;color:#C8A84B;}
-.top .model{font-size:12px;color:rgba(238,233,226,0.4);}
+/* HEADER */
+header{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;background:rgba(6,13,31,0.98);}
+.logo{font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.model-badge{font-size:11px;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace;background:rgba(255,255,255,0.04);padding:4px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);}
 
-/* CHAT ALANI — ortalanmış dar kolon */
-#chatWrap{flex:1;overflow-y:auto;scroll-behavior:smooth;}
-#chatMessages{max-width:720px;margin:0 auto;padding:28px 24px 40px;display:flex;flex-direction:column;gap:22px;}
+/* CHAT SCROLL AREA */
+#chatScroll{flex:1;overflow-y:auto;scroll-behavior:smooth;}
+#chatScroll::-webkit-scrollbar{width:4px;}
+#chatScroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px;}
 
-/* GREETING — Claude'un boş hali */
-.greeting{text-align:center;padding:60px 16px 24px;}
-.greeting .star{font-size:30px;color:#C8A84B;margin-bottom:14px;}
-.greeting h1{font-family:'Fraunces',serif;font-size:clamp(22px,4vw,30px);font-weight:700;color:#fff;margin-bottom:8px;}
-.greeting p{font-size:14px;color:rgba(238,233,226,0.45);}
+/* MESSAGES */
+#messages{max-width:680px;margin:0 auto;padding:32px 20px 20px;display:flex;flex-direction:column;gap:0;}
 
-/* MESAJLAR — Claude: kullanıcı bubble'da, asistan düz metin */
-.msg{line-height:1.7;font-size:15px;word-wrap:break-word;}
-.msg.user{align-self:flex-end;max-width:85%;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.15);border-radius:14px;padding:12px 18px;color:#fff;}
-.msg.assistant{align-self:stretch;color:rgba(255,255,255,0.85);padding:4px 0;max-width:680px;}
-.msg.assistant strong{color:#fff;}
-.msg.assistant code{background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:5px;font-size:13px;}
-.msg.assistant .legal{font-size:11px;color:rgba(238,233,226,0.3);margin-top:10px;font-style:italic;}
+/* GREETING */
+#greeting{text-align:center;padding:60px 20px 40px;max-width:480px;margin:0 auto;}
+#greeting .icon{font-size:36px;margin-bottom:16px;}
+#greeting h1{font-family:'Fraunces',serif;font-size:clamp(20px,4vw,28px);font-weight:900;color:#fff;margin-bottom:8px;line-height:1.3;}
+#greeting p{font-size:14px;color:rgba(255,255,255,0.4);line-height:1.7;}
 
-/* TYPING — üç nokta */
-.typing{display:flex;gap:5px;padding:6px 2px;}
-.typing span{width:7px;height:7px;border-radius:50%;background:rgba(238,233,226,0.4);animation:tp 1.2s infinite;}
-.typing span:nth-child(2){animation-delay:0.15s;}
-.typing span:nth-child(3){animation-delay:0.3s;}
-@keyframes tp{0%,60%,100%{opacity:0.25;transform:translateY(0);}30%{opacity:1;transform:translateY(-4px);}}
+/* SUGGESTIONS */
+.suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:24px;}
+.sug{padding:8px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);font-size:13px;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.15s;text-align:left;}
+.sug:hover{border-color:rgba(200,168,75,0.4);color:#fff;background:rgba(200,168,75,0.06);}
 
-/* SUGGESTIONS — chip'ler */
-#suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:4px 16px 12px;max-width:720px;margin:0 auto;}
-#suggestions button{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(238,233,226,0.65);border-radius:18px;padding:9px 16px;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.15s;}
-#suggestions button:hover{border-color:rgba(200,168,75,0.5);color:#fff;}
+/* USER MESSAGE */
+.msg-user{display:flex;justify-content:flex-end;margin:12px 0;}
+.msg-user-bubble{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:18px 18px 4px 18px;padding:12px 16px;max-width:75%;font-size:15px;line-height:1.6;color:#fff;word-wrap:break-word;}
 
-/* INPUT — Claude'un alt kutusu */
-.input-zone{flex-shrink:0;padding:10px 16px 18px;background:linear-gradient(transparent,#060d1f 30%);}
-.input-box{max-width:720px;margin:0 auto;background:#30302e;border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:12px 14px 12px 20px;display:flex;align-items:flex-end;gap:10px;transition:border-color 0.15s;box-shadow:0 4px 24px rgba(0,0,0,0.25);}
-.input-box:focus-within{border-color:rgba(200,168,75,0.45);}
-#userInput{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:15px;font-family:inherit;resize:none;max-height:160px;line-height:1.5;padding:4px 0;}
-#userInput::placeholder{color:rgba(238,233,226,0.3);}
-#sendBtn{width:36px;height:36px;border-radius:50%;background:#C8A84B;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity 0.15s;font-size:16px;color:#000;}
-#sendBtn:disabled{opacity:0.3;cursor:default;}
-#micBtn{display:none;}
-.input-note{max-width:720px;margin:8px auto 0;text-align:center;font-size:11px;color:rgba(238,233,226,0.25);}
+/* ASSISTANT MESSAGE */
+.msg-ai{display:flex;gap:12px;margin:20px 0 4px;align-items:flex-start;}
+.ai-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#C8A84B,#e8845a);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#000;flex-shrink:0;margin-top:2px;}
+.ai-content{flex:1;min-width:0;}
+.ai-name{font-size:11px;color:rgba(255,255,255,0.35);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;}
+.ai-text{font-size:15px;line-height:1.8;color:rgba(255,255,255,0.85);word-wrap:break-word;}
+.ai-text p{margin-bottom:10px;}
+.ai-text p:last-child{margin-bottom:0;}
+.ai-text strong{color:#fff;}
+.ai-text em{color:#C8A84B;}
+.ai-text ul,.ai-text ol{padding-left:20px;margin:8px 0;}
+.ai-text li{margin-bottom:4px;}
+.ai-text code{background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:4px;font-size:13px;font-family:'DM Mono',monospace;}
+.ai-text pre{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:14px;margin:10px 0;overflow-x:auto;}
+.ai-text hr{border:none;border-top:1px solid rgba(255,255,255,0.08);margin:12px 0;}
+.ai-text h3{font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:#C8A84B;margin:14px 0 6px;}
 
-/* KEY SCREEN korunsun ama aynı temada */
-#key-screen{position:fixed;inset:0;background:#060d1f;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
-#key-screen .kbox{max-width:380px;width:100%;text-align:center;}
-#key-screen input{width:100%;background:#30302e;border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:12px 16px;color:#fff;font-size:14px;margin:14px 0;outline:none;}
-#key-screen button{width:100%;padding:12px;background:#C8A84B;color:#000;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;}
+/* ACTION BUTTONS — Claude gibi */
+.ai-actions{display:flex;gap:4px;margin-top:10px;opacity:0;transition:opacity 0.15s;}
+.msg-ai:hover .ai-actions{opacity:1;}
+.act-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;border:none;background:transparent;color:rgba(255,255,255,0.35);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.act-btn:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);}
+.act-btn svg{width:14px;height:14px;flex-shrink:0;}
 
-@media(max-width:600px){.msg.user{max-width:92%;}#chatMessages{padding:20px 14px 32px;}}
-</style>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-ND9P4F3PHT');
-</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685"
-     crossorigin="anonymous"></script>
-<!-- © 2026 FinanceRateCalc.com — Original content. Reproduction prohibited without permission. press@financeratecalc.com -->
-<script>
-// API key embedded by build pipeline
-window._AKEY = 'proxy'; // Worker proxy — no key needed
-</script>
-<style>
-#key-screen{display:none !important;}
-#key-screen.hidden{display:none;}
-.key-card{width:100%;max-width:420px;background:rgba(255,255,255,0.02);border:1px solid rgba(200,164,74,0.25);border-radius:16px;padding:40px 36px;}
-.key-z{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#c8a44a,#f0d060);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;}
-.key-z span{font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:#08090c;}
-.key-title{font-family:'Fraunces',serif;font-size:22px;font-weight:900;text-align:center;margin-bottom:6px;color:#fff;}
-.key-sub{font-size:13px;color:rgba(255,255,255,0.4);text-align:center;line-height:1.6;margin-bottom:28px;}
-.key-input-wrap{position:relative;margin-bottom:12px;}
-.key-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:12px 44px 12px 14px;font-size:14px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;}
-.key-input:focus{border-color:rgba(200,164,74,0.5);}
-.key-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:16px;padding:4px;}
-.key-toggle:hover{color:rgba(255,255,255,0.6);}
-.key-btn{width:100%;padding:13px;background:linear-gradient(135deg,#c8a44a,#f0d060);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:#08090c;cursor:pointer;transition:opacity 0.2s;margin-top:4px;}
-.key-btn:hover{opacity:0.9;}
-.key-err{font-size:12px;color:#e8845a;text-align:center;margin-top:10px;min-height:18px;}
-.key-note{font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:16px;line-height:1.6;}
-.key-note a{color:rgba(200,164,74,0.5);text-decoration:none;}
+/* TYPING INDICATOR */
+.typing-indicator{display:flex;gap:4px;padding:6px 0;align-items:center;}
+.typing-indicator span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.3);animation:bounce 1.2s infinite;}
+.typing-indicator span:nth-child(2){animation-delay:0.15s;}
+.typing-indicator span:nth-child(3){animation-delay:0.3s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:0.3;}30%{transform:translateY(-5px);opacity:1;}}
+
+/* INPUT AREA — Claude gibi */
+#inputArea{flex-shrink:0;padding:10px 20px 20px;background:linear-gradient(transparent,#060d1f 25%);}
+.input-box{max-width:680px;margin:0 auto;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;display:flex;align-items:flex-end;gap:8px;padding:10px 12px;transition:border-color 0.15s;}
+.input-box:focus-within{border-color:rgba(200,168,75,0.4);}
+#msgInput{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:15px;font-family:inherit;resize:none;max-height:160px;line-height:1.6;padding:2px 0;}
+#msgInput::placeholder{color:rgba(255,255,255,0.25);}
+#sendBtn{width:32px;height:32px;border-radius:8px;border:none;background:#C8A84B;color:#000;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity 0.15s;margin-bottom:1px;}
+#sendBtn:hover{opacity:0.85;}
+#sendBtn:disabled{opacity:0.3;cursor:not-allowed;}
+#sendBtn svg{width:16px;height:16px;}
+.input-hint{max-width:680px;margin:6px auto 0;font-size:11px;color:rgba(255,255,255,0.2);text-align:center;}
+
+@media(max-width:600px){
+  #messages{padding:20px 14px 16px;}
+  .msg-user-bubble{max-width:90%;}
+  #inputArea{padding:8px 12px 16px;}
+}
 </style>
 </head>
 <body>
 
-<div class="top">
+<header>
   <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
-  <span class="model">Zai · 23-year mortgage banker</span>
-  <a href="/zai-one.html" style="font-size:12px;color:rgba(200,168,75,0.7);text-decoration:none;font-weight:700;">Routing tool →</a>
-</div>
+  <span class="model-badge">FRC Banker AI · 23yr</span>
+</header>
 
-<div id="chatWrap">
-  <div id="chatMessages">
-    <div class="greeting" id="greeting">
-      <div class="star">✳</div>
-      <h1>How can I help with your mortgage?</h1>
-      <p>Real answers from 8 years of federal lending data — no scripts, no sales.</p>
+<div id="chatScroll">
+  <div id="messages">
+    <div id="greeting">
+      <div class="icon">🏦</div>
+      <h1>What can I help you with?</h1>
+      <p>Ask me anything about FHA loans, lender routing, mortgage qualification, or denial analysis. Built on 8 years of HMDA data.</p>
+      <div class="suggestions">
+        <button class="sug" onclick="sendSuggestion(this)">My DTI is 46%, which lenders should I try?</button>
+        <button class="sug" onclick="sendSuggestion(this)">I was denied by Rocket. What are my options?</button>
+        <button class="sug" onclick="sendSuggestion(this)">What is a Shadow Approval?</button>
+        <button class="sug" onclick="sendSuggestion(this)">CLTV 88% — will that hurt my FHA chances?</button>
+      </div>
     </div>
   </div>
 </div>
 
-<div id="suggestions">
-  <button onclick="askSuggestion(this)">Why was I denied with a 680 credit score?</button>
-  <button onclick="askSuggestion(this)">Which FHA lender is most stable right now?</button>
-  <button onclick="askSuggestion(this)">What is a lender overlay?</button>
-  <button onclick="askSuggestion(this)">Can I reapply after a denial?</button>
-</div>
-
-<div class="input-zone">
+<div id="inputArea">
   <div class="input-box">
-    <textarea id="userInput" rows="1" placeholder="Ask Zai anything about mortgages…" oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
-    <button id="micBtn" onclick="toggleMic()">🎤</button>
-    <button id="sendBtn" onclick="sendMessage()">↑</button>
+    <textarea id="msgInput" rows="1" placeholder="Ask about your mortgage situation..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button id="sendBtn" onclick="sendMessage()" title="Send">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
   </div>
-  <div class="input-note">Zai can make mistakes. Educational only — not financial advice. <span id="freeCounter"></span></div>
+  <div class="input-hint">FRC Banker AI · For guidance only, not financial advice</div>
 </div>
 
 <script>
-function toggleKeyVis(){
-  var inp = document.getElementById('keyInput');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-}
-function activateZai(){
-  var k = document.getElementById('keyInput').value.trim();
-  var err = document.getElementById('keyErr');
-  if(!k){ err.textContent = 'Please enter your API key.'; return; }
-  if(!k.startsWith('sk-')){ err.textContent = 'Key must start with sk- — check and try again.'; return; }
-  localStorage.setItem('zai_k', k);
-  window._AKEY = k;
-  document.getElementById('key-screen').classList.add('hidden');
-  err.textContent = '';
-}
-var keyInput = document.getElementById('keyInput');
-if(keyInput) keyInput.addEventListener('keydown', function(e){
-  if(e.key === 'Enter') activateZai();
-});
-// Key screen disabled — API key embedded
-document.getElementById('key-screen').classList.add('hidden');
-</script>
-
-<script>
-var SYSTEM_PROMPT = `You are Zai — a mortgage routing engine built by a 23-year banking professional. You are not a chatbot. You are a decision tool for mortgage brokers and borrowers.
-
-YOUR JOB: Answer one question — "Which lender type should this file historical patterns favor?"
-
-OUTPUT FORMAT — ALWAYS START WITH THIS, NOTHING BEFORE IT:
-
----
-👉 ZAI DECISION: [Better Fit Lender DNA] — [Strong / Moderate / Weak] Approval Path
-
-• [Reason 1 — most important]
-• [Reason 2]  
-• [Reason 3 — OFI/state context]
-
-Primary Risk: [One sentence]
-Required Docs: [2-3 most critical]
-Higher historical fit:: [Lender DNA] first — [lowest fit DNA] is lower profile fit for this file
----
-
-THEN: DTI calculation, income notes, score erosion warning if relevant. Keep it tight.
-
-LENDER DNA CATEGORIES:
-- FHA-Specialist Profile: low overlay, SSDI/self-employed friendly. Examples: CrossCountry 5.5%, Guild 7.1%, UWM 19.9%, Planet Home 23.5%, Freedom 24.4% (HMDA 2024)
-- Flexible-Conventional Profile: moderate overlay, W2 strong, 640+ FICO
-- Portfolio/Non-QM Profile: bank statement income, DTI 55%+, self-employed friendly
-- Conservative-Bank Profile: jumbo/conventional, low DTI, high FICO required
-
-PROFILE FIT: Strong Fit / Moderate Fit / Weak Fit (never use percentages)
-
-STATE OFI: Always include. Texas OFI 30 (lowest), DC OFI 80 (highest), National OFI 47 (Q2 2026, moderate-tightening)
-
-VERIFIED DATA ONLY:
-HMDA 2018-2024 FHA Denial Rate Trends (CFPB verified):
-Loan Purpose DNA (2018-2024 CFPB HMDA):
-- CrossCountry: Higher historical purchase approval rate (76.7% purchase denials)
-- Guild: Higher historical purchase approval rate (64.6%)
-- NewRez/Freedom/Mr.Cooper: Higher historical cash-out denial ratio (70-75%) — High denial ratio for cash-out
-- Rocket/loanDepot: Higher historical cash-out denial ratio (56-61%) — risky for cash-out
-- UWM/Planet Home: Balanced
-Routing: Cash-out → CrossCountry/Guild/Planet Home | Purchase → CrossCountry/UWM/Guild | High cash-out denial ratio: NewRez/Freedom/Mr.Cooper/Rocket/loanDepot
-
-Key trends (2018→2024):
-- CrossCountry: 8.6%→5.5% (historically maintained lower FHA denial rates, 7yr range 5-9%)
-- UWM: 15.7%→19.9% (gradual tightening, follows OFI)
-- Freedom Mortgage: 49%→7.6%→24.4% (volatile — COVID FHA push, now re-tightening)
-- PennyMac: 52.8%→26.6% (major improvement — invested in FHA)
-- Rocket: 34.8%→28.4% (slowly improving but consistently high)
-- loanDepot: 40%→24.5%→37% (bottomed 2020, re-tightening — avoid borderline)
-- Wells Fargo: 46.7%→58.5% (EXITING FHA market — +11.8pp in 7 years)
-
-2024 rates (CFPB verified):
-- CrossCountry Mortgage: 5.5% — FHA-Specialist
-- Guild Mortgage: 7.1% — FHA-Specialist
-- UWM: 19.9% — FHA-Specialist (wholesale)
-- Planet Home Lending: 23.5% — FHA-Specialist
-- Freedom Mortgage: 24.4% — FHA-Specialist
-- Mr. Cooper: 25.2% — Flexible-Conventional
-- PennyMac: 26.6% — Flexible-Conventional
-- Rocket Mortgage: 28.4% — Flexible-Conventional
-- loanDepot: 37.0% — Conservative-Bank
-- NewRez: 47.8% — Conservative-Bank
-- Wells Fargo: 58.5% — Conservative-Bank
-
-LANGUAGE RULES — NEVER SAY:
-- "Do NOT apply to X" → say "lower profile fit for X"
-- "Skip these" → say "lower profile fit"
-- "avoid X entirely" → say "weak fit for this profile"
-- "Don't waste an application" → say "each application outside 45-day window has credit score impact"
-- Specific approval percentages → use Strong/Moderate/Weak Fit
-
-SCOPE: US mortgage only. If asked anything outside mortgage/lending, politely decline.
-
-TONE: Direct. Data-driven. No filler. Broker-grade.`;
-
-var messages = [];
-var isLoading = false;
+var API = 'https://frc-api.ziyetis.workers.dev/v1/messages';
+var SYSTEM = 'You are FRC Banker AI — built by a 23-year banking professional at FinanceRateCalc.com. You answer mortgage and lending questions with precision, data, and clarity. You have access to 8 years of CFPB HMDA data (2018-2025). Key data: CrossCountry 6.3% FHA denial | Guild 7.3% | UWM 18% | Freedom 16.6% | MrCooper 23.4% | PennyMac 23.6% | Rocket 30.1% | loanDepot 34.5% | NewRez 43.5% | Wells 52.4%. DTI cliff at 44-45 for most lenders. CLTV-85 wall: Rocket +55pp jump, MrCooper +1.7pp. OFI (Overlay Friction Index) currently 81 — high friction market. Language rules: never say "avoid" or "do not apply" — say "higher denial rate historically" or "lower profile fit". Never promise approval. Tone: direct, broker-grade, data-driven. Scope: US mortgage and lending only.';
+var history = [];
+var isThinking = false;
 
 function autoResize(el){
   el.style.height='auto';
-  el.style.height=Math.min(el.scrollHeight,120)+'px';
+  el.style.height=Math.min(el.scrollHeight,160)+'px';
 }
 
 function handleKey(e){
-  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}
+  if(e.key==='Enter' && !e.shiftKey){e.preventDefault(); sendMessage();}
 }
 
-function askSuggestion(el){
-  document.getElementById('userInput').value=el.textContent;
-  document.getElementById('suggestions').style.display='none';
+function sendSuggestion(btn){
+  document.getElementById('msgInput').value = btn.textContent;
   sendMessage();
 }
 
-function hideGreeting(){var g=document.getElementById('greeting');if(g)g.style.display='none';var s=document.getElementById('suggestions');if(s)s.style.display='none';}
-function addMessage(role, content){
+function hideGreeting(){
+  var g = document.getElementById('greeting');
+  if(g) g.style.display='none';
+}
+
+function scrollBottom(){
+  var s = document.getElementById('chatScroll');
+  s.scrollTop = s.scrollHeight;
+}
+
+function formatText(text){
+  // Markdown-lite
+  text = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  text = text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  text = text.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  text = text.replace(/`(.+?)`/g,'<code>$1</code>');
+  text = text.replace(/^### (.+)$/gm,'<h3>$1</h3>');
+  text = text.replace(/^---$/gm,'<hr>');
+  text = text.replace(/^\• (.+)$/gm,'<li>$1</li>');
+  text = text.replace(/^- (.+)$/gm,'<li>$1</li>');
+  text = text.replace(/(<li>.*<\/li>\n?)+/g,'<ul>$&</ul>');
+  text = text.split('\n\n').map(function(p){
+    return p.trim() ? '<p>'+p.replace(/\n/g,'<br>')+'</p>' : '';
+  }).join('');
+  return text;
+}
+
+function addUserMsg(text){
   hideGreeting();
-  var box = document.getElementById('chatMessages');
+  var box = document.getElementById('messages');
   var div = document.createElement('div');
-  div.className = 'msg ' + (role === 'ai' ? 'assistant' : 'user');
-  div.innerHTML = formatMessage(content);
-
-  if (role === 'assistant') {
-    var actions = document.createElement('div');
-    actions.style.cssText = 'display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;';
-
-    var copyBtn = document.createElement('button');
-    copyBtn.textContent = 'Copy';
-    copyBtn.style.cssText = 'padding:5px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);font-size:12px;cursor:pointer;font-family:inherit;';
-    copyBtn.onclick = (function(text) {
-      return function() {
-        navigator.clipboard && navigator.clipboard.writeText(text).then(function() {
-          copyBtn.textContent = '✅ Copied';
-          setTimeout(function(){ copyBtn.textContent = 'Copy'; }, 2000);
-        });
-      };
-    })(content);
-
-    var twBtn = document.createElement('a');
-    twBtn.textContent = 'Share on X';
-    twBtn.target = '_blank';
-    twBtn.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(content.substring(0, 240) + '... via financeratecalc.com/frc-banker-ai.html');
-    twBtn.style.cssText = 'padding:5px 12px;border-radius:6px;border:1px solid rgba(29,161,242,0.3);background:rgba(29,161,242,0.08);color:#1da1f2;font-size:12px;text-decoration:none;font-family:inherit;';
-
-    actions.appendChild(copyBtn);
-    actions.appendChild(twBtn);
-    div.appendChild(actions);
-  }
-
+  div.className = 'msg-user';
+  div.innerHTML = '<div class="msg-user-bubble">'+text.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>';
   box.appendChild(div);
-  scrollToBottom();
+  scrollBottom();
+}
+
+function addTyping(){
+  var box = document.getElementById('messages');
+  var div = document.createElement('div');
+  div.className = 'msg-ai';
+  div.id = 'typing';
+  div.innerHTML = '<div class="ai-avatar">Z</div><div class="ai-content"><div class="ai-name">FRC Banker AI</div><div class="typing-indicator"><span></span><span></span><span></span></div></div>';
+  box.appendChild(div);
+  scrollBottom();
   return div;
 }
 
-function formatMessage(text){
-  return text
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g,'<em>$1</em>')
-    .replace(/\n\n/g,'</p><p>')
-    .replace(/\n/g,'<br>')
-    .replace(/^(.)/,'<p>$1')
-    .replace(/(.)$/,'$1</p>')
-    .replace(/- (.+)/g,'<li>$1</li>')
-    .replace(/(<li>.*<\/li>)/gs,'<ul>$1</ul>');
+function addAIMsg(text){
+  var typing = document.getElementById('typing');
+  if(typing) typing.remove();
+  var box = document.getElementById('messages');
+  var div = document.createElement('div');
+  div.className = 'msg-ai';
+  var msgId = 'msg-'+Date.now();
+
+  div.innerHTML =
+    '<div class="ai-avatar">Z</div>'+
+    '<div class="ai-content">'+
+      '<div class="ai-name">FRC Banker AI</div>'+
+      '<div class="ai-text" id="'+msgId+'">'+formatText(text)+'</div>'+
+      '<div class="ai-actions">'+
+        '<button class="act-btn" onclick="copyMsg(\''+msgId+'\')" title="Copy">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>'+
+          'Copy'+
+        '</button>'+
+        '<button class="act-btn" onclick="thumbUp(this)" title="Good response">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/><path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>'+
+        '</button>'+
+        '<button class="act-btn" onclick="thumbDown(this)" title="Bad response">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0122 4v7a2.31 2.31 0 01-2.33 2H17"/></svg>'+
+        '</button>'+
+        '<button class="act-btn" onclick="shareMsg(\''+msgId+'\')" title="Share">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>'+
+          'Share'+
+        '</button>'+
+      '</div>'+
+    '</div>';
+
+  box.appendChild(div);
+  scrollBottom();
 }
 
-function showTyping(){
-  var wrap=document.getElementById('chatWrap');
-  var div=document.createElement('div');
-  div.className='msg ai';
-  div.id='typingIndicator';
-  var avatar=document.createElement('div');
-  avatar.className='msg-avatar';
-  avatar.textContent='Z';
-  var content=document.createElement('div');
-  content.className='msg-content';
-  var name=document.createElement('div');
-  name.className='msg-name';
-  name.textContent='Ziya · FRC Banker AI';
-  var bubble=document.createElement('div');
-  bubble.className='msg-bubble';
-  var typing=document.createElement('div');
-  typing.className='typing';
-  typing.innerHTML='<span></span><span></span><span></span>';
-  bubble.appendChild(typing);
-  content.appendChild(name);
-  content.appendChild(bubble);
-  div.appendChild(avatar);
-  div.appendChild(content);
-  wrap.appendChild(div);
-  window.scrollTo({top: document.body.scrollHeight, behavior: 'instant'});
-}
-
-function removeTyping(){
-  var t=document.getElementById('typingIndicator');
-  if(t) t.remove();
-}
-
-function quickPrompt(text) {
-  var input = document.getElementById('userInput') || document.querySelector('textarea') || document.querySelector('input[type=text]');
-  if(input) {
-    input.value = text;
-    sendMessage();
-  }
-}
-// ─── DENIAL CASE FEEDBACK LOOP ───────────────────────────────────────────────
-// Zai'nin VERDICT içeren cevaplarından anonim vaka verisi çıkarır
-// overlay-intelligence.json için feedback signal üretir
-
-function extractAndStoreDenialCase(reply, conversationHistory) {
-  try {
-    // VERDICT var mı?
-    var verdictMatch = reply.match(/VERDICT:\s*(LENDER OVERLAY|AGENCY RULE|MIXED|CANNOT DETERMINE)/i);
-    if (!verdictMatch) return;
-    
-    var verdict = verdictMatch[1].toUpperCase();
-    
-    // Konuşma geçmişinden profil bilgilerini çıkar
-    var fullConversation = conversationHistory.map(m => m.content).join(' ');
-    
-    // FICO çıkar
-    var ficoMatch = fullConversation.match(/\b(fico|credit\s*score)[:\s]*(\d{3})\b/i);
-    var fico = ficoMatch ? parseInt(ficoMatch[2]) : null;
-    
-    // DTI çıkar
-    var dtiMatch = fullConversation.match(/\b(dti|debt.to.income)[:\s]*(\d{1,2}(?:\.\d+)?)\s*%?/i);
-    var dti = dtiMatch ? parseFloat(dtiMatch[2]) : null;
-    
-    // Loan type çıkar
-    var loanType = 'unknown';
-    if (/\bfha\b/i.test(fullConversation)) loanType = 'FHA';
-    else if (/\bva\b/i.test(fullConversation)) loanType = 'VA';
-    else if (/\busda\b/i.test(fullConversation)) loanType = 'USDA';
-    else if (/\bconventional\b/i.test(fullConversation)) loanType = 'Conventional';
-    
-    // Lender adı çıkar (varsa)
-    var lenderMatch = fullConversation.match(/\b(wells\s*fargo|uwm|rocket|pennymac|loandepot|chase|bank\s*of\s*america)\b/i);
-    var lender = lenderMatch ? lenderMatch[1].toLowerCase().replace(/\s+/g, '_') : 'unknown';
-    
-    // Kaç bankaya başvuruldu?
-    var appCountMatch = fullConversation.match(/(\d+)\s*(lender|bank|institution)/i);
-    var appCount = appCountMatch ? parseInt(appCountMatch[1]) : null;
-    
-    // Vaka objesi oluştur
-    var denialCase = {
-      timestamp: new Date().toISOString(),
-      verdict: verdict,
-      profile: {
-        fico: fico,
-        dti: dti,
-        loan_type: loanType,
-        lender_mentioned: lender,
-        applications_count: appCount
-      },
-      ofi_context: 47,  // Current OFI
-      quarter: 'Q2_2026',
-      source: 'zai_conversation'
-    };
-    
-    // SessionStorage'a ekle (bu session için)
-    var existing = JSON.parse(sessionStorage.getItem('frc_denial_cases') || '[]');
-    existing.push(denialCase);
-    sessionStorage.setItem('frc_denial_cases', JSON.stringify(existing));
-    
-    // Overlay flag: Eğer LENDER OVERLAY ise, lender overlay veritabanını güncelleme sinyali
-    if (verdict === 'LENDER OVERLAY' && lender !== 'unknown' && (fico || dti)) {
-      var flags = JSON.parse(sessionStorage.getItem('frc_overlay_flags') || '[]');
-      flags.push({
-        lender: lender,
-        loan_type: loanType,
-        fico: fico,
-        dti: dti,
-        timestamp: new Date().toISOString(),
-        signal: 'OVERLAY_CONFIRMED'
-      });
-      sessionStorage.setItem('frc_overlay_flags', JSON.stringify(flags));
-      
-      console.log('FRC: Overlay signal captured →', lender, loanType, 'FICO:', fico, 'DTI:', dti);
-    }
-    
-    // Toplam vaka sayısını güncelle
-    var totalCases = parseInt(localStorage.getItem('frc_total_cases') || '0') + 1;
-    localStorage.setItem('frc_total_cases', totalCases);
-    
-    // ML eşiği kontrolü
-    if (totalCases >= 100 && !localStorage.getItem('frc_ml_notified')) {
-      localStorage.setItem('frc_ml_notified', 'true');
-      console.log('FRC: ML activation threshold reached! 100 cases collected.');
-    }
-    
-  } catch(e) {
-    // Sessizce geç — kullanıcı deneyimini etkileme
-  }
-}
-
-// ─── RATE LIMITING ────────────────────────────────────────────────────────────
-var _rl = JSON.parse(sessionStorage.getItem('frc_rl') || '{"count":0,"window":0}');
-function checkRateLimit() {
-  var now = Date.now();
-  if (now - _rl.window > 60000) { _rl = {count:0, window:now}; }
-  if (_rl.count >= 15) return false; // 15 mesaj/dakika
-  _rl.count++;
-  sessionStorage.setItem('frc_rl', JSON.stringify(_rl));
-  return true;
-}
-
-// ─── PROMPT INJECTION KORUMASI ────────────────────────────────────────────────
-var INJECTION_PATTERNS = [
-  /ignore (previous|above|all) instructions/i,
-  /you are now/i,
-  /forget (your|all|previous)/i,
-  /system prompt/i,
-  /\[INST\]|\[\/INST\]/i,
-  /###\s*(system|instruction)/i,
-  /<\|im_start\|>|<\|im_end\|>/i,
-  /act as (a|an) (different|new|other)/i,
-  /pretend (you are|to be)/i,
-  /roleplay as/i,
-  /jailbreak/i,
-  /DAN mode/i,
-];
-
-function sanitizeInput(text) {
-  // Injection pattern kontrolü
-  for (var pattern of INJECTION_PATTERNS) {
-    if (pattern.test(text)) {
-      return null; // Engelle
-    }
-  }
-  // Max uzunluk
-  if (text.length > 2000) {
-    return text.substring(0, 2000);
-  }
-  return text;
-}
-
-// ─── LLM JUDGE — CEVAP GÜVENLİK KONTROLÜ ─────────────────────────────────────
-// OUTPUT CLEANER — yasal ve dilsel sorunları temizle
-function cleanZaiOutput(text) {
-  // 1. "Do NOT apply to X" → "Lower profile fit for X"
-  text = text.replace(/Do NOT apply (directly )?to ([A-Za-z\s,]+)\./gi, 
-    function(m, p1, p2) { return 'Lower profile fit for ' + p2.trim() + '.'; });
-  
-  // 2. "avoid conservative banks entirely" → "conservative-bank DNA: weak fit"
-  text = text.replace(/avoid conservative banks entirely/gi, 
-    'conservative-bank DNA: weak fit for self-employed profiles');
-  text = text.replace(/avoid (submitting to|applying to) ([A-Za-z\s]+)/gi,
-    function(m, p1, p2) { return 'lower profile fit for ' + p2.trim(); });
-  
-  // 3. "Skip these" → remove
-  text = text.replace(/Skip these\./gi, 'Lower profile fit for this scenario.');
-  text = text.replace(/Not worth the application\./gi, 'Lower profile fit — prioritize better-matched lenders.');
-  
-  // 4. Yüzde sayıları → Strong/Moderate/Weak (sadece approval fit score context)
-  text = text.replace(/Approval (odds|probability)[:\s]+(\d+[-–]\d+)%/gi, 
-    function(m, p1, p2) {
-      var avg = parseInt(p2);
-      var fit = avg >= 70 ? 'Strong Fit' : avg >= 50 ? 'Moderate Fit' : 'Weak Fit';
-      return 'Profile Fit: ' + fit;
-    });
-  
-  // 5. "Do NOT" genel → "Lower priority"
-  text = text.replace(/Do NOT ([a-z]+)/gi, function(m, p1) {
-    return 'Lower priority: ' + p1;
+function copyMsg(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  var text = el.innerText;
+  navigator.clipboard && navigator.clipboard.writeText(text).then(function(){
+    var btn = el.parentElement.querySelector('.act-btn');
+    var orig = btn.innerHTML;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied';
+    setTimeout(function(){ btn.innerHTML = orig; }, 2000);
   });
-
-  return text;
 }
 
-async function judgeResponse(response, apiKey) {
-  // Sadece şüpheli cevaplar için çalış — performans için
-  var suspicious = [
-    /ignore|forget|pretend|roleplay/i,
-    /i am now|i will now act/i,
-    /\[system\]|\[admin\]/i,
-  ];
-  
-  var needsCheck = suspicious.some(p => p.test(response));
-  if (!needsCheck) return true; // Güvenli
-  
-  try {
-    var judgeResp = await fetch('https://frc-api.ziyetis.workers.dev/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': 'frc-proxy',
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 50,
-        messages: [{
-          role: 'user',
-          content: `Is this mortgage advice response safe and on-topic? Reply only YES or NO.\n\nResponse: "${response.substring(0, 500)}"`
-        }]
-      })
-    });
-    var judgeData = await judgeResp.json();
-    var verdict = judgeData?.content?.[0]?.text || 'YES';
-    return verdict.trim().toUpperCase().startsWith('YES');
-  } catch(e) {
-    return true; // Hata durumunda geç ver
-  }
+function thumbUp(btn){
+  btn.style.color='#27ae60';
+  if(typeof gtag!=='undefined') gtag('event','thumb_up');
 }
-
-
-// FREE TIER MESSAGE LIMIT
-var FREE_DAILY_LIMIT = 10;
-var FREE_MSG_KEY = 'zai_free_msgs_' + new Date().toDateString();
-var freeMsgCount = parseInt(localStorage.getItem(FREE_MSG_KEY) || '0');
-
-function checkFreeLimit() {
-  if (freeMsgCount >= FREE_DAILY_LIMIT) {
-    var chatMessages = document.getElementById('chatMessages') || document.querySelector('.chat-messages');
-    var limitMsg = document.createElement('div');
-    limitMsg.style.cssText = 'background:rgba(200,164,74,0.08);border:1px solid rgba(200,164,74,0.25);border-radius:10px;padding:16px;margin:12px;text-align:center;';
-    limitMsg.innerHTML = '<div style="font-size:13px;font-weight:700;color:#c8a44a;margin-bottom:8px;">Free daily limit reached (10 messages)</div><div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:12px;">Upgrade to Zai for Brokers for unlimited analysis, weekly OFI briefing, and lender alerts.</div><a href="/pricing.html" target="_blank" style="background:#c8a44a;color:#000;padding:10px 20px;border-radius:7px;font-weight:700;font-size:13px;text-decoration:none;">Upgrade — $49/month →</a>';
-    if (chatMessages) chatMessages.appendChild(limitMsg);
-    else document.body.appendChild(limitMsg);
-    return false;
-  }
-  return true;
+function thumbDown(btn){
+  btn.style.color='#e8845a';
+  if(typeof gtag!=='undefined') gtag('event','thumb_down');
 }
-
-function incrementFreeMsg() {
-  freeMsgCount++;
-  localStorage.setItem(FREE_MSG_KEY, freeMsgCount.toString());
-}
-
-
-function scrollToBottom() {
-  var wrap = document.getElementById('chatWrap');
-  if(wrap) {
-    var last = wrap.lastElementChild;
-    if(last) last.scrollIntoView({behavior:'instant', block:'end'});
-  }
-}
-
-
-// SCROLL FIX — window scroll (chat-wrap is full page)
-function forceScrollBottom() {
-  try {
-    window.scrollTo(0, document.body.scrollHeight);
-    var msgs = document.querySelectorAll('.msg');
-    if(msgs.length > 0) {
-      msgs[msgs.length-1].scrollIntoView({behavior:'instant', block:'end'});
-    }
-  } catch(e) {}
-}
-
-
-// Legal note ekle AI cevabına
-function addLegalNote(bubble) {
-  var note = document.createElement('div');
-  note.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);line-height:1.6;';
-  note.innerHTML = 'Not financial or legal advice. Educational purposes only. Approval probabilities are estimates based on historical HMDA data — individual outcomes vary. Consult a licensed mortgage professional before making decisions. All lenders referenced are legitimate institutions. <a href="/terms.html" style="color:rgba(255,255,255,0.25);">Terms</a>';
-  bubble.appendChild(note);
-}
-
-
-async function fetchWithRetry(url, options, retries=2) {
-  for(let i=0; i<=retries; i++) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 25000);
-      const res = await fetch(url, {...options, signal: controller.signal});
-      clearTimeout(timeout);
-      if(res.ok) return res;
-      if(i === retries) throw new Error('HTTP ' + res.status);
-    } catch(e) {
-      if(i === retries) throw e;
-      await new Promise(r => setTimeout(r, 1500 * (i+1)));
-    }
-  }
+function shareMsg(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  var text = el.innerText.substring(0,240);
+  var url = 'https://twitter.com/intent/tweet?text='+encodeURIComponent(text+'...\n\nfinanceratecalc.com/frc-banker-ai.html');
+  window.open(url,'_blank');
 }
 
 async function sendMessage(){
-  var input = document.getElementById('userInput');
+  if(isThinking) return;
+  var input = document.getElementById('msgInput');
   var text = input.value.trim();
-  if(!text || isLoading) return;
+  if(!text) return;
 
-  // Rate limit kontrolü
-  if (!checkRateLimit()) {
-    addMessage('ai', 'You\'ve sent a lot of messages quickly. Please wait a moment before continuing.');
-    return;
-  }
+  input.value='';
+  input.style.height='auto';
+  document.getElementById('sendBtn').disabled=true;
+  isThinking=true;
 
-  // Injection kontrolü
-  var safeText = sanitizeInput(text);
-  if (safeText === null) {
-    addMessage('ai', 'I can only help with mortgage and lending questions. Please ask about your loan situation.');
-    return;
-  }
-  text = safeText;
+  addUserMsg(text);
+  history.push({role:'user', content:text});
 
-  document.getElementById('suggestions').style.display = 'none';
-  isLoading = true;
-  document.getElementById('sendBtn').disabled = true;
-  input.value = '';
-  input.style.height = 'auto';
-
-  addMessage('user', text);
-  messages.push({role: 'user', content: text});
-  showTyping();
+  addTyping();
 
   try {
-    if(!window._AKEY) {
-      removeTyping();
-      addMessage('ai', 'To activate Zai, please enter your API key. Refresh the page to enter it.');
-      isLoading = false;
-      document.getElementById('sendBtn').disabled = false;
-      return;
-    }
-    var response = await fetchWithRetry('https://frc-api.ziyetis.workers.dev/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': 'frc-proxy', // Handled by Cloudflare Worker
-        'anthropic-version': '2023-06-01',
-      },
+    var resp = await fetch(API, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':'frc-proxy'},
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 3000,
-        system: SYSTEM_PROMPT,
-        messages: messages
+        model:'claude-haiku-4-5-20251001',
+        max_tokens:800,
+        system: SYSTEM,
+        messages: history
       })
     });
 
-    var data = await response.json();
-    removeTyping();
-
-    if (data) {
-      var reply = "";
-      if (data.reply) {
-        reply = data.reply;
-      } else if (data.content && Array.isArray(data.content)) {
-        for (var i = 0; i < data.content.length; i++) {
-          if (data.content[i].type === "text") {
-            reply = data.content[i].text;
-            break;
-          }
-        }
+    var data = await resp.json();
+    var reply = '';
+    if(data.content && data.content.length > 0){
+      for(var i=0;i<data.content.length;i++){
+        if(data.content[i].type==='text') reply += data.content[i].text;
       }
-      if (!reply) reply = JSON.stringify(data);
-      
-      // LLM Judge kontrolü
-      var isSafe = await judgeResponse(reply, window._AKEY);
-      if (!isSafe) {
-        reply = "I can only provide mortgage and lending guidance. Please ask about your loan situation, denial letter, or lender overlays.";
-      }
-      
-      messages.push({role: 'assistant', content: reply});
-      addMessage('ai', reply);
-      
-      // ─── FEEDBACK LOOP: Extract denial case data ──────────────────────────
-      extractAndStoreDenialCase(reply, messages);
-      
-    } else if (data && data.error) {
-      addMessage('ai', 'Error: ' + (data.error.message || 'Please try again.'));
-    } else {
-      addMessage('ai', 'Systems are currently experiencing high traffic. Please try your request again shortly.');
     }
+
+    if(!reply && data.error){
+      reply = 'Sorry, I ran into an issue: '+(data.error.message||'Please try again.');
+    }
+
+    history.push({role:'assistant', content:reply});
+    addAIMsg(reply);
+    if(typeof gtag!=='undefined') gtag('event','banker_ai_response');
+
   } catch(err) {
-    removeTyping();
-    addMessage('ai', 'Connecting... please wait a moment and try again.');
+    var typing = document.getElementById('typing');
+    if(typing) typing.remove();
+    addAIMsg('Connection issue — please try again in a moment.');
   }
 
-  isLoading = false;
-  document.getElementById('sendBtn').disabled = false;
-  input.focus();
-}
-
-// Welcome message + check for pending letter from decoder
-window.addEventListener('load', function(){
-  setTimeout(function(){
-    var pendingLetter = sessionStorage.getItem('zai_pending_letter');
-    if(pendingLetter){
-      sessionStorage.removeItem('zai_pending_letter');
-      addMessage('ai', "Hello. I'm Zai — FRC's banking intelligence, built on 23 years of mortgage experience.\n\nI see you came from the Denial Decoder with a letter to analyze. Let me read it now.");
-      setTimeout(function(){
-        document.getElementById('userInput').value = 'Please decode my denial letter: ' + pendingLetter;
-        sendMessage();
-      }, 800);
-    } 
-  }, 400);
-});
-
-
-// File upload handler
-function handleFile(input){
-  var file = input.files[0];
-  if(!file) return;
-  var reader = new FileReader();
-  
-  if(file.type === 'application/pdf'){
-    // For PDF - tell Zai about it
-    addMessage('user', '📎 I uploaded my credit report: ' + file.name);
-    messages.push({role:'user', content:'I just uploaded my credit report PDF: ' + file.name + '. Please ask me to describe what negative items you see, or I can paste key sections.'});
-    sendToZai();
-  } else if(file.type.startsWith('image/')){
-    // For images - convert to base64 and send
-    reader.onload = function(e){
-      var base64 = e.target.result.split(',')[1];
-      addMessage('user', '📎 Uploaded credit report image');
-      // Send as vision message
-      fetch('https://frc-api.ziyetis.workers.dev/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': 'frc-proxy', // Handled by Cloudflare Worker
-          'anthropic-version': '2023-06-01',
-          },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 3000,
-          system: SYSTEM_PROMPT,
-          messages: [{role:'user', content:[
-            {type:'image', source:{type:'base64', media_type:file.type, data:base64}},
-            {type:'text', text:'This is my credit report. Please analyze it: identify any negative items (late payments, collections, charge-offs), estimate which ones might be disputable, and tell me what fixing them could mean for my mortgage rate.'}
-          ]}]
-        })
-      })
-      .then(function(r){return r.json();})
-      .then(function(data){
-        if(data) {
-          var reply = "";
-          if (data.reply) {
-            reply = data.reply;
-          } else if (data.content && Array.isArray(data.content)) {
-            for (var ci = 0; ci < data.content.length; ci++) {
-              if (data.content[ci].type === "text") { reply = data.content[ci].text; break; }
-            }
-          }
-          if (!reply) reply = data.error || "No response";
-          messages.push({role:'assistant', content:reply});
-          addMessage('ai', reply);
-        }
-      })
-      .catch(function(){ addMessage('ai', 'Could not analyze the image. Please describe the negative items you see.'); });
-    };
-    reader.readAsDataURL(file);
-  }
-  input.value = '';
-}
-
-function sendToZai(){
-  // Trigger the existing send flow
-  sendMessage();
-}
-
-// Voice input
-var recognition = null;
-var micActive = false;
-function toggleMic(){
-  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
-    alert('Voice input not supported in this browser. Try Chrome.');
-    return;
-  }
-  if(micActive){ recognition.stop(); return; }
-  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SR();
-  recognition.lang = 'en-US';
-  recognition.interimResults = false;
-  recognition.onstart = function(){ micActive=true; document.getElementById('micBtn').textContent='🔴'; document.getElementById('micBtn').style.color='#ff6b6b'; };
-  recognition.onresult = function(e){ 
-    var txt = e.results[0][0].transcript;
-    document.getElementById('userInput').value = txt;
-  };
-  recognition.onend = function(){ micActive=false; document.getElementById('micBtn').textContent='🎤'; document.getElementById('micBtn').style.color='rgba(255,255,255,0.4)'; };
-  recognition.start();
+  isThinking=false;
+  document.getElementById('sendBtn').disabled=false;
+  document.getElementById('msgInput').focus();
 }
 </script>
 
-<div style="background:linear-gradient(135deg,rgba(200,168,75,0.08),rgba(107,255,184,0.04));border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:20px 24px;margin:32px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-  <script>
-function trackOutcome(outcome) {
-  if(typeof gtag !== 'undefined') {
-    gtag('event', 'banker_ai_outcome', {event_label: outcome});
-  }
-  // Visual feedback
-  document.querySelectorAll('.outcome-btn').forEach(b => b.style.opacity = '0.5');
-  event.target.style.opacity = '1';
-  event.target.style.borderColor = 'rgba(107,255,184,0.5)';
-}
-</script>
-<!-- ZAI_PILL -->
-<a href="/zai-one.html" onclick="if(typeof gtag!=='undefined')gtag('event','zai_pill_click',{event_label:location.pathname})" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;align-items:center;gap:7px;padding:11px 20px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.4);">⚡ Route a file</a>
+<a href="/zai-one.html" style="position:fixed;bottom:80px;right:20px;z-index:999;display:flex;align-items:center;gap:7px;padding:9px 16px;background:rgba(200,168,75,0.12);border:1px solid rgba(200,168,75,0.3);color:#C8A84B;border-radius:20px;font-size:12px;font-weight:700;text-decoration:none;">⚡ Routing →</a>
+
 </body>
 </html>
