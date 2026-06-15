@@ -265,6 +265,12 @@ header{
       <div class="next-arrow">Continue →</div>
     </a>
   </div>
+
+  <!-- Profile-aware cross-links -->
+  <div id="relatedPages" style="margin-top:14px;display:none;">
+    <div style="font-size:11px;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;font-family:'DM Mono',monospace;">Based on your profile</div>
+    <div id="relatedLinks" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
 </div>
 
 <button class="zai-pill" id="resetBtn" onclick="resetForm()">← New profile</button>
@@ -406,6 +412,9 @@ Provide routing analysis per format.`;
     window.frcFunnel.step('routing_result_shown', {top_lender: top});
     if(typeof gtag!=='undefined') gtag('event','routing_complete',{top_lender:top, fico, dti, income, state});
 
+    // Profile-aware cross-links
+    showRelatedPages(parseInt(dti), parseFloat(cltv)||0, parseInt(age)||0);
+
   } catch(err) {
     document.getElementById('resultInner').innerHTML = `
       <div class="result-card">
@@ -426,7 +435,84 @@ function autoCalcDTI() {
   }
   showDTICalc();
 }
-function showDTICalc(){
+function showRelatedPages(dti, cltv, age) {
+  const links = [];
+
+  // DTI cliff zone
+  if (dti >= 42 && dti <= 47) {
+    links.push({
+      url: '/dti-death-zone.html',
+      icon: '⚠️',
+      title: 'DTI 2-Point Death Zone',
+      desc: `Your DTI ${dti}% is near the institutional cliff. See exactly where each lender's threshold sits.`
+    });
+  }
+
+  // CLTV wall
+  if (cltv >= 82 && cltv <= 92) {
+    links.push({
+      url: '/cltv-85-trap.html',
+      icon: '🧱',
+      title: 'The CLTV 85 Trap',
+      desc: `CLTV ${cltv}% — you're ${cltv >= 85 ? 'above' : 'near'} the wall where some lenders jump 55 points.`
+    });
+  }
+
+  // High risk profile
+  if (dti >= 44 && cltv >= 90) {
+    links.push({
+      url: '/two-doors.html',
+      icon: '🚪',
+      title: 'Two Doors',
+      desc: 'Your profile sits in the 64-point gap zone. See both outcomes side by side.'
+    });
+  }
+
+  // Age penalty
+  if (age >= 62) {
+    links.push({
+      url: '/age-penalty.html',
+      icon: '📊',
+      title: 'The Age Penalty',
+      desc: `Borrowers ${age >= 75 ? '75+' : '65-74'} face higher denial rates. See the lender breakdown.`
+    });
+  }
+
+  // Second door — if denied
+  const denied = document.getElementById('denied')?.value;
+  if (denied && denied !== 'none') {
+    links.push({
+      url: '/second-door.html',
+      icon: '🟢',
+      title: 'Your Second Door',
+      desc: `You were denied by ${denied}. Find where borrowers like you got approved.`
+    });
+  }
+
+  // Geographic lottery — always relevant
+  links.push({
+    url: '/geographic-lottery.html',
+    icon: '🗺️',
+    title: 'Geographic Lottery',
+    desc: 'See how your state\'s FHA market compares to the national average.'
+  });
+
+  if (links.length === 0) return;
+
+  const container = document.getElementById('relatedPages');
+  const linksEl = document.getElementById('relatedLinks');
+  linksEl.innerHTML = links.slice(0,4).map(l => `
+    <a href="${l.url}" style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;text-decoration:none;transition:border-color 0.15s;" onmouseover="this.style.borderColor='rgba(200,168,75,0.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px;">${l.icon}</span>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:2px;">${l.title}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);line-height:1.5;">${l.desc}</div>
+      </div>
+    </a>`).join('');
+  container.style.display = 'block';
+}
+
+
   document.getElementById('dtiModal').style.display='flex';
 }
 function closeDTICalc(){
