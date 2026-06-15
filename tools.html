@@ -3,477 +3,454 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>All Tools | FRC Intelligence</title>
-<meta name="description" content="Every FRC Intelligence tool: Zai routing, Denial Clock, lender stress index, calculators, state maps, research, and guides.">
-<meta name="robots" content="index, follow">
+<title>All Tools — FRC Intelligence | Mortgage Decision Platform</title>
+<meta name="description" content="Every tool in the FRC Intelligence system. AI routing, lender analysis, decision surfaces, denial recovery, calculators, and research — all free, all built on verified HMDA data.">
 <link rel="canonical" href="https://financeratecalc.com/tools.html">
+<meta property="og:title" content="FRC Intelligence — All Tools">
+<meta property="og:url" content="https://financeratecalc.com/tools.html">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;min-height:100vh;}
-a:hover .arrow{color:#C8A84B!important;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.97);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+
+.hero{max-width:900px;margin:0 auto;padding:52px 24px 40px;}
+.hero-eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:12px;}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,42px);font-weight:900;line-height:1.15;margin-bottom:10px;}
+.hero h1 em{font-style:italic;color:#C8A84B;}
+.hero p{font-size:15px;color:rgba(255,255,255,0.45);max-width:540px;}
+.hero-stats{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap;}
+.hstat{font-size:12px;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace;}
+.hstat strong{color:rgba(255,255,255,0.7);font-size:14px;}
+
+/* SEARCH */
+.search-wrap{max-width:900px;margin:0 auto;padding:0 24px 28px;}
+.search-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;display:flex;align-items:center;gap:10px;padding:10px 16px;}
+.search-box svg{width:16px;height:16px;color:rgba(255,255,255,0.25);flex-shrink:0;}
+.search-box input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:14px;font-family:inherit;}
+.search-box input::placeholder{color:rgba(255,255,255,0.2);}
+
+/* GRID */
+.grid-wrap{max-width:900px;margin:0 auto;padding:0 24px 80px;}
+.section{margin-bottom:48px;}
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.section-icon{font-size:18px;}
+.section-title{font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:#C8A84B;}
+.section-count{font-size:11px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;margin-left:auto;}
+
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
+.tool-card{display:block;text-decoration:none;padding:16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;transition:all 0.15s;position:relative;}
+.tool-card:hover{border-color:rgba(200,168,75,0.3);background:rgba(200,168,75,0.04);transform:translateY(-1px);}
+.tool-card.featured{border-color:rgba(200,168,75,0.2);background:rgba(200,168,75,0.04);}
+.tool-badge{position:absolute;top:10px;right:10px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;text-transform:uppercase;letter-spacing:0.08em;}
+.badge-new{background:rgba(39,174,96,0.15);color:#27ae60;}
+.badge-ai{background:rgba(200,168,75,0.15);color:#C8A84B;}
+.badge-data{background:rgba(100,150,255,0.15);color:#8ab4f8;}
+.tool-icon{font-size:22px;margin-bottom:8px;}
+.tool-name{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px;line-height:1.3;}
+.tool-desc{font-size:12px;color:rgba(255,255,255,0.35);line-height:1.5;}
+
+/* HIDDEN for search */
+.tool-card.hidden{display:none;}
+
+@media(max-width:600px){.tool-grid{grid-template-columns:1fr;}.hero-stats{gap:14px;}}
 </style>
-<meta property="og:title" content="All Tools | FRC Intelligence">
-<meta property="og:description" content="44 mortgage tools, calculators and guides — everything in the FRC Intelligence system.">
-<meta property="og:url" content="https://financeratecalc.com/tools.html">
-<meta property="og:type" content="website">
 </head>
 <body>
-<header style="height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.97);backdrop-filter:blur(8px);z-index:100;">
-  <a href="/index.html" style="font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;">Finance<em style="font-style:italic;color:#C8A84B;">Rate</em>Calc</a>
-  <a href="/zai-one.html" style="padding:8px 18px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Route a file →</a>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 16px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Route a file →</a>
 </header>
 
-<div style="max-width:1100px;margin:0 auto;padding:40px 24px 80px;">
-  <h1 style="font-family:'Fraunces',serif;font-size:clamp(24px,4vw,34px);font-weight:900;margin-bottom:6px;">All Tools</h1>
-  <p style="font-size:14px;color:rgba(255,255,255,0.35);margin-bottom:32px;">44 tools, calculators and guides — everything in the FRC Intelligence system.</p>
-  <div style="columns:2;column-gap:14px;">
-    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px 22px;break-inside:avoid;">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);">
-  <span style="font-size:16px;">⚡</span>
-  <span style="font-size:12px;font-weight:700;color:#C8A84B;text-transform:uppercase;letter-spacing:0.1em;">Core Tools</span>
-  <span style="font-size:11px;color:rgba(255,255,255,0.2);margin-left:auto;">7</span>
-</div>
-<div style="display:flex;flex-direction:column;gap:1px;"><a href="/zai-one.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Zai — Lender Routing Engine</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Route any FHA file to the optimal lender in 60 seconds</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/frc-banker-ai.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Ask Zai — Mortgage AI</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">23-year banker intelligence. Any question, any time.</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/pre-flight.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Pre-Flight Check</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">30-second file risk score — Green / Yellow / Red</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/denial-letter-decoder.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Denial Letter Decoder</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Paste your denial letter — AI explains it in plain English</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/zai-for-brokers.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Zai for Brokers — Pro</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Unlimited routing, full lender matrix, weekly alerts</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/bank-rejection-engine.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Bank Rejection Engine</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">See why banks reject files before you submit</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/can-i-get-a-loan.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Can I Get a Loan?</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Quick qualification check based on real lender criteria</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a></div>
-</div><div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px 22px;break-inside:avoid;">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);">
-  <span style="font-size:16px;">📊</span>
-  <span style="font-size:12px;font-weight:700;color:#C8A84B;text-transform:uppercase;letter-spacing:0.1em;">Lender Intelligence</span>
-  <span style="font-size:11px;color:rgba(255,255,255,0.2);margin-left:auto;">6</span>
-</div>
-<div style="display:flex;flex-direction:column;gap:1px;"><a href="/lender-stress-index.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Lender Stress Index (LSI)</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">How each lender behaves when markets tighten — 8-year data</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/lender-trends.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Lender Trends — 8 Years HMDA</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">CrossCountry 6.37% vs NewRez 53.27% — every year since 2018</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/lender-state-matrix.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Lender × State Denial Matrix</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">11 lenders × 51 states — full denial rate grid</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/2025-fha-lender-report.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">2025 FHA Lender Report</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Full breakdown of this year's HMDA data</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/overlay-leaderboard.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Overlay Leaderboard</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Which lenders add the most restrictions above FHA minimums</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/loan-comparator.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Loan Comparator</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Compare lender terms side by side</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a></div>
-</div><div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px 22px;break-inside:avoid;">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);">
-  <span style="font-size:16px;">🗺️</span>
-  <span style="font-size:12px;font-weight:700;color:#C8A84B;text-transform:uppercase;letter-spacing:0.1em;">Market & State Data</span>
-  <span style="font-size:11px;color:rgba(255,255,255,0.2);margin-left:auto;">7</span>
-</div>
-<div style="display:flex;flex-direction:column;gap:1px;"><a href="/denial-clock.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">The Mortgage Denial Clock</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Live counter — 282 Americans denied FHA every day</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/fha-state-map.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">FHA Approval Climate by State</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Utah 16.9% vs DC 35.9% — where you apply matters</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/state-compare.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Compare States Side-by-Side</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Pick two states and see the approval gap</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/market-signal.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Weekly Market Signal</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">OFI + LSI updates — which lenders shifted this week</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/ofi-dashboard.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">OFI Dashboard</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Market friction index — current credit pressure reading</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/foreclosure-clock.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Foreclosure Clock</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Real-time foreclosure activity tracker</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/mortgage-rejection-database.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Mortgage Rejection Database</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Historical denial patterns by profile type</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a></div>
-</div><div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px 22px;break-inside:avoid;">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);">
-  <span style="font-size:16px;">🧮</span>
-  <span style="font-size:12px;font-weight:700;color:#C8A84B;text-transform:uppercase;letter-spacing:0.1em;">Calculators</span>
-  <span style="font-size:11px;color:rgba(255,255,255,0.2);margin-left:auto;">8</span>
-</div>
-<div style="display:flex;flex-direction:column;gap:1px;"><a href="/mortgage-calculator.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Mortgage Calculator</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Monthly payment, amortization, total cost</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/cost-of-waiting.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Cost of Waiting</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">What does delaying your purchase actually cost?</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/real-cost-calculator.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">True Cost of Homeownership</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Beyond the mortgage — taxes, insurance, maintenance</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/debt-consolidation-calculator.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Debt Consolidation Calculator</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Should you roll debt into your mortgage?</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/down-payment-for-200k-house.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Down Payment Calculator</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">How much do you actually need to save?</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/can-two-salaries-buy-this-house.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Two Salaries Calculator</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">What can a household afford together?</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/tax-refund-home-calculator.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Tax Refund → Down Payment</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Turn your refund into homeownership</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/american-dream-calculator.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">American Dream Calculator</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">How far are you from owning a home?</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a></div>
-</div><div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px 22px;break-inside:avoid;">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);">
-  <span style="font-size:16px;">🔬</span>
-  <span style="font-size:12px;font-weight:700;color:#C8A84B;text-transform:uppercase;letter-spacing:0.1em;">Research & Guides</span>
-  <span style="font-size:11px;color:rgba(255,255,255,0.2);margin-left:auto;">12</span>
-</div>
-<div style="display:flex;flex-direction:column;gap:1px;"><a href="/approval-twin.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Approval Twin — How Did Borrowers Like You Do?</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Profile-adjusted approval odds across 11 lenders · 3M real applications</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/denial-recovery.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Denial Recovery Pathway — Your Next Move</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Denied at Rocket? See which lenders approve similar profiles</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/test-your-lender.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Test Your Lender — Does your bank treat you fairly?</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Enter lender + profile → see denial rate vs market + shareable verdict</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/dti-death-zone.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">The DTI 2-Point Death Zone</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">interactive slider 36-49</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/geographic-lottery.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Geographic Lottery</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">51 states, FHA Mortgage Score, state lookup</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/lender-personality.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Lender Personality Test</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">4 archetypes, quiz, shareable result</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/black-hole-lender.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">The Black Hole Lender — 99% denial zones mapped</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">PennyMac 99% · Rocket 98% · CrossCountry 21% — same profile, different door</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/the-12b-gap.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">The $12 Billion Gap — Phantom Wealth Destruction</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">208,961 Shadow Approvals · $301,800 per household · live counter · personal calculator</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/age-penalty.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">The Age Penalty — FHA Denial Rates by Age Group</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Age 35-44: 6.7% denial · Age 75+: 21.0% · 3M applications · lender breakdown</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/cltv-85-trap.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">The CLTV 85 Trap</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">interactive slider, lender jump table, 3yr data</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/rejection-cost.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Hidden Rejection Cost Calculator</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Rate lock lost · time · fees · opportunity cost — what a denial really costs you in dollars</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/second-door.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">The Second Door — Denied FHA? Find where to go next</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Who denied you → Shadow Approval classification → best alternative lender</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/market-blindness-index.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Market Blindness Index 2025 — MBI = 0.883</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">The mortgage market doesn't reward good lenders with market share. 317 lenders, 8 years, p=0.326.</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/two-doors.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Two Doors — Same Borrower, Two Outcomes</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Enter your profile · see Mr. Cooper vs Rocket denial rates · 64-point gap · shareable</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/denial-disparity.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Denial Disparity Report 2025 — 64-Point Gap</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">MrCooper −33pp vs market · Rocket +31pp · Same borrower, 6 lenders, real loan-level data</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/fingerprint.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Lender Fit Fingerprint — Your Mortgage DNA</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Enter your profile · get a unique shareable code · see which lender geometries fit</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/lender-decision-surfaces.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Lender Decision Surfaces — The Topology of FHA Denial</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Six lenders' DTI×CLTV heatmaps from 106K loan-level records · cliffs at DTI 45 and CLTV 85 · one lender with none</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/market-that-doesnt-react.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">The Market That Doesn't React — Zero Flow Elasticity</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">A lender can deny half its applicants and lose no market share. Measured: +0.0047, p=0.883.</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/shadow-approval.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Shadow Approvals — The Denials That Shouldn't Have Happened</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">208,961 excess FHA denials in 8 years · 28% of all denials · first-named research</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/lender-taxonomy.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">FHA Lender Taxonomy — 4 Behavioral Types</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Stable Core, Regime-Sensitive, Improving Trend, Unpredictable — classified from 8-year data</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/denial-genome.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">The Denial Genome — Why Each Lender Rejects You</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">CrossCountry rejects DTI. Wells rejects credit. Freedom rejects paperwork.</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/locus-of-control.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">71% of FHA Denials Are Not Your Fault</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Variance decomposition: lender identity explains 63% of denial variance across 8 years.</div>
-  </div><span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a>
-<a href="/fha-lending-structure-research.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">The 9+2 Structure of FHA Lending</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">8-year study: 80% of denial risk is WHO you apply with</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/ofi-methodology.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">OFI Full Methodology</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">How the Origination Friction Index is calculated</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/methodology.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Data Integrity & Sources</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">CFPB HMDA methodology, limitations, validation</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/mortgage-glossary.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Mortgage Glossary</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Plain-English definitions for every term lenders use</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/lender-overlay-explained.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">What Is a Lender Overlay?</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Why identical borrowers get opposite outcomes</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/mortgage-denied-due-to-dti.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Denied Due to DTI</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">What your debt-to-income ratio means for approval</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/how-to-read-mortgage-denial-letter.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">How to Read a Denial Letter</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Plain-English guide to lender denial codes</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/self-employed-mortgage-qualification.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Self-Employed Qualification</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Bank statement loans, 2-year rules, what lenders check</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/ssdi-mortgage-qualification.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">SSDI Mortgage Qualification</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Disability income rules for FHA and conventional</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/fha-vs-lender-overlay.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">FHA Guidelines vs Overlays</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">What FHA allows vs what lenders actually enforce</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/mortgage-iq.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Mortgage IQ Test</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">How much do you really know about mortgages?</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/financial-twin.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Financial Twin</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Your financial profile mirrored in real lending data</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a></div>
-</div><div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px 22px;break-inside:avoid;">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);">
-  <span style="font-size:16px;">🎯</span>
-  <span style="font-size:12px;font-weight:700;color:#C8A84B;text-transform:uppercase;letter-spacing:0.1em;">Lifestyle & Awareness</span>
-  <span style="font-size:11px;color:rgba(255,255,255,0.2);margin-left:auto;">4</span>
-</div>
-<div style="display:flex;flex-direction:column;gap:1px;"><a href="/are-you-house-poor.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Are You House Poor?</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Is your mortgage eating your financial life?</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/are-you-rich.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Are You Rich?</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Where do you stand vs American homeowners?</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/dream-home-quiz.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Dream Home Quiz</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">What home can your income realistically support?</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a><a href="/salary-by-state.html" style="display:flex;align-items:flex-start;justify-content:space-between;padding:11px 14px;border-radius:8px;text-decoration:none;gap:12px;transition:background 0.12s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
-  <div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;margin-bottom:2px;">Salary by State</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.3);line-height:1.5;">Income requirements for homeownership across America</div>
-  </div>
-  <span style="font-size:14px;color:rgba(255,255,255,0.15);flex-shrink:0;margin-top:2px;">→</span>
-</a></div>
-</div>
+<div class="hero">
+  <div class="hero-eyebrow">FRC Intelligence</div>
+  <h1>Every tool.<br><em>All the research.</em></h1>
+  <p>66 tools, calculators, and guides built on 8 years of verified HMDA data. Free. No SSN. No ads.</p>
+  <div class="hero-stats">
+    <div class="hstat"><strong>8 years</strong> HMDA data</div>
+    <div class="hstat"><strong>3M+</strong> loan-level records</div>
+    <div class="hstat"><strong>6</strong> major lenders mapped</div>
+    <div class="hstat"><strong>51</strong> states analyzed</div>
   </div>
 </div>
 
-<!-- ZAI_PILL -->
-<a href="/zai-one.html" onclick="if(typeof gtag!=='undefined')gtag('event','zai_pill_click',{event_label:'/tools.html'})" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;align-items:center;gap:7px;padding:11px 20px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.4);">⚡ Route a file</a>
+<div class="search-wrap">
+  <div class="search-box">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Search tools..." oninput="filterTools(this.value)">
+  </div>
+</div>
+
+<div class="grid-wrap">
+
+  <!-- AI ROUTING -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚡</span>
+      <span class="section-title">AI Routing & Decision Engines</span>
+      <span class="section-count">3 tools</span>
+    </div>
+    <div class="tool-grid">
+      <a href="/zai-one.html" class="tool-card featured">
+        <span class="tool-badge badge-ai">AI</span>
+        <div class="tool-icon">🧠</div>
+        <div class="tool-name">Zai — FHA Routing Engine</div>
+        <div class="tool-desc">Enter your profile. Get lender routing, cliff analysis, and risk factors in 30 seconds.</div>
+      </a>
+      <a href="/frc-banker-ai.html" class="tool-card">
+        <span class="tool-badge badge-ai">AI</span>
+        <div class="tool-icon">🏦</div>
+        <div class="tool-name">FRC Banker AI</div>
+        <div class="tool-desc">Ask a 23-year banking professional anything about mortgages, denial, or qualification.</div>
+      </a>
+      <a href="/second-door.html" class="tool-card">
+        <span class="tool-badge badge-new">NEW</span>
+        <div class="tool-icon">🚪</div>
+        <div class="tool-name">The Second Door</div>
+        <div class="tool-desc">Denied by a lender? Find where borrowers like you got approved. Shadow Approval check.</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- VIRAL TOOLS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📊</span>
+      <span class="section-title">Lender Comparison Tools</span>
+      <span class="section-count">5 tools</span>
+    </div>
+    <div class="tool-grid">
+      <a href="/two-doors.html" class="tool-card featured">
+        <span class="tool-badge badge-new">NEW</span>
+        <div class="tool-icon">🚪</div>
+        <div class="tool-name">Two Doors</div>
+        <div class="tool-desc">Same borrower. Mr. Cooper 26.7% denial. Rocket 91.2%. See the 64-point gap.</div>
+      </a>
+      <a href="/test-your-lender.html" class="tool-card">
+        <span class="tool-badge badge-new">NEW</span>
+        <div class="tool-icon">🔍</div>
+        <div class="tool-name">Test Your Lender</div>
+        <div class="tool-desc">Select your lender, enter your profile — see their denial rate vs market average.</div>
+      </a>
+      <a href="/lender-decision-surfaces.html" class="tool-card">
+        <span class="tool-badge badge-data">DATA</span>
+        <div class="tool-icon">🗺️</div>
+        <div class="tool-name">Decision Surfaces</div>
+        <div class="tool-desc">DTI × CLTV heat maps for 6 major FHA lenders. 106,000 loan-level records.</div>
+      </a>
+      <a href="/denial-disparity.html" class="tool-card">
+        <span class="tool-badge badge-data">DATA</span>
+        <div class="tool-icon">📉</div>
+        <div class="tool-name">Denial Disparity Report</div>
+        <div class="tool-desc">MrCooper −33pp vs market. Rocket +31pp. The 64.5pp spread, verified.</div>
+      </a>
+      <a href="/black-hole-lender.html" class="tool-card">
+        <span class="tool-badge badge-new">NEW</span>
+        <div class="tool-icon">🕳️</div>
+        <div class="tool-name">The Black Hole Lender</div>
+        <div class="tool-desc">PennyMac 99% denial zone. Rocket 98%. Every lender's worst profile mapped.</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CLIFF ANALYSIS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚠️</span>
+      <span class="section-title">Cliff & Threshold Analysis</span>
+      <span class="section-count">3 tools</span>
+    </div>
+    <div class="tool-grid">
+      <a href="/dti-death-zone.html" class="tool-card featured">
+        <span class="tool-badge badge-new">NEW</span>
+        <div class="tool-icon">📐</div>
+        <div class="tool-name">DTI 2-Point Death Zone</div>
+        <div class="tool-desc">Slide from DTI 36 to 49. See exactly where each lender's denial rate cliffs — verified 3 years.</div>
+      </a>
+      <a href="/cltv-85-trap.html" class="tool-card">
+        <span class="tool-badge badge-new">NEW</span>
+        <div class="tool-icon">🧱</div>
+        <div class="tool-name">The CLTV 85 Trap</div>
+        <div class="tool-desc">Above 85%, Rocket jumps +55pp. MrCooper: +1.7pp. Slide to see your position.</div>
+      </a>
+      <a href="/lender-personality.html" class="tool-card">
+        <span class="tool-badge badge-new">NEW</span>
+        <div class="tool-icon">🧬</div>
+        <div class="tool-name">Lender Personality Test</div>
+        <div class="tool-desc">4 questions → your lender archetype. FLAT, CLTV-DOMINANT, DTI-SENSITIVE, or REGIME.</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- BORROWER TOOLS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">👤</span>
+      <span class="section-title">Borrower Intelligence</span>
+      <span class="section-count">6 tools</span>
+    </div>
+    <div class="tool-grid">
+      <a href="/fingerprint.html" class="tool-card">
+        <span class="tool-badge badge-new">NEW</span>
+        <div class="tool-icon">🔬</div>
+        <div class="tool-name">Lender Fit Fingerprint</div>
+        <div class="tool-desc">Your unique LFF code. Radar chart showing approval fit, stability, and surface safety.</div>
+      </a>
+      <a href="/rejection-cost.html" class="tool-card">
+        <span class="tool-badge badge-new">NEW</span>
+        <div class="tool-icon">💸</div>
+        <div class="tool-name">Hidden Rejection Cost</div>
+        <div class="tool-desc">Rate lock lost. Time. Fees. Opportunity. Calculate the true dollar cost of your denial.</div>
+      </a>
+      <a href="/age-penalty.html" class="tool-card">
+        <span class="tool-badge badge-new">NEW</span>
+        <div class="tool-icon">📅</div>
+        <div class="tool-name">The Age Penalty</div>
+        <div class="tool-desc">Age 35–44: 6.7% denial. Age 75+: 21.0%. 3 million applications. Lender breakdown.</div>
+      </a>
+      <a href="/geographic-lottery.html" class="tool-card">
+        <span class="tool-badge badge-new">NEW</span>
+        <div class="tool-icon">🗺️</div>
+        <div class="tool-name">Geographic Lottery</div>
+        <div class="tool-desc">Texas: 2.2% denial. Oklahoma: 25%. Look up your state's Mortgage Score.</div>
+      </a>
+      <a href="/approval-twin.html" class="tool-card">
+        <div class="tool-icon">👥</div>
+        <div class="tool-name">Approval Twin</div>
+        <div class="tool-desc">See how borrowers with your profile historically performed across all 11 lenders.</div>
+      </a>
+      <a href="/denial-recovery.html" class="tool-card">
+        <div class="tool-icon">🔄</div>
+        <div class="tool-name">Denial Recovery</div>
+        <div class="tool-desc">Denied? Step-by-step action plan based on your denial reason and profile.</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- RESEARCH -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔬</span>
+      <span class="section-title">Market Research</span>
+      <span class="section-count">6 tools</span>
+    </div>
+    <div class="tool-grid">
+      <a href="/shadow-approval.html" class="tool-card featured">
+        <span class="tool-badge badge-data">DATA</span>
+        <div class="tool-icon">👻</div>
+        <div class="tool-name">Shadow Approvals</div>
+        <div class="tool-desc">208,961 denials that shouldn't have happened. 8-year count. Live tracker.</div>
+      </a>
+      <a href="/the-12b-gap.html" class="tool-card">
+        <span class="tool-badge badge-new">NEW</span>
+        <div class="tool-icon">📊</div>
+        <div class="tool-name">The Gap — 208,961</div>
+        <div class="tool-desc">Year-by-year Shadow Approval count. 2021 peak: 53,748. Live counter.</div>
+      </a>
+      <a href="/market-blindness-index.html" class="tool-card">
+        <span class="tool-badge badge-data">DATA</span>
+        <div class="tool-icon">👁️</div>
+        <div class="tool-name">Market Blindness Index</div>
+        <div class="tool-desc">MBI = 0.883. 317 lenders. p=0.326. The market doesn't reward good lenders.</div>
+      </a>
+      <a href="/market-that-doesnt-react.html" class="tool-card">
+        <span class="tool-badge badge-data">DATA</span>
+        <div class="tool-icon">📈</div>
+        <div class="tool-name">The Market That Doesn't React</div>
+        <div class="tool-desc">Flow elasticity p=0.883. 317 lenders, 3 years. Market inertia mechanism.</div>
+      </a>
+      <a href="/locus-of-control.html" class="tool-card">
+        <span class="tool-badge badge-data">DATA</span>
+        <div class="tool-icon">🎯</div>
+        <div class="tool-name">Locus of Control</div>
+        <div class="tool-desc">71% of what determines your FHA outcome is outside your control. Measured.</div>
+      </a>
+      <a href="/lender-taxonomy.html" class="tool-card">
+        <div class="tool-icon">🏷️</div>
+        <div class="tool-name">Lender Taxonomy</div>
+        <div class="tool-desc">4 behavioral archetypes across 11 lenders. Stable Core, Regime-Sensitive, and more.</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CALCULATORS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🧮</span>
+      <span class="section-title">Mortgage Calculators</span>
+      <span class="section-count">8 tools</span>
+    </div>
+    <div class="tool-grid">
+      <a href="/mortgage-calculator.html" class="tool-card">
+        <div class="tool-icon">🏠</div>
+        <div class="tool-name">Mortgage Calculator</div>
+        <div class="tool-desc">Payment, amortization, and total cost — with lender routing built in.</div>
+      </a>
+      <a href="/cost-of-waiting.html" class="tool-card">
+        <div class="tool-icon">⏳</div>
+        <div class="tool-name">Cost of Waiting</div>
+        <div class="tool-desc">What does delaying your purchase actually cost? Rate + appreciation + rent.</div>
+      </a>
+      <a href="/real-cost-calculator.html" class="tool-card">
+        <div class="tool-icon">💰</div>
+        <div class="tool-name">Real Cost Calculator</div>
+        <div class="tool-desc">Total cost of homeownership including taxes, insurance, and maintenance.</div>
+      </a>
+      <a href="/how-much-house-can-i-afford-calculator.html" class="tool-card">
+        <div class="tool-icon">🏘️</div>
+        <div class="tool-name">Home Affordability</div>
+        <div class="tool-desc">Income-based affordability calculator with DTI routing guidance.</div>
+      </a>
+      <a href="/debt-consolidation-calculator.html" class="tool-card">
+        <div class="tool-icon">📋</div>
+        <div class="tool-name">Debt Consolidation</div>
+        <div class="tool-desc">Would consolidating improve your DTI enough to qualify?</div>
+      </a>
+      <a href="/down-payment-for-200k-house.html" class="tool-card">
+        <div class="tool-icon">💵</div>
+        <div class="tool-name">Down Payment Guide</div>
+        <div class="tool-desc">How much down payment, and what CLTV does it create?</div>
+      </a>
+      <a href="/home-equity-calculator.html" class="tool-card">
+        <div class="tool-icon">📐</div>
+        <div class="tool-name">Home Equity Calculator</div>
+        <div class="tool-desc">Current equity, CLTV, and cash-out potential.</div>
+      </a>
+      <a href="/savings-calculator.html" class="tool-card">
+        <div class="tool-icon">🏦</div>
+        <div class="tool-name">Savings Calculator</div>
+        <div class="tool-desc">Time to save for down payment at your current rate.</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- GUIDES -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📖</span>
+      <span class="section-title">Guides & Education</span>
+      <span class="section-count">8 tools</span>
+    </div>
+    <div class="tool-grid">
+      <a href="/lender-overlay-explained.html" class="tool-card">
+        <div class="tool-icon">📝</div>
+        <div class="tool-name">Lender Overlay Explained</div>
+        <div class="tool-desc">What is a lender overlay? Why do they cause Shadow Approvals?</div>
+      </a>
+      <a href="/how-to-read-mortgage-denial-letter.html" class="tool-card">
+        <div class="tool-icon">✉️</div>
+        <div class="tool-name">Read Your Denial Letter</div>
+        <div class="tool-desc">What each denial reason code actually means — and what to do next.</div>
+      </a>
+      <a href="/self-employed-mortgage-qualification.html" class="tool-card">
+        <div class="tool-icon">💼</div>
+        <div class="tool-name">Self-Employed Guide</div>
+        <div class="tool-desc">Which lenders are friendlier to 1099 income? Documented with HMDA data.</div>
+      </a>
+      <a href="/ssdi-mortgage-qualification.html" class="tool-card">
+        <div class="tool-icon">♿</div>
+        <div class="tool-name">SSDI Mortgage Guide</div>
+        <div class="tool-desc">SSDI income for FHA. Gross-up rules, lender behavior, and routing.</div>
+      </a>
+      <a href="/fha-vs-lender-overlay.html" class="tool-card">
+        <div class="tool-icon">⚖️</div>
+        <div class="tool-name">FHA vs Lender Overlay</div>
+        <div class="tool-desc">FHA allows DTI 57%. Some lenders cut at 43%. Here's the gap.</div>
+      </a>
+      <a href="/mortgage-denied-due-to-dti.html" class="tool-card">
+        <div class="tool-icon">❌</div>
+        <div class="tool-name">Denied for DTI?</div>
+        <div class="tool-desc">What to do when DTI is your denial reason — and which lenders have flat surfaces.</div>
+      </a>
+      <a href="/mortgage-glossary.html" class="tool-card">
+        <div class="tool-icon">📚</div>
+        <div class="tool-name">Mortgage Glossary</div>
+        <div class="tool-desc">DTI, CLTV, overlay, OFI — every term defined with real examples.</div>
+      </a>
+      <a href="/fha-lending-structure-research.html" class="tool-card">
+        <span class="tool-badge badge-data">DATA</span>
+        <div class="tool-icon">🔬</div>
+        <div class="tool-name">FHA Structure Research</div>
+        <div class="tool-desc">Deep analysis of FHA lending structure, lender types, and market dynamics.</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- MARKET INTELLIGENCE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📡</span>
+      <span class="section-title">Market Intelligence</span>
+      <span class="section-count">7 tools</span>
+    </div>
+    <div class="tool-grid">
+      <a href="/ofi-dashboard.html" class="tool-card">
+        <div class="tool-icon">🌡️</div>
+        <div class="tool-name">OFI Dashboard</div>
+        <div class="tool-desc">Overlay Friction Index: current market tightness. OFI 81 = high friction.</div>
+      </a>
+      <a href="/lender-stress-index.html" class="tool-card">
+        <div class="tool-icon">📊</div>
+        <div class="tool-name">Lender Stress Index</div>
+        <div class="tool-desc">Which lenders are regime-sensitive? Who tightens when rates rise?</div>
+      </a>
+      <a href="/lender-trends.html" class="tool-card">
+        <div class="tool-icon">📈</div>
+        <div class="tool-name">Lender Trends</div>
+        <div class="tool-desc">8-year denial rate trends. Who improved? Who deteriorated?</div>
+      </a>
+      <a href="/denial-clock.html" class="tool-card">
+        <div class="tool-icon">⏰</div>
+        <div class="tool-name">Denial Clock</div>
+        <div class="tool-desc">Live tracker — FHA denials happening right now, by lender.</div>
+      </a>
+      <a href="/fha-state-map.html" class="tool-card">
+        <div class="tool-icon">🗺️</div>
+        <div class="tool-name">FHA State Map</div>
+        <div class="tool-desc">State-level FHA performance map. Click any state for detailed analysis.</div>
+      </a>
+      <a href="/market-signal.html" class="tool-card">
+        <div class="tool-icon">📶</div>
+        <div class="tool-name">Market Signal</div>
+        <div class="tool-desc">Weekly FHA market conditions — tightening, easing, or stable?</div>
+      </a>
+      <a href="/2025-fha-lender-report.html" class="tool-card">
+        <span class="tool-badge badge-data">DATA</span>
+        <div class="tool-icon">📋</div>
+        <div class="tool-name">2025 FHA Lender Report</div>
+        <div class="tool-desc">Annual deep-dive on 11 major FHA lenders. Denial rates, trends, behavior.</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function filterTools(q){
+  q = q.toLowerCase().trim();
+  document.querySelectorAll('.tool-card').forEach(function(card){
+    var text = card.textContent.toLowerCase();
+    card.classList.toggle('hidden', q.length > 0 && !text.includes(q));
+  });
+  // Hide empty sections
+  document.querySelectorAll('.section').forEach(function(sec){
+    var visible = Array.from(sec.querySelectorAll('.tool-card')).some(function(c){return !c.classList.contains('hidden');});
+    sec.style.display = visible ? '' : 'none';
+  });
+}
+
+// Track tool clicks
+document.querySelectorAll('.tool-card').forEach(function(card){
+  card.addEventListener('click', function(){
+    var name = card.querySelector('.tool-name');
+    if(name && typeof gtag !== 'undefined') gtag('event','tool_click',{tool:name.textContent.trim()});
+  });
+});
+</script>
 
 </body>
 </html>
