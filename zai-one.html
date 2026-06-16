@@ -414,6 +414,12 @@ function getRouting() {
       }
 
       resultInner.innerHTML = html;
+      window.lastRoutingResult = {
+        top: top, topWhy: topWhy, second: second, secondWhy: secondWhy,
+        hd1: hd1, hd1Why: hd1Why, hd2: hd2, hd2Why: hd2Why,
+        k1: k1, k2: k2, k3: k3, twin: twin,
+        fico: fico, dti: dti, income: income, state: state
+      };
 
       document.getElementById('resetBtn').style.display = 'flex';
       if (window.frcFunnel) window.frcFunnel.step('routing_result_shown', {top_lender: top});
@@ -519,12 +525,29 @@ async function submitEmailCapture() {
   btn.disabled = true;
   btn.textContent = 'Sending...';
 
+  var r = window.lastRoutingResult || {};
+  var reportText =
+    'YOUR FRC ROUTING RESULT\n\n' +
+    'Profile: FICO ' + (r.fico||'-') + ' | DTI ' + (r.dti||'-') + '% | Income $' + (r.income||'-') + '/mo | State: ' + (r.state||'-') + '\n\n' +
+    'BEST FIT: ' + (r.top||'-') + '\n' + (r.topWhy||'') + '\n\n' +
+    (r.second ? ('BACKUP: ' + r.second + '\n' + (r.secondWhy||'') + '\n\n') : '') +
+    (r.hd1 ? ('HIGHER DENIAL RATE: ' + r.hd1 + ' — ' + (r.hd1Why||'') + '\n') : '') +
+    (r.hd2 ? (r.hd2 + ' — ' + (r.hd2Why||'') + '\n\n') : '\n') +
+    'RISK FACTORS:\n' +
+    (r.k1 ? ('1. ' + r.k1 + '\n') : '') +
+    (r.k2 ? ('2. ' + r.k2 + '\n') : '') +
+    (r.k3 && r.k3 !== 'N/A' ? ('3. ' + r.k3 + '\n') : '') +
+    (r.twin ? ('\n' + r.twin + '\n') : '') +
+    '\n---\nfinanceratecalc.com/zai-one.html';
+
   try {
     await fetch('https://formspree.io/f/mkoewrgp', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         email: email,
+        subject: 'Your FRC Routing Result',
+        message: reportText,
         source: 'zai_routing_result',
         page: location.pathname
       })
