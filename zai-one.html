@@ -271,6 +271,16 @@ header{
     <div style="font-size:11px;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;font-family:'DM Mono',monospace;">Based on your profile</div>
     <div id="relatedLinks" style="display:flex;flex-direction:column;gap:8px;"></div>
   </div>
+
+  <div id="emailCapture" style="margin-top:16px;display:none;background:rgba(200,168,75,0.04);border:1px solid rgba(200,168,75,0.15);border-radius:12px;padding:18px;">
+    <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;">Get your routing result by email</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:12px;line-height:1.5;">Save this analysis, plus a weekly OFI market update — no spam, unsubscribe anytime.</div>
+    <div style="display:flex;gap:8px;">
+      <input id="captureEmail" type="email" placeholder="you@email.com" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;font-family:inherit;outline:none;">
+      <button onclick="submitEmailCapture()" id="captureBtn" style="padding:10px 18px;background:#C8A84B;color:#000;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap;">Send</button>
+    </div>
+    <div id="captureMsg" style="font-size:12px;margin-top:8px;display:none;"></div>
+  </div>
 </div>
 
 <button class="zai-pill" id="resetBtn" onclick="resetForm()">← New profile</button>
@@ -410,6 +420,8 @@ function getRouting() {
       if (typeof gtag !== 'undefined') gtag('event', 'routing_complete', {top_lender: top, fico: fico, dti: dti, state: state});
 
       showRelatedPages(parseInt(dti), 0, 0);
+      var capEl = document.getElementById('emailCapture');
+      if(capEl) capEl.style.display = 'block';
 
     } catch(parseErr) {
       resultInner.innerHTML = '<div class="result-card"><div class="result-label">Parse error</div><div class="lender-why">Could not parse response. Please try again.</div></div>';
@@ -491,10 +503,52 @@ function useDTI() {
   closeDTICalc();
 }
 
+async function submitEmailCapture() {
+  var emailInput = document.getElementById('captureEmail');
+  var msgEl = document.getElementById('captureMsg');
+  var btn = document.getElementById('captureBtn');
+  var email = emailInput.value.trim();
+
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    msgEl.textContent = 'Please enter a valid email address.';
+    msgEl.style.color = '#e8845a';
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  try {
+    await fetch('https://formspree.io/f/mkoewrgp', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        email: email,
+        source: 'zai_routing_result',
+        page: location.pathname
+      })
+    });
+    msgEl.textContent = '✅ Sent! Check your inbox.';
+    msgEl.style.color = '#27ae60';
+    msgEl.style.display = 'block';
+    emailInput.value = '';
+    btn.textContent = 'Send';
+    if (typeof gtag !== 'undefined') gtag('event', 'email_capture', {source: 'zai_result'});
+  } catch(err) {
+    msgEl.textContent = 'Something went wrong. Please try again.';
+    msgEl.style.color = '#e8845a';
+    msgEl.style.display = 'block';
+    btn.textContent = 'Send';
+  }
+  btn.disabled = false;
+}
+
 function resetForm() {
   document.getElementById('result').style.display = 'none';
   document.getElementById('resultInner').innerHTML = '';
   document.getElementById('resetBtn').style.display = 'none';
+  document.getElementById('emailCapture').style.display = 'none';
   document.getElementById('relatedPages').style.display = 'none';
 }
 </script>
