@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mortgage Denial Rates by State 2018–2024 | FinanceRateCalc</title>
+    <meta name="description" content="Real HMDA data: mortgage denial rates by state from 2018 to 2024. See which states have the highest and lowest rejection rates for conventional and FHA loans.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://financeratecalc.com/state-denial-rates.html">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ND9P4F3PHT');
+    </script>
+    <style>
+      :root {
+        --blue: #1a4fa0;
+        --blue-light: #2563eb;
+        --green: #16a34a;
+        --red: #dc2626;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-700: #374151;
+        --gray-900: #111827;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--gray-900); background: #fff; }
+      
+      /* NAV */
+      nav { background: var(--blue); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+      nav a.logo { color: #fff; font-weight: 700; font-size: 1.1rem; text-decoration: none; }
+      nav .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; margin-left: 20px; font-size: 0.9rem; }
+      nav .nav-links a:hover { color: #fff; }
+
+      /* HERO */
+      .hero { background: linear-gradient(135deg, #1a4fa0 0%, #1e3a8a 100%); color: #fff; padding: 52px 24px 40px; text-align: center; }
+      .hero h1 { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; margin-bottom: 12px; }
+      .hero p { font-size: 1.05rem; opacity: 0.9; max-width: 600px; margin: 0 auto 20px; }
+      .hero .badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 5px 14px; font-size: 0.82rem; }
+
+      /* STAT CARDS */
+      .stats-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; padding: 28px 24px; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+      .stat-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 10px; padding: 16px 24px; text-align: center; min-width: 160px; }
+      .stat-card .value { font-size: 1.8rem; font-weight: 800; color: var(--blue); }
+      .stat-card .label { font-size: 0.8rem; color: var(--gray-700); margin-top: 4px; }
+
+      /* CONTROLS */
+      .controls { max-width: 1100px; margin: 28px auto 0; padding: 0 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+      .controls label { font-size: 0.9rem; font-weight: 600; color: var(--gray-700); }
+      .year-btn { padding: 6px 16px; border: 2px solid var(--gray-200); border-radius: 6px; background: #fff; cursor: pointer; font-size: 0.88rem; font-weight: 600; color: var(--gray-700); transition: all .15s; }
+      .year-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+      .search-box { margin-left: auto; padding: 6px 12px; border: 2px solid var(--gray-200); border-radius: 6px; font-size: 0.88rem; width: 180px; }
+      .sort-select { padding: 6px 12px; border: 2px solid var(--gray-200); border-radius: 6px; font-size: 0.88rem; background: #fff; cursor: pointer; }
+
+      /* TABLE */
+      .table-wrap { max-width: 1100px; margin: 16px auto 0; padding: 0 24px 48px; overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+      thead th { background: var(--gray-900); color: #fff; padding: 10px 12px; text-align: left; font-weight: 600; position: sticky; top: 0; cursor: pointer; user-select: none; white-space: nowrap; }
+      thead th:hover { background: var(--blue); }
+      thead th.sorted-asc::after { content: ' ↑'; }
+      thead th.sorted-desc::after { content: ' ↓'; }
+      tbody tr:nth-child(even) { background: var(--gray-50); }
+      tbody tr:hover { background: #eff6ff; }
+      tbody td { padding: 9px 12px; border-bottom: 1px solid var(--gray-200); }
+      td.state-cell { font-weight: 700; color: var(--blue); }
+      td.rate-cell { font-weight: 700; }
+      td.rate-cell.high { color: var(--red); }
+      td.rate-cell.mid { color: #d97706; }
+      td.rate-cell.low { color: var(--green); }
+      td.trend-cell { font-weight: 600; }
+      td.trend-cell.up { color: var(--red); }
+      td.trend-cell.down { color: var(--green); }
+
+      /* BAR */
+      .bar-wrap { width: 100%; background: var(--gray-200); border-radius: 3px; height: 6px; margin-top: 4px; }
+      .bar-fill { height: 6px; border-radius: 3px; background: var(--blue-light); transition: width .3s; }
+
+      /* SOURCE */
+      .source-box { max-width: 1100px; margin: 0 auto; padding: 0 24px 40px; }
+      .source-box .note { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 14px 18px; font-size: 0.82rem; color: var(--gray-700); line-height: 1.6; }
+      .source-box .note strong { color: var(--gray-900); }
+
+      /* FOOTER */
+      footer { background: var(--gray-900); color: rgba(255,255,255,0.6); text-align: center; padding: 20px; font-size: 0.8rem; }
+      footer a { color: rgba(255,255,255,0.8); }
+
+      @media (max-width: 600px) {
+        .stats-row { gap: 10px; }
+        .controls { gap: 8px; }
+        .search-box { width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+
+  <nav>
+    <a class="logo" href="/">FinanceRateCalc</a>
+    <div class="nav-links">
+      <a href="/mortgage-calculator.html">Calculator</a>
+      <a href="/state-denial-rates.html">Denial Rates</a>
+      <a href="/pricing.html">Pro</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <h1>Mortgage Denial Rates by State</h1>
+    <p>Real HMDA data from every mortgage application filed in the U.S. — 2018 through 2024. Conventional &amp; FHA loans only.</p>
+    <div class="badge">📊 Source: FFIEC HMDA Dynamic LAR Dataset &nbsp;·&nbsp; Updated June 2026</div>
+  </div>
+
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card"><div class="value" id="statYear">2024</div><div class="label">Data Year</div></div>
+    <div class="stat-card"><div class="value" id="statStates">52</div><div class="label">States &amp; DC</div></div>
+    <div class="stat-card"><div class="value" id="statAvg">—</div><div class="label">National Avg Denial Rate</div></div>
+    <div class="stat-card"><div class="value" id="statHighest">—</div><div class="label">Highest Denial State</div></div>
+    <div class="stat-card"><div class="value" id="statLowest">—</div><div class="label">Lowest Denial State</div></div>
+  </div>
+
+  <div class="controls">
+    <label>Year:</label>
+    <button class="year-btn" onclick="setYear(2018)">2018</button>
+    <button class="year-btn" onclick="setYear(2022)">2022</button>
+    <button class="year-btn" onclick="setYear(2023)">2023</button>
+    <button class="year-btn active" onclick="setYear(2024)">2024</button>
+    <select class="sort-select" onchange="setSort(this.value)">
+      <option value="denial_rate_desc">Sort: Highest Denial</option>
+      <option value="denial_rate_asc">Sort: Lowest Denial</option>
+      <option value="state_asc">Sort: State A–Z</option>
+      <option value="originated_desc">Sort: Most Applications</option>
+      <option value="trend_desc">Sort: Biggest Rate Increase</option>
+    </select>
+    <input class="search-box" type="text" placeholder="Search state…" oninput="setSearch(this.value)">
+  </div>
+
+  <div class="table-wrap">
+    <table id="mainTable">
+      <thead>
+        <tr>
+          <th onclick="setSort('state_asc')">State</th>
+          <th onclick="setSort('denial_rate_desc')">Denial Rate</th>
+          <th onclick="setSort('originated_desc')">Approved</th>
+          <th>Denied</th>
+          <th>Total Apps</th>
+          <th onclick="setSort('trend_desc')">vs 2018</th>
+          <th>Trend</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <div class="source-box">
+    <div class="note">
+      <strong>Data source:</strong> FFIEC HMDA Dynamic National Loan Application Register (LAR), all reporting institutions.
+      Includes <strong>Conventional (loan_type=1)</strong> and <strong>FHA (loan_type=2)</strong> loans only; VA and USDA excluded.
+      Actions counted: <strong>Originated (action_taken=1)</strong> and <strong>Denied (action_taken=3)</strong>.
+      Download raw data: <a href="https://www.ffiec.gov/hmda/hmdaflat.htm" target="_blank">ffiec.gov/hmda/hmdaflat.htm</a> &nbsp;|&nbsp;
+      <a href="https://www.consumerfinance.gov/data-research/hmda/" target="_blank">CFPB HMDA Overview</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 FinanceRateCalc · <a href="/privacy.html">Privacy</a> · Data: FFIEC HMDA</p>
+  </footer>
+
+  <script>
+  const DATA = {
+    source: "FFIEC HMDA Dynamic National LAR Dataset",
+    source_url: "https://www.ffiec.gov/hmda/hmdaflat.htm",
+    methodology: "Conventional (loan_type=1) and FHA (loan_type=2) only. Action taken: originated (1) and denied (3).",
+    years: [2018, 2022, 2023, 2024],
+    by_year: {}
+  };
+
+  // Populated from JSON fetch below — fallback inline for 2024
+  fetch("/_data/hmda_state_denial_rates.json")
+    .then(r => r.json())
+    .then(d => {
+      Object.assign(DATA.by_year, d.by_year);
+      DATA.years = d.years;
+      renderTable();
+    })
+    .catch(() => renderTable());
+
+  const STATE_NAMES = {
+    AK:"Alaska",AL:"Alabama",AR:"Arkansas",AZ:"Arizona",CA:"California",
+    CO:"Colorado",CT:"Connecticut",DC:"District of Columbia",DE:"Delaware",
+    FL:"Florida",GA:"Georgia",HI:"Hawaii",IA:"Iowa",ID:"Idaho",IL:"Illinois",
+    IN:"Indiana",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",MA:"Massachusetts",
+    MD:"Maryland",ME:"Maine",MI:"Michigan",MN:"Minnesota",MO:"Missouri",
+    MS:"Mississippi",MT:"Montana",NC:"North Carolina",ND:"North Dakota",
+    NE:"Nebraska",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",
+    NV:"Nevada",NY:"New York",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",
+    PA:"Pennsylvania",PR:"Puerto Rico",RI:"Rhode Island",SC:"South Carolina",
+    SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VA:"Virginia",
+    VT:"Vermont",WA:"Washington",WI:"Wisconsin",WV:"West Virginia",WY:"Wyoming"
+  };
+
+  let currentYear = 2024;
+  let currentSort = "denial_rate_desc";
+  let currentSearch = "";
+
+  function setYear(y) {
+    currentYear = y;
+    document.querySelectorAll('.year-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent == y);
+    });
+    renderTable();
+  }
+
+  function setSort(s) {
+    currentSort = s;
+    renderTable();
+  }
+
+  function setSearch(s) {
+    currentSearch = s.toLowerCase();
+    renderTable();
+  }
+
+  function renderTable() {
+    const yearData = DATA.by_year[currentYear] || {};
+    const baseData = DATA.by_year[2018] || {};
+
+    let rows = Object.entries(yearData).map(([state, d]) => ({
+      state,
+      name: STATE_NAMES[state] || state,
+      ...d,
+      total: d.originated + d.denied,
+      trend: baseData[state] ? +(d.denial_rate - baseData[state].denial_rate).toFixed(2) : null
+    }));
+
+    // Filter
+    if (currentSearch) {
+      rows = rows.filter(r => r.state.toLowerCase().includes(currentSearch) || r.name.toLowerCase().includes(currentSearch));
+    }
+
+    // Sort
+    const [field, dir] = currentSort.split('_');
+    const isDesc = currentSort.endsWith('desc');
+    rows.sort((a, b) => {
+      let av = a[field] ?? (field === 'denial' ? a.denial_rate : 0);
+      let bv = b[field] ?? (field === 'denial' ? b.denial_rate : 0);
+      if (field === 'state') { av = a.state; bv = b.state; }
+      if (field === 'denial') { av = a.denial_rate; bv = b.denial_rate; }
+      if (field === 'trend') { av = a.trend ?? -99; bv = b.trend ?? -99; }
+      if (typeof av === 'string') return isDesc ? bv.localeCompare(av) : av.localeCompare(bv);
+      return isDesc ? bv - av : av - bv;
+    });
+
+    const maxRate = Math.max(...rows.map(r => r.denial_rate));
+
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = rows.map(r => {
+      const rateClass = r.denial_rate >= 30 ? 'high' : r.denial_rate >= 22 ? 'mid' : 'low';
+      const trendStr = r.trend === null ? '—' : (r.trend > 0 ? '+' : '') + r.trend + '%';
+      const trendClass = r.trend > 0.5 ? 'up' : r.trend < -0.5 ? 'down' : '';
+      const barPct = Math.round((r.denial_rate / maxRate) * 100);
+      return `<tr>
+        <td class="state-cell">${r.state} <span style="font-weight:400;color:#6b7280;font-size:0.8rem;">${r.name}</span></td>
+        <td class="rate-cell ${rateClass}">
+          ${r.denial_rate}%
+          <div class="bar-wrap"><div class="bar-fill" style="width:${barPct}%"></div></div>
+        </td>
+        <td>${r.originated.toLocaleString()}</td>
+        <td>${r.denied.toLocaleString()}</td>
+        <td>${r.total.toLocaleString()}</td>
+        <td class="trend-cell ${trendClass}">${trendStr}</td>
+        <td>
+          ${DATA.years.filter(y => DATA.by_year[y]?.[r.state]).map(y => {
+            const v = DATA.by_year[y][r.state].denial_rate;
+            const h = Math.round(v);
+            const col = v >= 30 ? '#dc2626' : v >= 22 ? '#d97706' : '#16a34a';
+            return `<span title="${y}: ${v}%" style="display:inline-block;width:8px;height:${Math.round(h/2)}px;background:${col};margin-right:2px;border-radius:2px;vertical-align:bottom"></span>`;
+          }).join('')}
+        </td>
+      </tr>`;
+    }).join('');
+
+    // Update stat cards
+    document.getElementById('statYear').textContent = currentYear;
+    document.getElementById('statStates').textContent = rows.length;
+    if (rows.length) {
+      const totalO = rows.reduce((s, r) => s + r.originated, 0);
+      const totalD = rows.reduce((s, r) => s + r.denied, 0);
+      const natAvg = ((totalD / (totalO + totalD)) * 100).toFixed(1);
+      document.getElementById('statAvg').textContent = natAvg + '%';
+      const highest = rows.reduce((a, b) => a.denial_rate > b.denial_rate ? a : b);
+      const lowest = rows.reduce((a, b) => a.denial_rate < b.denial_rate ? a : b);
+      document.getElementById('statHighest').textContent = highest.state + ' ' + highest.denial_rate + '%';
+      document.getElementById('statLowest').textContent = lowest.state + ' ' + lowest.denial_rate + '%';
+    }
+  }
+
+  renderTable();
+  </script>
+  </body>
+  </html>
