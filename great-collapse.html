@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Great Collapse — How the Mortgage Market Lost Half Its Volume | FRC Intelligence</title>
+<meta name="description" content="2021: 16.4 million mortgage applications, 16.4% denied. 2023: 7.2 million applications, 26.7% denied. The market didn't just slow down — it lost more than half its volume in two years.">
+<meta property="og:title" content="The mortgage market lost 56% of its volume in 2 years">
+<meta property="og:description" content="16.4M applications in 2021. 7.2M in 2023. California alone lost 70% of its mortgage volume. Six years of real HMDA data, mapped state by state.">
+<meta property="og:url" content="https://financeratecalc.com/great-collapse.html">
+<meta property="og:image" content="https://financeratecalc.com/og-two-doors.svg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://financeratecalc.com/great-collapse.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.7;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:740px;margin:0 auto;padding:56px 24px 80px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:16px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,46px);font-weight:900;line-height:1.1;margin-bottom:16px;}
+h1 em{font-style:italic;color:#d44;}
+.meta{font-size:12px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.06);}
+p{font-size:15px;color:rgba(255,255,255,0.65);margin-bottom:14px;line-height:1.8;}
+strong{color:#fff;}
+h2{font-family:'Fraunces',serif;font-size:21px;font-weight:700;margin:36px 0 12px;color:#C8A84B;}
+
+.chart-box{margin:28px 0;}
+.year-row{display:grid;grid-template-columns:60px 1fr 90px 90px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.year-row.peak{background:rgba(39,174,96,0.05);}
+.year-row.trough{background:rgba(212,68,68,0.05);}
+.yr{font-family:'DM Mono',monospace;font-size:13px;color:rgba(255,255,255,0.4);}
+.bar-track{height:20px;background:rgba(255,255,255,0.04);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;background:linear-gradient(90deg,#C8A84B,#e8845a);border-radius:4px;}
+.vol{font-family:'DM Mono',monospace;font-size:13px;text-align:right;color:rgba(255,255,255,0.6);}
+.rate{font-family:'DM Mono',monospace;font-size:13px;text-align:right;font-weight:700;}
+
+.hero-stat{text-align:center;padding:32px 24px;border:1.5px solid rgba(212,68,68,0.25);border-radius:18px;background:rgba(212,68,68,0.04);margin:28px 0;}
+.hero-num{font-family:'DM Mono',monospace;font-size:clamp(44px,9vw,64px);font-weight:700;color:#d44;line-height:1;}
+.hero-label{font-size:13px;color:rgba(255,255,255,0.4);margin-top:10px;}
+
+.state-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;}
+.state-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px 16px;}
+.state-name{font-size:13px;font-weight:700;margin-bottom:4px;}
+.state-stat{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:#d44;}
+.state-detail{font-size:11px;color:rgba(255,255,255,0.3);margin-top:2px;}
+
+.blacklist-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:13px;}
+.blacklist-table th{text-align:left;padding:8px 10px;color:rgba(255,255,255,0.3);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid rgba(255,255,255,0.08);}
+.blacklist-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.04);}
+
+.finding-box{background:rgba(200,168,75,0.04);border-left:3px solid #C8A84B;padding:14px 18px;margin:22px 0;border-radius:0 8px 8px 0;}
+.finding-box p{margin:0;font-size:14px;color:rgba(255,255,255,0.7);}
+
+.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:24px;margin:36px 0;text-align:center;}
+.cta-box a{display:inline-block;padding:11px 24px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:8px;}
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);}
+@media(max-width:500px){.state-grid{grid-template-columns:1fr;}.year-row{grid-template-columns:50px 1fr 70px 60px;font-size:11px;}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/zai-one.html" style="padding:8px 18px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Route a file →</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · 6-Year HMDA Analysis · 2018–2024</div>
+  <h1>The Great<br><em>Collapse.</em></h1>
+  <div class="meta">
+    Source: CFPB/FFIEC HMDA, 52 states + DC + PR · Conventional + FHA applications · 6 years, 66.5 million applications
+  </div>
+
+  <p>In 2021, 16.4 million Americans applied for a mortgage. In 2023, that number was 7.2 million. The mortgage market didn't slow down — it lost <strong>more than half its volume</strong> in two years, and the applications that remained were rejected at nearly double the rate.</p>
+
+  <h2>The full six-year arc</h2>
+  <div class="chart-box">
+    <div class="year-row peak">
+      <div class="yr">2018</div>
+      <div class="bar-track"><div class="bar-fill" style="width:57%;"></div></div>
+      <div class="vol">9.4M</div>
+      <div class="rate" style="color:#e8845a;">25.0%</div>
+    </div>
+    <div class="year-row peak">
+      <div class="yr">2020</div>
+      <div class="bar-track"><div class="bar-fill" style="width:96%;"></div></div>
+      <div class="vol">15.7M</div>
+      <div class="rate" style="color:#27ae60;">16.6%</div>
+    </div>
+    <div class="year-row peak">
+      <div class="yr">2021</div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div>
+      <div class="vol">16.4M</div>
+      <div class="rate" style="color:#27ae60;">16.4%</div>
+    </div>
+    <div class="year-row">
+      <div class="yr">2022</div>
+      <div class="bar-track"><div class="bar-fill" style="width:62%;"></div></div>
+      <div class="vol">10.2M</div>
+      <div class="rate" style="color:#e8845a;">23.3%</div>
+    </div>
+    <div class="year-row trough">
+      <div class="yr">2023</div>
+      <div class="bar-track"><div class="bar-fill" style="width:44%;"></div></div>
+      <div class="vol">7.2M</div>
+      <div class="rate" style="color:#d44;">26.7%</div>
+    </div>
+    <div class="year-row trough">
+      <div class="yr">2024</div>
+      <div class="bar-track"><div class="bar-fill" style="width:47%;"></div></div>
+      <div class="vol">7.6M</div>
+      <div class="rate" style="color:#d44;">25.8%</div>
+    </div>
+  </div>
+
+  <p>In 2020 and 2021, mortgage rates sat below 3%. Volume nearly doubled from 2018, and denial rates fell to their lowest point in the dataset — 16.4%. Then the Federal Reserve raised rates from near-zero to over 5% in 18 months. Volume didn't just normalize. It cratered to less than half of the 2021 peak, and denial rates climbed back above pre-pandemic levels.</p>
+
+  <div class="hero-stat">
+    <div class="hero-num">−56%</div>
+    <div class="hero-label">National mortgage application volume, 2021 → 2023<br>16.4 million applications fell to 7.2 million in two years</div>
+  </div>
+
+  <h2>The volume collapse, state by state</h2>
+  <div class="state-grid">
+    <div class="state-card">
+      <div class="state-name">California</div>
+      <div class="state-stat">−69.9%</div>
+      <div class="state-detail">2.19M → 661K applications (2021→2024)</div>
+    </div>
+    <div class="state-card">
+      <div class="state-name">Illinois</div>
+      <div class="state-stat">−54.8%</div>
+      <div class="state-detail">576K → 260K applications (2021→2024)</div>
+    </div>
+    <div class="state-card">
+      <div class="state-name">New York</div>
+      <div class="state-stat">−50.8%</div>
+      <div class="state-detail">563K → 277K applications (2021→2024)</div>
+    </div>
+    <div class="state-card">
+      <div class="state-name">Hawaii</div>
+      <div class="state-stat">−68.0%</div>
+      <div class="state-detail">62.7K → 20.1K applications (2021→2024)</div>
+    </div>
+  </div>
+
+  <div class="finding-box">
+    <p><strong>California alone lost nearly 1.5 million mortgage applications between 2021 and 2024</strong> — not because fewer people wanted homes, but because at 7% interest rates, far fewer people could qualify or chose to try.</p>
+  </div>
+
+  <h2>Winners and losers: 2018 → 2024 net change</h2>
+  <p>Comparing the same two pre/post-pandemic years strips out the COVID-era anomaly and shows which states structurally improved or worsened over six years.</p>
+  <table class="blacklist-table">
+    <thead><tr><th>State</th><th>2018</th><th>2024</th><th>Change</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Hawaii</strong></td><td>25.6%</td><td>33.7%</td><td style="color:#d44;">+8.1pp</td></tr>
+      <tr><td><strong>Montana</strong></td><td>18.1%</td><td>22.2%</td><td style="color:#e8845a;">+4.1pp</td></tr>
+      <tr><td><strong>Louisiana</strong></td><td>29.7%</td><td>33.6%</td><td style="color:#e8845a;">+3.9pp</td></tr>
+      <tr><td><strong>Utah</strong></td><td>18.7%</td><td>21.9%</td><td style="color:#e8845a;">+3.1pp</td></tr>
+      <tr><td><strong>Mississippi</strong></td><td>30.4%</td><td>33.5%</td><td style="color:#e8845a;">+3.0pp</td></tr>
+      <tr><td colspan="4" style="height:8px;border:none;"></td></tr>
+      <tr><td><strong>Puerto Rico</strong></td><td>27.3%</td><td>21.3%</td><td style="color:#27ae60;">−6.0pp</td></tr>
+      <tr><td><strong>Connecticut</strong></td><td>27.0%</td><td>24.6%</td><td style="color:#27ae60;">−2.4pp</td></tr>
+      <tr><td><strong>New York</strong></td><td>28.2%</td><td>26.5%</td><td style="color:#27ae60;">−1.7pp</td></tr>
+    </tbody>
+  </table>
+
+  <h2>2024's five toughest states</h2>
+  <table class="blacklist-table">
+    <thead><tr><th>State</th><th>2024 Denial Rate</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Hawaii</strong></td><td style="color:#d44;">33.7%</td></tr>
+      <tr><td><strong>Louisiana</strong></td><td style="color:#d44;">33.6%</td></tr>
+      <tr><td><strong>Mississippi</strong></td><td style="color:#d44;">33.5%</td></tr>
+      <tr><td><strong>Florida</strong></td><td style="color:#d44;">31.4%</td></tr>
+      <tr><td><strong>West Virginia</strong></td><td style="color:#d44;">30.8%</td></tr>
+    </tbody>
+  </table>
+  <p>In these five states, roughly one in three mortgage applications was denied in 2024 — more than double the rate in the lowest-denial states the same year.</p>
+
+  <h2>Why Hawaii stands alone</h2>
+  <p>Hawaii's deterioration isn't explained by interest rates alone — every state faced the same Fed cycle, and most didn't see anything close to an 8-point jump. The more specific driver: a condominium insurance crisis that intensified sharply after the 2023 Maui wildfires. Hundreds of Hawaii condo buildings became underinsured for hurricane risk, with premium increases reported as high as 1,000% in some buildings. Fannie Mae and Freddie Mac will not purchase loans on buildings that aren't insured to full replacement value — effectively freezing financing for a meaningful share of Hawaii's housing stock, regardless of the borrower's qualifications.</p>
+
+  <div class="cta-box">
+    <div style="font-size:14px;color:rgba(255,255,255,0.5);">See your state's full 6-year trend.</div>
+    <div style="font-family:'Fraunces',serif;font-size:19px;font-weight:700;margin-top:6px;">Browse all 52 states, year by year.</div>
+    <a href="/state-denial-rates.html">View the full data →</a>
+  </div>
+
+  <div class="foot">
+    Source: CFPB/FFIEC HMDA Dynamic National LAR Dataset, 2018, 2020–2024 (Conventional and FHA applications, loan_type 1 and 2; action_taken originated or denied). 2019 and 2017 data pending. National totals independently verified by aggregating all 52 state-level records. Hawaii insurance crisis context: UHERO Hawai'i Housing Factbook 2025/2026, New America climate-insurance research. Statistical research on aggregate market patterns, not individual predictions. Not financial advice.
+    <br><br>Related: <a href="/state-denial-rates.html" style="color:rgba(200,168,75,0.5);">State Denial Rates →</a> &nbsp;|&nbsp; <a href="/geographic-lottery.html" style="color:rgba(200,168,75,0.5);">Geographic Lottery →</a> &nbsp;|&nbsp; <a href="/shadow-approval.html" style="color:rgba(200,168,75,0.5);">Shadow Approvals →</a>
+  </div>
+</div>
+<a href="/zai-one.html" style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;align-items:center;gap:7px;padding:10px 18px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.35);">⚡ Route a file</a>
+</body>
+</html>
