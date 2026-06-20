@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FRC Banker AI — 23-Year Banking Expert | FinanceRateCalc</title>
-<meta name="description" content="Ask a 23-year banking professional anything about mortgages, credit scores, refinancing, or home buying.">
+<title>Denied? Talk to Someone Who Understands — FRC Denial Navigator</title>
+<meta name="description" content="Got denied for a mortgage? You're not alone, and it's usually not your fault. Talk to a 23-year banking professional, free, about what happened and what to do next.">
 <link rel="canonical" href="https://financeratecalc.com/frc-banker-ai.html">
-<meta property="og:title" content="FRC Banker AI — Ask a 23-Year Banking Expert Anything">
+<meta property="og:title" content="Got denied? You're not alone — talk to someone who's seen this 1000 times">
 <meta property="og:url" content="https://financeratecalc.com/frc-banker-ai.html">
 <meta property="og:image" content="https://financeratecalc.com/og-two-doors.svg">
 <meta name="twitter:card" content="summary_large_image">
@@ -101,21 +101,22 @@ header{height:52px;display:flex;align-items:center;justify-content:space-between
 
 <header>
   <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
-  <span class="model-badge">FRC Banker AI · 23yr</span>
+  <span class="model-badge" id="modelBadge">FRC Denial Navigator</span>
 </header>
 
 <div id="chatScroll">
   <div id="messages">
     <div id="greeting">
-      <div class="icon">🏦</div>
-      <h1>What can I help you with?</h1>
-      <p>Ask me anything about FHA loans, lender routing, mortgage qualification, or denial analysis. Built on 8 years of HMDA data.</p>
+      <div class="icon">🤝</div>
+      <h1>Got denied? Let's figure out why.</h1>
+      <p>It's usually not "you." It's often the lender. Tell me what happened — your numbers, your denial reason, anything — and I'll walk through it with you. No judgment, no SSN, just a straight answer based on 8 years of real lending data.</p>
       <div class="suggestions">
+        <button class="sug" onclick="sendSuggestion(this)">I just got denied. What do I do now?</button>
         <button class="sug" onclick="sendSuggestion(this)">My DTI is 46%, which lenders should I try?</button>
         <button class="sug" onclick="sendSuggestion(this)">I was denied by Rocket. What are my options?</button>
-        <button class="sug" onclick="sendSuggestion(this)">What is a Shadow Approval?</button>
-        <button class="sug" onclick="sendSuggestion(this)">CLTV 88% — will that hurt my FHA chances?</button>
+        <button class="sug" onclick="sendSuggestion(this)">Was I denied unfairly? How do I check?</button>
       </div>
+      <div id="freeCounter" style="margin-top:28px;font-size:11px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;">5 free questions today · no signup needed</div>
     </div>
   </div>
 </div>
@@ -132,9 +133,59 @@ header{height:52px;display:flex;align-items:center;justify-content:space-between
 
 <script>
 var API = 'https://frc-api.ziyetis.workers.dev/v1/messages';
-var SYSTEM = 'You are FRC Banker AI — built by a 23-year banking professional at FinanceRateCalc.com. You answer mortgage and lending questions with precision, data, and clarity. You have access to 8 years of CFPB HMDA data (2018-2025). Key data: CrossCountry 6.3% FHA denial | Guild 7.3% | UWM 18% | Freedom 16.6% | MrCooper 23.4% | PennyMac 23.6% | Rocket 30.1% | loanDepot 34.5% | NewRez 43.5% | Wells 52.4%. DTI cliff at 44-45 for most lenders. CLTV-85 wall: Rocket +55pp jump, MrCooper +1.7pp. OFI (Overlay Friction Index) currently 81 — high friction market. Language rules: never say "avoid" or "do not apply" — say "higher denial rate historically" or "lower profile fit". Never promise approval. Tone: direct, broker-grade, data-driven. Scope: US mortgage and lending only.';
+var SYSTEM = 'You are the FRC Denial Navigator — built by a 23-year banking professional at FinanceRateCalc.com to help people who were just denied a mortgage, or are worried they will be. Most people talking to you are anxious, frustrated, or discouraged. Start by acknowledging that briefly and warmly (one short sentence, not generic — vary it, do not repeat the same opener every time), then get straight to substance. Never be saccharine or over-apologize. You have access to 8 years of CFPB HMDA data (2018-2025). Key data: CrossCountry 6.3% FHA denial | Guild 7.3% | UWM 18% | Freedom 16.6% | MrCooper 23.4% | PennyMac 23.6% | Rocket 30.1% | loanDepot 34.5% | NewRez 43.5% | Wells 52.4%. DTI cliff at 44-45 for most lenders. CLTV-85 wall: Rocket +55pp jump, MrCooper +1.7pp. OFI (Overlay Friction Index) currently 81 — high friction market. Core message worth reinforcing when relevant: denial is very often about which lender they picked, not a verdict on them as a borrower — the same profile can be denied at one lender and approved at another. Language rules: never say "avoid" or "do not apply" — say "higher denial rate historically" or "lower profile fit". Never promise approval. Tone: warm but direct, broker-grade, data-driven — a knowledgeable friend, not a corporate chatbot. Scope: US mortgage and lending only. If asked about anything outside mortgages/lending, gently redirect.';
 var chatHistory = [];
 var isThinking = false;
+var FREE_LIMIT = 5;
+
+function getTodayKey(){
+  var d = new Date();
+  return 'frc_dn_' + d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+}
+
+function getQuestionsUsed(){
+  return parseInt(localStorage.getItem(getTodayKey()) || '0', 10);
+}
+
+function incrementQuestionsUsed(){
+  var used = getQuestionsUsed() + 1;
+  localStorage.setItem(getTodayKey(), String(used));
+  return used;
+}
+
+function updateCounter(){
+  var used = getQuestionsUsed();
+  var remaining = Math.max(0, FREE_LIMIT - used);
+  var el = document.getElementById('freeCounter');
+  if(el){
+    el.textContent = remaining > 0
+      ? remaining + ' free question' + (remaining===1?'':'s') + ' left today'
+      : 'Free questions used for today';
+  }
+  var badge = document.getElementById('modelBadge');
+  if(badge) badge.textContent = remaining > 0 ? 'FRC Denial Navigator · ' + remaining + ' left' : 'FRC Denial Navigator';
+}
+
+function showUpgradePrompt(){
+  hideGreeting();
+  var box = document.getElementById('messages');
+  var div = document.createElement('div');
+  div.className = 'msg-ai';
+  div.innerHTML =
+    '<div class="ai-avatar">Z</div>'+
+    '<div class="ai-content">'+
+      '<div class="ai-name">FRC Denial Navigator</div>'+
+      '<div class="ai-text"><p>You\'ve used today\'s 5 free questions. I hope this helped — and I don\'t want to leave you stuck right when things are getting useful.</p><p>Zai for Brokers gives you unlimited questions, the full 11-lender denial-rate matrix, and a routing tool that tells you exactly which lender fits your profile best — for $49/mo, cancel anytime.</p></div>'+
+      '<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">'+
+        '<a href="https://ziyetis.gumroad.com/l/ixxar" target="_blank" rel="noopener" style="padding:10px 20px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13px;">Continue unlimited — $49/mo →</a>'+
+        '<a href="/zai-one.html" style="padding:10px 20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);border-radius:8px;font-weight:600;text-decoration:none;font-size:13px;">Try free routing tool →</a>'+
+      '</div>'+
+      '<div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:12px;">Your free questions reset tomorrow.</div>'+
+    '</div>';
+  box.appendChild(div);
+  scrollBottom();
+  if(typeof gtag!=='undefined') gtag('event','denial_nav_limit_hit');
+}
 
 function autoResize(el){
   el.style.height='auto';
@@ -267,6 +318,13 @@ async function sendMessage(){
   var text = input.value.trim();
   if(!text) return;
 
+  if(getQuestionsUsed() >= FREE_LIMIT){
+    input.value='';
+    input.style.height='auto';
+    showUpgradePrompt();
+    return;
+  }
+
   input.value='';
   input.style.height='auto';
   document.getElementById('sendBtn').disabled=true;
@@ -302,6 +360,8 @@ async function sendMessage(){
     }
 
     chatHistory.push({role:'assistant', content:reply});
+    incrementQuestionsUsed();
+    updateCounter();
     addAIMsg(reply);
     if(typeof gtag!=='undefined') gtag('event','banker_ai_response');
 
@@ -315,6 +375,8 @@ async function sendMessage(){
   document.getElementById('sendBtn').disabled=false;
   document.getElementById('msgInput').focus();
 }
+
+updateCounter();
 </script>
 
 <a href="/zai-one.html" style="position:fixed;bottom:80px;right:20px;z-index:999;display:flex;align-items:center;gap:7px;padding:9px 16px;background:rgba(200,168,75,0.12);border:1px solid rgba(200,168,75,0.3);color:#C8A84B;border-radius:20px;font-size:12px;font-weight:700;text-decoration:none;">⚡ Routing →</a>
