@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Denial Rate by State — Embeddable Chart</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:transparent;padding:4px;}
+.w{background:#060d1f;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px 22px 16px;max-width:560px;width:100%;}
+.head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2px;flex-wrap:wrap;gap:6px;}
+.title{font-size:14px;font-weight:700;color:#f3f1ea;}
+.yr{font-size:11px;color:#C8A84B;font-weight:600;}
+.sub{font-size:11px;color:rgba(243,241,234,0.4);margin-bottom:16px;}
+.bars{display:flex;flex-direction:column;gap:7px;}
+.row{display:grid;grid-template-columns:34px 1fr 44px;align-items:center;gap:8px;}
+.st{font-size:11px;font-weight:700;color:rgba(243,241,234,0.65);font-family:'Courier New',monospace;}
+.track{height:14px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;position:relative;}
+.fill{height:100%;border-radius:3px;}
+.val{font-size:11px;font-weight:700;color:rgba(243,241,234,0.8);text-align:right;}
+.divider{height:1px;background:rgba(255,255,255,0.06);margin:12px 0;}
+.foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:8px;}
+.src{font-size:10px;color:rgba(243,241,234,0.3);}
+.src a{color:#C8A84B;text-decoration:none;}
+.full{font-size:10px;font-weight:700;color:#000;background:#C8A84B;padding:5px 11px;border-radius:6px;text-decoration:none;white-space:nowrap;}
+.section-label{font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:rgba(243,241,234,0.3);margin:0 0 6px;}
+</style>
+</head>
+<body>
+<div class="w">
+  <div class="head">
+    <div class="title">Mortgage denial rate by state</div>
+    <div class="yr">2024</div>
+  </div>
+  <div class="sub">Conventional &amp; FHA purchase loans, CFPB HMDA data</div>
+
+  <div class="section-label">Highest denial rates</div>
+  <div class="bars" id="topBars"></div>
+
+  <div class="divider"></div>
+
+  <div class="section-label">Lowest denial rates</div>
+  <div class="bars" id="bottomBars"></div>
+
+  <div class="foot">
+    <div class="src">Source: <a href="https://financeratecalc.com/state-denial-rates.html" target="_blank" rel="noopener">FinanceRateCalc.com</a> · FFIEC HMDA</div>
+    <a class="full" href="https://financeratecalc.com/state-denial-rates.html" target="_blank" rel="noopener">See all 52 states →</a>
+  </div>
+</div>
+
+<script>
+const STATE_NAMES={HI:"Hawaii",LA:"Louisiana",MS:"Mississippi",FL:"Florida",WV:"West Virginia",SD:"South Dakota",WI:"Wisconsin",MN:"Minnesota",IA:"Iowa",ND:"North Dakota"};
+const TOP=[["HI",33.72],["LA",33.57],["MS",33.48],["FL",31.39],["WV",30.76]];
+const BOTTOM=[["SD",18.00],["WI",17.89],["MN",17.67],["IA",16.35],["ND",14.98]];
+const maxVal=34;
+
+function renderBars(data,el,color){
+  el.innerHTML=data.map(([code,rate])=>{
+    const w=Math.round((rate/maxVal)*100);
+    return `<div class="row">
+      <div class="st">${code}</div>
+      <div class="track"><div class="fill" style="width:${w}%;background:${color};"></div></div>
+      <div class="val">${rate.toFixed(2)}%</div>
+    </div>`;
+  }).join('');
+}
+renderBars(TOP, document.getElementById('topBars'), 'linear-gradient(90deg,#8a4530,#e8845a)');
+renderBars(BOTTOM, document.getElementById('bottomBars'), 'linear-gradient(90deg,#3a6b4a,#4ade80)');
+</script>
+</body>
+</html>
