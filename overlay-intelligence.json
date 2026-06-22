@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-06-15",
+  "last_updated": "2026-06-22",
   "methodology": "FRC Research \u2014 HMDA 2018-2024 + public guideline analysis",
   "ml_ready": false,
   "total_cases": 0,
@@ -8,14 +8,14 @@
     "PennyMac_Correspondent": {
       "full_name": "PennyMac Correspondent Group",
       "type": "nonbank_correspondent",
-      "source": "public_overlay_matrix",
+      "source": "pdf_pipeline",
       "source_url": "corr.pennymac.com/assets/documents/non-delegated-resources/",
-      "source_date": "2026-03-31",
-      "confidence_score": 0.9,
+      "source_date": "2026-06-22",
+      "confidence_score": 0.95,
       "fha": {
         "min_fico": 580,
         "min_fico_note": "Agency minimum \u2014 PennyMac follows FHA floor per overlay matrix",
-        "max_dti": 57,
+        "max_dti": 45,
         "max_dti_note": "With compensating factors per FHA 4000.1",
         "min_down_pct": 3.5,
         "reserves_months": 0,
@@ -26,7 +26,39 @@
         "frozen_credit_note": "All bureaus must be unfrozen \u2014 AUS rerun required",
         "disputed_derogatory_max": 1000,
         "disputed_derogatory_note": "Borrowers with $1000+ in disputed derogatory accounts require manual UW",
-        "installment_debt_note": "May not pay down to < 10 months to exclude from DTI"
+        "installment_debt_note": "May not pay down to < 10 months to exclude from DTI",
+        "manufactured_home_eligible": true,
+        "key_restrictions": [
+          "FHA Single Unit Condo approval ineligible",
+          "DELRAP approval ineligible",
+          "Manufactured homes minimum FICO 620 for purchase/rate-and-term, 640 for cash-out",
+          "Manufactured homes minimum FICO 640 for manually underwritten 203b",
+          "Business income decline greater than 20% makes borrower ineligible",
+          "Non-traditional credit not allowed",
+          "Joint loans not allowed",
+          "Multiple cash-out transactions within prior 12 months on same property not allowed",
+          "No simple refinances eligible",
+          "Energy Efficient Mortgages, Weatherization, Solar & Wind, and GPM ineligible",
+          "High-Cost Loans not purchased",
+          "Cooperatives, mobile homes, single-width manufactured homes, geodesic domes/berm homes ineligible",
+          "Working farms or ranches ineligible",
+          "All ARM terms not specifically listed ineligible",
+          "ARMs for manufactured homes ineligible",
+          "Maximum base loan amount $2,500,000",
+          "Manufactured homes: fee simple land ownership only, no leaseholds or land trusts",
+          "Manufactured homes: principal residence only",
+          "Manufactured homes: one-unit only",
+          "Manufactured homes: property condition C4 or better",
+          "Manufactured homes: cannot be moved or will move to another location",
+          "Manufactured homes: escrow holdbacks ineligible",
+          "For loans >$1.5M: primary mortgage/housing history 0x30x12 most recent 12 months required",
+          "Subject mortgage history 0x30 for last 3 payments required",
+          "Frozen credit bureaus must be unfrozen",
+          "Appraisal required if HVE/Clear Capital AVM does not return value or FSD >15%",
+          "External appraisal or full appraisal required for manufactured homes regardless of loan amount",
+          "For loan amounts >$2M: maximum 80% LTV/CLTV",
+          "Disaster inspections cannot be completed by lender"
+        ]
       },
       "conventional": {
         "min_fico": 620,
@@ -35,8 +67,8 @@
         "reserves_months": 2
       },
       "va": {
-        "min_fico": 580,
-        "max_dti": 41,
+        "min_fico": 700,
+        "max_dti": 45,
         "min_down_pct": 0,
         "cash_out_min_fico": 700,
         "cash_out_note": "Min 700 FICO for cash-out Type II transactions"
