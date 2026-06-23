@@ -254,41 +254,70 @@ function submitEmail(e){
   <h2 style="font-size:1.3rem;font-weight:700;margin:2rem 0 1rem">FRC Intelligence Tools</h2>
   <p>Built for mortgage brokers and informed borrowers. Every tool is grounded in verified CFPB public data — no estimates, no guesswork.</p>
 </section>
-<section style="max-width:860px;margin:0 auto;padding:0 24px 64px;">
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;">
-    <a href="/fha-state-map.html" style="background:rgba(15,30,60,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px;text-decoration:none;display:block;transition:transform 0.25s ease,border-color 0.25s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(59,130,246,0.5)'" onmouseout="this.style.transform='translateY(0)';this.style.borderColor='rgba(255,255,255,0.08)'">
-      <div style="width:40px;height:40px;border-radius:10px;background:rgba(59,130,246,0.15);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+<section style="max-width:900px;margin:0 auto;padding:0 20px 64px;">
+  <style>
+  .stat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+  .stat-card{border-radius:20px;padding:28px 24px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:transform 0.25s ease,box-shadow 0.25s ease;}
+  .stat-card:hover{transform:translateY(-5px);}
+  .stat-card-wide{border-radius:20px;padding:30px 32px;text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:24px;transition:transform 0.25s ease,box-shadow 0.25s ease;}
+  .stat-card-wide:hover{transform:translateY(-4px);}
+  .sc-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;flex-shrink:0;}
+  .sc-num{font-family:'Fraunces',serif;font-size:42px;font-weight:900;line-height:1;letter-spacing:-1.5px;margin-bottom:4px;}
+  .sc-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;}
+  .sc-desc{font-size:12px;line-height:1.65;}
+  .sc-arrow{font-size:18px;opacity:0.4;flex-shrink:0;}
+  @media(max-width:640px){
+    .stat-cards{grid-template-columns:1fr;}
+    .stat-card-wide{flex-direction:column;align-items:flex-start;}
+  }
+  </style>
+
+  <div class="stat-cards">
+    <!-- Kart 1: Location -->
+    <a href="/fha-state-map.html" class="stat-card" style="background:linear-gradient(145deg,rgba(15,30,70,0.95),rgba(10,20,50,0.98));border:1px solid rgba(59,130,246,0.2);box-shadow:0 8px 32px rgba(0,0,0,0.4);" onmouseover="this.style.boxShadow='0 20px 48px rgba(59,130,246,0.2)';this.style.borderColor='rgba(59,130,246,0.45)'" onmouseout="this.style.boxShadow='0 8px 32px rgba(0,0,0,0.4)';this.style.borderColor='rgba(59,130,246,0.2)'">
+      <div class="sc-icon" style="background:rgba(59,130,246,0.12);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
       </div>
-      <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:2px;">2×</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px;">Location matters</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;">Utah 16.9% vs DC 35.9% — same loan, opposite odds.</div>
+      <div class="sc-num" style="color:#3b82f6;">2×</div>
+      <div class="sc-title">Location matters</div>
+      <div class="sc-desc" style="color:rgba(255,255,255,0.4);">Utah 16.9% vs DC 35.9% — same loan, opposite odds. Your zip code is underwriting.</div>
     </a>
-    <a href="/lender-stress-index.html" style="background:rgba(40,15,20,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px;text-decoration:none;display:block;transition:transform 0.25s ease,border-color 0.25s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(233,69,96,0.5)'" onmouseout="this.style.transform='translateY(0)';this.style.borderColor='rgba(255,255,255,0.08)'">
-      <div style="width:40px;height:40px;border-radius:10px;background:rgba(233,69,96,0.15);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e94560" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+
+    <!-- Kart 2: Lender -->
+    <a href="/lender-stress-index.html" class="stat-card" style="background:linear-gradient(145deg,rgba(50,10,18,0.95),rgba(30,8,14,0.98));border:1px solid rgba(233,69,96,0.2);box-shadow:0 8px 32px rgba(0,0,0,0.4);" onmouseover="this.style.boxShadow='0 20px 48px rgba(233,69,96,0.2)';this.style.borderColor='rgba(233,69,96,0.45)'" onmouseout="this.style.boxShadow='0 8px 32px rgba(0,0,0,0.4)';this.style.borderColor='rgba(233,69,96,0.2)'">
+      <div class="sc-icon" style="background:rgba(233,69,96,0.12);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e94560" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       </div>
-      <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:2px;">8×</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px;">Lender matters more</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;">Same profile, same state — denial rate swings 8x by lender.</div>
+      <div class="sc-num" style="color:#e94560;">8×</div>
+      <div class="sc-title">Lender matters more</div>
+      <div class="sc-desc" style="color:rgba(255,255,255,0.4);">Denial rate swings 8x across lenders for the same profile. Who you apply with is the biggest variable.</div>
     </a>
-    <a href="/fha-lending-structure-research.html" style="background:rgba(10,30,20,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px;text-decoration:none;display:block;transition:transform 0.25s ease,border-color 0.25s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(34,197,94,0.5)'" onmouseout="this.style.transform='translateY(0)';this.style.borderColor='rgba(255,255,255,0.08)'">
-      <div style="width:40px;height:40px;border-radius:10px;background:rgba(34,197,94,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+
+    <!-- Kart 3: The proof -->
+    <a href="/fha-lending-structure-research.html" class="stat-card" style="background:linear-gradient(145deg,rgba(8,28,18,0.95),rgba(5,18,12,0.98));border:1px solid rgba(34,197,94,0.2);box-shadow:0 8px 32px rgba(0,0,0,0.4);" onmouseover="this.style.boxShadow='0 20px 48px rgba(34,197,94,0.15)';this.style.borderColor='rgba(34,197,94,0.4)'" onmouseout="this.style.boxShadow='0 8px 32px rgba(0,0,0,0.4)';this.style.borderColor='rgba(34,197,94,0.2)'">
+      <div class="sc-icon" style="background:rgba(34,197,94,0.1);">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
       </div>
-      <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:2px;">2.9M</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px;">The proof</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;">8 years of CFPB HMDA records — hierarchy never changed.</div>
-    </a>
-    <a href="/frc-banker-ai.html" style="background:rgba(30,20,5,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px;text-decoration:none;display:block;transition:transform 0.25s ease,border-color 0.25s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.borderColor='rgba(234,179,8,0.5)'" onmouseout="this.style.transform='translateY(0)';this.style.borderColor='rgba(255,255,255,0.08)'">
-      <div style="width:40px;height:40px;border-radius:10px;background:rgba(234,179,8,0.12);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      </div>
-      <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:2px;">Free</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:6px;">Already denied?</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;">Ask why. Denial Navigator walks you through it.</div>
+      <div class="sc-num" style="color:#22c55e;">2.9M</div>
+      <div class="sc-title">The proof</div>
+      <div class="sc-desc" style="color:rgba(255,255,255,0.4);">8 years of CFPB HMDA records. The hierarchy never changed — not once.</div>
     </a>
   </div>
+
+  <!-- Kart 4: Geniş, altta -->
+  <a href="/frc-banker-ai.html" class="stat-card-wide" style="background:linear-gradient(135deg,rgba(38,28,6,0.95),rgba(22,16,4,0.98));border:1px solid rgba(200,168,75,0.2);box-shadow:0 8px 32px rgba(0,0,0,0.4);" onmouseover="this.style.boxShadow='0 20px 48px rgba(200,168,75,0.15)';this.style.borderColor='rgba(200,168,75,0.45)'" onmouseout="this.style.boxShadow='0 8px 32px rgba(0,0,0,0.4)';this.style.borderColor='rgba(200,168,75,0.2)'">
+    <div style="display:flex;align-items:center;gap:20px;">
+      <div class="sc-icon" style="background:rgba(200,168,75,0.1);margin-bottom:0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C8A84B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div>
+        <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(200,168,75,0.5);font-weight:700;margin-bottom:6px;">Free · No signup</div>
+        <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px;margin-bottom:6px;">Already denied? Ask why — free.</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.6;max-width:500px;">The Denial Navigator walks you through your ECOA reason codes, explains what actually happened, and tells you if another lender would have approved you.</div>
+      </div>
+    </div>
+    <div style="font-size:28px;font-weight:900;color:#C8A84B;flex-shrink:0;">→</div>
+  </a>
 </section>
 
 <!-- GENOME PROJECT -->
