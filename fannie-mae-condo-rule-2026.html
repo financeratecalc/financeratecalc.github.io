@@ -76,7 +76,7 @@ h2{font-family:'Fraunces',serif;font-size:21px;font-weight:700;margin:36px 0 12p
 
 <div class="wrap">
   <div class="eyebrow">FRC Intelligence · Mortgage Policy Tracker · Updated June 24, 2026</div>
-  <h1>Fannie Mae's new condo rule arrives in <em>7 days.</em></h1>
+  <h1>Fannie Mae's new condo rule arrives in <em id="h1Days">7 days</em>.</h1>
   <div class="meta">
     Source: Fannie Mae Lender Letter LL-2026-03 (March 18, 2026), Freddie Mac Bulletin 2026-C
   </div>
@@ -84,9 +84,45 @@ h2{font-family:'Fraunces',serif;font-size:21px;font-weight:700;margin:36px 0 12p
   <p>On March 18, 2026, Fannie Mae and Freddie Mac quietly rewrote the rules for condo mortgages — not all at once, but in four separate phases stretched across nearly a year. The next one lands on <strong>July 1, 2026</strong>, and it directly affects whether your condo building still qualifies for a conventional loan.</p>
 
   <div class="countdown-box">
-    <div class="countdown-num">7 days</div>
-    <div class="countdown-label">Until the July 1, 2026 deductible cap takes effect</div>
+    <div class="countdown-num" id="cdNum">—</div>
+    <div class="countdown-label" id="cdLabel">Until the July 1, 2026 deductible cap takes effect</div>
   </div>
+  <script>
+  (function(){
+    var target = new Date('2026-07-01T00:00:00');
+    var now = new Date();
+    var diff = Math.ceil((target - now) / 86400000);
+    var num = document.getElementById('cdNum');
+    var lbl = document.getElementById('cdLabel');
+    if(diff > 0){
+      num.textContent = diff + (diff === 1 ? ' day' : ' days');
+      lbl.textContent = 'Until the July 1, 2026 deductible cap takes effect';
+      num.style.color = '#e8845a';
+    } else if(diff === 0){
+      num.textContent = 'Today';
+      lbl.textContent = 'The July 1, 2026 deductible cap takes effect today';
+      num.style.color = '#e8845a';
+    } else {
+      num.textContent = Math.abs(diff) + (Math.abs(diff) === 1 ? ' day' : ' days') + ' ago';
+      lbl.textContent = 'The July 1, 2026 deductible cap is now in effect';
+      num.style.color = '#4ade80';
+    }
+    // H1 güncelle
+    var h1 = document.getElementById('h1Days');
+    if(h1){
+      if(diff > 0) h1.textContent = diff + (diff === 1 ? ' day' : ' days');
+      else if(diff === 0) h1.textContent = 'today';
+      else h1.textContent = 'effect';
+    }
+    // Timeline güncelle
+    var tl = document.getElementById('tlDays');
+    if(tl){
+      if(diff > 0) tl.textContent = diff + (diff === 1 ? ' day away' : ' days away');
+      else if(diff === 0) tl.textContent = 'Today';
+      else tl.textContent = 'Now in effect';
+    }
+  })();
+  </script>
 
   <p>This isn't one rule — it's a phased rollout, similar in structure to how other major policy changes get staged in over time rather than flipped on overnight. Each phase hits a different part of the condo financing pipeline.</p>
 
@@ -98,7 +134,7 @@ h2{font-family:'Fraunces',serif;font-size:21px;font-weight:700;margin:36px 0 12p
     </div>
     <div class="tl-item">
       <div class="tl-date now">Jul 1, 2026</div>
-      <div class="tl-content"><strong>7 days away</strong>Maximum per-unit deductible on master property insurance policies capped at $50,000. If a building's policy exceeds that, the project can lose its mortgage eligibility. Individual unit owners must carry an HO-6 policy if the master policy has a per-unit deductible.</div>
+      <div class="tl-content"><strong id="tlDays">7 days away</strong>Maximum per-unit deductible on master property insurance policies capped at $50,000. If a building's policy exceeds that, the project can lose its mortgage eligibility. Individual unit owners must carry an HO-6 policy if the master policy has a per-unit deductible.</div>
     </div>
     <div class="tl-item">
       <div class="tl-date">Aug 3, 2026</div>
