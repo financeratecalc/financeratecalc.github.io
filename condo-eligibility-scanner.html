@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Condo Eligibility Scanner — Fannie Mae July 1 Rule | FRC Intelligence</title>
+<meta name="description" content="Instant Fannie Mae condo eligibility check. Enter your building's insurance details — we calculate per-unit deductible and tell you if your condo qualifies for conventional financing after July 1, 2026.">
+<meta property="og:title" content="Condo Eligibility Scanner — Does Your Building Pass the July 1 Test?">
+<meta property="og:description" content="Free tool. Enter HOA insurance details, get instant eligibility status + client-ready summary. Built on Fannie Mae LL-2026-03.">
+<meta property="og:url" content="https://financeratecalc.com/condo-eligibility-scanner.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FinanceRateCalc">
+<meta property="og:image" content="https://financeratecalc.com/genome-og.png">
+<link rel="canonical" href="https://financeratecalc.com/condo-eligibility-scanner.html">
+<link rel="icon" href="/favicon.ico">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.7;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.97);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:720px;margin:0 auto;padding:52px 24px 100px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,46px);font-weight:900;line-height:1.08;letter-spacing:-1px;margin-bottom:14px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.sub{font-size:15px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:40px;}
+
+/* FORM */
+.form-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:32px;}
+.form-section{margin-bottom:28px;}
+.form-section-title{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:700;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.field{margin-bottom:18px;}
+label{display:block;font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:6px;}
+.label-hint{font-size:11px;color:rgba(255,255,255,0.3);font-weight:400;margin-left:6px;}
+input,select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;font-size:14px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;}
+input:focus,select:focus{border-color:rgba(200,168,75,0.5);}
+input::placeholder{color:rgba(255,255,255,0.2);}
+select option{background:#0d1a3a;color:#fff;}
+.input-prefix{position:relative;}
+.input-prefix span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.3);font-size:14px;pointer-events:none;}
+.input-prefix input{padding-left:28px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.tip{font-size:11px;color:rgba(255,255,255,0.25);margin-top:5px;line-height:1.5;}
+
+/* BUTTON */
+.btn{width:100%;padding:16px;background:#C8A84B;color:#000;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;transition:opacity 0.2s;margin-top:8px;font-family:'DM Sans',sans-serif;}
+.btn:hover{opacity:0.9;}
+.btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* RESULT */
+.result{display:none;margin-top:28px;border-radius:18px;overflow:hidden;}
+.result-header{padding:24px 28px;}
+.result-status{font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+.result-verdict{font-family:'Fraunces',serif;font-size:28px;font-weight:900;line-height:1.1;margin-bottom:6px;}
+.result-body{padding:24px 28px;background:rgba(0,0,0,0.2);}
+.result-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;}
+.result-row:last-child{border-bottom:none;}
+.result-label{color:rgba(255,255,255,0.45);}
+.result-val{font-weight:700;font-family:'DM Mono',monospace;font-size:13px;}
+.result-actions{padding:20px 28px;display:flex;gap:10px;flex-wrap:wrap;}
+.btn-outline{padding:10px 20px;background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:9px;color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color 0.2s;}
+.btn-outline:hover{border-color:rgba(200,168,75,0.4);color:#fff;}
+.btn-print{padding:10px 20px;background:#C8A84B;border:none;border-radius:9px;color:#000;font-size:13px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+/* ELIGIBLE */
+.eligible .result-header{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);}
+.eligible .result-status{color:#22c55e;}
+.eligible .result-verdict{color:#fff;}
+.eligible .result-body{border:1px solid rgba(34,197,94,0.1);border-top:none;}
+.eligible .result-actions{border:1px solid rgba(34,197,94,0.1);border-top:none;border-radius:0 0 18px 18px;}
+
+/* INELIGIBLE */
+.ineligible .result-header{background:rgba(233,69,96,0.08);border:1px solid rgba(233,69,96,0.2);}
+.ineligible .result-status{color:#e94560;}
+.ineligible .result-verdict{color:#fff;}
+.ineligible .result-body{border:1px solid rgba(233,69,96,0.1);border-top:none;}
+.ineligible .result-actions{border:1px solid rgba(233,69,96,0.1);border-top:none;border-radius:0 0 18px 18px;}
+
+/* BORDERLINE */
+.borderline .result-header{background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.2);}
+.borderline .result-status{color:#eab308;}
+.borderline .result-verdict{color:#fff;}
+.borderline .result-body{border:1px solid rgba(234,179,8,0.1);border-top:none;}
+.borderline .result-actions{border:1px solid rgba(234,179,8,0.1);border-top:none;border-radius:0 0 18px 18px;}
+
+.warning-box{background:rgba(234,179,8,0.06);border:1px solid rgba(234,179,8,0.2);border-radius:10px;padding:14px 16px;margin-top:14px;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;}
+.warning-box strong{color:#eab308;}
+
+/* HOW IT WORKS */
+.how{margin-top:52px;}
+.how h2{font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:20px;}
+.step{display:flex;gap:16px;margin-bottom:18px;}
+.step-num{width:32px;height:32px;border-radius:8px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#C8A84B;flex-shrink:0;}
+.step-text{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;padding-top:4px;}
+.step-text strong{color:#fff;}
+
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:48px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);}
+.foot a{color:rgba(255,255,255,0.3);text-decoration:none;}
+
+/* PRINT */
+#printArea{display:none;}
+@media print{
+  body *{display:none;}
+  #printArea{display:block !important;font-family:sans-serif;color:#000;padding:40px;}
+  #printArea h2{font-size:22px;margin-bottom:8px;}
+  #printArea .pr{margin:8px 0;font-size:14px;}
+}
+@media(max-width:560px){
+  .field-row{grid-template-columns:1fr;}
+  .form-card{padding:20px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/tools.html" style="font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;">← All Tools</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Tool · Fannie Mae LL-2026-03</div>
+  <h1>Condo <em>Eligibility</em><br>Scanner</h1>
+  <p class="sub">Enter your building's insurance details. We calculate the per-unit deductible and tell you if the condo qualifies for conventional financing under Fannie Mae's July 1, 2026 rule — instantly.</p>
+
+  <div class="form-card">
+    <div class="form-section">
+      <div class="form-section-title">Building Info</div>
+      <div class="field">
+        <label>Building / Project Name <span class="label-hint">optional</span></label>
+        <input type="text" id="buildingName" placeholder="e.g. Ocean View Towers">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Number of Units</label>
+          <input type="number" id="numUnits" placeholder="e.g. 48" min="1">
+        </div>
+        <div class="field">
+          <label>Building Year <span class="label-hint">optional</span></label>
+          <input type="number" id="buildYear" placeholder="e.g. 1998" min="1900" max="2026">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Master Insurance Policy</div>
+      <div class="field">
+        <label>Total Insurable Value (Replacement Cost)</label>
+        <div class="input-prefix"><span>$</span><input type="number" id="insurableValue" placeholder="e.g. 8500000" min="0"></div>
+        <div class="tip">Found on the declarations page of the master policy — labeled "replacement cost" or "insurable value"</div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Deductible Type</label>
+          <select id="deductibleType">
+            <option value="flat">Flat dollar amount</option>
+            <option value="percent">Percentage of insured value</option>
+          </select>
+        </div>
+        <div class="field" id="deductibleFlatField">
+          <label>Deductible Amount</label>
+          <div class="input-prefix"><span>$</span><input type="number" id="deductibleFlat" placeholder="e.g. 500000" min="0"></div>
+        </div>
+        <div class="field" id="deductiblePctField" style="display:none;">
+          <label>Deductible Percentage</label>
+          <div class="input-prefix"><span>%</span><input type="number" id="deductiblePct" placeholder="e.g. 5" min="0" max="100" step="0.1"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>HO-6 Policy Required? <span class="label-hint">does master have per-unit deductible language?</span></label>
+        <select id="ho6">
+          <option value="unknown">Not sure</option>
+          <option value="yes">Yes — master has per-unit deductible</option>
+          <option value="no">No — master covers all units</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Loan Info <span class="label-hint" style="text-transform:none;letter-spacing:0;">(optional — for summary report)</span></div>
+      <div class="field-row">
+        <div class="field">
+          <label>Loan Type</label>
+          <select id="loanType">
+            <option value="conventional">Conventional (Fannie/Freddie)</option>
+            <option value="fha">FHA</option>
+            <option value="va">VA</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Purchase Price</label>
+          <div class="input-prefix"><span>$</span><input type="number" id="purchasePrice" placeholder="e.g. 425000" min="0"></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="calculate()">Check Eligibility →</button>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result" id="result">
+    <div class="result-header">
+      <div class="result-status" id="resultStatus"></div>
+      <div class="result-verdict" id="resultVerdict"></div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.45);margin-top:6px;" id="resultSub"></div>
+    </div>
+    <div class="result-body">
+      <div class="result-row">
+        <span class="result-label">Per-unit deductible</span>
+        <span class="result-val" id="rPerUnit"></span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Fannie Mae cap (July 1, 2026)</span>
+        <span class="result-val" style="color:#C8A84B;">$50,000</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Total deductible (building)</span>
+        <span class="result-val" id="rTotalDed"></span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Insurable value</span>
+        <span class="result-val" id="rInsVal"></span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">Units</span>
+        <span class="result-val" id="rUnits"></span>
+      </div>
+      <div class="result-row" id="rHO6Row">
+        <span class="result-label">HO-6 requirement</span>
+        <span class="result-val" id="rHO6"></span>
+      </div>
+      <div class="result-row" id="rLoanRow">
+        <span class="result-label">Loan type assessed</span>
+        <span class="result-val" id="rLoan"></span>
+      </div>
+      <div id="warningBox"></div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-print" onclick="printReport()">Print / Save PDF</button>
+      <button class="btn-outline" onclick="resetForm()">Run another building</button>
+      <a href="/fannie-mae-condo-rule-2026.html" style="text-decoration:none;"><button class="btn-outline">Full rule breakdown →</button></a>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how">
+    <h2>How the calculation works</h2>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text"><strong>We calculate total deductible.</strong> If you entered a percentage, we multiply it by the insurable value. If flat dollar, we use it directly.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text"><strong>We divide by number of units.</strong> Fannie Mae's rule is a per-unit cap — the total deductible divided equally across all units must stay under $50,000.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text"><strong>We compare to the $50,000 cap.</strong> Under = eligible. Over = building loses conventional financing eligibility on July 1, 2026.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text"><strong>Borderline zone: $40K–$50K.</strong> Buildings within 20% of the cap should verify with the HOA's insurance broker — policy renewals, endorsements, or minor adjustments can push them over.</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    Source: Fannie Mae Lender Letter LL-2026-03 (March 18, 2026). This tool provides an estimate based on publicly available guidelines. Confirm eligibility with your lender or HOA insurance broker — guidelines may be updated by Fannie Mae after publication. Not financial or legal advice.<br><br>
+    <a href="/tools.html">← All Tools</a> &nbsp;·&nbsp;
+    <a href="/fannie-mae-condo-rule-2026.html">Full Rule Breakdown</a> &nbsp;·&nbsp;
+    <a href="/zai-one.html">Zai Lender Routing</a> &nbsp;·&nbsp;
+    <a href="/terms.html">Terms</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </div>
+</div>
+
+<!-- PRINT AREA -->
+<div id="printArea">
+  <h2 id="prTitle">Condo Eligibility Report — FinanceRateCalc</h2>
+  <p style="color:#666;font-size:12px;margin-bottom:20px;">Generated <span id="prDate"></span> · financeratecalc.com/condo-eligibility-scanner.html</p>
+  <p class="pr"><strong>Building:</strong> <span id="prBuilding"></span></p>
+  <p class="pr"><strong>Result:</strong> <span id="prResult"></span></p>
+  <p class="pr"><strong>Per-unit deductible:</strong> <span id="prPerUnit"></span></p>
+  <p class="pr"><strong>Fannie Mae cap:</strong> $50,000</p>
+  <p class="pr"><strong>Total deductible:</strong> <span id="prTotalDed"></span></p>
+  <p class="pr"><strong>Insurable value:</strong> <span id="prInsVal"></span></p>
+  <p class="pr"><strong>Number of units:</strong> <span id="prUnits"></span></p>
+  <p class="pr"><strong>HO-6 required:</strong> <span id="prHO6"></span></p>
+  <p class="pr"><strong>Loan type:</strong> <span id="prLoan"></span></p>
+  <p style="margin-top:24px;font-size:11px;color:#999;">Source: Fannie Mae LL-2026-03. This report is for informational purposes only — confirm with your lender or HOA insurance broker. Not legal or financial advice.</p>
+</div>
+
+<script>
+// Deductible type toggle
+document.getElementById('deductibleType').addEventListener('change', function(){
+  var isPct = this.value === 'percent';
+  document.getElementById('deductibleFlatField').style.display = isPct ? 'none' : 'block';
+  document.getElementById('deductiblePctField').style.display = isPct ? 'block' : 'none';
+});
+
+function fmt(n){
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+
+function calculate(){
+  var units = parseFloat(document.getElementById('numUnits').value);
+  var insVal = parseFloat(document.getElementById('insurableValue').value);
+  var dedType = document.getElementById('deductibleType').value;
+  var dedFlat = parseFloat(document.getElementById('deductibleFlat').value) || 0;
+  var dedPct = parseFloat(document.getElementById('deductiblePct').value) || 0;
+  var ho6 = document.getElementById('ho6').value;
+  var loanType = document.getElementById('loanType').value;
+  var buildingName = document.getElementById('buildingName').value || 'Subject Property';
+  var price = parseFloat(document.getElementById('purchasePrice').value) || 0;
+
+  if(!units || units < 1){ alert('Please enter number of units.'); return; }
+  if(!insVal || insVal < 1){ alert('Please enter insurable value.'); return; }
+  if(dedType === 'flat' && (!dedFlat || dedFlat < 1)){ alert('Please enter deductible amount.'); return; }
+  if(dedType === 'percent' && (!dedPct || dedPct < 0)){ alert('Please enter deductible percentage.'); return; }
+
+  var totalDed = dedType === 'percent' ? (dedPct / 100) * insVal : dedFlat;
+  var perUnit = totalDed / units;
+  var CAP = 50000;
+  var BORDERLINE = 40000;
+
+  // Determine status
+  var status, verdict, sub, cls;
+  if(perUnit <= BORDERLINE){
+    status = '✅ ELIGIBLE';
+    verdict = 'This building passes the July 1 test.';
+    sub = 'Per-unit deductible is well under the $50,000 cap. Conventional financing should not be affected by this rule.';
+    cls = 'eligible';
+  } else if(perUnit <= CAP){
+    status = '⚠️ BORDERLINE — VERIFY';
+    verdict = 'Close to the cap. Confirm before closing.';
+    sub = 'Per-unit deductible is within 20% of the $50,000 limit. Any policy change, renewal, or minor adjustment could push the building over. Verify with HOA's insurance broker.';
+    cls = 'borderline';
+  } else {
+    status = '🚫 INELIGIBLE — FINANCING AT RISK';
+    verdict = 'This building exceeds the $50,000 cap.';
+    sub = 'As of July 1, 2026, conventional loans (Fannie Mae/Freddie Mac) cannot be originated on units in this building unless the master policy deductible is reduced. FHA and VA have separate eligibility rules.';
+    cls = 'ineligible';
+  }
+
+  // HO-6 note
+  var ho6Text = ho6 === 'yes' ? 'Required (master has per-unit deductible language)' : ho6 === 'no' ? 'Not required (master covers all units)' : 'Verify with HOA — unknown';
+
+  // Loan note
+  var loanNote = {
+    'conventional': 'Conventional (Fannie Mae/Freddie Mac) — directly affected by this rule',
+    'fha': 'FHA — separate HRAP/DELRAP approval process; this rule does not directly apply',
+    'va': 'VA — follows VA condo approval list; this rule does not directly apply'
+  }[loanType];
+
+  // Warning boxes
+  var warnings = '';
+  if(perUnit > CAP && loanType !== 'conventional'){
+    warnings = '<div class="warning-box"><strong>Note:</strong> Since you selected ' + (loanType.toUpperCase()) + ', this specific Fannie Mae rule may not apply directly. However, FHA and VA have their own condo approval requirements — verify with your lender.</div>';
+  }
+  if(perUnit <= CAP && perUnit > BORDERLINE){
+    warnings += '<div class="warning-box" style="margin-top:10px;"><strong>Action needed:</strong> Request written confirmation from the HOA that the policy will not change before or at renewal. Get the current declarations page dated after July 1.</div>';
+  }
+  if(perUnit > CAP){
+    var neededTotalDed = CAP * units;
+    var neededPct = dedType === 'percent' ? ((neededTotalDed / insVal) * 100).toFixed(2) : null;
+    warnings += '<div class="warning-box" style="margin-top:10px;"><strong>To become eligible:</strong> Total deductible must be reduced to ' + fmt(neededTotalDed) + ' or less (' + (neededPct ? neededPct + '% of insured value' : 'across all ' + Math.round(units) + ' units') + '). HOA must contact their insurance broker to adjust the master policy.</div>';
+  }
+
+  // Populate result
+  document.getElementById('resultStatus').textContent = status;
+  document.getElementById('resultVerdict').textContent = verdict;
+  document.getElementById('resultSub').textContent = sub;
+  document.getElementById('rPerUnit').textContent = fmt(perUnit);
+  document.getElementById('rPerUnit').style.color = perUnit > CAP ? '#e94560' : perUnit > BORDERLINE ? '#eab308' : '#22c55e';
+  document.getElementById('rTotalDed').textContent = fmt(totalDed);
+  document.getElementById('rInsVal').textContent = fmt(insVal);
+  document.getElementById('rUnits').textContent = Math.round(units) + ' units';
+  document.getElementById('rHO6').textContent = ho6Text;
+  document.getElementById('rLoan').textContent = loanNote;
+  document.getElementById('warningBox').innerHTML = warnings;
+
+  var resultEl = document.getElementById('result');
+  resultEl.className = 'result ' + cls;
+  resultEl.style.display = 'block';
+  resultEl.scrollIntoView({behavior:'smooth', block:'start'});
+
+  // Print area
+  document.getElementById('prTitle').textContent = 'Condo Eligibility Report — ' + buildingName;
+  document.getElementById('prDate').textContent = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('prBuilding').textContent = buildingName;
+  document.getElementById('prResult').textContent = status + ' · ' + verdict;
+  document.getElementById('prPerUnit').textContent = fmt(perUnit);
+  document.getElementById('prTotalDed').textContent = fmt(totalDed);
+  document.getElementById('prInsVal').textContent = fmt(insVal);
+  document.getElementById('prUnits').textContent = Math.round(units) + ' units';
+  document.getElementById('prHO6').textContent = ho6Text;
+  document.getElementById('prLoan').textContent = loanType.toUpperCase();
+
+  // GA event
+  if(typeof gtag !== 'undefined'){
+    gtag('event', 'condo_scan', {eligibility: cls, per_unit: Math.round(perUnit)});
+  }
+}
+
+function printReport(){
+  document.getElementById('printArea').style.display = 'block';
+  window.print();
+  setTimeout(function(){ document.getElementById('printArea').style.display = 'none'; }, 1000);
+}
+
+function resetForm(){
+  document.getElementById('result').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
