@@ -99,6 +99,34 @@ select option{background:#0d1a3a;color:#fff;}
 .foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:48px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);}
 .foot a{color:rgba(255,255,255,0.3);text-decoration:none;}
 
+/* PRO BADGE */
+.pro-badge{display:inline-block;background:#C8A84B;color:#000;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px;letter-spacing:0.08em;vertical-align:middle;margin-left:6px;}
+
+/* EMAIL MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:#0d1a3a;border:1px solid rgba(200,168,75,0.3);border-radius:18px;padding:32px;width:100%;max-width:460px;margin:20px;}
+.modal h3{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:6px;}
+.modal p{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:20px;line-height:1.6;}
+.modal input,.modal textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;font-size:13px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:12px;}
+.modal textarea{height:80px;resize:none;}
+.modal input:focus,.modal textarea:focus{border-color:rgba(200,168,75,0.5);}
+.modal-btns{display:flex;gap:10px;}
+.modal-send{flex:1;padding:12px;background:#C8A84B;color:#000;border:none;border-radius:9px;font-size:13px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.modal-cancel{padding:12px 18px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:9px;color:rgba(255,255,255,0.4);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.modal-success{display:none;text-align:center;padding:20px 0;}
+.modal-success .icon{font-size:40px;margin-bottom:12px;}
+.modal-success p{color:rgba(255,255,255,0.6);font-size:14px;}
+
+/* PRO UPSELL */
+.pro-upsell{background:rgba(200,168,75,0.04);border:1px solid rgba(200,168,75,0.2);border-radius:14px;padding:20px 24px;margin-top:16px;}
+.pro-upsell h4{font-family:'Fraunces',serif;font-size:18px;font-weight:900;margin-bottom:6px;}
+.pro-upsell p{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:14px;line-height:1.6;}
+.pro-features{list-style:none;margin-bottom:16px;}
+.pro-features li{font-size:13px;color:rgba(255,255,255,0.6);padding:4px 0;padding-left:18px;position:relative;}
+.pro-features li::before{content:"✓";position:absolute;left:0;color:#C8A84B;font-weight:700;}
+.btn-pro{display:inline-block;padding:11px 24px;background:#C8A84B;color:#000;border:none;border-radius:9px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;font-family:'DM Sans',sans-serif;}
+
 /* PRINT */
 #printArea{display:none;}
 @media print{
@@ -238,8 +266,23 @@ select option{background:#0d1a3a;color:#fff;}
     </div>
     <div class="result-actions">
       <button class="btn-print" onclick="printReport()">Print / Save PDF</button>
+      <button class="btn-outline" onclick="openEmailModal()">📧 Email to HOA <span class="pro-badge">PRO</span></button>
       <button class="btn-outline" onclick="resetForm()">Run another building</button>
       <a href="/fannie-mae-condo-rule-2026.html" style="text-decoration:none;"><button class="btn-outline">Full rule breakdown →</button></a>
+    </div>
+
+    <!-- PRO UPSELL -->
+    <div class="pro-upsell" id="proUpsell" style="display:none;">
+      <h4>🏢 FRC Pro — Condo Intelligence</h4>
+      <p>Upgrade to send client-ready eligibility reports directly to HOA managers and boards — with your branding.</p>
+      <ul class="pro-features">
+        <li>Email report directly to HOA / property manager</li>
+        <li>Branded PDF with your name + contact info</li>
+        <li>Bulk scan — multiple buildings at once</li>
+        <li>Save scan history + track building changes</li>
+        <li>Priority alerts when Fannie Mae updates eligibility rules</li>
+      </ul>
+      <a href="/pricing.html" class="btn-pro">Get Pro — $49/mo →</a>
     </div>
   </div>
 
@@ -413,5 +456,104 @@ function resetForm(){
   window.scrollTo({top:0, behavior:'smooth'});
 }
 </script>
+
+<!-- EMAIL MODAL -->
+<div class="modal-overlay" id="emailModal">
+  <div class="modal">
+    <div id="modalForm">
+      <h3>Email Report to HOA</h3>
+      <p>Send a client-ready eligibility summary directly to the HOA manager or board member. They'll know exactly what needs to change — and why.</p>
+      <input type="text" id="emailFrom" placeholder="Your name (e.g. Sarah Johnson, ABC Realty)">
+      <input type="email" id="emailTo" placeholder="HOA manager email address">
+      <input type="text" id="emailHOA" placeholder="HOA / Building name (optional)">
+      <textarea id="emailNote" placeholder="Add a personal note (optional)..."></textarea>
+      <div class="modal-btns">
+        <button class="modal-send" onclick="sendEmail()">Send Report →</button>
+        <button class="modal-cancel" onclick="closeEmailModal()">Cancel</button>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.2);text-align:center;">
+        This is a Pro feature. <a href="/pricing.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Upgrade to send →</a>
+      </div>
+    </div>
+    <div class="modal-success" id="modalSuccess">
+      <div class="icon">✅</div>
+      <h3 style="margin-bottom:8px;">Report sent!</h3>
+      <p>The HOA manager will receive the eligibility summary with your contact info. Follow up in 48 hours.</p>
+      <button class="modal-cancel" onclick="closeEmailModal()" style="margin-top:16px;width:100%;">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openEmailModal(){
+  // Pro check — şimdilik demo olarak çalışır, gerçek ödeme pricing.html'de
+  document.getElementById('emailModal').classList.add('open');
+  document.getElementById('modalForm').style.display='block';
+  document.getElementById('modalSuccess').style.display='none';
+  document.getElementById('proUpsell').style.display='block';
+}
+function closeEmailModal(){
+  document.getElementById('emailModal').classList.remove('open');
+}
+function sendEmail(){
+  var from = document.getElementById('emailFrom').value;
+  var to = document.getElementById('emailTo').value;
+  if(!from || !to){ alert('Please enter your name and HOA email address.'); return; }
+
+  // Mailto fallback (Pro'da API ile gönderilecek)
+  var subject = encodeURIComponent('Condo Eligibility Report — ' + (document.getElementById('buildingName').value || 'Subject Property'));
+  var perUnit = document.getElementById('rPerUnit').textContent;
+  var verdict = document.getElementById('resultVerdict').textContent;
+  var status = document.getElementById('resultStatus').textContent;
+  var note = document.getElementById('emailNote').value;
+
+  var body = encodeURIComponent(
+    'Hi,
+
+I ran your building through the Fannie Mae July 1, 2026 condo eligibility scanner and wanted to share the results.
+
+' +
+    'RESULT: ' + status + '
+' +
+    verdict + '
+
+' +
+    'Per-unit deductible: ' + perUnit + '
+' +
+    'Fannie Mae cap: $50,000
+
+' +
+    (note ? 'Note: ' + note + '
+
+' : '') +
+    'For the full breakdown and what this means for your building's financing eligibility, visit:
+' +
+    'https://financeratecalc.com/condo-eligibility-scanner.html
+
+' +
+    'Source: Fannie Mae Lender Letter LL-2026-03 (March 18, 2026)
+
+' +
+    'Best,
+' + from
+  );
+
+  window.location.href = 'mailto:' + to + '?subject=' + subject + '&body=' + body;
+
+  setTimeout(function(){
+    document.getElementById('modalForm').style.display='none';
+    document.getElementById('modalSuccess').style.display='block';
+    if(typeof gtag !== 'undefined'){
+      gtag('event','email_report_sent',{method:'mailto'});
+    }
+  }, 800);
+}
+
+// Modal dışına tıklayınca kapat
+document.getElementById('emailModal').addEventListener('click', function(e){
+  if(e.target === this) closeEmailModal();
+});
+</script>
+
 </body>
 </html>
