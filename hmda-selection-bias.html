@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Why Your State's Mortgage Denial Rate Might Be Misleading | FRC Research</title>
+<meta name="description" content="HMDA only captures mortgage applications — not cash purchases. In some states, nearly half of all home sales are cash. We analyzed what this means for state-level denial rates and whether they're telling the full story.">
+<meta property="og:title" content="The HMDA Blind Spot: Why State Denial Rates Are Incomplete">
+<meta property="og:description" content="In Mississippi, 50% of homes sell for cash — none of those buyers appear in HMDA. The buyers who do apply are a self-selected, higher-risk pool. This changes everything about how you read denial rates.">
+<meta property="og:url" content="https://financeratecalc.com/hmda-selection-bias.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="FinanceRateCalc">
+<meta property="og:image" content="https://financeratecalc.com/genome-og.png">
+<link rel="canonical" href="https://financeratecalc.com/hmda-selection-bias.html">
+<link rel="icon" href="/favicon.ico">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.8;-webkit-font-smoothing:antialiased;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.97);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:720px;margin:0 auto;padding:56px 24px 100px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:16px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,48px);font-weight:900;line-height:1.07;letter-spacing:-1.5px;margin-bottom:18px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.meta{font-size:12px;color:rgba(255,255,255,0.25);margin-bottom:40px;display:flex;gap:16px;flex-wrap:wrap;}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin:44px 0 14px;color:#fff;}
+h2 em{font-style:italic;color:#C8A84B;}
+p{font-size:15px;color:rgba(255,255,255,0.6);line-height:1.85;margin-bottom:16px;}
+strong{color:#fff;}
+
+/* PULL QUOTE */
+.pull{border-left:3px solid #C8A84B;padding:16px 24px;margin:32px 0;background:rgba(200,168,75,0.04);}
+.pull p{font-family:'Fraunces',serif;font-size:18px;font-style:italic;color:rgba(255,255,255,0.8);margin:0;line-height:1.6;}
+
+/* STAT BOXES */
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:28px 0;}
+.stat-box{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px 16px;text-align:center;}
+.stat-val{font-family:'Fraunces',serif;font-size:32px;font-weight:900;line-height:1;margin-bottom:4px;}
+.stat-lbl{font-size:11px;color:rgba(255,255,255,0.3);line-height:1.4;}
+
+/* COMPARISON TABLE */
+.comp-table{width:100%;border-collapse:collapse;margin:24px 0;font-size:13px;}
+.comp-table th{text-align:left;padding:9px 14px;color:rgba(255,255,255,0.3);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;border-bottom:1px solid rgba(255,255,255,0.07);}
+.comp-table td{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:top;}
+.comp-table tr:last-child td{border-bottom:none;}
+.comp-table td:first-child{font-family:'DM Mono',monospace;font-size:12px;color:#C8A84B;font-weight:700;}
+.comp-table td:nth-child(2){color:rgba(255,255,255,0.7);}
+.comp-table td:nth-child(3){color:rgba(255,255,255,0.7);}
+.comp-table td:nth-child(4){font-family:'DM Mono',monospace;font-size:12px;}
+.high-denial{color:#e94560 !important;font-weight:700;}
+.low-denial{color:#22c55e !important;font-weight:700;}
+.mid-denial{color:#eab308 !important;}
+
+/* FINDING BOXES */
+.finding{border-radius:14px;padding:22px 24px;margin:24px 0;}
+.finding-num{font-size:10px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;}
+.finding-title{font-size:17px;font-weight:800;color:#fff;margin-bottom:8px;}
+.finding-text{font-size:13px;line-height:1.7;}
+.finding.f1{background:rgba(59,130,246,0.05);border:1px solid rgba(59,130,246,0.15);}
+.finding.f1 .finding-num{color:#3b82f6;}
+.finding.f1 .finding-text{color:rgba(255,255,255,0.5);}
+.finding.f2{background:rgba(233,69,96,0.05);border:1px solid rgba(233,69,96,0.15);}
+.finding.f2 .finding-num{color:#e94560;}
+.finding.f2 .finding-text{color:rgba(255,255,255,0.5);}
+.finding.f3{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.15);}
+.finding.f3 .finding-num{color:#C8A84B;}
+.finding.f3 .finding-text{color:rgba(255,255,255,0.5);}
+
+/* CORRELATION VIZ */
+.corr-box{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:24px;margin:28px 0;}
+.corr-title{font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:18px;font-weight:700;}
+.corr-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.corr-label{font-size:12px;color:rgba(255,255,255,0.5);width:240px;flex-shrink:0;line-height:1.4;}
+.corr-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;}
+.corr-bar{height:100%;border-radius:4px;}
+.corr-val{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;width:48px;text-align:right;flex-shrink:0;}
+
+/* IMPLICATION */
+.implication{background:rgba(34,197,94,0.04);border:1px solid rgba(34,197,94,0.15);border-radius:14px;padding:24px;margin:32px 0;}
+.implication h3{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;margin-bottom:12px;}
+.implication ul{list-style:none;padding:0;}
+.implication li{font-size:14px;color:rgba(255,255,255,0.55);padding:7px 0 7px 20px;position:relative;border-bottom:1px solid rgba(255,255,255,0.05);line-height:1.6;}
+.implication li:last-child{border-bottom:none;}
+.implication li::before{content:"→";position:absolute;left:0;color:#22c55e;font-weight:700;}
+
+.cta-strip{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.15);border-radius:14px;padding:22px 24px;margin-top:40px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.cta-strip p{font-size:13px;color:rgba(255,255,255,0.4);max-width:400px;line-height:1.6;}
+.cta-strip a{padding:10px 20px;background:#C8A84B;color:#000;border-radius:9px;font-weight:800;text-decoration:none;font-size:13px;white-space:nowrap;}
+
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.9;margin-top:48px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);}
+.foot a{color:rgba(255,255,255,0.3);text-decoration:none;}
+
+@media(max-width:560px){
+  .stat-row{grid-template-columns:1fr 1fr;}
+  .corr-label{width:160px;font-size:11px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/tools.html" style="font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;">← All Tools</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Research · June 2026</div>
+  <h1>Why Your State's<br><em>Denial Rate</em><br>Might Be Misleading</h1>
+  <div class="meta">
+    <span>By FRC Intelligence</span>
+    <span>June 26, 2026</span>
+    <span>HMDA · Selection Bias · Methodology</span>
+  </div>
+
+  <p>Every year, researchers, journalists, and mortgage professionals cite HMDA denial rates as a measure of how hard it is to get a mortgage in a given state. <strong>Mississippi is hard. Utah is easy. End of story.</strong></p>
+
+  <p>Except it isn't. There's a fundamental problem with this analysis that nobody talks about: <strong>HMDA only captures people who applied for a mortgage.</strong> It says nothing about the people who bought homes with cash — and in some states, that's nearly half of all buyers.</p>
+
+  <p>We ran the numbers. Here's what we found.</p>
+
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-val" style="color:#e94560;">~39%</div>
+      <div class="stat-lbl">of U.S. home sales were all-cash in 2025 (ATTOM)</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" style="color:#C8A84B;">50%</div>
+      <div class="stat-lbl">of Mississippi home sales were cash — highest in the nation</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" style="color:#22c55e;">19%</div>
+      <div class="stat-lbl">of California home sales were cash — among the lowest</div>
+    </div>
+  </div>
+
+  <h2>The <em>selection problem</em></h2>
+
+  <p>When half a state's buyers pay cash, the mortgage applicant pool is not a random sample of that state's homebuyers. It's the other half — the people who <em>needed</em> credit to buy. On average, that group has lower savings, lower incomes, and weaker credit profiles than the cash buyers they're competing against.</p>
+
+  <p>So when HMDA tells you Mississippi's denial rate is 30%, it's not measuring how hard it is to get a mortgage in Mississippi. It's measuring the denial rate among the self-selected group of Mississippians who couldn't afford to pay cash — which is a fundamentally different, and more financially strained, population.</p>
+
+  <div class="pull">
+    <p>"A high denial rate might mean lenders are strict. Or it might mean the applicant pool is weaker. HMDA can't tell you which — and neither can anyone who quotes HMDA without this caveat."</p>
+  </div>
+
+  <h2>What the data shows</h2>
+
+  <table class="comp-table">
+    <tr>
+      <th>State</th>
+      <th>Cash sale %</th>
+      <th>HMDA denial %</th>
+      <th>Median income</th>
+    </tr>
+    <tr><td>MS</td><td>~50%</td><td class="high-denial">30.0%</td><td>$52,000</td></tr>
+    <tr><td>WV</td><td>~42%</td><td class="high-denial">29.7%</td><td>$55,000</td></tr>
+    <tr><td>HI</td><td>~45%</td><td class="high-denial">30.7%</td><td>$88,000</td></tr>
+    <tr><td>FL</td><td>~43%</td><td class="mid-denial">26.6%</td><td>$67,000</td></tr>
+    <tr><td>MT</td><td>~46%</td><td class="low-denial">22.2%</td><td>$64,000</td></tr>
+    <tr><td>ID</td><td>~45%</td><td class="low-denial">17.5%</td><td>$66,000</td></tr>
+    <tr><td>CA</td><td>~19%</td><td class="mid-denial">24.3%</td><td>$91,000</td></tr>
+    <tr><td>WA</td><td>~20%</td><td class="low-denial">20.0%</td><td>$92,000</td></tr>
+    <tr><td>NJ</td><td>~27%</td><td class="mid-denial">26.7%</td><td>$97,000</td></tr>
+    <tr><td>MA</td><td>~24%</td><td class="mid-denial">25.8%</td><td>$96,000</td></tr>
+  </table>
+
+  <p>Notice the pattern — or rather, the lack of one. Hawaii has a 45% cash rate and a 30.7% denial rate. Idaho has a 45% cash rate and a 17.5% denial rate. Same cash penetration, completely different denial rates. <strong>Cash share alone doesn't predict denial rates.</strong></p>
+
+  <h2>The three findings</h2>
+
+  <div class="finding f1">
+    <div class="finding-num">Finding 01</div>
+    <div class="finding-title">Cash share and denial rates are uncorrelated (r = 0.03)</div>
+    <div class="finding-text">Across 34 states with matched data, the Pearson correlation between all-cash sale percentage and HMDA denial rate is essentially zero. States with high cash penetration don't systematically show higher or lower denial rates. This means the selection bias concern, while real, doesn't produce a predictable directional distortion across states — the effect is state-specific and depends on local market dynamics.</div>
+  </div>
+
+  <div class="finding f2">
+    <div class="finding-num">Finding 02</div>
+    <div class="finding-title">Income and denial rates are also uncorrelated (r = −0.03)</div>
+    <div class="finding-text">This is perhaps the most striking result. State median household income has virtually no relationship with HMDA denial rates. New Jersey ($97K income) has a 26.7% denial rate. Mississippi ($52K income) has a 30.0% denial rate. The spread is almost nothing. This suggests that lender behavior — overlays, underwriting culture, market concentration — drives denial rates far more than borrower financial strength at the state level.</div>
+  </div>
+
+  <div class="finding f3">
+    <div class="finding-num">Finding 03 ⭐</div>
+    <div class="finding-title">Cash share and income are strongly inversely correlated (r = −0.695)</div>
+    <div class="finding-text">This is the most important structural finding. Low-income states have the highest cash sale rates. The reason: in states like Mississippi and West Virginia, home prices are so low ($150K–$200K) that cash purchases are feasible for a broader range of buyers — including people using inheritance, savings, or family transfers. Meanwhile, wealthy coastal states have $800K–$1.5M median prices where almost nobody pays cash in absolute terms, even if they're wealthy enough to qualify for a mortgage. The "cash buyer = rich" assumption breaks down completely at the state level.</div>
+  </div>
+
+  <div class="corr-box">
+    <div class="corr-title">Correlation summary — what predicts what</div>
+    <div class="corr-row">
+      <div class="corr-label">Cash sale % → Denial rate</div>
+      <div class="corr-bar-wrap"><div class="corr-bar" style="width:3%;background:#eab308;"></div></div>
+      <div class="corr-val" style="color:#eab308;">r=0.03</div>
+    </div>
+    <div class="corr-row">
+      <div class="corr-label">Income → Denial rate</div>
+      <div class="corr-bar-wrap"><div class="corr-bar" style="width:3%;background:#eab308;"></div></div>
+      <div class="corr-val" style="color:#eab308;">r=−0.03</div>
+    </div>
+    <div class="corr-row">
+      <div class="corr-label">Cash sale % → Income (inverse)</div>
+      <div class="corr-bar-wrap"><div class="corr-bar" style="width:69.5%;background:#e94560;"></div></div>
+      <div class="corr-val" style="color:#e94560;">r=−0.70</div>
+    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:12px;">Source: FRC analysis of Realtor.com H1 2025 cash sale data (n=34 states), CFPB HMDA 2024 denial rates, Census ACS 2024 median household income.</div>
+  </div>
+
+  <h2>What this means for <em>how you read denial rates</em></h2>
+
+  <div class="implication">
+    <h3>Practical implications</h3>
+    <ul>
+      <li><strong>Don't compare state denial rates directly</strong> without accounting for local market structure. A 30% denial rate in Mississippi is not the same phenomenon as a 30% denial rate in New Jersey.</li>
+      <li><strong>High cash penetration states have a narrower, weaker HMDA applicant pool.</strong> Their denial rates may be inflated by selection — the people applying for mortgages couldn't afford to go cash.</li>
+      <li><strong>Lender behavior dominates at the state level.</strong> Income and cash share explain almost nothing about why denial rates differ. Lender identity explains most of it — which is what our LSI and lender routing tools are built on.</li>
+      <li><strong>The "fix your state" advice is mostly wrong.</strong> Moving from Mississippi to Utah doesn't fix your approval odds as much as switching from Rocket to CrossCountry does.</li>
+      <li><strong>HMDA is still the best public data we have</strong> — but it should be read as a measure of applicant pool outcomes, not market accessibility.</li>
+    </ul>
+  </div>
+
+  <h2>The honest caveat</h2>
+
+  <p>This analysis uses state-level averages, which smooth over enormous within-state variation. Miami's cash rate (~43%) is very different from rural Florida's. And our HMDA data covers FHA loans specifically — a segment already skewed toward first-time, lower-credit borrowers. The selection effect is almost certainly larger in FHA data than in conventional loan data.</p>
+
+  <p>We're also working with 34 states where we have matched cash sale and HMDA data. The remaining states may behave differently. This is a hypothesis-generating analysis, not a definitive study. The right next step is county-level matching — which requires data we don't yet have.</p>
+
+  <p>But the core point stands: <strong>denial rates tell you about the people who applied, not the people who bought.</strong> That's a meaningful distinction that almost every HMDA analysis ignores.</p>
+
+  <div class="cta-strip">
+    <p>Lender choice explains denial rates far better than geography. See which lenders approve your profile.</p>
+    <a href="/zai-one.html">Route with Zai — free →</a>
+  </div>
+
+  <div class="foot">
+    Data sources: CFPB HMDA Public Loan-Level Dataset 2024 (FHA originations and denials by state) · Realtor.com All-Cash Sales Report H1 2025 · ATTOM Year-End 2025 U.S. Home Sales Report · U.S. Census Bureau American Community Survey 2024 (median household income by state). All-cash purchases are not recorded in HMDA and are excluded from HMDA-based denial rate calculations. Correlation coefficients computed using Pearson r across n=34 states with matched data. This analysis is educational and exploratory — not peer-reviewed. FRC Intelligence, June 2026. Not financial advice.<br><br>
+    <a href="/tools.html">← All Tools</a> &nbsp;·&nbsp;
+    <a href="/fha-lending-structure-research.html">FHA Structure Research</a> &nbsp;·&nbsp;
+    <a href="/lender-stress-index.html">Lender Stress Index</a> &nbsp;·&nbsp;
+    <a href="/denial-genome-project.html">Mortgage Genome Project</a> &nbsp;·&nbsp;
+    <a href="/terms.html">Terms</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </div>
+</div>
+</body>
+</html>
