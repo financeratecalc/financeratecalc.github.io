@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Cash vs Mortgage Calculator — Which Builds More Wealth? | FRC Intelligence</title>
+<meta name="description" content="Should you buy a house with cash or get a mortgage? Enter your numbers — we calculate net wealth at 10, 20, and 30 years, the true cost of each path, and the exact year mortgage beats cash.">
+<meta property="og:title" content="Cash vs Mortgage: Which Makes You Richer?">
+<meta property="og:description" content="Free calculator. Enter home price, cash on hand, mortgage rate, investment return — see which path builds more wealth over time.">
+<meta property="og:url" content="https://financeratecalc.com/cash-vs-mortgage-calculator.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FinanceRateCalc">
+<link rel="canonical" href="https://financeratecalc.com/cash-vs-mortgage-calculator.html">
+<link rel="icon" href="/favicon.ico">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9462410013713685" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.7;-webkit-font-smoothing:antialiased;}
+
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.97);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+
+.wrap{max-width:760px;margin:0 auto;padding:52px 24px 100px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(30px,5.5vw,50px);font-weight:900;line-height:1.06;letter-spacing:-1.5px;margin-bottom:14px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.sub{font-size:15px;color:rgba(255,255,255,0.4);line-height:1.8;margin-bottom:44px;max-width:560px;}
+
+/* INPUTS */
+.inputs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+.field{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:18px 20px;transition:border-color 0.2s;}
+.field:focus-within{border-color:rgba(200,168,75,0.4);}
+.field label{display:block;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;}
+.field-row{display:flex;align-items:center;gap:6px;}
+.field-prefix{font-size:16px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;}
+.field input{background:none;border:none;outline:none;font-size:20px;font-weight:700;color:#fff;font-family:'DM Mono',monospace;width:100%;min-width:0;}
+.field input::placeholder{color:rgba(255,255,255,0.15);}
+.field-suffix{font-size:13px;color:rgba(255,255,255,0.25);white-space:nowrap;}
+.field-hint{font-size:11px;color:rgba(255,255,255,0.2);margin-top:6px;line-height:1.4;}
+.full{grid-column:1/-1;}
+
+.btn{width:100%;padding:17px;background:#C8A84B;color:#000;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s;letter-spacing:0.02em;}
+.btn:hover{opacity:0.9;}
+
+/* RESULTS */
+.results{display:none;margin-top:36px;}
+
+/* VERDICT */
+.verdict{border-radius:18px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.verdict-label{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;}
+.verdict-headline{font-family:'Fraunces',serif;font-size:clamp(22px,4vw,34px);font-weight:900;line-height:1.1;margin-bottom:8px;}
+.verdict-sub{font-size:14px;line-height:1.7;}
+.verdict.cash-wins{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);}
+.verdict.cash-wins .verdict-label{color:#22c55e;}
+.verdict.mortgage-wins{background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.2);}
+.verdict.mortgage-wins .verdict-label{color:#3b82f6;}
+.verdict.tie{background:rgba(200,168,75,0.06);border:1px solid rgba(200,168,75,0.2);}
+.verdict.tie .verdict-label{color:#C8A84B;}
+
+/* TIMELINE */
+.timeline{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;}
+.yr-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px 16px;text-align:center;}
+.yr-label{font-size:11px;color:rgba(255,255,255,0.3);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;}
+.yr-compare{display:flex;flex-direction:column;gap:10px;}
+.yr-item{padding:10px 12px;border-radius:9px;}
+.yr-item-label{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px;}
+.yr-item-val{font-family:'DM Mono',monospace;font-size:15px;font-weight:700;}
+.yr-item.cash{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.15);}
+.yr-item.cash .yr-item-label{color:#22c55e;}
+.yr-item.cash .yr-item-val{color:#fff;}
+.yr-item.mortgage{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15);}
+.yr-item.mortgage .yr-item-label{color:#3b82f6;}
+.yr-item.mortgage .yr-item-val{color:#fff;}
+.yr-winner{font-size:10px;font-weight:700;margin-top:8px;color:rgba(255,255,255,0.3);}
+
+/* BREAKDOWN */
+.breakdown{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+.bk-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;}
+.bk-title{font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+.bk-title.cash{color:#22c55e;}
+.bk-title.mortgage{color:#3b82f6;}
+.bk-row{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;}
+.bk-row:last-child{border-bottom:none;padding-top:10px;margin-top:4px;}
+.bk-row:last-child .bk-val{font-weight:800;font-size:15px;}
+.bk-key{color:rgba(255,255,255,0.4);}
+.bk-val{font-family:'DM Mono',monospace;color:#fff;font-weight:600;}
+
+/* BREAKEVEN */
+.breakeven{background:rgba(200,168,75,0.04);border:1px solid rgba(200,168,75,0.15);border-radius:14px;padding:22px 24px;margin-bottom:24px;display:flex;align-items:center;gap:20px;}
+.breakeven-yr{font-family:'Fraunces',serif;font-size:48px;font-weight:900;color:#C8A84B;line-height:1;flex-shrink:0;}
+.breakeven-text h3{font-size:15px;font-weight:700;margin-bottom:4px;}
+.breakeven-text p{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;}
+
+/* ASSUMPTIONS */
+.assumptions{background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:18px 20px;font-size:12px;color:rgba(255,255,255,0.3);line-height:1.9;}
+.assumptions strong{color:rgba(255,255,255,0.5);}
+
+/* CTA */
+.cta-strip{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.15);border-radius:14px;padding:22px 24px;margin-top:32px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.cta-strip p{font-size:14px;color:rgba(255,255,255,0.5);max-width:400px;line-height:1.6;}
+.cta-strip a{padding:11px 22px;background:#C8A84B;color:#000;border-radius:9px;font-weight:800;text-decoration:none;font-size:13px;white-space:nowrap;}
+
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:48px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);}
+.foot a{color:rgba(255,255,255,0.25);text-decoration:none;}
+
+@media(max-width:580px){
+  .inputs{grid-template-columns:1fr;}
+  .timeline{grid-template-columns:1fr;}
+  .breakdown{grid-template-columns:1fr;}
+  .breakeven{flex-direction:column;gap:10px;}
+  .breakeven-yr{font-size:36px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/tools.html" style="font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;">← All Tools</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Calculator</div>
+  <h1>Cash or <em>Mortgage</em>?<br>Which makes you richer.</h1>
+  <p class="sub">Enter your numbers. We'll show you the real cost of each path, net wealth at 10/20/30 years, and the exact year one strategy overtakes the other.</p>
+
+  <div class="inputs">
+    <div class="field">
+      <label>Home Price</label>
+      <div class="field-row"><span class="field-prefix">$</span><input type="number" id="homePrice" value="400000" min="0"></div>
+    </div>
+    <div class="field">
+      <label>Cash Available</label>
+      <div class="field-row"><span class="field-prefix">$</span><input type="number" id="cashAvail" value="400000" min="0"></div>
+      <div class="field-hint">If less than home price, we'll use it as down payment</div>
+    </div>
+    <div class="field">
+      <label>Mortgage Rate</label>
+      <div class="field-row"><input type="number" id="mortgageRate" value="6.8" step="0.1" min="0" max="30"><span class="field-suffix">% / yr</span></div>
+    </div>
+    <div class="field">
+      <label>Investment Return</label>
+      <div class="field-row"><input type="number" id="investReturn" value="7" step="0.1" min="0" max="30"><span class="field-suffix">% / yr</span></div>
+      <div class="field-hint">Expected annual return if cash is invested instead</div>
+    </div>
+    <div class="field">
+      <label>Home Appreciation</label>
+      <div class="field-row"><input type="number" id="homeAppreciation" value="3.5" step="0.1" min="0" max="20"><span class="field-suffix">% / yr</span></div>
+    </div>
+    <div class="field">
+      <label>Property Tax + Insurance</label>
+      <div class="field-row"><input type="number" id="annualCosts" value="6000" min="0"></div>
+      <div class="field-hint">Annual total (property tax + insurance)</div>
+    </div>
+    <div class="field full">
+      <label>Marginal Tax Rate (for mortgage interest deduction)</label>
+      <div class="field-row"><input type="number" id="taxRate" value="22" step="1" min="0" max="50"><span class="field-suffix">%</span></div>
+      <div class="field-hint">Federal + state combined. Set to 0 if you take standard deduction.</div>
+    </div>
+  </div>
+
+  <button class="btn" onclick="calculate()">Compare Both Paths →</button>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+
+    <div class="verdict" id="verdictBox">
+      <div class="verdict-label" id="verdictLabel"></div>
+      <div class="verdict-headline" id="verdictHeadline"></div>
+      <div class="verdict-sub" id="verdictSub"></div>
+    </div>
+
+    <div class="timeline" id="timeline"></div>
+
+    <div class="breakdown">
+      <div class="bk-card">
+        <div class="bk-title cash">💵 Cash Path</div>
+        <div id="cashBreakdown"></div>
+      </div>
+      <div class="bk-card">
+        <div class="bk-title mortgage">🏦 Mortgage Path</div>
+        <div id="mortgageBreakdown"></div>
+      </div>
+    </div>
+
+    <div class="breakeven" id="breakevenBox">
+      <div class="breakeven-yr" id="breakevenYr"></div>
+      <div class="breakeven-text">
+        <h3 id="breakevenTitle"></h3>
+        <p id="breakevenDesc"></p>
+      </div>
+    </div>
+
+    <div class="assumptions" id="assumptionsBox"></div>
+
+    <div class="cta-strip">
+      <p>Know which lender gives you the best mortgage terms for your profile — before you apply.</p>
+      <a href="/zai-one.html">Route with Zai — free →</a>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    This calculator provides estimates based on simplified financial modeling. It does not account for PMI, HOA fees, maintenance costs, capital gains tax, or changes in tax law. Consult a financial advisor before making major financial decisions. Not financial advice.<br><br>
+    <a href="/tools.html">← All Tools</a> &nbsp;·&nbsp;
+    <a href="/zai-one.html">Zai Lender Routing</a> &nbsp;·&nbsp;
+    <a href="/can-i-afford-a-house-on-100k-salary.html">Affordability Guides</a> &nbsp;·&nbsp;
+    <a href="/terms.html">Terms</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </div>
+</div>
+
+<script>
+function fmt(n){
+  if(Math.abs(n) >= 1000000) return '$' + (n/1000000).toFixed(2) + 'M';
+  return '$' + Math.round(Math.abs(n)).toLocaleString('en-US') * (n < 0 ? -1 : 1);
+}
+function fmtSigned(n){
+  var s = Math.abs(n) >= 1000000 ? (Math.abs(n)/1000000).toFixed(2) + 'M' : Math.round(Math.abs(n)).toLocaleString('en-US');
+  return (n < 0 ? '-$' : '$') + s;
+}
+
+function calcMortgagePayment(principal, annualRate, years){
+  var r = annualRate / 100 / 12;
+  var n = years * 12;
+  if(r === 0) return principal / n;
+  return principal * r * Math.pow(1+r, n) / (Math.pow(1+r, n) - 1);
+}
+
+function calcTotalInterest(principal, annualRate, years){
+  var monthly = calcMortgagePayment(principal, annualRate, years);
+  return monthly * years * 12 - principal;
+}
+
+function netWealthAtYear(yr, homePrice, cashAvail, mortgageRate, investReturn, homeApp, annualCosts, taxRate){
+  var canBuyCash = cashAvail >= homePrice;
+  var downPayment = canBuyCash ? homePrice : cashAvail;
+  var loanAmount = homePrice - downPayment;
+
+  // Home value at year yr
+  var homeVal = homePrice * Math.pow(1 + homeApp/100, yr);
+
+  // === CASH PATH ===
+  var cashHomeEquity = homeVal; // own it outright
+  // Opportunity cost: money not invested
+  var cashInvestment = 0; // no cash left to invest (all went into house)
+  var cashCosts = annualCosts * yr; // property tax + insurance
+  var cashNetWealth = cashHomeEquity - cashCosts;
+
+  // If had excess cash beyond home price
+  var excessCash = Math.max(0, cashAvail - homePrice);
+  if(excessCash > 0){
+    cashNetWealth += excessCash * Math.pow(1 + investReturn/100, yr);
+  }
+
+  // === MORTGAGE PATH ===
+  if(!canBuyCash){
+    // Can't go full cash anyway — only compare down payment scenarios
+    // In this case "cash path" = all cash as down payment
+    // "mortgage path" = minimum down (3.5% FHA or 20% conventional)
+  }
+
+  var mortgageMonthly = loanAmount > 0 ? calcMortgagePayment(loanAmount, mortgageRate, 30) : 0;
+
+  // Remaining balance at year yr
+  var r = mortgageRate / 100 / 12;
+  var n = 30 * 12;
+  var paymentsM = yr * 12;
+  var remainingBalance = loanAmount;
+  if(loanAmount > 0 && r > 0){
+    remainingBalance = loanAmount * (Math.pow(1+r, n) - Math.pow(1+r, paymentsM)) / (Math.pow(1+r, n) - 1);
+    remainingBalance = Math.max(0, remainingBalance);
+  } else {
+    remainingBalance = Math.max(0, loanAmount - (mortgageMonthly * paymentsM));
+  }
+
+  var mortgageHomeEquity = homeVal - remainingBalance;
+
+  // Cash invested instead of buying outright: homePrice - downPayment would've been in portfolio
+  // But with mortgage, freed-up cash = homePrice - downPayment, invested
+  var investedCash = homePrice - downPayment; // the cash NOT put into home
+  var investedGrowth = investedCash * Math.pow(1 + investReturn/100, yr);
+
+  // Tax savings from mortgage interest deduction (simplified: first years heavy interest)
+  // Total interest paid up to yr
+  var totalInterestPaid = 0;
+  if(loanAmount > 0 && r > 0){
+    for(var m = 1; m <= Math.min(yr*12, 360); m++){
+      var balance_m = loanAmount * (Math.pow(1+r, n) - Math.pow(1+r, m-1)) / (Math.pow(1+r, n) - 1);
+      totalInterestPaid += balance_m * r;
+    }
+  }
+  var taxSavings = totalInterestPaid * (taxRate / 100);
+
+  // Mortgage costs: interest paid - tax savings, but also saved by not paying cash upfront
+  var mortgageCosts = annualCosts * yr;
+  var mortgageNetWealth = mortgageHomeEquity + investedGrowth + taxSavings - mortgageCosts;
+
+  return {cash: cashNetWealth, mortgage: mortgageNetWealth, homeVal: homeVal, remainingBalance: remainingBalance};
+}
+
+function calculate(){
+  var homePrice = parseFloat(document.getElementById('homePrice').value) || 400000;
+  var cashAvail = parseFloat(document.getElementById('cashAvail').value) || 400000;
+  var mortgageRate = parseFloat(document.getElementById('mortgageRate').value) || 6.8;
+  var investReturn = parseFloat(document.getElementById('investReturn').value) || 7;
+  var homeApp = parseFloat(document.getElementById('homeAppreciation').value) || 3.5;
+  var annualCosts = parseFloat(document.getElementById('annualCosts').value) || 6000;
+  var taxRate = parseFloat(document.getElementById('taxRate').value) || 22;
+
+  var canBuyCash = cashAvail >= homePrice;
+  var downPayment = canBuyCash ? homePrice : cashAvail;
+  var loanAmount = homePrice - downPayment;
+
+  // Calculate at 10, 20, 30 years
+  var yrs = [10, 20, 30];
+  var results = yrs.map(function(yr){
+    return {yr: yr, data: netWealthAtYear(yr, homePrice, cashAvail, mortgageRate, investReturn, homeApp, annualCosts, taxRate)};
+  });
+
+  // Find breakeven year
+  var breakeven = null;
+  for(var yr = 1; yr <= 30; yr++){
+    var d = netWealthAtYear(yr, homePrice, cashAvail, mortgageRate, investReturn, homeApp, annualCosts, taxRate);
+    if(breakeven === null){
+      var prev = yr > 1 ? netWealthAtYear(yr-1, homePrice, cashAvail, mortgageRate, investReturn, homeApp, annualCosts, taxRate) : null;
+      if(prev){
+        var cashWasBetter = prev.cash > prev.mortgage;
+        var cashIsBetter = d.cash > d.mortgage;
+        if(cashWasBetter !== cashIsBetter){ breakeven = yr; break; }
+      }
+    }
+  }
+
+  // 30yr verdict
+  var d30 = results[2].data;
+  var cashWins30 = d30.cash > d30.mortgage;
+  var diff30 = Math.abs(d30.cash - d30.mortgage);
+
+  // Total interest
+  var totalInterest = loanAmount > 0 ? calcTotalInterest(loanAmount, mortgageRate, 30) : 0;
+  var investedCash = homePrice - downPayment;
+  var investedGrowth30 = investedCash * Math.pow(1 + investReturn/100, 30);
+
+  // VERDICT
+  var vBox = document.getElementById('verdictBox');
+  var winner = cashWins30 ? 'cash' : 'mortgage';
+  vBox.className = 'verdict ' + (cashWins30 ? 'cash-wins' : 'mortgage-wins');
+  document.getElementById('verdictLabel').textContent = '30-year verdict';
+
+  if(!canBuyCash){
+    document.getElementById('verdictHeadline').textContent = "You can't go full cash — but here's what partial cash vs mortgage looks like.";
+    document.getElementById('verdictSub').textContent = 'Your available cash ($' + cashAvail.toLocaleString() + ') is less than the home price ($' + homePrice.toLocaleString() + '). We\'re comparing your cash as down payment vs investing it and borrowing more.';
+    vBox.className = 'verdict tie';
+  } else if(cashWins30){
+    document.getElementById('verdictHeadline').textContent = 'Cash wins by ' + fmtSigned(diff30) + ' over 30 years.';
+    document.getElementById('verdictSub').textContent = 'At a ' + mortgageRate + '% mortgage rate and ' + investReturn + '% investment return, the interest savings outweigh the opportunity cost of tying up your capital. Paying cash builds more wealth over 30 years.';
+  } else {
+    document.getElementById('verdictHeadline').textContent = 'Mortgage wins by ' + fmtSigned(diff30) + ' over 30 years.';
+    document.getElementById('verdictSub').textContent = 'At a ' + mortgageRate + '% mortgage rate and ' + investReturn + '% investment return, investing your freed-up capital outperforms the interest savings from paying cash. Taking the mortgage builds more wealth.';
+  }
+
+  // TIMELINE
+  var tlHtml = results.map(function(r){
+    var cashWins = r.data.cash > r.data.mortgage;
+    var winnerLabel = cashWins ? '💵 Cash ahead' : '🏦 Mortgage ahead';
+    return '<div class="yr-card">' +
+      '<div class="yr-label">Year ' + r.yr + '</div>' +
+      '<div class="yr-compare">' +
+        '<div class="yr-item cash"><div class="yr-item-label">Cash</div><div class="yr-item-val">' + fmtSigned(r.data.cash) + '</div></div>' +
+        '<div class="yr-item mortgage"><div class="yr-item-label">Mortgage</div><div class="yr-item-val">' + fmtSigned(r.data.mortgage) + '</div></div>' +
+      '</div>' +
+      '<div class="yr-winner">' + winnerLabel + '</div>' +
+    '</div>';
+  }).join('');
+  document.getElementById('timeline').innerHTML = tlHtml;
+
+  // BREAKDOWN
+  var cashBkHtml =
+    '<div class="bk-row"><span class="bk-key">Home price</span><span class="bk-val">' + fmtSigned(homePrice) + '</span></div>' +
+    '<div class="bk-row"><span class="bk-key">Cash paid</span><span class="bk-val">' + fmtSigned(downPayment) + '</span></div>' +
+    '<div class="bk-row"><span class="bk-key">Total interest paid</span><span class="bk-val">$0</span></div>' +
+    '<div class="bk-row"><span class="bk-key">30yr property costs</span><span class="bk-val">-' + fmtSigned(annualCosts * 30) + '</span></div>' +
+    '<div class="bk-row"><span class="bk-key">Home value (30yr)</span><span class="bk-val">' + fmtSigned(results[2].data.homeVal) + '</span></div>' +
+    '<div class="bk-row"><span class="bk-key">Net wealth (30yr)</span><span class="bk-val">' + fmtSigned(results[2].data.cash) + '</span></div>';
+
+  var mortgageBkHtml =
+    '<div class="bk-row"><span class="bk-key">Down payment</span><span class="bk-val">' + fmtSigned(downPayment) + '</span></div>' +
+    '<div class="bk-row"><span class="bk-key">Loan amount</span><span class="bk-val">' + fmtSigned(loanAmount) + '</span></div>' +
+    '<div class="bk-row"><span class="bk-key">Total interest (30yr)</span><span class="bk-val">-' + fmtSigned(totalInterest) + '</span></div>' +
+    '<div class="bk-row"><span class="bk-key">Invested cash grows to</span><span class="bk-val">' + fmtSigned(investedGrowth30) + '</span></div>' +
+    '<div class="bk-row"><span class="bk-key">Home value (30yr)</span><span class="bk-val">' + fmtSigned(results[2].data.homeVal) + '</span></div>' +
+    '<div class="bk-row"><span class="bk-key">Net wealth (30yr)</span><span class="bk-val">' + fmtSigned(results[2].data.mortgage) + '</span></div>';
+
+  document.getElementById('cashBreakdown').innerHTML = cashBkHtml;
+  document.getElementById('mortgageBreakdown').innerHTML = mortgageBkHtml;
+
+  // BREAKEVEN
+  if(breakeven){
+    document.getElementById('breakevenYr').textContent = 'Yr ' + breakeven;
+    document.getElementById('breakevenTitle').textContent = cashWins30 ?
+      'Mortgage leads until year ' + breakeven + ', then cash takes over.' :
+      'Cash leads until year ' + breakeven + ', then mortgage pulls ahead.';
+    document.getElementById('breakevenDesc').textContent =
+      'The crossover point where the two strategies produce equal net wealth. Before this year, one path is better. After it, the other wins.';
+  } else {
+    document.getElementById('breakevenYr').textContent = cashWins30 ? '💵' : '🏦';
+    document.getElementById('breakevenTitle').textContent = cashWins30 ? 'Cash wins at every point in the 30-year window.' : 'Mortgage wins at every point in the 30-year window.';
+    document.getElementById('breakevenDesc').textContent = 'With your inputs, one strategy dominates throughout. No crossover occurs in the 30-year analysis window.';
+  }
+
+  // ASSUMPTIONS
+  document.getElementById('assumptionsBox').innerHTML =
+    '<strong>Assumptions:</strong> ' +
+    'Home price $' + homePrice.toLocaleString() + ' · ' +
+    'Mortgage rate ' + mortgageRate + '% (30-year fixed) · ' +
+    'Investment return ' + investReturn + '% annual · ' +
+    'Home appreciation ' + homeApp + '% annual · ' +
+    'Annual costs $' + annualCosts.toLocaleString() + ' · ' +
+    'Tax rate ' + taxRate + '% · ' +
+    'Does not include PMI, maintenance, HOA, or closing costs. ' +
+    'Investment returns assumed consistent (actual returns vary). ' +
+    'Mortgage interest deduction simplified.';
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+
+  if(typeof gtag !== 'undefined'){
+    gtag('event', 'cash_vs_mortgage_calc', {
+      winner: cashWins30 ? 'cash' : 'mortgage',
+      mortgage_rate: mortgageRate,
+      invest_return: investReturn
+    });
+  }
+}
+</script>
+</body>
+</html>
