@@ -405,7 +405,13 @@ async function sendMessage(){
     addAIMsg(reply);
     if(typeof gtag!=='undefined') gtag('event','banker_ai_response');
 
-    isThinking=false;
+    } catch(err) {
+    var typing = document.getElementById('typing');
+    if(typing) typing.remove();
+    addAIMsg('Connection issue — please try again in a moment.');
+  }
+
+  isThinking=false;
   document.getElementById('sendBtn').disabled=false;
   document.getElementById('msgInput').focus();
 }
