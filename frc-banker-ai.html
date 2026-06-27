@@ -405,29 +405,7 @@ async function sendMessage(){
     addAIMsg(reply);
     if(typeof gtag!=='undefined') gtag('event','banker_ai_response');
 
-    // Credit score kaynaklı denial tespiti — credit repair kutusu göster
-    var creditKeywords = ['credit score', 'credit history', 'fico', 'credit profile', 'below the threshold', 'improve your score', 'credit repair', 'credit issue'];
-    var replyLower = reply.toLowerCase();
-    var hasCreditIssue = creditKeywords.some(function(kw){ return replyLower.indexOf(kw) > -1; });
-    if(hasCreditIssue && !document.getElementById('creditRepairBanner')){
-      var banner = document.createElement('div');
-      banner.id = 'creditRepairBanner';
-      banner.style.cssText = 'background:rgba(233,69,96,0.06);border:1px solid rgba(233,69,96,0.2);border-radius:14px;padding:18px 20px;margin:14px 0;';
-      banner.innerHTML = '<div style="font-size:10px;color:#e94560;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">💡 Credit Score May Be Fixable</div>' +
-        '<div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:6px;">Get a free analysis — see your repair timeline.</div>' +
-        '<div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:12px;">If your score is holding you back, a targeted credit repair plan can move it 40–80 points in 3–6 months. See exactly what's costing you — and how long it takes to fix it.</div>' +
-        '<a href="/credit-repair-consultation.html" style="display:inline-block;padding:10px 20px;background:#e94560;color:#fff;border-radius:9px;font-weight:800;text-decoration:none;font-size:13px;">Free Credit Analysis →</a>';
-      var chatEl = document.getElementById('messages');
-      if(chatEl) chatEl.appendChild(banner);
-    }
-
-  } catch(err) {
-    var typing = document.getElementById('typing');
-    if(typing) typing.remove();
-    addAIMsg('Connection issue — please try again in a moment.');
-  }
-
-  isThinking=false;
+    isThinking=false;
   document.getElementById('sendBtn').disabled=false;
   document.getElementById('msgInput').focus();
 }
