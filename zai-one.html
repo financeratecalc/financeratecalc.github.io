@@ -472,6 +472,17 @@ function getRouting() {
       if (window.frcFunnel) window.frcFunnel.step('routing_result_shown', {top_lender: top});
       if (typeof gtag !== 'undefined') gtag('event', 'routing_complete', {top_lender: top, fico: fico, dti: dti, state: state});
 
+      // Credit score < 620 ise credit repair kutusu göster
+      if (parseInt(fico) < 640) {
+        var creditBox = document.createElement('div');
+        creditBox.style.cssText = 'background:rgba(233,69,96,0.06);border:1px solid rgba(233,69,96,0.25);border-radius:14px;padding:20px 22px;margin-top:14px;';
+        creditBox.innerHTML = '<div style="font-size:10px;color:#e94560;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">⚠️ Score Risk Detected</div>' +
+          '<div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:6px;">A ' + fico + ' score limits your lender options significantly.</div>' +
+          '<div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:14px;">Most conventional lenders require 620+. FHA accepts 580+, but at a higher rate cost. Improving your score by even 40 points can open better lenders and save $30,000–$60,000 over 30 years.</div>' +
+          '<a href="/credit-repair-consultation.html" style="display:inline-block;padding:10px 20px;background:#e94560;color:#fff;border-radius:9px;font-weight:800;text-decoration:none;font-size:13px;">See Your Credit Repair Timeline — Free →</a>';
+        resultInner.appendChild(creditBox);
+      }
+
       showRelatedPages(parseInt(dti), 0, 0);
       var capEl = document.getElementById('emailCapture');
       if(capEl) capEl.style.display = 'block';
