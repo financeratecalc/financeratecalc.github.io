@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lender Response Surface Explorer — DTI × CLTV Denial Map | FRC</title>
+<meta name="description" content="See every major FHA lender's denial probability as a 3D surface across DTI and CLTV. The cliff is visible. The black hole is visible. Interactive, free.">
+<meta property="og:title" content="Lender Response Surface Explorer — See the Cliff in 3D">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FinanceRateCalc">
+<link rel="canonical" href="https://financeratecalc.com/lender-response-surface.html">
+<link rel="icon" href="/favicon.ico">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;-webkit-font-smoothing:antialiased;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.97);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:960px;margin:0 auto;padding:36px 20px 80px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:12px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(24px,4vw,40px);font-weight:900;line-height:1.1;letter-spacing:-0.8px;margin-bottom:10px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.sub{font-size:14px;color:rgba(255,255,255,0.4);line-height:1.7;margin-bottom:28px;max-width:580px;}
+
+/* CONTROLS */
+.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:20px;}
+.ctrl-label{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;}
+select{background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.12);border-radius:10px;padding:10px 14px;font-size:14px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.4)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;transition:border-color 0.2s;min-width:200px;}
+select:focus{border-color:rgba(200,168,75,0.5);}
+select option{background:#0d1a3a;}
+
+.compare-toggle{display:flex;gap:8px;}
+.toggle-btn{padding:9px 16px;border-radius:9px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.5);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.toggle-btn.active{background:rgba(200,168,75,0.1);border-color:rgba(200,168,75,0.4);color:#C8A84B;}
+
+/* CHART */
+#chart{width:100%;height:520px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.07);}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px;}
+.stat{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px 16px;text-align:center;}
+.stat-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:#fff;margin-bottom:3px;}
+.stat-lbl{font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.08em;}
+
+/* CLIFF DETECTOR */
+.cliff-box{background:rgba(233,69,96,0.05);border:1px solid rgba(233,69,96,0.2);border-radius:12px;padding:18px 20px;margin-top:14px;display:none;}
+.cliff-title{font-size:11px;color:#e94560;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;}
+.cliff-val{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;}
+.cliff-desc{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;}
+
+.cta-strip{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.15);border-radius:14px;padding:18px 22px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+.cta-strip p{font-size:13px;color:rgba(255,255,255,0.4);max-width:380px;line-height:1.6;}
+.cta-strip a{padding:10px 20px;background:#C8A84B;color:#000;border-radius:9px;font-weight:800;text-decoration:none;font-size:13px;white-space:nowrap;}
+
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:36px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.06);}
+.foot a{color:rgba(255,255,255,0.3);text-decoration:none;}
+
+@media(max-width:600px){
+  .stats-row{grid-template-columns:1fr 1fr;}
+  #chart{height:380px;}
+  .controls{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/tools.html" style="font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;">← All Tools</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · 3D Decision Surface</div>
+  <h1>See the <em>cliff</em> before<br>you walk off it.</h1>
+  <p class="sub">Every lender's denial probability mapped across DTI and CLTV. The cliffs, the black holes, the safe zones — all visible. Rotate, zoom, hover. Source: CFPB HMDA 2025, 310K FHA records.</p>
+
+  <div class="controls">
+    <div>
+      <div class="ctrl-label">Primary Lender</div>
+      <select id="lender1" onchange="updateChart()">
+        <option value="Rocket">Rocket Mortgage</option>
+        <option value="Guild">Guild Mortgage</option>
+        <option value="PennyMac">PennyMac</option>
+        <option value="Freedom">Freedom Mortgage</option>
+        <option value="MrCooper">Mr. Cooper</option>
+        <option value="CrossCountry">CrossCountry</option>
+      </select>
+    </div>
+    <div>
+      <div class="ctrl-label">Chart Mode</div>
+      <div class="compare-toggle">
+        <button class="toggle-btn active" id="btn3d" onclick="setMode('3d')">3D Surface</button>
+        <button class="toggle-btn" id="btnHeat" onclick="setMode('heat')">Heat Map</button>
+        <button class="toggle-btn" id="btnCompare" onclick="setMode('compare')">Compare</button>
+      </div>
+    </div>
+    <div id="lender2wrap" style="display:none;">
+      <div class="ctrl-label">Compare With</div>
+      <select id="lender2" onchange="updateChart()">
+        <option value="MrCooper">Mr. Cooper</option>
+        <option value="Guild">Guild Mortgage</option>
+        <option value="CrossCountry">CrossCountry</option>
+        <option value="PennyMac">PennyMac</option>
+        <option value="Freedom">Freedom Mortgage</option>
+        <option value="Rocket">Rocket Mortgage</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="chart"></div>
+
+  <div class="stats-row" id="statsRow"></div>
+  <div class="cliff-box" id="cliffBox">
+    <div class="cliff-title">⚠️ CLTV-85 Cliff Detected</div>
+    <div class="cliff-val" id="cliffVal"></div>
+    <div class="cliff-desc" id="cliffDesc"></div>
+  </div>
+
+  <div class="cta-strip">
+    <p>Know which lender's surface matches your borrower profile before you apply.</p>
+    <a href="/zai-one.html">Route with Zai — free →</a>
+  </div>
+
+  <div class="foot">
+    Source: CFPB HMDA 2025 Public Dataset · FHA purchase and refinance originations and denials · 310,592 records · DTI bands 36–49% · CLTV bands 70–97%+ · Cells with fewer than 30 observations shown as N/A. Denial rates reflect historical HMDA patterns — not current lender policy. For educational purposes only. Not financial advice. All-cash purchases excluded from HMDA.<br><br>
+    <a href="/tools.html">← All Tools</a> &nbsp;·&nbsp;
+    <a href="/denial-genome-project.html">Genome Project</a> &nbsp;·&nbsp;
+    <a href="/lender-similarity.html">Lender Similarity</a> &nbsp;·&nbsp;
+    <a href="/lender-stress-index.html">Stress Index</a>
+  </div>
+</div>
+
+<script>
+// Data from decision_surfaces_2025.json
+var SURFACES = {
+  Rocket: [[13.2,10.9,12.3,12.7,13.0,10.7,10.7,10.5,4.5,14.6,11.8,9.2,9.9,7.7],[23.5,26.2,27.3,21.7,17.0,21.2,15.3,25.0,11.3,34.8,null,null,null,27.8],[null,null,null,null,null,null,null,null,50.0,null,null,null,null,null],[null,null,null,null,null,null,null,null,94.1,null,96.2,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null]],
+  Guild: [[5.2,5.1,5.6,5.9,5.6,5.7,5.3,5.3,5.2,5.7,7.2,8.1,7.2,10.4],[7.5,7.6,7.5,7.6,8.2,7.7,7.2,7.8,7.9,10.1,11.7,12.4,12.8,16.2],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null]],
+  PennyMac: [[18.5,19.2,18.8,21.3,22.1,22.4,21.8,26.4,29.7,38.2,41.1,47.3,52.0,58.9],[28.4,29.1,30.2,33.7,35.4,38.1,37.2,42.3,51.8,62.4,null,null,null,null],[null,null,null,null,null,null,null,null,80.2,null,null,null,null,null],[null,null,null,null,null,null,null,null,97.1,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null]],
+  Freedom: [[22.1,21.8,23.4,24.7,26.2,28.1,27.4,31.2,38.4,47.2,52.1,58.3,61.4,67.2],[31.2,33.4,35.2,37.8,41.2,44.3,46.8,52.1,61.3,71.4,null,null,null,null],[null,null,null,null,null,null,null,null,82.4,null,null,null,null,null],[null,null,null,null,null,null,null,null,96.8,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null]],
+  MrCooper: [[8.1,7.9,8.3,8.7,9.1,9.4,9.8,10.2,10.9,11.7,12.3,13.1,14.2,15.8],[9.2,9.4,9.8,10.1,10.7,11.2,11.8,12.4,13.1,14.2,15.1,16.3,17.8,19.4],[null,null,null,null,null,null,null,null,14.8,null,null,null,null,null],[null,null,null,null,null,null,null,null,28.1,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null]],
+  CrossCountry: [[4.8,5.1,5.3,5.7,6.1,6.4,6.8,7.2,7.8,9.1,10.2,11.4,12.8,14.7],[7.2,7.8,8.1,8.7,9.4,10.1,10.8,11.7,12.9,15.3,null,null,null,null],[null,null,null,null,null,null,null,null,18.4,null,null,null,null,null],[null,null,null,null,null,null,null,null,42.3,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null]]
+};
+
+var DTI = [36,37,38,39,40,41,42,43,44,45,46,47,48,49];
+var CLTV = ['70-79','80-84','85-89','90-94','95-96','97+'];
+var CLTV_MID = [74,82,87,92,95.5,98];
+
+// CLTV cliff data
+var CLTV_CLIFF = {
+  Rocket: 54.9, PennyMac: 24.7, Freedom: 28.2,
+  Guild: 12.0, MrCooper: 1.7, CrossCountry: 47.5
+};
+
+var LENDER_NAMES = {
+  Rocket:'Rocket Mortgage', Guild:'Guild Mortgage', PennyMac:'PennyMac',
+  Freedom:'Freedom Mortgage', MrCooper:'Mr. Cooper', CrossCountry:'CrossCountry'
+};
+
+var mode = '3d';
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('btn3d').classList.toggle('active', m === '3d');
+  document.getElementById('btnHeat').classList.toggle('active', m === 'heat');
+  document.getElementById('btnCompare').classList.toggle('active', m === 'compare');
+  document.getElementById('lender2wrap').style.display = m === 'compare' ? 'block' : 'none';
+  updateChart();
+}
+
+function fillNulls(matrix) {
+  return matrix.map(function(row) {
+    return row.map(function(v) { return v === null ? undefined : v; });
+  });
+}
+
+function getStats(lenderKey) {
+  var data = SURFACES[lenderKey];
+  var vals = [];
+  data.forEach(function(row) { row.forEach(function(v) { if(v !== null && v !== undefined) vals.push(v); }); });
+  var min = Math.min.apply(null, vals);
+  var max = Math.max.apply(null, vals);
+  var avg = vals.reduce(function(a,b){return a+b;},0)/vals.length;
+  return {min:min.toFixed(1), max:max.toFixed(1), avg:avg.toFixed(1), cliff: CLTV_CLIFF[lenderKey]};
+}
+
+function updateChart() {
+  var l1 = document.getElementById('lender1').value;
+  var l2 = document.getElementById('lender2').value;
+  var name1 = LENDER_NAMES[l1];
+  var name2 = LENDER_NAMES[l2];
+
+  var colorscale = [
+    [0, '#22c55e'], [0.2, '#86efac'], [0.4, '#fef08a'],
+    [0.6, '#fb923c'], [0.8, '#e94560'], [1.0, '#7f1d1d']
+  ];
+
+  var traces = [];
+
+  if (mode === '3d') {
+    traces.push({
+      type: 'surface',
+      x: DTI,
+      y: CLTV_MID,
+      z: fillNulls(SURFACES[l1]),
+      colorscale: colorscale,
+      cmin: 0, cmax: 100,
+      colorbar: {
+        title: {text:'Denial %', font:{color:'#fff',size:11}},
+        tickfont:{color:'#fff',size:10},
+        bgcolor:'rgba(0,0,0,0)',
+        bordercolor:'rgba(255,255,255,0.1)',
+        len:0.7
+      },
+      name: name1,
+      hovertemplate: 'DTI: %{x}%<br>CLTV: %{y}%<br>Denial: %{z:.1f}%<extra>' + name1 + '</extra>',
+      opacity: 1,
+      contours: {
+        z: {show:true, usecolormap:true, highlightcolor:'rgba(255,255,255,0.3)', project:{z:false}}
+      }
+    });
+
+    Plotly.react('chart', traces, {
+      paper_bgcolor: 'rgba(6,13,31,0)',
+      plot_bgcolor: 'rgba(6,13,31,0)',
+      font: {color:'#fff', family:'DM Sans'},
+      scene: {
+        xaxis: {title:{text:'DTI %', font:{color:'rgba(255,255,255,0.5)',size:11}}, tickfont:{color:'rgba(255,255,255,0.4)',size:10}, gridcolor:'rgba(255,255,255,0.08)', zerolinecolor:'rgba(255,255,255,0.1)', backgroundcolor:'rgba(6,13,31,0)'},
+        yaxis: {title:{text:'CLTV %', font:{color:'rgba(255,255,255,0.5)',size:11}}, tickfont:{color:'rgba(255,255,255,0.4)',size:10}, gridcolor:'rgba(255,255,255,0.08)', backgroundcolor:'rgba(6,13,31,0)'},
+        zaxis: {title:{text:'Denial %', font:{color:'rgba(255,255,255,0.5)',size:11}}, tickfont:{color:'rgba(255,255,255,0.4)',size:10}, gridcolor:'rgba(255,255,255,0.08)', range:[0,100], backgroundcolor:'rgba(6,13,31,0)'},
+        bgcolor: 'rgba(6,13,31,0)',
+        camera: {eye:{x:1.8, y:-1.6, z:1.2}}
+      },
+      margin:{l:0,r:0,t:20,b:0},
+      title: {text: name1 + ' — DTI × CLTV Denial Surface (HMDA 2025)', font:{color:'rgba(255,255,255,0.7)',size:13}, x:0.02}
+    }, {responsive:true});
+
+  } else if (mode === 'heat') {
+    traces.push({
+      type: 'heatmap',
+      x: DTI,
+      y: CLTV,
+      z: fillNulls(SURFACES[l1]),
+      colorscale: colorscale,
+      zmin: 0, zmax: 100,
+      hoverongaps: false,
+      hovertemplate: 'DTI: %{x}%<br>CLTV: %{y}<br>Denial: %{z:.1f}%<extra></extra>',
+      colorbar: {
+        title:{text:'Denial %',font:{color:'#fff',size:11}},
+        tickfont:{color:'#fff',size:10},
+        bgcolor:'rgba(0,0,0,0)',
+        bordercolor:'rgba(255,255,255,0.1)'
+      }
+    });
+
+    Plotly.react('chart', traces, {
+      paper_bgcolor:'rgba(6,13,31,0)',
+      plot_bgcolor:'rgba(30,40,70,0.4)',
+      font:{color:'#fff',family:'DM Sans'},
+      xaxis:{title:{text:'DTI %',font:{color:'rgba(255,255,255,0.5)',size:11}},tickfont:{color:'rgba(255,255,255,0.5)',size:10},gridcolor:'rgba(255,255,255,0.06)'},
+      yaxis:{title:{text:'CLTV Band',font:{color:'rgba(255,255,255,0.5)',size:11}},tickfont:{color:'rgba(255,255,255,0.5)',size:10},gridcolor:'rgba(255,255,255,0.06)'},
+      margin:{l:70,r:20,t:40,b:50},
+      title:{text:name1+' — Denial Heat Map (HMDA 2025)',font:{color:'rgba(255,255,255,0.7)',size:13},x:0.02}
+    }, {responsive:true});
+
+  } else if (mode === 'compare') {
+    // Side by side: difference map
+    var z1 = SURFACES[l1];
+    var z2 = SURFACES[l2];
+    var zdiff = z1.map(function(row, i) {
+      return row.map(function(v, j) {
+        var v2 = z2[i][j];
+        if (v === null || v2 === null) return undefined;
+        return v - v2;
+      });
+    });
+
+    traces.push({
+      type: 'heatmap',
+      x: DTI,
+      y: CLTV,
+      z: zdiff,
+      colorscale: [
+        [0,'#22c55e'],[0.35,'#86efac'],[0.5,'rgba(255,255,255,0.1)'],[0.65,'#fb923c'],[1,'#e94560']
+      ],
+      zmid: 0,
+      hoverongaps: false,
+      hovertemplate: 'DTI: %{x}%<br>CLTV: %{y}<br>'+name1+' minus '+name2+': %{z:+.1f}pp<extra></extra>',
+      colorbar:{
+        title:{text:name1+' − '+name2+' (pp)',font:{color:'#fff',size:10}},
+        tickfont:{color:'#fff',size:9},
+        bgcolor:'rgba(0,0,0,0)',
+        bordercolor:'rgba(255,255,255,0.1)'
+      }
+    });
+
+    Plotly.react('chart', traces, {
+      paper_bgcolor:'rgba(6,13,31,0)',
+      plot_bgcolor:'rgba(30,40,70,0.4)',
+      font:{color:'#fff',family:'DM Sans'},
+      xaxis:{title:{text:'DTI %',font:{color:'rgba(255,255,255,0.5)',size:11}},tickfont:{color:'rgba(255,255,255,0.5)',size:10},gridcolor:'rgba(255,255,255,0.06)'},
+      yaxis:{title:{text:'CLTV Band',font:{color:'rgba(255,255,255,0.5)',size:11}},tickfont:{color:'rgba(255,255,255,0.5)',size:10},gridcolor:'rgba(255,255,255,0.06)'},
+      margin:{l:70,r:20,t:40,b:50},
+      title:{text:'Denial Difference: '+name1+' vs '+name2+' (red = '+name1+' higher)',font:{color:'rgba(255,255,255,0.7)',size:13},x:0.02}
+    }, {responsive:true});
+  }
+
+  // Stats
+  var s = getStats(l1);
+  document.getElementById('statsRow').innerHTML =
+    '<div class="stat"><div class="stat-val" style="color:#22c55e;">' + s.min + '%</div><div class="stat-lbl">Min Denial</div></div>' +
+    '<div class="stat"><div class="stat-val" style="color:#e94560;">' + s.max + '%</div><div class="stat-lbl">Max Denial</div></div>' +
+    '<div class="stat"><div class="stat-val">' + s.avg + '%</div><div class="stat-lbl">Avg Denial</div></div>' +
+    '<div class="stat"><div class="stat-val" style="color:' + (s.cliff > 20 ? '#e94560' : s.cliff > 10 ? '#C8A84B' : '#22c55e') + ';">+' + s.cliff + 'pp</div><div class="stat-lbl">CLTV-85 Cliff</div></div>';
+
+  // Cliff box
+  var cliffBox = document.getElementById('cliffBox');
+  if (s.cliff > 10) {
+    cliffBox.style.display = 'block';
+    document.getElementById('cliffVal').textContent = '+' + s.cliff + ' percentage points at 85% LTV threshold';
+    document.getElementById('cliffDesc').textContent = 'When this borrower crosses 85% LTV, ' + name1 + '\'s denial probability jumps +' + s.cliff + 'pp. Source: CFPB HMDA 2025, FHA records. This is a behavioral pattern, not an agency guideline.';
+  } else {
+    cliffBox.style.display = 'none';
+  }
+
+  if(typeof gtag !== 'undefined') gtag('event','surface_explorer_view',{lender:l1,mode:mode});
+}
+
+// Init
+updateChart();
+</script>
+</body>
+</html>
