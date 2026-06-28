@@ -504,6 +504,25 @@ function getRouting() {
         '</div>';
       resultInner.appendChild(reportBox);
 
+      // Similarity box — top lender'ın benzerlerini göster
+      var simData = {"CrossCountry": {"similar": [("Rocket", 77), ("Guild", 75), ("PennyMac", 62)], "different": [("Wells Fargo", 19), ("Mr. Cooper", 28), ("NewRez", 31)]}, "Guild": {"similar": [("UWM", 90), ("CrossCountry", 75), ("Planet Home", 75)], "different": [("Wells Fargo", 41), ("Freedom", 63), ("PennyMac", 64)]}, "UWM": {"similar": [("Planet Home", 91), ("Guild", 90), ("loanDepot", 86)], "different": [("CrossCountry", 57), ("Rocket", 63), ("Wells Fargo", 66)]}, "Planet Home": {"similar": [("loanDepot", 91), ("UWM", 91), ("PennyMac", 79)], "different": [("CrossCountry", 38), ("Rocket", 58), ("Guild", 75)]}, "Freedom": {"similar": [("Mr. Cooper", 85), ("PennyMac", 83), ("NewRez", 81)], "different": [("CrossCountry", 47), ("Guild", 63), ("UWM", 67)]}, "Mr. Cooper": {"similar": [("NewRez", 91), ("loanDepot", 86), ("Freedom", 85)], "different": [("CrossCountry", 28), ("Rocket", 57), ("PennyMac", 66)]}, "PennyMac": {"similar": [("Rocket", 87), ("Freedom", 83), ("Planet Home", 79)], "different": [("CrossCountry", 62), ("NewRez", 64), ("Guild", 64)]}, "Rocket": {"similar": [("PennyMac", 87), ("CrossCountry", 77), ("Freedom", 72)], "different": [("Mr. Cooper", 57), ("Planet Home", 58), ("Wells Fargo", 59)]}, "loanDepot": {"similar": [("NewRez", 94), ("Planet Home", 91), ("Wells Fargo", 90)], "different": [("CrossCountry", 33), ("Rocket", 64), ("Guild", 70)]}, "NewRez": {"similar": [("loanDepot", 94), ("Mr. Cooper", 91), ("Wells Fargo", 81)], "different": [("CrossCountry", 31), ("Rocket", 62), ("PennyMac", 64)]}, "Wells Fargo": {"similar": [("loanDepot", 90), ("NewRez", 81), ("Planet Home", 79)], "different": [("CrossCountry", 19), ("Guild", 41), ("Rocket", 59)]}};
+      if(top && simData[top]){
+        var sd = simData[top];
+        var simBox = document.createElement('div');
+        simBox.style.cssText = 'background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px 22px;margin-top:14px;';
+        var simSimilarHTML = sd.similar.slice(0,2).map(function(x){ return '<span style="font-family:DM Mono,monospace;font-size:12px;background:rgba(255,255,255,0.05);padding:4px 10px;border-radius:6px;margin-right:6px;">'+x[0]+' <span style="color:rgba(255,255,255,0.3);">'+x[1]+'/100</span></span>'; }).join('');
+        var simDiffHTML = sd.different.slice(0,2).map(function(x){ return '<span style="font-family:DM Mono,monospace;font-size:12px;background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.15);padding:4px 10px;border-radius:6px;margin-right:6px;color:rgba(255,255,255,0.8);">'+x[0]+' <span style="color:rgba(34,197,94,0.7);">'+x[1]+'/100</span></span>'; }).join('');
+        simBox.innerHTML =
+          '<div style="font-size:10px;color:rgba(255,255,255,0.3);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;">🔗 Lender Behavioral Similarity — HMDA Data</div>' +
+          '<div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:8px;">Lenders with similar historical underwriting patterns to ' + top + ':</div>' +
+          '<div style="margin-bottom:14px;">' + simSimilarHTML + '</div>' +
+          '<div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:8px;">Lenders with the most different historical underwriting patterns:</div>' +
+          '<div style="margin-bottom:14px;">' + simDiffHTML + '</div>' +
+          '<div style="font-size:11px;color:rgba(255,255,255,0.2);line-height:1.6;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px;">Similarity scores are based on 15 behavioral features from CFPB HMDA 2025 data. This is a historical data observation — not a recommendation to apply to or avoid any lender. Always consult a licensed mortgage professional.</div>' +
+          '<a href="/lender-similarity.html" style="display:inline-block;margin-top:12px;font-size:12px;color:#C8A84B;text-decoration:none;font-weight:700;">View full similarity engine →</a>';
+        resultInner.appendChild(simBox);
+      }
+
     } catch(parseErr) {
       if (loadingInterval) clearInterval(loadingInterval);
       resultInner.innerHTML = '<div class="result-card"><div class="result-label">Parse error</div><div class="lender-why">Could not parse response. Please try again.</div></div>';
