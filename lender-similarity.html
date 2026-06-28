@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lender Similarity Engine — Which Lenders Share the Same DNA? | FRC</title>
+<meta name="description" content="If your lender denies you, which lender behaves most similarly — and which is the most different? FRC's cosine similarity engine compares 15 behavioral features across 11 major FHA lenders.">
+<meta property="og:title" content="Lender Similarity Engine — Which Lenders Share the Same DNA?">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FinanceRateCalc">
+<link rel="canonical" href="https://financeratecalc.com/lender-similarity.html">
+<link rel="icon" href="/favicon.ico">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.7;-webkit-font-smoothing:antialiased;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.97);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:860px;margin:0 auto;padding:52px 24px 100px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,46px);font-weight:900;line-height:1.08;letter-spacing:-1px;margin-bottom:14px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.sub{font-size:15px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:40px;max-width:580px;}
+
+/* SELECT */
+.select-wrap{margin-bottom:32px;}
+.select-label{font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px;}
+select{width:100%;max-width:400px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 18px;font-size:15px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.4)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;transition:border-color 0.2s;}
+select:focus{border-color:rgba(200,168,75,0.5);}
+select option{background:#0d1a3a;}
+
+/* RESULT */
+#result{display:none;}
+.lender-header{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px 28px;margin-bottom:20px;}
+.lender-name{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:#fff;margin-bottom:16px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.stat{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px;text-align:center;}
+.stat-val{font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:#fff;margin-bottom:2px;}
+.stat-lbl{font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.08em;}
+
+.section-title{font-size:12px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;}
+
+/* SIMILAR CARDS */
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:32px;}
+.card{border-radius:14px;padding:18px 16px;text-decoration:none;display:block;transition:transform 0.2s;}
+.card:hover{transform:translateY(-3px);}
+.card-rank{font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+.card-name{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;margin-bottom:8px;}
+.card-score-label{font-size:11px;margin-bottom:4px;}
+.card-score-bar{height:4px;border-radius:2px;margin-bottom:10px;}
+.card-score-num{font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:#fff;}
+.card-score-pct{font-size:11px;color:rgba(255,255,255,0.4);margin-left:4px;}
+.card-why{font-size:12px;line-height:1.5;margin-top:8px;}
+
+.card.sim-1{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);}
+.card.sim-1 .card-rank{color:#22c55e;}
+.card.sim-1 .card-score-label{color:#22c55e;}
+.card.sim-1 .card-score-bar{background:rgba(34,197,94,0.3);}
+.card.sim-1 .card-score-bar-fill{background:#22c55e;}
+
+.card.sim-2{background:rgba(200,168,75,0.06);border:1px solid rgba(200,168,75,0.15);}
+.card.sim-2 .card-rank{color:#C8A84B;}
+.card.sim-2 .card-score-label{color:#C8A84B;}
+.card.sim-2 .card-score-bar{background:rgba(200,168,75,0.2);}
+.card.sim-2 .card-score-bar-fill{background:#C8A84B;}
+
+.card.sim-3{background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);}
+.card.sim-3 .card-rank{color:#3b82f6;}
+.card.sim-3 .card-score-label{color:#3b82f6;}
+.card.sim-3 .card-score-bar{background:rgba(59,130,246,0.2);}
+.card.sim-3 .card-score-bar-fill{background:#3b82f6;}
+
+.card.diff{background:rgba(233,69,96,0.04);border:1px solid rgba(233,69,96,0.15);}
+.card.diff .card-rank{color:#e94560;}
+.card.diff .card-score-label{color:#e94560;}
+.card.diff .card-score-bar{background:rgba(233,69,96,0.15);}
+.card.diff .card-score-bar-fill{background:#e94560;}
+
+/* METHODOLOGY */
+.method{background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:20px 24px;margin-top:36px;}
+.method p{font-size:13px;color:rgba(255,255,255,0.4);line-height:1.8;}
+.method strong{color:rgba(255,255,255,0.6);}
+
+/* CTA */
+.cta{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.15);border-radius:14px;padding:22px 24px;margin-top:32px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.cta p{font-size:14px;color:rgba(255,255,255,0.45);max-width:420px;line-height:1.6;}
+.cta a{padding:11px 22px;background:#C8A84B;color:#000;border-radius:9px;font-weight:800;text-decoration:none;font-size:13px;white-space:nowrap;}
+
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);}
+.foot a{color:rgba(255,255,255,0.3);text-decoration:none;}
+
+@media(max-width:600px){
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .cards{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/tools.html" style="font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;">← All Tools</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · Lender DNA Analysis</div>
+  <h1>Which lenders share<br>the same <em>decision DNA?</em></h1>
+  <p class="sub">If your lender denies you, the worst move is applying to a lender with identical behavior. Pick a lender that thinks differently. This engine compares 15 behavioral features across 11 major FHA lenders using cosine similarity.</p>
+
+  <div class="select-wrap">
+    <div class="select-label">Select a lender</div>
+    <select id="lenderSelect" onchange="showResult()">
+      <option value="">— Choose a lender —</option>
+    </select>
+  </div>
+
+  <div id="result">
+    <div class="lender-header">
+      <div class="lender-name" id="headerName"></div>
+      <div class="stats-row" id="statsRow"></div>
+    </div>
+
+    <div class="section-title" style="color:#22c55e;">✓ Most Similar — Same DNA, Same Risks</div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:14px;">These lenders behave like your selected lender. If it denied you, these likely will too.</p>
+    <div class="cards" id="similarCards"></div>
+
+    <div class="section-title" style="color:#e94560;margin-top:8px;">✗ Most Different — Opposite DNA, Different Outcome</div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:14px;">These lenders behave most differently. If your lender denied you, start here.</p>
+    <div class="cards" id="differentCards"></div>
+
+    <div class="cta">
+      <p>See which lender's DNA actually matches your borrower profile — before you apply.</p>
+      <a href="/zai-one.html">Route with Zai — free →</a>
+    </div>
+  </div>
+
+  <div class="method">
+    <p><strong>Methodology:</strong> Each lender is represented as a 15-dimensional feature vector: 2025 denial rate, 2024 denial rate, year-over-year trend, volatility, LSI score, overlay risk, OFI sensitivity, CLTV cliff (+pp at 85% LTV), DTI cliff (+pp at 44-45% DTI), mid-risk disparity, high-risk disparity, OFI score, refi volume ratio, purchase sensitivity, and cash instability. Vectors are min-max normalized and compared using cosine similarity. Score of 1.0 = identical behavior, 0.0 = completely orthogonal. Source: CFPB HMDA 2025, FRC internal analysis.</p>
+  </div>
+
+  <div class="foot">
+    Source: CFPB HMDA Public Dataset 2025 · FRC Lender Behavior Panel · FRC Lender Stress Index · June 2026 analysis.<br>
+    Similarity scores reflect behavioral patterns in historical HMDA data — not current lender policy. For informational purposes only. Not financial advice.<br><br>
+    <a href="/tools.html">← All Tools</a> &nbsp;·&nbsp;
+    <a href="/denial-genome-project.html">Mortgage Genome Project</a> &nbsp;·&nbsp;
+    <a href="/lender-stress-index.html">Lender Stress Index</a> &nbsp;·&nbsp;
+    <a href="/terms.html">Terms</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </div>
+</div>
+
+<script>
+var DATA = null;
+
+// Why text per lender pair
+var WHY = {
+  'Rocket': 'High CLTV cliff (+54.9pp at 85% LTV), high volatility, elevated denial rate.',
+  'PennyMac': 'CLTV cliff present, rising denial rate trend, high mid-risk disparity.',
+  'CrossCountry': 'CLTV cliff active, purchase-focused but cliff-heavy on high-LTV files.',
+  'Freedom': 'High volatility (55% denial in 2018 → 24% in 2025), rate-driven behavior.',
+  'Mr. Cooper': 'Low CLTV cliff (+1.7pp), stable behavior, lowest high-risk disparity.',
+  'Guild': 'No meaningful CLTV cliff, consistent denial rate decline, purchase-focused.',
+  'UWM': 'Rising denial trend (+35% in 3 years), high volume, balanced product mix.',
+  'Planet Home': 'Mid-tier behavior, balanced OFI, moderate instability.',
+  'loanDepot': 'Stable, balanced, low cliff exposure, consistent performance.',
+  'NewRez': 'Cash-out dominant, stable denial, low volatility.',
+  'Wells Fargo': 'Low FHA volume, conservative, very different behavioral profile.',
+};
+
+fetch('/_data/lender_similarity.json')
+  .then(r => r.json())
+  .then(data => {
+    DATA = data;
+    var sel = document.getElementById('lenderSelect');
+    Object.keys(data).sort().forEach(function(l){
+      var opt = document.createElement('option');
+      opt.value = l;
+      opt.textContent = l;
+      sel.appendChild(opt);
+    });
+  });
+
+function showResult(){
+  var lender = document.getElementById('lenderSelect').value;
+  if(!lender || !DATA || !DATA[lender]) return;
+
+  var d = DATA[lender];
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('headerName').textContent = lender;
+
+  // Stats
+  var statsHTML = [
+    {val: d.denial_2025 + '%', lbl: '2025 Denial Rate'},
+    {val: d.cltv_cliff > 0 ? '+' + d.cltv_cliff + 'pp' : '~0', lbl: 'CLTV Cliff @85%'},
+    {val: d.dti_cliff > 0 ? '+' + d.dti_cliff.toFixed(1) + 'pp' : '~0', lbl: 'DTI Cliff @44%'},
+    {val: d.volatility || '—', lbl: 'Volatility Score'},
+  ].map(function(s){
+    return '<div class="stat"><div class="stat-val">' + s.val + '</div><div class="stat-lbl">' + s.lbl + '</div></div>';
+  }).join('');
+  document.getElementById('statsRow').innerHTML = statsHTML;
+
+  // Similar cards
+  var simHTML = d.similar.map(function(item, i){
+    var cls = 'sim-' + (i+1);
+    var rank = ['#1 Most Similar', '#2 Similar', '#3 Similar'][i];
+    var pct = Math.round(item.score * 100);
+    var why = WHY[item.lender] || 'Behavioral features align closely with ' + lender + '.';
+    return '<a href="/lender-similarity.html" class="card ' + cls + '" onclick="document.getElementById(\'lenderSelect\').value=\'' + item.lender + '\';showResult();return false;">' +
+      '<div class="card-rank">' + rank + '</div>' +
+      '<div class="card-name">' + item.lender + '</div>' +
+      '<div class="card-score-label">Similarity score</div>' +
+      '<div class="card-score-bar"><div class="card-score-bar-fill" style="height:4px;border-radius:2px;width:' + pct + '%"></div></div>' +
+      '<div class="card-score-num">' + pct + '<span class="card-score-pct">/ 100</span></div>' +
+      '<div class="card-why" style="color:rgba(255,255,255,0.4);">' + why + '</div>' +
+      '</a>';
+  }).join('');
+  document.getElementById('similarCards').innerHTML = simHTML;
+
+  // Different cards
+  var diffItems = [...d.different].reverse();
+  var diffHTML = diffItems.map(function(item, i){
+    var rank = ['Most Different', '2nd Most Different', '3rd Most Different'][i];
+    var pct = Math.round(item.score * 100);
+    var why = WHY[item.lender] || 'Behavioral features diverge significantly from ' + lender + '.';
+    return '<a href="/lender-similarity.html" class="card diff" onclick="document.getElementById(\'lenderSelect\').value=\'' + item.lender + '\';showResult();return false;">' +
+      '<div class="card-rank">' + rank + '</div>' +
+      '<div class="card-name">' + item.lender + '</div>' +
+      '<div class="card-score-label">Similarity score</div>' +
+      '<div class="card-score-bar"><div class="card-score-bar-fill" style="height:4px;border-radius:2px;width:' + pct + '%"></div></div>' +
+      '<div class="card-score-num">' + pct + '<span class="card-score-pct">/ 100</span></div>' +
+      '<div class="card-why" style="color:rgba(255,255,255,0.4);">' + why + '</div>' +
+      '</a>';
+  }).join('');
+  document.getElementById('differentCards').innerHTML = diffHTML;
+
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'start'});
+
+  if(typeof gtag !== 'undefined'){
+    gtag('event', 'lender_similarity_view', {lender: lender});
+  }
+}
+</script>
+</body>
+</html>
