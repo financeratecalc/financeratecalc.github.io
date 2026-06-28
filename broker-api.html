@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FRC Broker API — Unlimited Lender Routing for Mortgage Professionals</title>
+<meta name="description" content="Unlimited FHA lender routing decisions via API. CSV bulk upload, PDF reports, lender DNA access. $299/month. Built for mortgage brokers.">
+<link rel="canonical" href="https://financeratecalc.com/broker-api.html">
+<link rel="icon" href="/favicon.ico">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.7;-webkit-font-smoothing:antialiased;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.97);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:800px;margin:0 auto;padding:56px 24px 100px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,48px);font-weight:900;line-height:1.08;letter-spacing:-1px;margin-bottom:14px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.sub{font-size:16px;color:rgba(255,255,255,0.5);line-height:1.8;margin-bottom:48px;max-width:560px;}
+
+/* PRICE HERO */
+.price-hero{background:linear-gradient(135deg,rgba(200,168,75,0.08),rgba(200,168,75,0.03));border:1.5px solid rgba(200,168,75,0.3);border-radius:20px;padding:36px 40px;margin-bottom:40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.price-left h2{font-family:'Fraunces',serif;font-size:42px;font-weight:900;color:#C8A84B;line-height:1;}
+.price-left span{font-size:16px;color:rgba(255,255,255,0.4);font-weight:400;}
+.price-left p{font-size:14px;color:rgba(255,255,255,0.4);margin-top:8px;}
+.btn-primary{padding:16px 36px;background:#C8A84B;color:#000;border-radius:12px;font-weight:900;text-decoration:none;font-size:16px;white-space:nowrap;display:inline-block;transition:opacity 0.2s;}
+.btn-primary:hover{opacity:0.9;}
+.btn-secondary{display:block;text-align:center;margin-top:10px;font-size:12px;color:rgba(255,255,255,0.3);text-decoration:none;}
+.btn-secondary:hover{color:rgba(255,255,255,0.6);}
+
+/* FEATURES */
+.features{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:40px;}
+.feat{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;}
+.feat-icon{font-size:24px;margin-bottom:10px;}
+.feat-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;}
+.feat-desc{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;}
+
+/* HOW IT WORKS */
+h2.section{font-family:'Fraunces',serif;font-size:24px;font-weight:900;margin-bottom:20px;color:#fff;}
+.steps{display:flex;flex-direction:column;gap:12px;margin-bottom:40px;}
+.step{display:flex;gap:16px;align-items:flex-start;}
+.step-num{width:32px;height:32px;border-radius:50%;background:rgba(200,168,75,0.15);border:1px solid rgba(200,168,75,0.3);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#C8A84B;flex-shrink:0;margin-top:2px;}
+.step-body h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;}
+.step-body p{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;}
+
+/* CODE SAMPLE */
+.code-block{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin-bottom:40px;overflow-x:auto;}
+.code-block pre{font-family:'DM Mono',monospace;font-size:12px;color:#C8A84B;line-height:1.8;}
+.code-block .comment{color:rgba(255,255,255,0.3);}
+.code-block .string{color:#22c55e;}
+.code-block .key{color:#C8A84B;}
+
+/* INTEREST FORM */
+.interest-form{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:32px;}
+.interest-form h3{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:8px;}
+.interest-form p{font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:24px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-row.full{grid-template-columns:1fr;}
+input,select,textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;font-size:14px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:rgba(200,168,75,0.4);}
+select option{background:#0d1a3a;}
+textarea{height:80px;resize:none;}
+.form-submit{width:100%;padding:14px;background:#C8A84B;color:#000;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;}
+.form-note{font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:10px;line-height:1.6;}
+.success-msg{display:none;text-align:center;padding:20px;color:#22c55e;font-weight:700;}
+
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:48px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);}
+.foot a{color:rgba(255,255,255,0.3);text-decoration:none;}
+
+@media(max-width:580px){
+  .features{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .price-hero{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+  <a href="/pricing.html" style="font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;">Pricing →</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">FRC Intelligence · Professional Access</div>
+  <h1>Lender routing<br>for <em>mortgage brokers.</em><br>At scale.</h1>
+  <p class="sub">Unlimited FHA lender routing decisions. Bulk CSV upload. PDF reports with your branding. Full access to lender DNA, cliff maps, and black hole coordinates. Built for brokers who route more than 10 files a month.</p>
+
+  <div class="price-hero">
+    <div class="price-left">
+      <h2>$299<span>/mo</span></h2>
+      <p>Cancel anytime · No setup fee · 7-day free trial</p>
+    </div>
+    <div>
+      <a href="https://ziyetis.gumroad.com/l/sqsby" target="_blank" class="btn-primary">Start Free Trial →</a>
+      <a href="#interest" class="btn-secondary">Talk to us first</a>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feat">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-title">Unlimited Routing Queries</div>
+      <div class="feat-desc">Run as many borrower profiles as you need. No per-query fees. No throttling.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📄</div>
+      <div class="feat-title">Branded PDF Reports</div>
+      <div class="feat-desc">Client-ready lender match reports with your name and contact info. Download instantly.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">CSV Bulk Upload</div>
+      <div class="feat-desc">Upload multiple borrower profiles at once. Get batch routing results in one file.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🧬</div>
+      <div class="feat-title">Full Lender DNA Access</div>
+      <div class="feat-desc">CLTV cliffs, DTI sensitivity, black hole coordinates, volatility scores for all 11 major FHA lenders.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🔗</div>
+      <div class="feat-title">Similarity Engine</div>
+      <div class="feat-desc">See which lenders share behavioral DNA. Know which alternatives to route to when your primary lender fails.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📡</div>
+      <div class="feat-title">API Access (Coming Q3 2026)</div>
+      <div class="feat-desc">Integrate FRC routing directly into your LOS. REST API with JSON responses. Early access for current subscribers.</div>
+    </div>
+  </div>
+
+  <h2 class="section">How it works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Enter the borrower profile</h3>
+        <p>DTI, CLTV, FICO range, loan type, state. Takes 30 seconds.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Get ranked lender matches</h3>
+        <p>Top 5 lenders for this profile, sorted by approval probability. Includes cliff warnings and black hole alerts.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Download branded PDF</h3>
+        <p>Client-ready report with your name, the lender ranking, and the behavioral data behind each recommendation.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Upload your pipeline</h3>
+        <p>Batch process multiple files via CSV. Get routing results for your entire pipeline in one download.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section">What the data looks like</h2>
+  <div class="code-block">
+    <pre><span class="comment">// Sample routing response for: DTI 44%, CLTV 88%, FICO 640, FHA Purchase, TX</span>
+{
+  <span class="key">"top_lender"</span>: <span class="string">"Mr. Cooper"</span>,
+  <span class="key">"denial_probability"</span>: <span class="string">"18.4%"</span>,
+  <span class="key">"cltv_cliff_warning"</span>: <span class="string">false</span>,
+  <span class="key">"alternatives"</span>: [
+    { <span class="key">"lender"</span>: <span class="string">"Guild Mortgage"</span>, <span class="key">"denial_est"</span>: <span class="string">"22.1%"</span> },
+    { <span class="key">"lender"</span>: <span class="string">"CrossCountry"</span>, <span class="key">"denial_est"</span>: <span class="string">"24.7%"</span> }
+  ],
+  <span class="key">"avoid"</span>: [
+    { <span class="key">"lender"</span>: <span class="string">"Rocket"</span>, <span class="key">"reason"</span>: <span class="string">"CLTV-85 gene active (+54.9pp at this LTV)"</span> },
+    { <span class="key">"lender"</span>: <span class="string">"PennyMac"</span>, <span class="key">"reason"</span>: <span class="string">"High-risk disparity +28.8pp above market"</span> }
+  ],
+  <span class="key">"source"</span>: <span class="string">"CFPB HMDA 2025, 310,592 FHA records"</span>
+}</pre>
+  </div>
+
+  <div class="interest-form" id="interest">
+    <h3>Talk to us first</h3>
+    <p>If you route more than 20 files a month or want custom pricing for your team, fill this out and we'll reply within 24 hours.</p>
+    <form id="brokerForm" action="https://formspree.io/f/mkoewrgp" method="POST">
+      <input type="hidden" name="_subject" value="Broker API Interest — FRC">
+      <input type="hidden" name="source" value="broker-api-page">
+      <div class="form-row">
+        <input type="text" name="name" placeholder="Your name" required>
+        <input type="email" name="email" placeholder="Work email" required>
+      </div>
+      <div class="form-row">
+        <input type="text" name="company" placeholder="Company / brokerage name">
+        <select name="volume">
+          <option value="">Monthly file volume</option>
+          <option value="10-20">10–20 files/mo</option>
+          <option value="20-50">20–50 files/mo</option>
+          <option value="50-100">50–100 files/mo</option>
+          <option value="100+">100+ files/mo</option>
+        </select>
+      </div>
+      <div class="form-row full">
+        <textarea name="message" placeholder="What are you trying to solve? (optional)"></textarea>
+      </div>
+      <button type="submit" class="form-submit">Send Message →</button>
+      <div class="form-note">We reply within 24 hours. No spam, no sales calls unless you ask.</div>
+    </form>
+    <div class="success-msg" id="successMsg">✅ Got it — we'll be in touch within 24 hours.</div>
+  </div>
+
+  <div class="foot" style="margin-top:32px;">
+    Routing guidance based on CFPB HMDA 2025 public data · 310,592 FHA records · Not financial advice · For informational purposes only.<br><br>
+    <a href="/pricing.html">Pricing</a> &nbsp;·&nbsp;
+    <a href="/zai-one.html">Free Zai Tool</a> &nbsp;·&nbsp;
+    <a href="/terms.html">Terms</a> &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy</a>
+  </div>
+</div>
+
+<script>
+document.getElementById('brokerForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var form = this;
+  fetch(form.action, {
+    method: 'POST',
+    body: new FormData(form),
+    headers: {'Accept': 'application/json'}
+  }).then(function(r){
+    if(r.ok){
+      form.style.display='none';
+      document.getElementById('successMsg').style.display='block';
+      if(typeof gtag !== 'undefined') gtag('event','broker_api_interest');
+    }
+  });
+});
+</script>
+</body>
+</html>
