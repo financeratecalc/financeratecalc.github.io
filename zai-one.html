@@ -523,6 +523,49 @@ function getRouting() {
         resultInner.appendChild(simBox);
       }
 
+      // MARGINAL ANALYSIS — "what opens if you improve"
+      // Data: decision_surfaces_2025 — DTI thresholds per lender (denial <35% = "open")
+      var MARGINAL = {
+        // dtiThreshold: max DTI where lender is still historically favorable (denial <35% in 2025 HMDA, CLTV<85)
+        'Rocket':       {dtiOpen: 45, cltvOpen: 84},
+        'Guild':        {dtiOpen: 49, cltvOpen: 84},
+        'PennyMac':     {dtiOpen: 43, cltvOpen: 84},
+        'Freedom':      {dtiOpen: 41, cltvOpen: 84},
+        'Mr. Cooper':   {dtiOpen: 49, cltvOpen: 94},
+        'CrossCountry': {dtiOpen: 49, cltvOpen: 89},
+        'UWM':          {dtiOpen: 44, cltvOpen: 84},
+        'loanDepot':    {dtiOpen: 44, cltvOpen: 84},
+        'NewRez':       {dtiOpen: 45, cltvOpen: 84},
+        'Planet Home':  {dtiOpen: 44, cltvOpen: 84},
+        'Wells Fargo':  {dtiOpen: 43, cltvOpen: 84}
+      };
+
+      var userDTI = parseInt(dti);
+      var openNow = 0, openMinus2 = 0, openMinus4 = 0;
+      var namesMinus2 = [];
+      for (var lname in MARGINAL) {
+        var th = MARGINAL[lname].dtiOpen;
+        if (userDTI <= th) openNow++;
+        if (userDTI - 2 <= th) { openMinus2++; if (userDTI > th && userDTI - 2 <= th) namesMinus2.push(lname); }
+        if (userDTI - 4 <= th) openMinus4++;
+      }
+
+      if (userDTI >= 41 && openMinus2 > openNow) {
+        var gainedNames = namesMinus2.length ? ' (' + namesMinus2.slice(0,3).join(', ') + ')' : '';
+        var margBox = document.createElement('div');
+        margBox.style.cssText = 'background:linear-gradient(135deg,rgba(34,197,94,0.07),rgba(34,197,94,0.03));border:1.5px solid rgba(34,197,94,0.3);border-radius:14px;padding:20px 22px;margin-top:14px;';
+        margBox.innerHTML =
+          '<div style="font-size:10px;color:#22c55e;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;">📈 Marginal Analysis — What Improvement Unlocks</div>' +
+          '<div style="font-size:16px;font-weight:900;color:#fff;margin-bottom:10px;line-height:1.4;">At DTI ' + userDTI + '%, your profile is historically favorable at <span style="color:#22c55e;">' + openNow + ' of 11</span> major FHA lenders.</div>' +
+          '<div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8;margin-bottom:6px;">' +
+            'Lower your DTI by <strong style="color:#22c55e;">2 points</strong> → <strong style="color:#fff;">' + openMinus2 + ' lenders</strong> open' + gainedNames + '<br>' +
+            'Lower it by <strong style="color:#22c55e;">4 points</strong> → <strong style="color:#fff;">' + openMinus4 + ' lenders</strong> open' +
+          '</div>' +
+          '<div style="font-size:11px;color:rgba(255,255,255,0.3);line-height:1.6;margin-top:10px;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;">"Open" = denial rate below 35% for this DTI band in 2025 HMDA data (CLTV under each lender\'s cliff threshold). Paying down a credit card or adding a co-borrower income can move DTI 2-4 points. Historical data observation — not advice.</div>';
+        resultInner.appendChild(margBox);
+        if (window.frcFunnel) window.frcFunnel.step('marginal_analysis_shown', {dti: userDTI, open_now: openNow, open_minus2: openMinus2});
+      }
+
     } catch(parseErr) {
       if (loadingInterval) clearInterval(loadingInterval);
       resultInner.innerHTML = '<div class="result-card"><div class="result-label">Parse error</div><div class="lender-why">Could not parse response. Please try again.</div></div>';
