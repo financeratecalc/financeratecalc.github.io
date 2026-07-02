@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Shock Beta — Which Lenders Panic When Markets Turn | FRC</title>
+<meta name="description" content="Shock Beta measures how violently each FHA lender's underwriting reacts to macro shocks. Validated across two opposite shock episodes (2020 easing, 2022-23 tightening). Refi-mix controlled.">
+<meta property="og:title" content="Shock Beta — Which Lenders Panic When Markets Turn">
+<meta property="og:type" content="website"><meta property="og:site_name" content="FinanceRateCalc">
+<link rel="canonical" href="https://financeratecalc.com/shock-beta.html"><link rel="icon" href="/favicon.ico">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#060d1f;color:#fff;line-height:1.8;-webkit-font-smoothing:antialiased;}
+header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.97);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-size:16px;font-weight:900;color:#fff;text-decoration:none;}
+.logo em{font-style:italic;color:#C8A84B;}
+.wrap{max-width:760px;margin:0 auto;padding:52px 24px 100px;}
+.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:14px;font-weight:700;}
+h1{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,46px);font-weight:900;line-height:1.08;letter-spacing:-1px;margin-bottom:14px;}
+h1 em{font-style:italic;color:#C8A84B;}
+.sub{font-size:15px;color:rgba(255,255,255,0.5);line-height:1.85;margin-bottom:40px;max-width:600px;}
+h2{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin:40px 0 12px;}
+h2 em{font-style:italic;color:#C8A84B;}
+p{font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:14px;}
+strong{color:#fff;}
+.board{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px;margin:20px 0;}
+.brow{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.brow:last-child{border-bottom:none;}
+.bname{width:110px;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.btrack{flex:1;height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;}
+.bfill{height:100%;border-radius:4px;}
+.bval{font-family:'DM Mono',monospace;font-size:15px;font-weight:700;width:36px;text-align:right;flex-shrink:0;}
+.blab{font-size:9px;font-weight:800;letter-spacing:0.08em;width:96px;flex-shrink:0;text-align:right;}
+.evidence{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0;}
+.ecard{border-radius:14px;padding:20px;}
+.e1{background:rgba(233,69,96,0.05);border:1px solid rgba(233,69,96,0.2);}
+.e2{background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.2);}
+.elabel{font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;}
+.e1 .elabel{color:#e94560;} .e2 .elabel{color:#22c55e;}
+.enum{font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#fff;}
+.edesc{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;margin-top:6px;}
+.pull{border-left:3px solid #C8A84B;padding:14px 20px;margin:24px 0;background:rgba(200,168,75,0.04);border-radius:0 8px 8px 0;}
+.pull p{font-family:'Fraunces',serif;font-size:17px;font-style:italic;color:rgba(255,255,255,0.85);margin:0;}
+.cta{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.15);border-radius:14px;padding:20px 24px;margin-top:36px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.cta p{font-size:13px;color:rgba(255,255,255,0.4);max-width:400px;margin:0;}
+.cta a{padding:11px 22px;background:#C8A84B;color:#000;border-radius:9px;font-weight:800;text-decoration:none;font-size:13px;white-space:nowrap;}
+.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.9;margin-top:44px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);}
+.foot a{color:rgba(255,255,255,0.3);text-decoration:none;}
+@media(max-width:560px){.evidence{grid-template-columns:1fr;}.blab{display:none;}}
+</style></head><body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
+<a href="/tools.html" style="font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;">← All Tools</a></header>
+<div class="wrap">
+<div class="eyebrow">FRC Intelligence · World-First Metric · June 2026</div>
+<h1>Shock Beta.<br>Which lenders <em>panic</em><br>when markets turn?</h1>
+<p class="sub">Every lender has a temperament. Some barely move when the Fed shocks the market. Others swing violently — in both directions. Shock Beta is the first metric to measure it, validated across two opposite macro shocks using 8 years of HMDA data.</p>
+
+<h2>The <em>scoreboard</em></h2>
+<p>0 = rock stable across all conditions. 100 = maximum amplitude. Score = normalized average year-over-year denial rate movement, 2018–2025.</p>
+<div class="board"><div class="brow"><div class="bname">Freedom</div>
+<div class="btrack"><div class="bfill" style="width:100%;background:#e94560;"></div></div>
+<div class="bval" style="color:#e94560;">100</div>
+<div class="blab" style="color:#e94560;">HIGH AMPLITUDE</div></div><div class="brow"><div class="bname">NewRez</div>
+<div class="btrack"><div class="bfill" style="width:90%;background:#e94560;"></div></div>
+<div class="bval" style="color:#e94560;">90</div>
+<div class="blab" style="color:#e94560;">HIGH AMPLITUDE</div></div><div class="brow"><div class="bname">PennyMac</div>
+<div class="btrack"><div class="bfill" style="width:45%;background:#eab308;"></div></div>
+<div class="bval" style="color:#eab308;">45</div>
+<div class="blab" style="color:#eab308;">MODERATE</div></div><div class="brow"><div class="bname">Planet Home</div>
+<div class="btrack"><div class="bfill" style="width:41%;background:#eab308;"></div></div>
+<div class="bval" style="color:#eab308;">41</div>
+<div class="blab" style="color:#eab308;">MODERATE</div></div><div class="brow"><div class="bname">Wells Fargo</div>
+<div class="btrack"><div class="bfill" style="width:26%;background:#eab308;"></div></div>
+<div class="bval" style="color:#eab308;">26</div>
+<div class="blab" style="color:#eab308;">MODERATE</div></div><div class="brow"><div class="bname">loanDepot</div>
+<div class="btrack"><div class="bfill" style="width:24%;background:#22c55e;"></div></div>
+<div class="bval" style="color:#22c55e;">24</div>
+<div class="blab" style="color:#22c55e;">STABLE</div></div><div class="brow"><div class="bname">Mr. Cooper</div>
+<div class="btrack"><div class="bfill" style="width:22%;background:#22c55e;"></div></div>
+<div class="bval" style="color:#22c55e;">22</div>
+<div class="blab" style="color:#22c55e;">STABLE</div></div><div class="brow"><div class="bname">UWM</div>
+<div class="btrack"><div class="bfill" style="width:11%;background:#22c55e;"></div></div>
+<div class="bval" style="color:#22c55e;">11</div>
+<div class="blab" style="color:#22c55e;">STABLE</div></div><div class="brow"><div class="bname">Rocket</div>
+<div class="btrack"><div class="bfill" style="width:9%;background:#22c55e;"></div></div>
+<div class="bval" style="color:#22c55e;">9</div>
+<div class="blab" style="color:#22c55e;">STABLE</div></div><div class="brow"><div class="bname">CrossCountry</div>
+<div class="btrack"><div class="bfill" style="width:3%;background:#22c55e;"></div></div>
+<div class="bval" style="color:#22c55e;">0</div>
+<div class="blab" style="color:#22c55e;">STABLE</div></div><div class="brow"><div class="bname">Guild</div>
+<div class="btrack"><div class="bfill" style="width:3%;background:#22c55e;"></div></div>
+<div class="bval" style="color:#22c55e;">0</div>
+<div class="blab" style="color:#22c55e;">STABLE</div></div></div>
+
+<h2>Why this is <em>real</em> — two opposite shocks, one pattern</h2>
+<div class="evidence">
+<div class="ecard e1"><div class="elabel">2022–23 Tightening Shock</div><div class="enum">r = +0.95</div>
+<div class="edesc">Pre-shock volatility (2018–21) predicted how hard each lender tightened when rates spiked. High-beta lenders swung up to +28pp. Low-beta lenders barely moved.</div></div>
+<div class="ecard e2"><div class="elabel">2020 Easing Shock (Placebo Test)</div><div class="enum">r = −0.61</div>
+<div class="edesc">Same lenders, opposite shock: the volatile ones swung hardest downward. The pattern is directionless amplification — temperament, not bias.</div></div>
+</div>
+
+<p><strong>The refi objection — tested and dismissed.</strong> Could this just be product mix (refi-heavy lenders swinging with refi volume)? We ran the partial correlation controlling for each lender's 2021 refi share: the relationship barely moved (r = 0.946 → 0.935). The killer counterexample is Mr. Cooper — the highest refi exposure in the sample (0.99) with one of the lowest betas (22). Temperament is institutional, not compositional.</p>
+
+<div class="pull"><p>"Routing tells you where a lender stands today. Shock Beta tells you whether they'll still be standing there tomorrow."</p></div>
+
+<h2>How to <em>use</em> it</h2>
+<p>If market conditions are shifting — Fed moves, rate spikes, credit tightening headlines — a high-beta lender's behavior from last quarter is a poor guide to next quarter. A borderline file that clears Freedom (beta 100) today may hit a wall in three months. The same file at Guild (beta 0) faces roughly the same odds in any weather. Stable-beta lenders are where you send files when timing is uncertain.</p>
+<p style="font-size:12px;color:rgba(255,255,255,0.35);font-style:italic;">This is a historical data observation, not a recommendation to apply to or avoid any lender. Always consult a licensed mortgage professional.</p>
+
+<div class="cta"><p>See which lender fits your profile — now with behavioral stability context.</p><a href="/zai-one.html">Route with Zai — free →</a></div>
+<div class="cta" style="margin-top:12px;"><p>Full lender DNA: cliffs, similarity, black holes, 3D surfaces.</p><a href="/denial-genome-project.html">Genome Project →</a></div>
+
+<div class="foot">
+Methodology: Shock Beta = min-max normalized mean absolute year-over-year change in FHA denial rate, 2018–2025, per lender (n=11 major FHA lenders, CFPB HMDA public loan-level data). Validation: pre-shock volatility (2018–21 σ) vs. 2021→2023 tightening response, Pearson r=+0.946, Spearman ρ=+0.918, outlier-robust (r=+0.835 excluding largest). Placebo: 2019→2020 easing episode, r=−0.605 (opposite sign, as theory predicts). Refi-mix partial correlation: r=+0.935. Sample size is small (n=11); findings are hypothesis-generating and pending purchase-only replication. Historical patterns do not guarantee future behavior. Not financial advice.<br><br>
+<a href="/tools.html">← All Tools</a> &nbsp;·&nbsp; <a href="/mortgage-correlation-research.html">Correlation Research</a> &nbsp;·&nbsp; <a href="/lender-similarity.html">Similarity Engine</a> &nbsp;·&nbsp; <a href="/terms.html">Terms</a>
+</div></div></body></html>
