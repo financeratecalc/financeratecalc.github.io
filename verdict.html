@@ -140,8 +140,7 @@ function verdict(){
  +'<div class="exh"><h3>EXHIBIT A — THE SAME COORDINATES, OTHER COURTROOMS (2025)</h3><table><tr><th>Lender</th><th>Historical denial @ your cell</th><th>Shock Beta</th></tr>'+rows+'</table><div class="note">Shock Beta (0–100): how violently this lender\'s underwriting historically swung when macro conditions shifted. Low beta = the pattern you see is more likely to persist. <a href="/shock-beta.html" style="color:rgba(200,168,75,.7)">Methodology</a></div></div>'
  +'<div class="exh"><h3>EXHIBIT B — THE PEOPLE WHO SHARED YOUR COORDINATES</h3><p style="font-size:13.5px;color:rgba(255,255,255,.6)">Denied applicants do not disappear. In our 8-year panel, elevated denial years were followed by borrowers originating elsewhere — and the 2-year delinquency record shows most performed. Denial by one lender has not historically meant unfinanceable. <a href="/mortgage-correlation-research.html" style="color:rgba(200,168,75,.7)">Finding F01 →</a></p></div>'
  +'<div class="cta2"><div style="font-family:Fraunces,serif;font-size:19px;font-weight:900;color:#fff;margin-bottom:6px">Want the full case file?</div><p style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:14px">Every lender\'s complete decision surface, all six black holes, and the escape-route matrix — the 11-page Black Hole Report.</p><a href="/black-hole-report.html" style="display:inline-block;padding:12px 24px;background:#C8A84B;color:#000;border-radius:10px;font-weight:800;text-decoration:none;font-size:13px">Open the full report — $49 →</a></div>'
- +'<div class="exh" style="border-color:rgba(59,130,246,.25)"><h3 style="color:#7aa2f7">LEGAL POSTURE — READ THIS</h3>
-<p style="font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.8">The Verdict is a <b style="color:#fff">statistical analysis of public government data</b>, presented with courtroom theming for clarity. It is <b style="color:#fff">not</b> a legal proceeding, an appeal, legal advice, or a determination of any rights &mdash; and it does <b style="color:#fff">not</b> assess or allege discrimination (all protected-class variables are excluded from FRC analyses). A denial characterized here as &ldquo;lender-pattern&rdquo; means the historical numbers diverged, nothing more; lenders may have lawful reasons invisible in public data. If you were denied credit, federal law entitles you to a statement of specific reasons from the lender (your adverse action notice) &mdash; that document, and a licensed mortgage professional, are your authoritative next steps.</p></div>'
+ +'<div class="exh" style="border-color:rgba(59,130,246,.25)"><h3 style="color:#7aa2f7">LEGAL POSTURE &mdash; READ THIS</h3><p style="font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.8">The Verdict is a <b style="color:#fff">statistical analysis of public government data</b>, presented with courtroom theming for clarity. It is <b style="color:#fff">not</b> a legal proceeding, an appeal, legal advice, or a determination of any rights &mdash; and it does <b style="color:#fff">not</b> assess or allege discrimination (all protected-class variables are excluded from FRC analyses). A denial characterized here as &ldquo;lender-pattern&rdquo; means the historical numbers diverged, nothing more; lenders may have lawful reasons invisible in public data. If you were denied credit, federal law entitles you to a statement of specific reasons from the lender (your adverse action notice) &mdash; that document, and a licensed mortgage professional, are your authoritative next steps.</p></div>'
  +'<div style="text-align:center"><span class="dl" onclick="card(\''+cls.replace(/'/g,"")+'\',\''+col+'\')">⬇ Download your Verdict Card</span></div>';
  el.style.display='block';el.scrollIntoView({behavior:'smooth'});
  gtag('event','verdict_rendered',{lender:L,verdict:cls});
@@ -165,4 +164,38 @@ function card(cls,col){
 </script>
 <!-- ZAI FLOATING Z -->
 <a href="/zai-one.html" aria-label="Zai" style="position:fixed;bottom:22px;right:22px;z-index:9999;width:52px;height:52px;border-radius:50%;background:#C8A84B;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 6px 22px rgba(200,168,75,0.45);transition:transform .15s;font-family:'Fraunces',serif;font-style:italic;font-weight:900;font-size:25px;color:#060d1f;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">Z</a>
+<canvas id="frcVoid" style="position:fixed;inset:0;z-index:-1;pointer-events:none;"></canvas>
+<script>/* FRC-VOID-VERDICT */
+(function(){var cv=document.getElementById('frcVoid');if(!cv)return;
+var ctx=cv.getContext('2d'),W,H,V,P=[],rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;V={x:W*0.82,y:H*0.12};}rs();addEventListener('resize',rs);
+var N=W<760?200:520;
+function sp(p,e){p.m=0;p.d=Math.random()<0.27;
+if(e){var s=Math.floor(Math.random()*4);if(s==0){p.x=-10;p.y=Math.random()*H}else if(s==1){p.x=W+10;p.y=Math.random()*H}else if(s==2){p.x=Math.random()*W;p.y=-10}else{p.x=Math.random()*W;p.y=H+10}}
+else{p.x=Math.random()*W;p.y=Math.random()*H}
+p.vx=-0.05-Math.random()*0.15;p.vy=(Math.random()-0.5)*0.12;
+p.r=0.6+Math.random()*1.1;p.a=0.15+Math.random()*0.35;
+p.c=p.d?'233,69,96':(Math.random()<0.72?'200,168,75':'96,140,246');return p}
+for(var i=0;i<N;i++)P.push(sp({},false));
+function st(){ctx.clearRect(0,0,W,H);
+var g=ctx.createRadialGradient(V.x,V.y,0,V.x,V.y,110);
+g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(0.5,'rgba(0,0,0,0.9)');g.addColorStop(0.78,'rgba(3,6,14,0.4)');g.addColorStop(1,'rgba(3,6,14,0)');
+ctx.fillStyle=g;ctx.beginPath();ctx.arc(V.x,V.y,110,0,7);ctx.fill();
+for(var i=0;i<P.length;i++){var p=P[i];
+if(p.m==1){p.or*=0.987;p.ang+=8/p.or;
+var px=p.x,py=p.y;p.x=V.x+Math.cos(p.ang)*p.or;p.y=V.y+Math.sin(p.ang)*p.or;
+if(p.or<12){sp(p,true);continue}
+var t=(p.or-12)/44;var c1=Math.round(233+22*(1-t)),c2=Math.round(69+145*(1-t)),c3=Math.round(96+24*(1-t));
+var beam=1+0.7*Math.cos(p.ang-0.9);var al=Math.min(1,(0.28+(1-t)*0.5)*beam);
+ctx.save();ctx.globalCompositeOperation='lighter';
+ctx.strokeStyle='rgba('+c1+','+c2+','+c3+','+al+')';ctx.lineWidth=p.r*1.5;
+ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.restore();continue}
+if(p.d){var dx=V.x-p.x,dy=V.y-p.y,d=Math.sqrt(dx*dx+dy*dy)||1;
+p.vx+=(dx/d)*(18/d)+(-dy/d)*(11/d);p.vy+=(dy/d)*(18/d)+(dx/d)*(11/d);
+p.vx*=0.985;p.vy*=0.985;
+if(d<56){p.m=1;p.or=d;p.ang=Math.atan2(p.y-V.y,p.x-V.x);continue}}
+p.x+=p.vx;p.y+=p.vy;
+if(p.x<-15||p.x>W+15||p.y<-15||p.y>H+15){sp(p,true)}
+ctx.fillStyle='rgba('+p.c+','+p.a+')';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill()}
+if(!rm)requestAnimationFrame(st)}st()})();</script>
 </body></html>
