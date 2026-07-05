@@ -40,6 +40,11 @@ select:focus{border-color:rgba(200,168,75,.55)}
 .dl{display:inline-block;margin-top:14px;padding:12px 22px;background:rgba(200,168,75,.12);border:1px solid rgba(200,168,75,.45);color:#C8A84B;border-radius:10px;font-weight:800;text-decoration:none;font-size:13px;cursor:pointer}
 .note{font-size:11px;color:rgba(255,255,255,.35);line-height:1.7;margin-top:20px}
 .cta2{background:linear-gradient(135deg, rgba(200,168,75,.14), rgba(200,168,75,.03));border:1px solid rgba(200,168,75,.4);border-radius:16px;padding:24px;margin-top:22px;text-align:center}
+
+.help-t{font-size:11px;color:rgba(200,168,75,.7);cursor:pointer;margin-top:5px;display:inline-block;text-decoration:underline dotted}
+.help-b{display:none;background:rgba(59,130,246,.05);border:1px dashed rgba(59,130,246,.3);border-radius:10px;padding:14px;margin-top:8px}
+.help-b label{margin-top:8px;font-size:10px}
+.help-b .out{font-family:'DM Mono',monospace;font-size:12px;color:#C8A84B;margin-top:10px;font-weight:700}
 </style></head><body>
 <header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
 <nav style="display:flex;gap:16px;align-items:center;font-size:12px;">
@@ -54,8 +59,21 @@ select:focus{border-color:rgba(200,168,75,.55)}
 <div class="court">
 <label>Debt-to-income at time of application (DTI)</label>
 <select id="dti"></select>
+<span class="help-t" onclick="tog('dtiH')">Don&rsquo;t know your DTI? Calculate it &rarr;</span>
+<div class="help-b" id="dtiH">
+<label>Gross monthly income (before tax), $</label><input type="number" id="hInc" placeholder="6500" oninput="calcDTI()">
+<label>Monthly housing payment you applied for (or estimate), $</label><input type="number" id="hHouse" placeholder="2100" oninput="calcDTI()">
+<label>All other monthly debt payments (cards, car, student loans), $</label><input type="number" id="hDebt" placeholder="600" oninput="calcDTI()">
+<div class="out" id="dtiOut">Enter your numbers &mdash; DTI appears here</div>
+</div>
 <label>Combined loan-to-value (CLTV)</label>
 <select id="cltv"></select>
+<span class="help-t" onclick="tog('cltvH')">Don&rsquo;t know your CLTV? Calculate it &rarr;</span>
+<div class="help-b" id="cltvH">
+<label>Home price / appraised value, $</label><input type="number" id="hPrice" placeholder="380000" oninput="calcCLTV()">
+<label>Your down payment, $</label><input type="number" id="hDown" placeholder="13300" oninput="calcCLTV()">
+<div class="out" id="cltvOut">Enter your numbers &mdash; CLTV appears here</div>
+</div>
 <label>The lender that denied you</label>
 <select id="lender"></select>
 <button class="go" onclick="verdict()">⚖ RENDER THE VERDICT</button>
@@ -77,6 +95,27 @@ Promise.all([fetch(BASE+'decision_surfaces_2025.json').then(r=>r.json()),fetch(B
  var l=document.getElementById('lender');Object.keys(DS.surfaces).forEach(function(k){l.innerHTML+='<option value="'+k+'">'+NICE[k]+'</option>'});
 });
 function betaOf(k){if(!BETA)return null;var n=NICE[k];for(var key in BETA){if(key.indexOf(k)>=0||k.indexOf(key)>=0||(BETA[key]&&BETA[key].lender&&BETA[key].lender.indexOf(k)>=0))return BETA[key].score!==undefined?BETA[key].score:BETA[key];}return null}
+
+function tog(id){var e=document.getElementById(id);e.style.display=e.style.display=='block'?'none':'block'}
+function calcDTI(){
+ var inc=+document.getElementById('hInc').value, h=+document.getElementById('hHouse').value, d=+document.getElementById('hDebt').value;
+ if(!inc||!h){document.getElementById('dtiOut').textContent='Enter your numbers — DTI appears here';return}
+ var dti=(h+(d||0))/inc*100, sel=document.getElementById('dti'), t;
+ if(dti<36){t='Your estimated DTI ≈ '+dti.toFixed(1)+'% — below our 36–49 high-resolution grid (good news). Using 36.';sel.value=36;}
+ else if(dti>49){t='Your estimated DTI ≈ '+dti.toFixed(1)+'% — above 49. Using 49 (the grid ceiling).';sel.value=49;}
+ else{sel.value=Math.round(dti);t='Your estimated DTI ≈ '+dti.toFixed(1)+'% → set to '+Math.round(dti)+'%';}
+ document.getElementById('dtiOut').textContent=t+' · Estimate only — your lender\u2019s calculation may differ.';
+}
+function calcCLTV(){
+ var p=+document.getElementById('hPrice').value, dn=+document.getElementById('hDown').value;
+ if(!p){document.getElementById('cltvOut').textContent='Enter your numbers — CLTV appears here';return}
+ var cltv=(p-(dn||0))/p*100, sel=document.getElementById('cltv'), bands=[[70,79,0],[80,84,1],[85,89,2],[90,94,3],[95,96,4],[97,200,5]], bi=5;
+ if(cltv<70){document.getElementById('cltvOut').textContent='Your CLTV ≈ '+cltv.toFixed(1)+'% — below 70, outside the FHA-typical grid. Using 70–79.';sel.value=0;return}
+ for(var i=0;i<bands.length;i++){if(cltv>=bands[i][0]&&cltv<=bands[i][1]){bi=bands[i][2];break}}
+ sel.value=bi;
+ document.getElementById('cltvOut').textContent='Your CLTV ≈ '+cltv.toFixed(1)+'% → band set. · Estimate only.';
+}
+
 function verdict(){
  var dti=+document.getElementById('dti').value, band=+document.getElementById('cltv').value, L=document.getElementById('lender').value;
  var ci=DS.dti_axis.indexOf(dti);
