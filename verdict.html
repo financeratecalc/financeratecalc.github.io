@@ -59,7 +59,7 @@ select:focus{border-color:rgba(200,168,75,.55)}
 <label>The lender that denied you</label>
 <select id="lender"></select>
 <button class="go" onclick="verdict()">⚖ RENDER THE VERDICT</button>
-<div class="note">Free &middot; no signup &middot; nothing is stored. Historical FHA patterns from CFPB HMDA 2025 &mdash; informational only, not financial advice, not a prediction for any individual file.</div>
+<div class="note">Free &middot; no signup &middot; nothing is stored. Historical FHA patterns from CFPB HMDA 2025 &mdash; a statistical analysis with courtroom theming, not a legal proceeding or advice, and not a prediction or allegation about any lender or file.</div>
 </div>
 
 <div id="res"></div>
@@ -88,10 +88,11 @@ function verdict(){
  var h=HOLE[L], inHole=h&&dti>=h.dti_min&&dti<=h.dti_max&&(function(){var br=DS.cltv_bands[band].replace('+','-130').split('-');return +br[0]<=h.cltv_max&&+br[1]>=h.cltv_min})();
  var cls,col,line;
  if(mine===null){cls='INSUFFICIENT RECORD';col='rgba(255,255,255,.5)';line='Fewer than 50 comparable 2025 files at these exact coordinates at '+NICE[L]+' — the historical record is too thin for a verdict here. The alternative-lender exhibit below still applies.';}
- else if(inHole){cls='CASE DISMISSED — BLACK HOLE';col='#e94560';line='Your coordinates fall inside '+NICE[L]+'\'s verified 2025 black hole ('+h.rate+'% historical denial across '+h.n+' applications). At these coordinates, outcome has historically been governed by the lender\'s zone — not by individual files.';}
+ else if(inHole){cls='BLACK HOLE COORDINATES';col='#e94560';line='Your coordinates fall inside '+NICE[L]+'\'s verified 2025 black hole ('+h.rate+'% historical denial across '+h.n+' applications). At these coordinates, outcome has historically been governed by the lender\'s zone — not by individual files.';}
  else if(med!==null&&mine-med>=25){cls='LENDER-PATTERN DENIAL';col='#e94560';line=NICE[L]+' historically denied '+mine.toFixed(0)+'% of files at your coordinates, while the median major lender denied '+med.toFixed(0)+'%. A '+(mine-med).toFixed(0)+'-point gap at identical coordinates is the statistical signature of lender-specific behavior.';}
  else if(med!==null&&mine-med>=10){cls='CONTESTED — SPLIT DECISION';col='#e6a23c';line='At your coordinates, '+NICE[L]+' ran '+mine.toFixed(0)+'% historical denial vs a '+med.toFixed(0)+'% median elsewhere. The record shows both terrain difficulty and lender-specific pattern.';}
  else{cls='TERRAIN, NOT TARGETING';col='#8899bb';line='At your coordinates, most major lenders showed similar historical denial ('+NICE[L]+': '+(mine!==null?mine.toFixed(0):'—')+'%, median: '+(med!==null?med.toFixed(0):'—')+'%). The record points to the coordinates themselves, not one lender\'s pattern. Coordinates can change — see Exhibit C.';}
+ line+=' — Statistical characterization of public HMDA data. This is not a finding of impropriety: underwriting overlays are lawful business decisions, and lenders lawfully consider factors (credit history, assets, property, documentation) not visible at these coordinates.';
  var rows='';valid.forEach(function(a){var b=betaOf(a.k);rows+='<tr><td>'+NICE[a.k]+'</td><td class="mono '+(a.v<30?'good':a.v<60?'mid':'bad')+'">'+a.v.toFixed(1)+'%</td><td class="mono">'+(b!==null&&b!==undefined?b:'—')+'</td></tr>'});
  var nulls=alts.filter(function(a){return a.v===null});
  nulls.forEach(function(a){rows+='<tr><td>'+NICE[a.k]+'</td><td class="mono" style="color:rgba(255,255,255,.3)">n&lt;50</td><td class="mono">—</td></tr>'});
@@ -100,6 +101,8 @@ function verdict(){
  +'<div class="exh"><h3>EXHIBIT A — THE SAME COORDINATES, OTHER COURTROOMS (2025)</h3><table><tr><th>Lender</th><th>Historical denial @ your cell</th><th>Shock Beta</th></tr>'+rows+'</table><div class="note">Shock Beta (0–100): how violently this lender\'s underwriting historically swung when macro conditions shifted. Low beta = the pattern you see is more likely to persist. <a href="/shock-beta.html" style="color:rgba(200,168,75,.7)">Methodology</a></div></div>'
  +'<div class="exh"><h3>EXHIBIT B — THE PEOPLE WHO SHARED YOUR COORDINATES</h3><p style="font-size:13.5px;color:rgba(255,255,255,.6)">Denied applicants do not disappear. In our 8-year panel, elevated denial years were followed by borrowers originating elsewhere — and the 2-year delinquency record shows most performed. Denial by one lender has not historically meant unfinanceable. <a href="/mortgage-correlation-research.html" style="color:rgba(200,168,75,.7)">Finding F01 →</a></p></div>'
  +'<div class="cta2"><div style="font-family:Fraunces,serif;font-size:19px;font-weight:900;color:#fff;margin-bottom:6px">Want the full case file?</div><p style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:14px">Every lender\'s complete decision surface, all six black holes, and the escape-route matrix — the 11-page Black Hole Report.</p><a href="/black-hole-report.html" style="display:inline-block;padding:12px 24px;background:#C8A84B;color:#000;border-radius:10px;font-weight:800;text-decoration:none;font-size:13px">Open the full report — $49 →</a></div>'
+ +'<div class="exh" style="border-color:rgba(59,130,246,.25)"><h3 style="color:#7aa2f7">LEGAL POSTURE — READ THIS</h3>
+<p style="font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.8">The Verdict is a <b style="color:#fff">statistical analysis of public government data</b>, presented with courtroom theming for clarity. It is <b style="color:#fff">not</b> a legal proceeding, an appeal, legal advice, or a determination of any rights &mdash; and it does <b style="color:#fff">not</b> assess or allege discrimination (all protected-class variables are excluded from FRC analyses). A denial characterized here as &ldquo;lender-pattern&rdquo; means the historical numbers diverged, nothing more; lenders may have lawful reasons invisible in public data. If you were denied credit, federal law entitles you to a statement of specific reasons from the lender (your adverse action notice) &mdash; that document, and a licensed mortgage professional, are your authoritative next steps.</p></div>'
  +'<div style="text-align:center"><span class="dl" onclick="card(\''+cls.replace(/'/g,"")+'\',\''+col+'\')">⬇ Download your Verdict Card</span></div>';
  el.style.display='block';el.scrollIntoView({behavior:'smooth'});
  gtag('event','verdict_rendered',{lender:L,verdict:cls});
@@ -114,7 +117,9 @@ function card(cls,col){
  x.fillStyle='rgba(255,255,255,0.75)';x.font='24px DM Sans, sans-serif';
  x.fillText('Tried against 310,592 real FHA case files (CFPB HMDA 2025).', 70, 370);
  x.fillStyle='rgba(255,255,255,0.4)';x.font='20px DM Mono, monospace';
- x.fillText('Get yours free → financeratecalc.com/verdict', 70, 540);
+ x.fillText('Get yours free → financeratecalc.com/verdict', 70, 505);
+ x.fillStyle='rgba(255,255,255,0.32)';x.font='15px DM Sans, sans-serif';
+ x.fillText('Statistical analysis of public CFPB HMDA data. Not a legal finding, not advice, no allegation of impropriety.', 70, 560);
  var a=document.createElement('a');a.download='frc-verdict-card.png';a.href=cv.toDataURL('image/png');a.click();
  gtag('event','verdict_card_download');
 }
