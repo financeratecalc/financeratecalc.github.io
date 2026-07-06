@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Meter — What the Market Did After Your Denial | FinanceRateCalc</title>
+<meta name="description" content="Your file waited. The market didn't. Enter your denial date and state — The Meter shows exactly how far home prices moved since, on official FHFA data.">
+<link rel="canonical" href="https://financeratecalc.com/the-meter.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Mono&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;line-height:1.7;min-height:100vh}
+.wrap{max-width:720px;margin:0 auto;padding:52px 22px 90px}
+h1{font-family:'Fraunces',serif;font-size:clamp(30px,5vw,46px);font-weight:900;line-height:1.15}
+h1 em{font-style:italic;color:#C8A84B}
+.sub{color:rgba(255,255,255,.5);font-size:15px;margin-top:12px}
+.panel{background:#0b0d12;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px;margin:26px 0}
+label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin:14px 0 6px}
+select,input{width:100%;padding:12px;background:#0d0f14;border:1px solid rgba(255,255,255,.14);border-radius:9px;color:#fff;font-size:14px;font-family:'DM Sans',sans-serif}
+button{margin-top:20px;width:100%;padding:15px;background:#C8A84B;color:#000;border:none;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer}
+#out{display:none}
+.big{font-family:'DM Mono',monospace;font-size:clamp(34px,7vw,54px);font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:16px}
+.card{padding:14px;background:rgba(255,255,255,.03);border-radius:10px}
+.card .k{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em}
+.card .v{font-family:'DM Mono',monospace;font-size:19px;font-weight:700;margin-top:4px}
+.legal{font-size:10.5px;color:rgba(255,255,255,.3);line-height:1.8;margin-top:30px;border-top:1px solid rgba(255,255,255,.07);padding-top:14px}
+.cta{display:block;margin-top:14px;padding:14px;text-align:center;border:1px solid rgba(200,168,75,.35);border-radius:10px;color:#C8A84B;font-weight:700;text-decoration:none;font-size:13.5px}
+</style></head><body>
+<div class="wrap">
+<h1>The <em>Meter</em></h1>
+<p class="sub">A denial doesn't pause the market. Enter when and where — The Meter reads what official FHFA price records did while the file sat in a drawer.</p>
+
+<div class="panel">
+  <label>State</label><select id="mState"></select>
+  <label>Year of denial</label><select id="mYear"></select>
+  <label>Home price you were pursuing ($, optional — default: national median $429,300)</label>
+  <input id="mPrice" type="number" placeholder="429300">
+  <button onclick="runMeter()">Read the meter →</button>
+</div>
+
+<div id="out" class="panel">
+  <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35)">Since your denial, in <span id="oState"></span></div>
+  <div class="big" id="oPct"></div>
+  <div style="color:rgba(255,255,255,.55);font-size:14px" id="oLine"></div>
+  <div class="cards">
+    <div class="card"><div class="k">On your price point</div><div class="v" id="oDollar"></div></div>
+    <div class="card"><div class="k">Index then → now</div><div class="v" id="oIdx"></div></div>
+    <div class="card"><div class="k">Latest year pace</div><div class="v" id="oPace"></div></div>
+  </div>
+  <a class="cta" href="/verdict.html">Was the denial itself lender-specific? Run the Verdict →</a>
+  <a class="cta" href="/geographic-lottery.html" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.6)">See your state's full 50-year price film →</a>
+</div>
+
+<div class="legal">The Meter reads the FHFA state-level House Price Index (annual resolution, 1975–2026). It is a historical data observation about market movement — not a claim about what any individual gained or lost, not a forecast, and not financial, legal, or mortgage advice. Denials have many causes; market movement afterward is context, not blame. FRC Intelligence · financeratecalc.com</div>
+</div>
+
+<script>
+var HPI=null;
+var SEL_YEARS=['2018','2019','2020','2021','2022','2023','2024','2025','2026'];
+fetch('https://raw.githubusercontent.com/financeratecalc/financeratecalc.github.io/main/_data/hpi_state_annual.json')
+  .then(function(r){return r.json();})
+  .then(function(d){
+    HPI=d;
+    var ss=document.getElementById('mState');
+    Object.keys(d.index).sort().forEach(function(s){
+      var o=document.createElement('option');o.value=s;o.textContent=s;ss.appendChild(o);
+    });
+    ss.value='Texas';
+    var sy=document.getElementById('mYear');
+    SEL_YEARS.forEach(function(y){var o=document.createElement('option');o.value=y;o.textContent=y;sy.appendChild(o);});
+    sy.value='2023';
+  });
+function runMeter(){
+  if(!HPI)return;
+  var st=document.getElementById('mState').value;
+  var yr=document.getElementById('mYear').value;
+  var price=parseFloat(document.getElementById('mPrice').value)||429300;
+  var idx=HPI.index[st]; if(!idx||!idx[yr]){return;}
+  var yrs=Object.keys(idx).sort(); var last=yrs[yrs.length-1];
+  var chg=(idx[last]/idx[yr]-1)*100;
+  var dollars=price*chg/100;
+  var sign=chg>=0?'+':'';
+  document.getElementById('oState').textContent=st+', '+yr+' \u2192 '+last;
+  var pctEl=document.getElementById('oPct');
+  pctEl.textContent=sign+chg.toFixed(1)+'%';
+  pctEl.style.color=chg>=0?'#e94560':'#22c55e';
+  document.getElementById('oLine').textContent=chg>=0
+    ? 'The index climbed while the file waited. The same house costs more to reach today.'
+    : 'The index eased since then. In this state, the wait ran in the buyer\u0027s favor \u2014 it happens.';
+  document.getElementById('oDollar').textContent=(dollars>=0?'+':'\u2212')+'$'+Math.abs(Math.round(dollars)).toLocaleString();
+  document.getElementById('oIdx').textContent=idx[yr].toFixed(0)+' \u2192 '+idx[last].toFixed(0);
+  var pace=HPI.yoy_pct[st][last];
+  document.getElementById('oPace').textContent=(pace!=null?(pace>=0?'+':'')+pace.toFixed(1)+'%/yr':'\u2014');
+  document.getElementById('out').style.display='block';
+  gtag('event','meter_run',{state:st,year:yr});
+}
+</script></body></html>

@@ -3,7 +3,7 @@
 Extracts every inline <script>, syntax-checks with node, verifies referenced _data/ files exist."""
 import re, subprocess, sys, os, tempfile
 
-ENGINES = ['verdict-casefile.html','verdict.html','zai-one.html','lender-response-surface.html',
+ENGINES = ['the-meter.html','verdict-casefile.html','verdict.html','zai-one.html','lender-response-surface.html',
            'lender-similarity.html','shock-beta.html','index.html',
            'mortgage-correlation-research.html','black-hole-report.html']
 FAIL = 0

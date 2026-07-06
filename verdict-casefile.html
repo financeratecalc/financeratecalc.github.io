@@ -44,7 +44,12 @@ td{padding:9px 8px;border-bottom:1px solid rgba(255,255,255,.05)}
 <div id="dossier">
   <div class="doc-section"><h2>I. Executive Summary</h2><div id="s-exec"></div></div>
   <div class="doc-section"><h2>II. Your Coordinates — All Lenders Compared</h2><div id="s-matrix"></div></div>
-  <div class="doc-section"><h2>III. Macro Credit Climate Context</h2><div id="s-climate"></div></div>
+  <div class="doc-section"><h2>III. Macro Credit Climate Context</h2><div id="s-climate"></div>
+<div id="hpiCtx" style="margin-top:14px;">
+<label style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);">Add your state for local price context (optional)</label>
+<select id="cfState" onchange="stateCtx()" style="width:100%;padding:11px;background:#0d0f14;border:1px solid rgba(255,255,255,.14);border-radius:8px;color:#fff;margin-top:6px;"><option value="">— select state —</option></select>
+<p id="cfStateLine" style="font-size:13.5px;color:rgba(255,255,255,.6);margin-top:10px;"></p>
+</div></div>
   <div class="doc-section"><h2>IV. Regulatory Context: Your Adverse-Action Rights</h2>
     <p style="font-size:13.5px;color:rgba(255,255,255,.6)">Under the Equal Credit Opportunity Act (Reg B) you are entitled to a written statement of specific denial reasons within 30 days of a completed application. Under FCRA §615, if a credit report influenced the decision, you are entitled to the name of the bureau used and a free copy of that report. These are federal rights — exercising them is routine, not adversarial. This section is educational; it is not legal advice, and this document makes no finding that any lender acted improperly. Overlays are lawful business decisions.</p></div>
   <div class="doc-section"><h2>V. If Credit History Was a Stated Reason</h2>
@@ -99,5 +104,19 @@ async function buildDossier(){
   const last=yrs[yrs.length-1];
   document.getElementById('s-climate').innerHTML=
     `<p style="font-size:13.5px;color:rgba(255,255,255,.6)">Market-wide FHA denial averaged <b class="mono">${den[last]}%</b> in ${last} (vs ${den[yrs[0]]}% in ${yrs[0]}). Spread over Treasuries: <b class="mono">${macro.series.mortgage_treasury_spread.data[last]}pp</b>. Your denial happened inside this climate — coordinates matter more than the weather, but both are on the record.</p>`;
+}
+
+var CF_HPI=null;
+fetch(base+'hpi_state_annual.json').then(function(r){return r.json();}).then(function(d){
+  CF_HPI=d;var s=document.getElementById('cfState');
+  Object.keys(d.index).sort().forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o);});
+});
+function stateCtx(){
+  if(!CF_HPI)return;var st=document.getElementById('cfState').value;if(!st)return;
+  var idx=CF_HPI.index[st],yrs=Object.keys(idx).sort(),last=yrs[yrs.length-1];
+  var s20=idx['2020']?((idx[last]/idx['2020']-1)*100):null;
+  var pace=CF_HPI.yoy_pct[st][last];
+  document.getElementById('cfStateLine').innerHTML='In <b>'+st+'</b>, the FHFA index moved <b class="mono">'+(s20!=null?(s20>=0?'+':'')+s20.toFixed(1)+'%':'—')+'</b> since 2020; latest-year pace <b class="mono">'+(pace!=null?(pace>=0?'+':'')+pace.toFixed(1)+'%':'—')+'</b>. Re-entry coordinates live inside this local climate. <a href="/the-meter.html" style="color:#C8A84B;">Read your full Meter →</a>';
+  gtag('event','casefile_state_ctx',{state:st});
 }
 </script></body></html>
