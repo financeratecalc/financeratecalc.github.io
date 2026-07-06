@@ -11,7 +11,10 @@ for page in ENGINES:
     if not os.path.exists(page):
         print(f"  ⚠ {page}: dosya yok, atlandı"); continue
     html = open(page, errors='ignore').read()
-    scripts = re.findall(r'<script(?![^>]*src=)[^>]*>(.*?)</script>', html, re.S)
+    scripts = [(attrs, body) for attrs, body in
+               re.findall(r'<script((?:(?!src=)[^>])*)>(.*?)</script>', html, re.S)
+               if 'ld+json' not in attrs and 'src=' not in attrs]
+    scripts = [b for _, b in scripts]
     ok = True
     for i, js in enumerate(s for s in scripts if s.strip()):
         with tempfile.NamedTemporaryFile('w', suffix='.js', delete=False) as t:
@@ -20,7 +23,7 @@ for page in ENGINES:
         os.unlink(tf)
         if r.returncode != 0:
             ok = False; FAIL += 1
-            print(f"  ✗ {page} [script #{i}]: {r.stderr.strip().splitlines()[-1][:100]}")
+            print(f"  ✗ {page} [script #{i}]: {' | '.join(r.stderr.strip().splitlines()[-3:-1])[:160]}")
     # sayfanın çektiği _data dosyaları repoda var mı
     for ref in set(re.findall(r'_data/([\w.]+\.json)', html)):
         if not os.path.exists(f'_data/{ref}'):
