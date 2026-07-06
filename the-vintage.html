@@ -1,0 +1,138 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>The Vintage — How Hard Was Your Denial Year? | FinanceRateCalc</title>
+<meta name="description" content="You didn't fail. You may have filed in the wrong year. The Vintage ranks your denial year against 8 years of real federal credit-climate data.">
+<meta property="og:title" content="The Vintage — You didn't fail. You filed in the wrong year.">
+<meta property="og:description" content="Rank your denial year against 8 years of real federal credit data.">
+<meta property="og:url" content="https://financeratecalc.com/the-vintage.html">
+<link rel="canonical" href="https://financeratecalc.com/the-vintage.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Mono&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;line-height:1.7}
+.wrap{max-width:720px;margin:0 auto;padding:52px 22px 90px}
+h1{font-family:'Fraunces',serif;font-size:clamp(30px,5vw,46px);font-weight:900;line-height:1.15}
+h1 em{font-style:italic;color:#C8A84B}
+.sub{color:rgba(255,255,255,.5);font-size:15px;margin-top:12px}
+.panel{background:#0b0d12;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px;margin:26px 0}
+label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin:14px 0 6px}
+select{width:100%;padding:12px;background:#0d0f14;border:1px solid rgba(255,255,255,.14);border-radius:9px;color:#fff;font-size:14px}
+button{margin-top:20px;width:100%;padding:15px;background:#C8A84B;color:#000;border:none;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer}
+#out{display:none}
+.rank{font-family:'DM Mono',monospace;font-size:clamp(38px,8vw,60px);font-weight:700;color:#C8A84B}
+.verdictline{font-family:'Fraunces',serif;font-size:clamp(18px,3.4vw,24px);font-weight:900;font-style:italic;margin-top:8px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:18px}
+.card{padding:14px;background:rgba(255,255,255,.03);border-radius:10px}
+.card .k{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em}
+.card .v{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;margin-top:4px}
+.cta{display:block;margin-top:12px;padding:14px;text-align:center;border:1px solid rgba(200,168,75,.35);border-radius:10px;color:#C8A84B;font-weight:700;text-decoration:none;font-size:13.5px}
+.dl{margin-top:16px;width:100%;padding:13px;background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:10px;font-weight:700;cursor:pointer;font-size:13.5px}
+.legal{font-size:10.5px;color:rgba(255,255,255,.3);line-height:1.8;margin-top:30px;border-top:1px solid rgba(255,255,255,.07);padding-top:14px}
+</style></head><body>
+<div class="wrap">
+<h1>The <em>Vintage</em></h1>
+<p class="sub">Wine has good years and brutal years. So does mortgage credit. Enter your denial year — The Vintage ranks it against 8 years of real federal climate data. You may not have failed. You may have filed in the wrong year.</p>
+
+<div class="panel">
+  <label>Year you were denied</label>
+  <select id="vYear"><option>2018</option><option>2019</option><option>2020</option><option>2021</option><option>2022</option><option selected>2023</option><option>2024</option><option>2025</option></select>
+  <label>Lender (optional)</label>
+  <select id="vLender"><option value="">— skip —</option></select>
+  <label>State (optional)</label>
+  <select id="vState"><option value="">— skip —</option></select>
+  <button onclick="runVintage()">Judge my vintage →</button>
+</div>
+
+<div id="out" class="panel">
+  <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35)">Vintage rank — <span id="oYear"></span></div>
+  <div class="rank" id="oRank"></div>
+  <div class="verdictline" id="oLine"></div>
+  <div class="cards">
+    <div class="card"><div class="k">Climate that year</div><div class="v" id="oClimate"></div></div>
+    <div class="card" id="cLender" style="display:none"><div class="k" id="kLender"></div><div class="v" id="oLender"></div></div>
+    <div class="card" id="cState" style="display:none"><div class="k" id="kState"></div><div class="v" id="oState"></div></div>
+  </div>
+  <button class="dl" onclick="downloadCard()">⬇ Download my Vintage Card</button>
+  <a class="cta" href="/verdict.html">Was the door part of it too? Run the Verdict — free →</a>
+  <a class="cta" href="/zai-one.html" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.6)">It's not that year anymore. See which lender fits your file today →</a>
+</div>
+
+<div class="legal">The Vintage compares the FRC Credit Climate Index (a composite of FHA denial rates, Fed SLOOS, mortgage-Treasury spreads, and FHFA HPI, 2018–2025) across years. It describes market context, not any individual's creditworthiness, and makes no finding about any lender's conduct. Historical data observation — not financial, legal, or mortgage advice. FRC Intelligence · financeratecalc.com</div>
+</div>
+
+<script>
+var BASE='https://raw.githubusercontent.com/financeratecalc/financeratecalc.github.io/main/_data/';
+var CLIMATE=null,LSI=null,HPI=null;
+Promise.all([
+ fetch(BASE+'climate_scores.json').then(function(r){return r.json();}),
+ fetch(BASE+'lender_stress_index.json').then(function(r){return r.json();}),
+ fetch(BASE+'hpi_state_annual.json').then(function(r){return r.json();})
+]).then(function(a){
+ CLIMATE=a[0];LSI=a[1];HPI=a[2];
+ var ls=document.getElementById('vLender');
+ Object.keys(LSI).sort().forEach(function(L){var o=document.createElement('option');o.value=L;o.textContent=L;ls.appendChild(o);});
+ var ss=document.getElementById('vState');
+ Object.keys(HPI.index).sort().forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;ss.appendChild(o);});
+});
+var LAST={};
+function ord(n){return n===1?'1st':n===2?'2nd':n===3?'3rd':n+'th';}
+function runVintage(){
+ if(!CLIMATE)return;
+ var yr=document.getElementById('vYear').value;
+ var ci=CLIMATE.climate_index; var years=Object.keys(ci).sort();
+ var sorted=years.slice().sort(function(a,b){return ci[b]-ci[a];});
+ var rank=sorted.indexOf(yr)+1; var score=ci[yr];
+ document.getElementById('oYear').textContent=yr;
+ document.getElementById('oRank').textContent=ord(rank)+' hardest of '+years.length;
+ var line = rank<=2 ? 'Your file met the market at its worst. That is not a verdict on you.'
+   : rank<=4 ? 'A genuinely tight year. The climate was working against the file.'
+   : rank<=6 ? 'A middling year — climate was a factor, not the whole story.'
+   : 'A relatively open year. The climate offers little cover here — worth running the Verdict on the door itself.';
+ document.getElementById('oLine').textContent=line;
+ document.getElementById('oClimate').textContent=score+'/100';
+ var L=document.getElementById('vLender').value;
+ if(L&&LSI[L]&&LSI[L].denial_history&&LSI[L].denial_history[yr]!=null){
+   var h=LSI[L].denial_history; var v=h[yr];
+   var hy=Object.keys(h); var worse=hy.filter(function(y){return h[y]>v;}).length;
+   document.getElementById('kLender').textContent=L+' denial, '+yr;
+   document.getElementById('oLender').textContent=v.toFixed(1)+'%'+(worse===0?' — its 8yr peak':'');
+   document.getElementById('cLender').style.display='block';
+ } else document.getElementById('cLender').style.display='none';
+ var S=document.getElementById('vState').value;
+ if(S&&HPI.yoy_pct[S]&&HPI.yoy_pct[S][yr]!=null){
+   var p=HPI.yoy_pct[S][yr];
+   document.getElementById('kState').textContent=S+' prices, '+yr;
+   document.getElementById('oState').textContent=(p>=0?'+':'')+p.toFixed(1)+'%/yr';
+   document.getElementById('cState').style.display='block';
+ } else document.getElementById('cState').style.display='none';
+ LAST={yr:yr,rank:rank,n:years.length,score:score};
+ document.getElementById('out').style.display='block';
+ gtag('event','vintage_run',{year:yr});
+}
+function downloadCard(){
+ var c=document.createElement('canvas');c.width=1080;c.height=1080;
+ var x=c.getContext('2d');
+ x.fillStyle='#08090c';x.fillRect(0,0,1080,1080);
+ x.fillStyle='rgba(200,168,75,0.06)';x.beginPath();x.arc(540,420,320,0,7);x.fill();
+ x.fillStyle='rgba(255,255,255,0.35)';x.font='26px monospace';x.textAlign='center';
+ x.fillText('THE VINTAGE \u00b7 FRC INTELLIGENCE',540,120);
+ x.fillStyle='#fff';x.font='italic 900 58px Georgia';
+ x.fillText('The '+LAST.yr+' vintage',540,340);
+ x.fillStyle='#C8A84B';x.font='700 120px monospace';
+ x.fillText(ord(LAST.rank).toUpperCase(),540,500);
+ x.fillStyle='rgba(255,255,255,0.7)';x.font='34px Georgia';
+ x.fillText('hardest year to be approved of the last '+LAST.n,540,560);
+ x.fillStyle='#fff';x.font='italic 900 44px Georgia';
+ x.fillText('It wasn\u0027t just me. It was the year.',540,700);
+ x.fillStyle='rgba(255,255,255,0.35)';x.font='24px monospace';
+ x.fillText('Climate Index '+LAST.score+'/100 \u00b7 FHA denial + SLOOS + spread + HPI',540,780);
+ x.fillStyle='rgba(255,255,255,0.3)';x.font='22px Georgia';
+ x.fillText('Market context \u2014 not a determination of creditworthiness.',540,950);
+ x.fillStyle='#C8A84B';x.font='700 28px monospace';
+ x.fillText('financeratecalc.com/the-vintage',540,1010);
+ var a=document.createElement('a');a.download='frc-vintage-'+LAST.yr+'.png';a.href=c.toDataURL();a.click();
+ gtag('event','vintage_card_download',{year:LAST.yr});
+}
+</script></body></html>
