@@ -615,6 +615,20 @@ No personal data was stored or transmitted. All entries processed locally in you
 Need a second opinion on your loan file? Ask your broker to run a Pre-Flight at:<br>
 <strong>financeratecalc.com/pre-flight</strong>
 </div>
+<script>
+(function(){
+  fetch('https://raw.githubusercontent.com/financeratecalc/financeratecalc.github.io/main/_data/climate_scores.json')
+  .then(function(r){return r.json();})
+  .then(function(d){
+    var b=document.querySelector('.market-badge'); if(!b||!d.current)return;
+    var L=d.current.label, s=d.current.climate;
+    var map={RESTRICTIVE:['\u26a0 Restrictive market','#e94560'],TIGHTENING:['\u26a0 Tightening market','#eab308'],NEUTRAL:['\u25d0 Neutral market','#9ca3af'],ACCOMMODATIVE:['\u25cf Accommodative market','#22c55e']};
+    var m=map[L]||map.NEUTRAL;
+    b.textContent=m[0]; b.style.color=m[1];
+    b.title='FRC Credit Climate Index: '+s+'/100 ('+d.current.year+') \u2014 composite of denial, SLOOS, spread, HPI';
+  }).catch(function(){});
+})();
+</script>
 </body>
 </html>`);
   printWin.document.close();
