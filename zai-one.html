@@ -510,8 +510,8 @@ function getRouting() {
         var sd = simData[top];
         var simBox = document.createElement('div');
         simBox.style.cssText = 'background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px 22px;margin-top:14px;';
-        var simSimilarHTML = sd.similar.slice(0,2).map(function(x){ return '<span style="font-family:DM Mono,monospace;font-size:12px;background:rgba(255,255,255,0.05);padding:4px 10px;border-radius:6px;margin-right:6px;">'+x[0]+' <span style="color:rgba(255,255,255,0.3);">'+x[1]+'/100</span></span>'; }).join('');
-        var simDiffHTML = sd.different.slice(0,2).map(function(x){ return '<span style="font-family:DM Mono,monospace;font-size:12px;background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.15);padding:4px 10px;border-radius:6px;margin-right:6px;color:rgba(255,255,255,0.8);">'+x[0]+' <span style="color:rgba(34,197,94,0.7);">'+x[1]+'/100</span></span>'; }).join('');
+        var simSimilarHTML = sd.similar.slice(0,2).map(function(x){ return '<span style="font-family:DM Mono,monospace;font-size:12px;background:rgba(255,255,255,0.05);padding:4px 10px;border-radius:6px;margin-right:6px;">'+x.lender+' <span style="color:rgba(255,255,255,0.3);">'+Math.round(x.score*100)+'/100</span></span>'; }).join('');
+        var simDiffHTML = sd.different.slice(0,2).map(function(x){ return '<span style="font-family:DM Mono,monospace;font-size:12px;background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.15);padding:4px 10px;border-radius:6px;margin-right:6px;color:rgba(255,255,255,0.8);">'+x.lender+' <span style="color:rgba(34,197,94,0.7);">'+Math.round(x.score*100)+'/100</span></span>'; }).join('');
         simBox.innerHTML =
           '<div style="font-size:10px;color:rgba(255,255,255,0.3);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;">🔗 Lender Behavioral Similarity — HMDA Data</div>' +
           '<div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:8px;">Lenders with similar historical underwriting patterns to ' + top + ':</div>' +

@@ -35,3 +35,4 @@ _Last updated: 2026-07-06 · Owner: Ziya Yetiş · Bus-factor insurance document
 Store: financeratecalc.lemonsqueezy.com — Black Hole $49 · Condo $9.99 · Zai Pro $49/mo · Zai Broker $149/mo · annuals. Receipt emails configured; reply-to monitored.
 
 * Credential rotation executed & verified via API (old GH token + old Anthropic key → 401 confirmed) — 2026-07-06. Rule: cell closes only on a verified 401, never on a claim.
+* Worker secret migration: hardcoded key removed from source, env.ANTHROPIC_API_KEY guard added, end-to-end verified via live Zai routing response — 2026-07-06.
