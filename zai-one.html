@@ -578,7 +578,15 @@ function getRouting() {
         if (window.frcFunnel) window.frcFunnel.step('marginal_analysis_shown', {dti: userDTI, open_now: openNow, open_minus2: openMinus2});
       }
 
-    } catch(parseErr) {
+    } catch(parseErr) { /*FRC-DIAG*/ }
+  try {
+    var _d = JSON.parse(xhr.responseText);
+    if (_d && _d.error) {
+      if (loadingInterval) clearInterval(loadingInterval);
+      resultInner.innerHTML = '<div class="result-card"><div class="result-label" style="color:#e94560;">Engine error (diagnostic)</div><div class="lender-why" style="font-family:monospace;font-size:12px;color:#e94560;">HTTP ' + xhr.status + ' — ' + (typeof _d.error==='string' ? _d.error : (_d.error.type||'') + ': ' + (_d.error.message||JSON.stringify(_d.error)).slice(0,300)) + '</div></div>';
+      return;
+    }
+  } catch(_e) {
       if (loadingInterval) clearInterval(loadingInterval);
       resultInner.innerHTML = '<div class="result-card"><div class="result-label">Parse error</div><div class="lender-why">Could not parse response. Please try again.</div></div>';
     }
