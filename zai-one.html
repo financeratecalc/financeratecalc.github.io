@@ -311,7 +311,7 @@ var ZAI_API = 'https://frc-api.ziyetis.workers.dev/v1/messages';
 
 var ZAI_SYSTEM = [
   'You are Zai, the FHA mortgage routing engine of FinanceRateCalc.com.',
-  'DENIAL RATES (8yr HMDA 2018-2025): CrossCountry 6.3% | Guild 7.3% | UWM 18.0% | Freedom 16.6% | MrCooper 23.4% | PennyMac 23.6% | Rocket 30.1% | loanDepot 34.5% | NewRez 43.5% | Wells 52.4%.',
+  'DENIAL RATES (8yr HMDA 2018-2025): CrossCountry 6.3% | Guild 7.3% | UWM 18.0% | Freedom 16.6% | MrCooper 23.4% | PennyMac 23.6% | Rocket 30.1% | loanDepot 34.5% | NewRez 43.5% | Wells 52.4%. These are GLOBAL averages reflecting applicant mix; when COORDINATE DATA appears in the user message it OVERRIDES this ranking entirely.',
   'CURRENT: OFI 52 moderate friction (model 4.81*rate+20.17 at 6.60). Wells Fargo: FHA exit — lowest profile fit historically. NewRez: lowest routing priority — highest denial rate in panel.',
   'DTI CLIFF at 44-45: Rocket +15pp, PennyMac +11pp, MrCooper +1.4pp (flat). CrossCountry cliff at 45-46.',
   'CLTV-85 WALL: Rocket +55pp, CrossCountry +48pp, Guild +12pp, MrCooper +1.7pp.',
@@ -330,6 +330,28 @@ var ZAI_SYSTEM = [
   'TWIN_NOTE: [1 sentence about similar borrower performance at top lender]',
   'RULES: Never say will be approved or denied. Never say best lender or give financial advice. Tone: calm, strategic, evidence-based.'
 ].join(' ');
+
+var ZAI_SURF=null,ZAI_AXIS=null,ZAI_BANDS=null;
+fetch('https://raw.githubusercontent.com/financeratecalc/financeratecalc.github.io/main/_data/decision_surfaces_2025.json')
+.then(function(r){return r.json();})
+.then(function(d){ZAI_SURF=d.surfaces;ZAI_AXIS=d.dti_axis;ZAI_BANDS=d.cltv_bands;})
+.catch(function(){});
+function zaiCoord(dtiStr){
+ try{
+  if(!ZAI_SURF)return '';
+  var dti=Math.max(36,Math.min(49,parseInt(dtiStr)||44));
+  var col=ZAI_AXIS.indexOf(dti);if(col<0)return '';
+  var hp=parseFloat((document.getElementById('homePrice')||{}).value)||0;
+  var dp=parseFloat((document.getElementById('downpayment')||{}).value)||0;
+  var cltv=hp>0?((hp-dp)/hp*100):96.5;
+  var row=ZAI_BANDS.length-1;
+  for(var i=0;i<ZAI_BANDS.length;i++){var m=ZAI_BANDS[i].match(/(\d+)(?:-(\d+))?/);if(!m)continue;var lo=+m[1],hi=m[2]?+m[2]:999;if(cltv>=lo&&cltv<=hi+0.99){row=i;break;}}
+  var lines=[];
+  for(var L in ZAI_SURF){var arr=ZAI_SURF[L][row]||[];var v=arr[col];if(v==null)continue;lines.push(L+' '+Number(v).toFixed(1)+'%');}
+  if(!lines.length)return '';
+  return ' COORDINATE DATA (AUTHORITATIVE) - DTI '+dti+' x CLTV '+ZAI_BANDS[row]+', 2025 cell denial rates: '+lines.join(' | ')+'. Route PRIMARILY on these cell rates; global averages are tiebreak only. Lenders absent here lack cell data (n<50) - judge cautiously. Different coordinates MUST produce different routing when cells differ.';
+ }catch(e){return '';}
+}
 
 function getRouting() {
   var fico = document.getElementById('fico').value.trim();
@@ -606,7 +628,7 @@ function getRouting() {
     model: 'claude-haiku-4-5-20251001',
     max_tokens: 600,
     system: ZAI_SYSTEM,
-    messages: [{role: 'user', content: userPrompt}]
+    messages: [{role: 'user', content: userPrompt + zaiCoord(dti)}]
   }));
 }
 
