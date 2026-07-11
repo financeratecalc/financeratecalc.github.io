@@ -340,13 +340,21 @@ fetch('https://raw.githubusercontent.com/financeratecalc/financeratecalc.github.
 function zaiCoord(dtiStr){
  try{
   if(!ZAI_SURF)return '';
-  var dti=Math.max(36,Math.min(49,parseInt(dtiStr)||44));
-  var col=ZAI_AXIS.indexOf(dti);if(col<0)return '';
+  var dtiRaw=parseInt(dtiStr)||44;var dti=Math.max(36,Math.min(49,dtiRaw));
+  var col=ZAI_AXIS.indexOf(dti);if(col<0)col=0;
+  var dtiNote=(dtiRaw<36)?' (mapped to floor DTI 36 - your '+dtiRaw+' sits below the data grid; at low DTI, denial is rarely DTI-driven)':(dtiRaw>49?' (mapped to DTI 49 ceiling)':'');
   var hp=parseFloat((document.getElementById('homePrice')||{}).value)||0;
   var dp=parseFloat((document.getElementById('downpayment')||{}).value)||0;
-  var cltv=hp>0?((hp-dp)/hp*100):96.5;
-  var row=ZAI_BANDS.length-1;
-  for(var i=0;i<ZAI_BANDS.length;i++){var m=ZAI_BANDS[i].match(/(\d+)(?:-(\d+))?/);if(!m)continue;var lo=+m[1],hi=m[2]?+m[2]:999;if(cltv>=lo&&cltv<=hi+0.99){row=i;break;}}
+  var cltv=(hp>0)?((hp-dp)/hp*100):null;
+  var row=-1;
+  if(cltv!=null){for(var i=0;i<ZAI_BANDS.length;i++){var m=ZAI_BANDS[i].match(/(\d+)(?:-(\d+))?/);if(!m)continue;var lo=+m[1],hi=m[2]?+m[2]:999;if(cltv>=lo&&cltv<=hi+0.99){row=i;break;}}}
+  if(row<0){
+    // pesinat bilinmiyor: DTI sutununda TUM bantlardaki en iyi kapiyi topla
+    var allb=[];
+    for(var r=0;r<ZAI_BANDS.length;r++){var lines2=[];for(var L in ZAI_SURF){var vv=ZAI_SURF[L][r][col];if(vv!=null)lines2.push(L+' '+Number(vv).toFixed(1)+'%');}if(lines2.length)allb.push('CLTV '+ZAI_BANDS[r]+': '+lines2.join(', '));}
+    if(!allb.length)return dtiNote?(' NOTE: DTI '+dtiRaw+dtiNote+'.'):'';
+    return ' COORDINATE DATA (AUTHORITATIVE) - DTI '+dti+dtiNote+', denial rates by down-payment band (2025 cells): '+allb.join(' | ')+'. Down payment was NOT provided, so routing depends heavily on it - ASK the user for home price + down payment to pinpoint, and show how the best lender CHANGES across bands. Never default to one lender; the right door flips between bands.';
+  }
   var lines=[];
   for(var L in ZAI_SURF){var arr=ZAI_SURF[L][row]||[];var v=arr[col];if(v==null)continue;lines.push(L+' '+Number(v).toFixed(1)+'%');}
   if(!lines.length)return '';
