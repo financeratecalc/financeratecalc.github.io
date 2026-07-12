@@ -127,10 +127,27 @@ select option{background:#0d1a3a;}
     <div class="cliff-desc" id="cliffDesc"></div>
   </div>
 
-  <div class="cta-strip">
-    <p>Know which lender's surface matches your borrower profile before you apply.</p>
-    <a href="/zai-one.html">Route with Zai — free →</a>
+  <div class="cta-strip" id="ctaStrip" style="text-align:center;padding:24px;background:rgba(200,168,75,.05);border:1px solid rgba(200,168,75,.3);border-radius:14px;margin:24px 0;">
+    <p style="font-size:16px;color:#fff;font-weight:700;margin-bottom:6px;">You're looking at the terrain. Now find <em>your</em> spot on it.</p>
+    <p style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:16px;">Enter your DTI and the lender that denied you — see exactly where your file lands on the cliff, and which door has a ramp instead.</p>
+    <a id="ctaZai" href="/zai-one.html" style="display:inline-block;padding:13px 26px;background:#C8A84B;color:#000;border-radius:10px;font-weight:800;text-decoration:none;font-size:14px;">Find my spot on the cliff — free, 60 sec →</a>
+    <div style="margin-top:12px;"><a id="ctaVerdict" href="/verdict.html" style="color:rgba(255,255,255,.5);font-size:12.5px;text-decoration:none;">Already denied? Run the Verdict on that exact door →</a></div>
   </div>
+  <script>
+  // sayfada bir lender seçiliyse köprüye taşı — kişiselleşsin
+  (function(){
+    document.addEventListener('change', function(e){
+      var v = e.target && e.target.value;
+      if(!v) return;
+      var z = document.getElementById('ctaZai'), vd = document.getElementById('ctaVerdict');
+      if(z && /rocket|wells|newrez|freedom|pennymac|guild|cooper|crosscountry|loandepot|uwm|planet/i.test(v)){
+        z.href = '/zai-one.html?denied=' + encodeURIComponent(v);
+        vd.href = '/verdict.html?lender=' + encodeURIComponent(v);
+        z.textContent = 'See if ' + v + ' treated your file normally →';
+      }
+    }, true);
+  })();
+  </script>
 
   <div class="research-chain" style="display:flex;justify-content:space-between;gap:12px;margin-top:36px;padding:16px 0;border-top:1px solid rgba(255,255,255,0.06);"><a href="/lender-similarity.html" style="color:rgba(255,255,255,.4);text-decoration:none;font-size:13px;">← Similarity Engine</a><span style="color:rgba(255,255,255,.2);font-size:11px;letter-spacing:.1em;">FRC RESEARCH SERIES</span><a href="/rocket-mrcooper-dna-analysis.html" style="color:#C8A84B;text-decoration:none;font-size:13px;font-weight:700;">Rocket × Mr. Cooper →</a></div>
 <div style="background:rgba(255,255,255,.015);border-left:2px solid rgba(59,130,246,.4);padding:12px 16px;margin:20px 0;font-size:12px;color:rgba(255,255,255,.5);line-height:1.7;"><strong style="color:rgba(255,255,255,.7);">Fair Lending Note:</strong> FRC analyses exclude all protected-class variables present in HMDA (race, ethnicity, sex, age). We model lender behavior across financial variables only — DTI, CLTV, loan type, property type, and outcome. We measure how institutions decide, not who applies.</div>
