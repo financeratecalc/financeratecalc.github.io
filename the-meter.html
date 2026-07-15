@@ -7,7 +7,36 @@
 <meta property="og:url" content="https://financeratecalc.com/the-meter.html">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://financeratecalc.com/the-meter.html">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT">
+function downloadMeterCard(){
+ var st=document.getElementById('mState').value, yr=document.getElementById('mYear').value;
+ var pctTxt=document.getElementById('oPct').textContent, dolTxt=document.getElementById('oDollar').textContent;
+ var c=document.createElement('canvas');c.width=1080;c.height=1080;var x=c.getContext('2d');
+ x.fillStyle='#08090c';x.fillRect(0,0,1080,1080);
+ x.fillStyle='rgba(233,69,96,0.05)';x.beginPath();x.arc(540,430,330,0,7);x.fill();
+ x.textAlign='center';
+ x.fillStyle='rgba(255,255,255,0.35)';x.font='26px monospace';
+ x.fillText('THE METER \u00b7 FRC INTELLIGENCE',540,120);
+ x.fillStyle='#fff';x.font='italic 900 50px Georgia';
+ x.fillText('While the file waited\u2026',540,300);
+ x.fillStyle=(pctTxt.indexOf('-')===0)?'#22c55e':'#e94560';
+ x.font='700 130px monospace';x.fillText(pctTxt,540,460);
+ x.fillStyle='rgba(255,255,255,0.7)';x.font='32px Georgia';
+ x.fillText(st+' home prices, '+yr+' \u2192 today',540,520);
+ x.fillStyle='#C8A84B';x.font='700 64px monospace';
+ x.fillText(dolTxt,540,650);
+ x.fillStyle='rgba(255,255,255,0.5)';x.font='26px Georgia';
+ x.fillText('on the price point I was chasing',540,700);
+ x.fillStyle='#fff';x.font='italic 900 40px Georgia';
+ x.fillText('A denial doesn\u0027t pause the market.',540,830);
+ x.fillStyle='rgba(255,255,255,0.3)';x.font='21px Georgia';
+ x.fillText('FHFA House Price Index \u00b7 market context, not blame',540,930);
+ x.fillStyle='#C8A84B';x.font='700 28px monospace';
+ x.fillText('financeratecalc.com/the-meter',540,1010);
+ var a=document.createElement('a');a.download='frc-meter-'+st.replace(/ /g,'-')+'-'+yr+'.png';a.href=c.toDataURL();a.click();
+ gtag('event','meter_card_download',{state:st,year:yr});
+}
+</script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Mono&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -59,6 +88,7 @@ button{margin-top:20px;width:100%;padding:15px;background:#C8A84B;color:#000;bor
     <div class="card"><div class="k">Index then → now</div><div class="v" id="oIdx"></div></div>
     <div class="card"><div class="k">Latest year pace</div><div class="v" id="oPace"></div></div>
   </div>
+  <button onclick="downloadMeterCard()" style="margin-top:16px;width:100%;padding:13px;background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:10px;font-weight:700;cursor:pointer;font-size:13.5px;">⬇ Download my Meter Card</button>
   <a class="cta" href="/verdict.html">Was the denial itself lender-specific? Run the Verdict →</a>
   <a class="cta" href="/zai-one.html" style="border-color:rgba(34,197,94,.35);color:#22c55e">The clock only matters if you re-enter. See which lender fits today →</a>
   <a class="cta" href="/geographic-lottery.html" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.6)">See your state's full 50-year price film →</a>
