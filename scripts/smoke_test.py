@@ -29,6 +29,10 @@ for page in ENGINES:
         if not os.path.exists(f'_data/{ref}'):
             ok = False; FAIL += 1
             print(f"  ✗ {page}: _data/{ref} REPODA YOK")
+    # NAV CHECK: motor sayfasi cikissiz olamaz
+    if '<header' not in html or 'href="/index.html"' not in html:
+        ok = False; FAIL += 1
+        print(f"  ✗ {page}: NAVIGASYON YOK (header/ana-sayfa linki eksik)")
     if ok: print(f"  ✓ {page}")
 print(f"\n{'❌ FAIL — PUSH ETME' if FAIL else '✅ TÜM MOTORLAR SAĞLAM'} ({FAIL} hata)")
 sys.exit(1 if FAIL else 0)
