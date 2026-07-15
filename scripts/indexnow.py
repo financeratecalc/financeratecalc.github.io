@@ -9,8 +9,11 @@ import json, sys, urllib.request, re
 KEY = "bd45cca31ee741d782a82eb0be514e13"
 HOST = "financeratecalc.com"
 
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
+
 def priority_urls():
-    raw = urllib.request.urlopen("https://financeratecalc.com/sitemap-priority.xml", timeout=20).read().decode()
+    req = urllib.request.Request("https://financeratecalc.com/sitemap-priority.xml", headers=UA)
+    raw = urllib.request.urlopen(req, timeout=20).read().decode()
     return re.findall(r"<loc>(.*?)</loc>", raw)
 
 urls = sys.argv[1:] or priority_urls()
