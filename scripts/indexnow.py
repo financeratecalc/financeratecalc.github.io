@@ -7,6 +7,7 @@ import json, urllib.request
 KEY = "c6b683da5a78f29f3cfc283546e6ee73"
 HOST = "financeratecalc.com"
 URLS = [
+ "https://financeratecalc.com/fha-denial-rates-by-state.html",
  "https://financeratecalc.com/fha-denial-rates-by-loan-amount.html",
  "https://financeratecalc.com/fha-denial-rates-top-100.html",
  "https://financeratecalc.com/ai-vs-the-data.html",
