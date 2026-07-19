@@ -56,6 +56,7 @@ URLS = [
  "https://financeratecalc.com/fha-denial-rates-wisconsin.html",
  "https://financeratecalc.com/fha-denial-rates-wyoming.html",
  "https://financeratecalc.com/fha-denial-rates-puerto-rico.html",
+ "https://financeratecalc.com/mortgage-myths-vs-data.html",
  "https://financeratecalc.com/fha-rates-vs-denial.html",
  "https://financeratecalc.com/fha-lenders-by-state.html",
  "https://financeratecalc.com/fha-denial-reasons-by-lender.html",
