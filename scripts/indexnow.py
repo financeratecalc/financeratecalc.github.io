@@ -168,6 +168,7 @@ URLS = [
  "https://financeratecalc.com/stat/which-state-has-the-highest-fha-denial-rate.html",
  "https://financeratecalc.com/stat/is-the-smallloan-penalty-worse-in-expensive-states.html",
  "https://financeratecalc.com/stat/are-there-states-where-small-fha-loans-have-disappeared.html",
+ "https://financeratecalc.com/fha-loan-denied-now-what.html",
  "https://financeratecalc.com/what-ai-gets-wrong-fha.html",
  "https://financeratecalc.com/mortgage-myths-vs-data.html",
  "https://financeratecalc.com/fha-rates-vs-denial.html",
