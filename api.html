@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>FRC API — Mortgage Intelligence Data Endpoints</title>
-<meta name="description" content="FRC public data API. Free JSON endpoints for Overlay Friction Index, active signals, overlay climate, denial taxonomy, and underwriting cycle state. CC BY 4.0.">
+<meta name="description" content="FRC public data API. Free JSON endpoints for lender denial patterns, active signals, overlay climate, denial taxonomy, and underwriting cycle state. CC BY 4.0.">
 <link rel="canonical" href="https://financeratecalc.com/api.html">
 <link rel="icon" href="/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -83,7 +83,7 @@ code{background:rgba(0,0,0,0.4);border-radius:4px;padding:12px;display:block;fon
       <span class="url">/overlay-climate.json</span>
       <span style="font-size:12px;color:rgba(255,255,255,0.3);">OFI + climate by category</span>
     </div>
-    <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:10px;">Current Overlay Friction Index, climate state, and per-category breakdown with historical OFI series.</p>
+    <p style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:10px;">Current lender denial patterns, climate state, and per-category breakdown with historical OFI series.</p>
     <code>fetch('https://financeratecalc.com/overlay-climate.json')
   .then(r => r.json())
   .then(data => {
@@ -93,7 +93,7 @@ code{background:rgba(0,0,0,0.4);border-radius:4px;padding:12px;display:block;fon
     const categories = data.by_category;      // per-lender-type breakdown
   });</code>
     <h3>Response fields</h3>
-    <div class="response-field"><span class="field-name">current_state.ofi</span><span class="field-type">integer</span><span class="field-desc">Current Overlay Friction Index (0-100)</span></div>
+    <div class="response-field"><span class="field-name">current_state.ofi</span><span class="field-type">integer</span><span class="field-desc">Current lender denial patterns (0-100)</span></div>
     <div class="response-field"><span class="field-name">current_state.macro_state</span><span class="field-type">string</span><span class="field-desc">EXPANSION | MODERATE | TIGHTENING | RESTRICTIVE</span></div>
     <div class="response-field"><span class="field-name">by_category</span><span class="field-type">array</span><span class="field-desc">OFI, climate, SSDI/1099 acceptance, credit floor by lender category</span></div>
     <div class="response-field" style="border:none;"><span class="field-name">ofi_history</span><span class="field-type">array</span><span class="field-desc">Quarterly OFI values [{period, value}]</span></div>
