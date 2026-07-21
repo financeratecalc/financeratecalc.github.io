@@ -276,7 +276,7 @@ function calculate(){
         <div class="metric-val ${eligible?(piti<2500?'good':piti<3500?'':'warn'):'bad'}">$${Math.round(piti).toLocaleString()}/mo</div></div>
       <div class="metric"><div class="metric-label">Back-End DTI</div>
         <div class="metric-val ${dti<36?'good':dti<45?'':'warn'}">${Math.round(dti)}%</div></div>
-      <div class="metric"><div class="metric-label">Approval Probability</div>
+      <div class="metric"><div class="metric-label">Observed Denial Rates</div>
         <div class="metric-val ${prob>=70?'good':prob>=45?'warn':'bad'}">${Math.round(prob)}%</div></div>
       ${extraLines}
       ${notEligible}
@@ -312,7 +312,7 @@ function calculate(){
   document.getElementById('verdict').style.display = 'block';
 
   // Approval bars
-  var bars_html = '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:700;margin-bottom:14px;">Approval Probability</div>';
+  var bars_html = '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:700;margin-bottom:14px;">Observed Denial Rates</div>';
   [[fha_prob,'FHA','#9b9bff',fha_eligible],[conv_prob,'Conventional','#c8a44a',conv_eligible],[va_prob,'VA','#6bffb8',va_eligible]].forEach(function(r){
     bars_html += `<div class="approval-bar"><div class="approval-bar-label"><span>${r[1]}</span><span style="color:${r[2]};">${r[3]?Math.round(r[0])+'%':'Not eligible'}</span></div><div class="bar-track"><div class="bar-fill" style="width:${r[0]}%;background:${r[2]};"></div></div></div>`;
   });
