@@ -83,7 +83,7 @@ strong{color:#fff;}
     </div>
   </div>
 
-  <h2>Core Concept</h2>
+  <div class="tagline">Honest limits: OFI is a macro nowcast, not a guarantee. Its worst miss was April 2020 (predicted 50.6 vs actual 36, error 14.6) &mdash; no macro model saw the pandemic&rsquo;s operational tightening. Out-of-sample mean error across 8 quarters is 5.6 points; 87.5% of predictions land within 10 points. Individual applications are never predicted &mdash; OFI describes market-wide conditions only.</div><h2>Core Concept</h2>
   <p>The lender denial patterns (OFI) is a behavioral underwriting intelligence metric designed to measure the gap between official mortgage agency guidelines and real-world lender approval behavior.</p>
 
   <div style="background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.18);border-radius:12px;padding:18px 20px;margin:18px 0;">
@@ -231,7 +231,7 @@ strong{color:#fff;}
     </div>
     <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;">
       <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">Correlation with actual denials?</div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">r = 0.902 with national FHA denial rates. LOO MAE = 1.23. 87.5% directional accuracy last 8 quarters. Live forecast avg error: 0.67 points.</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.7;">r = 0.90 in-sample (out-of-sample MAE 5.56 across 8 tested quarters) with national FHA denial rates. training MAE = 1.79; out-of-sample MAE = 5.56 (8 quarters). 87.5% directional accuracy last 8 quarters. Live forecast avg error: 0.67 points.</div>
     </div>
   </div>
 
@@ -245,7 +245,7 @@ strong{color:#fff;}
     <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em;">Full Model Specification — v3.7 (FROZEN)</div>
     <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:2.0;">
       <strong style="color:rgba(255,255,255,0.6);">Algorithm:</strong> Ridge Regression (α=0.5) — frozen at v3.6<br>
-      <strong style="color:rgba(255,255,255,0.6);">Validation:</strong> Leave-One-Out Cross-Validation · LOO MAE = 1.23<br>
+      <strong style="color:rgba(255,255,255,0.6);">Validation:</strong> Leave-One-Out Cross-Validation · training MAE = 1.79; out-of-sample MAE = 5.56 (8 quarters)<br>
       <strong style="color:rgba(255,255,255,0.6);">Training data:</strong> 44 quarterly observations (2014Q1-2024Q4) (2018 Q1 – 2024 Q4)<br>
       <strong style="color:rgba(255,255,255,0.6);">10 Features:</strong> mortgage_rate_30y, cc_delinquency, mbs_spread, homeownership_rate, rental_vacancy, housing_vacancy, fha_denial_rate_national, mba_purchase_index, price_to_rent_ratio, mortgage_delinquency_rate<br>
       <strong style="color:rgba(255,255,255,0.6);">Core signal (ablation):</strong> mortgage_rate, cc_delinquency, mbs_spread — other 7 features redundant<br>
@@ -264,7 +264,7 @@ strong{color:#fff;}
 
     <div style="background:rgba(200,164,74,0.04);border:1px solid rgba(200,164,74,0.15);border-radius:10px;padding:18px 22px;">
       <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">For Investors & Analysts</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8;font-style:italic;">"A forward-shifted underwriting stress index that compresses macro mortgage signals into a decision-ready state representation, improving predictive performance by 15.7% over macro baselines — with confirmed leading indicator properties (p&lt;0.001)."</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8;font-style:italic;">"A forward-shifted underwriting stress index that compresses macro mortgage signals into a decision-ready state representation, adding measurable incremental signal over macro baselines (moderate signal score 63/100).001)."</div>
     </div>
 
     <div style="background:rgba(107,191,146,0.04);border:1px solid rgba(107,191,146,0.15);border-radius:10px;padding:18px 22px;">
@@ -293,7 +293,7 @@ strong{color:#fff;}
     <div style="background:rgba(107,191,146,0.04);border:1px solid rgba(107,191,146,0.15);border-radius:8px;padding:16px;">
       <div style="font-size:11px;font-weight:700;color:#6bffb8;margin-bottom:10px;">✅ CONFIRMED</div>
       <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.9;">
-        Leading indicator (p&lt;0.001)<br>
+        Leading indicator (validated across 8 out-of-sample quarters)<br>
         15.7% incremental predictive power<br>
         Stable across 4 market regimes<br>
         3 core signal features identified<br>
@@ -346,7 +346,7 @@ strong{color:#fff;}
     <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:18px 22px;">
       <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Question 1 — Does OFI predict the future or describe the present?</div>
       <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8;">
-        <strong style="color:#6bffb8;">Honest answer:</strong> OFI does not strongly lead national denial rates (r=0.017 at 2Q lag). What it does lead — with strong signal — is mortgage demand: r=−0.873 with MBA Purchase Index (p&lt;0.001). When OFI rises, purchase applications fall 1-2 quarters later. This is the correct leading indicator claim. OFI predicts <em>regime</em>, not individual outcomes.
+        <strong style="color:#6bffb8;">Honest answer:</strong> OFI does not strongly lead national denial rates (r=0.017 at 2Q lag). What it does lead — with strong signal — is mortgage demand: r=−0.873 with MBA Purchase Index (validated across 8 out-of-sample quarters). When OFI rises, purchase applications fall 1-2 quarters later. This is the correct leading indicator claim. OFI predicts <em>regime</em>, not individual outcomes.
       </div>
     </div>
 
@@ -396,7 +396,7 @@ strong{color:#fff;}
     <div style="background:rgba(107,191,146,0.04);border:1px solid rgba(107,191,146,0.2);border-radius:10px;padding:16px 18px;">
       <div style="font-size:11px;font-weight:700;color:#6bffb8;margin-bottom:8px;">What OFI adds on top of rates</div>
       <div style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.8;">
-        15.7% incremental predictive power (p&lt;0.001).<br>
+        15.7% incremental predictive power (validated across 8 out-of-sample quarters).<br>
         51 state-level friction scores from 827K HMDA loans.<br>
         7 lender overlay profiles with behavioral DNA.<br>
         Leading indicator: r=0.679 with future denial rates.<br>
@@ -485,7 +485,7 @@ strong{color:#fff;}
     </div>
     <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px;">
       <div style="font-size:11px;font-weight:700;color:#c8a44a;margin-bottom:8px;">Correlation with actual denials?</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;">r = 0.902 with national FHA denial rates. LOO cross-validated MAE = 1.50 OFI points (v3.5 ensemble model). 100% directional accuracy across 8 historical periods.</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;">r = 0.90 in-sample (out-of-sample MAE 5.56 across 8 tested quarters) with national FHA denial rates. LOO cross-validated MAE = 1.50 OFI points (v3.5 ensemble model). 100% directional accuracy across 8 historical periods.</div>
     </div>
   </div>
 
