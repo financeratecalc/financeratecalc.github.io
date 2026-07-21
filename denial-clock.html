@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>The American Mortgage Denial Clock | FRC Intelligence</title>
-<meta name="description" content="An FHA mortgage application is denied every 4 minutes in America. Watch it happen. Source: CFPB HMDA 2025 — 103,022 denials.">
+<meta name="description" content="An FHA mortgage application is denied every 2 minutes in America. Watch it happen. Source: CFPB HMDA 2025 — 103,022 denials.">
 <meta name="keywords" content="mortgage denial clock, FHA denial rate 2025, mortgage rejection statistics, HMDA 2025">
 <meta name="robots" content="index, follow, max-snippet:-1">
-<meta property="og:title" content="An FHA borrower was denied every 4 minutes today.">
+<meta property="og:title" content="An FHA borrower was denied every 2 minutes today.">
 <meta property="og:description" content="Since you opened this page, more Americans have been denied FHA mortgages. A denial is not always a qualification problem. Watch it happen.">
 <meta property="og:url" content="https://financeratecalc.com/denial-clock.html">
 <link rel="canonical" href="https://financeratecalc.com/denial-clock.html">
@@ -116,7 +116,7 @@ window.frcFunnel.step('page_view', {page: location.pathname});
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "The American Mortgage Denial Clock",
-  "description": "Live counter tracking FHA mortgage denials in 2025. Based on CFPB HMDA public data (mortgage applications only — all-cash purchases not captured in HMDA).",
+  "description": "Live counter tracking FHA mortgage denials since Jan 1, 2025, at the pace measured in the full 2025 federal record (264,006 denials). Based on CFPB HMDA public data (mortgage applications only — all-cash purchases not captured in HMDA).",
   "url": "https://financeratecalc.com/denial-clock.html",
   "publisher": {
     "@type": "Organization",
@@ -158,7 +158,7 @@ function submitEmail(e){
 <div class="hero">
   <div class="live"><div class="dot"></div>live</div>
 
-  <div class="hook">An FHA borrower was denied<br><strong>every 4 minutes today.</strong></div>
+  <div class="hook">An FHA borrower was denied<br><strong>every 2 minutes today.</strong></div>
   <div style="font-size:clamp(12px,1.8vw,15px);color:rgba(255,255,255,0.25);margin-top:10px;margin-bottom:4px;font-style:italic;">Some of them never should have been.</div>
   <div class="since-open" id="sinceOpen">Since you opened this page: <span id="sinceCount">0</span> more denials.</div>
 
@@ -170,7 +170,7 @@ function submitEmail(e){
   <div class="dual-stats">
     <div class="ds">
       <div class="ds-num red" id="totalDenied">103,022</div>
-      <div class="ds-label">Denied in 2025<br>Source: CFPB HMDA</div>
+      <div class="ds-label">Denied since Jan 1, 2025<br>Source: CFPB HMDA</div>
     </div>
     <div class="ds">
       <div class="ds-num amber" id="recoverable">41,387</div>
@@ -188,7 +188,7 @@ function submitEmail(e){
   <div style="max-width:520px;margin:0 auto 24px;padding:0 20px;">
     <div style="background:rgba(233,69,96,0.05);border:1px solid rgba(233,69,96,0.2);border-radius:14px;padding:20px 22px;">
       <div style="font-size:10px;color:#e94560;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">⚠️ Is Your Score Part of the Problem?</div>
-      <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:6px;">An FHA borrower is denied every 4 minutes. Credit score is the #1 reason.</div>
+      <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:6px;">An FHA borrower is denied every 2 minutes. Credit score is the #1 reason.</div>
       <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:14px;">If your score is below 640, improving it by 40–60 points can cut your denial risk in half — and save $30,000–$60,000 over the life of the loan.</div>
       <a href="/credit-repair-consultation.html" style="display:inline-block;padding:10px 20px;background:#e94560;color:#fff;border-radius:9px;font-weight:800;text-decoration:none;font-size:13px;">See Your Credit Repair Timeline — Free →</a>
     </div>
@@ -207,13 +207,13 @@ function submitEmail(e){
   <div class="source">
     Source: CFPB HMDA 2025 · 103,022 FHA denials · 399,179 total records · 11 lenders · 51 states<br>
     "Potentially recoverable" = estimated files that fall within CrossCountry/Guild approval parameters<br>
-    Counter calculates elapsed time since Jan 1 2025 00:00 UTC · Educational only · Not financial advice
+    Counter runs at the 2025 measured pace (264,006 FHA denials, full-universe CFPB HMDA, state-aggregated) since Jan 1 2025 00:00 UTC · Educational only · Not financial advice
   </div>
 </div>
 
 <script>
 const YEAR_START = new Date('2025-01-01T00:00:00Z').getTime();
-const TOTAL = 103022;
+const TOTAL = 264006;
 const PER_MS = TOTAL / (365 * 24 * 60 * 60 * 1000);
 const RECOVERABLE_PCT = 0.4017; // 41,387 / 103,022
 const PAGE_OPEN = Date.now();
@@ -264,14 +264,14 @@ function tick() {
   document.getElementById('totalDenied').textContent = fmt(count);
 
   // Share links
-  const text = `An FHA borrower is denied every 4 minutes in America.\n\n${fmt(count)} denied since Jan 1, 2025.\n${fmt(count * RECOVERABLE_PCT)} may have qualified elsewhere.\n\nA denial is not always a qualification problem.\nfinanceratecalc.com/denial-clock.html`;
+  const text = `An FHA borrower is denied every 2 minutes in America.\n\n${fmt(count)} denied since Jan 1, 2025 (at the 2025 measured pace).\n${fmt(count * RECOVERABLE_PCT)} may have qualified elsewhere.\n\nA denial is not always a qualification problem.\nfinanceratecalc.com/denial-clock.html`;
   document.getElementById('twBtn').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
   document.getElementById('liBtn').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://financeratecalc.com/denial-clock.html')}`;
 }
 
 function copyShare() {
   const count = getCount();
-  const text = `An FHA borrower is denied every 4 minutes in America.\n\n${fmt(count)} denied since Jan 1, 2025.\n${fmt(count * RECOVERABLE_PCT)} may have qualified elsewhere.\n\n"A denial is not always a qualification problem."\n\nData: CFPB HMDA 2025\nfinanceratecalc.com/denial-clock.html`;
+  const text = `An FHA borrower is denied every 2 minutes in America.\n\n${fmt(count)} denied since Jan 1, 2025 (at the 2025 measured pace).\n${fmt(count * RECOVERABLE_PCT)} may have qualified elsewhere.\n\n"A denial is not always a qualification problem."\n\nData: CFPB HMDA 2025\nfinanceratecalc.com/denial-clock.html`;
   navigator.clipboard.writeText(text).catch(() => {
     const ta = document.createElement('textarea');
     ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
