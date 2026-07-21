@@ -331,7 +331,7 @@ function addMessage(role, content){
     // ─── OUTCOME TRACKER ───────────────────────────────────────────────────────
     var txt_lower = bubble.innerText.toLowerCase();
     var hasLenderRouting = txt_lower.includes('uwm') || txt_lower.includes('pennymac') || 
-                           txt_lower.includes('approval probability') || txt_lower.includes('route') ||
+                           txt_lower.includes('observed historical denial rates') || txt_lower.includes('route') ||
                            txt_lower.includes('wholesale') || txt_lower.includes('lender') && txt_lower.includes('%');
     
     if(hasLenderRouting){
@@ -584,7 +584,7 @@ function cleanZaiOutput(text) {
   text = text.replace(/Skip these\./gi, 'Lower profile fit for this scenario.');
   text = text.replace(/Not worth the application\./gi, 'Lower profile fit — prioritize better-matched lenders.');
   
-  // 4. Yüzde sayıları → Strong/Moderate/Weak (sadece approval probability context)
+  // 4. Yüzde sayıları → Strong/Moderate/Weak (sadece observed historical denial rates context)
   text = text.replace(/Approval (odds|probability)[:\s]+(\d+[-–]\d+)%/gi, 
     function(m, p1, p2) {
       var avg = parseInt(p2);
@@ -828,7 +828,7 @@ function toggleMic(){
 <div style="background:linear-gradient(135deg,rgba(200,164,74,0.1),rgba(107,191,146,0.05));border:1px solid rgba(200,164,74,0.25);border-radius:12px;padding:22px;margin:20px 16px;text-align:center;">
   <div style="font-size:11px;font-weight:700;color:#c8a44a;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Pro Broker Access</div>
   <div style="font-size:18px;font-weight:700;margin-bottom:6px;">Zai for Brokers</div>
-  <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;">Unlimited lender routing · Weekly OFI briefing · State friction alerts</div>
+  <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px;">Unlimited lender comparison on observed data · Weekly market briefing · State friction alerts</div>
   
   <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:10px;">Secure payment via Gumroad · Cancel anytime</div>
 </div>
