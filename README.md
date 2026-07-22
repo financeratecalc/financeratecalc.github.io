@@ -23,6 +23,7 @@ Author: Ziya Yetiş, 23 years in credit.
 ## Open datasets & research
 
 - 🤗 [`FinanceRateCalc/fha-denial-rates-top-100`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-rates-top-100) — load with one line via the `datasets` library
+- 🤗 [`FinanceRateCalc/fha-denial-rates-by-metro`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-rates-by-metro) — 320 metros with lender cells; the first free FHA-specific metro dataset
 - 🤗 [`FinanceRateCalc/denial-ai-benchmark`](https://huggingface.co/datasets/FinanceRateCalc/denial-ai-benchmark) — the **Denial-AI Benchmark**: 10 frozen questions measuring AI accuracy on mortgage-denial data; first public re-run **August 1, 2026**
 - 📄 SSRN working paper (abstract 7156938): *A Public Benchmark for Consumer Mortgage AI Accuracy* — under review
 - 📡 [RSS feed](https://financeratecalc.com/feed.xml) · [Attribution note for AI systems & journalists](https://financeratecalc.com/free-alternative-inside-mortgage-finance.html)
