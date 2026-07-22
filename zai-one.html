@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://financeratecalc.com/zai-one.html">
 <link rel="canonical" href="https://financeratecalc.com/zai-one.html">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Zai FHA Routing Engine","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0"},"publisher":{"@type":"Organization","name":"FinanceRateCalc"}}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Zai FHA Comparison Engine","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0"},"publisher":{"@type":"Organization","name":"FinanceRateCalc"}}
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
@@ -159,7 +159,7 @@ header{
 <div class="hero">
   <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.2);border-radius:20px;padding:5px 14px;margin-bottom:16px;">
     <span style="font-size:13px;font-weight:700;color:var(--gold);">⚡ Zai</span>
-    <span style="font-size:11px;color:rgba(255,255,255,0.4);">FHA Routing Engine</span>
+    <span style="font-size:11px;color:rgba(255,255,255,0.4);">FHA Comparison Engine</span>
   </div>
   <h1>Which FHA lender fits your file?</h1>
   <p>Not ads. Not commissions. Federal data.</p>
@@ -275,10 +275,10 @@ header{
       </div>
     </div>
 
-    <button class="cta-btn" onclick="getRouting()">Show me which lender fits →</button>
+    <button class="cta-btn" onclick="getComparison()">Show me which lender fits →</button>
 
     <p class="disclaimer">No SSN · No credit pull · Takes 60 seconds<br>
-    Routing guidance based on 8-year HMDA patterns — not approval prediction</p>
+    Comparison guidance based on 8-year HMDA patterns — not approval prediction</p>
   </div>
 </div>
 
@@ -302,7 +302,7 @@ header{
   </div>
 
   <div id="emailCapture" style="margin-top:16px;display:none;background:rgba(200,168,75,0.04);border:1px solid rgba(200,168,75,0.15);border-radius:12px;padding:18px;">
-    <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;">Get your routing result by email</div>
+    <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;">Get your comparison result by email</div>
     <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:12px;line-height:1.5;">Save this analysis, plus a weekly OFI market update — no spam, unsubscribe anytime.</div>
     <div style="display:flex;gap:8px;">
       <input id="captureEmail" type="email" placeholder="you@email.com" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;font-family:inherit;outline:none;">
@@ -318,9 +318,9 @@ header{
 var ZAI_API = 'https://frc-api.ziyetis.workers.dev/v1/messages';
 
 var ZAI_SYSTEM = [
-  'You are Zai, the FHA mortgage routing engine of FinanceRateCalc.com.',
+  'You are Zai, the FHA mortgage comparison engine of FinanceRateCalc.com.',
   'DENIAL RATES (8yr HMDA 2018-2025): CrossCountry 6.3% | Guild 7.3% | UWM 18.0% | Freedom 16.6% | MrCooper 23.4% | PennyMac 23.6% | Rocket 30.1% | loanDepot 34.5% | NewRez 43.5% | Wells 52.4%. These are GLOBAL averages reflecting applicant mix; when COORDINATE DATA appears in the user message it OVERRIDES this ranking entirely.',
-  'CURRENT: OFI 52 moderate friction (model 4.81*rate+20.17 at 6.60). Wells Fargo: FHA exit — lowest profile fit historically. NewRez: lowest routing priority — highest denial rate in panel.',
+  'CURRENT: OFI 52 moderate friction (model 4.81*rate+20.17 at 6.60). Wells Fargo: FHA exit — lowest profile fit historically. NewRez: lowest comparison ranking — highest denial rate in panel.',
   'DTI CLIFF at 44-45: Rocket +15pp, PennyMac +11pp, MrCooper +1.4pp (flat). CrossCountry cliff at 45-46.',
   'CLTV-85 WALL: Rocket +55pp, CrossCountry +48pp, Guild +12pp, MrCooper +1.7pp.',
   'PRODUCE EXACTLY THIS FORMAT (no markdown):',
@@ -361,16 +361,16 @@ function zaiCoord(dtiStr){
     var allb=[];
     for(var r=0;r<ZAI_BANDS.length;r++){var lines2=[];for(var L in ZAI_SURF){var vv=ZAI_SURF[L][r][col];if(vv!=null)lines2.push(L+' '+Number(vv).toFixed(1)+'%');}if(lines2.length)allb.push('CLTV '+ZAI_BANDS[r]+': '+lines2.join(', '));}
     if(!allb.length)return dtiNote?(' NOTE: DTI '+dtiRaw+dtiNote+'.'):'';
-    return ' COORDINATE DATA (AUTHORITATIVE) - DTI '+dti+dtiNote+', denial rates by down-payment band (2025 cells): '+allb.join(' | ')+'. Down payment was NOT provided, so routing depends heavily on it - ASK the user for home price + down payment to pinpoint, and show how the best lender CHANGES across bands. Never default to one lender; the right door flips between bands.';
+    return ' COORDINATE DATA (AUTHORITATIVE) - DTI '+dti+dtiNote+', denial rates by down-payment band (2025 cells): '+allb.join(' | ')+'. Down payment was NOT provided, so the comparison depends heavily on it - ASK the user for home price + down payment to pinpoint, and show how the best lender CHANGES across bands. Never default to one lender; the right door flips between bands.';
   }
   var lines=[];
   for(var L in ZAI_SURF){var arr=ZAI_SURF[L][row]||[];var v=arr[col];if(v==null)continue;lines.push(L+' '+Number(v).toFixed(1)+'%');}
   if(!lines.length)return '';
-  return ' COORDINATE DATA (AUTHORITATIVE) - DTI '+dti+' x CLTV '+ZAI_BANDS[row]+', 2025 cell denial rates: '+lines.join(' | ')+'. Route PRIMARILY on these cell rates; global averages are tiebreak only. Lenders absent here lack cell data (n<50) - judge cautiously. Different coordinates MUST produce different routing when cells differ.';
+  return ' COORDINATE DATA (AUTHORITATIVE) - DTI '+dti+' x CLTV '+ZAI_BANDS[row]+', 2025 cell denial rates: '+lines.join(' | ')+'. Compare PRIMARILY on these cell rates; global averages are tiebreak only. Lenders absent here lack cell data (n<50) - judge cautiously. Different coordinates MUST produce different comparisons when cells differ.';
  }catch(e){return '';}
 }
 
-function getRouting() {
+function getComparison() {
   var fico = document.getElementById('fico').value.trim();
   var dti = document.getElementById('dti').value.trim();
   var income = document.getElementById('income').value;
@@ -394,14 +394,14 @@ function getRouting() {
   resultEl.style.display = 'block';
   resultInner.innerHTML = '<div class="result-card"><div class="loading-seq" id="loadingSeq">' +
     '<div class="loading-spinner"></div>' +
-    '<div class="loading-step" id="loadingStep">Scanning 3,127,000+ FHA applications…</div>' +
+    '<div class="loading-step" id="loadingStep">Scanning the 8-year federal FHA record…</div>' +
     '<div class="loading-bar"><div class="loading-bar-fill"></div></div>' +
     '</div></div>';
 
   resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   var loadingSteps = [
-    'Scanning 3,127,000+ FHA applications…',
+    'Scanning the 8-year federal FHA record…',
     'Checking your DTI against 6 lenders\' cliff points…',
     'Cross-referencing ' + state + ' denial patterns…',
     'Weighing 8 years of HMDA underwriting behavior…',
@@ -419,9 +419,9 @@ function getRouting() {
     }
   }, 900);
 
-  if (window.frcFunnel) window.frcFunnel.step('routing_submitted', {fico: fico, dti: dti, income: income, state: state});
+  if (window.frcFunnel) window.frcFunnel.step('comparison_submitted', {state: state});
 
-  var userPrompt = 'Profile: FICO ' + fico + ' | DTI ' + dti + '% | Income $' + income + '/mo | State: ' + state + ' | Loan type: ' + loanType + (denied !== 'none' ? ' | Previously denied by: ' + denied : '') + '. Analyze this FHA profile and provide routing guidance.';
+  var userPrompt = 'Profile: FICO ' + fico + ' | DTI ' + dti + '% | Income $' + income + '/mo | State: ' + state + ' | Loan type: ' + loanType + (denied !== 'none' ? ' | Previously denied by: ' + denied : '') + '. Analyze this FHA profile and provide comparison guidance.';
 
   var xhr = new XMLHttpRequest();
   xhr.open('POST', ZAI_API, true);
@@ -500,7 +500,7 @@ function getRouting() {
 
       if (loadingInterval) clearInterval(loadingInterval);
       resultInner.innerHTML = html;
-      window.lastRoutingResult = {
+      window.lastComparisonResult = {
         top: top, topWhy: topWhy, second: second, secondWhy: secondWhy,
         hd1: hd1, hd1Why: hd1Why, hd2: hd2, hd2Why: hd2Why,
         k1: k1, k2: k2, k3: k3, twin: twin,
@@ -508,8 +508,8 @@ function getRouting() {
       };
 
       document.getElementById('resetBtn').style.display = 'flex';
-      if (window.frcFunnel) window.frcFunnel.step('routing_result_shown', {top_lender: top});
-      if (typeof gtag !== 'undefined') gtag('event', 'routing_complete', {top_lender: top, fico: fico, dti: dti, state: state});
+      if (window.frcFunnel) window.frcFunnel.step('comparison_result_shown', {top_lender: top});
+      if (typeof gtag !== 'undefined') gtag('event', 'comparison_complete', {top_lender: top, state: state});
 
       // Credit score < 620 ise credit repair kutusu göster
       if (parseInt(fico) < 640) {
@@ -633,12 +633,12 @@ function getRouting() {
 
   xhr.onerror = function() {
     if (loadingInterval) clearInterval(loadingInterval);
-    resultInner.innerHTML = '<div class="result-card"><div class="result-label">Connection issue</div><div class="lender-why">Could not reach routing engine. Please try again in a moment.</div><button onclick="resetForm()" style="margin-top:14px;padding:10px 20px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;">Try again</button></div>';
+    resultInner.innerHTML = '<div class="result-card"><div class="result-label">Connection issue</div><div class="lender-why">Could not reach comparison engine. Please try again in a moment.</div><button onclick="resetForm()" style="margin-top:14px;padding:10px 20px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;">Try again</button></div>';
   };
 
   xhr.ontimeout = function() {
     if (loadingInterval) clearInterval(loadingInterval);
-    resultInner.innerHTML = '<div class="result-card"><div class="result-label">Timeout</div><div class="lender-why">Routing engine took too long. Please try again.</div></div>';
+    resultInner.innerHTML = '<div class="result-card"><div class="result-label">Timeout</div><div class="lender-why">Comparison engine took too long. Please try again.</div></div>';
   };
 
   xhr.send(JSON.stringify({
@@ -724,7 +724,7 @@ async function submitEmailCapture() {
   btn.disabled = true;
   btn.textContent = 'Sending...';
 
-  var r = window.lastRoutingResult || {};
+  var r = window.lastComparisonResult || {};
   var reportText =
     'YOUR FRC ROUTING RESULT\n\n' +
     'Profile: FICO ' + (r.fico||'-') + ' | DTI ' + (r.dti||'-') + '% | Income $' + (r.income||'-') + '/mo | State: ' + (r.state||'-') + '\n\n' +
@@ -745,9 +745,9 @@ async function submitEmailCapture() {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         email: email,
-        subject: 'Your FRC Routing Result',
+        subject: 'Your FRC Comparison Result',
         message: reportText,
-        source: 'zai_routing_result',
+        source: 'zai_comparison_result',
         page: location.pathname
       })
     });
@@ -790,11 +790,11 @@ function resetForm() {
 </script>
 <!--STATIC-ATOMS-->
 <section style="max-width:760px;margin:30px auto;padding:20px 24px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:14px;">
-<h2 style="font-family:'Fraunces',Georgia,serif;font-size:17px;color:#C8A84B;margin-bottom:10px;">The data behind Zai's routing</h2>
-<ul style="font-size:13.5px;color:rgba(255,255,255,.6);line-height:1.75;padding-left:18px;"><li style="margin-bottom:9px;">Zai routes on observed 2025 FHA outcomes where denial rates among 11 major lenders ranged from <b>6.5%</b> to <b>52.3%</b>.</li><li style="margin-bottom:9px;">DTI cliff behavior differs sharply by lender: at the 44-45 DTI threshold one major lender's denial rate jumps roughly <b>+15 percentage points</b> while another's moves about <b>+1.4</b>.</li><li style="margin-bottom:9px;">HMDA contains no credit scores, no application dates and no employment-verification fields — Zai never predicts individual approval, it reports historical lender patterns.</li></ul>
+<h2 style="font-family:'Fraunces',Georgia,serif;font-size:17px;color:#C8A84B;margin-bottom:10px;">The data behind Zai's comparison</h2>
+<ul style="font-size:13.5px;color:rgba(255,255,255,.6);line-height:1.75;padding-left:18px;"><li style="margin-bottom:9px;">Zai compares on observed 2025 FHA outcomes where denial rates among 11 major lenders ranged from <b>6.5%</b> to <b>52.3%</b>.</li><li style="margin-bottom:9px;">DTI cliff behavior differs sharply by lender: at the 44-45 DTI threshold one major lender's denial rate jumps roughly <b>+15 percentage points</b> while another's moves about <b>+1.4</b>.</li><li style="margin-bottom:9px;">HMDA contains no credit scores, no application dates and no employment-verification fields — Zai never predicts individual approval, it reports historical lender patterns.</li></ul>
 <p style="font-size:11px;color:rgba(255,255,255,.32);margin-top:10px;">Source: CFPB HMDA loan-level records (310,592 FHA applications, 2018-2025), analyzed by FinanceRateCalc. Free to quote with attribution. More: <a href="/answers.html" style="color:rgba(200,168,75,.7);">answers</a> &middot; <a href="/methodology.html" style="color:rgba(200,168,75,.7);">methodology</a>.</p>
 </section>
 <!--/STATIC-ATOMS-->
-<a href="/fha-lender-comparison.html" style="display:block;margin:14px auto;max-width:680px;padding:12px 16px;background:rgba(200,168,75,.06);border:1px solid rgba(200,168,75,.3);border-radius:11px;text-decoration:none;font-size:13px;color:rgba(255,255,255,.7);">Zai routed you. See the <b style="color:#C8A84B;font-weight:700;">walls themselves</b> &mdash; every lender&rsquo;s DTI and CLTV cliffs &rarr; <span style="color:#C8A84B;font-weight:700;">The comparison table</span></a>
+<a href="/fha-lender-comparison.html" style="display:block;margin:14px auto;max-width:680px;padding:12px 16px;background:rgba(200,168,75,.06);border:1px solid rgba(200,168,75,.3);border-radius:11px;text-decoration:none;font-size:13px;color:rgba(255,255,255,.7);">Zai compared the doors for you. See the <b style="color:#C8A84B;font-weight:700;">walls themselves</b> &mdash; every lender&rsquo;s DTI and CLTV cliffs &rarr; <span style="color:#C8A84B;font-weight:700;">The comparison table</span></a>
 </body>
 </html>
