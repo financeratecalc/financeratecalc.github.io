@@ -20,6 +20,44 @@
 <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,168,75,.7);margin-bottom:6px;">The Denial Map &middot; FRC Intelligence</div>
 <h1>The Denial Map&trade;:<br>FHA loan denied. <em>Now what?</em></h1>
 <p style="font-size:14px;color:rgba(255,255,255,.6);max-width:700px;">The Denial Map is FinanceRateCalc's four-step post-denial framework &mdash; <b style="color:#C8A84B;">Decode &middot; Year &middot; Door &middot; Reapply</b> &mdash; built on the complete 2025 federal record. It is not an approval-probability tool and not a geographic denial-rate map: it reads the record about doors, never predicts your file.</p>
+<!-- REASON PICKER — interactive entry -->
+<div id="rp" style="max-width:760px;margin:22px auto;padding:20px 22px;border:1px solid rgba(200,168,75,.35);border-radius:14px;background:rgba(200,168,75,.04);">
+<div style="font-size:11px;color:rgba(200,168,75,.7);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;">Start here &middot; 10 seconds</div>
+<div style="font-family:'Fraunces',serif;font-size:19px;font-weight:900;margin-bottom:12px;">What reason did your denial letter give?</div>
+<div id="rpBtns" style="display:flex;flex-wrap:wrap;gap:8px;">
+<button data-r="dti">Debt-to-income</button><button data-r="credit_history">Credit history</button><button data-r="incomplete">"Incomplete application"</button><button data-r="collateral">Collateral / appraisal</button><button data-r="insufficient_cash">Insufficient cash</button><button data-r="unverifiable_info">Unverifiable info</button><button data-r="employment">Employment</button><button data-r="other">Other / not sure</button>
+</div>
+<div id="rpOut" style="display:none;margin-top:14px;font-size:14px;color:rgba(255,255,255,.7);line-height:1.8;"></div>
+<div style="margin-top:10px;font-size:10.5px;color:rgba(255,255,255,.35);">Observed shares of cited reasons on formal 2025 FHA denials (top-100 lenders). Historical observation about doors &mdash; never a prediction about your file.</div>
+</div>
+<script>
+(function(){
+var D={
+ dti:{m:29.8,t:"the most common denial reason in America \u2014 median 29.8% of cited reasons. The practical wall in observed originations sits near DTI 50, not the famous 43.",hi:[["Pulte Mortgage",62.8],["Inspire Home Loans",60.2],["M/I Financial",58.0]],link:"/dti-denial-disparity-report.html",lt:"See the real DTI wall \u2192"},
+ credit_history:{m:20.4,t:"cited on a median 20.4% of denials \u2014 but lender overlays differ sharply: FHA\u2019s paper minimum is 580, in practice each door sets its own bar.",hi:[["Envoy Mortgage",74.5],["HomeAmerican",60.4],["Village Capital",54.4]],link:"/fha-denial-rates-top-100.html",lt:"Compare 100 doors \u2192"},
+ incomplete:{m:1.2,t:"at most doors this reason is RARE \u2014 median just 1.2% of cited reasons. At a small servicer-rooted cluster it is nearly 3 of every 4 denials. If you got this one, read the pattern before blaming your paperwork.",hi:[["Carrington",73.5],["Lakeview",72.2],["Planet Home",49.9]],link:"/the-incomplete-wall.html",lt:"The Incomplete Wall \u2192"},
+ collateral:{m:8.6,t:"median 8.6% \u2014 usually about the property or appraisal, not you. A different property, or sometimes a different door\u2019s appraisal process, changes the outcome.",hi:[["AdvantageFirst",44.8],["Freedom Mortgage",39.6],["Rocket Mortgage",36.6]],link:"/fha-denial-rates-top-100.html",lt:"See lender patterns \u2192"},
+ insufficient_cash:{m:5.4,t:"median 5.4% of cited reasons. Reserve and down-payment expectations vary by door \u2014 and small loans are hit hardest: under $100K applications were denied at 46.9% nationally.",hi:[["Longbridge",27.7],["UWM",26.3],["PHH Mortgage",23.6]],link:"/fha-denial-rates-by-loan-amount.html",lt:"The small-loan penalty \u2192"},
+ unverifiable_info:{m:6.1,t:"median 6.1% \u2014 often documentation-chain issues (self-employment, deposits, employers who don\u2019t answer). Very door-dependent in practice.",hi:[["HomeBridge",47.5],["Kind Lending",30.5],["SecurityNational",29.8]],link:"/fha-loan-denied-now-what.html#decode",lt:"Decode your letter \u2192"},
+ employment:{m:3.8,t:"the rarest major reason \u2014 median 3.8%. Usually about history length or verification timing, both of which a second door may treat differently.",hi:[["Huntington",12.1],["NFM",11.3],["Paramount",9.7]],link:"/fha-denial-rates-top-100.html",lt:"Compare doors \u2192"},
+ other:{m:9.3,t:"a catch-all \u2014 median 9.3%. First step: request the specific reason in writing (your right under federal law). Then decode it.",hi:[["Plaza Home",47.1],["Top Flite",35.5],["Longbridge",34.1]],link:"/fha-loan-denied-now-what.html#decode",lt:"Start the Decode step \u2192"}
+};
+var bs=document.querySelectorAll('#rpBtns button');
+bs.forEach(function(b){
+ b.style.cssText='padding:10px 14px;border:1px solid rgba(255,255,255,.2);border-radius:9px;background:rgba(255,255,255,.04);color:#fff;font-size:13px;cursor:pointer;font-family:inherit;';
+ b.onclick=function(){
+  bs.forEach(function(x){x.style.borderColor='rgba(255,255,255,.2)';x.style.background='rgba(255,255,255,.04)';});
+  b.style.borderColor='#C8A84B';b.style.background='rgba(200,168,75,.12)';
+  var r=D[b.dataset.r],o=document.getElementById('rpOut');
+  var hi=r.hi.map(function(h){return h[0]+' ('+h[1]+'%)';}).join(', ');
+  o.innerHTML='<b style="color:#fff;">In the 2025 record:</b> '+r.t+'<br><span style="color:rgba(255,255,255,.5);">Doors citing it most: '+hi+'.</span><br><a href="'+r.link+'" style="display:inline-block;margin-top:8px;padding:10px 18px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13.5px;">'+r.lt+'</a>';
+  o.style.display='block';
+  if(typeof gtag!=='undefined')gtag('event','reason_picked',{reason:b.dataset.r});
+ };
+});
+})();
+</script>
+
 <div class="answer"><div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,168,75,.8);margin-bottom:8px;">Read this first</div>
 <p style="color:rgba(255,255,255,.75)"><b style="color:#fff">Before you blame yourself, know three things from the complete 2025 federal record:</b> the same FHA application faces a <b class="mono">44&times;</b> difference in denial odds depending on the lender (1.8% to 78.7%); loans under $100K are denied <b class="mono">46.9%</b> of the time &mdash; 2.5&times; the rate of large loans; and at some high-denial lenders, most &ldquo;denials&rdquo; are files that were never actually judged &mdash; <b class="mono">73.5%</b> of one major lender&rsquo;s cited reasons were simply &ldquo;incomplete application.&rdquo; <b style="color:#fff">A denial is a data point about a door, a year, and a file &mdash; not a verdict on you.</b></p></div>
 
