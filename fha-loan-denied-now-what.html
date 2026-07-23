@@ -30,11 +30,20 @@
 #rp .rpTitle{background:linear-gradient(90deg,#fff 40%,#C8A84B 50%,#f0d060 55%,#fff 65%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:rpShimmer 3.2s linear infinite}
 #rp button:hover{transform:translateY(-2px);border-color:#C8A84B!important;box-shadow:0 4px 14px rgba(200,168,75,.25);transition:all .18s}
 .rpArrow{text-align:center;font-size:22px;color:#C8A84B;animation:rpArrow 1.2s ease-in-out infinite;margin:-6px auto 0}
-@media (prefers-reduced-motion: reduce){#rp,.rpArrow,#rp .rpTitle{animation:none}}
+#rpBtns button{animation:rpIn .5s ease-out backwards}
+#rpBtns button:nth-child(1){animation-delay:.05s}#rpBtns button:nth-child(2){animation-delay:.12s}#rpBtns button:nth-child(3){animation-delay:.19s}#rpBtns button:nth-child(4){animation-delay:.26s}#rpBtns button:nth-child(5){animation-delay:.33s}#rpBtns button:nth-child(6){animation-delay:.40s}#rpBtns button:nth-child(7){animation-delay:.47s}#rpBtns button:nth-child(8){animation-delay:.54s}
+#rpBtns button:active{transform:scale(.94)}
+@keyframes rpPop{0%{opacity:0;transform:translateY(16px) scale(.96)}60%{opacity:1;transform:translateY(-4px) scale(1.01)}100%{transform:translateY(0) scale(1)}}
+#rpOut.show{animation:rpPop .5s cubic-bezier(.34,1.4,.64,1)}
+@keyframes rpDot{0%,100%{opacity:1}50%{opacity:.25}}
+.rpLive{display:inline-block;width:8px;height:8px;border-radius:50%;background:#f0d060;margin-right:6px;animation:rpDot 1s infinite}
+.rpBits{position:absolute;pointer-events:none;font-size:14px;animation:rpFly .9s ease-out forwards}
+@keyframes rpFly{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot))}}
+@media (prefers-reduced-motion: reduce){#rp,.rpArrow,#rp .rpTitle,#rpBtns button,#rpOut.show{animation:none}}
 </style>
 <div class="rpArrow">&#9660;</div>
 <div id="rp" style="max-width:760px;margin:8px auto 22px;padding:20px 22px;border:1.5px solid rgba(200,168,75,.55);border-radius:14px;background:linear-gradient(135deg,rgba(200,168,75,.08),rgba(200,168,75,.03));">
-<div style="font-size:11px;color:#f0d060;text-transform:uppercase;letter-spacing:.14em;margin-bottom:8px;font-weight:800;">&#9889; Start here &middot; answers in 10 seconds &middot; free</div>
+<div style="font-size:11px;color:#f0d060;text-transform:uppercase;letter-spacing:.14em;margin-bottom:8px;font-weight:800;"><span class="rpLive"></span>&#9889; START HERE &middot; ANSWERS IN 10 SECONDS &middot; FREE</div>
 <div class="rpTitle" style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:12px;">What reason did your denial letter give?</div>
 <div id="rpBtns" style="display:flex;flex-wrap:wrap;gap:8px;">
 <button data-r="dti">Debt-to-income</button><button data-r="credit_history">Credit history</button><button data-r="incomplete">"Incomplete application"</button><button data-r="collateral">Collateral / appraisal</button><button data-r="insufficient_cash">Insufficient cash</button><button data-r="unverifiable_info">Unverifiable info</button><button data-r="employment">Employment</button><button data-r="other">Other / not sure</button>
@@ -63,7 +72,13 @@ bs.forEach(function(b){
   var r=D[b.dataset.r],o=document.getElementById('rpOut');
   var hi=r.hi.map(function(h){return h[0]+' ('+h[1]+'%)';}).join(', ');
   o.innerHTML='<b style="color:#fff;">In the 2025 record:</b> '+r.t+'<br><span style="color:rgba(255,255,255,.5);">Doors citing it most: '+hi+'.</span><br><a href="'+r.link+'" style="display:inline-block;margin-top:8px;padding:10px 18px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:13.5px;">'+r.lt+'</a>';
-  o.style.display='block';
+  o.classList.remove('show');void o.offsetWidth;o.classList.add('show');o.style.display='block';
+  // altın-konfeti patlaması
+  var rect=b.getBoundingClientRect(),chars=['\u2728','\u2B50','\uD83D\uDCA5','\u26A1'];
+  for(var i=0;i<10;i++){var sp=document.createElement('span');sp.className='rpBits';sp.textContent=chars[i%4];
+   sp.style.left=(rect.left+rect.width/2+window.scrollX)+'px';sp.style.top=(rect.top+window.scrollY)+'px';
+   sp.style.setProperty('--dx',(Math.random()*160-80)+'px');sp.style.setProperty('--dy',(-60-Math.random()*80)+'px');sp.style.setProperty('--rot',(Math.random()*360-180)+'deg');
+   document.body.appendChild(sp);setTimeout(function(x){return function(){x.remove()}}(sp),950);}
   if(typeof gtag!=='undefined')gtag('event','reason_picked',{reason:b.dataset.r});
  };
 });
