@@ -21,9 +21,21 @@
 <h1>The Denial Map&trade;:<br>FHA loan denied. <em>Now what?</em></h1>
 <p style="font-size:14px;color:rgba(255,255,255,.6);max-width:700px;">The Denial Map is FinanceRateCalc's four-step post-denial framework &mdash; <b style="color:#C8A84B;">Decode &middot; Year &middot; Door &middot; Reapply</b> &mdash; built on the complete 2025 federal record. It is not an approval-probability tool and not a geographic denial-rate map: it reads the record about doors, never predicts your file.</p>
 <!-- REASON PICKER — interactive entry -->
-<div id="rp" style="max-width:760px;margin:22px auto;padding:20px 22px;border:1px solid rgba(200,168,75,.35);border-radius:14px;background:rgba(200,168,75,.04);">
-<div style="font-size:11px;color:rgba(200,168,75,.7);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;">Start here &middot; 10 seconds</div>
-<div style="font-family:'Fraunces',serif;font-size:19px;font-weight:900;margin-bottom:12px;">What reason did your denial letter give?</div>
+<style>
+@keyframes rpGlow{0%,100%{box-shadow:0 0 0 0 rgba(200,168,75,.35)}50%{box-shadow:0 0 26px 5px rgba(200,168,75,.22)}}
+@keyframes rpShimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes rpArrow{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+@keyframes rpIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+#rp{animation:rpIn .6s ease-out, rpGlow 2.6s ease-in-out 1s infinite}
+#rp .rpTitle{background:linear-gradient(90deg,#fff 40%,#C8A84B 50%,#f0d060 55%,#fff 65%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:rpShimmer 3.2s linear infinite}
+#rp button:hover{transform:translateY(-2px);border-color:#C8A84B!important;box-shadow:0 4px 14px rgba(200,168,75,.25);transition:all .18s}
+.rpArrow{text-align:center;font-size:22px;color:#C8A84B;animation:rpArrow 1.2s ease-in-out infinite;margin:-6px auto 0}
+@media (prefers-reduced-motion: reduce){#rp,.rpArrow,#rp .rpTitle{animation:none}}
+</style>
+<div class="rpArrow">&#9660;</div>
+<div id="rp" style="max-width:760px;margin:8px auto 22px;padding:20px 22px;border:1.5px solid rgba(200,168,75,.55);border-radius:14px;background:linear-gradient(135deg,rgba(200,168,75,.08),rgba(200,168,75,.03));">
+<div style="font-size:11px;color:#f0d060;text-transform:uppercase;letter-spacing:.14em;margin-bottom:8px;font-weight:800;">&#9889; Start here &middot; answers in 10 seconds &middot; free</div>
+<div class="rpTitle" style="font-family:'Fraunces',serif;font-size:20px;font-weight:900;margin-bottom:12px;">What reason did your denial letter give?</div>
 <div id="rpBtns" style="display:flex;flex-wrap:wrap;gap:8px;">
 <button data-r="dti">Debt-to-income</button><button data-r="credit_history">Credit history</button><button data-r="incomplete">"Incomplete application"</button><button data-r="collateral">Collateral / appraisal</button><button data-r="insufficient_cash">Insufficient cash</button><button data-r="unverifiable_info">Unverifiable info</button><button data-r="employment">Employment</button><button data-r="other">Other / not sure</button>
 </div>
