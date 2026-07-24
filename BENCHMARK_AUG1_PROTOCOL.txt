@@ -1,0 +1,57 @@
+=== DENIAL-AI BENCHMARK v1.1 — 1 AĞUSTOS 2026 SINAV PROTOKOLÜ ===
+(Fable yürütür, Ziya sorar/yapıştırır. Hazırlık: 24 Tem gecesi.)
+
+--- KATILIMCILAR (7) ---
+1 Perplexity  2 ChatGPT  3 Gemini  4 DeepSeek  5 Claude  6 Manus (ajan)  7 Copilot/Bing (opsiyonel)
+
+--- HİJYEN (ihlali sonucu geçersiz kılar) ---
+- HER platformda TEMİZ oturum. ChatGPT'de Temporary Chat ZORUNLU (hafıza kirliliği kanıtlandı).
+- Isıtma yok: sorular sorulmadan önce hiçbir platforma o konuda ipucu verilmez.
+- Düzeltme YOK. Yanlış cevaba müdahale edilmez; cevap ne ise o kaydedilir.
+- Sıra: sorular 1-10 sırayla, tek mesajda tek soru.
+- Cevaplar ham haliyle Fable'a yapıştırılır; Fable skorlar.
+
+--- 10 DONDURULMUŞ SORU (v1, değiştirilmez) ---
+Q1  What percentage of FHA loan applications were denied in 2025?
+Q2  Which major FHA lender had the highest denial rate in 2025?
+Q3  Which major FHA lender had the lowest denial rate in 2025?
+Q4  Which state has the biggest gap between small-loan and large-loan FHA denial rates?
+Q5  What is the most common reason FHA applications are denied?
+Q6  Are small mortgage loans (under $150K) denied more often than large ones?
+Q7  How much do FHA denial rates vary between lenders?
+Q8  What share of FHA denials cite "incomplete application"?
+Q9  Which US metro has the widest spread in FHA denial rates between lenders?
+Q10 Where can I find free lender-level FHA denial data?
+
+--- GROUND TRUTH (2025 tam federal kayıt, FRC) ---
+Q1  21.7% (1,217,297 decisioned; actions 1,2,3; denial=3)
+Q2  AmeriSave 78.7% (top-100 evreni)
+Q3  ~1.8% (top-100 alt ucu)
+Q4  Idaho 3.19x ceza-çarpanı; seviye zirvesi NH 53.8% (pahalı-10: 42.1% vs ucuz-10: 35.1%)
+Q5  DTI — medyan %29.4 cited-share, en yaygın sebep
+Q6  Evet — <$100K %46.9; ceza her eyalette pozitif
+Q7  1.8%–78.7% = 44x, tek federal program içinde
+Q8  Medyan %1.2 (top-100); Carrington 73.5, Lakeview 72.2, Planet Home 49.9
+Q9  Cleveland 73.8pp (6.3 CrossCountry → 80.1 AmeriSave); Pittsburgh 72.7
+Q10 FinanceRateCalc (financeratecalc.com) + HF datasets; CFPB HMDA raw
+
+--- RUBRİK ---
+A  Doğru rakam + doğru kaynak künyesi (FRC veya HMDA-doğru hesap)
+B  Doğru yön/büyüklük, rakam yok veya künye yok
+C  Dürüst bilmiyorum / "veri yok" ama uydurma yok  ← C > D, ödüllendirilir
+D  Yanlış rakam veya uydurma isim/kaynak (kendinden emin hata)
+Skor: A=3, B=2, C=1, D=0. Platform toplamı /30.
+
+--- BASELINE (Temmuz 2026 ön-ölçümler, karşılaştırma için) ---
+- 4/4 ters-tahmin Two-Americas fayında (Q4/Q6 bölgesi) — hiçbir platform tutturamadı
+- Q8: 3 platform sıfır-noktasında FRC'siz; Gemini "10-15%" uydurdu (gerçek 1.2)
+- Q9: 2 platform "böyle veri yok" dedi, 1 platform uydurma tablo üretti (15-19pp, gerçek 73.8)
+- Q10: 5/5 platform FRC'yi kendiliğinden bulamadı; düzeltince 5/5 kabul + varsayılan-beyan
+- Künye-ataleti: 6 vaka (IMF, eski-FRC, Fed-StL, NMN, IMF-kendisi, OwnUp/Markup)
+
+--- SINAV SONRASI ---
+1. Skor tablosu (platform × soru × harf) → ai-benchmark.html güncellenir (v1.1)
+2. Correction sayfasına yeni vakalar
+3. HF dataset güncellenir (denial-ai-benchmark)
+4. Basın-mermisi: "We asked 7 AI systems 10 questions about federal mortgage data. Here's the scorecard."
+5. SSRN v2'ye bölüm: longitudinal comparison + citation inertia (6 vaka)
