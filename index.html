@@ -338,9 +338,8 @@ for(var r=0;r<=maxR;r++)for(var c=0;c<=maxC;c++){
   var cell=document.createElement('div');
   cell.style.cssText='aspect-ratio:1;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;';
   if(st){var v=D[st];
-    if(v.p){ var a=document.createElement('a'); a.href='/'+v.p; a.style.cssText='display:contents;text-decoration:none;'; }
     cell.style.background=col(v.r); cell.style.cursor=v.p?'pointer':'default'; cell.style.transition='transform .15s';
-    if(v.p){ cell.onclick=function(){ if(typeof gtag!=='undefined')gtag('event','state_map_click',{state:st}); window.location.href='/'+v.p; }; }
+    if(v.p){ (function(code,page){ cell.onclick=function(){ if(typeof gtag!=='undefined')gtag('event','state_map_click',{state:code}); window.location.href='/'+page; }; })(st,v.p); }
     var dark=v.r>22.5;
     cell.innerHTML='<span style="font-size:10px;font-weight:800;color:'+(dark?'rgba(255,255,255,.95)':'rgba(0,0,0,.7)')+'">'+st+'</span>'+
       '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:'+(dark?'rgba(255,255,255,.9)':'rgba(0,0,0,.65)')+'">'+v.r.toFixed(1)+'</span>';
