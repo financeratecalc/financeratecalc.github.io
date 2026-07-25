@@ -1,215 +1,51 @@
 #!/usr/bin/env python3
 """FRC IndexNow pusher — Bing/Yandex/Seznam/Naver'a ANINDA URL bildirir.
 Ziya'nin makinesinde: python indexnow.py
-Yeni sayfa yayinlandiginda calistir. Kota yok, ucretsiz, saniyeler icinde indekse duser."""
-import json, urllib.request
+Sitemap'i canli okur; yeni sayfalar otomatik dahil olur. Kota yok, ucretsiz.
+"""
+import json, urllib.request, re, sys
 
-KEY = "c6b683da5a78f29f3cfc283546e6ee73"
+KEY  = "c6b683da5a78f29f3cfc283546e6ee73"
 HOST = "financeratecalc.com"
-URLS = [
- "https://financeratecalc.com/fha-denial-rates-alabama.html",
- "https://financeratecalc.com/fha-denial-rates-alaska.html",
- "https://financeratecalc.com/fha-denial-rates-arizona.html",
- "https://financeratecalc.com/fha-denial-rates-arkansas.html",
- "https://financeratecalc.com/fha-denial-rates-california.html",
- "https://financeratecalc.com/fha-denial-rates-colorado.html",
- "https://financeratecalc.com/fha-denial-rates-connecticut.html",
- "https://financeratecalc.com/fha-denial-rates-delaware.html",
- "https://financeratecalc.com/fha-denial-rates-florida.html",
- "https://financeratecalc.com/fha-denial-rates-georgia.html",
- "https://financeratecalc.com/fha-denial-rates-idaho.html",
- "https://financeratecalc.com/fha-denial-rates-illinois.html",
- "https://financeratecalc.com/fha-denial-rates-indiana.html",
- "https://financeratecalc.com/fha-denial-rates-iowa.html",
- "https://financeratecalc.com/fha-denial-rates-kansas.html",
- "https://financeratecalc.com/fha-denial-rates-kentucky.html",
- "https://financeratecalc.com/fha-denial-rates-louisiana.html",
- "https://financeratecalc.com/fha-denial-rates-maine.html",
- "https://financeratecalc.com/fha-denial-rates-maryland.html",
- "https://financeratecalc.com/fha-denial-rates-massachusetts.html",
- "https://financeratecalc.com/fha-denial-rates-michigan.html",
- "https://financeratecalc.com/fha-denial-rates-minnesota.html",
- "https://financeratecalc.com/fha-denial-rates-mississippi.html",
- "https://financeratecalc.com/fha-denial-rates-missouri.html",
- "https://financeratecalc.com/fha-denial-rates-montana.html",
- "https://financeratecalc.com/fha-denial-rates-nebraska.html",
- "https://financeratecalc.com/fha-denial-rates-nevada.html",
- "https://financeratecalc.com/fha-denial-rates-new-hampshire.html",
- "https://financeratecalc.com/fha-denial-rates-new-jersey.html",
- "https://financeratecalc.com/fha-denial-rates-new-mexico.html",
- "https://financeratecalc.com/fha-denial-rates-new-york.html",
- "https://financeratecalc.com/fha-denial-rates-north-carolina.html",
- "https://financeratecalc.com/fha-denial-rates-north-dakota.html",
- "https://financeratecalc.com/fha-denial-rates-ohio.html",
- "https://financeratecalc.com/fha-denial-rates-oklahoma.html",
- "https://financeratecalc.com/fha-denial-rates-oregon.html",
- "https://financeratecalc.com/fha-denial-rates-pennsylvania.html",
- "https://financeratecalc.com/fha-denial-rates-rhode-island.html",
- "https://financeratecalc.com/fha-denial-rates-south-carolina.html",
- "https://financeratecalc.com/fha-denial-rates-south-dakota.html",
- "https://financeratecalc.com/fha-denial-rates-tennessee.html",
- "https://financeratecalc.com/fha-denial-rates-texas.html",
- "https://financeratecalc.com/fha-denial-rates-utah.html",
- "https://financeratecalc.com/fha-denial-rates-virginia.html",
- "https://financeratecalc.com/fha-denial-rates-washington.html",
- "https://financeratecalc.com/fha-denial-rates-west-virginia.html",
- "https://financeratecalc.com/fha-denial-rates-wisconsin.html",
- "https://financeratecalc.com/fha-denial-rates-wyoming.html",
- "https://financeratecalc.com/fha-denial-rates-puerto-rico.html",
- "https://financeratecalc.com/dhi-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/lennar-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/new-american-funding-fha-denial-rate.html",
- "https://financeratecalc.com/amerisave-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/lakeview-loan-servicing-fha-denial-rate.html",
- "https://financeratecalc.com/fairway-independent-mort-fha-denial-rate.html",
- "https://financeratecalc.com/cmg-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/carrington-mortgage-services-fha-denial-rate.html",
- "https://financeratecalc.com/mutual-of-omaha-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/movement-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/guaranteed-rate-fha-denial-rate.html",
- "https://financeratecalc.com/american-financing-fha-denial-rate.html",
- "https://financeratecalc.com/kind-lending-fha-denial-rate.html",
- "https://financeratecalc.com/union-home-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/equity-prime-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/village-capital-investment-fha-denial-rate.html",
- "https://financeratecalc.com/american-pacific-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/paramount-residential-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/nvr-mortgage-finance-fha-denial-rate.html",
- "https://financeratecalc.com/finance-of-america-reverse-fha-denial-rate.html",
- "https://financeratecalc.com/plaza-home-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/cardinal-financial-li-fha-denial-rate.html",
- "https://financeratecalc.com/lower-fha-denial-rate.html",
- "https://financeratecalc.com/american-financial-network-fha-denial-rate.html",
- "https://financeratecalc.com/sun-west-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/primelending-fha-denial-rate.html",
- "https://financeratecalc.com/click-n-close-fha-denial-rate.html",
- "https://financeratecalc.com/american-financial-resources-fha-denial-rate.html",
- "https://financeratecalc.com/everett-financial-fha-denial-rate.html",
- "https://financeratecalc.com/amerihome-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/longbridge-financial-fha-denial-rate.html",
- "https://financeratecalc.com/nfm-fha-denial-rate.html",
- "https://financeratecalc.com/ark-la-tex-financial-services-fha-denial-rate.html",
- "https://financeratecalc.com/ocmbc-fha-denial-rate.html",
- "https://financeratecalc.com/flat-branch-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/mortgage-research-center-fha-denial-rate.html",
- "https://financeratecalc.com/goodleap-fha-denial-rate.html",
- "https://financeratecalc.com/prosperity-home-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/pulte-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/inspire-home-loans-fha-denial-rate.html",
- "https://financeratecalc.com/kbhs-home-loans-fha-denial-rate.html",
- "https://financeratecalc.com/plains-commerce-bank-fha-denial-rate.html",
- "https://financeratecalc.com/loan-store-fha-denial-rate.html",
- "https://financeratecalc.com/advantagefirst-lending-fha-denial-rate.html",
- "https://financeratecalc.com/phh-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/american-neighborhood-mortgage-acceptance-fha-denial-rate.html",
- "https://financeratecalc.com/towne-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/first-community-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/atlantic-bay-mortgage-group-fha-denial-rate.html",
- "https://financeratecalc.com/velocio-mortgage-l-l-c-fha-denial-rate.html",
- "https://financeratecalc.com/t2-financial-fha-denial-rate.html",
- "https://financeratecalc.com/primary-residential-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/ruoff-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/jpmorgan-chase-bank-fha-denial-rate.html",
- "https://financeratecalc.com/stockton-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/lakeview-community-capital-fha-denial-rate.html",
- "https://financeratecalc.com/zillow-home-loans-fha-denial-rate.html",
- "https://financeratecalc.com/flagstar-bank-fha-denial-rate.html",
- "https://financeratecalc.com/securitynational-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/huntington-national-bank-fha-denial-rate.html",
- "https://financeratecalc.com/canopy-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/m-i-financial-fha-denial-rate.html",
- "https://financeratecalc.com/us-bank-n-a-fha-denial-rate.html",
- "https://financeratecalc.com/das-acquisition-fha-denial-rate.html",
- "https://financeratecalc.com/vanderbilt-mortgage-and-finance-fha-denial-rate.html",
- "https://financeratecalc.com/gold-star-mortgage-financial-group-fha-denial-rate.html",
- "https://financeratecalc.com/regions-bank-fha-denial-rate.html",
- "https://financeratecalc.com/ixonia-bank-fha-denial-rate.html",
- "https://financeratecalc.com/acrisure-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/nations-lending-fha-denial-rate.html",
- "https://financeratecalc.com/synergy-one-lending-fha-denial-rate.html",
- "https://financeratecalc.com/better-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/top-flite-financial-fha-denial-rate.html",
- "https://financeratecalc.com/envoy-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/first-colony-mortgage-corporat-fha-denial-rate.html",
- "https://financeratecalc.com/taylor-morrison-home-funding-fha-denial-rate.html",
- "https://financeratecalc.com/ameris-bank-fha-denial-rate.html",
- "https://financeratecalc.com/m-t-bank-fha-denial-rate.html",
- "https://financeratecalc.com/highlands-residential-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/loanunited-com-fha-denial-rate.html",
- "https://financeratecalc.com/calcon-mutual-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/homeamerican-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/homebridge-financial-services-fha-denial-rate.html",
- "https://financeratecalc.com/premier-mortgage-resources-fha-denial-rate.html",
- "https://financeratecalc.com/luminate-bank-fha-denial-rate.html",
- "https://financeratecalc.com/first-heritage-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/gateway-first-bank-fha-denial-rate.html",
- "https://financeratecalc.com/geneva-financial-fha-denial-rate.html",
- "https://financeratecalc.com/v-i-p-mortgage-fha-denial-rate.html",
- "https://financeratecalc.com/stat/which-fha-lender-has-the-lowest-denial-rate-in.html",
- "https://financeratecalc.com/stat/which-fha-lender-has-the-highest-denial-rate-in.html",
- "https://financeratecalc.com/stat/how-much-do-fha-denial-rates-vary-between-lenders.html",
- "https://financeratecalc.com/stat/what-was-the-hardest-year-to-get-a-mortgage.html",
- "https://financeratecalc.com/stat/what-was-the-easiest-year-to-get-a-mortgage.html",
- "https://financeratecalc.com/stat/how-hard-is-it-to-get-a-mortgage-approved.html",
- "https://financeratecalc.com/stat/what-is-the-worst-dti-and-ltv-combination-for.html",
- "https://financeratecalc.com/stat/does-the-lender-you-choose-matter-more-if-you.html",
- "https://financeratecalc.com/stat/does-a-mortgage-denial-mean-i-did-something-wrong.html",
- "https://financeratecalc.com/stat/do-fha-rules-mean-every-lender-has-the-same.html",
- "https://financeratecalc.com/stat/are-home-prices-still-rising-in-texas.html",
- "https://financeratecalc.com/stat/are-mortgage-denials-increasing-or-decreasing.html",
- "https://financeratecalc.com/stat/how-often-are-ai-assistants-wrong-about-mortgage-denials.html",
- "https://financeratecalc.com/stat/what-is-the-frc-credit-climate-index.html",
- "https://financeratecalc.com/stat/who-publishes-the-frc-credit-climate-index-and-is.html",
- "https://financeratecalc.com/stat/is-43-dti-really-the-maximum-for-mortgage-approval.html",
- "https://financeratecalc.com/stat/which-lender-has-the-highest-fha-denial-rate-in.html",
- "https://financeratecalc.com/stat/which-lender-processes-the-most-fha-loans-in-2025.html",
- "https://financeratecalc.com/stat/do-builderowned-mortgage-lenders-deny-fha-loans-often.html",
- "https://financeratecalc.com/stat/is-better-mortgages-fha-denial-rate-high.html",
- "https://financeratecalc.com/stat/which-state-has-the-highest-fha-denial-rate.html",
- "https://financeratecalc.com/stat/is-the-smallloan-penalty-worse-in-expensive-states.html",
- "https://financeratecalc.com/stat/are-there-states-where-small-fha-loans-have-disappeared.html",
- "https://financeratecalc.com/fha-loan-denied-now-what.html",
- "https://financeratecalc.com/the-correction.html",
- "https://financeratecalc.com/denial-ai-benchmark.html",
- "https://financeratecalc.com/what-ai-gets-wrong-fha.html",
- "https://financeratecalc.com/mortgage-myths-vs-data.html",
- "https://financeratecalc.com/fha-rates-vs-denial.html",
- "https://financeratecalc.com/fha-lenders-by-state.html",
- "https://financeratecalc.com/fha-denial-reasons-by-lender.html",
- "https://financeratecalc.com/fha-denial-rates-by-state.html",
- "https://financeratecalc.com/fha-denial-rates-by-loan-amount.html",
- "https://financeratecalc.com/fha-denial-rates-top-100.html",
- "https://financeratecalc.com/ai-vs-the-data.html",
- "https://financeratecalc.com/answers.html",
- "https://financeratecalc.com/ai-benchmark.html",
- "https://financeratecalc.com/fha-lender-comparison.html",
- "https://financeratecalc.com/fha-denial-rates-by-lender.html",
- "https://financeratecalc.com/climate.html",
- "https://financeratecalc.com/the-vintage.html",
- "https://financeratecalc.com/the-meter.html",
- "https://financeratecalc.com/verdict.html",
- "https://financeratecalc.com/zai-one.html",
- "https://financeratecalc.com/widgets.html",
- "https://financeratecalc.com/about.html",
- "https://financeratecalc.com/crosscountry-fha-denial-rate.html",
- "https://financeratecalc.com/freedom-fha-denial-rate.html",
- "https://financeratecalc.com/guild-fha-denial-rate.html",
- "https://financeratecalc.com/loandepot-fha-denial-rate.html",
- "https://financeratecalc.com/mr-cooper-fha-denial-rate.html",
- "https://financeratecalc.com/newrez-fha-denial-rate.html",
- "https://financeratecalc.com/pennymac-fha-denial-rate.html",
- "https://financeratecalc.com/planet-home-fha-denial-rate.html",
- "https://financeratecalc.com/rocket-fha-denial-rate.html",
- "https://financeratecalc.com/uwm-fha-denial-rate.html",
- "https://financeratecalc.com/wells-fargo-fha-denial-rate.html"
-]
+SITEMAP = "https://financeratecalc.com/sitemap.xml"
+BATCH = 500          # IndexNow tek istekte 10.000'e izin verir; 500 guvenli
+UA = {"User-Agent": "Mozilla/5.0 (FRC IndexNow)"}
 
-payload = {"host": HOST, "key": KEY,
-           "keyLocation": f"https://{HOST}/{KEY}.txt", "urlList": URLS}
-req = urllib.request.Request("https://api.indexnow.org/indexnow",
-    data=json.dumps(payload).encode(), headers={"Content-Type": "application/json; charset=utf-8"})
-try:
-    r = urllib.request.urlopen(req, timeout=20)
-    print(f"IndexNow: HTTP {r.status} — {len(URLS)} URL bildirildi (200/202 = basarili)")
-except Exception as e:
-    print("Hata:", e)
+def fetch_urls():
+    req = urllib.request.Request(SITEMAP, headers=UA)
+    xml = urllib.request.urlopen(req, timeout=30).read().decode("utf-8", "ignore")
+    urls = re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", xml)
+    seen, out = set(), []
+    for u in urls:
+        if HOST in u and u not in seen:
+            seen.add(u); out.append(u)
+    return out
+
+def push(urls):
+    payload = {"host": HOST, "key": KEY,
+               "keyLocation": f"https://{HOST}/{KEY}.txt", "urlList": urls}
+    req = urllib.request.Request("https://api.indexnow.org/indexnow",
+        data=json.dumps(payload).encode(),
+        headers={"Content-Type": "application/json; charset=utf-8", **UA})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        return r.status
+
+def main():
+    try:
+        urls = fetch_urls()
+    except Exception as e:
+        print("Sitemap okunamadi:", e); sys.exit(1)
+    print(f"Sitemap'te {len(urls)} URL bulundu. Gonderiliyor...")
+    ok = 0
+    for i in range(0, len(urls), BATCH):
+        chunk = urls[i:i+BATCH]
+        try:
+            st = push(chunk)
+            print(f"  parti {i//BATCH+1}: HTTP {st} — {len(chunk)} URL")
+            if st in (200, 202): ok += len(chunk)
+        except Exception as e:
+            print(f"  parti {i//BATCH+1} HATA: {e}")
+    print(f"IndexNow tamam: {ok}/{len(urls)} URL bildirildi (200/202 = basarili)")
+
+if __name__ == "__main__":
+    main()
