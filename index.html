@@ -308,6 +308,78 @@ function submitEmail(e){
 </main>
 
 <!-- TIMELINE -->
+
+<!-- ===== THE WALL OF 100 DOORS ===== -->
+<section style="max-width:1040px;margin:64px auto 0;padding:0 24px;">
+  <div class="frc-eyebrow" style="text-align:center;margin-bottom:10px;">The wall of 100 doors</div>
+  <h2 style="font-family:'Fraunces',Georgia,serif;font-size:var(--fs-h2);font-weight:900;text-align:center;line-height:1.25;margin-bottom:8px;">Every large FHA lender in America, colored by how often it says no.</h2>
+  <p style="text-align:center;font-size:var(--fs-small);color:var(--ink-4);max-width:520px;margin:0 auto 22px;line-height:1.75;">One federal program. One year. 1,217,297 decisions. Hover a door &mdash; or find yours.</p>
+
+  <div style="max-width:420px;margin:0 auto 18px;position:relative;">
+    <input id="wallSearch" type="text" placeholder="Find your lender…" autocomplete="off" style="width:100%;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;color:#fff;font-family:inherit;font-size:var(--fs-small);outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='rgba(200,168,75,.6)'" onblur="this.style.borderColor='rgba(255,255,255,.09)'">
+  </div>
+
+  <div id="wallGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(26px,1fr));gap:5px;margin-bottom:14px;"></div>
+
+  <div style="display:flex;align-items:center;justify-content:center;gap:12px;font-size:var(--fs-micro);color:var(--ink-4);margin-bottom:10px;">
+    <span>1.8%</span>
+    <div style="width:180px;height:7px;border-radius:4px;background:linear-gradient(90deg,#1f9d55,#8fbf3f,#e3c14a,#e8845a,#c0392b);"></div>
+    <span>78.7%</span>
+    <span style="margin-left:6px;">denial rate</span>
+  </div>
+
+  <div id="wallInfo" style="min-height:62px;text-align:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);">
+    <div style="font-size:var(--fs-small);color:var(--ink-4);">Hover any door to see its record &middot; click to open its profile</div>
+  </div>
+
+  <p style="text-align:center;font-size:var(--fs-micro);color:var(--ink-4);margin-top:12px;line-height:1.7;">CFPB HMDA 2025 &middot; decisioned applications (actions 1,2,3) &middot; rates partly reflect applicant mix &middot; historical observation, not a prediction &mdash; <a href="/fha-denial-rates-top-100.html" style="color:var(--gold);text-decoration:none;">see the full table &rarr;</a></p>
+</section>
+
+<script>
+(function(){
+  var W=[["FLAT BRANCH MORTGAGE, INC.", 1.8, 4179, "flat-branch-mortgage-fha-denial-rate.html"], ["Lakeview Community Capital", 1.8, 2957, "lakeview-community-capital-fha-denial-rate.html"], ["VANDERBILT MORTGAGE AND FINANCE, INC", 2.7, 2569, "vanderbilt-mortgage-and-finance-fha-denial-rate.html"], ["Highlands Residential Mortgage, Ltd.", 3.0, 2179, "highlands-residential-mortgage-fha-denial-rate.html"], ["ATLANTIC BAY MORTGAGE GROUP", 3.6, 3145, "atlantic-bay-mortgage-group-fha-denial-rate.html"], ["GENEVA FINANCIAL LLC", 3.6, 1968, "geneva-financial-fha-denial-rate.html"], ["VELOCIO MORTGAGE, L.L.C.", 4.0, 3140, "velocio-mortgage-l-l-c-fha-denial-rate.html"], ["NFM, INC", 4.1, 4831, "nfm-fha-denial-rate.html"], ["CANOPY MORTGAGE, LLC", 4.3, 2732, "canopy-mortgage-fha-denial-rate.html"], ["ARK-LA-TEX FINANCIAL SERVICES LLC", 4.6, 4671, "ark-la-tex-financial-services-fha-denial-rate.html"], ["American Neighborhood Mortgage Acceptance Company", 4.6, 3543, "american-neighborhood-mortgage-acceptance-fha-denial-rate.html"], ["DAS ACQUISITION COMPANY, LLC", 4.7, 2595, "das-acquisition-fha-denial-rate.html"], ["V.I.P. MORTGAGE, INC.", 4.9, 1940, ""], ["M/I FINANCIAL. LLC", 5.2, 2603, "m-i-financial-fha-denial-rate.html"], ["Premier Mortgage Resources, LLC", 5.2, 2091, "premier-mortgage-resources-fha-denial-rate.html"], ["TOWNE MORTGAGE COMPANY", 5.5, 3455, "towne-mortgage-fha-denial-rate.html"], ["FIRST COLONY MORTGAGE CORPORAT", 5.6, 2261, "first-colony-mortgage-corporat-fha-denial-rate.html"], ["PARAMOUNT RESIDENTIAL MORTGAGE", 5.8, 7977, "paramount-residential-mortgage-fha-denial-rate.html"], ["MOVEMENT MORTGAGE, LLC", 5.9, 14292, "movement-mortgage-fha-denial-rate.html"], ["CMG MORTGAGE INC", 6.2, 16407, "cmg-mortgage-fha-denial-rate.html"], ["CROSSCOUNTRY MORTGAGE, LLC", 6.3, 29897, "crosscountry-fha-denial-rate.html"], ["GUILD MORTGAGE COMPANY", 6.6, 24313, "guild-fha-denial-rate.html"], ["Ixonia Bank", 6.7, 2472, "ixonia-bank-fha-denial-rate.html"], ["Gold Star Mortgage Financial Group, Corporation", 7.0, 2534, "gold-star-mortgage-financial-group-fha-denial-rate.html"], ["First Heritage Mortgage, LLC", 7.2, 1999, "first-heritage-mortgage-fha-denial-rate.html"], ["Luminate Bank", 7.3, 2009, "luminate-bank-fha-denial-rate.html"], ["GATEWAY FIRST BANK", 7.7, 1973, "gateway-first-bank-fha-denial-rate.html"], ["FAIRWAY INDEPENDENT MORT CORP", 8.3, 18130, "fairway-independent-mort-fha-denial-rate.html"], ["UNION HOME MORTGAGE CORP.", 8.3, 8891, "union-home-mortgage-fha-denial-rate.html"], ["Acrisure Mortgage, LLC", 8.8, 2441, "acrisure-mortgage-fha-denial-rate.html"], ["PRIMELENDING", 9.1, 5782, "primelending-fha-denial-rate.html"], ["Click n' Close, Inc.", 9.2, 5630, "click-n-close-fha-denial-rate.html"], ["T2 FINANCIAL LLC", 9.2, 3081, "t2-financial-fha-denial-rate.html"], ["Ruoff Mortgage Company", 9.4, 3041, "ruoff-mortgage-fha-denial-rate.html"], ["FIRST COMMUNITY MORTGAGE, INC.", 9.5, 3298, "first-community-mortgage-fha-denial-rate.html"], ["EVERETT FINANCIAL, INC.", 10.1, 5404, "everett-financial-fha-denial-rate.html"], ["Ameris Bank", 10.2, 2234, "ameris-bank-fha-denial-rate.html"], ["American Financial Resources LLC", 10.4, 5438, "american-financial-resources-fha-denial-rate.html"], ["OCMBC, INC.", 10.4, 4437, "ocmbc-fha-denial-rate.html"], ["Primary Residential Mortgage, INC.", 10.7, 3050, "primary-residential-mortgage-fha-denial-rate.html"], ["Synergy One Lending, Inc.", 10.8, 2372, "synergy-one-lending-fha-denial-rate.html"], ["The Loan Store, Inc", 10.9, 3619, ""], ["NATIONS LENDING CORPORATION", 11.1, 2424, "nations-lending-fha-denial-rate.html"], ["LONGBRIDGE FINANCIAL, LLC", 11.4, 5016, "longbridge-financial-fha-denial-rate.html"], ["FINANCE OF AMERICA REVERSE LLC", 11.8, 7008, "finance-of-america-reverse-fha-denial-rate.html"], ["CARDINAL FINANCIAL COMPANY, LI", 12.0, 6686, "cardinal-financial-li-fha-denial-rate.html"], ["KBHS HOME LOANS, LLC", 12.2, 3918, "kbhs-home-loans-fha-denial-rate.html"], ["ZILLOW HOME LOANS, LLC", 12.4, 2946, "zillow-home-loans-fha-denial-rate.html"], ["American Pacific Mortgage Corporation", 12.8, 8201, "american-pacific-mortgage-fha-denial-rate.html"], ["HOMEAMERICAN MORTGAGE CORPORATION", 12.9, 2106, "homeamerican-mortgage-fha-denial-rate.html"], ["GUARANTEED RATE, INC.", 13.4, 12451, "guaranteed-rate-fha-denial-rate.html"], ["SECURITYNATIONAL MORTGAGE COMPANY", 13.9, 2782, "securitynational-mortgage-fha-denial-rate.html"], ["AmeriHome Mortgage Company, LLC", 14.3, 5371, "amerihome-mortgage-fha-denial-rate.html"], ["Plains Commerce Bank", 14.5, 3650, "plains-commerce-bank-fha-denial-rate.html"], ["Top Flite Financial, Inc.", 15.2, 2281, "top-flite-financial-fha-denial-rate.html"], ["AMERICAN FINANCIAL NETWORK, INC.", 15.3, 6096, "american-financial-network-fha-denial-rate.html"], ["Inspire Home Loans Inc.", 15.7, 3966, "inspire-home-loans-fha-denial-rate.html"], ["STOCKTON MORTGAGE CORPORATION", 16.3, 2992, "stockton-mortgage-fha-denial-rate.html"], ["PLANET HOME LENDING, LLC", 17.8, 7304, "planet-home-fha-denial-rate.html"], ["PROSPERITY HOME MORTGAGE, LLC", 18.1, 4070, "prosperity-home-mortgage-fha-denial-rate.html"], ["FREEDOM MORTGAGE CORPORATION", 19.9, 41095, "freedom-fha-denial-rate.html"], ["SUN WEST MORTGAGE COMPANY, INC", 20.0, 5951, "sun-west-mortgage-fha-denial-rate.html"], ["Equity Prime Mortgage LLC", 20.5, 8792, "equity-prime-mortgage-fha-denial-rate.html"], ["DHI Mortgage Company, LTD.", 20.6, 40378, "dhi-mortgage-fha-denial-rate.html"], ["United Wholesale Mortgage", 21.4, 112470, ""], ["LOWER, LLC", 22.3, 6151, "lower-fha-denial-rate.html"], ["PENNYMAC LOAN SERVICES LLC", 22.9, 32517, "pennymac-fha-denial-rate.html"], ["Lennar Mortgage, LLC", 22.9, 25525, "lennar-mortgage-fha-denial-rate.html"], ["US BANK, N.A.", 23.5, 2596, "us-bank-n-a-fha-denial-rate.html"], ["CALCON MUTUAL MORTGAGE LLC", 24.1, 2122, "calcon-mutual-mortgage-fha-denial-rate.html"], ["LOANUNITED.COM, LLC", 24.8, 2168, ""], ["Huntington National Bank", 26.3, 2766, "huntington-national-bank-fha-denial-rate.html"], ["Nationstar Mortgage", 26.5, 7650, ""], ["NEW AMERICAN FUNDING, LLC.", 26.6, 25501, "new-american-funding-fha-denial-rate.html"], ["Pulte Mortgage LLC", 26.8, 4007, "pulte-mortgage-fha-denial-rate.html"], ["TAYLOR MORRISON HOME FUNDING, INC.", 26.8, 2245, "taylor-morrison-home-funding-fha-denial-rate.html"], ["PHH Mortgage Corporation", 27.1, 3589, "phh-mortgage-fha-denial-rate.html"], ["Kind Lending, LLC", 27.6, 10723, "kind-lending-fha-denial-rate.html"], ["Mutual of Omaha Mortgage", 28.9, 15148, "mutual-of-omaha-mortgage-fha-denial-rate.html"], ["ROCKET MORTGAGE", 29.8, 96051, "rocket-fha-denial-rate.html"], ["M&T BANK", 32.6, 2182, "m-t-bank-fha-denial-rate.html"], ["Village Capital & Investment", 33.3, 8725, "village-capital-investment-fha-denial-rate.html"], ["PLAZA HOME MORTGAGE, INC", 33.3, 6863, "plaza-home-mortgage-fha-denial-rate.html"], ["HomeBridge Financial Services, Inc", 33.4, 2096, "homebridge-financial-services-fha-denial-rate.html"], ["NVR MORTGAGE FINANCE, INC.", 34.0, 7354, "nvr-mortgage-finance-fha-denial-rate.html"], ["loanDepot.com LLC", 34.6, 35265, "loandepot-fha-denial-rate.html"], ["GOODLEAP, LLC", 35.5, 4118, "goodleap-fha-denial-rate.html"], ["Mortgage Research Center", 36.2, 4160, "mortgage-research-center-fha-denial-rate.html"], ["AdvantageFirst Lending Inc", 37.6, 3592, "advantagefirst-lending-fha-denial-rate.html"], ["REGIONS BANK", 40.0, 2477, "regions-bank-fha-denial-rate.html"], ["Flagstar Bank NA", 40.7, 2933, "flagstar-bank-fha-denial-rate.html"], ["ENVOY MORTGAGE, LTD", 42.0, 2264, "envoy-mortgage-fha-denial-rate.html"], ["JPMorgan Chase Bank, NA", 42.2, 3035, "jpmorgan-chase-bank-fha-denial-rate.html"], ["WELLS FARGO BANK NA", 48.6, 2525, "wells-fargo-fha-denial-rate.html"], ["Better Mortgage Corporation", 49.4, 2354, "better-mortgage-fha-denial-rate.html"], ["NEWREZ LLC", 52.8, 22790, "newrez-fha-denial-rate.html"], ["Lakeview Loan Servicing, LLC", 57.0, 22734, "lakeview-loan-servicing-fha-denial-rate.html"], ["Carrington Mortgage Services LLC", 58.4, 16051, "carrington-mortgage-services-fha-denial-rate.html"], ["AMERICAN FINANCING CORPORATION", 71.0, 11062, "american-financing-fha-denial-rate.html"], ["AMERISAVE MORTGAGE COMPANY", 78.7, 22944, "amerisave-mortgage-fha-denial-rate.html"]];
+  var g=document.getElementById('wallGrid'), info=document.getElementById('wallInfo'), sb=document.getElementById('wallSearch');
+  function col(r){
+    var stops=[[1.8,[31,157,85]],[12,[143,191,63]],[22,[227,193,74]],[40,[232,132,90]],[78.7,[192,57,43]]];
+    for(var i=0;i<stops.length-1;i++){
+      if(r<=stops[i+1][0]){
+        var a=stops[i],b=stops[i+1],t=(r-a[0])/(b[0]-a[0]);
+        return 'rgb('+Math.round(a[1][0]+(b[1][0]-a[1][0])*t)+','+Math.round(a[1][1]+(b[1][1]-a[1][1])*t)+','+Math.round(a[1][2]+(b[1][2]-a[1][2])*t)+')';
+      }
+    }
+    return 'rgb(192,57,43)';
+  }
+  var cells=[];
+  W.forEach(function(d,i){
+    var c=document.createElement(d[3]?'a':'div');
+    if(d[3]) c.href='/'+d[3];
+    c.style.cssText='aspect-ratio:1;border-radius:5px;background:'+col(d[1])+';cursor:pointer;transition:transform .16s,box-shadow .16s,opacity .16s;display:block;opacity:.92;';
+    c.setAttribute('aria-label',d[0]+' '+d[1]+'%');
+    function show(){
+      c.style.transform='scale(1.45)';c.style.boxShadow='0 6px 20px rgba(0,0,0,.6)';c.style.zIndex='5';c.style.position='relative';
+      info.innerHTML='<div style="font-weight:800;color:#fff;font-size:var(--fs-body);">'+d[0]+'</div>'+
+        '<div style="font-family:\'DM Mono\',monospace;font-size:var(--fs-h3);color:'+col(d[1])+';margin:2px 0;">'+d[1].toFixed(1)+'%</div>'+
+        '<div style="font-size:var(--fs-micro);color:var(--ink-4);">'+d[2].toLocaleString()+' decisioned FHA applications in 2025'+(d[3]?' &middot; click for full profile':'')+'</div>';
+    }
+    function hide(){c.style.transform='';c.style.boxShadow='';c.style.zIndex='';}
+    c.onmouseenter=show;c.onmouseleave=hide;c.ontouchstart=show;
+    cells.push({el:c,name:d[0].toLowerCase(),show:show});
+    g.appendChild(c);
+  });
+  sb.oninput=function(){
+    var q=this.value.trim().toLowerCase();
+    var found=null;
+    cells.forEach(function(x){
+      var m=q&&x.name.indexOf(q)>-1;
+      x.el.style.opacity=q?(m?'1':'.13'):'.92';
+      x.el.style.outline=m?'2px solid #fff':'';
+      if(m&&!found)found=x;
+    });
+    if(found){found.show();if(typeof gtag!=='undefined')gtag('event','wall_search',{q:q});}
+  };
+})();
+</script>
+
 <section style="max-width:1040px;margin:0 auto;padding:0 24px 40px;">
   <div class="frc-eyebrow" style="text-align:center;margin-bottom:10px;">How the system works</div>
   <p style="text-align:center;font-size:var(--fs-body);color:var(--ink-3);max-width:560px;margin:0 auto 30px;line-height:1.8;">Three variables decide an FHA application before anyone reads your character. All three are measurable in the public federal record &mdash; and one of them dwarfs the others.</p>
