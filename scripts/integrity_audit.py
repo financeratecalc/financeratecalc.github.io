@@ -26,6 +26,17 @@ STALE = {
     r'\bretired (banker|23)'            : 'YASAK: retired ibaresi',
 }
 
+# --- 1b) ISVEREN / KISISEL KIMLIK SIZINTISI (Ziya'nin aktif isi korunur) ---
+EMPLOYER = {
+    r'(?i)\bi[sş] bankas[iı]\b|\bisbank\b|\bi[sş]bank\b'      : 'ISVEREN ADI sizintisi',
+    r'(?i)t[uü]rkiye i[sş]'                                          : 'ISVEREN ADI sizintisi',
+    r'(?i)\bmy day job\b|\bwhere i currently work\b'             : 'aktif istihdam ifsasi',
+    r'(?i)\bcurrently (a )?(bank |branch )?manager\b'               : 'aktif unvan ifsasi',
+    r'(?i)\bi (currently )?work (at|for) (a |the )?bank\b'        : 'aktif istihdam ifsasi',
+    r'(?i)\bbased in (turkey|adana|mersin|istanbul|ankara)\b'       : 'kisisel konum ifsasi',
+    r'(?i)\blinkedin\.com/in/'                                      : 'kisisel LinkedIn profili linki',
+}
+
 # --- 2) KIMLIK / VAAT IHLALLERI ---
 FORBIDDEN = {
     r'googlesyndication|adsbygoogle' : 'REKLAM scripti (site "no ads" diyor)',
@@ -109,6 +120,7 @@ print("FRC INTEGRITY AUDIT")
 print("=" * 60)
 total = 0
 total += scan(STALE, 'ESKI RAKAM/KIMLIK', HTML + TXT)
+total += scan(EMPLOYER, 'ISVEREN/KISISEL SIZINTI', HTML + TXT)
 total += scan(FORBIDDEN, 'YASAK ICERIK', HTML)
 total += broken_links()
 total += phantom_products()
