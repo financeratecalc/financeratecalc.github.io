@@ -23,6 +23,7 @@ Author: Ziya Yetiş, 23 years in credit.
 ## Open datasets & research
 
 - 🤗 [`FinanceRateCalc/fha-denial-rates-top-100`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-rates-top-100) — load with one line via the `datasets` library
+- 🤗 [`FinanceRateCalc/fha-peer-adjusted-denial-rates`](https://huggingface.co/datasets/FinanceRateCalc/fha-peer-adjusted-denial-rates) — is it the borrower mix or the door? Standardized across 40,459 profile cells
 - 🤗 [`FinanceRateCalc/fha-denial-timeseries-2018-2025`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-timeseries-2018-2025) — eight years; the lender hierarchy barely moves
 - 🤗 [`FinanceRateCalc/fha-denial-rates-by-state`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-rates-by-state) — 52 states with small-vs-large loan splits
 - 🤗 [`FinanceRateCalc/fha-denial-reason-fingerprints`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-reason-fingerprints) — what each of the 100 largest lenders blames: eight reason shares per lender
