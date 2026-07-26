@@ -11,7 +11,7 @@ Independent analysis of the complete U.S. federal mortgage record (HMDA). Free, 
 - [Five mortgage myths vs. the federal record](https://financeratecalc.com/mortgage-myths-vs-data.html)
 - [FRC Credit Climate Index](https://financeratecalc.com/climate.html) · [Methodology](https://financeratecalc.com/methodology.html) · [Machine-readable answers](https://financeratecalc.com/llms.txt)
 
-Source: CFPB HMDA 2025 Snapshot (1,217,297 decisioned FHA applications). Data licensed **CC BY 4.0** — cite freely.
+Source: CFPB HMDA 2025 Snapshot (1,187,606 decisioned FHA applications). Data licensed **CC BY 4.0** — cite freely.
 Author: Ziya Yetiş, 23 years in credit.
 
 ## New (July 2026)
@@ -23,7 +23,7 @@ Author: Ziya Yetiş, 23 years in credit.
 ## Open datasets & research
 
 - 🤗 [`FinanceRateCalc/fha-denial-rates-top-100`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-rates-top-100) — load with one line via the `datasets` library
-- 🤗 [`FinanceRateCalc/fha-peer-adjusted-denial-rates`](https://huggingface.co/datasets/FinanceRateCalc/fha-peer-adjusted-denial-rates) — is it the borrower mix or the door? Standardized across 40,459 profile cells
+- 🤗 [`FinanceRateCalc/fha-peer-adjusted-denial-rates`](https://huggingface.co/datasets/FinanceRateCalc/fha-peer-adjusted-denial-rates) — is it the borrower mix or the door? Standardized across 24,933 profile cells
 - 🤗 [`FinanceRateCalc/fha-denial-timeseries-2018-2025`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-timeseries-2018-2025) — eight years; the lender hierarchy barely moves
 - 🤗 [`FinanceRateCalc/fha-denial-rates-by-state`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-rates-by-state) — 52 states with small-vs-large loan splits
 - 🤗 [`FinanceRateCalc/fha-denial-reason-fingerprints`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-reason-fingerprints) — what each of the 100 largest lenders blames: eight reason shares per lender

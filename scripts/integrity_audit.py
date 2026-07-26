@@ -23,6 +23,13 @@ STALE = {
     r'[Ee]very 4 [Mm]inutes'            : 'eski Denial Clock (4 dk) — artik 2 dk',
     r'103,022'                          : 'eski Denial Clock tabani',
     r'\b23-year (banker|banking)'       : 'B-formulune aykiri kimlik',
+    r'1,217,297'                        : 'HECM-oncesi evren (dogru: 1,187,606)',
+    r'national (rate|denial rate) of 21\.7%|21\.7% nationally|21\.7% of 1,1|21\.7% \(national'  : 'HECM-oncesi ulusal oran (dogru: 22.1%)',
+    r'median (share is )?1\.2%'          : 'HECM-oncesi incomplete medyani (dogru: 1.8%)',
+    r'73\.5% of Carrington|Carrington 73\.5' : 'HECM-oncesi Carrington (dogru: 75.2%)',
+    r'8\.9% to 31\.8%'                   : 'HECM-oncesi metro araligi (dogru: 9.0-32.9)',
+    r'3\.19(&times;|x) in Idaho|Idaho[^.]{0,40}3\.19'  : 'HECM-oncesi Idaho cezasi (dogru: 4.45x)',
+    r'3\.61(&times;|x) in El Paso|El Paso[^.]{0,40}3\.61'  : 'HECM-oncesi El Paso cezasi (dogru: 3.94x)',
     r'\bretired (banker|23)'            : 'YASAK: retired ibaresi',
 }
 
@@ -48,6 +55,8 @@ FORBIDDEN = {
 def scan(patterns, label, files):
     hits = []
     for f in files:
+        if f.endswith('corrections.html'):   # duzeltme kaydi eski rakamlari BILEREK icerir
+            continue
         try:
             s = open(f, encoding='utf-8', errors='ignore').read()
         except Exception:
