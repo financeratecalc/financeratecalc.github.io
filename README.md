@@ -1,4 +1,4 @@
-# FinanceRateCalc — FRC Intelligence
+# FinanceRateCalc — FRC Research
 Independent analysis of the complete U.S. federal mortgage record (HMDA). Free, no ads, no lender pays us.
 
 **Live site: https://financeratecalc.com**
