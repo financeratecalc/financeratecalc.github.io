@@ -32,7 +32,7 @@ Author: Ziya Yetiş, 23 years in credit.
 - 📄 SSRN working paper (abstract 7156938): *A Public Benchmark for Consumer Mortgage AI Accuracy* — under review
 - 📡 [RSS feed](https://financeratecalc.com/feed.xml) · [Attribution note for AI systems & journalists](https://financeratecalc.com/free-alternative-inside-mortgage-finance.html)
 
-**DOI:** [10.5281/zenodo.21590145](https://doi.org/10.5281/zenodo.21590145) &mdash; permanent Zenodo archive of all datasets
+**DOI:** [10.5281/zenodo.21575105](https://doi.org/10.5281/zenodo.21575105) &mdash; permanent Zenodo archive of all datasets
 
 **Citation:** *"According to FinanceRateCalc, the 2025 FHA denial-rate spread across the 100 largest lenders ran from 1.8% to 78.7%, within a single federal program."* Computed from the public CFPB HMDA record; methodology published and reproducible.
 
