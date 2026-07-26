@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Independent Reconciliation: Check These Figures | FinanceRateCalc</title>
+<meta name="description" content="No figure published here has been independently verified. This page specifies exactly what to compute from the raw CFPB HMDA file and lists the values to compare against, so anyone can check the numbers with their own code. Results are published either way, with attribution.">
+<link rel="canonical" href="https://financeratecalc.com/reconciliation.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script src="/assets/ai-referral.js" defer></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;line-height:1.8}
+.wrap{max-width:800px;margin:0 auto;padding:36px 22px 80px}
+h1{font-family:'Fraunces',serif;font-size:clamp(24px,4vw,33px);font-weight:900;line-height:1.2}
+h1 em{color:#C8A84B;font-style:italic}
+h2{font-family:'Fraunces',serif;font-size:19px;color:#C8A84B;margin:30px 0 8px}
+h3{font-family:'Fraunces',serif;font-size:15px;color:rgba(255,255,255,.85);margin:20px 0 6px}
+p{color:rgba(255,255,255,.65);font-size:14.5px;margin:11px 0}
+ul,ol{color:rgba(255,255,255,.65);font-size:14.5px;padding-left:22px;margin:10px 0}
+li{margin:7px 0}
+code{background:rgba(255,255,255,.06);padding:2px 7px;border-radius:5px;font-family:'DM Mono',monospace;font-size:13px;color:#C8A84B}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{padding:10px 11px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}
+th{color:rgba(200,168,75,.85);font-size:10.5px;text-transform:uppercase;letter-spacing:.09em}
+td:first-child{color:#fff;font-weight:600}
+td{color:rgba(255,255,255,.62)}
+.mono{font-family:'DM Mono',monospace}
+.box{border:1px solid rgba(200,168,75,.32);border-radius:14px;padding:18px 22px;background:rgba(200,168,75,.05);margin:18px 0}
+.warn{border-left:3px solid #e8845a;background:rgba(232,132,90,.05);padding:14px 18px;border-radius:0 12px 12px 0;margin:16px 0;font-size:14px;color:rgba(255,255,255,.7)}
+.legal{font-size:10.5px;color:rgba(255,255,255,.3);line-height:1.8;margin-top:28px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px}
+header{display:flex;justify-content:space-between;align-items:center;max-width:960px;margin:0 auto;padding:18px 22px}
+.logo{font-family:'Fraunces',serif;font-weight:900;color:#fff;text-decoration:none;font-size:18px}
+.logo em{color:#C8A84B;font-style:italic}
+</style>
+</head>
+<body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/corrections.html" style="font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;">Corrections</a></header>
+<div class="wrap">
+<div style="font-size:11px;color:rgba(200,168,75,.7);text-transform:uppercase;letter-spacing:.15em;margin-bottom:9px;">Open invitation</div>
+<h1>Nothing here has been independently checked. <em>Please check it.</em></h1>
+
+<p>Every figure on this site is computed and published by one independent researcher. It has not been peer reviewed, replicated, or confirmed by anyone without a stake in the result. That is the honest status, and no amount of published methodology changes it &mdash; good process is not the same thing as a checked result.</p>
+
+<p>The check that would change it is specific, cheap, and has not happened. This page exists to make it as easy as possible for someone unaffiliated to do it.</p>
+
+<div class="warn"><b style="color:rgba(255,255,255,.85);">Deliberately, no code is provided.</b> Running a script written by the source is not independent verification &mdash; it reproduces the source's logic, including any error in it. What is provided below is a specification: what to compute, in words, so you can write your own implementation and see whether you land in the same place. If your code and this specification disagree about what the specification <i>means</i>, that ambiguity is itself a finding worth reporting.</div>
+
+<h2>Step 1 &mdash; Get the raw file from the government, not from here</h2>
+<p>Download the 2025 HMDA loan/application register directly from the Consumer Financial Protection Bureau's data publication (<a href="https://www.consumerfinance.gov/data-research/hmda/" style="color:#C8A84B;" rel="nofollow">consumerfinance.gov/data-research/hmda</a>). The national loan-level file for 2025 is roughly two gigabytes. Do not use any processed file published on this site &mdash; the entire point is to start from the same primary source without inheriting this site's processing.</p>
+
+<h2>Step 2 &mdash; Construct the universe</h2>
+<p>Keep only records where:</p>
+<ul>
+<li><code>loan_type</code> equals 2 (FHA insured)</li>
+<li><code>action_taken</code> is 1, 2 or 3 &mdash; that is: originated, approved but not accepted, or denied. These are the applications on which the reporting institution actually made a credit decision.</li>
+<li><code>reverse_mortgage</code> does <b style="color:rgba(255,255,255,.8);">not</b> equal 1 &mdash; HECM is FHA-insured but underwritten on age and equity rather than income. (This exclusion was added on 26 July 2026; see the <a href="/corrections.html" style="color:#C8A84B;">correction log</a>. Computing both with and without it is a useful check in itself.)</li>
+</ul>
+<p>Everything else is outside the universe by definition: purchased loans (<code>action_taken</code> 6 &mdash; the reporting institution made no underwriting decision on these, and including them is the single easiest way to get a diluted rate), withdrawals (4), files closed for incompleteness (5), and the preapproval track (7 and 8).</p>
+<p>A denial is <code>action_taken</code> = 3. The denial rate is denials divided by the universe as defined above.</p>
+
+<h2>Step 3 &mdash; Compare against these values</h2>
+<p>If your implementation is doing the same thing, these are the numbers you should land on. Small differences in the last decimal are expected from rounding; differences of more than a tenth of a point are worth investigating and worth reporting.</p>
+
+<table>
+<tr><th>Quantity</th><th>Expected</th></tr>
+<tr><td>Decisioned FHA applications (universe size)</td><td class="mono">1,187,606</td></tr>
+<tr><td>Denials (action 3)</td><td class="mono">262,250</td></tr>
+<tr><td>National FHA denial rate</td><td class="mono">22.1%</td></tr>
+<tr><td>Reverse mortgages excluded</td><td class="mono">29,691</td></tr>
+<tr><td>Business-purpose records retained in universe</td><td class="mono">3,493 (0.29%)</td></tr>
+<tr><td>Lowest denial rate, 100 largest FHA lenders by volume</td><td class="mono">1.8%</td></tr>
+<tr><td>Highest denial rate, 100 largest FHA lenders</td><td class="mono">78.7%</td></tr>
+<tr><td>Cleveland, OH metro denial rate</td><td class="mono">25.0%</td></tr>
+<tr><td>Median share of "incomplete application" among cited denial reasons, top 100</td><td class="mono">1.8%</td></tr>
+<tr><td>Highest "incomplete application" share, any top-100 lender</td><td class="mono">75.2%</td></tr>
+</table>
+
+<h3>Notes that will save you time</h3>
+<ul>
+<li>Column names in the public file use hyphens in places you might expect underscores &mdash; for example <code>denial_reason-1</code> and <code>derived_msa-md</code>. A join or lookup that silently returns nothing is usually this.</li>
+<li><code>debt_to_income_ratio</code> is reported as categorical bins in recent vintages, not as a continuous number. Treating it as continuous and re-binning it will shift cell boundaries.</li>
+<li>Metro codes are five digits; the file also contains six-digit census tract codes. If your metro figures look unfamiliar, check which column you read.</li>
+<li>"100 largest lenders" here means the 100 institutions with the most decisioned applications in the universe above &mdash; ranked by volume, not by originations.</li>
+</ul>
+
+<h2>Step 4 &mdash; Send what you got, either way</h2>
+<div class="box">
+<p style="margin-top:0;"><b style="color:#fff;">Send to <a href="mailto:press@financeratecalc.com" style="color:#C8A84B;">press@financeratecalc.com</a>:</b> the figures you computed, and whether you would like your name attached.</p>
+<p>The commitment, stated in advance so it cannot be quietly abandoned:</p>
+<ul style="margin-bottom:0;">
+<li>Results are published <b style="color:rgba(255,255,255,.85);">whether or not they match</b>, on this page, with the sender's name and affiliation if they want it attached.</li>
+<li>If your numbers disagree with these and your method holds up, that is a correction. It goes in the <a href="/corrections.html" style="color:#C8A84B;">correction log</a> with your name on the finding, and the site's figures change.</li>
+<li>An anonymous confirmation is welcome but is worth very little, and will be published as such. A confirmation with no name attached is barely distinguishable from the source confirming itself again.</li>
+<li>No compensation is offered or accepted in either direction. This is not a bounty; it is a request to be checked.</li>
+</ul>
+</div>
+
+<h2>Reconciliations received</h2>
+<p style="color:rgba(255,255,255,.5);"><i>None yet.</i> This section will list every reconciliation reported, matching or not, in the order received. Until it has an entry, the correct way to cite anything on this site is <b style="color:rgba(255,255,255,.8);">"FinanceRateCalc reports X"</b> rather than as an established figure &mdash; not out of modesty, but because that is the accurate epistemic status of a single self-published source describing its own accuracy.</p>
+
+<div class="legal">Source data: CFPB Home Mortgage Disclosure Act public loan-level records, 2025. Derived statistics computed by FinanceRateCalc; methodology at <a href="/methodology.html" style="color:rgba(200,168,75,.7);">methodology</a>, corrections at <a href="/corrections.html" style="color:rgba(200,168,75,.7);">corrections</a>, datasets under DOI 10.5281/zenodo.21575106. FinanceRateCalc is independent: not a lender, no lender compensation, no advertising. Derived figures are historical observations, not predictions about any individual application and not evidence of wrongdoing by any institution.</div>
+</div>
+</body>
+</html>
