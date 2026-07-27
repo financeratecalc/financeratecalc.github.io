@@ -12,10 +12,27 @@
   var API='https://financeratecalc.com/api/';
   var SITE='https://financeratecalc.com';
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function bgOf(el){
+    /* walk up until a non-transparent background is found — the widget may sit inside a
+       light card on a dark page, or the reverse, and must match its actual container */
+    var n=el;
+    while(n && n!==document.documentElement){
+      try{
+        var b=getComputedStyle(n).backgroundColor;
+        if(b && b!=='transparent' && b.indexOf('rgba(0, 0, 0, 0)')!==0){
+          var m=b.match(/[\d.]+/g);
+          if(m && (m.length<4 || parseFloat(m[3])>0.15)) return m;
+        }
+      }catch(e){}
+      n=n.parentElement;
+    }
+    try{ return getComputedStyle(document.body).backgroundColor.match(/[\d.]+/g); }catch(e){}
+    return null;
+  }
   function css(el){
     var dark=false;
-    try{var bg=getComputedStyle(document.body).backgroundColor.match(/\d+/g);
-        if(bg) dark=(+bg[0]*299 + +bg[1]*587 + +bg[2]*114)/1000 < 128;}catch(e){}
+    var bg=bgOf(el);
+    if(bg) dark=(+bg[0]*299 + +bg[1]*587 + +bg[2]*114)/1000 < 140;
     return {fg:dark?'#f2f2f4':'#16181d', mut:dark?'rgba(255,255,255,.55)':'rgba(0,0,0,.5)',
             line:dark?'rgba(255,255,255,.13)':'rgba(0,0,0,.1)', acc:'#9a7d25',
             bgs:dark?'rgba(255,255,255,.04)':'rgba(0,0,0,.025)',
