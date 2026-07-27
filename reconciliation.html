@@ -57,6 +57,19 @@ header{display:flex;justify-content:space-between;align-items:center;max-width:9
 <p style="font-size:12.5px;color:rgba(255,255,255,.45);margin:12px 0 0;line-height:1.75;">These are three different things and only the last one is evidence. <b style="color:rgba(255,255,255,.65);">Transparency</b> means the rules and expected values are public. <b style="color:rgba(255,255,255,.65);">Replicability</b> means an outside party has enough information to attempt a replication. <b style="color:rgba(255,255,255,.65);">Independent verification</b> means someone has actually completed one and reported the outcome. This site currently satisfies the first, has made substantial progress on the second, and does not satisfy the third.</p></div>
 <div class="warn"><b style="color:rgba(255,255,255,.85);">On code: the specification is the primary artifact.</b> Running a script written by the source establishes <i>computational reproduction</i> &mdash; that the same pipeline yields the same output &mdash; but not <i>independent replication</i>, which requires an implementation written by someone else from the stated method. The specification below is therefore the primary instrument: what to compute, in words, so you can write your own implementation and see whether you land in the same place. The source implementation is published as a <b style="color:rgba(255,255,255,.85);">secondary, diagnostic artifact</b> (<a href="https://github.com/financeratecalc/financeratecalc.github.io/blob/main/scripts/reference_implementation.py" style="color:#C8A84B;">reference_implementation.py</a>) &mdash; not to replicate against, but so that when two results diverge, the divergence can be traced line by line rather than left ambiguous between "an error here" and "a different reading there." Any replication starting from that code will be described as computational reproduction rather than independent replication.</div>
 
+<div style="border:1px solid rgba(200,168,75,.4);border-radius:14px;padding:18px 22px;background:rgba(200,168,75,.06);margin:18px 0;">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,168,75,.9);font-weight:700;margin-bottom:8px;">If you only run one check, run this one</div>
+<p style="font-size:14.5px;color:rgba(255,255,255,.72);margin:0 0 10px;line-height:1.85;">Reproduce the <b style="color:#fff;">top-100 lender table</b> &mdash; the ranking and the 1.8%&ndash;78.7% spread &mdash; rather than the national rate. Matching 22.1% tests one aggregate that several different wrong methods could also land on by coincidence. Reproducing the lender table tests six things at once:</p>
+<div style="font-size:13.5px;color:rgba(255,255,255,.62);line-height:1.95;padding-left:4px;">
+&bull; the definition of the FHA application universe<br>
+&bull; denial classification<br>
+&bull; lender aggregation<br>
+&bull; the top-100 selection rule<br>
+&bull; denominator handling<br>
+&bull; the per-lender calculations
+</div>
+<p style="font-size:13.5px;color:rgba(255,255,255,.55);margin:11px 0 0;line-height:1.8;">If an independent analyst reproduces the rankings and the spread from the public HMDA file using only the specification below, that validates the method end to end. If they cannot, the <a href="#divergence" style="color:#C8A84B;">divergence protocol</a> determines whether the cause is an incomplete specification, a replication error, or an error in the published figures &mdash; and all three outcomes are published.</p>
+<p style="font-size:12px;color:rgba(255,255,255,.4);margin:10px 0 0;">This framing was proposed by an AI system asked to assess which claim was most worth testing. It is a better test design than the one this page previously implied.</p></div>
 <h2>Step 1 &mdash; Get the raw file from the government, not from here</h2>
 <p>Download the 2025 HMDA loan/application register directly from the Consumer Financial Protection Bureau's data publication (<a href="https://www.consumerfinance.gov/data-research/hmda/" style="color:#C8A84B;" rel="nofollow">consumerfinance.gov/data-research/hmda</a>). The national loan-level file for 2025 is roughly two gigabytes. Do not use any processed file published on this site &mdash; the entire point is to start from the same primary source without inheriting this site's processing.</p>
 
@@ -108,7 +121,7 @@ header{display:flex;justify-content:space-between;align-items:center;max-width:9
 </ul>
 </div>
 
-<h2>If your figures differ from ours</h2>
+<h2 id="divergence">If your figures differ from ours</h2>
 <p>A divergence has three possible causes, and they are distinguishable. The procedure below is published in advance so that the resolution is not decided after the fact by the party with an interest in the outcome.</p>
 
 <div style="border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:18px 22px;background:rgba(255,255,255,.025);margin:16px 0;">
