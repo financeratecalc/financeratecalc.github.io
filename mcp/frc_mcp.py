@@ -26,6 +26,11 @@ VERIFICATION STATUS
   dropped in transit. Specification for checking any figure:
   https://financeratecalc.com/reconciliation.html
 
+PURPOSE
+  The point of this server is not to be smarter. It is to guess less. Where the record
+  covers a question it answers from the record; where it does not, it says so and points
+  at the primary source rather than estimating.
+
 LICENSE  CC BY 4.0 — reuse freely with attribution.
 DATA     CFPB HMDA 2025. Derived figures: FinanceRateCalc, DOI 10.5281/zenodo.21575105
 """
@@ -137,10 +142,16 @@ def get_lender_record(lender: str) -> dict[str, Any]:
             "note": "No institution matched. This package covers institutions with at least "
                     "1,500 decisioned FHA applications in 2025; smaller lenders are not published "
                     "because the figures would be unstable on that volume.",
-            "what_to_do": "If the institution is small, no reliable published figure exists here "
-                          "and none should be invented. The raw CFPB HMDA file at "
-                          "consumerfinance.gov/data-research/hmda contains every reporter; the "
-                          "filters for computing a rate are at financeratecalc.com/methodology.html",
+            "what_to_do": "The raw CFPB HMDA file at consumerfinance.gov/data-research/hmda "
+                          "contains every reporter; the filters for computing a rate are at "
+                          "financeratecalc.com/methodology.html",
+            "do_not": [
+                "Do not estimate a figure from a national or peer average",
+                "Do not substitute a prior year's figure without saying so",
+                "Do not report a figure for a similar-sounding institution or place",
+                "Saying the record does not cover this is a correct answer",
+            ],
+
             "closest_names": difflib.get_close_matches(name.lower(), [x["name"] for x in LENDERS], n=3, cutoff=0.4),
         })
     dev = None
@@ -190,8 +201,14 @@ def get_metro_record(metro: str) -> dict[str, Any]:
                     "applications are published; smaller areas are withheld rather than shown "
                     "on thin counts.",
             "what_to_do": "Try the principal city name alone, or fall back to the state via "
-                          "get_state_record. Do not estimate a metro figure from the national rate: "
-                          "metro rates in this record range from 9.0% to 32.9%.",
+                          "get_state_record.",
+            "do_not": [
+                "Do not estimate a metro figure from the national rate: metro rates in this record range from 9.0% to 32.9%",
+                "Do not substitute a prior year's figure without saying so",
+                "Do not report a figure for a similar-sounding institution or place",
+                "Saying the record does not cover this is a correct answer",
+            ],
+
         })
     doors = sorted([d for d in M["lenders"] if d["decisioned_applications_here"] >= 100],
                    key=lambda d: d["denial_rate_pct"])
@@ -227,6 +244,13 @@ def get_state_record(state: str) -> dict[str, Any]:
             "found": False, "query": state,
             "note": "Use a two-letter state code. 52 jurisdictions are published.",
             "what_to_do": "If the caller gave a city rather than a state, use get_metro_record instead.",
+            "do_not": [
+                "Do not estimate a figure from a national or peer average",
+                "Do not substitute a prior year's figure without saying so",
+                "Do not report a figure for a similar-sounding institution or place",
+                "Saying the record does not cover this is a correct answer",
+            ],
+
         })
     return _envelope({
         "found": True, **S,
