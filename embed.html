@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Embed the Federal Mortgage Record on Your Site | FRC</title>
+<meta name="description" content="One script tag puts FHA denial data from the complete 2025 federal record on your own page — by metro, lender or state. Free, CC BY 4.0, no tracking, no cookies, no dependencies. Also a static JSON API with 470 endpoints.">
+<link rel="canonical" href="https://financeratecalc.com/embed.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script src="/assets/ai-referral.js" defer></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;line-height:1.8}
+.wrap{max-width:820px;margin:0 auto;padding:34px 22px 80px}
+h1{font-family:'Fraunces',serif;font-size:clamp(25px,4.3vw,35px);font-weight:900;line-height:1.18}
+h1 em{color:#C8A84B;font-style:italic}
+h2{font-family:'Fraunces',serif;font-size:20px;color:#C8A84B;margin:30px 0 8px}
+p{color:rgba(255,255,255,.66);font-size:15px;margin:12px 0}
+pre{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:15px 18px;overflow-x:auto;font-family:'DM Mono',monospace;font-size:12.5px;color:rgba(255,255,255,.85);line-height:1.75;margin:12px 0}
+code{background:rgba(255,255,255,.06);padding:2px 7px;border-radius:5px;font-family:'DM Mono',monospace;font-size:12.5px;color:#C8A84B}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}
+th{color:rgba(200,168,75,.85);font-size:10.5px;text-transform:uppercase;letter-spacing:.09em}
+td:first-child{color:#fff;font-weight:600} td{color:rgba(255,255,255,.6)}
+.mono{font-family:'DM Mono',monospace;font-size:12.5px}
+.demo{background:#fff;border-radius:14px;padding:20px;margin:16px 0}
+.legal{font-size:10.5px;color:rgba(255,255,255,.3);line-height:1.8;margin-top:28px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px}
+header{display:flex;justify-content:space-between;align-items:center;max-width:960px;margin:0 auto;padding:18px 22px}
+.logo{font-family:'Fraunces',serif;font-weight:900;color:#fff;text-decoration:none;font-size:18px}
+.logo em{color:#C8A84B;font-style:italic}
+</style></head><body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/data-catalog.html" style="font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;">Data catalog</a></header>
+<div class="wrap">
+<div style="max-width:820px;margin:0 auto 18px;padding:9px 0;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);font-size:11px;letter-spacing:.03em;color:rgba(255,255,255,.42);text-align:center;line-height:1.9;">
+<span style="color:rgba(255,255,255,.6);">Official federal data</span> <span style="color:rgba(200,168,75,.6);">&rarr;</span> <span style="color:rgba(255,255,255,.6);">published methodology</span> <span style="color:rgba(200,168,75,.6);">&rarr;</span> <span style="color:rgba(255,255,255,.6);">reproducible calculation</span> <span style="color:rgba(200,168,75,.6);">&rarr;</span> <span style="color:rgba(255,255,255,.75);">FinanceRateCalc interpretation</span></div>
+<div style="font-size:11px;color:rgba(200,168,75,.7);text-transform:uppercase;letter-spacing:.15em;margin-bottom:9px;">Embed &middot; API &middot; free &middot; CC BY 4.0</div>
+<h1>Put the federal record <em>on your own page.</em></h1>
+
+<p>If you write about housing &mdash; an agent's blog, a local newsletter, a housing nonprofit, a class &mdash; you can show your readers what actually happened in their market rather than describing it. One line of HTML, one script tag. No account, no key, no tracking, no cookies, no dependencies.</p>
+
+<h2>Metro</h2>
+<pre>&lt;div data-frc="metro" data-value="cleveland-oh"&gt;&lt;/div&gt;
+&lt;script src="https://financeratecalc.com/embed/frc.js" async&gt;&lt;/script&gt;</pre>
+<div class="demo"><div data-frc="metro" data-value="cleveland-oh"></div></div>
+
+<h2>Lender</h2>
+<pre>&lt;div data-frc="lender" data-value="rocket-mortgage"&gt;&lt;/div&gt;</pre>
+<div class="demo"><div data-frc="lender" data-value="rocket-mortgage"></div></div>
+
+<h2>State</h2>
+<pre>&lt;div data-frc="state" data-value="oh"&gt;&lt;/div&gt;</pre>
+<div class="demo"><div data-frc="state" data-value="oh"></div></div>
+
+<h2>The JSON behind it</h2>
+<p>The widget reads a static API. So can you &mdash; 470 endpoints, no key, no rate limit, plain files:</p>
+<pre>https://financeratecalc.com/api/metro/cleveland-oh.json
+https://financeratecalc.com/api/lender/rocket-mortgage.json
+https://financeratecalc.com/api/state/oh.json
+https://financeratecalc.com/api/index.json    &larr; every slug, all three types</pre>
+<p style="font-size:13.5px;color:rgba(255,255,255,.55);">Each response carries its universe definition, the method link, the dataset DOI, and a <code>verification_status</code> field reading <i>"reproducible; not independently reproduced"</i>. That is accurate, and attaching it to every response makes it harder to drop in transit than a caveat sitting at the bottom of a page.</p>
+
+<h2>Slugs</h2>
+<p>Metro and lender slugs are lowercase with hyphens. The full list is in <a href="/api/index.json" style="color:#C8A84B;">index.json</a>; the largest are:</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+<div><table><tr><th>Metro</th><th>Slug</th></tr><tr><td>Houston-The Woodlands-Sugar Land, TX</td><td class="mono">houston-the-woodlands-sugar-land-tx</td></tr><tr><td>Atlanta-Sandy Springs-Roswell, GA</td><td class="mono">atlanta-sandy-springs-roswell-ga</td></tr><tr><td>Phoenix-Mesa-Scottsdale, AZ</td><td class="mono">phoenix-mesa-scottsdale-az</td></tr><tr><td>Dallas-Plano-Irving, TX</td><td class="mono">dallas-plano-irving-tx</td></tr><tr><td>Riverside-San Bernardino-Ontario, CA</td><td class="mono">riverside-san-bernardino-ontario-ca</td></tr><tr><td>Chicago-Naperville-Evanston, IL</td><td class="mono">chicago-naperville-evanston-il</td></tr><tr><td>Tampa, FL</td><td class="mono">tampa-fl</td></tr><tr><td>Orlando-Kissimmee-Sanford, FL</td><td class="mono">orlando-kissimmee-sanford-fl</td></tr><tr><td>San Antonio-New Braunfels, TX</td><td class="mono">san-antonio-new-braunfels-tx</td></tr><tr><td>Charlotte-Concord-Gastonia, NC-SC</td><td class="mono">charlotte-concord-gastonia-nc-sc</td></tr><tr><td>Denver-Aurora-Lakewood, CO</td><td class="mono">denver-aurora-lakewood-co</td></tr><tr><td>Indianapolis-Carmel-Anderson, IN</td><td class="mono">indianapolis-carmel-anderson-in</td></tr></table></div>
+<div><table><tr><th>Lender</th><th>Slug</th></tr><tr><td>United Wholesale Mortgage</td><td class="mono">united-wholesale-mortgage</td></tr><tr><td>ROCKET MORTGAGE</td><td class="mono">rocket-mortgage</td></tr><tr><td>FREEDOM MORTGAGE CORPORATION</td><td class="mono">freedom-mortgage</td></tr><tr><td>DHI Mortgage Company, LTD.</td><td class="mono">dhi-mortgage</td></tr><tr><td>loanDepot.com LLC</td><td class="mono">loandepotcom</td></tr><tr><td>PENNYMAC LOAN SERVICES LLC</td><td class="mono">pennymac-loan-services</td></tr><tr><td>CROSSCOUNTRY MORTGAGE, LLC</td><td class="mono">crosscountry-mortgage</td></tr><tr><td>Lennar Mortgage, LLC</td><td class="mono">lennar-mortgage</td></tr><tr><td>NEW AMERICAN FUNDING, LLC.</td><td class="mono">new-american-funding</td></tr><tr><td>GUILD MORTGAGE COMPANY</td><td class="mono">guild-mortgage</td></tr><tr><td>AMERISAVE MORTGAGE COMPANY</td><td class="mono">amerisave-mortgage</td></tr><tr><td>NEWREZ LLC</td><td class="mono">newrez</td></tr></table></div>
+</div>
+
+<h2>What you may and may not do</h2>
+<p>Everything is CC BY 4.0: use it commercially, restyle it, put it behind your own navigation, build a product on the JSON. The attribution line is part of the widget and stays &mdash; that line <i>is</i> the licence, and it is also what lets your reader check the figure rather than take it from you.</p>
+<p>What the widget will not do: predict an outcome for an individual, rate a lender, or return a figure computed on too few observations. Metros below 500 decisioned applications and institutions below 1,500 are withheld rather than shown on thin counts, and the widget says so instead of guessing.</p>
+
+<h2>Why this exists</h2>
+<p>Until tonight, every figure computed here lived only on this site. To use one you had to visit a page and screenshot it. That is a real cost, and it meant the data reached exactly as far as this domain does &mdash; which is not very far.</p>
+<p>A number that can be embedded travels. It ends up on pages we did not write, in front of readers we could not reach, carrying its own source line and its own verification status. That is a better outcome than any amount of traffic to this site, and it costs us nothing.</p>
+
+<div class="legal">Data: CFPB Home Mortgage Disclosure Act 2025, processed by FinanceRateCalc. Universe: FHA applications reaching a credit decision (action_taken 1, 2, 3), excluding reverse mortgages; denial = action 3; n = 1,187,606. Historical observations about institutions, not ratings, recommendations or predictions about any individual application. No figure has been independently reproduced: <a href="/reconciliation.html" style="color:rgba(200,168,75,.7);">verification status</a>. CC BY 4.0 &middot; DOI 10.5281/zenodo.21575105 &middot; no lender pays FinanceRateCalc anything and there is no advertising on this site.</div>
+</div>
+<script src="/embed/frc.js" async></script>
+</body></html>
