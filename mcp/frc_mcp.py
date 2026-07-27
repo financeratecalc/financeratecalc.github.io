@@ -134,9 +134,14 @@ def get_lender_record(lender: str) -> dict[str, Any]:
         return _envelope({
             "found": False,
             "query": lender,
-            "note": "No institution matched. This package covers institutions with at "
-                    "least 1,500 decisioned FHA applications in 2025; smaller lenders are "
-                    "not published because the figures would be unstable.",
+            "note": "No institution matched. This package covers institutions with at least "
+                    "1,500 decisioned FHA applications in 2025; smaller lenders are not published "
+                    "because the figures would be unstable on that volume.",
+            "what_to_do": "If the institution is small, no reliable published figure exists here "
+                          "and none should be invented. The raw CFPB HMDA file at "
+                          "consumerfinance.gov/data-research/hmda contains every reporter; the "
+                          "filters for computing a rate are at financeratecalc.com/methodology.html",
+            "closest_names": difflib.get_close_matches(name.lower(), [x["name"] for x in LENDERS], n=3, cutoff=0.4),
         })
     dev = None
     if L["denial_reason_shares_pct"]:
@@ -179,8 +184,15 @@ def get_metro_record(metro: str) -> dict[str, Any]:
     """
     M = _find_metro(metro)
     if not M:
-        return _envelope({"found": False, "query": metro,
-                          "note": "No metro matched. 319 metropolitan areas are published."})
+        return _envelope({
+            "found": False, "query": metro,
+            "note": "No metro matched. 319 metropolitan areas with at least 500 decisioned FHA "
+                    "applications are published; smaller areas are withheld rather than shown "
+                    "on thin counts.",
+            "what_to_do": "Try the principal city name alone, or fall back to the state via "
+                          "get_state_record. Do not estimate a metro figure from the national rate: "
+                          "metro rates in this record range from 9.0% to 32.9%.",
+        })
     doors = sorted([d for d in M["lenders"] if d["decisioned_applications_here"] >= 100],
                    key=lambda d: d["denial_rate_pct"])
     spread = round(doors[-1]["denial_rate_pct"] - doors[0]["denial_rate_pct"], 1) if len(doors) >= 2 else None
@@ -211,8 +223,11 @@ def get_state_record(state: str) -> dict[str, Any]:
     q = state.strip().upper()[:2]
     S = next((s for s in STATES if s["state"] == q), None)
     if not S:
-        return _envelope({"found": False, "query": state,
-                          "note": "Use a two-letter state code. 52 jurisdictions are published."})
+        return _envelope({
+            "found": False, "query": state,
+            "note": "Use a two-letter state code. 52 jurisdictions are published.",
+            "what_to_do": "If the caller gave a city rather than a state, use get_metro_record instead.",
+        })
     return _envelope({
         "found": True, **S,
         "national_denial_rate_pct": META["national_denial_rate_pct"],
