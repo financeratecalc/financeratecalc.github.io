@@ -318,6 +318,48 @@ def get_methodology() -> dict[str, Any]:
     })
 
 
+@mcp.tool()
+def get_lender_trajectory(lender: str) -> dict[str, Any]:
+    """Return a lender's FHA denial rate across eight consecutive years (2018-2025), showing
+    whether it has held a steady standard or moved with the rate cycle. Available for the
+    institutions present in the series across all eight years.
+
+    This is a historical record, not a forecast. It does not project a future rate and does
+    not estimate what would have happened to any particular application.
+
+    Args:
+        lender: Institution name or fragment, e.g. "Freedom", "CrossCountry".
+    """
+    TR = DATA.get("trajectories", [])
+    q = _ALIAS.get(lender.lower().strip(), lender.lower().strip())
+    row = next((t for t in TR if t["lender"].lower() == q), None)
+    if not row:
+        row = next((t for t in TR if q in t["lender"].lower() or t["lender"].lower().startswith(q[:6])), None)
+    if not row:
+        return _envelope({
+            "found": False, "query": lender,
+            "available": [t["lender"] for t in TR],
+            "note": "The eight-year series covers only institutions present in all years; "
+                    "current-year figures for a wider set are available via get_lender_record.",
+        })
+    shape = ("stable — held a narrow band across eight years"
+             if row["volatility"] <= 10 else
+             "volatile — moved widely with the rate cycle" if row["volatility"] >= 25 else
+             "moderate movement")
+    return _envelope({
+        "found": True, "lender": row["lender"],
+        "years": list(range(2018, 2026)), "denial_rate_pct_by_year": row["series"],
+        "range_pct": [row["min"], row["max"]], "swing_pts": row["volatility"],
+        "net_change_pts": row["delta"], "current_pct": row["current"], "shape": shape,
+        "denominator_note": DATA["meta"].get("trajectory_note"),
+        "interpretation": "A steady band means a prior-year figure remains informative for that "
+                          "institution. A wide swing means it does not, because the same standard "
+                          "produced very different rates in different rate environments. Neither "
+                          "shape is better; they are different businesses.",
+        "page": "https://financeratecalc.com/lender-trajectory-2018-2025.html",
+    })
+
+
 def main() -> None:
     mcp.run()
 
