@@ -55,8 +55,8 @@ FORBIDDEN = {
 def scan(patterns, label, files):
     hits = []
     for f in files:
-        if f.endswith('corrections.html'):   # duzeltme kaydi eski rakamlari BILEREK icerir
-            continue
+        if f.endswith('corrections.html') or f.endswith('reconciliation.html') or f.endswith('claims.json'):
+            continue   # duzeltme kaydi ve sapma teshisi eski rakamlari BILEREK icerir
         try:
             s = open(f, encoding='utf-8', errors='ignore').read()
         except Exception:

@@ -399,6 +399,64 @@ def get_lender_trajectory(lender: str) -> dict[str, Any]:
     })
 
 
+@mcp.tool()
+def reconcile_claim(claim_id: str, value: float) -> dict[str, Any]:
+    """Compare a figure encountered elsewhere against the published value, and where they
+    differ, name the likely cause. Most disagreements between published mortgage denial
+    figures are definitional rather than computational.
+
+    Args:
+        claim_id: one of the published claim ids — call list_claims() to see them.
+        value: the figure to compare, as a plain number.
+    """
+    import os as _os, json as _json
+    p = _os.path.join(_HERE, "claims.json")
+    if not _os.path.exists(p):
+        return _envelope({"available": False,
+                          "note": "claims.json not bundled with this install; fetch it from "
+                                  "https://financeratecalc.com/claims.json"})
+    claims = _json.load(open(p, encoding="utf-8"))["claims"]
+    c = next((x for x in claims if x["id"] == claim_id), None)
+    if not c:
+        return _envelope({"found": False, "claim_ids": [x["id"] for x in claims]})
+    tol = max(1, c["value"] * 0.001) if c["unit"] == "applications" else max(0.05, abs(c["value"]) * 0.01)
+    diff = abs(value - c["value"])
+    if diff <= tol:
+        return _envelope({"result": "agrees", "your_value": value, "published_value": c["value"],
+                          "unit": c["unit"], "scope": c.get("scope"),
+                          "note": "Agreement between two figures is not proof either is correct. "
+                                  "No figure published here has been independently reproduced."})
+    cause = next((d for d in c.get("known_divergences", []) if abs(value - d["value"]) <= d["tolerance"]), None)
+    out = {"result": "differs", "your_value": value, "published_value": c["value"],
+           "difference": round(diff, 4), "unit": c["unit"], "scope": c.get("scope")}
+    if cause:
+        out["likely_cause"] = cause["cause"]
+        out["explanation"] = cause["explain"]
+        out["what_to_do"] = cause["fix"]
+    else:
+        out["likely_cause"] = "not in our documented list"
+        out["explanation"] = ("This gap does not match a divergence we have documented. It may come "
+                              "from a different universe, year or weighting — or one of the two "
+                              "figures may be wrong, possibly ours.")
+        out["what_to_do"] = ("Run the specification at financeratecalc.com/reconciliation.html and "
+                             "report the result; it is published either way.")
+    return _envelope(out)
+
+
+@mcp.tool()
+def list_claims() -> dict[str, Any]:
+    """List every headline figure published here, with its id, value and scope, for use with
+    reconcile_claim."""
+    import os as _os, json as _json
+    p = _os.path.join(_HERE, "claims.json")
+    if not _os.path.exists(p):
+        return _envelope({"available": False, "source": "https://financeratecalc.com/claims.json"})
+    claims = _json.load(open(p, encoding="utf-8"))["claims"]
+    return _envelope({"count": len(claims),
+                      "claims": [{"id": c["id"], "claim": c["claim"], "value": c["value"],
+                                  "unit": c["unit"], "scope": c.get("scope")} for c in claims]})
+
+
 def main() -> None:
     mcp.run()
 
