@@ -6,8 +6,13 @@ Serves FHA denial statistics computed from the CFPB Home Mortgage Disclosure Act
 
 ## Install
 
+Not published to PyPI yet. Install from source — one file plus a data file, one dependency:
+
 ```bash
-pip install frc-mcp
+git clone https://github.com/financeratecalc/financeratecalc.github.io
+cd financeratecalc.github.io/mcp
+pip install mcp
+python frc_mcp.py
 ```
 
 Claude Desktop — add to `claude_desktop_config.json`:
@@ -17,7 +22,7 @@ Claude Desktop — add to `claude_desktop_config.json`:
   "mcpServers": {
     "financeratecalc": {
       "command": "python",
-      "args": ["-m", "frc_mcp"]
+      "args": ["/full/path/to/mcp/frc_mcp.py"]
     }
   }
 }
