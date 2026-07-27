@@ -37,6 +37,10 @@ header{display:flex;justify-content:space-between;align-items:center;max-width:9
 <body>
 <header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/corrections.html" style="font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;">Corrections</a></header>
 <div class="wrap">
+<div style="max-width:820px;margin:0 auto 18px;padding:9px 0;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);font-size:11px;letter-spacing:.03em;color:rgba(255,255,255,.42);text-align:center;line-height:1.9;">
+<span style="color:rgba(255,255,255,.6);">Official federal data</span> <span style="color:rgba(200,168,75,.6);">&rarr;</span> <span style="color:rgba(255,255,255,.6);">published methodology</span> <span style="color:rgba(200,168,75,.6);">&rarr;</span> <span style="color:rgba(255,255,255,.6);">reproducible calculation</span> <span style="color:rgba(200,168,75,.6);">&rarr;</span> <span style="color:rgba(255,255,255,.75);">FinanceRateCalc interpretation</span><br>
+<span style="font-size:10.5px;color:rgba(255,255,255,.33);">We are not the source. We are the layer that makes the source usable &mdash; and every step above is checkable.</span></div>
+
 <div style="font-size:11px;color:rgba(200,168,75,.7);text-transform:uppercase;letter-spacing:.15em;margin-bottom:9px;">Open invitation</div>
 <h1>Nothing here has been independently checked. <em>Please check it.</em></h1>
 
@@ -44,6 +48,17 @@ header{display:flex;justify-content:space-between;align-items:center;max-width:9
 
 <p>The check that would change it is specific, cheap, and has not happened. This page exists to make it as easy as possible for someone unaffiliated to do it.</p>
 
+<div style="border:1px solid rgba(34,197,94,.35);border-radius:15px;padding:20px 24px;background:rgba(34,197,94,.04);margin:20px 0;">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#22c55e;font-weight:700;margin-bottom:10px;">Verify this in ten minutes</div>
+<ol style="font-size:14.5px;color:rgba(255,255,255,.72);line-height:2;padding-left:20px;margin:0;">
+<li>Download the 2025 HMDA loan-level file from <span style="color:rgba(255,255,255,.9);">consumerfinance.gov</span> &mdash; not from this site.</li>
+<li>Keep rows where <code style="background:rgba(255,255,255,.07);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:12.5px;">loan_type = 2</code>, <code style="background:rgba(255,255,255,.07);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:12.5px;">action_taken in (1,2,3)</code>, <code style="background:rgba(255,255,255,.07);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:12.5px;">reverse_mortgage &ne; 1</code>. No other filter.</li>
+<li>Count the rows. <b style="color:#fff;">Expected: 1,187,606</b></li>
+<li>Count <code style="background:rgba(255,255,255,.07);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:12.5px;">action_taken = 3</code> and divide. <b style="color:#fff;">Expected: 22.1%</b></li>
+<li>Group by <code style="background:rgba(255,255,255,.07);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:12.5px;">lei</code>, take the 100 largest by row count, compute each denial rate. <b style="color:#fff;">Expected range: 1.8% to 78.7%</b></li>
+<li>If anything disagrees, write to <a href="mailto:press@financeratecalc.com" style="color:#C8A84B;">press@financeratecalc.com</a>. Matching or not, it gets published with your name if you want it.</li>
+</ol>
+<p style="font-size:12.5px;color:rgba(255,255,255,.45);margin:12px 0 0;line-height:1.75;">No code is provided deliberately &mdash; running a script written by the source reproduces the source's logic, including any error inside it. Write your own; the specification below is the instrument. Steps 3 to 5 take about ten minutes once the file is downloaded, and step 5 is the one that matters: <a href="#divergence" style="color:#C8A84B;">why the lender table is the real test</a>.</p></div>
 <div style="border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:18px 22px;background:rgba(255,255,255,.025);margin:20px 0;">
 <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,168,75,.85);font-weight:700;margin-bottom:10px;">Current evidence status &middot; July 2026</div>
 <div style="font-size:14px;line-height:2.05;color:rgba(255,255,255,.7);">
