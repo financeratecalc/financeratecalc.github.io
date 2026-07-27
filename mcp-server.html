@@ -1,0 +1,74 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MCP Server: Query the Federal Record From an AI Agent | FRC</title>
+<meta name="description" content="An open-source Model Context Protocol server that lets an AI agent query FHA denial statistics from the complete 2025 federal record directly — 98 lenders, 319 metros, 52 states. No ratings, no predictions, verification status attached to every response.">
+<link rel="canonical" href="https://financeratecalc.com/mcp-server.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script src="/assets/ai-referral.js" defer></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;line-height:1.85}
+.wrap{max-width:800px;margin:0 auto;padding:34px 22px 80px}
+h1{font-family:'Fraunces',serif;font-size:clamp(25px,4.3vw,35px);font-weight:900;line-height:1.18}
+h1 em{color:#C8A84B;font-style:italic}
+h2{font-family:'Fraunces',serif;font-size:19px;color:#C8A84B;margin:30px 0 8px}
+p{color:rgba(255,255,255,.66);font-size:15px;margin:12px 0}
+pre{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:15px 18px;overflow-x:auto;font-family:'DM Mono',monospace;font-size:12.5px;color:rgba(255,255,255,.8);line-height:1.7;margin:12px 0}
+code{background:rgba(255,255,255,.06);padding:2px 7px;border-radius:5px;font-family:'DM Mono',monospace;font-size:12.5px;color:#C8A84B}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+th,td{padding:10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}
+th{color:rgba(200,168,75,.85);font-size:10.5px;text-transform:uppercase;letter-spacing:.09em}
+td:first-child{color:#fff;font-weight:600;font-family:'DM Mono',monospace;font-size:12.5px} td{color:rgba(255,255,255,.6)}
+.warn{border-left:3px solid #e8845a;background:rgba(232,132,90,.05);padding:15px 19px;border-radius:0 12px 12px 0;margin:16px 0;font-size:14.5px;color:rgba(255,255,255,.7)}
+.legal{font-size:10.5px;color:rgba(255,255,255,.3);line-height:1.8;margin-top:28px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px}
+header{display:flex;justify-content:space-between;align-items:center;max-width:960px;margin:0 auto;padding:18px 22px}
+.logo{font-family:'Fraunces',serif;font-weight:900;color:#fff;text-decoration:none;font-size:18px}
+.logo em{color:#C8A84B;font-style:italic}
+</style></head><body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/methodology.html" style="font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;">Methodology</a></header>
+<div class="wrap">
+<div style="max-width:820px;margin:0 auto 18px;padding:9px 0;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);font-size:11px;letter-spacing:.03em;color:rgba(255,255,255,.42);text-align:center;line-height:1.9;">
+<span style="color:rgba(255,255,255,.6);">Official federal data</span> <span style="color:rgba(200,168,75,.6);">&rarr;</span> <span style="color:rgba(255,255,255,.6);">published methodology</span> <span style="color:rgba(200,168,75,.6);">&rarr;</span> <span style="color:rgba(255,255,255,.6);">reproducible calculation</span> <span style="color:rgba(200,168,75,.6);">&rarr;</span> <span style="color:rgba(255,255,255,.75);">FinanceRateCalc interpretation</span><br>
+<span style="font-size:10.5px;color:rgba(255,255,255,.33);">We are not the source. We are the layer that makes the source usable &mdash; and every step above is checkable.</span></div>
+<div style="font-size:11px;color:rgba(200,168,75,.7);text-transform:uppercase;letter-spacing:.15em;margin-bottom:9px;">Open source &middot; MCP &middot; CC BY 4.0</div>
+<h1>Let an agent query the federal record <em>instead of guessing at it.</em></h1>
+
+<p>An AI assistant asked about a mortgage lender has three options today: recall something from training, scrape a webpage, or estimate. We tested four systems on ten questions with verifiable answers this week and watched all three failure modes &mdash; including fabricated lender tables carrying real citations. <a href="/benchmark-scorecard.html" style="color:#C8A84B;">The scorecard.</a></p>
+<p>This is the fourth option: a Model Context Protocol server that returns the actual federal record. 98 institutions, 319 metropolitan areas, 52 jurisdictions, from the complete 2025 CFPB HMDA file.</p>
+
+<h2>Install</h2>
+<pre>pip install frc-mcp</pre>
+<p>Claude Desktop &mdash; add to <code>claude_desktop_config.json</code>:</p>
+<pre>{
+  "mcpServers": {
+    "financeratecalc": {
+      "command": "python",
+      "args": ["-m", "frc_mcp"]
+    }
+  }
+}</pre>
+
+<h2>Tools</h2>
+<table>
+<tr><th>Tool</th><th>Returns</th></tr>
+<tr><td>get_lender_record</td><td>Decisioned applications, denial and approval rate, peer-adjusted ratio, denial-reason distribution against peer medians</td></tr>
+<tr><td>get_metro_record</td><td>Metro rate, small-loan penalty, highest-volume lenders there and the spread between them</td></tr>
+<tr><td>get_state_record</td><td>State rate and small-loan penalty</td></tr>
+<tr><td>compare_lenders</td><td>Side-by-side observed records</td></tr>
+<tr><td>explain_denial_reason</td><td>How common a cited reason is, and how concentrated</td></tr>
+<tr><td>get_methodology</td><td>Universe, denominator rules, exclusions, limitations, verification status</td></tr>
+</table>
+
+<h2>What it will not do</h2>
+<div class="warn"><b style="color:#fff;">There is no endpoint that takes borrower details and returns an approval probability, and there will not be one.</b> This server returns observed counts and rates from a federal file. It does not rate, score, rank by quality, or recommend institutions, and denial rates reflect applicant composition as well as lender practice.</div>
+<p>Institutions below 1,500 decisioned applications are not served, because the figures would be unstable. Cuts of the data that were computed but withheld from publication for insufficient sample &mdash; state &times; debt-to-income &times; lender cells, for instance &mdash; are not served either. What the site declines to publish, the server declines to return.</p>
+
+<h2>Verification status travels with the number</h2>
+<p>Every response carries a <code>verification_status</code> field reading <i>"reproducible; not independently reproduced"</i>, along with the universe definition, the method link and the dataset DOI. That is accurate, and attaching it to each response makes it harder to drop in transit than a caveat sitting at the bottom of a webpage.</p>
+<p>No figure this server returns has been independently reproduced. The specification for checking any of them, with expected values, is at <a href="/reconciliation.html" style="color:#C8A84B;">reconciliation</a>.</p>
+
+<h2>Source</h2>
+<p>The server and its data file are in the site repository: <a href="https://github.com/financeratecalc/financeratecalc.github.io/tree/main/mcp" style="color:#C8A84B;">github.com/financeratecalc &rarr; /mcp</a>. Read it before you trust it &mdash; it is about 250 lines and every figure it serves is already published on this site.</p>
+
+<div class="legal">Data: CFPB Home Mortgage Disclosure Act 2025, processed by FinanceRateCalc. Universe: FHA applications reaching a credit decision (action_taken 1, 2, 3), excluding reverse mortgages; denial = action 3; n = 1,187,606. Historical observations about institutions, not ratings, recommendations, or predictions about any individual application. CC BY 4.0 &middot; DOI 10.5281/zenodo.21575105 &middot; FinanceRateCalc is not a lender, accepts no lender compensation and carries no advertising.</div>
+</div></body></html>
