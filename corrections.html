@@ -74,6 +74,19 @@ header{display:flex;justify-content:space-between;align-items:center;max-width:9
 <p>The rebuild script validates its own column selection (it verifies, for example, that values read as metro codes are five digits before using them), excludes purchased loans, withdrawals, incomplete closures and the preapproval track explicitly rather than by numeric range, and prints the universe composition on every run. A pre-publication audit script scans the site for figures that no longer match the current data.</p>
 </div>
 
+<div class="entry">
+<div class="date">27 July 2026 &middot; Specification defect</div>
+<h2 style="margin-top:6px;">Four filter dimensions were undocumented</h2>
+<h3>What was missing</h3>
+<p>The published specification stated the loan type, the action codes, the treatment of withdrawn and incomplete files, the reporting year and the reverse-mortgage exclusion. It did not state that <b style="color:rgba(255,255,255,.8);">no restriction is applied</b> on loan purpose, lien status, occupancy, or property type. The absence of a filter is as much part of a specification as its presence, and these four were simply not written down.</p>
+<h3>Why it matters</h3>
+<p>Loan purpose is the consequential one. Restricting the universe to home purchase only drops the national FHA denial rate from <b style="color:#fff;">22.1% to approximately 13%</b>. That is the largest single source of divergence between published FHA denial figures, and a replication attempt applying a purchase-only filter would have landed nine points away from ours with no way to tell whether the difference was an error or a definition.</p>
+<h3>How it was found</h3>
+<p>An AI system, asked whether these figures had been independently verified, correctly answered that they had not &mdash; and then noted that replication would require knowing choices such as loan purpose, lien status and occupancy, which had not been published. It was right. No figure changed as a result; what changed is that the rules producing them are now fully stated.</p>
+<h3>Where it now appears</h3>
+<p>In <a href="/methodology.html" style="color:#C8A84B;">methodology</a> as a section on what is not filtered, and in the <a href="/reconciliation.html" style="color:#C8A84B;">reconciliation specification</a> with a note that a run landing near 13% should check this first.</p>
+</div>
+
 <h2>Deposited versions</h2>
 <p>Cite <code style="background:rgba(255,255,255,.06);padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:12px;">10.5281/zenodo.21575105</code> for the dataset as such &mdash; it always resolves to the current version. Cite a specific version DOI below when a figure needs to be pinned to the exact form in which it was published.</p>
 <table>
