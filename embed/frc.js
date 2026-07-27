@@ -1,9 +1,10 @@
-/*! FinanceRateCalc embed v1.0 — CC BY 4.0
+/*! FinanceRateCalc embed v1.1 — CC BY 4.0
     Put FHA denial data from the complete 2025 federal record on your own page.
 
     <div data-frc="metro" data-value="cleveland-oh"></div>
     <div data-frc="lender" data-value="rocket-mortgage"></div>
     <div data-frc="state" data-value="oh"></div>
+    <div data-frc="metro" data-value="cleveland-oh" data-theme="dark"></div>   optional: force a theme
     <script src="https://financeratecalc.com/embed/frc.js" async></script>
 
     No tracking, no cookies, no dependencies. Data: CFPB HMDA 2025.
@@ -30,9 +31,14 @@
     return null;
   }
   function css(el){
-    var dark=false;
-    var bg=bgOf(el);
-    if(bg) dark=(+bg[0]*299 + +bg[1]*587 + +bg[2]*114)/1000 < 140;
+    /* explicit override wins: data-theme="dark" or "light" */
+    var forced=(el.getAttribute('data-theme')||'').toLowerCase();
+    var dark=false;                      /* default light — most pages are */
+    if(forced==='dark') dark=true;
+    else if(forced!=='light'){
+      var bg=bgOf(el);
+      if(bg) dark=(+bg[0]*299 + +bg[1]*587 + +bg[2]*114)/1000 < 140;
+    }
     return {fg:dark?'#f2f2f4':'#16181d', mut:dark?'rgba(255,255,255,.55)':'rgba(0,0,0,.5)',
             line:dark?'rgba(255,255,255,.13)':'rgba(0,0,0,.1)', acc:'#9a7d25',
             bgs:dark?'rgba(255,255,255,.04)':'rgba(0,0,0,.025)',
