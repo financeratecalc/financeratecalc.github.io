@@ -43,6 +43,28 @@ header{display:flex;justify-content:space-between;align-items:center;max-width:9
 <p>Derived statistics can be wrong in two ways: the arithmetic can be wrong, or the universe can be wrong &mdash; the second is harder to notice and more consequential. This page records every correction to published figures, what caused it, and how much it moved. Nothing is quietly edited.</p>
 
 <div class="entry">
+<div class="date">2026-07-28 &middot; Measurement did not match the claim</div>
+<h2 style="margin-top:6px;">"Widest intra-metro spread in the US" was not what we measured</h2>
+
+<h3>What was claimed</h3>
+<p>The benchmark answer key, and several statements made in correspondence, asserted that Cleveland has the <i>widest intra-metro FHA lender spread in the United States</i> at 73.7 points. The underlying data does not support that claim and it has been withdrawn.</p>
+
+<h3>What was actually measured</h3>
+<p>Our published metro records contain the <b style="color:rgba(255,255,255,.8);">highest-volume</b> lenders in each market, up to five. The 73.7-point Cleveland figure is the spread within that set &mdash; which is what the metro pages have always said. Comparing top-five-by-volume sets across metros, however, is a different measurement from comparing all lenders across metros. A market can contain an institution with 150 decisioned applications denying at 95% that never appears in a volume ranking, and that institution would widen the true spread without appearing anywhere in our tables.</p>
+
+<h3>How it was found</h3>
+<p>An AI agent asked which US metro has the widest such gap downloaded the raw HMDA file and computed an answer. Its first attempt used a 10-application threshold and produced 100-point gaps &mdash; a sample-size artifact, since a lender with ten applications can trivially show 0% or 100%. Told so, it re-ran the analysis at a 100-application threshold with all decisioned applications in the denominator, then extended it nationally: <b style="color:#fff;">1,102,120 decisioned applications, 185 metros, 2024</b>.</p>
+<p>It reported Los Angeles at <b style="color:#fff;">93.71 points</b> and Cleveland eighth at 86.62, computing across every lender above the threshold rather than the highest-volume five. We have not verified that computation and the year differs from ours. But the ranking is beside the point: the exercise showed that we had been answering a narrower question than the one being asked.</p>
+
+<h3>What changed</h3>
+<p>The Q9 answer key now reads &ldquo;73.7 points among that metro's five highest-volume lenders&rdquo; with the limitation stated. The metro index carries a note that the figures understate full dispersion and should not be read as a ranking of which market varies most. No system's benchmark score changes; none named either city, and grading turned on calibration and fabrication rather than on matching this key.</p>
+
+<h3>Why this one matters more than the others</h3>
+<p>The previous corrections here were errors in the data or gaps in the specification. This one is different: the arithmetic was right and the specification was published, but <b style="color:rgba(255,255,255,.8);">the claim built on top of it exceeded what the measurement could support</b>. That failure is invisible from inside &mdash; it took someone computing the alternative to expose it, which is the entire argument for publishing a specification and inviting people to run it.</p>
+<p>It also arrived through the <a href="/reconciliation.html" style="color:#C8A84B;">reconciliation protocol</a> working as designed, on the first occasion anyone used it.</p>
+</div>
+
+<div class="entry">
 <div class="date">26 July 2026 &middot; Universe correction</div>
 <h2 style="margin-top:6px;">Reverse mortgages (HECM) removed from the FHA universe</h2>
 
