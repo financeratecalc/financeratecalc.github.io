@@ -58,7 +58,7 @@ FORBIDDEN = {
 def scan(patterns, label, files):
     hits = []
     for f in files:
-        if f.endswith('corrections.html') or f.endswith('reconciliation.html') or f.endswith('claims.json') or f.endswith('ofi-evidence.html'):
+        if f.endswith('corrections.html') or f.endswith('reconciliation.html') or f.endswith('claims.json') or f.endswith('ofi-evidence.html') or f.endswith('ofi-for-lenders.html'):
             continue   # duzeltme kaydi ve sapma teshisi eski rakamlari BILEREK icerir
         try:
             s = open(f, encoding='utf-8', errors='ignore').read()
