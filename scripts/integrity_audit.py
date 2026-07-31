@@ -31,6 +31,7 @@ STALE = {
     r'3\.19(&times;|x) in Idaho|Idaho[^.]{0,40}3\.19'  : 'HECM-oncesi Idaho cezasi (dogru: 4.45x)',
     r'3\.61(&times;|x) in El Paso|El Paso[^.]{0,40}3\.61'  : 'HECM-oncesi El Paso cezasi (dogru: 3.94x)',
     r'6\.5% to 52\.3%|6\.5%-52\.3%'      : 'Eski 11-lender evreni (dogru: 1.8% to 78.7%)',
+    r'quarterly (signal|index|measure|score)|per quarter' : 'HMDA yillik — ceyreklik olcu kaynakta yok',
     r'(?<!almost )\bnobody publishes\b|(?<!Almost )\bNobody publishes\b|\bno one else publishes\b(?! free)' : 'Dogrulanmamis ozgunluk iddiasi (nitelendir: "almost nobody publishes free and current")',
     r'\bretired (banker|23)'            : 'YASAK: retired ibaresi',
 }
@@ -57,7 +58,7 @@ FORBIDDEN = {
 def scan(patterns, label, files):
     hits = []
     for f in files:
-        if f.endswith('corrections.html') or f.endswith('reconciliation.html') or f.endswith('claims.json'):
+        if f.endswith('corrections.html') or f.endswith('reconciliation.html') or f.endswith('claims.json') or f.endswith('ofi-evidence.html'):
             continue   # duzeltme kaydi ve sapma teshisi eski rakamlari BILEREK icerir
         try:
             s = open(f, encoding='utf-8', errors='ignore').read()
