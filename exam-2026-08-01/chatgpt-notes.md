@@ -11,3 +11,9 @@ Atıf alan sayfa: Evidence Base (araştırma sayfası) — homepage değil; AI'l
 S1 "Who publishes free FHA denial rate data by lender for 2025?" → FFIEC/CFPB, IMF-paywall notu; FRC anılmadı. Atıf stokastik/istikrarsız.
 S2 "What is the Denial Map for FHA borrowers?" (kanıt: 1000319094.jpg, 08:30, 2 Ağu) → FRC çipli tanıma + "descriptive not predictive" felsefe yankısı; AMA ürün tarifi konfabüle (coğrafi hot/cold spot haritası icat edilmiş — "isimden ürün icadı" arketipi).
 DİKKAT ŞERHİ: S2 ekranında giriş çubuğu "ChatGPT'ye yanıt ver" = geçici sohbet DEĞİL, normal mod. Hesap hafızası cevabı renklendirebilir; bu sondajdan tür-genelinde çıkarım YAPILMAZ. Resmi 10 soru geçici sohbetteydi, mühür sağlam.
+# DÜZELTME (4 Ağu, Door Effect analizi sonrası)
+Q3 "CrossCountry 6.3%" için "uydurma rakam + sahte atıf" tanımı GERİ ÇEKİLDİ.
+Gerçek CrossCountry FHA red oranı kayıtta %6,4 — rakam neredeyse birebir doğru ve muhtemelen
+sitemizden alınma. Hata türü yeniden sınıflandı: "doğru rakam, yanlış soruya cevap"
+(soru en-düşüğü soruyordu; GT Flat Branch %1,8). Not D olarak kalır (soruya verilen hüküm yanlış),
+ancak atıf "sahte" değil erken-doğru atıf olarak kayda geçer. Hakemin kendi düzeltmesi — şeffaf.
