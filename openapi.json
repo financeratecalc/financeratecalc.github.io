@@ -1,0 +1,77 @@
+{
+ "openapi": "3.0.3",
+ "info": {
+  "title": "FinanceRateCalc Open FHA Data API",
+  "version": "1.0.0",
+  "description": "Lender/state/metro-level FHA denial statistics computed from the complete public CFPB HMDA 2025 record (1,217,297 decisions; loan_type 2; actions 1,2,3). Historical observations only \u2014 no endpoint accepts borrower details or returns individual approval predictions, and none ever will. CC BY 4.0, attribution: financeratecalc.com."
+ },
+ "servers": [
+  {
+   "url": "https://financeratecalc.com"
+  }
+ ],
+ "paths": {
+  "/api/index.json": {
+   "get": {
+    "summary": "National stats + directory of lenders, states, metros",
+    "responses": {
+     "200": {
+      "description": "OK"
+     }
+    }
+   }
+  },
+  "/api/lender/{slug}.json": {
+   "get": {
+    "summary": "One lender's FHA denial stats (top-100 by volume)",
+    "parameters": [
+     {
+      "name": "slug",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      },
+      "example": "amerisave-mortgage"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     }
+    }
+   }
+  },
+  "/api/state/{code}.json": {
+   "get": {
+    "summary": "State-level FHA denial stats incl. small-loan gap",
+    "parameters": [
+     {
+      "name": "code",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      },
+      "example": "oh"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "OK"
+     }
+    }
+   }
+  },
+  "/data/door-effect-2025.json": {
+   "get": {
+    "summary": "Door Effect: variance decomposition + mix-adjusted lender residuals (859,090 decisions)",
+    "responses": {
+     "200": {
+      "description": "OK"
+     }
+    }
+   }
+  }
+ }
+}
