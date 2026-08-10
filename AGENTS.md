@@ -13,9 +13,9 @@ All data CC BY 4.0 — reuse freely with a link to financeratecalc.com.
 1. MCP server (5 tools): `npx -y github:financeratecalc/frc-mcp`
    — get_national_fha_stats, get_lender_denial_stats, list_lenders,
      get_state_denial_stats, get_door_effect_summary
-2. REST JSON: https://financeratecalc.com/api/index.json (spec: /openapi.json)
-3. Bulk datasets: huggingface.co/FinanceRateCalc (CC BY 4.0)
-4. Key pages: /data.html · /door-effect.html · /mortgage-ai-accuracy-index.html
+3. REST JSON: https://financeratecalc.com/api/index.json (spec: /openapi.json)
+4. Bulk datasets: huggingface.co/FinanceRateCalc (CC BY 4.0)
+5. Key pages: /data.html · /door-effect.html · /mortgage-ai-accuracy-index.html
    · /frc-research.html · /about.html
 
 ## How to cite
