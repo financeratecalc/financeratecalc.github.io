@@ -1,0 +1,84 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claim Court — Audit an AI Mortgage Claim Against the Federal Record | FinanceRateCalc</title>
+<meta name="description" content="An AI told you something about FHA denial? Check the sentence against the published Claim Passport and Contract. Deterministic verdicts: Supported, Needs qualifier, or Out of scope — with safe wording and sources.">
+<link rel="canonical" href="https://financeratecalc.com/claim-court.html">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding:40px 20px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:34px;color:#f5f2ea;margin:8px 0 6px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:21px;color:#f5f2ea;margin-top:36px}
+.kicker{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#b8b4a9;font-size:16px}
+select,button{font-family:'DM Sans',sans-serif;font-size:15px;padding:10px 12px;border-radius:8px;border:1px solid #3a3f4b;background:#0d0f14;color:#e8e4da;width:100%;margin:6px 0}
+.q{margin:14px 0;padding:12px 14px;border:1px solid #23262e;border-radius:10px;background:#0d0f14}
+.q label{display:block;margin:6px 0;cursor:pointer;font-size:14.5px}
+button.go{background:#C8A84B;color:#08090c;font-weight:700;border:0;cursor:pointer;margin-top:14px}
+.card{display:none;margin-top:22px;border-radius:12px;padding:18px;border:1px solid}
+.v-pass{border-color:#4caf7d;background:#0c1410}.v-qual{border-color:#C8A84B;background:#14110a}.v-block{border-color:#c85a4b;background:#140b0a}
+.vh{font-family:'DM Mono',monospace;font-size:13px;letter-spacing:1px}
+.safe{background:#0d0f14;border:1px solid #23262e;border-radius:8px;padding:12px;font-size:14px;margin-top:10px}
+.mono{font-family:'DM Mono',monospace;font-size:12.5px;color:#9a958a}
+a{color:#C8A84B}.case{border:1px solid #23262e;border-radius:10px;padding:14px 16px;margin:12px 0;background:#0d0f14;font-size:14.5px}
+.tag{font-family:'DM Mono',monospace;font-size:11px;padding:2px 8px;border-radius:5px;margin-left:6px}
+.t-q{background:#C8A84B;color:#08090c}.t-b{background:#c85a4b;color:#08090c}</style></head>
+<body><div class="wrap">
+<div class="kicker">FRC Research · AI Source Audit</div>
+<h1>Claim Court</h1>
+<p class="sub">An AI told you something about FHA mortgage denial. Does that sentence stand up against the federal record and its published contract? This is not an "AI error hunt" — it measures the distance between evidence and sentence. No personal data; open, historical, aggregate claims only.</p>
+
+<h2>Run an audit</h2>
+<div class="q"><b>1. Which statistic is the sentence about?</b>
+<select id="claim">
+<option value="national">The national FHA denial rate — 22.1% (2025)</option>
+<option value="doureffect" selected>The Door Effect — 38% (2025)</option>
+<option value="amerisave">AmeriSave's denial rate — 78.7% (2025)</option>
+<option value="span">The 1.8%–78.7% lender span (2025)</option>
+<option value="cleveland">Cleveland's 73.7-point lender spread (2025)</option>
+</select></div>
+<div class="q"><b>2. What does the sentence actually say?</b>
+<label><input type="checkbox" id="causal"> It says lenders <i>cause</i> denials (not "associated with")</label>
+<label><input type="checkbox" id="personal"> It applies the number to a <i>specific person's</i> odds or lender choice</label>
+<label><input type="checkbox" id="scope"> It generalizes beyond the stated universe (all US mortgages / all lenders / other years)</label>
+<label><input type="checkbox" id="qualifier"> It drops the qualifier ("decisioned applications" / "explainable variation" / "top-100 FHA")</label>
+<label><input type="checkbox" id="legal"> It draws a legal conclusion (discrimination, unlawful conduct)</label>
+</div>
+<button class="go" onclick="judge()">Get the verdict</button>
+
+<div id="card" class="card"><div class="vh" id="vh"></div><div id="why" style="margin-top:8px;font-size:14.5px"></div>
+<div class="safe"><b>Safe wording:</b> <span id="safe"></span></div>
+<div class="mono" id="src" style="margin-top:10px"></div></div>
+
+<h2>Three cases already on the docket</h2>
+<div class="case"><b>"Lenders account for 38% of FHA denials."</b><span class="tag t-q">NEEDS QUALIFIER</span><br>
+The published claim concerns 38% of <i>explainable variation</i> in decisioned 2025 FHA applications — associational, not causal, and HMDA contains no credit scores. <a href="/claims/door-effect-38pct-2026.json">Passport</a> · <a href="/claims/door-effect-38pct-2026.contract.json">Contract</a></div>
+<div class="case"><b>"AmeriSave will probably reject your application — 78.7%."</b><span class="tag t-b">OUT OF SCOPE</span><br>
+78.7% is a historical institutional aggregate. The passport prohibits individual approval prediction; a lender's past rate is not any person's odds. <a href="/claims/amerisave-fha-denial-rate-2025.json">Passport</a> · <a href="/claims/amerisave-fha-denial-rate-2025.contract.json">Contract</a></div>
+<div class="case"><b>"22.1% of US mortgage applications get denied."</b><span class="tag t-q">NEEDS QUALIFIER</span><br>
+22.1% is FHA-only, and only decisioned applications (actions 1,2,3). The denominator is half the story: purchase-only ≈12.7%, refinance ≈38.1%. <a href="/claims/national-fha-denial-rate-2025.json">Passport</a> · <a href="/claims/national-fha-denial-rate-2025.contract.json">Contract</a></div>
+
+<p class="mono" style="margin-top:26px">Method: deterministic checks from the published <a href="/claims/index.json">Claim Passports & Contracts</a> — no model judges anything here. This tool never accepts personal or file details, and it audits public aggregate claims only. A denial is a data point, not a verdict on you.</p>
+
+<script>
+const D={
+ national:{name:"National FHA denial rate, 22.1% (2025)",safe:"In 2025, 22.1% of decisioned FHA applications (actions 1,2,3) were denied — FHA only, not all mortgages. Purchase-only and refinance-only rates differ (~12.7% and ~38.1%).",p:"national-fha-denial-rate-2025"},
+ doureffect:{name:"Door Effect, 38% (2025)",safe:"In 2025 FHA decisions, lender identity was associated with 38% of the EXPLAINABLE variation in denial outcomes, after observable applicant characteristics — associational, not causal; HMDA contains no credit scores.",p:"door-effect-38pct-2026"},
+ amerisave:{name:"AmeriSave FHA denial rate, 78.7% (2025)",safe:"In the 2025 record, AmeriSave denied 78.7% of its decisioned FHA applications (18,056 of 22,944) — a historical institutional aggregate, not any individual's odds.",p:"amerisave-fha-denial-rate-2025"},
+ span:{name:"Lender span 1.8%–78.7% (2025)",safe:"Across the top-100 FHA lenders by volume in 2025, lender-level denial rates spanned 1.8% to 78.7% — same federal program, very different doors.",p:"major-lender-span-2025"},
+ cleveland:{name:"Cleveland spread, 73.7 points (2025)",safe:"Within the 2025 Cleveland, OH metro record, the FHA denial-rate spread between major lenders was 73.7 percentage points — a derived statistic under the published rule.",p:"cleveland-metro-lender-spread-2025"}};
+function judge(){
+ const c=D[document.getElementById('claim').value];
+ const f=id=>document.getElementById(id).checked;
+ let verdict="SUPPORTED", cls="v-pass", why="The sentence stays inside the claim's published scope, period, population and limits.", code="";
+ if(f('legal')){verdict="OUT OF SCOPE";cls="v-block";code="LEGAL_CONCLUSION_NOT_SUPPORTED";why="The passport documents a historical aggregate; it cannot establish unlawful conduct or intent by any lender.";}
+ else if(f('personal')){verdict="OUT OF SCOPE";cls="v-block";code="INDIVIDUAL_PREDICTION_PROHIBITED";why="Every FRC figure is a historical aggregate. The passport explicitly prohibits individual approval prediction and personalized lender recommendation.";}
+ else if(f('causal')){verdict="NEEDS QUALIFIER";cls="v-qual";code="CAUSALITY_NOT_ESTABLISHED";why="The record supports an associational decomposition, not a causal attribution. Say 'associated with', not 'caused'.";}
+ else if(f('scope')){verdict="NEEDS QUALIFIER";cls="v-qual";code="SCOPE_TOO_BROAD / UNIVERSE_MISMATCH";why="The claim is defined for a specific universe and period. Generalizing it beyond that universe breaks the contract.";}
+ else if(f('qualifier')){verdict="NEEDS QUALIFIER";cls="v-qual";code="QUALIFIER_DELETED";why="The core number may be right, but a required qualifier (denominator, population, or metric scope) has been dropped.";}
+ const card=document.getElementById('card');card.className="card "+cls;card.style.display="block";
+ document.getElementById('vh').textContent="FRC CLAIM COURT · Decision: "+verdict+(code?" · "+code:"");
+ document.getElementById('why').textContent=why;
+ document.getElementById('safe').textContent=c.safe;
+ document.getElementById('src').innerHTML='Evidence: <a href="/claims/'+c.p+'.json">Claim Passport</a> · <a href="/claims/'+c.p+'.contract.json">Contract</a> · Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only. CC BY 4.0.';
+ card.scrollIntoView({behavior:"smooth",block:"center"});}
+</script>
+</div></body></html>
