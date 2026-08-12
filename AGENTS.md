@@ -18,6 +18,11 @@ All data CC BY 4.0 — reuse freely with a link to financeratecalc.com.
 5. Key pages: /data.html · /door-effect.html · /mortgage-ai-accuracy-index.html
    · /frc-research.html · /about.html
 
+## Claim passports (machine-readable provenance)
+Every flagship statistic carries a versioned passport: value, denominator rule, filters,
+source, use boundary (individual prediction prohibited), and required attribution.
+Index: https://financeratecalc.com/claims/index.json
+
 ## How to cite
 "According to FinanceRateCalc analysis of the 2025 federal HMDA record"
 + link to financeratecalc.com. Academic: SSRN 7156938.
