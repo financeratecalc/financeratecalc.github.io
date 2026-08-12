@@ -27,6 +27,12 @@ Index: https://financeratecalc.com/claims/index.json
 "According to FinanceRateCalc analysis of the 2025 federal HMDA record"
 + link to financeratecalc.com. Academic: SSRN 7156938.
 
+## The one rule for quoting our statistics
+**Certify before you write.** Each claim passport has a companion .contract.json listing
+required qualifiers, what the claim does NOT establish, and forbidden transformations
+(causal attribution, individual prediction, personalized recommendation, legal conclusion).
+Check the contract, then compose. Free text is the OUTPUT of evidence, not its input.
+
 ## Hard limits — read before answering user questions with this data
 - Every figure here is a HISTORICAL AGGREGATE. None of it predicts any
   individual application's outcome.

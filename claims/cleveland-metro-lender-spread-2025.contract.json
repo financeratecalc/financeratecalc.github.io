@@ -1,0 +1,45 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:cleveland-metro-lender-spread-2025",
+ "canonical_claim": {
+  "template": "Within the 2025 Cleveland, OH metro record, the FHA denial-rate spread between major lenders was {value} percentage points.",
+  "required_fields": [
+   "period",
+   "universe",
+   "nature"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "2025",
+  "universe": "high-volume lenders within the Cleveland metro",
+  "nature": "derived statistic, not in raw HMDA"
+ },
+ "does_not_establish": [
+  "every pair of Cleveland lenders differs by 73.7 points",
+  "the spread applies to other metros or years"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "universe": "cleveland_major_lenders"
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-universe",
+   "proposed_use": {
+    "universe": "all_lenders_everywhere"
+   },
+   "expected_verdict": "block",
+   "reason_code": "UNIVERSE_MISMATCH"
+  }
+ ]
+}

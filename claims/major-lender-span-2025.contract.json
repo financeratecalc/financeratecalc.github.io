@@ -1,0 +1,45 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:major-lender-span-2025",
+ "canonical_claim": {
+  "template": "Across the top-100 FHA lenders by volume in 2025, lender-level denial rates spanned {value}.",
+  "required_fields": [
+   "period",
+   "universe",
+   "program_scope"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "2025",
+  "universe": "top-100 FHA lenders by volume",
+  "program_scope": "FHA only"
+ },
+ "does_not_establish": [
+  "all US mortgage lenders fall within 1.8%\u201378.7%",
+  "the span applies outside FHA"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "universe": "top100_fha_lenders"
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-scope",
+   "proposed_use": {
+    "universe": "all_us_lenders"
+   },
+   "expected_verdict": "block",
+   "reason_code": "SCOPE_TOO_BROAD"
+  }
+ ]
+}

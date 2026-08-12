@@ -1,0 +1,68 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:door-effect-38pct-2026",
+ "canonical_claim": {
+  "template": "In 2025 FHA decisions, lender identity was associated with {value} of the EXPLAINABLE variation in denial outcomes (McFadden R2 0.171\u21920.276), on observable federal-record characteristics.",
+  "required_fields": [
+   "period",
+   "population",
+   "metric_scope",
+   "association_not_causation",
+   "observable_data_limit"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "2025",
+  "population": "decisioned FHA applications (859,090)",
+  "metric_scope": "share of explainable variation",
+  "association_not_causation": true,
+  "observable_data_limit": "HMDA contains no credit scores"
+ },
+ "does_not_establish": [
+  "lenders CAUSED 38% of denials",
+  "38% of every individual denial is lender-driven",
+  "a borrower would be approved by switching lenders",
+  "unlawful conduct by any lender"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "metric_scope": "explainable_variation",
+    "causal_assertion": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-causality",
+   "proposed_use": {
+    "causal_assertion": true
+   },
+   "expected_verdict": "block",
+   "reason_code": "CAUSALITY_NOT_ESTABLISHED"
+  },
+  {
+   "id": "fail-denominator",
+   "proposed_use": {
+    "metric_scope": "all_denials"
+   },
+   "expected_verdict": "block",
+   "reason_code": "DENOMINATOR_AND_CAUSALITY_ERROR"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "individual_prediction": true
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  }
+ ]
+}

@@ -1,0 +1,55 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:amerisave-fha-denial-rate-2025",
+ "canonical_claim": {
+  "template": "In the 2025 record, AmeriSave denied {value} of its decisioned FHA applications (18,056/22,944).",
+  "required_fields": [
+   "period",
+   "population",
+   "nature"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "2025",
+  "population": "AmeriSave decisioned FHA applications",
+  "nature": "historical institutional aggregate"
+ },
+ "does_not_establish": [
+  "AmeriSave will deny any specific future application with 78.7% probability",
+  "AmeriSave discriminates or violates law",
+  "78.7% applies to AmeriSave's non-FHA lending"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "causal_assertion": false,
+    "individual_prediction": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "proposed_sentence": "AmeriSave will likely reject YOUR application"
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  },
+  {
+   "id": "fail-legal",
+   "proposed_use": {
+    "legal_conclusion": true
+   },
+   "expected_verdict": "block",
+   "reason_code": "LEGAL_CONCLUSION_NOT_SUPPORTED"
+  }
+ ]
+}

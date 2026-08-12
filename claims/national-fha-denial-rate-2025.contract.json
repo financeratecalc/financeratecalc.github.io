@@ -1,0 +1,56 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:national-fha-denial-rate-2025",
+ "canonical_claim": {
+  "template": "In 2025, {value} of decisioned FHA applications were denied (actions 1,2,3; loan_type 2).",
+  "required_fields": [
+   "period",
+   "population",
+   "program_scope"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "2025",
+  "population": "decisioned FHA applications",
+  "program_scope": "FHA only, not all mortgages"
+ },
+ "does_not_establish": [
+  "22.1% of ALL US mortgage applications were denied",
+  "22.1% applies to purchase-only or refinance-only segments",
+  "any individual's denial probability"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "population": "decisioned_fha_applications",
+    "causal_assertion": false,
+    "individual_prediction": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-scope",
+   "proposed_use": {
+    "population": "all_us_mortgages"
+   },
+   "expected_verdict": "block",
+   "reason_code": "SCOPE_TOO_BROAD"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "individual_prediction": true
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  }
+ ]
+}
