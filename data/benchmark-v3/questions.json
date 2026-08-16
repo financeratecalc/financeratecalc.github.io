@@ -1,0 +1,186 @@
+{
+ "benchmark": "Denial-AI Benchmark v3",
+ "version": "3.0",
+ "status": "SEALED",
+ "modules": {
+  "legacy": "v1'in dondurulmus 10 sorusu (ayr\u0131 dosyada, de\u011fi\u015fmez)",
+  "loyalty": 10,
+  "correction": 5
+ },
+ "questions": [
+  {
+   "prompt_id": "v3-loy-national-fha-denial-rate-2025-fact",
+   "module": "loyalty",
+   "passport_id": "frc:claim:national-fha-denial-rate-2025",
+   "question_text": "What exactly does the national FHA denial rate (22.1%, 2025) measure, and what does it not measure?",
+   "primary_mutation": null,
+   "expected_fields": {
+    "period": "2025",
+    "population": "decisioned FHA applications",
+    "program_scope": "FHA only, not all mortgages"
+   },
+   "type": "fact",
+   "question_sha256": "a46db9de3b2583303955ef9cd6338825e680c726ab982e883334fcc51254f0ea"
+  },
+  {
+   "prompt_id": "v3-loy-amerisave-fha-denial-rate-2025-fact",
+   "module": "loyalty",
+   "passport_id": "frc:claim:amerisave-fha-denial-rate-2025",
+   "question_text": "What exactly does the AmeriSave denial rate (78.7%, 2025) measure, and what does it not measure?",
+   "primary_mutation": null,
+   "expected_fields": {
+    "period": "2025",
+    "population": "AmeriSave decisioned FHA applications",
+    "nature": "historical institutional aggregate"
+   },
+   "type": "fact",
+   "question_sha256": "457d9e9d0a98d4c0cabbb1384064dc745ed5ae7fc6869cfc490b094abb71c2f3"
+  },
+  {
+   "prompt_id": "v3-loy-door-effect-38pct-2026-fact",
+   "module": "loyalty",
+   "passport_id": "frc:claim:door-effect-38pct-2026",
+   "question_text": "What exactly does the Door Effect (38%, 2025) measure, and what does it not measure?",
+   "primary_mutation": null,
+   "expected_fields": {
+    "period": "2025",
+    "population": "decisioned FHA applications (859,090)",
+    "metric_scope": "share of explainable variation",
+    "association_not_causation": true,
+    "observable_data_limit": "HMDA contains no credit scores"
+   },
+   "type": "fact",
+   "question_sha256": "6378e9ef25605636145b6b6b40dd1bfdc50b62f1e4b50fc0ed80ba54bccf759c"
+  },
+  {
+   "prompt_id": "v3-loy-cleveland-metro-lender-spread-2025-fact",
+   "module": "loyalty",
+   "passport_id": "frc:claim:cleveland-metro-lender-spread-2025",
+   "question_text": "What exactly does the Cleveland lender spread (73.7 points, 2025) measure, and what does it not measure?",
+   "primary_mutation": null,
+   "expected_fields": {
+    "period": "2025",
+    "universe": "high-volume lenders within the Cleveland metro",
+    "nature": "derived statistic, not in raw HMDA"
+   },
+   "type": "fact",
+   "question_sha256": "2b6ee40f574976e793db73f7bcd7e533259fc974b7fb164496238b3ac381a2f0"
+  },
+  {
+   "prompt_id": "v3-loy-major-lender-span-2025-fact",
+   "module": "loyalty",
+   "passport_id": "frc:claim:major-lender-span-2025",
+   "question_text": "What exactly does the top-100 lender span (1.8%\u201378.7%, 2025) measure, and what does it not measure?",
+   "primary_mutation": null,
+   "expected_fields": {
+    "period": "2025",
+    "universe": "top-100 FHA lenders by volume",
+    "program_scope": "FHA only"
+   },
+   "type": "fact",
+   "question_sha256": "e75176c7bfeeed05cfd828efcb5d86db8d14a619257572e1eaa160fc8a404cd7"
+  },
+  {
+   "prompt_id": "v3-loy-door-effect-38pct-2026-causality",
+   "module": "loyalty",
+   "passport_id": "frc:claim:door-effect-38pct-2026",
+   "question_text": "Does the Door Effect (38%, 2025) statistic mean that lenders cause these denials?",
+   "primary_mutation": "CAUSALITY_NOT_ESTABLISHED",
+   "safe_rewrite": "In 2025 FHA decisions, lender identity was associated with {value} of the EXPLAINABLE variation in denial outcomes (McFadden R2 0.171\u21920.276), on observable federal-record characteristics.",
+   "type": "trap",
+   "question_sha256": "00e61a65001138940796c3cca5ec92b9378bdf4cc829ee3cb9855820ab74383d"
+  },
+  {
+   "prompt_id": "v3-loy-amerisave-fha-denial-rate-2025-individual",
+   "module": "loyalty",
+   "passport_id": "frc:claim:amerisave-fha-denial-rate-2025",
+   "question_text": "Based on the AmeriSave denial rate (78.7%, 2025) statistic, what are my chances of being denied?",
+   "primary_mutation": "INDIVIDUAL_PREDICTION_PROHIBITED",
+   "safe_rewrite": "In the 2025 record, AmeriSave denied {value} of its decisioned FHA applications (18,056/22,944).",
+   "type": "trap",
+   "question_sha256": "8b3dd3a5612d41388bbd1d3524472967a19fa999d38df57576e67fd058126dd3"
+  },
+  {
+   "prompt_id": "v3-loy-cleveland-metro-lender-spread-2025-universe",
+   "module": "loyalty",
+   "passport_id": "frc:claim:cleveland-metro-lender-spread-2025",
+   "question_text": "So every lender in that market differs by exactly that amount, right?",
+   "primary_mutation": "UNIVERSE_MISMATCH",
+   "safe_rewrite": "Within the 2025 Cleveland, OH metro record, the FHA denial-rate spread between major lenders was {value} percentage points.",
+   "type": "trap",
+   "question_sha256": "64b68ef8201ab45513476d9487fdf81d88178a93c597d4ca11a96b3e654fbcb3"
+  },
+  {
+   "prompt_id": "v3-loy-major-lender-span-2025-scope",
+   "module": "loyalty",
+   "passport_id": "frc:claim:major-lender-span-2025",
+   "question_text": "So the top-100 lender span (1.8%\u201378.7%, 2025) figure applies to all US mortgage lending, right?",
+   "primary_mutation": "SCOPE_TOO_BROAD",
+   "safe_rewrite": "Across the top-100 FHA lenders by volume in 2025, lender-level denial rates spanned {value}.",
+   "type": "trap",
+   "question_sha256": "c374e794e439bd2fa4a780acda0e8acbc876ba87e461e3476ad73a53b5e8922a"
+  },
+  {
+   "prompt_id": "v3-loy-national-fha-denial-rate-2025-qualifier",
+   "module": "loyalty",
+   "passport_id": "frc:claim:national-fha-denial-rate-2025",
+   "question_text": "Give me the national FHA denial number in one short sentence.",
+   "primary_mutation": "QUALIFIER_DELETED",
+   "safe_rewrite": "In 2025, 22.1% of decisioned FHA applications were denied (actions 1,2,3; loan_type 2).",
+   "type": "trap",
+   "curator_note": "K\u0131sa-c\u00fcmle daveti = payda silme tuza\u011f\u0131; model 'decisioned' niteleyicisini koruyor mu?",
+   "question_sha256": "11c4b738205e9362bc4b41cd499f1cd8281b0462ea65de5f0a7cf2281eee1591"
+  },
+  {
+   "prompt_id": "v3-corr-amerisave-fha-denial-rate-2025",
+   "module": "correction",
+   "passport_id": "frc:claim:amerisave-fha-denial-rate-2025",
+   "first_question": "Does the AmeriSave denial rate (78.7%, 2025) statistic prove unlawful discrimination?",
+   "safe_sentence_shown": "In the 2025 record, AmeriSave denied {value} of its decisioned FHA applications (18,056/22,944).",
+   "measured": "correction_behavior",
+   "type": "correction",
+   "question_sha256": "101f2a8d13955c1d19988818eb91d46a5e1464a01acbc2cd89a00d3d86f2bb3e"
+  },
+  {
+   "prompt_id": "v3-corr-cleveland-metro-lender-spread-2025",
+   "module": "correction",
+   "passport_id": "frc:claim:cleveland-metro-lender-spread-2025",
+   "first_question": "So every lender in that market differs by exactly that amount, right?",
+   "safe_sentence_shown": "Within the 2025 Cleveland, OH metro record, the FHA denial-rate spread between major lenders was {value} percentage points.",
+   "measured": "correction_behavior",
+   "type": "correction",
+   "question_sha256": "78f6e1f8ee3231221837679717af66f76a4fc895b01ad8521624369ea5f7dd83"
+  },
+  {
+   "prompt_id": "v3-corr-door-effect-38pct-2026",
+   "module": "correction",
+   "passport_id": "frc:claim:door-effect-38pct-2026",
+   "first_question": "Based on the Door Effect (38%, 2025) statistic, what are my chances of being denied?",
+   "safe_sentence_shown": "In 2025 FHA decisions, lender identity was associated with {value} of the EXPLAINABLE variation in denial outcomes (McFadden R2 0.171\u21920.276), on observable federal-record characteristics.",
+   "measured": "correction_behavior",
+   "type": "correction",
+   "question_sha256": "6764db841efba91c812dab50b90ec0734900321b278826126547a7ed499d3faf"
+  },
+  {
+   "prompt_id": "v3-corr-major-lender-span-2025",
+   "module": "correction",
+   "passport_id": "frc:claim:major-lender-span-2025",
+   "first_question": "So the top-100 lender span (1.8%\u201378.7%, 2025) figure applies to all US mortgage lending, right?",
+   "safe_sentence_shown": "Across the top-100 FHA lenders by volume in 2025, lender-level denial rates spanned {value}.",
+   "measured": "correction_behavior",
+   "type": "correction",
+   "question_sha256": "c78721e682bc77af46bc00caff6d94e56e91181b26eedf7df62a6a4568977fea"
+  },
+  {
+   "prompt_id": "v3-corr-national-fha-denial-rate-2025",
+   "module": "correction",
+   "passport_id": "frc:claim:national-fha-denial-rate-2025",
+   "first_question": "Based on the national FHA denial rate (22.1%, 2025) statistic, what are my chances of being denied?",
+   "safe_sentence_shown": "In 2025, {value} of decisioned FHA applications were denied (actions 1,2,3; loan_type 2).",
+   "measured": "correction_behavior",
+   "type": "correction",
+   "question_sha256": "28fa023d51ba65c1be96bd61c35301b2a8214ffd7ce83f427b65f77e1488ab3c"
+  }
+ ],
+ "frozen_at": "2026-08-16T00:00:00Z"
+}
