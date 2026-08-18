@@ -194,7 +194,7 @@ const LENDER_DATA = {
   'loanDepot':     {originated:195725, denial_8yr:34.47, lsi:44, trend:null,       ofi_gate:null},
   'Freedom':       {originated:392092, denial_8yr:16.63, lsi:50, trend:null,       ofi_gate:50},
   'NewRez':        {originated:79225,  denial_8yr:43.45, lsi:57, trend:null,       ofi_gate:50},
-  'Wells Fargo':   {originated:12757,  denial_8yr:52.37, lsi:29, trend:'chaos',    ofi_gate:'avoid'},
+  'Wells Fargo':   {originated:12757,  denial_8yr:52.37, lsi:29, trend:'chaos',    ofi_gate:'low_fit'},
 };
 
 const CURRENT_enial rate modifiers (2025 HMDA, selected states)
@@ -221,8 +221,8 @@ function calcTwin(){
   const results = [];
   
   Object.entries(LENDER_DATA).forEach(([lender, d]) => {
-    if(d.ofi_gate === 'avoid'){
-      results.push({lender, approval:0, flag:'AVOID', originated:d.originated}); return;
+    if(d.ofi_gate === 'low_fit'){
+      results.push({lender, approval:0, flag:'Historically weakest fit — excluded from estimate', originated:d.originated}); return;
     }
     if(d.ofi_gate && CURRENT_OFI > d.ofi_gate){
       results.push({lender, approval:15, flag:'Market gate active (OFI '+CURRENT_OFI+')', originated:d.originated}); return;
