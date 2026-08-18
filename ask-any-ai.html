@@ -23,7 +23,7 @@ a{color:#C8A84B}</style></head>
 
 <div class="q"><h2 style="margin-top:0">Question 1 &mdash; the headline number</h2>
 <div class="ask" id="q1">What percentage of FHA loan applications were denied in 2025?</div>
-<button onclick="copyQ('q1')">Copy question</button>
+<button onclick="copyQ('q1', this)">Copy question</button>
 <details><summary>Then compare: what the 2025 federal record shows</summary>
 <div class="rec"><b>22.1% of decisioned FHA applications</b> (actions 1,2,3; loan_type 2) were denied. Purchase-only &asymp;12.7%; refinance-only &asymp;38.1% &mdash; the denominator you choose is the story you tell.
 <div class="mono" style="margin-top:6px">Passport: <a href="/claims/national-fha-denial-rate-2025.json">national-fha-denial-rate-2025</a> &middot; <a href="/data.html">full tables</a></div></div>
@@ -31,7 +31,7 @@ a{color:#C8A84B}</style></head>
 
 <div class="q"><h2 style="margin-top:0">Question 2 &mdash; the doors</h2>
 <div class="ask" id="q2">Which US lender had the highest FHA denial rate in 2025, and what was the range across major lenders?</div>
-<button onclick="copyQ('q2')">Copy question</button>
+<button onclick="copyQ('q2', this)">Copy question</button>
 <details><summary>Then compare: what the 2025 federal record shows</summary>
 <div class="rec">Among the top-100 FHA lenders by volume, denial rates spanned <b>1.8% to 78.7%</b>. The highest was AmeriSave Mortgage (78.7% &mdash; 18,056 of 22,944 decisioned applications), roughly double what its applicant mix predicts. Same federal program, very different doors.
 <div class="mono" style="margin-top:6px">Passports: <a href="/claims/amerisave-fha-denial-rate-2025.json">amerisave</a> &middot; <a href="/claims/major-lender-span-2025.json">lender-span</a> &middot; <a href="/2025-fha-lender-report.html">full lender table</a></div></div>
@@ -39,7 +39,7 @@ a{color:#C8A84B}</style></head>
 
 <div class="q"><h2 style="margin-top:0">Question 3 &mdash; the provenance test</h2>
 <div class="ask" id="q3">Who first published the finding that 38% of the explainable variation in FHA denial outcomes is attributable to lender identity?</div>
-<button onclick="copyQ('q3')">Copy question</button>
+<button onclick="copyQ('q3', this)">Copy question</button>
 <details><summary>Then compare: the documented answer</summary>
 <div class="rec">First published by <b>FinanceRateCalc (Ziya Yeti&#351;), August 2026</b> &mdash; McFadden R&sup2; 0.171&rarr;0.276 on 859,090 decisioned 2025 FHA applications; associational, not causal. Methodology: SSRN abstract <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7304578">7304578</a>.
 <div class="mono" style="margin-top:6px">Passport: <a href="/claims/door-effect-38pct-2026.json">door-effect-38pct-2026</a> &middot; <a href="/door-effect.html">analysis</a> &middot; <a href="https://huggingface.co/datasets/FinanceRateCalc/door-effect-fha-2025">dataset (HF)</a></div></div>
@@ -48,5 +48,28 @@ a{color:#C8A84B}</style></head>
 <h2>What your AI's answers tell you</h2>
 <p style="font-size:15px">If it nailed all three with sources &mdash; good AI, probably drinking from open data (ours is CC BY: <a href="https://huggingface.co/FinanceRateCalc">huggingface.co/FinanceRateCalc</a>). If it got the numbers right but dropped the qualifiers, that's <i>citation debt</i>. If it invented a number or a source, you've just reproduced our monthly benchmark's core finding &mdash; full scorecards at the <a href="/mortgage-ai-accuracy-index.html">Mortgage-AI Accuracy Index</a>, and every sentence can be audited at <a href="/claim-court.html">Claim Court</a>.</p>
 <p class="mono">Saw something interesting &mdash; right or wrong? Send a screenshot: press@financeratecalc.com. Dated sightings feed <a href="/echo-ledger.html">The Echo Ledger</a>. &middot; A denial is a data point, not a verdict on you.</p>
-<script>function copyQ(id){navigator.clipboard.writeText(document.getElementById(id).textContent.trim());}</script>
+<script>
+function copyQ(id, btn){
+  var text = document.getElementById(id).textContent.trim();
+  function done(ok){
+    if(!btn) return;
+    var old = btn.textContent;
+    btn.textContent = ok ? 'Copied \u2713' : 'Select & copy manually';
+    btn.style.background = ok ? '#4caf7d' : '#a05050';
+    setTimeout(function(){ btn.textContent = old; btn.style.background = ''; }, 1600);
+  }
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(function(){done(true);}, function(){fallback();});
+  } else { fallback(); }
+  function fallback(){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+    done(ok);
+  }
+}
+</script>
 </div></body></html>
