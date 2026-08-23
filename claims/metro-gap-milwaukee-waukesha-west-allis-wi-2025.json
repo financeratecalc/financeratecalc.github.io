@@ -1,0 +1,74 @@
+{
+ "passport_version": "0.1",
+ "issuer": "FinanceRateCalc",
+ "issued_at": "2026-08-22T00:00:00Z",
+ "provenance": {
+  "primary_source": "CFPB/FFIEC HMDA public record, 2025",
+  "dataset": "loan_type=2 (FHA); action_taken in {1,2,3} = decisioned; reverse mortgages excluded",
+  "code_history": "https://github.com/financeratecalc/financeratecalc.github.io",
+  "integrity_note": "v0: integrity via sha256 + public git history; cryptographic signatures planned",
+  "source_record": "https://financeratecalc.com/api/metro/milwaukee-waukesha-west-allis-wi.json",
+  "source_record_sha256": "6cc94b2d37a685a7573740023fe4dc4df913872b90fafee0921e420c6ec8147e"
+ },
+ "use_boundary": {
+  "allowed": [
+   "historical aggregate comparison",
+   "journalism",
+   "market analysis",
+   "research"
+  ],
+  "prohibited": [
+   "individual approval prediction",
+   "borrower profiling",
+   "personalized lender recommendation"
+  ],
+  "minimum_cell_size": 100
+ },
+ "attribution": {
+  "required_text": "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.",
+  "license": "CC BY 4.0"
+ },
+ "claim": {
+  "metric": "intra_metro_lender_denial_gap",
+  "value": 20.7,
+  "unit": "percentage_points",
+  "subject": "Milwaukee-Waukesha-West Allis, WI metro (MSA 33340)",
+  "period": "2025",
+  "definition": "max minus min observed FHA denial rate among listed lenders with >=100 decisioned applications in this metro",
+  "lowest_denial_lender": {
+   "name": "FAIRWAY INDEPENDENT MORT CORP",
+   "denial_rate_pct": 10.9,
+   "decisioned_here": 101
+  },
+  "highest_denial_lender": {
+   "name": "ROCKET MORTGAGE",
+   "denial_rate_pct": 31.6,
+   "decisioned_here": 358
+  },
+  "eligible_lender_count": 5,
+  "note": "Derived statistic; does not appear in raw HMDA. Observed rates are unadjusted for applicant mix."
+ },
+ "interpretation_boundary": {
+  "consistent_with": [
+   "lender overlays",
+   "channel composition",
+   "documentation practices",
+   "unobserved applicant risk mix"
+  ],
+  "does_not_establish": [
+   "cause of the gap",
+   "misconduct by any lender",
+   "expected outcome for any individual applicant"
+  ],
+  "caveat": "Historical observations about institutions. Not ratings, not recommendations, not predictions about any individual application. Rates reflect applicant composition as well as lender practice."
+ },
+ "related_research": {
+  "variance_decomposition": "38% of explained variation in FHA denial outcomes attaches to lender identity (national, mix-adjusted).",
+  "paper": "https://ssrn.com/abstract=7309319",
+  "doi": "https://doi.org/10.2139/ssrn.7309319",
+  "dataset": "https://huggingface.co/datasets/FinanceRateCalc/door-effect-fha-2025",
+  "methodology": "https://financeratecalc.com/methodology.html"
+ },
+ "passport_id": "frc:claim:metro-gap-milwaukee-waukesha-west-allis-wi-2025",
+ "canonical_url": "https://financeratecalc.com/claims/metro-gap-milwaukee-waukesha-west-allis-wi-2025.json"
+}

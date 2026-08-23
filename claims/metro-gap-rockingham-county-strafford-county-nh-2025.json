@@ -1,0 +1,74 @@
+{
+ "passport_version": "0.1",
+ "issuer": "FinanceRateCalc",
+ "issued_at": "2026-08-22T00:00:00Z",
+ "provenance": {
+  "primary_source": "CFPB/FFIEC HMDA public record, 2025",
+  "dataset": "loan_type=2 (FHA); action_taken in {1,2,3} = decisioned; reverse mortgages excluded",
+  "code_history": "https://github.com/financeratecalc/financeratecalc.github.io",
+  "integrity_note": "v0: integrity via sha256 + public git history; cryptographic signatures planned",
+  "source_record": "https://financeratecalc.com/api/metro/rockingham-county-strafford-county-nh.json",
+  "source_record_sha256": "5ce65680e06c0d35ad6b450ae0c22618687d0644918277284efea9a80f7d0fa9"
+ },
+ "use_boundary": {
+  "allowed": [
+   "historical aggregate comparison",
+   "journalism",
+   "market analysis",
+   "research"
+  ],
+  "prohibited": [
+   "individual approval prediction",
+   "borrower profiling",
+   "personalized lender recommendation"
+  ],
+  "minimum_cell_size": 100
+ },
+ "attribution": {
+  "required_text": "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.",
+  "license": "CC BY 4.0"
+ },
+ "claim": {
+  "metric": "intra_metro_lender_denial_gap",
+  "value": 1.7,
+  "unit": "percentage_points",
+  "subject": "Rockingham County-Strafford County, NH metro (MSA 40484)",
+  "period": "2025",
+  "definition": "max minus min observed FHA denial rate among listed lenders with >=100 decisioned applications in this metro",
+  "lowest_denial_lender": {
+   "name": "ROCKET MORTGAGE",
+   "denial_rate_pct": 24.0,
+   "decisioned_here": 100
+  },
+  "highest_denial_lender": {
+   "name": "United Wholesale Mortgage",
+   "denial_rate_pct": 25.7,
+   "decisioned_here": 101
+  },
+  "eligible_lender_count": 2,
+  "note": "Derived statistic; does not appear in raw HMDA. Observed rates are unadjusted for applicant mix."
+ },
+ "interpretation_boundary": {
+  "consistent_with": [
+   "lender overlays",
+   "channel composition",
+   "documentation practices",
+   "unobserved applicant risk mix"
+  ],
+  "does_not_establish": [
+   "cause of the gap",
+   "misconduct by any lender",
+   "expected outcome for any individual applicant"
+  ],
+  "caveat": "Historical observations about institutions. Not ratings, not recommendations, not predictions about any individual application. Rates reflect applicant composition as well as lender practice."
+ },
+ "related_research": {
+  "variance_decomposition": "38% of explained variation in FHA denial outcomes attaches to lender identity (national, mix-adjusted).",
+  "paper": "https://ssrn.com/abstract=7309319",
+  "doi": "https://doi.org/10.2139/ssrn.7309319",
+  "dataset": "https://huggingface.co/datasets/FinanceRateCalc/door-effect-fha-2025",
+  "methodology": "https://financeratecalc.com/methodology.html"
+ },
+ "passport_id": "frc:claim:metro-gap-rockingham-county-strafford-county-nh-2025",
+ "canonical_url": "https://financeratecalc.com/claims/metro-gap-rockingham-county-strafford-county-nh-2025.json"
+}
