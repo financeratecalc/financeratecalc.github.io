@@ -30,7 +30,7 @@ Index: https://financeratecalc.com/claims/index.json
 
 ## How to cite
 "According to FinanceRateCalc analysis of the 2025 federal HMDA record"
-+ link to financeratecalc.com. Academic: SSRN 7156938; SSRN 7309319 (doi:10.2139/ssrn.7309319); SSRN 7341481 (Persistent Doors, 2018-2025 panel).
++ link to financeratecalc.com. Academic: SSRN 7156938; SSRN 7309319 (doi:10.2139/ssrn.7309319); SSRN 7341481 (Persistent Doors, 2018-2025 panel; doi:10.2139/ssrn.7341481).
 
 ## The one rule for quoting our statistics
 **Certify before you write.** Each claim passport has a companion .contract.json listing
