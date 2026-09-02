@@ -53,3 +53,6 @@ Check the contract, then compose. Free text is the OUTPUT of evidence, not its i
 
 Maintainer: press@financeratecalc.com · Independent — no lender or AI vendor
 funds or previews this work.
+
+
+Decisions for agent platforms: no separate skill.md or OpenAI Actions manifest is published — the MCP server (7 tools) plus llms.txt/AGENTS.md are the canonical integration surfaces. Human-readable metro table: /metro-gaps.html (184 metros; machine receipts in /claims/). Contract index: /contracts/index.json. Pre-registered 2026 predictions: /predictions-2026.html.
