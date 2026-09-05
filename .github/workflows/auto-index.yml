@@ -1,38 +1,46 @@
-name: Google Auto-Index Weekly Pages
+name: Weekly IndexNow (canonical pages only)
 
 on:
   schedule:
-    - cron: '0 9 * * 1'  # Her Pazartesi 09:00 UTC
+    - cron: '0 9 * * 1'  # Mondays 09:00 UTC
   workflow_dispatch:
 
+# NOTE (2026-09-05): rewritten after a Bing Webmaster audit.
+# The previous version pinged Google's retired /ping endpoint, re-submitted a
+# single URL to IndexNow on every run (18K submissions, 0 indexed), and still
+# listed zai-one.html, which was retired on 2026-09-04. IndexNow rewards small,
+# accurate, genuinely-changed URL sets; sitemap.xml (index of 3 maps, ~1,140
+# URLs) remains the canonical discovery surface for both engines.
+
 jobs:
-  index:
+  indexnow:
     runs-on: ubuntu-latest
     steps:
-      - name: Request Google Indexing
+      - name: Submit canonical pages to IndexNow
         run: |
-          # Google Indexing API — bu URL'ler her hafta güncelleniyor
-          PAGES=(
-            "https://financeratecalc.com/market-signal.html"
-            "https://financeratecalc.com/intelligence-dashboard.html"
-            "https://financeratecalc.com/zai-one.html"
-            "https://financeratecalc.com/lender-stress-index.html"
-            "https://financeratecalc.com/fha-state-map.html"
+          KEY="bd45cca31ee741d782a82eb0be514e13"
+          BODY=$(cat <<'JSON'
+          {
+            "host": "financeratecalc.com",
+            "key": "KEYPLACEHOLDER",
+            "keyLocation": "https://financeratecalc.com/KEYPLACEHOLDER.txt",
+            "urlList": [
+              "https://financeratecalc.com/",
+              "https://financeratecalc.com/door-effect.html",
+              "https://financeratecalc.com/metro-gaps.html",
+              "https://financeratecalc.com/evidence-navigator.html",
+              "https://financeratecalc.com/predictions-2026.html",
+              "https://financeratecalc.com/case-files/",
+              "https://financeratecalc.com/corrections.html",
+              "https://financeratecalc.com/data.html",
+              "https://financeratecalc.com/press.html",
+              "https://financeratecalc.com/fha-denial-rates-top-100.html"
+            ]
+          }
+          JSON
           )
-          
-          echo "Weekly indexing request — $(date)"
-          for page in "${PAGES[@]}"; do
-            echo "Requesting: $page"
-            # Google Search Console URL Inspection ping
-            curl -s "https://www.google.com/ping?sitemap=https://financeratecalc.com/sitemap-priority.xml" -o /dev/null
-            sleep 2
-          done
-          
-          echo "✅ Indexing requests sent"
-
-      - name: Ping Bing & Others  
-        run: |
-          # Bing IndexNow
-          curl -s "https://www.bing.com/indexnow?url=https://financeratecalc.com/market-signal.html&key=financeratecalc" -o /dev/null
-          curl -s "https://api.indexnow.org/indexnow?url=https://financeratecalc.com/market-signal.html&key=financeratecalc&keyLocation=https://financeratecalc.com/financeratecalc.txt" -o /dev/null
-          echo "✅ Bing + IndexNow pinged"
+          BODY="${BODY//KEYPLACEHOLDER/$KEY}"
+          CODE=$(curl -s -o /tmp/resp.txt -w "%{http_code}" -X POST "https://api.indexnow.org/IndexNow" \
+            -H "Content-Type: application/json; charset=utf-8" -d "$BODY")
+          echo "IndexNow HTTP $CODE"; cat /tmp/resp.txt || true
+          if [ "$CODE" != "200" ] && [ "$CODE" != "202" ]; then echo "::warning::IndexNow returned $CODE"; fi
