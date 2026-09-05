@@ -5,7 +5,7 @@ _Last updated: 2026-07-06 · Owner: Ziya Yetiş · Bus-factor insurance document
 * **Frontend:** ~2,970 static HTML pages, GitHub Pages (repo: financeratecalc/financeratecalc.github.io, branch `main`)
 * **Compute layer:** Cloudflare Worker — `frc-api.ziyetis.workers.dev` (Zai chat proxy)
 * **Data engine:** `_data/` — 50+ git-versioned JSON vintages (HMDA 2018-2025, decision surfaces, macro_annual). `data/citable.json` = LLM citation endpoint. Engines fetch from `raw.githubusercontent.com/.../main/_data/` — **main IS production for data.**
-* **Monetization:** Lemon Squeezy (all paid products) + Sky Blue affiliate (1,420 pages, rel="sponsored" + FTC disclosure)
+* **Monetization:** Lemon Squeezy (research-tool products only). Sky Blue affiliate REMOVED site-wide 2026-09-04 (identity audit). Zai / zai-one / verdict-casefile retired same day (individual-advice red line). Canonical line: data free forever; optional professional tools; no lender money, no ads, no affiliates, no lead-gen.
 * **Analytics:** GA4 `G-ND9P4F3PHT` · Forms: Formspree `mkoewrgp`
 
 ## 2. Deployment Workflow
