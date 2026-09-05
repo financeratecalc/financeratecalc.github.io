@@ -80,7 +80,7 @@ select option{background:#0a0e1a;}
 .finder-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:22px 26px;margin-bottom:16px;}
 
 /* Sky Blue */
-
+.skyblue{background:linear-gradient(135deg,#0a0000,#1a0505);border:2px solid rgba(192,57,43,0.5);border-radius:12px;padding:22px;margin-bottom:14px;text-align:center;}
 .share-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;margin-bottom:14px;text-align:center;}
 .sbtn{padding:10px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:'Geist',sans-serif;margin:4px;}
 
@@ -96,7 +96,7 @@ footer{background:rgba(0,0,0,0.5);padding:24px;text-align:center;border-top:1px 
   gtag('config', 'G-ND9P4F3PHT');
 </script>
 <script src="/assets/ai-referral.js" defer></script>
-</head>
+<style>.skyblue{display:none!important}</style></head>
 <body>
 <header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
 
@@ -493,7 +493,53 @@ function navigate(){
 
     // Sky Blue
     (score<720?
-    '
+    '<div class="skyblue">'+
+      '<div style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(192,57,43,0.8);font-weight:700;margin-bottom:8px;">💳 The Fastest Route Upgrade: Fix Your Score</div>'+
+      '<div style="font-family:\'Fraunces\',serif;font-size:32px;font-weight:900;color:#ff6b6b;margin-bottom:6px;">'+fmt(creditSavings)+'</div>'+
+      '<div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:14px;">Difference between your current score and 740+ on this loan over 30 years. Improving your score is the single highest-ROI move on your route.</div>'+
+      '<a href="#'+zip+'_FRC" target="_blank" style="display:inline-block;background:#c0392b;color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">🛡️ Fix My Score — Sky Blue Credit #ad</a>'+
+      '<div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:8px;">Not financial advice · Individual results vary</div>'+
+    '</div>':'') +
+
+    // Share
+    '<div class="share-box">'+
+      '<div style="font-size:16px;font-weight:700;margin-bottom:4px;">Share Your Mortgage Route</div>'+
+      '<div style="font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:12px;">Challenge someone to find their route</div>'+
+      '<button class="sbtn" style="background:#1da1f2;color:#fff;" onclick="tweet(\''+city+'\',\''+state+'\',\''+demand+'\',\''+routeIcon+'\')">🐦 Tweet My Route</button>'+
+      '<button class="sbtn" style="background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);" onclick="copyRoute(\''+city+'\',\''+state+'\',\''+demand+'\',\''+routeIcon+'\')">📋 Copy</button>'+
+    '</div>'+
+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">'+
+      '<a href="mortgage-fate.html" style="padding:13px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;color:#fff;text-align:center;">🎲 Find My Mortgage Fate →</a>'+
+      '<a href="mortgage-calculator.html" style="padding:13px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;color:#fff;text-align:center;">Calculate My Payment →</a>'+
+    '</div>';
+
+  document.getElementById('results').innerHTML=html;
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+function tweet(city,state,demand,icon){
+  var t='My Mortgage Route:\n\n'+icon+' Route plotted for '+city+', '+state+'\n📊 Market: '+demand+'\n\nPlot YOUR mortgage route:\nfinanceratecalc.com/mortgage-navigator.html\n\n#MortgageNavigator #HomeBuying';
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(t),'_blank');
+}
+function copyRoute(city,state,demand,icon){
+  var t='My Mortgage Route: '+icon+' '+city+', '+state+' — Market: '+demand+'\nfinanceratecalc.com/mortgage-navigator.html';
+  navigator.clipboard.writeText(t).then(function(){alert('Copied!');});
+}
+</script>
+
+<!-- LISTING TOOL LINK -->
+<div style="max-width:800px;margin:0 auto;padding:0 20px 24px;">
+  <a href="/listing-analyzer.html" style="display:flex;align-items:center;gap:16px;padding:16px 20px;background:rgba(192,57,43,0.07);border:1px solid rgba(192,57,43,0.2);border-radius:10px;text-decoration:none;">
+    <div style="font-size:24px;flex-shrink:0;">🏠</div>
+    <div>
+      <div style="font-size:10px;color:rgba(255,107,107,0.7);font-weight:700;margin-bottom:3px;">Free Tool · Zai AI</div>
+      <div style="font-size:14px;font-weight:700;color:#fff;">Why Isn't This Listing Selling?</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);">Get the FRC Buyer Demand Score + price to move it in 14 days</div>
+    </div>
+  </a>
+</div>
 <div style="margin:0 auto 16px;padding:0 20px;max-width:800px;">
   <a href="/employer/" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(200,164,74,0.06);border:1px solid rgba(200,164,74,0.2);border-radius:8px;text-decoration:none;">
     <div style="font-size:20px;">🏢</div>
