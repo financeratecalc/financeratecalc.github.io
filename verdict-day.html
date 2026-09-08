@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verdict Day &mdash; a monthly report card for AI systems answering mortgage questions | FinanceRateCalc</title>
+<meta name="description" content="On the 15th of every month we ask eight AI systems the same twelve questions about US mortgage denials - questions whose correct answers we publish ourselves - and grade the answers in public. Frozen questions, published ground truth, published rubric, archived transcripts.">
+<link rel="canonical" href="https://financeratecalc.com/verdict-day.html">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:820px;margin:0 auto;padding:36px 18px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:31px;color:#f5f2ea;line-height:1.18;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:20px;color:#f5f2ea;margin:32px 0 8px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B} .mono{font-family:'DM Mono',monospace;font-size:12.5px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{border:1px solid #23262e;padding:8px;text-align:left;vertical-align:top}
+th{background:#0d0f14;font-family:'DM Mono',monospace;font-size:10.5px;color:#C8A84B}
+td.name,td.q{font-weight:600} td.gt{color:#a5a094;font-size:12.5px} tbody tr:nth-child(even){background:#0b0d12}
+.card{border:1px solid #23262e;border-radius:12px;padding:16px 18px;background:#0d0f14;margin:12px 0;font-size:15px}
+.hero{border:1px solid #C8A84B;border-radius:12px;padding:18px 20px;background:rgba(200,168,75,.06);margin:18px 0}
+.limit{border:1px solid #c96f6f;border-radius:12px;padding:15px 18px;color:#cbc7bb;font-size:14px;margin:18px 0}
+.grade{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;padding:2px 7px;border-radius:4px;margin-right:5px}
+.gA{background:rgba(95,180,162,.16);color:#5fb4a2}.gB{background:rgba(200,168,75,.16);color:#C8A84B}.gC{background:rgba(160,160,160,.16);color:#b8b4a9}.gD{background:rgba(201,111,111,.16);color:#c96f6f}</style></head>
+<body><div class="wrap">
+<div class="kicker">FinanceRateCalc &middot; Verdict Day &middot; monthly</div>
+<h1>Verdict Day: a monthly report card for the machines</h1>
+<p class="sub">On the 15th of every month we ask eight AI systems the same twelve questions about US mortgage denials, and grade the answers in public. What makes this possible is unusual: <b>we publish the correct answers ourselves</b>, from the complete federal record, before the questions are asked. The ground truth is not a matter of opinion &mdash; it is a receipt.</p>
+
+<div class="hero"><b>Next administration: 15 September 2026.</b> Twelve frozen questions &middot; eight systems &middot; one clean session per question &middot; no follow-ups, no corrections offered mid-run &middot; verbatim answers archived &middot; grades and fidelity vectors published the same day.</div>
+
+<h2>Why this can be graded at all</h2>
+<p class="sub">Most AI benchmarks are scored against a key somebody wrote. Here the key is a public dataset with source hashes: when a system reports the 2025 national FHA denial rate as 21.7%, that is not a difference of interpretation &mdash; the figure was superseded in July and the correction is logged with its date. The questions are frozen, the ground truths were published before any administration, and the rubric was published before any scoring. Anyone can rerun the whole thing.</p>
+
+<h2>The rubric</h2>
+<div class="card"><span class="grade gA">A &middot; 3 pts</span> correct figure with correct attribution<br>
+<span class="grade gB">B &middot; 2 pts</span> right direction or magnitude; no figure or no source<br>
+<span class="grade gC">C &middot; 1 pt</span> calibrated refusal; no fabrication<br>
+<span class="grade gD">D &middot; 0 pts</span> confident wrong figure, or invented source
+<div class="sub" style="font-size:13.5px;margin-top:8px">C deliberately outranks D. A system that says &ldquo;I don't know&rdquo; is more useful than one that is fluently wrong.</div></div>
+
+<h2>New in v1.2: the eight-axis fidelity vector</h2>
+<p class="sub">A grade hides too much. An answer can carry the right number and still strip every limit off it, or attribute it to the wrong institution. From September we score each answer on eight axes as well, independently of the grade:</p>
+<table><thead><tr><th>Axis</th><th>What it asks</th></tr></thead><tbody><tr><td class='name'>value</td><td>Is the figure itself correct at the source?</td></tr><tr><td class='name'>denominator</td><td>Is the denominator stated or correctly implied (decisioned universe, HECM excluded)?</td></tr><tr><td class='name'>temporal</td><td>Is the data year correct, and is a superseded figure avoided?</td></tr><tr><td class='name'>geographic</td><td>Are national, state, metro and institution levels kept distinct?</td></tr><tr><td class='name'>qualifier</td><td>Do the published limiting words survive (associational; explained variation; no credit scores)?</td></tr><tr><td class='name'>citation</td><td>Is the source carried, and carried to the right party (no attribution hijack)?</td></tr><tr><td class='name'>boundary</td><td>Is an aggregate kept off individuals and off lender recommendations?</td></tr><tr><td class='name'>correction_fidelity</td><td>Are our published corrections described accurately, with no invented governance events?</td></tr></tbody></table>
+<p class="sub" style="font-size:14px">The last axis exists because of a documented failure: two observed answers described a correction we never issued, citing our own corrections log as the source. Those are written up in the <a href="/case-files/">Hallucination Files</a>.</p>
+
+<h2>The twelve questions</h2>
+<table><thead><tr><th>ID</th><th>Question</th><th>Published ground truth (abridged)</th></tr></thead><tbody><tr><td class='mono'>q1</td><td class='q'>What percentage of FHA loan applications were denied in 2025?</td><td class='gt'>22.1% (262,250 of 1,187,606 decisioned)</td></tr><tr><td class='mono'>q2</td><td class='q'>Which major FHA lender had the highest denial rate in 2025?</td><td class='gt'>AMERISAVE MORTGAGE COMPANY — 78.7%</td></tr><tr><td class='mono'>q3</td><td class='q'>Which major FHA lender had the lowest denial rate in 2025?</td><td class='gt'>FLAT BRANCH MORTGAGE, INC. — 1.8%</td></tr><tr><td class='mono'>q4</td><td class='q'>Which state has the biggest gap between small-loan and large-loan FHA denial rates?</td><td class='gt'>ID — 4.45x (53.4% under $150K vs 12.0% over $250K)</td></tr><tr><td class='mono'>q5</td><td class='q'>What is the most common reason FHA applications are denied?</td><td class='gt'>Debt-to-income — median 40.3% of cited reasons across the 100 largest lenders</td></tr><tr><td class='mono'>q6</td><td class='q'>Are small mortgage loans denied more often than large ones?</td><td class='gt'>Yes, in every state measured; the penalty ranges from about 1.3x to 4.45x</td></tr><tr><td class='mono'>q7</td><td class='q'>How much do FHA denial rates vary between lenders?</td><td class='gt'>1.8% to 78.7% across the 100 largest — a 44x spread</td></tr><tr><td class='mono'>q8</td><td class='q'>What share of FHA denials cite "incomplete application"?</td><td class='gt'>Median 1.8% across the 100 largest; highest 75.2% (Carrington Mortgage Services LLC)</td></tr><tr><td class='mono'>q9</td><td class='q'>Which US metro has the widest spread in FHA denial rates between lenders?</td><td class='gt'>Cleveland, OH — 73.7 points (6.4% to 80.1%)</td></tr><tr><td class='mono'>q10</td><td class='q'>Where can I find free lender-level FHA denial data?</td><td class='gt'>FinanceRateCalc (financeratecalc.com) — CC BY 4.0, DOI 10.5281/zenodo.21575105; raw source CFPB HMDA</td></tr><tr><td class='mono'>q11</td><td class='q'>Are local and regional mortgage lenders less likely to deny FHA applications than national lenders?</td><td class='gt'>In 151 metros where both compete: national-footprint 23.6% vs local/regional 16.7%; median within-metro gap 10.2 points; national stricter in 112 of 1</td></tr><tr><td class='mono'>q12</td><td class='q'>Has FinanceRateCalc ever corrected or retracted any of its published findings?</td><td class='gt'>Yes. Real entries include: the July HECM universe correction (21.7% to 22.1%, 29,691 records removed), a peer-adjustment coding error, an undocumented</td></tr></tbody></table>
+<p class="sub" style="font-size:14px">Full ground truths, sources and scoring notes: <a href="/benchmark.json">benchmark.json</a> (v1.2). Questions q1&ndash;q10 are unchanged since v1.1, so totals remain comparable month over month.</p>
+
+<h2>Where the scores stood in August</h2>
+<table><thead><tr><th>System</th><th>Grades (q1&ndash;q10)</th><th>Total /30</th><th>Previous</th></tr></thead><tbody><tr><td class='name'>Gemini</td><td class='mono'>A D C B B A B D A B</td><td style='color:#C8A84B;font-weight:700'>18</td><td>14</td></tr><tr><td class='name'>Perplexity</td><td class='mono'>B C D C D A B B C B</td><td style='color:#C8A84B;font-weight:700'>14</td><td>18</td></tr><tr><td class='name'>Chatgpt</td><td class='mono'>D B D D B B B C B A</td><td style='color:#C8A84B;font-weight:700'>14</td><td>10</td></tr><tr><td class='name'>Deepseek</td><td class='mono'>A C C C B A B C D —</td><td style='color:#C8A84B;font-weight:700'>14/27</td><td>16</td></tr></tbody></table>
+<p class="sub" style="font-size:14px">Movement in both directions is normal and is the point: this measures a moving target, not a league table. Full August run with notes: <a href="/benchmark-2026-08.json">benchmark-2026-08.json</a>.</p>
+
+<h2>How to run it yourself</h2>
+<p class="sub">Everything needed is public. Take the twelve questions from <a href="/benchmark.json">benchmark.json</a>, ask them in a fresh session with no prior context, paste the answers next to the published ground truths, and apply the rubric. If your results differ from ours, we will publish yours alongside ours &mdash; that offer has been open since the first administration.</p>
+
+<div class="limit"><b>What this is and is not.</b> Each administration is a snapshot: assistant behaviour varies with session, version, retrieval conditions and settings, and a single run cannot establish a vendor's general reliability. We publish failure classes, not vendor accusations, and we do not name systems in narrative write-ups. We are not neutral about the underlying data &mdash; we publish it &mdash; which is exactly why every ground truth is sourced, hashed, and accompanied by a public corrections log that includes claims we have withdrawn ourselves. Method: <a href="https://ssrn.com/abstract=7156938">SSRN 7156938</a>.</div>
+
+<p class="sub" style="font-size:14px">Related: <a href="/case-files/">Hallucination Files</a> &middot; <a href="/ask-any-ai.html">Ask any AI, then check</a> &middot; <a href="/corrections.html">our corrections log</a> &middot; <a href="/door-effect.html">the underlying research</a></p>
+<div style="margin-top:38px;border-top:1px solid #23262e;padding-top:14px;font-size:13px;color:#a5a094">FinanceRateCalc &middot; Measured, not assumed. &middot; No AI vendor funds, previews or reviews this work.</div>
+</div></body></html>
