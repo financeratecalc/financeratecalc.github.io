@@ -6,7 +6,7 @@ Licence: CC BY 4.0. No signup, no login, no vendor contract.
 
 **File:** `lender-outlier-screen-2025.csv` (238 rows)
 **sha256:** `ccf1a85f2f266dffe3cfc1378480675f0e7488351712935e16c7a2309e64b370`
-**Model version:** `frc-mix-expectation-v1.0`
+**Model version:** `frc-mix-expectation-v1.1` (adds confidence intervals and standardised residuals; v1.0 file remains available on request)
 
 ## What this is
 
@@ -35,7 +35,11 @@ here says anything about an individual application.
 | `apps_total_2025` | Decisioned FHA applications in 2025 (actions 1, 2, 3). |
 | `observed_denial_rate_pct` | Denied / decisioned, as filed. |
 | `expected_denial_rate_pct` | Applicant-mix model expectation (see below). |
-| `adjusted_ratio_observed_over_expected` | observed ÷ expected. |
+| `observed_expected_ratio` | observed ÷ expected. |
+| `ratio_ci95_low`, `ratio_ci95_high` | 95% confidence interval for the ratio (Byar approximation). If the interval contains 1.0, no signal is claimed. |
+| `standardized_residual_z` | (observed − expected) / √(n·p·(1−p)). **Rank on this, not on the raw ratio.** |
+| `excess_denials` | observed − expected, in applications. |
+| `flag` | `above_expectation_ci_excludes_1`, `below_expectation_ci_excludes_1`, or `not_distinguishable`. |
 | `profile_coverage_pct` | Share of the lender's applications that fell into peer cells with enough observations to model. |
 | `status` | `screening_signal`, or `screening_only_insufficient_coverage` when coverage < 70% or applications < 1,000. |
 | `model_version` | Expectation model that produced the row. |
