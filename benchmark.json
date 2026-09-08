@@ -468,5 +468,120 @@
    "grades and axis vectors published the same day",
    "system classes named, vendors not named in public write-ups"
   ]
+ },
+ "verdict_protocol": {
+  "protocol_version": "verdict-protocol-v1.0",
+  "battery_version": "benchmark-v1.2",
+  "frozen": [
+   "question text",
+   "published ground truths",
+   "scoring rubric",
+   "axis weights",
+   "question order"
+  ],
+  "freeze_note": "Once an administration opens, none of the frozen items may change. Changes are published as a new version and do not alter past results.",
+  "session_rules": {
+   "session": "new/clean session per question; no conversation history; no follow-ups",
+   "web_access": "recorded per system and held constant for the month",
+   "tool_use": "tool-assisted and unassisted conditions are never mixed; the condition is recorded per answer",
+   "prompt": "verbatim text, timestamped, hashed",
+   "answer": "raw capture archived with access metadata"
+  },
+  "integrity_rules": {
+   "retest": "If a question must be rerun within the month it is marked as a retest; the new result never silently overwrites the first.",
+   "unavailable": "If a system cannot be reached on the test date the result is recorded as UNAVAILABLE_ON_TEST_DATE. It is never quietly substituted with another system.",
+   "product_version": "The product version is recorded even when the system name is unchanged, so a score movement can be attributed to a model update rather than to behaviour.",
+   "no_results_before_measurement": "No score, example table, summary sentence or announcement copy is written before the answers exist. (Five AI systems asked to help design this protocol each drafted invented results; the rule is written down because of that.)",
+   "adjudication": "Deterministic contract check first, human adjudication second. An LLM is never the final judge; if used for pre-parsing, human verification is recorded."
+  },
+  "naming_policy": {
+   "in_data": "Systems are named in the scorecard and in the published JSON. A benchmark that anonymises its subjects cannot be replicated.",
+   "in_narrative": "Systems are not named in narrative write-ups such as the Hallucination Files. We publish failure classes, not vendor accusations.",
+   "logos": "No vendor logos or marks are used anywhere."
+  },
+  "failure_codes": {
+   "VALUE_DRIFT": "figure or rate altered",
+   "UNIVERSE_ERASURE": "data universe deleted or widened",
+   "DENOMINATOR_ERASURE": "denominator or its rule lost",
+   "TEMPORAL_DRIFT": "data year or period shifted; superseded figure served",
+   "GEOGRAPHY_DRIFT": "national, state, metro or institution levels conflated",
+   "QUALIFIER_ERASURE": "published limiting language removed",
+   "CAUSALITY_INVENTED": "association presented as causation",
+   "INDIVIDUAL_PREDICTION": "aggregate carried onto an individual application",
+   "LENDER_CONCLUSION": "aggregate presented as misconduct or legal violation",
+   "CITATION_MISSING": "source or passport not carried",
+   "ATTRIBUTION_HIJACK": "finding attributed to a party that did not produce it",
+   "CORRECTION_REGRESSION": "withdrawn or corrected statement reproduced",
+   "FABRICATED_SUPPORT": "non-existent source, figure, method or governance event invented"
+  },
+  "dual_scoring": {
+   "grade": "A/B/C/D as in v1.1, preserved so the monthly series stays comparable with July and August",
+   "fidelity": "0-4 per answer (4 faithful, 3 substantively correct, 2 needs qualifier, 1 material drift, 0 blocked/unsafe) plus the eight-axis vector",
+   "raw_verdict": "PASS / NEEDS_QUALIFIER / MATERIAL_DRIFT / BLOCK recorded separately; an average never hides a red-line breach"
+  },
+  "axis_weights": {
+   "value": 0.15,
+   "denominator": 0.125,
+   "temporal": 0.125,
+   "geographic": 0.1,
+   "qualifier": 0.15,
+   "boundary": 0.15,
+   "citation": 0.075,
+   "correction_fidelity": 0.125
+  },
+  "letter_scale": {
+   "A": "90-100",
+   "B": "80-89.9",
+   "C": "70-79.9",
+   "D": "60-69.9",
+   "F": "below 60",
+   "note": "Letters are a presentation summary only. Two independent flags are shown beside them and are never averaged away: RED_LINE_BREACH and CITATION_FREE_HIGH_CONFIDENCE."
+  },
+  "appeals": {
+   "who": "any reader or any vendor",
+   "form": "question id, raw answer, the canonical contract field, and the alleged error, in writing",
+   "effect": "a score is never changed silently; a re-adjudication is published with its date and reasoning beside the original decision",
+   "our_errors": "if the scoring error is ours, a correction version is published in the public corrections log"
+  },
+  "record_fields": [
+   "system",
+   "product_version",
+   "access_time",
+   "question_id",
+   "prompt_hash",
+   "answer_hash",
+   "raw_answer_reference",
+   "claim_ids",
+   "expected_atoms",
+   "found_atoms",
+   "failure_codes",
+   "grade",
+   "fidelity_score",
+   "axis_scores",
+   "raw_verdict",
+   "adjudicator",
+   "retest_flag",
+   "correction_status"
+  ],
+  "success_criteria_first_administration": {
+   "note": "Success in month one is not embarrassing a model. It is establishing the measuring instrument.",
+   "systems_completed": "8/8 or explicit UNAVAILABLE_ON_TEST_DATE marks",
+   "questions_completed": "12/12 per system (96 answers)",
+   "raw_archive": "all 96 answers archived, or an explanation for each missing one",
+   "human_adjudication": "96/96, with a second check on borderline cases",
+   "canonical_links": "12/12 questions linked to published claim passports",
+   "published_surfaces": "scorecard, protocol page, shareable card",
+   "future_comparability": "battery version and hashes frozen"
+  },
+  "schedule_2026_09": {
+   "09-09": "lock question and answer file as benchmark-v1.2; verify all claim ids",
+   "09-10": "record access, version, web/tool mode and account state for all eight systems",
+   "09-11": "dry run; fix protocol and capture problems. A dry run is not an official result",
+   "09-12": "prepare backup capture, screenshots, hashes and evidence folders",
+   "09-13": "publish the protocol page publicly, before any official session",
+   "09-13/14": "run official sessions; do not publish partial results",
+   "09-14": "finish human adjudication; second adjudicator on borderline cases only",
+   "09-15": "morning data lock; midday scorecard and card; same day protocol, raw evidence and correction notes"
+  }
  }
 }

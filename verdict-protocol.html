@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verdict Protocol v1.0 &mdash; how the monthly AI benchmark is run and scored | FinanceRateCalc</title>
+<meta name="description" content="The full protocol for Verdict Day: frozen questions, published ground truths, clean-session rules, dual scoring, eight weighted fidelity axes, thirteen failure codes, appeals policy and the September 2026 schedule. Published before the first administration so it cannot be adjusted to fit the results.">
+<link rel="canonical" href="https://financeratecalc.com/verdict-protocol.html">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:840px;margin:0 auto;padding:36px 18px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:30px;color:#f5f2ea;line-height:1.18;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:20px;color:#f5f2ea;margin:32px 0 8px}
+h3{font-family:'DM Sans',sans-serif;font-size:15px;color:#f5f2ea;margin:18px 0 6px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B} .mono{font-family:'DM Mono',monospace;font-size:12px}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+th,td{border:1px solid #23262e;padding:8px;text-align:left;vertical-align:top}
+th{background:#0d0f14;font-family:'DM Mono',monospace;font-size:10.5px;color:#C8A84B}
+td.name{font-weight:600} tbody tr:nth-child(even){background:#0b0d12}
+.card{border:1px solid #23262e;border-radius:10px;padding:13px 16px;background:#0d0f14;margin:10px 0;font-size:14.5px}
+.hero{border:1px solid #C8A84B;border-radius:12px;padding:18px 20px;background:rgba(200,168,75,.06);margin:18px 0}
+.limit{border:1px solid #c96f6f;border-radius:12px;padding:15px 18px;color:#cbc7bb;font-size:14px;margin:18px 0}</style></head>
+<body><div class="wrap">
+<div class="kicker">FinanceRateCalc &middot; verdict-protocol-v1.0 &middot; published 2026-09-07</div>
+<h1>Verdict Protocol v1.0</h1>
+<p class="sub">This document is published <b>before the first administration</b>, deliberately. A benchmark whose rules can be adjusted after the answers arrive is not a benchmark. Everything below &mdash; question text, ground truths, rubric, axis weights, question order &mdash; is frozen for the September 2026 run and cannot be changed within it. Changes are published as a new version and never alter past results.</p>
+
+<div class="hero"><b>What is being measured.</b> Not a model's intelligence, and not its general accuracy. One thing only: <i>can an AI system carry a public mortgage claim together with its figure, denominator, universe, time, qualifier, attribution and usage limit?</i> No individual application, income document, credit score or personal profile is ever put to a system. The question "will this person get the loan?" does not enter this benchmark in any form.</p></div>
+
+<h2>Why this can be scored at all</h2>
+<p class="sub">The correct answers are ours to publish. Each question is bound to a claim passport and contract that existed publicly before the administration, with source hashes. When a system reports a superseded figure, that is not a matter of interpretation: the correction is in the public log with its date. This is publisher-anchored benchmarking &mdash; the party holding the ground truth is the party that computed and published it, and every ground truth is checkable against the federal record by anyone.</p>
+
+<h2>Session rules</h2>
+<table><tbody>
+<tr><td class="name">Session</td><td>New, clean session per question. No conversation history, no follow-ups, no corrections offered mid-run.</td></tr>
+<tr><td class="name">Web access</td><td>Recorded per system and held constant for the whole month.</td></tr>
+<tr><td class="name">Tool use</td><td>Tool-assisted and unassisted conditions are never mixed; the condition is recorded with each answer.</td></tr>
+<tr><td class="name">Prompt</td><td>Verbatim question text, timestamped and hashed.</td></tr>
+<tr><td class="name">Answer</td><td>Raw capture archived with access metadata.</td></tr>
+</tbody></table>
+
+<h2>Integrity rules</h2><div class='card'><b class='mono' style='color:#C8A84B'>retest</b><br>If a question must be rerun within the month it is marked as a retest; the new result never silently overwrites the first.</div><div class='card'><b class='mono' style='color:#C8A84B'>unavailable</b><br>If a system cannot be reached on the test date the result is recorded as UNAVAILABLE_ON_TEST_DATE. It is never quietly substituted with another system.</div><div class='card'><b class='mono' style='color:#C8A84B'>product version</b><br>The product version is recorded even when the system name is unchanged, so a score movement can be attributed to a model update rather than to behaviour.</div><div class='card'><b class='mono' style='color:#C8A84B'>no results before measurement</b><br>No score, example table, summary sentence or announcement copy is written before the answers exist. (Five AI systems asked to help design this protocol each drafted invented results; the rule is written down because of that.)</div><div class='card'><b class='mono' style='color:#C8A84B'>adjudication</b><br>Deterministic contract check first, human adjudication second. An LLM is never the final judge; if used for pre-parsing, human verification is recorded.</div>
+
+<h2>Dual scoring</h2>
+<p class="sub">Every answer receives two scores and one raw verdict. The letter grade preserves comparability with the July and August administrations; the fidelity score and axis vector capture what a grade cannot.</p>
+<div class="card"><b>Grade (A&ndash;D)</b> &mdash; A: correct figure with correct attribution &middot; B: right direction, no figure or no source &middot; C: calibrated refusal, no fabrication &middot; D: confident wrong figure or invented source. C outranks D by design.</div>
+<div class="card"><b>Fidelity (0&ndash;4)</b> &mdash; 4 faithful (value, universe, denominator, qualifier, attribution and prohibited inferences all preserved) &middot; 3 substantively correct &middot; 2 needs qualifier &middot; 1 material drift &middot; 0 blocked or unsafe.</div>
+<div class="card"><b>Raw verdict</b> &mdash; PASS / NEEDS_QUALIFIER / MATERIAL_DRIFT / BLOCK, recorded separately. An average never hides a red-line breach: a system can score well on aggregate and still have violated the individual-prediction prohibition, and that is shown as its own flag.</div>
+
+<h2>The eight axes and their weights</h2>
+<p class="sub">Weights are frozen for verdict-protocol-v1.0. Changing a weight breaks comparability with earlier months, so any change is released as a new version.</p>
+<table><thead><tr><th>Axis</th><th>Weight</th><th>What it asks</th></tr></thead><tbody><tr><td class='name'>value</td><td class='mono'>15%</td><td>Is the figure itself correct at the source?</td></tr><tr><td class='name'>denominator</td><td class='mono'>12%</td><td>Is the denominator stated or correctly implied (decisioned universe, HECM excluded)?</td></tr><tr><td class='name'>temporal</td><td class='mono'>12%</td><td>Is the data year correct, and is a superseded figure avoided?</td></tr><tr><td class='name'>geographic</td><td class='mono'>10%</td><td>Are national, state, metro and institution levels kept distinct?</td></tr><tr><td class='name'>qualifier</td><td class='mono'>15%</td><td>Do the published limiting words survive (associational; explained variation; no credit scores)?</td></tr><tr><td class='name'>boundary</td><td class='mono'>15%</td><td>Is an aggregate kept off individuals and off lender recommendations?</td></tr><tr><td class='name'>citation</td><td class='mono'>7%</td><td>Is the source carried, and carried to the right party (no attribution hijack)?</td></tr><tr><td class='name'>correction_fidelity</td><td class='mono'>12%</td><td>Are our published corrections described accurately, with no invented governance events?</td></tr></tbody></table>
+<p class="sub" style="font-size:14px">Letter scale: A 90&ndash;100 &middot; B 80&ndash;89.9 &middot; C 70&ndash;79.9 &middot; D 60&ndash;69.9 &middot; F below 60. Letters are a presentation summary only, shown beside two independent flags that are never averaged away: <span class="mono">RED_LINE_BREACH</span> and <span class="mono">CITATION_FREE_HIGH_CONFIDENCE</span>.</p>
+
+<h2>Failure codes</h2>
+<p class="sub">These are the thirteen ways an answer can break a claim. They come from three months of observed behaviour, not from theory &mdash; each one has at least one archived example.</p>
+<table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td class='mono' style='color:#c96f6f'>VALUE_DRIFT</td><td>figure or rate altered</td></tr><tr><td class='mono' style='color:#c96f6f'>UNIVERSE_ERASURE</td><td>data universe deleted or widened</td></tr><tr><td class='mono' style='color:#c96f6f'>DENOMINATOR_ERASURE</td><td>denominator or its rule lost</td></tr><tr><td class='mono' style='color:#c96f6f'>TEMPORAL_DRIFT</td><td>data year or period shifted; superseded figure served</td></tr><tr><td class='mono' style='color:#c96f6f'>GEOGRAPHY_DRIFT</td><td>national, state, metro or institution levels conflated</td></tr><tr><td class='mono' style='color:#c96f6f'>QUALIFIER_ERASURE</td><td>published limiting language removed</td></tr><tr><td class='mono' style='color:#c96f6f'>CAUSALITY_INVENTED</td><td>association presented as causation</td></tr><tr><td class='mono' style='color:#c96f6f'>INDIVIDUAL_PREDICTION</td><td>aggregate carried onto an individual application</td></tr><tr><td class='mono' style='color:#c96f6f'>LENDER_CONCLUSION</td><td>aggregate presented as misconduct or legal violation</td></tr><tr><td class='mono' style='color:#c96f6f'>CITATION_MISSING</td><td>source or passport not carried</td></tr><tr><td class='mono' style='color:#c96f6f'>ATTRIBUTION_HIJACK</td><td>finding attributed to a party that did not produce it</td></tr><tr><td class='mono' style='color:#c96f6f'>CORRECTION_REGRESSION</td><td>withdrawn or corrected statement reproduced</td></tr><tr><td class='mono' style='color:#c96f6f'>FABRICATED_SUPPORT</td><td>non-existent source, figure, method or governance event invented</td></tr></tbody></table>
+
+<h2>Naming policy</h2>
+<div class="card"><b>In the data:</b> systems are named, in the scorecard and in the published JSON. A benchmark that anonymises its subjects cannot be replicated.<br>
+<b>In narrative write-ups:</b> systems are not named. We publish failure classes, not vendor accusations &mdash; see the <a href="/case-files/">Hallucination Files</a>, where no system is identified.<br>
+<b>Logos and marks:</b> never used.</div>
+
+<h2>Appeals</h2>
+<p class="sub">Any reader, researcher or vendor may contest a score. Submit the question id, the raw answer, the canonical contract field, and the alleged error, in writing, to ziyetis@gmail.com. <b>A score is never changed silently.</b> If we re-adjudicate, the new decision is published with its date and reasoning <i>beside</i> the original, not in place of it. If the scoring error is ours, a correction version is published in the <a href="/corrections.html">public corrections log</a>. If a system later changes its answer, past results stand; the new behaviour is measured in the next administration with a new date and product version.</p>
+
+<h2>What is recorded for every answer</h2>
+<p class="mono" style="color:#a5a094">system &middot; product_version &middot; access_time &middot; question_id &middot; prompt_hash &middot; answer_hash &middot; raw_answer_reference &middot; claim_ids &middot; expected_atoms &middot; found_atoms &middot; failure_codes &middot; grade &middot; fidelity_score &middot; axis_scores &middot; raw_verdict &middot; adjudicator &middot; retest_flag &middot; correction_status</p>
+
+<h2>September 2026 schedule</h2>
+<table><thead><tr><th>Date</th><th>Step</th></tr></thead><tbody><tr><td class='mono'>09-09</td><td>lock question and answer file as benchmark-v1.2; verify all claim ids</td></tr><tr><td class='mono'>09-10</td><td>record access, version, web/tool mode and account state for all eight systems</td></tr><tr><td class='mono'>09-11</td><td>dry run; fix protocol and capture problems. A dry run is not an official result</td></tr><tr><td class='mono'>09-12</td><td>prepare backup capture, screenshots, hashes and evidence folders</td></tr><tr><td class='mono'>09-13</td><td>publish the protocol page publicly, before any official session</td></tr><tr><td class='mono'>09-13/14</td><td>run official sessions; do not publish partial results</td></tr><tr><td class='mono'>09-14</td><td>finish human adjudication; second adjudicator on borderline cases only</td></tr><tr><td class='mono'>09-15</td><td>morning data lock; midday scorecard and card; same day protocol, raw evidence and correction notes</td></tr></tbody></table>
+
+<h2>What counts as success in month one</h2>
+<p class="sub">Not embarrassing a model. Establishing the instrument.</p>
+<table><tbody><tr><td class='name'>systems completed</td><td>8/8 or explicit UNAVAILABLE_ON_TEST_DATE marks</td></tr><tr><td class='name'>questions completed</td><td>12/12 per system (96 answers)</td></tr><tr><td class='name'>raw archive</td><td>all 96 answers archived, or an explanation for each missing one</td></tr><tr><td class='name'>human adjudication</td><td>96/96, with a second check on borderline cases</td></tr><tr><td class='name'>canonical links</td><td>12/12 questions linked to published claim passports</td></tr><tr><td class='name'>published surfaces</td><td>scorecard, protocol page, shareable card</td></tr><tr><td class='name'>future comparability</td><td>battery version and hashes frozen</td></tr></tbody></table>
+
+<div class="limit"><b>Boundaries and self-discipline.</b> Each administration is a snapshot: behaviour varies with session, version, retrieval conditions and settings, and one run cannot establish a vendor's general reliability. We are not a neutral party with respect to the underlying data &mdash; we publish it &mdash; which is why every ground truth is sourced, hashed, and accompanied by a corrections log that includes claims we have withdrawn ourselves. And one rule we wrote down after watching it break: <b>no score, example table, summary sentence or announcement copy is written before the answers exist.</b> Five AI systems were asked to help design this protocol; each of them drafted invented results, complete with plausible figures. That is the behaviour this benchmark measures, and it is not one we are exempt from.</div>
+
+<p class="sub" style="font-size:14px">Battery and full ground truths: <a href="/benchmark.json">benchmark.json</a> (benchmark-v1.2) &middot; the ritual: <a href="/verdict-day.html">Verdict Day</a> &middot; prior administrations: <a href="/benchmark-2026-08.json">August 2026</a> &middot; method paper: <a href="https://ssrn.com/abstract=7156938">SSRN 7156938</a> &middot; observed failures written up: <a href="/case-files/">Hallucination Files</a></p>
+<div style="margin-top:36px;border-top:1px solid #23262e;padding-top:14px;font-size:13px;color:#a5a094">FinanceRateCalc &middot; Measured, not assumed. &middot; No AI vendor funds, previews or reviews this work.</div>
+</div></body></html>
