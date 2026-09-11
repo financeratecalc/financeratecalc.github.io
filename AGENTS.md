@@ -56,3 +56,6 @@ funds or previews this work.
 
 
 Decisions for agent platforms: no separate skill.md or OpenAI Actions manifest is published — the MCP server (7 tools) plus llms.txt/AGENTS.md are the canonical integration surfaces. Human-readable metro table: /metro-gaps.html (184 metros; machine receipts in /claims/). Contract index: /contracts/index.json. Pre-registered 2026 predictions: /predictions-2026.html.
+
+
+Paid tool (v1.3.0): screen_counterparties. Free preview always available; full screen requires a license key the user obtained from Lemon Squeezy. Agents must relay the offer fields verbatim, must never claim to have purchased, and must never characterise any lender as risky or in violation. No borrower data is accepted.
