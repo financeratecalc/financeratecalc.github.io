@@ -1,0 +1,105 @@
+name: Enrich LEI names from GLEIF
+
+# Fills lender_name for every LEI in the outlier screen using the public GLEIF API.
+# Runs on GitHub's infrastructure, which can reach api.gleif.org.
+# Manual trigger; also monthly, since legal names change with mergers and rebrandings.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 1 * *'   # 1st of each month, 06:00 UTC
+
+permissions:
+  contents: write
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch legal names from GLEIF
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, time, os
+
+          SCREEN = "data/lender-outlier-screen-2025.json"
+          OUT    = "data/lei-names.json"
+
+          screen = json.load(open(SCREEN))
+          leis = [r["lei"] for r in screen["rows"]]
+          print(f"{len(leis)} LEIs in screen")
+
+          names = {}
+          if os.path.exists(OUT):
+              names = json.load(open(OUT)).get("names", {})
+              print(f"{len(names)} already cached")
+
+          todo = [l for l in leis if l not in names]
+          print(f"{len(todo)} to fetch")
+
+          # GLEIF allows batch lookups via filter[lei]; keep batches modest and polite.
+          B = 40
+          for i in range(0, len(todo), B):
+              batch = todo[i:i+B]
+              url = "https://api.gleif.org/api/v1/lei-records?filter[lei]=" + ",".join(batch) + "&page[size]=" + str(B)
+              req = urllib.request.Request(url, headers={
+                  "Accept": "application/vnd.api+json",
+                  "User-Agent": "FinanceRateCalc/1.0 (open research; ziyetis@gmail.com)"})
+              try:
+                  with urllib.request.urlopen(req, timeout=45) as r:
+                      payload = json.load(r)
+              except Exception as e:
+                  print(f"batch {i//B}: {e}")
+                  time.sleep(3)
+                  continue
+              for rec in payload.get("data", []):
+                  lei = rec.get("id")
+                  ent = (rec.get("attributes") or {}).get("entity") or {}
+                  legal = (ent.get("legalName") or {}).get("name")
+                  status = ent.get("status")
+                  juris = ent.get("jurisdiction")
+                  if lei and legal:
+                      names[lei] = {"legal_name": legal, "entity_status": status, "jurisdiction": juris}
+              print(f"batch {i//B}: {len(names)} total")
+              time.sleep(1.2)
+
+          json.dump({
+            "generated": time.strftime("%Y-%m-%d"),
+            "source": "GLEIF public LEI records API (api.gleif.org)",
+            "note": "Legal names as filed with GLEIF. A legal name is not a brand name: a lender may trade under a different name than the entity that files HMDA. Names are informational; the LEI remains the authoritative key.",
+            "count": len(names),
+            "names": names
+          }, open(OUT, "w"), indent=1)
+          print(f"wrote {OUT} with {len(names)} names")
+
+          # Merge into the screen and the CSV
+          filled = 0
+          for r in screen["rows"]:
+              if not r.get("lender_name") and r["lei"] in names:
+                  r["lender_name"] = names[r["lei"]]["legal_name"]
+                  r["name_source"] = "GLEIF legal name"
+                  filled += 1
+          json.dump(screen, open(SCREEN, "w"), indent=1)
+          print(f"filled {filled} names into the screen")
+
+          import csv
+          CSV = "lender-outlier-screen-2025.csv"
+          if os.path.exists(CSV):
+              rows = list(csv.DictReader(open(CSV)))
+              n = 0
+              for row in rows:
+                  if not row.get("lender_name") and row["lei"] in names:
+                      row["lender_name"] = names[row["lei"]]["legal_name"]; n += 1
+              with open(CSV, "w", newline="") as fh:
+                  w = csv.DictWriter(fh, fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)
+              print(f"filled {n} names into the CSV")
+          PY
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "FinanceRateCalc"
+          git config user.email "ziyetis@gmail.com"
+          git add data/lei-names.json data/lender-outlier-screen-2025.json lender-outlier-screen-2025.csv || true
+          git diff --staged --quiet && echo "no changes" || \
+            (git commit -m "GLEIF: refresh legal names for screened LEIs" && git push)
