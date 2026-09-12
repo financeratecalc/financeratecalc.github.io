@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connect the counterparty screen to your own agent — 10-minute integration | FinanceRateCalc</title>
+<meta name="description" content="Wire the FRC MCP server into Claude Desktop, an internal agent or any MCP client, and screen your seller list by LEI from inside your own workflow. Config, example prompts, response schema, field dictionary and limits.">
+<link rel="canonical" href="https://financeratecalc.com/mcp-integration.html">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:820px;margin:0 auto;padding:36px 18px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:29px;color:#f5f2ea;line-height:1.18;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:20px;color:#f5f2ea;margin:32px 0 8px}
+h3{font-size:15px;color:#f5f2ea;margin:20px 0 6px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B}
+pre{background:#0d0f14;border:1px solid #23262e;border-radius:10px;padding:14px 16px;overflow-x:auto;font-family:'DM Mono',monospace;font-size:12.5px;color:#cbc7bb;line-height:1.55}
+.card{border:1px solid #23262e;border-radius:12px;padding:15px 18px;background:#0d0f14;margin:12px 0;font-size:15px}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+th,td{border:1px solid #23262e;padding:8px;text-align:left;vertical-align:top}
+th{background:#0d0f14;font-family:'DM Mono',monospace;font-size:10.5px;color:#C8A84B}
+td.f{font-family:'DM Mono',monospace;font-size:12px;color:#f5f2ea}
+.limit{border:1px solid #c96f6f;border-radius:12px;padding:15px 18px;color:#cbc7bb;font-size:14px;margin:18px 0}
+.step{border-left:3px solid #C8A84B;padding-left:14px;margin:18px 0}</style></head>
+<body><div class="wrap">
+<div class="kicker">FinanceRateCalc &middot; Integration guide &middot; 10 minutes</div>
+<h1>Screen your seller list from inside your own agent</h1>
+<p class="sub">The counterparty screen is not only a web page. It is an MCP server, which means your own assistant &mdash; Claude Desktop, an internal agent, any MCP client &mdash; can run it against your list without anyone opening a browser. This page is the whole integration: config, prompts, response schema, limits.</p>
+
+<div class="step"><h3>1. Add the server</h3>
+<p class="sub">Claude Desktop: <span class="mono">Settings &rarr; Connectors &rarr; Add custom connector</span>, then paste the URL. For any other MCP client, the server speaks standard JSON-RPC over HTTPS:</p>
+<pre>https://frc-mcp.ziyetis.workers.dev</pre>
+<p class="sub">Config-file clients (mcpServers block):</p>
+<pre>{
+  "mcpServers": {
+    "financeratecalc": {
+      "url": "https://frc-mcp.ziyetis.workers.dev"
+    }
+  }
+}</pre>
+<p class="sub" style="font-size:14px">No API key, no account, no signup. Eight read-only tools; nothing you send is retained.</p></div>
+
+<div class="step"><h3>2. Ask it in plain language</h3>
+<p class="sub">Once connected, these prompts work as written:</p>
+<pre>Screen these LEIs against the FRC counterparty screen:
+549300HW662MN1WU8550, 5493001Z2ZQLDQ4SCT12, ...
+
+Which of my sellers are above their applicant-mix expectation?
+[paste LEI list]
+
+Run the FRC screen on this list and tell me only the rows
+where the 95% CI excludes 1.0 and coverage is above 70%.</pre></div>
+
+<div class="step"><h3>3. Or call it directly</h3>
+<pre>curl -s -X POST https://frc-mcp.ziyetis.workers.dev \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call",
+       "params":{"name":"screen_counterparties",
+       "arguments":{"lei_list":["549300HW662MN1WU8550"]}}}'</pre></div>
+
+<h2>What comes back</h2>
+<p class="sub">Free, with no license: the aggregate shape of your list plus full rows for the first three valid LEIs, and a result commitment hash. With a license: full rows for up to 40 LEIs and a hash-linked Evidence Brief.</p>
+<table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td class="f">observed_expected_ratio</td><td>Observed denials divided by what the applicant-mix model predicts for that lender's own profile. 1.0 = matches its own expectation.</td></tr>
+<tr><td class="f">ratio_ci95</td><td>95% confidence interval (Byar). If it contains 1.0, no signal is claimed.</td></tr>
+<tr><td class="f">standardized_residual_z</td><td>(observed &minus; expected) / &radic;(n&middot;p&middot;(1&minus;p)). <b>Rank on this, not the raw ratio</b> &mdash; a small book can post a dramatic ratio on few decisions.</td></tr>
+<tr><td class="f">excess_denials</td><td>Observed minus expected, in applications.</td></tr>
+<tr><td class="f">profile_coverage_pct</td><td>Share of the lender's applications that fell into modellable peer cells.</td></tr>
+<tr><td class="f">flag</td><td><span class="mono">above_expectation_ci_excludes_1</span> &middot; <span class="mono">below_expectation_ci_excludes_1</span> &middot; <span class="mono">not_distinguishable</span></td></tr>
+<tr><td class="f">status</td><td><span class="mono">screening_signal</span>, or <span class="mono">screening_only_insufficient_coverage</span> when coverage &lt;70% or fewer than 1,000 applications. The second must never be repeated as "an elevated-risk lender".</td></tr>
+<tr><td class="f">source_vintage / as_of</td><td>HMDA vintage and run timestamp carried on every response.</td></tr>
+<tr><td class="f">join_type</td><td><span class="mono">exact</span> for LEI joins. Weighted and spatial joins, when added, are labelled as such &mdash; an approximate join is never presented as exact.</td></tr>
+<tr><td class="f">evidence_manifest_sha256</td><td>Licensed responses only: hash over the method manifest and result, for your audit trail.</td></tr>
+<tr><td class="f">result_commitment</td><td>Hash of the full result, returned <i>with the free preview</i>. After purchase you can verify the paid result was not altered.</td></tr>
+</tbody></table>
+
+<h2>Privacy and what we never accept</h2>
+<div class="card">Matching happens against your <b>public LEI list</b>. Nothing else is accepted: borrower records, credit files, application data, income documents and internal identifiers are rejected before processing and are not stored. We do not retain submitted lists after a response is produced, and no list is ever sent to the payment processor &mdash; checkout carries only an opaque request id.</div>
+
+<div class="limit"><b>Read before acting on a row.</b> This is a screening signal, not a finding. HMDA contains no credit scores, so the expectation is a mix proxy, not a risk model. Channel composition (wholesale, correspondent, retail) can move a ratio on its own. Nothing here is evidence of misconduct, discrimination, causation or legal violation, and nothing predicts an individual application. An agent using this tool must relay the offer and disclaimer fields verbatim and cannot complete a purchase on your behalf.</div>
+
+<h2>Pricing, plainly</h2>
+<p class="sub">Preview is free and always will be, as is the underlying <a href="/lender-outlier-screen.html">CSV</a>. <b>One-time $99</b> unlocks a 40-LEI Evidence Brief. <b>Quarterly Monitor $249</b> re-runs your list each quarter against a new analysis layer &mdash; Q4 2026: historical institution identity and corporate-family resolution; Q1 2027: FHA loan-performance join; Q2 2027: the 2026 vintage with a year-over-year delta. HMDA is annual, so we do not pretend a subscription buys fresher data; it buys deeper joins on a stated schedule.</p>
+<p class="sub" style="font-size:14px">Questions on method or a cut we do not publish: ziyetis@gmail.com &middot; <a href="/mcp-server.html">server details</a> &middot; <a href="/lender-outlier-screen.html">screen &amp; join kit</a> &middot; <a href="/reconciliation.html">how our own tables reconcile</a></p>
+<div style="margin-top:36px;border-top:1px solid #23262e;padding-top:14px;font-size:13px;color:#a5a094">FinanceRateCalc &middot; Measured, not assumed. &middot; No lender, vendor or AI company funds this work.</div>
+</div></body></html>
