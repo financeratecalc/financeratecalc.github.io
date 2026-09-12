@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Null Results — things we tested that showed nothing | FinanceRateCalc</title>
+<meta name="description" content="Analyses we ran that produced no publishable signal, and the claims we withdrew after testing them. Published because a research site that only shows its hits is not showing you its method.">
+<link rel="canonical" href="https://financeratecalc.com/null-results.html">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding:36px 18px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:29px;color:#f5f2ea;line-height:1.2;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:19px;color:#f5f2ea;margin:30px 0 8px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B} .mono{font-family:'DM Mono',monospace;font-size:12.5px}
+.card{border:1px solid #23262e;border-radius:12px;padding:16px 18px;background:#0d0f14;margin:14px 0;font-size:15px}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+th,td{border:1px solid #23262e;padding:8px;text-align:left}th{background:#0d0f14;font-family:'DM Mono',monospace;font-size:10.5px;color:#C8A84B}
+.tag{display:inline-block;font-family:'DM Mono',monospace;font-size:10.5px;padding:2px 8px;border-radius:4px;background:rgba(160,160,160,.15);color:#b8b4a9;margin-bottom:8px}</style></head>
+<body><div class="wrap">
+<div class="kicker">FinanceRateCalc &middot; Null results</div>
+<h1>Things we tested that showed nothing</h1>
+<p class="sub">Every research site publishes its findings. This page publishes the other half: analyses we ran that produced no signal, and claims we withdrew after testing them properly. It exists because a method you only see when it works is not a method you can judge.</p>
+
+<h2>1. Does a lender deny more when its volume rises?</h2>
+<div class="tag">TESTED 2026-09-12 &middot; NO DETECTABLE EFFECT</div>
+<p class="sub">A plausible idea: when a lender's pipeline fills up, operational strain shows up as a higher denial rate &mdash; which would make volume a leading indicator of door tightness, and a useful thing for a counterparty desk to watch. We tested it on the 2018&ndash;2025 panel: within each lender, does the annual denial rate move with the log of annual FHA volume?</p>
+<table><tbody>
+<tr><td>Observations (lender-years)</td><td class="mono">77</td></tr>
+<tr><td>Lenders</td><td class="mono">11</td></tr>
+<tr><td>Pooled within-lender correlation</td><td class="mono">r = -0.208</td></tr>
+<tr><td>95% confidence interval</td><td class="mono">[-0.428, 0.036] &mdash; crosses zero</td></tr>
+<tr><td>Permutation test (years shuffled within lender)</td><td class="mono">p = 0.148</td></tr>
+<tr><td>Implied slope</td><td class="mono">-0.26 points per 10% volume increase</td></tr>
+</tbody></table>
+<p class="sub">The interval spans zero and the permutation test does not reject chance. <b>There is no detectable within-lender relationship between volume and denial rate in this panel</b>, in either direction. We are not publishing a capacity indicator, because we do not have one.</p>
+<p class="sub" style="font-size:14px">Per-lender numbers are deliberately not shown. With seven annual observations each, individual correlations of &plusmn;0.5 are indistinguishable from noise, and printing them would invite exactly the misreading we would then have to correct. Data: <a href="/data/capacity-elasticity-2025.json">capacity-elasticity-2025.json</a>.</p>
+
+<h2>2. Is a lender's denial behaviour the same across loan programs?</h2>
+<div class="tag">TESTED 2026-09-06 &middot; NOT IDENTIFIED &middot; CLAIM WITHDRAWN</div>
+<p class="sub">We had published that FHA and conventional denial rates are essentially uncorrelated within the same institution (r = 0.056), and drew the tidy conclusion that &ldquo;lender quality is product-specific&rdquo;. Checking it before putting it in a paper killed it: the sample is six lenders, Pearson 0.054 contradicts Spearman 0.543, the 95% interval runs from &minus;0.79 to +0.83, and deleting one institution moves Pearson to 0.835 &mdash; deleting the outlier <i>creates</i> a relationship rather than weakening one.</p>
+<p class="sub">The correlation claim was withdrawn and logged. What survives is narrower: at least one large institution behaves very differently across products in the same year (FHA 8.9% vs conventional 47.0%, on tens of thousands of decisions each), which is enough to show program-invariance cannot be assumed and not enough to say how common it is. <a href="/corrections.html">Corrections log</a> &middot; <a href="/data/cross-program-sensitivity.json">full leave-one-out table</a>.</p>
+
+<h2>Why this page exists</h2>
+<p class="sub">Two reasons, both practical. First, a null result is information: if you were about to build the same capacity indicator, this page saves you the work, and if you think our test was wrong, everything you need to redo it is linked. Second, it is the only honest way to read our positive findings. The <a href="/door-effect.html">door effect</a> and the <a href="/national-vs-local.html">footprint gap</a> survived the same treatment that killed the two analyses above; that is what makes them worth reading.</p>
+<p class="sub" style="font-size:14px">If an analysis here is later revived by better data or a better design, it will be published as a new result with its own date &mdash; not quietly moved off this page. Related: <a href="/verdict-protocol.html">how we bind ourselves before measuring</a> &middot; <a href="/reconciliation.html">how our own tables reconcile</a>.</p>
+<div style="margin-top:36px;border-top:1px solid #23262e;padding-top:14px;font-size:13px;color:#a5a094">FinanceRateCalc &middot; Measured, not assumed.</div>
+</div></body></html>
