@@ -1,0 +1,127 @@
+name: FDIC crosswalk (depositories only)
+
+# Builds a LEI -> FDIC certificate crosswalk by matching GLEIF legal names against
+# the FDIC BankFind institutions API, then attaches a small set of call-report style
+# fields. Runs on GitHub's infrastructure, which can reach banks.data.fdic.gov.
+#
+# IMPORTANT COVERAGE NOTE, carried into the output file:
+# Most large FHA lenders are independent mortgage banks with no FDIC certificate and
+# no call report. This crosswalk will only ever cover the depository subset — expect
+# roughly a quarter of the screen, not all of it. Rows that do not match are not a
+# failure; they are non-depositories.
+#
+# JOIN TYPE: fuzzy name match, never presented as exact. Every row carries
+# join_type: "fuzzy_name" and a match_confidence, per the published join policy.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 6 2 */3 *'   # quarterly, day 2, 06:30 UTC
+
+permissions:
+  contents: write
+
+jobs:
+  crosswalk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build LEI -> FDIC CERT crosswalk
+        run: |
+          python3 - <<'PY'
+          import json, re, time, urllib.parse, urllib.request, os, difflib
+
+          NAMES  = "data/lei-names.json"
+          SCREEN = "data/lender-outlier-screen-2025.json"
+          OUT    = "data/fdic-crosswalk.json"
+
+          if not os.path.exists(NAMES):
+              raise SystemExit("Run 'Enrich LEI names from GLEIF' first — this job needs legal names.")
+
+          names = json.load(open(NAMES))["names"]
+          screen = {r["lei"]: r for r in json.load(open(SCREEN))["rows"]}
+          print(f"{len(names)} legal names, {len(screen)} screened LEIs")
+
+          def norm(s):
+              s = (s or "").upper()
+              s = re.sub(r"[.,]", " ", s)
+              s = re.sub(r"\b(LLC|L L C|INC|INCORPORATED|CORP|CORPORATION|COMPANY|CO|NA|N A|LP|LTD|THE)\b", " ", s)
+              s = re.sub(r"\s+", " ", s)
+              return s.strip()
+
+          def fdic_search(name):
+              q = urllib.parse.quote(f'NAME:"{name}"')
+              url = ("https://banks.data.fdic.gov/api/institutions"
+                     f"?filters=&search={q}&fields=NAME,CERT,CITY,STALP,ACTIVE,ASSET,OFFDOM"
+                     "&limit=5&format=json")
+              req = urllib.request.Request(url, headers={"User-Agent": "FinanceRateCalc/1.0 (open research)"})
+              with urllib.request.urlopen(req, timeout=40) as r:
+                  return json.load(r).get("data", [])
+
+          out, matched, unmatched = {}, 0, 0
+          for i, (lei, meta) in enumerate(names.items()):
+              legal = meta.get("legal_name", "")
+              if not legal:
+                  continue
+              try:
+                  hits = fdic_search(norm(legal)[:60])
+              except Exception as e:
+                  print(f"{lei}: {e}")
+                  time.sleep(2)
+                  continue
+              best, conf = None, 0.0
+              for h in hits:
+                  d = h.get("data", h)
+                  cand = d.get("NAME", "")
+                  score = difflib.SequenceMatcher(None, norm(legal), norm(cand)).ratio()
+                  if score > conf:
+                      best, conf = d, score
+              if best and conf >= 0.80:
+                  out[lei] = {
+                      "legal_name_gleif": legal,
+                      "fdic_name": best.get("NAME"),
+                      "cert": best.get("CERT"),
+                      "state": best.get("STALP"),
+                      "active": best.get("ACTIVE"),
+                      "total_assets_usd_thousands": best.get("ASSET"),
+                      "join_type": "fuzzy_name",
+                      "match_confidence": round(conf, 3),
+                      "institution_type": "depository"
+                  }
+                  matched += 1
+              else:
+                  unmatched += 1
+              if i % 25 == 0:
+                  print(f"{i}/{len(names)} — matched {matched}, unmatched {unmatched}")
+              time.sleep(0.4)
+
+          json.dump({
+            "generated": time.strftime("%Y-%m-%d"),
+            "source": "FDIC BankFind institutions API (banks.data.fdic.gov) matched to GLEIF legal names",
+            "join_type": "fuzzy_name",
+            "match_threshold": 0.80,
+            "coverage": {
+              "screened_leis": len(screen),
+              "names_available": len(names),
+              "matched_depositories": matched,
+              "unmatched": unmatched,
+              "note": "Unmatched rows are overwhelmingly independent mortgage banks, which have no FDIC certificate. This crosswalk covers the depository subset only and must never be described as covering the screen."
+            },
+            "boundaries": [
+              "Name matching is approximate. Every row carries join_type=fuzzy_name and a match_confidence; rows below 0.80 are dropped rather than guessed.",
+              "A matched certificate identifies a depository institution, not necessarily the entity that filed the HMDA record.",
+              "Nothing in this file is a statement about the financial condition, conduct or compliance of any institution."
+            ],
+            "crosswalk": out
+          }, open(OUT, "w"), indent=1)
+          print(f"wrote {OUT}: {matched} matched, {unmatched} unmatched")
+          PY
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "FinanceRateCalc"
+          git config user.email "ziyetis@gmail.com"
+          git add data/fdic-crosswalk.json || true
+          git diff --staged --quiet && echo "no changes" || \
+            (git commit -m "FDIC: refresh LEI to certificate crosswalk (depositories only, fuzzy name join)" && git push)

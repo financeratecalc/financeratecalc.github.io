@@ -1,0 +1,111 @@
+name: HUD FHA data fetch
+
+# Pulls a HUD FHA dataset (portfolio snapshot or performance/early-delinquency file)
+# into the repo so it can be joined to the denial screen.
+#
+# WHY A URL INPUT: HUD republishes these files at changing paths each period, and we
+# do not want a workflow that quietly fetches the wrong vintage. You paste the exact
+# download URL you want captured; the run records that URL, the file hash and the
+# retrieval date, so the join can always be traced back to a specific published file.
+#
+# WHERE TO FIND THE URL:
+#   HUD FHA Single Family Portfolio Snapshot / Neighborhood Watch public files are
+#   listed under hud.gov's FHA single-family data pages. Open the page, right-click
+#   the .xlsx or .csv link, copy the address, paste it below.
+#
+# WHAT THIS DOES NOT DO: it does not join anything. It only captures the raw file
+# with provenance. The join is a separate, reviewed step — an approximate match to
+# lender identity will be labelled join_type=fuzzy_name, never exact.
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Exact HUD file URL (.xlsx or .csv)'
+        required: true
+      label:
+        description: 'Short label, e.g. portfolio-snapshot-2026q2'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download and record provenance
+        run: |
+          python3 - <<'PY'
+          import os, json, time, hashlib, urllib.request, pathlib
+
+          url   = os.environ["INPUT_URL"].strip()
+          label = os.environ["INPUT_LABEL"].strip().replace("/", "-")
+          ext   = ".xlsx" if url.lower().split("?")[0].endswith(("xlsx", "xls")) else ".csv"
+          dest  = pathlib.Path("_data/hud") / f"{label}{ext}"
+          dest.parent.mkdir(parents=True, exist_ok=True)
+
+          req = urllib.request.Request(url, headers={"User-Agent": "FinanceRateCalc/1.0 (open research; ziyetis@gmail.com)"})
+          with urllib.request.urlopen(req, timeout=180) as r:
+              blob = r.read()
+              ctype = r.headers.get("Content-Type", "")
+          dest.write_bytes(blob)
+
+          sha = hashlib.sha256(blob).hexdigest()
+          man = pathlib.Path("_data/hud/manifest.json")
+          entries = json.load(open(man)) if man.exists() else {"files": []}
+          entries["files"] = [f for f in entries["files"] if f["label"] != label]
+          entries["files"].append({
+              "label": label,
+              "path": str(dest),
+              "source_url": url,
+              "content_type": ctype,
+              "bytes": len(blob),
+              "sha256": sha,
+              "retrieved_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+              "note": "Captured verbatim from HUD. Not yet joined to any FinanceRateCalc table; any future join to lender identity is approximate and will be labelled join_type=fuzzy_name."
+          })
+          entries["generated"] = time.strftime("%Y-%m-%d")
+          json.dump(entries, open(man, "w"), indent=1)
+          print(f"saved {dest} ({len(blob):,} bytes, sha256 {sha[:16]}…)")
+          PY
+        env:
+          INPUT_URL: ${{ inputs.url }}
+          INPUT_LABEL: ${{ inputs.label }}
+
+      - name: Inspect structure (first rows, column names)
+        run: |
+          pip install --quiet openpyxl >/dev/null 2>&1 || true
+          python3 - <<'PY'
+          import json, pathlib
+          man = json.load(open("_data/hud/manifest.json"))
+          f = man["files"][-1]
+          p = pathlib.Path(f["path"])
+          print(f"--- {p.name} ---")
+          if p.suffix in (".xlsx", ".xls"):
+              try:
+                  import openpyxl
+                  wb = openpyxl.load_workbook(p, read_only=True, data_only=True)
+                  for ws in wb.worksheets[:3]:
+                      print(f"sheet: {ws.title}  dims={ws.calculate_dimension()}")
+                      for i, row in enumerate(ws.iter_rows(max_row=4, values_only=True)):
+                          print("   ", [str(c)[:28] if c is not None else "" for c in row[:12]])
+                          if i >= 3: break
+              except Exception as e:
+                  print("xlsx read failed:", e)
+          else:
+              with open(p, encoding="utf-8", errors="ignore") as fh:
+                  for i, line in enumerate(fh):
+                      print("   ", line.rstrip()[:200])
+                      if i >= 4: break
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name  "FinanceRateCalc"
+          git config user.email "ziyetis@gmail.com"
+          git add _data/hud || true
+          git diff --staged --quiet && echo "no changes" || \
+            (git commit -m "HUD: capture ${{ inputs.label }} with source URL and sha256" && git push)
