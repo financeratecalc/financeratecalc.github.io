@@ -1,476 +1,540 @@
 {
  "generated": "2026-09-12",
- "model": "conditional-door-v1.0",
- "source_vintage": "HMDA 2025",
- "method": "Within each published cell (state x loan amount x income x DTI x CLTV), the difference between the cell denial rate and a lender's denial rate inside that cell (lender rows n>=30). Averaged by CLTV band, bands with at least 5 cells. Positive = softer than the cell; negative = stricter. The cell rate includes the lender, which attenuates rather than inflates the difference.",
+ "model": "conditional-door-v1.1",
+ "peer_definition": "Peers are the other lenders inside the same published cell: same state, loan-amount band, income band, DTI band and CLTV band, same program (FHA forward, 2025), same decisioned universe. The cell rate includes the lender itself, which attenuates the difference.",
+ "weighting": "Both reported: cell-equal mean (each cell counts once) and decision-weighted mean (cells weighted by the lender decisions inside them).",
+ "multiple_testing": "All lenders meeting the thresholds are published, not a selected example. CLTV bands are the pre-existing published cell definition, not chosen after seeing results. A within-lender permutation test (1,000 shuffles of a lender own cell differences across its bands) is reported per lender.",
  "boundaries": [
-  "Observed, unadjusted comparison inside published cells; not a model of underwriting.",
-  "Cell composition, channel and product mix differ between lenders and can produce these gaps without any difference in policy.",
-  "Screening signal only: not evidence of misconduct, discrimination or causation, and never a prediction about an individual application.",
-  "CLTV bands follow the published cell definition; above 96.5 includes high-leverage FHA structures."
+  "Observed cell comparison, not underwriting causality.",
+  "Not evidence of discrimination or legal violation.",
+  "Never a prediction about an individual application.",
+  "Cells require 40 decisions; lender rows 30; bands at least 5 cells."
  ],
  "lenders": [
   {
-   "lei": "549300HW662MN1WU8550",
    "name": "United Wholesale Mortgage",
-   "conditional_swing_pp": 50.8,
-   "by_cltv": {
+   "bands": {
     "u80": {
-     "mean_edge_pp": 14.2,
+     "cell_equal_mean_pp": 14.2,
+     "decision_weighted_mean_pp": 13.8,
      "cells": 129,
-     "applications": 7083,
+     "decisions": 7083,
      "ci95": [
       13.1,
       15.2
      ],
-     "all_same_sign": false
+     "share_soft_side": 98
     },
     "80-90": {
-     "mean_edge_pp": -1.3,
+     "cell_equal_mean_pp": -1.3,
+     "decision_weighted_mean_pp": -1.8,
      "cells": 39,
-     "applications": 2257,
+     "decisions": 2257,
      "ci95": [
       -3.4,
       0.8
      ],
-     "all_same_sign": false
+     "share_soft_side": 38
     },
     "90-95": {
-     "mean_edge_pp": -3.5,
+     "cell_equal_mean_pp": -3.5,
+     "decision_weighted_mean_pp": -3.5,
      "cells": 42,
-     "applications": 2591,
+     "decisions": 2591,
      "ci95": [
       -5.2,
       -1.7
      ],
-     "all_same_sign": false
+     "share_soft_side": 19
     },
     "95-96.5": {
-     "mean_edge_pp": 1.7,
+     "cell_equal_mean_pp": 1.7,
+     "decision_weighted_mean_pp": 2.0,
      "cells": 334,
-     "applications": 32960,
+     "decisions": 32960,
      "ci95": [
       1.2,
       2.1
      ],
-     "all_same_sign": false
+     "share_soft_side": 70
     },
     "96.5p": {
-     "mean_edge_pp": -36.6,
+     "cell_equal_mean_pp": -36.6,
+     "decision_weighted_mean_pp": -36.2,
      "cells": 19,
-     "applications": 1058,
+     "decisions": 1058,
      "ci95": [
       -41.8,
       -31.3
      ],
-     "all_same_sign": true
+     "share_soft_side": 0
     }
    },
-   "total_cells": 563
+   "flip": {
+    "flip_threshold": "u80 -> 80-90",
+    "flip_direction": "soft_to_strict",
+    "edge_before_pp": 14.2,
+    "edge_after_pp": -1.3,
+    "supporting_cells": 168,
+    "decision_count": 9340
+   },
+   "swing_pp": 50.8,
+   "permutation_p": 0.0
   },
   {
-   "lei": "549300FGXN1K3HLB1R50",
    "name": "ROCKET MORTGAGE",
-   "conditional_swing_pp": 14.1,
-   "by_cltv": {
+   "bands": {
     "u80": {
-     "mean_edge_pp": 2.0,
+     "cell_equal_mean_pp": 2.0,
+     "decision_weighted_mean_pp": 1.7,
      "cells": 371,
-     "applications": 18058,
+     "decisions": 18058,
      "ci95": [
       1.3,
       2.8
      ],
-     "all_same_sign": false
+     "share_soft_side": 63
     },
     "80-90": {
-     "mean_edge_pp": -12.1,
+     "cell_equal_mean_pp": -12.1,
+     "decision_weighted_mean_pp": -14.5,
      "cells": 5,
-     "applications": 214,
+     "decisions": 214,
      "ci95": [
       -22.2,
       -1.9
      ],
-     "all_same_sign": false
+     "share_soft_side": 40
     },
     "90-95": {
-     "mean_edge_pp": -5.3,
+     "cell_equal_mean_pp": -5.3,
+     "decision_weighted_mean_pp": -5.4,
      "cells": 7,
-     "applications": 319,
+     "decisions": 319,
      "ci95": [
       -9.7,
       -1.0
      ],
-     "all_same_sign": false
+     "share_soft_side": 29
     },
     "95-96.5": {
-     "mean_edge_pp": -4.3,
+     "cell_equal_mean_pp": -4.3,
+     "decision_weighted_mean_pp": -4.0,
      "cells": 129,
-     "applications": 8185,
+     "decisions": 8185,
      "ci95": [
       -5.2,
       -3.5
      ],
-     "all_same_sign": false
+     "share_soft_side": 17
     }
    },
-   "total_cells": 512
+   "flip": {
+    "flip_threshold": "u80 -> 80-90",
+    "flip_direction": "soft_to_strict",
+    "edge_before_pp": 2.0,
+    "edge_after_pp": -12.1,
+    "supporting_cells": 376,
+    "decision_count": 18272
+   },
+   "swing_pp": 14.1,
+   "permutation_p": 0.0
   },
   {
-   "lei": "549300H3IZO24NSOO931",
    "name": "Lennar Mortgage, LLC",
-   "conditional_swing_pp": 10.3,
-   "by_cltv": {
+   "bands": {
     "95-96.5": {
-     "mean_edge_pp": -5.1,
+     "cell_equal_mean_pp": -5.1,
+     "decision_weighted_mean_pp": -5.9,
      "cells": 110,
-     "applications": 15658,
+     "decisions": 15658,
      "ci95": [
       -6.2,
       -4.0
      ],
-     "all_same_sign": false
+     "share_soft_side": 20
     },
     "96.5p": {
-     "mean_edge_pp": -15.4,
+     "cell_equal_mean_pp": -15.4,
+     "decision_weighted_mean_pp": -13.5,
      "cells": 9,
-     "applications": 405,
+     "decisions": 405,
      "ci95": [
       -29.3,
       -1.4
      ],
-     "all_same_sign": false
+     "share_soft_side": 11
     }
    },
-   "total_cells": 119
+   "flip": null,
+   "swing_pp": 10.3,
+   "permutation_p": 0.003
   },
   {
-   "lei": "5493001SXWZ4OFP8Z903",
    "name": "DHI Mortgage Company, LTD.",
-   "conditional_swing_pp": 8.6,
-   "by_cltv": {
+   "bands": {
     "80-90": {
-     "mean_edge_pp": -1.1,
+     "cell_equal_mean_pp": -1.1,
+     "decision_weighted_mean_pp": -1.5,
      "cells": 7,
-     "applications": 299,
+     "decisions": 299,
      "ci95": [
       -4.5,
       2.3
      ],
-     "all_same_sign": false
+     "share_soft_side": 29
     },
     "90-95": {
-     "mean_edge_pp": 2.9,
+     "cell_equal_mean_pp": 2.9,
+     "decision_weighted_mean_pp": 3.1,
      "cells": 8,
-     "applications": 306,
+     "decisions": 306,
      "ci95": [
       0.9,
       4.9
      ],
-     "all_same_sign": false
+     "share_soft_side": 88
     },
     "95-96.5": {
-     "mean_edge_pp": -4.2,
+     "cell_equal_mean_pp": -4.2,
+     "decision_weighted_mean_pp": -2.7,
      "cells": 182,
-     "applications": 23582,
+     "decisions": 23582,
      "ci95": [
       -5.2,
       -3.2
      ],
-     "all_same_sign": false
+     "share_soft_side": 23
     },
     "96.5p": {
-     "mean_edge_pp": -5.7,
+     "cell_equal_mean_pp": -5.7,
+     "decision_weighted_mean_pp": -7.4,
      "cells": 9,
-     "applications": 445,
+     "decisions": 445,
      "ci95": [
       -11.1,
       -0.4
      ],
-     "all_same_sign": false
+     "share_soft_side": 33
     }
    },
-   "total_cells": 206
+   "flip": {
+    "flip_threshold": "80-90 -> 90-95",
+    "flip_direction": "strict_to_soft",
+    "edge_before_pp": -1.1,
+    "edge_after_pp": 2.9,
+    "supporting_cells": 15,
+    "decision_count": 605
+   },
+   "swing_pp": 8.6,
+   "permutation_p": 0.03
   },
   {
-   "lei": "549300GSCUJKJINRJ980",
    "name": "Ruoff Mortgage Company",
-   "conditional_swing_pp": 4.1,
-   "by_cltv": {
+   "bands": {
     "95-96.5": {
-     "mean_edge_pp": 3.2,
+     "cell_equal_mean_pp": 3.2,
+     "decision_weighted_mean_pp": 3.0,
      "cells": 5,
-     "applications": 182,
+     "decisions": 182,
      "ci95": [
       1.0,
       5.4
      ],
-     "all_same_sign": true
+     "share_soft_side": 100
     },
     "96.5p": {
-     "mean_edge_pp": 7.3,
+     "cell_equal_mean_pp": 7.3,
+     "decision_weighted_mean_pp": 7.2,
      "cells": 8,
-     "applications": 329,
+     "decisions": 329,
      "ci95": [
       5.6,
       9.0
      ],
-     "all_same_sign": true
+     "share_soft_side": 100
     }
    },
-   "total_cells": 13
+   "flip": null,
+   "swing_pp": 4.1,
+   "permutation_p": 0.023
   },
   {
-   "lei": "RVDPPPGHCGZ40J4VQ731",
    "name": "PENNYMAC LOAN SERVICES LLC",
-   "conditional_swing_pp": 4.0,
-   "by_cltv": {
+   "bands": {
     "u80": {
-     "mean_edge_pp": 3.3,
+     "cell_equal_mean_pp": 3.3,
+     "decision_weighted_mean_pp": 3.0,
      "cells": 15,
-     "applications": 596,
+     "decisions": 596,
      "ci95": [
       0.7,
       5.8
      ],
-     "all_same_sign": false
+     "share_soft_side": 73
     },
     "95-96.5": {
-     "mean_edge_pp": -0.7,
+     "cell_equal_mean_pp": -0.7,
+     "decision_weighted_mean_pp": -0.4,
      "cells": 8,
-     "applications": 401,
+     "decisions": 401,
      "ci95": [
       -3.8,
       2.4
      ],
-     "all_same_sign": false
+     "share_soft_side": 50
     }
    },
-   "total_cells": 23
+   "flip": {
+    "flip_threshold": "u80 -> 95-96.5",
+    "flip_direction": "soft_to_strict",
+    "edge_before_pp": 3.3,
+    "edge_after_pp": -0.7,
+    "supporting_cells": 23,
+    "decision_count": 997
+   },
+   "swing_pp": 4.0,
+   "permutation_p": 0.083
   },
   {
-   "lei": "549300MZ8VZJOVC63092",
    "name": "Kind Lending, LLC",
-   "conditional_swing_pp": 3.3,
-   "by_cltv": {
+   "bands": {
     "95-96.5": {
-     "mean_edge_pp": -10.4,
+     "cell_equal_mean_pp": -10.4,
+     "decision_weighted_mean_pp": -10.6,
      "cells": 15,
-     "applications": 1027,
+     "decisions": 1027,
      "ci95": [
       -12.6,
       -8.1
      ],
-     "all_same_sign": true
+     "share_soft_side": 0
     },
     "96.5p": {
-     "mean_edge_pp": -7.1,
+     "cell_equal_mean_pp": -7.1,
+     "decision_weighted_mean_pp": -6.6,
      "cells": 5,
-     "applications": 215,
+     "decisions": 215,
      "ci95": [
       -16.7,
       2.6
      ],
-     "all_same_sign": false
+     "share_soft_side": 40
     }
    },
-   "total_cells": 20
+   "flip": null,
+   "swing_pp": 3.3,
+   "permutation_p": 0.347
   },
   {
-   "lei": "549300E2UX99HKDBR481",
    "name": "NEW AMERICAN FUNDING, LLC.",
-   "conditional_swing_pp": 1.8,
-   "by_cltv": {
+   "bands": {
     "95-96.5": {
-     "mean_edge_pp": 4.1,
+     "cell_equal_mean_pp": 4.1,
+     "decision_weighted_mean_pp": 4.1,
      "cells": 6,
-     "applications": 260,
+     "decisions": 260,
      "ci95": [
       3.2,
       4.9
      ],
-     "all_same_sign": true
+     "share_soft_side": 100
     },
     "96.5p": {
-     "mean_edge_pp": 5.9,
+     "cell_equal_mean_pp": 5.9,
+     "decision_weighted_mean_pp": 6.2,
      "cells": 12,
-     "applications": 543,
+     "decisions": 543,
      "ci95": [
       3.9,
       7.8
      ],
-     "all_same_sign": true
+     "share_soft_side": 100
     }
    },
-   "total_cells": 18
+   "flip": null,
+   "swing_pp": 1.8,
+   "permutation_p": 0.685
   },
   {
-   "lei": "549300VZVN841I2ILS84",
    "name": "CROSSCOUNTRY MORTGAGE, LLC",
-   "conditional_swing_pp": 1.5,
-   "by_cltv": {
+   "bands": {
     "95-96.5": {
-     "mean_edge_pp": 6.3,
+     "cell_equal_mean_pp": 6.3,
+     "decision_weighted_mean_pp": 6.6,
      "cells": 67,
-     "applications": 3226,
+     "decisions": 3226,
      "ci95": [
       5.3,
       7.2
      ],
-     "all_same_sign": false
+     "share_soft_side": 97
     },
     "96.5p": {
-     "mean_edge_pp": 7.8,
+     "cell_equal_mean_pp": 7.8,
+     "decision_weighted_mean_pp": 8.2,
      "cells": 19,
-     "applications": 778,
+     "decisions": 778,
      "ci95": [
       5.8,
       9.7
      ],
-     "all_same_sign": true
+     "share_soft_side": 100
     }
    },
-   "total_cells": 86
+   "flip": null,
+   "swing_pp": 1.5,
+   "permutation_p": 0.161
   },
   {
-   "lei": "549300DD4R4SYK5RAQ92",
    "name": "MOVEMENT MORTGAGE, LLC",
-   "conditional_swing_pp": 1.4,
-   "by_cltv": {
+   "bands": {
     "95-96.5": {
-     "mean_edge_pp": 5.7,
+     "cell_equal_mean_pp": 5.7,
+     "decision_weighted_mean_pp": 5.8,
      "cells": 10,
-     "applications": 402,
+     "decisions": 402,
      "ci95": [
       4.0,
       7.4
      ],
-     "all_same_sign": true
+     "share_soft_side": 100
     },
     "96.5p": {
-     "mean_edge_pp": 7.1,
+     "cell_equal_mean_pp": 7.1,
+     "decision_weighted_mean_pp": 6.7,
      "cells": 10,
-     "applications": 434,
+     "decisions": 434,
      "ci95": [
       5.0,
       9.2
      ],
-     "all_same_sign": true
+     "share_soft_side": 100
     }
    },
-   "total_cells": 20
+   "flip": null,
+   "swing_pp": 1.4,
+   "permutation_p": 0.335
   },
   {
-   "lei": "549300GKFNPRWNS0GF29",
    "name": "CMG MORTGAGE INC",
-   "conditional_swing_pp": 1.3,
-   "by_cltv": {
+   "bands": {
     "95-96.5": {
-     "mean_edge_pp": 5.6,
+     "cell_equal_mean_pp": 5.6,
+     "decision_weighted_mean_pp": 6.2,
      "cells": 29,
-     "applications": 1622,
+     "decisions": 1622,
      "ci95": [
       3.5,
       7.8
      ],
-     "all_same_sign": false
+     "share_soft_side": 86
     },
     "96.5p": {
-     "mean_edge_pp": 6.9,
+     "cell_equal_mean_pp": 6.9,
+     "decision_weighted_mean_pp": 7.2,
      "cells": 17,
-     "applications": 842,
+     "decisions": 842,
      "ci95": [
       5.1,
       8.8
      ],
-     "all_same_sign": false
+     "share_soft_side": 94
     }
    },
-   "total_cells": 46
+   "flip": null,
+   "swing_pp": 1.3,
+   "permutation_p": 0.421
   },
   {
-   "lei": "549300AG64NHILB7ZP05",
    "name": "loanDepot.com LLC",
-   "conditional_swing_pp": 1.3,
-   "by_cltv": {
+   "bands": {
     "u80": {
-     "mean_edge_pp": -7.7,
+     "cell_equal_mean_pp": -7.7,
+     "decision_weighted_mean_pp": -7.9,
      "cells": 39,
-     "applications": 1478,
+     "decisions": 1478,
      "ci95": [
       -10.5,
       -4.8
      ],
-     "all_same_sign": false
+     "share_soft_side": 23
     },
     "95-96.5": {
-     "mean_edge_pp": -9.0,
+     "cell_equal_mean_pp": -9.0,
+     "decision_weighted_mean_pp": -10.2,
      "cells": 89,
-     "applications": 6562,
+     "decisions": 6562,
      "ci95": [
       -10.9,
       -7.1
      ],
-     "all_same_sign": false
+     "share_soft_side": 18
     }
    },
-   "total_cells": 128
+   "flip": null,
+   "swing_pp": 1.3,
+   "permutation_p": 0.48
   },
   {
-   "lei": "549300AQ3T62GXDU7D76",
    "name": "GUILD MORTGAGE COMPANY",
-   "conditional_swing_pp": 0.7,
-   "by_cltv": {
+   "bands": {
     "95-96.5": {
-     "mean_edge_pp": 6.0,
+     "cell_equal_mean_pp": 6.0,
+     "decision_weighted_mean_pp": 6.0,
      "cells": 30,
-     "applications": 1363,
+     "decisions": 1363,
      "ci95": [
       4.6,
       7.5
      ],
-     "all_same_sign": true
+     "share_soft_side": 100
     },
     "96.5p": {
-     "mean_edge_pp": 6.7,
+     "cell_equal_mean_pp": 6.7,
+     "decision_weighted_mean_pp": 6.7,
      "cells": 35,
-     "applications": 1427,
+     "decisions": 1427,
      "ci95": [
       5.0,
       8.5
      ],
-     "all_same_sign": false
+     "share_soft_side": 91
     }
    },
-   "total_cells": 65
+   "flip": null,
+   "swing_pp": 0.7,
+   "permutation_p": 0.538
   },
   {
-   "lei": "549300MGPZBLQDIL7538",
    "name": "FAIRWAY INDEPENDENT MORT CORP",
-   "conditional_swing_pp": 0.5,
-   "by_cltv": {
+   "bands": {
     "95-96.5": {
-     "mean_edge_pp": 4.9,
+     "cell_equal_mean_pp": 4.9,
+     "decision_weighted_mean_pp": 4.8,
      "cells": 5,
-     "applications": 182,
+     "decisions": 182,
      "ci95": [
       2.0,
       7.8
      ],
-     "all_same_sign": true
+     "share_soft_side": 100
     },
     "96.5p": {
-     "mean_edge_pp": 5.4,
+     "cell_equal_mean_pp": 5.4,
+     "decision_weighted_mean_pp": 6.2,
      "cells": 15,
-     "applications": 606,
+     "decisions": 606,
      "ci95": [
       2.4,
       8.4
      ],
-     "all_same_sign": false
+     "share_soft_side": 87
     }
    },
-   "total_cells": 20
+   "flip": null,
+   "swing_pp": 0.5,
+   "permutation_p": 0.867
   }
  ]
 }
