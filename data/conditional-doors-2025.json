@@ -617,5 +617,25 @@
    "a lender denies applications above X% leverage"
   ],
   "required_label": "band-level observational pattern"
+ },
+ "temporal_boundary": {
+  "status": "not_identified",
+  "hypothesis": "The same lender, in the same observable loan conditions, could show a different peer-adjusted gap in different periods \u2014 a lender x condition x period interaction, not a claim that lenders lend more at month end.",
+  "why_untestable_here": "The public HMDA record carries activity_year only. Application date and action-taken date are withheld from the public file for privacy reasons, so no month, quarter or decision date exists to interact with. Nothing in our published cells has a finer time resolution than the year.",
+  "what_would_be_needed": [
+   "lender LEI",
+   "application or decision date, or at least month/quarter",
+   "state or metro",
+   "loan amount band",
+   "income band",
+   "DTI band",
+   "CLTV band",
+   "action taken",
+   "loan type",
+   "decision count per cell-period"
+  ],
+  "design_if_data_arrives": "Start with one lender, two CLTV bands and four pre-specified periods rather than sweeping all 1,086 cells. Test the lender x condition x period term. Required robustness: cell-equal and decision-weighted results, minimum period-cell support, period permutation, leave-one-period-out, leave-one-state-out, multiple-testing correction, lender mix standardisation, and a negative control.",
+  "publication_rule": "No calendar claim is published from year-level data. If a dated source becomes available, the finding would be phrased as an observational temporal interaction and would not identify a calendar policy, a causal mechanism or any individual outcome.",
+  "related": "This is the same class of limit described in SSRN 7423798: the record cannot answer a question its fields do not contain."
  }
 }
