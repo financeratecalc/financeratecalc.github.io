@@ -1,0 +1,81 @@
+{
+ "schema_version": "frc-usage-terms-v1.0",
+ "generated": "2026-09-14",
+ "purpose": "A machine-readable statement of what a paid FinanceRateCalc run covers, what it costs, what we keep, and what a client is authorising. Published in the shape of an agent payment mandate so that it can be read by a procurement team, a risk committee, or an agent framework \u2014 without requiring any of them.",
+ "products": {
+  "conditional_entity_screen": {
+   "description": "Full peer-adjusted screen of a submitted public LEI list, returned as a hash-linked Evidence Brief.",
+   "max_lei_per_run": 40,
+   "hard_cap_per_call": 100,
+   "price_usd": 99,
+   "billing": "one-time, per licence",
+   "period_cap_usd": 99,
+   "human_approval_required": true,
+   "payment_by_agent_allowed": false,
+   "output": "evidence_receipt"
+  },
+  "quarterly_monitor": {
+   "description": "The same LEI list re-run each quarter against a new analysis layer.",
+   "max_lei_per_run": 40,
+   "price_usd": 249,
+   "billing": "every 3 months",
+   "period_cap_usd": 249,
+   "human_approval_required": true,
+   "payment_by_agent_allowed": false,
+   "output": "evidence_receipt",
+   "quarterly_layers": {
+    "2026Q4": "corporate-family and historical institution identity",
+    "2027Q1": "institution-history layer",
+    "2027Q2": "2026 HMDA vintage with a year-over-year delta"
+   }
+  }
+ },
+ "data_handling": {
+  "accepted_input": "Public Legal Entity Identifiers only.",
+  "rejected_input": [
+   "borrower records",
+   "credit files",
+   "application data",
+   "income documents",
+   "internal identifiers",
+   "any personal data"
+  ],
+  "rejected_input_handling": "Rejected before processing and not stored.",
+  "data_retention": "none \u2014 submitted lists are not retained after a response is produced",
+  "sent_to_payment_processor": "an opaque request id only; never the LEI list"
+ },
+ "receipt": {
+  "fields": [
+   "model_version",
+   "source_vintage",
+   "run_timestamp",
+   "method_url",
+   "evidence_manifest_sha256",
+   "result_commitment",
+   "join_type",
+   "suppression_policy"
+  ],
+  "result_commitment": "A hash of the full result is returned with the free preview, so a client can verify after purchase that the paid result was not altered."
+ },
+ "billing_integrity": {
+  "idempotency": "Identical job (same licence, same LEI set, same model version) returns the prior result and is not charged again.",
+  "quota_exceeded": "Requests above the per-run cap are refused before any charge.",
+  "delivery_failure": "If a payment succeeds and a receipt cannot be produced, the run is refunded in full on request; report it to ziyetis@gmail.com with the request id.",
+  "refund": "30 days, no explanation required."
+ },
+ "what_is_never_sold": [
+  "individual approval or denial predictions",
+  "lender recommendations or rankings for a borrower",
+  "leads",
+  "advertising or affiliate placement",
+  "any figure to a lender covered in the screen"
+ ],
+ "independence": "No lender, vendor or AI company funds this work. We accept no payment from any institution appearing in the screen, and every paying client is disclosed in a public register. Published figures are corrected only through the public corrections log; they cannot be bought, moved or removed.",
+ "boundaries": [
+  "Screening signal only.",
+  "Not evidence of misconduct, discrimination, causation or legal violation.",
+  "Never a prediction about an individual application.",
+  "HMDA contains no credit scores; the expectation is a mix proxy, not a risk model."
+ ],
+ "future_payment_rails": "If per-call agent payment is added (x402 or an equivalent), these same caps, retention rules and human-approval requirements apply unchanged. An agent may relay an offer; it may not authorise a purchase."
+}
