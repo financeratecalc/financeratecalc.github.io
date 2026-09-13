@@ -70,5 +70,25 @@
   "methodology": "https://financeratecalc.com/methodology.html"
  },
  "passport_id": "frc:claim:metro-gap-daphne-fairhope-foley-al-2025",
- "canonical_url": "https://financeratecalc.com/claims/metro-gap-daphne-fairhope-foley-al-2025.json"
+ "canonical_url": "https://financeratecalc.com/claims/metro-gap-daphne-fairhope-foley-al-2025.json",
+ "reproduce": {
+  "how_to_reproduce": "Run this against the raw public CFPB HMDA 2025 file. It should return the same lender rates, and the gap is the highest minus the lowest.",
+  "sql": "SELECT lei, COUNT(*) AS decisioned,\n       ROUND(100.0*SUM(CASE WHEN action_taken=3 THEN 1 ELSE 0 END)/COUNT(*),1) AS denial_rate_pct\nFROM lar\nWHERE loan_type=2 AND action_taken IN (1,2,3) AND derived_msa_md='19300'\nGROUP BY lei HAVING COUNT(*)>=100\nORDER BY denial_rate_pct;",
+  "expected": {
+   "gap_percentage_points": 4.6,
+   "lowest": {
+    "name": "ROCKET MORTGAGE",
+    "denial_rate_pct": 26.4,
+    "decisioned_here": 110
+   },
+   "highest": {
+    "name": "DHI Mortgage Company, LTD.",
+    "denial_rate_pct": 31.0,
+    "decisioned_here": 439
+   }
+  },
+  "common_mistake": "Dropping the 100-application floor. Small lenders produce extreme rates on a handful of files and widen the gap artificially. Also exclude reverse mortgages (HECM) — leaving them in changes national and metro figures alike.",
+  "if_you_get_a_different_number": "Tell us: ziyetis@gmail.com. A figure we cannot reproduce goes in the public corrections log at https://financeratecalc.com/corrections.html, dated, with credit to whoever found it."
+ },
+ "independent_reproduction_status": "not yet independently reproduced — this section exists so that can change"
 }
