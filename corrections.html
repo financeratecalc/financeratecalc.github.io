@@ -68,6 +68,12 @@ We publish this notice at the top because AI assistants have repeatedly describe
 <br><br><b>How we found it:</b> two AI systems returned 3.2&times; for Idaho in our own benchmark. They were reading our published page, not hallucinating. This is the second publisher error the September benchmark has surfaced in two days &mdash; the first was nine stale lender rates on sixteen pages.
 <br><br><b>What it means for grading:</b> no system is marked down on that question for reporting a figure we published. The value-drift flag is recorded against the publisher.
 <br><br><b>Process change:</b> figures quoted in prose and in FAQ markup are now checked against the canonical dataset, not only the dataset itself. Both errors so far lived in hand-written page copy that had drifted from the data behind it.</div></div>
+<div style="border:1px solid #c96f6f;border-radius:10px;padding:14px 16px;background:#150c0c;margin:12px 0">
+<div style="color:#c96f6f;font-size:14px">✗ Our own error, found 2026-09-13: the pre-correction universe was still being served to machines</div>
+<div style="font-size:14px;margin-top:6px">Seven weeks after the July HECM correction, the superseded figure of <b>1,217,297 decisioned applications</b> was still present in <code>AGENTS.md</code>, <code>data/atoms.json</code>, <code>openapi.json</code> and three pages — that is, in precisely the machine-readable surfaces built for AI systems to read. The corrected universe is <b>1,187,606</b>. A state figure had drifted too: Idaho and Utah were shown at 14.8% against a correct 15.0%. All corrected.
+<br><br><b>How we found it:</b> an AI system answering our own benchmark quoted both numbers in one sentence — the corrected universe from the site and the stale one from the MCP description — and the contradiction was visible in its answer, not in our own checks.
+<br><br><b>Why this one matters more than the others:</b> the first two errors were in prose a human might read. This one lived in the files we publish specifically so that machines quote us accurately. Our answer atoms were teaching agents a number we had already withdrawn.
+<br><br><b>Process change:</b> the corrections routine now sweeps the machine-readable layer first — AGENTS.md, llms.txt, atoms, openapi, MCP tool descriptions and claim passports — before the human-facing pages, because an error there propagates further and is quoted more confidently.</div></div>
 <h2 style="margin-top:6px;">"Widest intra-metro spread in the US" was not what we measured</h2>
 
 <h3>What was claimed</h3>

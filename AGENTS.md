@@ -3,7 +3,7 @@
 Machine-readable guidance for AI agents using this site.
 
 ## What this site is
-Independent analysis of the complete public CFPB HMDA 2025 record: 1,217,297 FHA
+Independent analysis of the complete public CFPB HMDA 2025 record: 1,187,606 FHA
 credit decisions computed into lender-, state-, and metro-level denial statistics.
 National FHA denial rate 2025: 22.1% of decisioned applications
 (denominator: action_taken 1,2,3; loan_type 2). Lender span: 1.8%–78.7%.
