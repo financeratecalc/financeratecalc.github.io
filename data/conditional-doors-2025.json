@@ -536,5 +536,63 @@
    "swing_pp": 0.5,
    "permutation_p": 0.867
   }
- ]
+ ],
+ "robustness": {
+  "bootstrap_flip_location": {
+   "method": "2,000 bootstrap resamples of a lender own cell differences within each band; we record where the sign change lands.",
+   "UWM": {
+    "u80_to_80_90": 0.88,
+    "80_90_to_90_95": 0.12
+   },
+   "Rocket": {
+    "u80_to_80_90": 0.99,
+    "80_90_to_90_95": 0.01
+   },
+   "reading": "The flip location is stable, but it is an estimated transition between published bands, not an observed policy threshold. We do not claim 80% is anyone policy line."
+  },
+  "negative_control": {
+   "method": "The same peer-adjusted comparison computed across income bands, where no leverage-driven flip should appear.",
+   "UWM": {
+    "income_swing_pp": 4.6,
+    "cltv_swing_pp": 50.7
+   },
+   "Rocket": {
+    "income_swing_pp": 8.9,
+    "cltv_swing_pp": 14.1
+   },
+   "reading": "If the leverage pattern were an artefact of cell selection, a comparable swing should appear on income. For the largest case it is eleven times smaller."
+  },
+  "shrinkage": {
+   "method": "Empirical-Bayes shrinkage of each band mean toward the lender overall mean, weighted by cell count.",
+   "UWM_96_5p": {
+    "raw_pp": -36.6,
+    "shrunk_pp": -34.0,
+    "cells": 19
+   },
+   "UWM_u80": {
+    "raw_pp": 14.2,
+    "shrunk_pp": 14.2,
+    "cells": 129
+   },
+   "Rocket_80_90": {
+    "raw_pp": -12.1,
+    "shrunk_pp": -8.0,
+    "cells": 5,
+    "note": "Thin band; the shrunk value is the one to read."
+   }
+  },
+  "leave_one_state_out": {
+   "method": "Drop each state in turn and recompute the widest band gap.",
+   "UWM_gap_range_pp": [
+    48.0,
+    58.9
+   ],
+   "full_sample_pp": 50.8,
+   "states_tested": 29,
+   "reading": "No single state carries the result; removing the largest state leaves it at 48 points."
+  },
+  "not_possible": {
+   "continuous_cltv_curve": "The published cells band CLTV, so a continuous gap curve cannot be estimated from this file. It would require loan-level data, which is not what we publish."
+  }
+ }
 }
