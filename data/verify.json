@@ -1,0 +1,80 @@
+{
+ "schema_version": "frc-verify-v1.0",
+ "generated": "2026-09-14",
+ "purpose": "Every figure we publish, with a short recipe an agent or analyst can run to reproduce it from the raw federal file. We say on every page that none of our numbers has been independently reproduced. This file exists so that stops being true. If a recipe does not reproduce our number, that is a finding and we want it: ziyetis@gmail.com.",
+ "source": {
+  "dataset": "CFPB HMDA 2025 public loan/application register (Modified LAR or Snapshot National)",
+  "url": "https://ffiec.cfpb.gov/data-publication/",
+  "note": "We do not host the raw file; it is public and large. Recipes assume you have loaded it into pandas, DuckDB or SQL."
+ },
+ "universe_filter": {
+  "loan_type": "2 (FHA)",
+  "exclude": "reverse mortgages (HECM), 29,691 records removed 2026-07-26",
+  "decisioned": "action_taken in (1,2,3)",
+  "denial": "action_taken = 3"
+ },
+ "checks": [
+  {
+   "id": "national-denial-rate",
+   "claim": "National FHA denial rate 22.08% on 1,187,606 decisioned applications",
+   "sql": "SELECT ROUND(100.0*SUM(action_taken=3)/COUNT(*),2) AS denial_rate, COUNT(*) AS decisioned\nFROM lar WHERE loan_type=2 AND action_taken IN (1,2,3) AND derived_dwelling_category NOT LIKE '%Reverse%';",
+   "expected": {
+    "denial_rate_pct": 22.08,
+    "decisioned": 1187606,
+    "denials": 262250
+   },
+   "tolerance": "\u00b10.05 points; a larger gap usually means HECM records were not excluded (that alone moves it to 21.7%)."
+  },
+  {
+   "id": "state-small-loan-penalty",
+   "claim": "Idaho small-loan penalty 4.45x (53.4% vs 12.0%)",
+   "sql": "SELECT state_code,\n  ROUND(100.0*SUM(CASE WHEN loan_amount<150000 AND action_taken=3 THEN 1 END)/NULLIF(SUM(CASE WHEN loan_amount<150000 THEN 1 END),0),1) AS small,\n  ROUND(100.0*SUM(CASE WHEN loan_amount>=250000 AND action_taken=3 THEN 1 END)/NULLIF(SUM(CASE WHEN loan_amount>=250000 THEN 1 END),0),1) AS large\nFROM lar WHERE loan_type=2 AND action_taken IN (1,2,3) GROUP BY state_code HAVING small IS NOT NULL;",
+   "expected": {
+    "ID": {
+     "small_pct": 53.4,
+     "large_pct": 12.0,
+     "ratio": 4.45
+    }
+   },
+   "tolerance": "Bands are the published HMDA midpoints; using exact amounts will shift this slightly."
+  },
+  {
+   "id": "metro-lender-gap",
+   "claim": "Cleveland intra-metro lender gap 73.7 points (6.4% vs 80.1%)",
+   "sql": "SELECT lei, COUNT(*) n, ROUND(100.0*SUM(action_taken=3)/COUNT(*),1) rate\nFROM lar WHERE loan_type=2 AND action_taken IN (1,2,3) AND derived_msa_md='17460'\nGROUP BY lei HAVING n>=100 ORDER BY rate;",
+   "expected": {
+    "msa": "17460",
+    "floor": "100 decisioned applications in the metro",
+    "lowest_pct": 6.4,
+    "highest_pct": 80.1,
+    "gap_points": 73.7
+   },
+   "tolerance": "The floor matters: dropping it below 100 admits tiny lenders and widens the gap artificially."
+  },
+  {
+   "id": "top100-range",
+   "claim": "Denial rates among the 100 largest FHA lenders range 1.8% to 78.7%",
+   "sql": "SELECT lei, COUNT(*) n, ROUND(100.0*SUM(action_taken=3)/COUNT(*),1) rate\nFROM lar WHERE loan_type=2 AND action_taken IN (1,2,3)\nGROUP BY lei ORDER BY n DESC LIMIT 100;",
+   "expected": {
+    "min_pct": 1.8,
+    "max_pct": 78.7,
+    "ranked_by": "application volume, not rate"
+   },
+   "tolerance": "Rank by volume first, then read the range; ranking by rate changes which 100 you get."
+  },
+  {
+   "id": "builder-affiliated",
+   "claim": "Builder-owned lenders price 1.33 points below peers and deny at 1.26x their own mix expectation",
+   "method": "Classify by GLEIF legal name (list published at /data/builder-affiliated-2025.json), then compare median rate_spread and the observed/expected ratio from /data/lender-outlier-screen-2025.json. Permutation test with 20,000 shuffles of the group labels.",
+   "expected": {
+    "spread_difference_pp": -1.33,
+    "oe_builder": 1.26,
+    "oe_other": 0.74,
+    "permutation_p_spread": 0.0001
+   },
+   "tolerance": "Six lenders; the classification is hand-coded and open to dispute."
+  }
+ ],
+ "what_we_want_back": "A number that differs from ours, with the query that produced it. We will check it, and if you are right it goes in the corrections log with your name on it.",
+ "not_a_payment_scheme": "This is not a challenge, a proof-of-work or a gate. Nothing here is required to read our data, and no result you compute is collected by us. It is a reproduction aid, nothing else."
+}

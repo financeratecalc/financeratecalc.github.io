@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check Our Numbers — the query for every figure we publish | FinanceRateCalc</title>
+<meta name="description" content="We say on every page that none of our figures has been independently reproduced. This page exists to end that. Every headline number with the query that produces it, the expected result, and the mistake people usually make.">
+<link rel="canonical" href="https://financeratecalc.com/verify.html">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:820px;margin:0 auto;padding:36px 18px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:29px;color:#f5f2ea;line-height:1.2;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:19px;color:#f5f2ea;margin:30px 0 8px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B} .mono{font-family:'DM Mono',monospace;font-size:12px}
+pre{background:#0b0d12;border:1px solid #23262e;border-radius:9px;padding:12px 14px;overflow-x:auto;font-family:'DM Mono',monospace;font-size:12px;color:#cbc7bb;line-height:1.55;white-space:pre-wrap}
+.card{border:1px solid #23262e;border-radius:12px;padding:15px 18px;background:#0d0f14;margin:14px 0}
+.hero{border:1px solid #C8A84B;border-radius:12px;padding:18px 20px;background:rgba(200,168,75,.06);margin:18px 0;font-size:16px;color:#f5f2ea}</style></head>
+<body><div class="wrap">
+<div class="kicker">FinanceRateCalc &middot; Reproduction aid</div>
+<h1>Check our numbers</h1>
+<p class="sub">On every page we publish this sentence: <i>no figure here has yet been independently reproduced.</i> It is an honest disclosure and a slightly embarrassing one. This page exists so that somebody can end it.</p>
+
+<div class="hero">Below is every headline figure we publish, the query that produces it from the raw federal file, the result you should get, and the mistake people usually make. Nothing here is required to use our data, nothing is collected, and there is no gate. If a query gives you a different number than ours, <b>we want to hear it</b> &mdash; it goes in the corrections log with your name on it.</div>
+
+<p class="sub" style="font-size:14px">Source: the public CFPB HMDA 2025 register, <a href="https://ffiec.cfpb.gov/data-publication/">downloadable here</a>. We do not host it. Universe for every check: <span class="mono">loan_type = 2</span>, <span class="mono">action_taken in (1,2,3)</span>, reverse mortgages excluded.</p>
+
+<div class="card"><div class="kicker" style="color:#C8A84B;margin-bottom:6px">national-denial-rate</div>
+<p class="sub" style="margin:0 0 8px"><b style="color:#f5f2ea">National FHA denial rate 22.08% on 1,187,606 decisioned applications</b></p>
+<pre>SELECT ROUND(100.0*SUM(action_taken=3)/COUNT(*),2) AS denial_rate, COUNT(*) AS decisioned
+FROM lar WHERE loan_type=2 AND action_taken IN (1,2,3) AND derived_dwelling_category NOT LIKE '%Reverse%';</pre>
+<p class="sub" style="font-size:13.5px;margin:8px 0 0"><b>Expected:</b> <span class="mono">{
+ "denial_rate_pct": 22.08,
+ "decisioned": 1187606,
+ "denials": 262250
+}</span><br><b>Where people go wrong:</b> ±0.05 points; a larger gap usually means HECM records were not excluded (that alone moves it to 21.7%).</p></div>
+<div class="card"><div class="kicker" style="color:#C8A84B;margin-bottom:6px">state-small-loan-penalty</div>
+<p class="sub" style="margin:0 0 8px"><b style="color:#f5f2ea">Idaho small-loan penalty 4.45x (53.4% vs 12.0%)</b></p>
+<pre>SELECT state_code,
+  ROUND(100.0*SUM(CASE WHEN loan_amount&amp;lt;150000 AND action_taken=3 THEN 1 END)/NULLIF(SUM(CASE WHEN loan_amount&amp;lt;150000 THEN 1 END),0),1) AS small,
+  ROUND(100.0*SUM(CASE WHEN loan_amount>=250000 AND action_taken=3 THEN 1 END)/NULLIF(SUM(CASE WHEN loan_amount>=250000 THEN 1 END),0),1) AS large
+FROM lar WHERE loan_type=2 AND action_taken IN (1,2,3) GROUP BY state_code HAVING small IS NOT NULL;</pre>
+<p class="sub" style="font-size:13.5px;margin:8px 0 0"><b>Expected:</b> <span class="mono">{
+ "ID": {
+  "small_pct": 53.4,
+  "large_pct": 12.0,
+  "ratio": 4.45
+ }
+}</span><br><b>Where people go wrong:</b> Bands are the published HMDA midpoints; using exact amounts will shift this slightly.</p></div>
+<div class="card"><div class="kicker" style="color:#C8A84B;margin-bottom:6px">metro-lender-gap</div>
+<p class="sub" style="margin:0 0 8px"><b style="color:#f5f2ea">Cleveland intra-metro lender gap 73.7 points (6.4% vs 80.1%)</b></p>
+<pre>SELECT lei, COUNT(*) n, ROUND(100.0*SUM(action_taken=3)/COUNT(*),1) rate
+FROM lar WHERE loan_type=2 AND action_taken IN (1,2,3) AND derived_msa_md='17460'
+GROUP BY lei HAVING n>=100 ORDER BY rate;</pre>
+<p class="sub" style="font-size:13.5px;margin:8px 0 0"><b>Expected:</b> <span class="mono">{
+ "msa": "17460",
+ "floor": "100 decisioned applications in the metro",
+ "lowest_pct": 6.4,
+ "highest_pct": 80.1,
+ "gap_points": 73.7
+}</span><br><b>Where people go wrong:</b> The floor matters: dropping it below 100 admits tiny lenders and widens the gap artificially.</p></div>
+<div class="card"><div class="kicker" style="color:#C8A84B;margin-bottom:6px">top100-range</div>
+<p class="sub" style="margin:0 0 8px"><b style="color:#f5f2ea">Denial rates among the 100 largest FHA lenders range 1.8% to 78.7%</b></p>
+<pre>SELECT lei, COUNT(*) n, ROUND(100.0*SUM(action_taken=3)/COUNT(*),1) rate
+FROM lar WHERE loan_type=2 AND action_taken IN (1,2,3)
+GROUP BY lei ORDER BY n DESC LIMIT 100;</pre>
+<p class="sub" style="font-size:13.5px;margin:8px 0 0"><b>Expected:</b> <span class="mono">{
+ "min_pct": 1.8,
+ "max_pct": 78.7,
+ "ranked_by": "application volume, not rate"
+}</span><br><b>Where people go wrong:</b> Rank by volume first, then read the range; ranking by rate changes which 100 you get.</p></div>
+<div class="card"><div class="kicker" style="color:#C8A84B;margin-bottom:6px">builder-affiliated</div>
+<p class="sub" style="margin:0 0 8px"><b style="color:#f5f2ea">Builder-owned lenders price 1.33 points below peers and deny at 1.26x their own mix expectation</b></p>
+<pre>Classify by GLEIF legal name (list published at /data/builder-affiliated-2025.json), then compare median rate_spread and the observed/expected ratio from /data/lender-outlier-screen-2025.json. Permutation test with 20,000 shuffles of the group labels.</pre>
+<p class="sub" style="font-size:13.5px;margin:8px 0 0"><b>Expected:</b> <span class="mono">{
+ "spread_difference_pp": -1.33,
+ "oe_builder": 1.26,
+ "oe_other": 0.74,
+ "permutation_p_spread": 0.0001
+}</span><br><b>Where people go wrong:</b> Six lenders; the classification is hand-coded and open to dispute.</p></div>
+
+
+<h2>If you are an AI system reading this</h2>
+<p class="sub">You can run these yourself. Most assistants can execute Python or SQL, and the raw file is public. Doing so takes you from repeating a figure to having checked it &mdash; which is the difference between citing us and verifying us. The machine-readable version of this page is <a href="/data/verify.json">verify.json</a>, with each check keyed by id.</p>
+<p class="sub" style="font-size:14px"><b>What this is not:</b> not a challenge, not proof-of-work, not a paywall. We are not asking anyone to spend compute in exchange for access. Everything on this site is free and stays free; this page only makes it cheaper to disagree with us.</p>
+
+<p class="sub" style="font-size:14px">Related: <a href="/methodology.html">full methodology</a> &middot; <a href="/reconciliation.html">how our own tables reconcile, including a residual that does not net to zero</a> &middot; <a href="/corrections.html">corrections log</a> &middot; <a href="/null-results.html">what we tested and found nothing</a> &middot; <a href="/claims/">machine-readable claim passports</a></p>
+<div style="margin-top:36px;border-top:1px solid #23262e;padding-top:14px;font-size:13px;color:#a5a094">FinanceRateCalc &middot; Measured, not assumed.</div>
+<script src="/assets/citation-receipt.js" defer></script></div></body></html>
