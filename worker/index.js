@@ -176,10 +176,21 @@ async function validateLicense(key) {
 // no user identifier, nothing that could identify a person or a firm's book.
 // Its single purpose: tell us whether anyone outside this project is calling
 // the server, because we cannot answer "did demand appear" from memory.
-const OURS = /^(frc-selftest|curl|node|python|postman|insomnia)/i;
+const OURS = /^frc-selftest/i;   // only our own probe; generic names (python, node, curl) stay UNATTRIBUTED, never assumed ours
 function clientLabel(info) {
   const n = String(info?.name || "unknown").trim().toLowerCase().replace(/[^a-z0-9._-]/g, "-").slice(0, 40);
   return n || "unknown";
+}
+// Session label: stateless transport, so initialize and tools/call arrive in separate
+// requests. The client gets a Mcp-Session-Id carrying its own label (label.random) and
+// we read it back on later requests. Header only: no KV write, nothing personal.
+function makeSession(label) { return `${label}.${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`; }
+function labelFromRequest(request) {
+  const sid = request.headers.get("Mcp-Session-Id") || "";
+  const m = /^([a-z0-9._-]{1,40})\.[a-f0-9]{16}$/.exec(sid);
+  if (m) return m[1];
+  const ua = (request.headers.get("User-Agent") || "").split(/[\s/]/)[0].toLowerCase().replace(/[^a-z0-9._-]/g, "-").slice(0, 40);
+  return ua ? `ua-${ua}` : "unknown";
 }
 async function tally(env, client, event) {
   // Deliberately cheap: only real tool calls are counted, and the running count is
@@ -501,14 +512,16 @@ export default {
     let body;
     try { body = await request.json(); } catch { return json(rpcErr(null, -32700, "Parse error"), 400); }
     const msgs = Array.isArray(body) ? body : [body];
-    let clientName = "unknown";
+    let clientName = labelFromRequest(request);
+    let newSession = null;
     const out = [];
     for (const m of msgs) {
       if (!m || m.jsonrpc !== "2.0") { out.push(rpcErr(m && m.id, -32600, "Invalid request")); continue; }
       if (m.method === "initialize") {
         clientName = clientLabel(m.params?.clientInfo);
+        newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.8.1" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.8.2" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
@@ -524,7 +537,10 @@ export default {
       }
       else if (m.id !== undefined) out.push(rpcErr(m.id, -32601, `Method not found: ${m.method}`));
     }
-    if (out.length === 0) return new Response(null, { status: 202, headers: CORS });
-    return json(Array.isArray(body) ? out : out[0]);
+    const extra = newSession ? { "Mcp-Session-Id": newSession } : {};
+    if (out.length === 0) return new Response(null, { status: 202, headers: { ...CORS, ...extra } });
+    const res = json(Array.isArray(body) ? out : out[0]);
+    if (newSession) res.headers.set("Mcp-Session-Id", newSession);
+    return res;
   }
 };
