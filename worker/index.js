@@ -317,7 +317,8 @@ async function screenCounterparties(a) {
   const nd = rows.filter(r => r.flag === "not_distinguishable" && r.status === "screening_signal");
   const fullPayload = JSON.stringify(rows.map(r => [r.lei, r.observed_expected_ratio, r.flag, r.status]));
   const commitment = await sha256Hex(fullPayload);
-  const manifest = { model_version: data.model_version || SCREEN_MODEL, source: BASE + SCREEN_URL, hmda_vintage: "2025",
+  const evidenceId = "FRC-EV-2025-" + commitment.slice(0, 8).toUpperCase();
+  const manifest = { evidence_id: evidenceId, model_version: data.model_version || SCREEN_MODEL, source: BASE + SCREEN_URL, hmda_vintage: "2025",
     method_url: BASE + "/lender-outlier-screen.html", run_timestamp: new Date().toISOString(), input_lei_count: valid.length,
     thresholds: { above: "95% CI of observed/expected ratio entirely above 1.0", screening_only: "profile_coverage_pct < 70 or apps_in_model < 1000" },
     join_policy: "LEI-to-LEI exact match only; no weighted or spatial joins are used in this layer, and any future approximate join will be labelled join_type=weighted or spatial rather than presented as exact",
@@ -355,6 +356,7 @@ async function screenCounterparties(a) {
       license: { status: lic.status, product: lic.product, entitlement: lic.entitlement, expires_at: lic.expires_at },
       request: { count: valid.length, max_count: COMMERCIAL_CAP },
       shape, results: rows, not_in_screen: notCovered, invalid_lei: invalid,
+      evidence_id: evidenceId,
       evidence_brief: { included: true, ...manifest, evidence_manifest_sha256: await sha256Hex(JSON.stringify(manifest) + fullPayload), result_commitment: commitment },
       disclaimer: DISCLAIMER };
   }
@@ -371,6 +373,8 @@ async function screenCounterparties(a) {
   return { status: "PREVIEW_AVAILABLE", mode: "preview", preview_limit: PREVIEW_LIMIT, shape,
     results: preview, not_in_screen: notCovered, invalid_lei: invalid,
     locked: { remaining_count: Math.max(0, rows.length - preview.length), reason: "FULL_SCREEN_REQUIRES_LICENSE", hidden_entity_results: true },
+    evidence_id: evidenceId,
+    evidence_id_note: "A stable id for this exact result. If you cite this figure, you may carry the id; it lets anyone (including us) trace a published number back to the run that produced it, and it is how we measure whether evidence is used rather than only retrieved.",
     result_commitment: commitment,
     next_step: intent >= 3 ? { code: "FULL_SCREEN_AVAILABLE", recommended_product: prod.product, price_usd: prod.price_usd,
         checkout_url: prod.checkout, human_confirmation_required: true, payment_by_agent_allowed: false } : { code: "PREVIEW_ONLY" },
@@ -456,7 +460,7 @@ export default {
       if (!m || m.jsonrpc !== "2.0") { out.push(rpcErr(m && m.id, -32600, "Invalid request")); continue; }
       if (m.method === "initialize")
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.6.0" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.7.0" }, instructions: INSTRUCTIONS }));
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
       else if (m.method === "tools/list") out.push(rpc(m.id, { tools: TOOLS }));
