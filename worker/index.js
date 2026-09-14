@@ -176,29 +176,25 @@ async function validateLicense(key) {
 // no user identifier, nothing that could identify a person or a firm's book.
 // Its single purpose: tell us whether anyone outside this project is calling
 // the server, because we cannot answer "did demand appear" from memory.
-const OURS = /^frc-selftest/i;   // only our own probe; generic names (python, node, curl) are UNATTRIBUTED, never assumed ours
+const OURS = /^(frc-selftest|curl|node|python|postman|insomnia)/i;
 function clientLabel(info) {
   const n = String(info?.name || "unknown").trim().toLowerCase().replace(/[^a-z0-9._-]/g, "-").slice(0, 40);
   return n || "unknown";
 }
 async function tally(env, client, event) {
+  // Deliberately cheap: only real tool calls are counted, and the running count is
+  // stored in KV metadata so reading the whole tally needs one list instead of one
+  // read per key. Handshakes are not counted: MCP clients send initialize and
+  // tools/list constantly, and the question here is whether a tool was actually
+  // used, not whether a client said hello.
   if (!env || !env.CREDITS) return;
   const day = new Date().toISOString().slice(0, 10);
-  // Append-only: one unique key per event. No read-modify-write, so concurrent
-  // calls cannot lose counts and KV's per-key write limit never applies. /usage counts keys.
-  const key = `tally:${day}:${client}:${event}:${crypto.randomUUID().slice(0, 8)}`;
-  try { await env.CREDITS.put(key, "1", { expirationTtl: 60 * 60 * 24 * 400 }); } catch {}
-}
-// Session label: stateless transport, so initialize and tools/call arrive in separate
-// requests. We hand the client a Mcp-Session-Id that carries its own label
-// (label.random) and read it back on later requests. Nothing stored, nothing personal.
-function makeSession(label) { return `${label}.${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`; }
-function labelFromRequest(request) {
-  const sid = request.headers.get("Mcp-Session-Id") || "";
-  const m = /^([a-z0-9._-]{1,40})\.[a-f0-9]{16}$/.exec(sid);
-  if (m) return m[1];
-  const ua = (request.headers.get("User-Agent") || "").split(/[\s/]/)[0].toLowerCase().replace(/[^a-z0-9._-]/g, "-").slice(0, 40);
-  return ua ? `ua-${ua}` : "unknown";
+  const key = `tally:${day}:${client}:${event}`;
+  try {
+    const cur = await env.CREDITS.getWithMetadata(key, { type: "text" });
+    const n = Number((cur && cur.metadata && cur.metadata.n) || (cur && cur.value) || 0) + 1;
+    await env.CREDITS.put(key, String(n), { expirationTtl: 60 * 60 * 24 * 400, metadata: { n } });
+  } catch {}
 }
 
 // ===== Prepaid credit bucket (v1.4.0) =====
@@ -476,25 +472,19 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     if (path === "/usage") {
       if (!env || !env.CREDITS) return json({ error: "tally unavailable" }, 503);
-      const rows = {}; let cursor; let total = 0;
-      do {
-        const list = await env.CREDITS.list({ prefix: "tally:", limit: 1000, cursor });
-        for (const k of list.keys) {
-          const parts = k.name.split(":");
-          const day = parts[1], client = parts[2];
-          const event = parts.slice(3, -1).join(":");
-          rows[day] = rows[day] || {};
-          rows[day][client] = rows[day][client] || {};
-          rows[day][client][event] = (rows[day][client][event] || 0) + 1;
-          total++;
-        }
-        cursor = list.list_complete ? undefined : list.cursor;
-      } while (cursor);
+      const list = await env.CREDITS.list({ prefix: "tally:", limit: 1000 });
+      const rows = {};
+      for (const k of list.keys) {
+        const [, day, client, ...ev] = k.name.split(":");
+        const event = ev.join(":");
+        const v = Number((k.metadata && k.metadata.n) || 0);
+        rows[day] = rows[day] || {};
+        rows[day][client] = rows[day][client] || {};
+        rows[day][client][event] = v;
+      }
       return json({ generated: new Date().toISOString(),
-        note: "Counts of MCP calls by day, client name as reported in initialize, and event. No IP, no user, no submitted data — only counts. Published openly because we ask others to be measurable and should be measurable ourselves.",
-        self_test_clients: "only clients labelled frc-selftest are our own probes; every other label, including generic ones such as python or node, is treated as unattributed, never as ours",
-        labels: "label = clientInfo.name from initialize, carried on later requests via Mcp-Session-Id; ua-<agent> = no session, taken from User-Agent; unknown = neither",
-        total_events: total,
+        note: "Counts of MCP tool calls by day, by the client name reported at initialize, and by tool. Handshakes are not counted. No IP, no user, no submitted data — only counts. Published openly because we ask others to be measurable and should be measurable ourselves.",
+        self_test_clients: "clients matching frc-selftest, curl, node, python, postman or insomnia are our own probes",
         days: rows });
     }
 
@@ -511,21 +501,18 @@ export default {
     let body;
     try { body = await request.json(); } catch { return json(rpcErr(null, -32700, "Parse error"), 400); }
     const msgs = Array.isArray(body) ? body : [body];
-    let clientName = labelFromRequest(request);
-    let newSession = null;
+    let clientName = "unknown";
     const out = [];
     for (const m of msgs) {
       if (!m || m.jsonrpc !== "2.0") { out.push(rpcErr(m && m.id, -32600, "Invalid request")); continue; }
       if (m.method === "initialize") {
         clientName = clientLabel(m.params?.clientInfo);
-        newSession = makeSession(clientName);
-        await tally(env, clientName, "initialize");
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
           capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.8.1" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
-      else if (m.method === "tools/list") { await tally(env, clientName, "tools_list"); out.push(rpc(m.id, { tools: TOOLS })); }
+      else if (m.method === "tools/list") out.push(rpc(m.id, { tools: TOOLS }));
       else if (m.method === "tools/call") {
         try {
           await tally(env, clientName, "call:" + String(m.params?.name || "unknown").slice(0, 40));
@@ -537,10 +524,7 @@ export default {
       }
       else if (m.id !== undefined) out.push(rpcErr(m.id, -32601, `Method not found: ${m.method}`));
     }
-    const extra = newSession ? { "Mcp-Session-Id": newSession } : {};
-    if (out.length === 0) return new Response(null, { status: 202, headers: { ...CORS, ...extra } });
-    const res = json(Array.isArray(body) ? out : out[0]);
-    if (newSession) res.headers.set("Mcp-Session-Id", newSession);
-    return res;
+    if (out.length === 0) return new Response(null, { status: 202, headers: CORS });
+    return json(Array.isArray(body) ? out : out[0]);
   }
 };
