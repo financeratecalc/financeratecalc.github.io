@@ -1,18 +1,19 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>When Should I Refinance? Calculator | FRC</title>
-<meta name="description" content="Find your exact refinance trigger rate. See break-even point at every rate level. Know when refinancing makes mathematical sense.">
-<link rel="canonical" href="https://financeratecalc.com/refinance-alert-calculator.html">
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
-<meta property="og:url" content="https://financeratecalc.com/refinance-alert-calculator.html"><meta property="og:title" content="When Should I Refinance? The Exact Break-Even Calculator">
-<meta property="og:description" content="See exactly what rate triggers your refinance. At 6.5% you save $162/month. At 6.0% you save $270/month. Know your number.">
-<meta property="og:image" content="https://financeratecalc.com/og-image.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://financeratecalc.com/og-image.png">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,700;0,900;1,900&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta content="Find your exact refinance trigger rate. See break-even point at every rate level. Know when refinancing makes mathematical sense." name="description"/>
+<link href="https://financeratecalc.com/refinance-alert-calculator.html" rel="canonical"/>
+<link href="/favicon.ico" rel="icon" type="image/x-icon"/>
+<meta content="https://financeratecalc.com/refinance-alert-calculator.html" property="og:url"/><meta content="When Should I Refinance? The Exact Break-Even Calculator" property="og:title"/>
+<meta content="See exactly what rate triggers your refinance. At 6.5% you save $162/month. At 6.0% you save $270/month. Know your number." property="og:description"/>
+<meta content="https://financeratecalc.com/og-image.png" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="https://financeratecalc.com/og-image.png" name="twitter:image"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&amp;family=Fraunces:ital,wght@0,700;0,900;1,900&amp;family=Geist:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <style>
 :root{--navy:#0a1f5c;--gold:#c8a44a;--gold-light:#f0d060;--green:#27ae60;--red:#c0392b;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -91,112 +92,98 @@ h2{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--navy)
 footer{background:#0a1f5c;padding:24px 60px;text-align:center;}
 @media(max-width:768px){header{padding:0 16px;}.hero{padding:40px 20px;}.main{padding:28px 20px 60px;}.input-grid{grid-template-columns:1fr;}.current-stats{grid-template-columns:1fr 1fr;}.scenario-row{grid-template-columns:60px 1fr;}.sr-right{grid-column:2;}.related{grid-template-columns:1fr;}footer{padding:20px;}}
 </style>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-ND9P4F3PHT');
 </script>
-<script src="/assets/ai-referral.js" defer></script>
+<script defer="" src="/assets/ai-referral.js"></script>
 </head>
 <body>
-<header><a href="index.html" class="logo">Finance<em>Rate</em>Calc</a></header>
-
+<header><a class="logo" href="index.html">Finance<em>Rate</em>Calc</a></header>
 <div class="hero">
-  <div class="hero-inner">
-    <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;">🎯 Refinance Alert Calculator · Know Your Number</div>
-    <h1>When Should You<br><em>Refinance?</em></h1>
-    <p class="hero-sub">Enter your current mortgage details. See exactly which rate triggers your refinance, your break-even point, and your 30-year savings at every level.</p>
-  </div>
+<div class="hero-inner">
+<div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:700;">🎯 Refinance Alert Calculator · Know Your Number</div>
+<h1>When Should You<br/><em>Refinance?</em></h1>
+<p class="hero-sub">Enter your current mortgage details. See exactly which rate triggers your refinance, your break-even point, and your 30-year savings at every level.</p>
+</div>
+</div>
+<div class="main">
+<div class="input-card">
+<h2>Your Current Mortgage</h2>
+<div class="input-grid">
+<div class="field">
+<label>Current Loan Balance</label>
+<input id="balance" min="50000" step="5000" type="number" value="380000"/>
+</div>
+<div class="field">
+<label>Current Interest Rate %</label>
+<input id="currentRate" max="15" min="1" step="0.1" type="number" value="7.2"/>
+</div>
+<div class="field">
+<label>Remaining Term (Years)</label>
+<input id="remaining" max="30" min="1" type="number" value="28"/>
+</div>
+<div class="field">
+<label>Estimated Closing Costs</label>
+<input id="closingCosts" step="500" type="number" value="8000"/>
+</div>
+</div>
+<button class="calc-btn" onclick="calculate()">🎯 Show My Refinance Triggers →</button>
+</div>
+<div class="results" id="results">
+<!-- Current situation -->
+<div class="current-box">
+<h2>Your Current Situation</h2>
+<div class="current-stats" id="currentStats"></div>
+</div>
+<!-- Rate scenarios -->
+<h2 style="margin-bottom:12px;">📊 Your Refinance Trigger Points</h2>
+<p style="font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:16px;">Every row below shows what happens when rates drop to that level. <strong>Green rows</strong> = refinance makes sense.</p>
+<div class="scenarios-wrap" id="scenariosWrap"></div>
+<!-- Sniper simulation -->
+<div class="sniper-box">
+<div class="sniper-tag"><div class="sniper-dot"></div> 🎯 FRC RATE SNIPER — SIMULATION</div>
+<div class="sniper-title" id="sniperTitle">This is what your alert would look like</div>
+<div class="sniper-body">Banks won't tell you when to refinance — it costs them money. This is the alert you'd get from a system that actually works for you:</div>
+<div class="sniper-alert-box" id="sniperAlert"></div>
+<div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:12px;">⚠️ This is a simulation. Bookmark this page and return when rates drop to your trigger rate.</div>
+</div>
+<!-- Email capture / reminder -->
+<div class="email-box">
+<div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.55);font-weight:700;margin-bottom:8px;">📧 Set a Manual Reminder</div>
+<h3 style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px;">Don't Miss Your Trigger Rate</h3>
+<p style="font-size:14px;color:rgba(255,255,255,0.55);">We'll send you a one-time email reminder with your trigger rate and break-even calculation saved — so you don't have to remember.</p>
+<div class="email-row">
+<input class="email-inp" id="alertEmail" placeholder="your@email.com" type="email"/>
+<button class="email-btn" onclick="setReminder()">Save My Trigger →</button>
+</div>
+<div class="email-thanks" id="emailThanks">✅ Saved! We'll remind you when to check rates. Check Freddie Mac's weekly survey at freddiemac.com/pmms for current rates.</div>
+</div>
+<!-- Banker note -->
+<div class="banker-note">
+<div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px;">🏦 Banker's Note — 23 Years Experience</div>
+<p style="font-size:14px;color:rgba(255,255,255,0.72);line-height:1.75;">"The 14-day rate shopping rule: multiple mortgage inquiries within 14 days count as ONE hard pull on your credit. So when rates hit your trigger, get 3-5 quotes simultaneously within that window. The difference between lenders can be 0.25-0.5% even at the same market rate — that's thousands of dollars."</p>
 </div>
 
-<div class="main">
-  <div class="input-card">
-    <h2>Your Current Mortgage</h2>
-    <div class="input-grid">
-      <div class="field">
-        <label>Current Loan Balance</label>
-        <input type="number" id="balance" value="380000" min="50000" step="5000">
-      </div>
-      <div class="field">
-        <label>Current Interest Rate %</label>
-        <input type="number" id="currentRate" value="7.2" step="0.1" min="1" max="15">
-      </div>
-      <div class="field">
-        <label>Remaining Term (Years)</label>
-        <input type="number" id="remaining" value="28" min="1" max="30">
-      </div>
-      <div class="field">
-        <label>Estimated Closing Costs</label>
-        <input type="number" id="closingCosts" value="8000" step="500">
-      </div>
-    </div>
-    <button class="calc-btn" onclick="calculate()">🎯 Show My Refinance Triggers →</button>
-  </div>
-
-  <div class="results" id="results">
-
-    <!-- Current situation -->
-    <div class="current-box">
-      <h2>Your Current Situation</h2>
-      <div class="current-stats" id="currentStats"></div>
-    </div>
-
-    <!-- Rate scenarios -->
-    <h2 style="margin-bottom:12px;">📊 Your Refinance Trigger Points</h2>
-    <p style="font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:16px;">Every row below shows what happens when rates drop to that level. <strong>Green rows</strong> = refinance makes sense.</p>
-    <div class="scenarios-wrap" id="scenariosWrap"></div>
-
-    <!-- Sniper simulation -->
-    <div class="sniper-box">
-      <div class="sniper-tag"><div class="sniper-dot"></div> 🎯 FRC RATE SNIPER — SIMULATION</div>
-      <div class="sniper-title" id="sniperTitle">This is what your alert would look like</div>
-      <div class="sniper-body">Banks won't tell you when to refinance — it costs them money. This is the alert you'd get from a system that actually works for you:</div>
-      <div class="sniper-alert-box" id="sniperAlert"></div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:12px;">⚠️ This is a simulation. Bookmark this page and return when rates drop to your trigger rate.</div>
-    </div>
-
-    <!-- Email capture / reminder -->
-    <div class="email-box">
-      <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.55);font-weight:700;margin-bottom:8px;">📧 Set a Manual Reminder</div>
-      <h3 style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px;">Don't Miss Your Trigger Rate</h3>
-      <p style="font-size:14px;color:rgba(255,255,255,0.55);">We'll send you a one-time email reminder with your trigger rate and break-even calculation saved — so you don't have to remember.</p>
-      <div class="email-row">
-        <input class="email-inp" type="email" id="alertEmail" placeholder="your@email.com">
-        <button class="email-btn" onclick="setReminder()">Save My Trigger →</button>
-      </div>
-      <div class="email-thanks" id="emailThanks">✅ Saved! We'll remind you when to check rates. Check Freddie Mac's weekly survey at freddiemac.com/pmms for current rates.</div>
-    </div>
-
-    <!-- Banker note -->
-    <div class="banker-note">
-      <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px;">🏦 Banker's Note — 23 Years Experience</div>
-      <p style="font-size:14px;color:rgba(255,255,255,0.72);line-height:1.75;">"The 14-day rate shopping rule: multiple mortgage inquiries within 14 days count as ONE hard pull on your credit. So when rates hit your trigger, get 3-5 quotes simultaneously within that window. The difference between lenders can be 0.25-0.5% even at the same market rate — that's thousands of dollars."</p>
-    </div>
-
-    <!-- Sky Blue -->
-
-    <div style="margin-top:16px;padding:12px 16px;background:#060d1f;border:1px solid rgba(255,255,255,0.10);border-radius:8px;font-size:12px;color:rgba(255,255,255,0.55);">
+<div style="margin-top:16px;padding:12px 16px;background:#060d1f;border:1px solid rgba(255,255,255,0.10);border-radius:8px;font-size:12px;color:rgba(255,255,255,0.55);">
       📋 <strong>Methodology:</strong> Break-even = closing costs ÷ monthly savings. All calculations use standard amortization. Closing costs estimated at user-entered amount. Rate data: Freddie Mac PMMS. Educational use only — not financial advice. Always consult a licensed mortgage professional before refinancing.
     </div>
-  </div>
 </div>
-
+</div>
 <footer>
-  <div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
-  <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 · Educational use only · Not financial advice</div>
-
+<div style="font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:700;">Finance<em style="color:var(--gold);font-style:italic;">Rate</em>Calc</div>
+<div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px;">© 2026 · Educational use only · Not financial advice</div>
 <div style="background:linear-gradient(135deg,rgba(200,168,75,0.08),rgba(107,255,184,0.04));border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:20px 24px;margin:32px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-  <div>
-    <div style="font-size:11px;font-weight:700;color:rgba(200,168,75,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Are You a Mortgage Broker?</div>
-    <div style="font-size:15px;font-weight:700;color:#fff;">Run a Pre-Flight Check on your files</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px;">30 seconds · Green/Yellow/Red · PDF boarding pass · No SSN</div>
-  </div>
-  
+<div>
+<div style="font-size:11px;font-weight:700;color:rgba(200,168,75,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Are You a Mortgage Broker?</div>
+<div style="font-size:15px;font-weight:700;color:#fff;">Run a Pre-Flight Check on your files</div>
+<div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px;">30 seconds · Green/Yellow/Red · PDF boarding pass · No SSN</div>
+</div>
 </div>
 </footer>
-
 <script>
 function fmt(n){return '$'+Math.round(n).toLocaleString();}
 function moPay(p,r,n){var mr=r/100/12;return p*mr*Math.pow(1+mr,n)/(Math.pow(1+mr,n)-1);}
@@ -315,7 +302,7 @@ function setReminder(){
   document.getElementById('alertEmail').value='';
 }
 </script>
-<script src="/banker-widget.js?v=6">
+<script>
 function generateRefiCard(){
   if(!_balance||!_currentRate||!_triggerRate) return;
   var tr = _triggerRate;
@@ -353,27 +340,24 @@ function refiShareTwitter(){window.open('https://twitter.com/intent/tweet?text='
 function refiCopy(){navigator.clipboard.writeText(window._refiShareText).then(function(){document.getElementById('refiCopyBtn').textContent='✅ Copied!';setTimeout(function(){document.getElementById('refiCopyBtn').textContent='📋 Copy';},2000);});}
 function refiShareWhatsApp(){window.open('https://wa.me/?text='+encodeURIComponent(window._refiShareText),'_blank');}
 </script>
-
 <!-- Broker CTA -->
-
 <div style="max-width:760px;margin:24px auto;padding:18px 21px;border:1px solid rgba(200,168,75,.35);border-radius:15px;background:rgba(200,168,75,.05);">
 <div style="font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:rgba(200,168,75,.85);font-weight:700;margin-bottom:9px;">The part almost nobody publishes free</div>
-<p style="font-size:14px;color:rgba(255,255,255,.72);margin:0 0 11px;line-height:1.9;">Prices and rates are widely reported. Whether a lender says yes is not. In the complete 2025 federal record, denial rates across the 100 largest FHA lenders ran from <b style="color:#22c55e;">1.8%</b> to <b style="color:#e8845a;">78.7%</b> &mdash; same programme, same year.</p>
-<p style="font-size:13.5px;color:rgba(255,255,255,.6);margin:0 0 12px;line-height:1.85;">And it is not simply who applies where: standardizing on state, loan amount, income, debt-to-income and loan-to-value, applicant mix explains only a <b style="color:#fff;">2.7&times;</b> range in expected outcomes.</p>
+<p style="font-size:14px;color:rgba(255,255,255,.72);margin:0 0 11px;line-height:1.9;">Prices and rates are widely reported. Whether a lender says yes is not. In the complete 2025 federal record, denial rates across the 100 largest FHA lenders ran from <b style="color:#22c55e;">1.8%</b> to <b style="color:#e8845a;">78.7%</b> — same programme, same year.</p>
+<p style="font-size:13.5px;color:rgba(255,255,255,.6);margin:0 0 12px;line-height:1.85;">And it is not simply who applies where: standardizing on state, loan amount, income, debt-to-income and loan-to-value, applicant mix explains only a <b style="color:#fff;">2.7×</b> range in expected outcomes.</p>
 <div style="display:flex;gap:8px;flex-wrap:wrap;">
-<a href="/fha-lenders-approval-rates.html" style="padding:9px 14px;background:#C8A84B;color:#0a0a0a;border-radius:9px;font-weight:800;text-decoration:none;font-size:12.5px;">Which lenders approve most &rarr;</a>
-<a href="/fha-denial-rates-by-metro.html" style="padding:9px 14px;border:1px solid rgba(200,168,75,.5);color:#C8A84B;border-radius:9px;font-weight:700;text-decoration:none;font-size:12.5px;">Your metro &rarr;</a>
-<a href="/fha-loan-denied-now-what.html" style="padding:9px 14px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);border-radius:9px;font-weight:700;text-decoration:none;font-size:12.5px;">Denied? &rarr;</a></div>
+<a href="/fha-lenders-approval-rates.html" style="padding:9px 14px;background:#C8A84B;color:#0a0a0a;border-radius:9px;font-weight:800;text-decoration:none;font-size:12.5px;">Which lenders approve most →</a>
+<a href="/fha-denial-rates-by-metro.html" style="padding:9px 14px;border:1px solid rgba(200,168,75,.5);color:#C8A84B;border-radius:9px;font-weight:700;text-decoration:none;font-size:12.5px;">Your metro →</a>
+<a href="/fha-loan-denied-now-what.html" style="padding:9px 14px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);border-radius:9px;font-weight:700;text-decoration:none;font-size:12.5px;">Denied? →</a></div>
 <p style="font-size:10px;color:rgba(255,255,255,.35);margin:11px 0 0;line-height:1.7;">CFPB HMDA 2025, computed by FinanceRateCalc. Covers the highest-volume lenders published per market, not all lenders. Historical observations, not predictions. CC BY 4.0, <a href="/reconciliation.html" style="color:rgba(200,168,75,.7);">not independently reproduced</a>.</p></div>
 <!-- dispatch-cta -->
 <div style="max-width:680px;margin:48px auto;padding:28px 26px;background:#08090c;border:1px solid #C8A84B;border-radius:10px;text-align:center;">
-  <div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase;margin-bottom:10px;">The Denial Dispatch</div>
-  <div style="font-family:'Fraunces',Georgia,serif;font-size:22px;color:#f5f2ea;margin-bottom:8px;">One finding a week from the federal mortgage record.</div>
-  <div style="font-family:'DM Sans',sans-serif;font-size:14px;color:#b8b4a9;margin-bottom:18px;">One chart, three paragraphs, every Saturday. Measured, not assumed.</div>
-  <a href="https://denialdispatch.beehiiv.com/subscribe" rel="noopener" style="display:inline-block;font-family:'DM Mono',monospace;font-size:14px;background:#C8A84B;color:#08090c;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">Get the Dispatch &rarr;</a>
+<div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase;margin-bottom:10px;">The Denial Dispatch</div>
+<div style="font-family:'Fraunces',Georgia,serif;font-size:22px;color:#f5f2ea;margin-bottom:8px;">One finding a week from the federal mortgage record.</div>
+<div style="font-family:'DM Sans',sans-serif;font-size:14px;color:#b8b4a9;margin-bottom:18px;">One chart, three paragraphs, every Saturday. Measured, not assumed.</div>
+<a href="https://denialdispatch.beehiiv.com/subscribe" rel="noopener" style="display:inline-block;font-family:'DM Mono',monospace;font-size:14px;background:#C8A84B;color:#08090c;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">Get the Dispatch →</a>
 </div>
 <!-- /dispatch-cta -->
-
 <!-- frc-footer -->
 <div style="max-width:920px;margin:40px auto 0;padding:22px 20px;border-top:1px solid rgba(200,168,75,.35);font-family:'DM Sans',Arial,sans-serif;font-size:13px;color:#9a958a;text-align:center;background:transparent">
 <div style="margin-bottom:8px">
@@ -388,7 +372,7 @@ function refiShareWhatsApp(){window.open('https://wa.me/?text='+encodeURICompone
 <a href="/press.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">Press</a>
 <a href="https://denialdispatch.beehiiv.com/subscribe" style="color:#C8A84B;text-decoration:none;margin:0 9px">Newsletter</a>
 </div>
-<div>FinanceRateCalc &middot; Independent analysis of the complete federal HMDA record &middot; Measured, not assumed. &middot; No lender or AI vendor funds or previews this work.</div>
+<div>FinanceRateCalc · Independent analysis of the complete federal HMDA record · Measured, not assumed. · No lender or AI vendor funds or previews this work.</div>
 </div>
 <!-- /frc-footer -->
 </body>

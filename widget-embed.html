@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Mortgage Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Geist',sans-serif;background:transparent;padding:8px;}
@@ -71,133 +72,121 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .powered{text-align:center;padding:8px;font-size:9px;color:#d1d5db;border-top:1px solid #f3f4f6;}
 .powered a{color:#9ca3af;font-weight:600;text-decoration:none;}
 </style>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-ND9P4F3PHT');
 </script>
-<meta name="description" content="Mortgage Calculator — free tools and lender behavioral data from FRC Research, built on public CFPB HMDA records.">
-<script src="/assets/ai-referral.js" defer></script>
-<meta name="robots" content="noindex,follow">
-<link rel="canonical" href="https://financeratecalc.com/widget-embed.html">
+<meta content="Mortgage Calculator — free tools and lender behavioral data from FRC Research, built on public CFPB HMDA records." name="description"/>
+<script defer="" src="/assets/ai-referral.js"></script>
+<meta content="noindex,follow" name="robots"/>
+<link href="https://financeratecalc.com/widget-embed.html" rel="canonical"/>
 </head>
 <body>
 <header style="height:54px;display:flex;align-items:center;padding:0 24px;background:#060d1f;background-image:radial-gradient(1000px 560px at 80% -10%, rgba(200,168,75,0.10), transparent 60%);background-attachment:fixed;border-bottom:1px solid rgba(255,255,255,0.06);"><a href="/index.html" style="font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.3px;">Finance<em style="font-style:italic;color:#C8A84B;">Rate</em>Calc</a></header>
 <div class="w">
-  <!-- Agent bar -->
-  <div class="ab">
-    <div class="av" id="agentAvatar" style="font-family:'Geist',sans-serif;font-size:13px;font-weight:700;color:#fff;background:linear-gradient(135deg,#c8a44a,#f0d060);">ZY</div>
-    <div>
-      <div class="an" id="agentName">Your Agent</div>
-      <div class="at" id="agentTitle">Licensed Real Estate Agent</div>
-    </div>
-  </div>
-
-  <!-- Demand -->
-  <div class="db">
-    <div>
-      <div style="font-size:9px;color:#9ca3af;margin-bottom:2px;">FRC BUYER DEMAND</div>
-      <div class="dd" id="demandBadge" style="background:rgba(37,99,235,0.1);color:#2563eb;border:1px solid rgba(37,99,235,0.2);">🔵 COOLING — Negotiate</div>
-    </div>
-    <div class="di" id="demandInfo">67 days on market</div>
-  </div>
-
-  <div class="body">
-    <!-- Inputs -->
-    <div class="field">
-      <label class="label">Home Price</label>
-      <input class="inp" type="number" id="price" value="425000" step="5000">
-    </div>
-    <div class="row">
-      <div class="field">
-        <label class="label">Down Payment %</label>
-        <input class="inp" type="number" id="down" value="20" min="0" max="100">
-      </div>
-      <div class="field">
-        <label class="label">Interest Rate %</label>
-        <input class="inp" type="number" id="rate" value="6.5" step="0.1">
-      </div>
-    </div>
-
-    <!-- Loan term -->
-    <label class="label">Loan Term</label>
-    <div class="term-row">
-      <button class="term-btn active" id="t30" onclick="setTerm(30)">30-Year Fixed</button>
-      <button class="term-btn" id="t15" onclick="setTerm(15)">15-Year Fixed</button>
-    </div>
-
-    <!-- Credit score -->
-    <div class="slider-wrap">
-      <label class="label">Credit Score: <span id="scoreLabel">700-739</span></label>
-      <input type="range" id="creditScore" min="0" max="4" value="3" oninput="updateScore()">
-      <div class="slider-labels">
-        <span>580</span><span>620</span><span>660</span><span>700</span><span>740+</span>
-      </div>
-    </div>
-
-    <button class="calc-btn" onclick="calculate()">Calculate 3 Scenarios →</button>
-
-    <!-- Results -->
-    <div class="results" id="results">
-      <div class="tabs">
-        <div class="tab active" onclick="showTab(0)">📉 Best</div>
-        <div class="tab" onclick="showTab(1)">📊 Today</div>
-        <div class="tab" onclick="showTab(2)">📈 Higher</div>
-      </div>
-
-      <div id="sc0" class="result-box">
-        <div class="mo-amount" id="mo0"></div>
-        <div class="mo-label" id="lb0"></div>
-        <div class="breakdown">
-          <div class="bd"><div class="bd-n" id="pi0"></div><div class="bd-l">P&I</div></div>
-          <div class="bd"><div class="bd-n" id="tx0"></div><div class="bd-l">Tax</div></div>
-          <div class="bd"><div class="bd-n" id="in0"></div><div class="bd-l">Ins</div></div>
-          <div class="bd"><div class="bd-n" id="pm0"></div><div class="bd-l">PMI</div></div>
-        </div>
-      </div>
-      <div id="sc1" class="result-box" style="display:none;">
-        <div class="mo-amount" id="mo1"></div>
-        <div class="mo-label" id="lb1"></div>
-        <div class="breakdown">
-          <div class="bd"><div class="bd-n" id="pi1"></div><div class="bd-l">P&I</div></div>
-          <div class="bd"><div class="bd-n" id="tx1"></div><div class="bd-l">Tax</div></div>
-          <div class="bd"><div class="bd-n" id="in1"></div><div class="bd-l">Ins</div></div>
-          <div class="bd"><div class="bd-n" id="pm1"></div><div class="bd-l">PMI</div></div>
-        </div>
-      </div>
-      <div id="sc2" class="result-box" style="display:none;">
-        <div class="mo-amount" id="mo2"></div>
-        <div class="mo-label" id="lb2"></div>
-        <div class="breakdown">
-          <div class="bd"><div class="bd-n" id="pi2"></div><div class="bd-l">P&I</div></div>
-          <div class="bd"><div class="bd-n" id="tx2"></div><div class="bd-l">Tax</div></div>
-          <div class="bd"><div class="bd-n" id="in2"></div><div class="bd-l">Ins</div></div>
-          <div class="bd"><div class="bd-n" id="pm2"></div><div class="bd-l">PMI</div></div>
-        </div>
-      </div>
-
-      <div class="savings" id="savings"></div>
-
-      <!-- Sky Blue -->
-        <div class="sb-text" id="sbText"></div>
-      <p style="font-size:10px;color:rgba(255,255,255,.3);margin-top:6px;">Disclosure: FRC may earn a commission if you use this link — at no cost to you. This does not influence our data or analysis.</p></div>
-
-      <!-- Lead capture -->
-      <div class="lead-box">
-        <div class="lead-title">📧 Email me this breakdown</div>
-        <div class="lead-row">
-          <input class="lead-inp" type="email" id="leadEmail" placeholder="your@email.com">
-          <button class="lead-btn" onclick="sendLead()">Send →</button>
-        </div>
-        <div class="lead-thanks" id="leadThanks"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="powered">Powered by <a href="https://financeratecalc.com" target="_blank">FinanceRateCalc.com</a> · Free mortgage tools · Not financial advice</div>
+<!-- Agent bar -->
+<div class="ab">
+<div class="av" id="agentAvatar" style="font-family:'Geist',sans-serif;font-size:13px;font-weight:700;color:#fff;background:linear-gradient(135deg,#c8a44a,#f0d060);">ZY</div>
+<div>
+<div class="an" id="agentName">Your Agent</div>
+<div class="at" id="agentTitle">Licensed Real Estate Agent</div>
 </div>
+</div>
+<!-- Demand -->
+<div class="db">
+<div>
+<div style="font-size:9px;color:#9ca3af;margin-bottom:2px;">FRC BUYER DEMAND</div>
+<div class="dd" id="demandBadge" style="background:rgba(37,99,235,0.1);color:#2563eb;border:1px solid rgba(37,99,235,0.2);">🔵 COOLING — Negotiate</div>
+</div>
+<div class="di" id="demandInfo">67 days on market</div>
+</div>
+<div class="body">
+<!-- Inputs -->
+<div class="field">
+<label class="label">Home Price</label>
+<input class="inp" id="price" step="5000" type="number" value="425000"/>
+</div>
+<div class="row">
+<div class="field">
+<label class="label">Down Payment %</label>
+<input class="inp" id="down" max="100" min="0" type="number" value="20"/>
+</div>
+<div class="field">
+<label class="label">Interest Rate %</label>
+<input class="inp" id="rate" step="0.1" type="number" value="6.5"/>
+</div>
+</div>
+<!-- Loan term -->
+<label class="label">Loan Term</label>
+<div class="term-row">
+<button class="term-btn active" id="t30" onclick="setTerm(30)">30-Year Fixed</button>
+<button class="term-btn" id="t15" onclick="setTerm(15)">15-Year Fixed</button>
+</div>
+<!-- Credit score -->
+<div class="slider-wrap">
+<label class="label">Credit Score: <span id="scoreLabel">700-739</span></label>
+<input id="creditScore" max="4" min="0" oninput="updateScore()" type="range" value="3"/>
+<div class="slider-labels">
+<span>580</span><span>620</span><span>660</span><span>700</span><span>740+</span>
+</div>
+</div>
+<button class="calc-btn" onclick="calculate()">Calculate 3 Scenarios →</button>
+<!-- Results -->
+<div class="results" id="results">
+<div class="tabs">
+<div class="tab active" onclick="showTab(0)">📉 Best</div>
+<div class="tab" onclick="showTab(1)">📊 Today</div>
+<div class="tab" onclick="showTab(2)">📈 Higher</div>
+</div>
+<div class="result-box" id="sc0">
+<div class="mo-amount" id="mo0"></div>
+<div class="mo-label" id="lb0"></div>
+<div class="breakdown">
+<div class="bd"><div class="bd-n" id="pi0"></div><div class="bd-l">P&amp;I</div></div>
+<div class="bd"><div class="bd-n" id="tx0"></div><div class="bd-l">Tax</div></div>
+<div class="bd"><div class="bd-n" id="in0"></div><div class="bd-l">Ins</div></div>
+<div class="bd"><div class="bd-n" id="pm0"></div><div class="bd-l">PMI</div></div>
+</div>
+</div>
+<div class="result-box" id="sc1" style="display:none;">
+<div class="mo-amount" id="mo1"></div>
+<div class="mo-label" id="lb1"></div>
+<div class="breakdown">
+<div class="bd"><div class="bd-n" id="pi1"></div><div class="bd-l">P&amp;I</div></div>
+<div class="bd"><div class="bd-n" id="tx1"></div><div class="bd-l">Tax</div></div>
+<div class="bd"><div class="bd-n" id="in1"></div><div class="bd-l">Ins</div></div>
+<div class="bd"><div class="bd-n" id="pm1"></div><div class="bd-l">PMI</div></div>
+</div>
+</div>
+<div class="result-box" id="sc2" style="display:none;">
+<div class="mo-amount" id="mo2"></div>
+<div class="mo-label" id="lb2"></div>
+<div class="breakdown">
+<div class="bd"><div class="bd-n" id="pi2"></div><div class="bd-l">P&amp;I</div></div>
+<div class="bd"><div class="bd-n" id="tx2"></div><div class="bd-l">Tax</div></div>
+<div class="bd"><div class="bd-n" id="in2"></div><div class="bd-l">Ins</div></div>
+<div class="bd"><div class="bd-n" id="pm2"></div><div class="bd-l">PMI</div></div>
+</div>
+</div>
+<div class="savings" id="savings"></div>
+
+<div class="sb-text" id="sbText"></div>
+<p style="font-size:10px;color:rgba(255,255,255,.3);margin-top:6px;">Disclosure: FRC may earn a commission if you use this link — at no cost to you. This does not influence our data or analysis.</p></div>
+<!-- Lead capture -->
+<div class="lead-box">
+<div class="lead-title">📧 Email me this breakdown</div>
+<div class="lead-row">
+<input class="lead-inp" id="leadEmail" placeholder="your@email.com" type="email"/>
+<button class="lead-btn" onclick="sendLead()">Send →</button>
+</div>
+<div class="lead-thanks" id="leadThanks"></div>
+</div>
+</div>
+</div>
+<div class="powered">Powered by <a href="https://financeratecalc.com" target="_blank">FinanceRateCalc.com</a> · Free mortgage tools · Not financial advice</div>
 
 <script>
 // Get URL params
@@ -355,37 +344,31 @@ function sendLead(){
   document.getElementById('leadThanks').style.display='block';
 }
 </script>
-<script src="/banker-widget.js?v=6"></script>
-
 <!-- Broker CTA -->
-
-
 <div style="background:linear-gradient(135deg,rgba(200,168,75,0.08),rgba(107,255,184,0.04));border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:20px 24px;margin:32px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-  <div>
-    <div style="font-size:11px;font-weight:700;color:rgba(200,168,75,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Are You a Mortgage Broker?</div>
-    <div style="font-size:15px;font-weight:700;color:#fff;">Run a Pre-Flight Check on your files</div>
-    <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px;">30 seconds · Green/Yellow/Red · PDF boarding pass · No SSN</div>
-  </div>
-  
+<div>
+<div style="font-size:11px;font-weight:700;color:rgba(200,168,75,0.7);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Are You a Mortgage Broker?</div>
+<div style="font-size:15px;font-weight:700;color:#fff;">Run a Pre-Flight Check on your files</div>
+<div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px;">30 seconds · Green/Yellow/Red · PDF boarding pass · No SSN</div>
+</div>
 </div>
 <div style="max-width:760px;margin:24px auto;padding:18px 21px;border:1px solid rgba(200,168,75,.35);border-radius:15px;background:rgba(200,168,75,.05);">
 <div style="font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:rgba(200,168,75,.85);font-weight:700;margin-bottom:9px;">The part almost nobody publishes free</div>
-<p style="font-size:14px;color:rgba(255,255,255,.72);margin:0 0 11px;line-height:1.9;">Prices and rates are widely reported. Whether a lender says yes is not. In the complete 2025 federal record, denial rates across the 100 largest FHA lenders ran from <b style="color:#22c55e;">1.8%</b> to <b style="color:#e8845a;">78.7%</b> &mdash; same programme, same year.</p>
-<p style="font-size:13.5px;color:rgba(255,255,255,.6);margin:0 0 12px;line-height:1.85;">And it is not simply who applies where: standardizing on state, loan amount, income, debt-to-income and loan-to-value, applicant mix explains only a <b style="color:#fff;">2.7&times;</b> range in expected outcomes.</p>
+<p style="font-size:14px;color:rgba(255,255,255,.72);margin:0 0 11px;line-height:1.9;">Prices and rates are widely reported. Whether a lender says yes is not. In the complete 2025 federal record, denial rates across the 100 largest FHA lenders ran from <b style="color:#22c55e;">1.8%</b> to <b style="color:#e8845a;">78.7%</b> — same programme, same year.</p>
+<p style="font-size:13.5px;color:rgba(255,255,255,.6);margin:0 0 12px;line-height:1.85;">And it is not simply who applies where: standardizing on state, loan amount, income, debt-to-income and loan-to-value, applicant mix explains only a <b style="color:#fff;">2.7×</b> range in expected outcomes.</p>
 <div style="display:flex;gap:8px;flex-wrap:wrap;">
-<a href="/fha-lenders-approval-rates.html" style="padding:9px 14px;background:#C8A84B;color:#0a0a0a;border-radius:9px;font-weight:800;text-decoration:none;font-size:12.5px;">Which lenders approve most &rarr;</a>
-<a href="/fha-denial-rates-by-metro.html" style="padding:9px 14px;border:1px solid rgba(200,168,75,.5);color:#C8A84B;border-radius:9px;font-weight:700;text-decoration:none;font-size:12.5px;">Your metro &rarr;</a>
-<a href="/fha-loan-denied-now-what.html" style="padding:9px 14px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);border-radius:9px;font-weight:700;text-decoration:none;font-size:12.5px;">Denied? &rarr;</a></div>
+<a href="/fha-lenders-approval-rates.html" style="padding:9px 14px;background:#C8A84B;color:#0a0a0a;border-radius:9px;font-weight:800;text-decoration:none;font-size:12.5px;">Which lenders approve most →</a>
+<a href="/fha-denial-rates-by-metro.html" style="padding:9px 14px;border:1px solid rgba(200,168,75,.5);color:#C8A84B;border-radius:9px;font-weight:700;text-decoration:none;font-size:12.5px;">Your metro →</a>
+<a href="/fha-loan-denied-now-what.html" style="padding:9px 14px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);border-radius:9px;font-weight:700;text-decoration:none;font-size:12.5px;">Denied? →</a></div>
 <p style="font-size:10px;color:rgba(255,255,255,.35);margin:11px 0 0;line-height:1.7;">CFPB HMDA 2025, computed by FinanceRateCalc. Covers the highest-volume lenders published per market, not all lenders. Historical observations, not predictions. CC BY 4.0, <a href="/reconciliation.html" style="color:rgba(200,168,75,.7);">not independently reproduced</a>.</p></div>
 <!-- dispatch-cta -->
 <div style="max-width:680px;margin:48px auto;padding:28px 26px;background:#08090c;border:1px solid #C8A84B;border-radius:10px;text-align:center;">
-  <div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase;margin-bottom:10px;">The Denial Dispatch</div>
-  <div style="font-family:'Fraunces',Georgia,serif;font-size:22px;color:#f5f2ea;margin-bottom:8px;">One finding a week from the federal mortgage record.</div>
-  <div style="font-family:'DM Sans',sans-serif;font-size:14px;color:#b8b4a9;margin-bottom:18px;">One chart, three paragraphs, every Saturday. Measured, not assumed.</div>
-  <a href="https://denialdispatch.beehiiv.com/subscribe" rel="noopener" style="display:inline-block;font-family:'DM Mono',monospace;font-size:14px;background:#C8A84B;color:#08090c;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">Get the Dispatch &rarr;</a>
+<div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase;margin-bottom:10px;">The Denial Dispatch</div>
+<div style="font-family:'Fraunces',Georgia,serif;font-size:22px;color:#f5f2ea;margin-bottom:8px;">One finding a week from the federal mortgage record.</div>
+<div style="font-family:'DM Sans',sans-serif;font-size:14px;color:#b8b4a9;margin-bottom:18px;">One chart, three paragraphs, every Saturday. Measured, not assumed.</div>
+<a href="https://denialdispatch.beehiiv.com/subscribe" rel="noopener" style="display:inline-block;font-family:'DM Mono',monospace;font-size:14px;background:#C8A84B;color:#08090c;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">Get the Dispatch →</a>
 </div>
 <!-- /dispatch-cta -->
-
 <!-- frc-footer -->
 <div style="max-width:920px;margin:40px auto 0;padding:22px 20px;border-top:1px solid rgba(200,168,75,.35);font-family:'DM Sans',Arial,sans-serif;font-size:13px;color:#9a958a;text-align:center;background:transparent">
 <div style="margin-bottom:8px">
@@ -400,7 +383,7 @@ function sendLead(){
 <a href="/press.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">Press</a>
 <a href="https://denialdispatch.beehiiv.com/subscribe" style="color:#C8A84B;text-decoration:none;margin:0 9px">Newsletter</a>
 </div>
-<div>FinanceRateCalc &middot; Independent analysis of the complete federal HMDA record &middot; Measured, not assumed. &middot; No lender or AI vendor funds or previews this work.</div>
+<div>FinanceRateCalc · Independent analysis of the complete federal HMDA record · Measured, not assumed. · No lender or AI vendor funds or previews this work.</div>
 </div>
 <!-- /frc-footer -->
 </body>
