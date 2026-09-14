@@ -464,17 +464,7 @@ export default {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
-    // Authless by design: no OAuth metadata — 404 on well-known and any non-root path
-    if (path !== "/" && path !== "") return json({ error: "not found" }, 404);
-    if (request.method === "DELETE") return new Response(null, { status: 204, headers: CORS });
-    if (request.method === "GET" && (request.headers.get("Accept") || "").includes("text/event-stream"))
-      return new Response("SSE stream not offered; POST JSON-RPC to /", { status: 405, headers: CORS });
-    if (request.method === "GET")
-      return json({ name: "financeratecalc", transport: "streamable-http", endpoint: "POST /", tools: TOOLS.map(t => t.name),
-        note: "Remote MCP server. " + INSTRUCTIONS, docs: "https://financeratecalc.com/mcp-server.html" });
-    if (request.method !== "POST") return json({ error: "POST JSON-RPC 2.0 messages to /" }, 405);
-
-    if (url.pathname === "/usage") {
+    if (path === "/usage") {
       if (!env || !env.CREDITS) return json({ error: "tally unavailable" }, 503);
       const list = await env.CREDITS.list({ prefix: "tally:", limit: 1000 });
       const rows = {};
@@ -491,6 +481,17 @@ export default {
         self_test_clients: "clients matching frc-selftest, curl, node, python, postman or insomnia are our own probes",
         days: rows });
     }
+
+    // Authless by design: no OAuth metadata — 404 on well-known and any non-root path
+    if (path !== "/" && path !== "") return json({ error: "not found" }, 404);
+    if (request.method === "DELETE") return new Response(null, { status: 204, headers: CORS });
+    if (request.method === "GET" && (request.headers.get("Accept") || "").includes("text/event-stream"))
+      return new Response("SSE stream not offered; POST JSON-RPC to /", { status: 405, headers: CORS });
+    if (request.method === "GET")
+      return json({ name: "financeratecalc", transport: "streamable-http", endpoint: "POST /", tools: TOOLS.map(t => t.name),
+        note: "Remote MCP server. " + INSTRUCTIONS, docs: "https://financeratecalc.com/mcp-server.html" });
+    if (request.method !== "POST") return json({ error: "POST JSON-RPC 2.0 messages to /" }, 405);
+
     let body;
     try { body = await request.json(); } catch { return json(rpcErr(null, -32700, "Parse error"), 400); }
     const msgs = Array.isArray(body) ? body : [body];
