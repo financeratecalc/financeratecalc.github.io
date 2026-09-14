@@ -38,17 +38,17 @@ header{display:flex;justify-content:space-between;align-items:center;max-width:9
 
 <h2>Remote connection (no install)</h2><p>Connect any MCP-capable client or agent directly over HTTP — nothing to install:</p>
 <pre style="background:#0d0f14;border:1px solid #C8A84B;border-radius:8px;padding:14px;overflow-x:auto;font-size:13px">https://frc-mcp.ziyetis.workers.dev</pre>
-<p>Streamable HTTP transport; same five tools, same hard limit (historical aggregates only — no individual predictions). Custom domain coming.</p>
+<p>Streamable HTTP transport; twelve tools, same hard limit (historical aggregates only — no individual predictions). Custom domain coming.</p>
 <h2>Install (live now)</h2><p>Any MCP host (Claude Desktop, agent frameworks) — add to your MCP config:</p>
 <pre style="background:#0d0f14;border:1px solid #C8A84B;border-radius:8px;padding:14px;overflow-x:auto;font-size:13px">{
   "mcpServers": {
     "financeratecalc": { "command": "npx", "args": ["-y", "github:financeratecalc/frc-mcp"] }
   }
 }</pre>
-<p>Five tools: national stats, lender lookup, lender rankings, state stats, and the Door Effect summary. Source: <a href="https://github.com/financeratecalc/frc-mcp" style="color:#C8A84B">github.com/financeratecalc/frc-mcp</a> · <p style="margin-top:14px"><a href="https://allmcps.com/mcp/financeratecalc-frc-mcp"><img src="https://allmcps.com/api/badge/financeratecalc-frc-mcp?style=directory" alt="FinanceRateCalc on AllMCPs" style="border:0"/></a></p>
+<p>Twelve tools: claim certification, national, lender, state and metro statistics, the Door Effect and its conditional map, and a counterparty screen (see the table below). Source: <a href="https://github.com/financeratecalc/frc-mcp" style="color:#C8A84B">github.com/financeratecalc/frc-mcp</a> · <p style="margin-top:14px"><a href="https://allmcps.com/mcp/financeratecalc-frc-mcp"><img src="https://allmcps.com/api/badge/financeratecalc-frc-mcp?style=directory" alt="FinanceRateCalc on AllMCPs" style="border:0"/></a></p>
 REST spec: <a href="/openapi.json" style="color:#C8A84B">openapi.json</a></p>
-<h2>Install</h2>
-<p style="font-size:13.5px;color:rgba(255,255,255,.55);">Not on PyPI yet &mdash; install from source. It is a single file plus a data file, with one dependency.</p>
+<h2>Legacy local server (Python)</h2>
+<p style="font-size:13.5px;color:rgba(255,255,255,.55);">The original single-file Python server still works but exposes the older, smaller tool set; prefer the remote endpoint above. Not on PyPI &mdash; install from source. It is a single file plus a data file, with one dependency.</p>
 <pre>git clone https://github.com/financeratecalc/financeratecalc.github.io
 cd financeratecalc.github.io/mcp
 pip install mcp
@@ -63,16 +63,24 @@ python frc_mcp.py</pre>
   }
 }</pre>
 
-<h2>Tools</h2>
+<h2>Tools (12, server v1.7.0)</h2>
+<p style="font-size:13.5px;color:rgba(255,255,255,.55);">Generated from the server source (<code>worker/index.js</code>). Every response carries the same guardrail: historical aggregates from the public 2025 HMDA record, never an individual prediction.</p>
 <table>
-<tr><th>Tool</th><th>Returns</th></tr>
-<tr><td>get_lender_record</td><td>Decisioned applications, denial and approval rate, peer-adjusted ratio, denial-reason distribution against peer medians</td></tr>
-<tr><td>get_metro_record</td><td>Metro rate, small-loan penalty, highest-volume lenders there and the spread between them</td></tr>
-<tr><td>get_state_record</td><td>State rate and small-loan penalty</td></tr>
-<tr><td>compare_lenders</td><td>Side-by-side observed records</td></tr>
-<tr><td>explain_denial_reason</td><td>How common a cited reason is, and how concentrated</td></tr>
-<tr><td>get_methodology</td><td>Universe, denominator rules, exclusions, limitations, verification status</td></tr>
+<tr><th>Tool</th><th>What it does</th><th>Access</th></tr>
+<tr><td>check_claim_contract</td><td>Certify a proposed use of an FRC statistic against its published Claim Contract BEFORE writing free text.</td><td>Free</td></tr>
+<tr><td>get_national_fha_stats</td><td>National FHA denial statistics from the 2025 federal record.</td><td>Free</td></tr>
+<tr><td>get_lender_denial_stats</td><td>FHA denial statistics for one lender by name, slug, or LEI.</td><td>Free</td></tr>
+<tr><td>list_lenders</td><td>List covered FHA lenders sorted by denial rate or volume (2025 span: 1.8% to 78.7%).</td><td>Free</td></tr>
+<tr><td>get_state_denial_stats</td><td>FHA denial statistics for a US state.</td><td>Free</td></tr>
+<tr><td>get_door_effect_summary</td><td>Door Effect: 38% of explainable variation in FHA denial outcomes is lender identity, not the applicant&#x27;s file (859,090 decisions; McFadden 0.1712 to 0.2760).</td><td>Free</td></tr>
+<tr><td>get_metro_lender_gap</td><td>Per-metro FHA denial-rate gap between high-volume lenders (&gt;=100 decisioned applications in that metro, 2025), returned as a machine-readable claim passport: lowest and highest door with counts, gap in percentage points, source-record sha256, interpretation boundaries, and a link to its Claim Contract.</td><td>Free</td></tr>
+<tr><td>screen_counterparties</td><td>Counterparty screen: run a list of public LEIs against the FinanceRateCalc 2025 FHA denial outlier screen (observed vs applicant-mix model expectation).</td><td>Free preview; full Evidence Brief by license</td></tr>
+<tr><td>screen_counterparties_quote</td><td>Price and coverage quote BEFORE running a counterparty screen.</td><td>Free</td></tr>
+<tr><td>list_cohorts</td><td>Ready-made public cohorts you can screen without uploading anything.</td><td>Free</td></tr>
+<tr><td>run_cohort</td><td>Screen a ready-made public cohort by id (see list_cohorts).</td><td>Free preview; full Evidence Brief by license</td></tr>
+<tr><td>get_conditional_door_map</td><td>Conditional surface for a lender: how its peer-adjusted denial gap changes across leverage bands inside identical published cells (state x loan amount x income x DTI x CLTV).</td><td>Free</td></tr>
 </table>
+<p style="font-size:13.5px;color:rgba(255,255,255,.55);">Paid tools return a free preview to any agent. Unlocking a full Evidence Brief requires a license bought by a human on <a href="/pricing.html" style="color:#C8A84B;">the pricing page</a>; the agent only relays the offer and can never complete a purchase.</p>
 
 <h2>What it will not do</h2>
 <div class="warn"><b style="color:#fff;">There is no endpoint that takes borrower details and returns an approval probability, and there will not be one.</b> This server returns observed counts and rates from a federal file. It does not rate, score, rank by quality, or recommend institutions, and denial rates reflect applicant composition as well as lender practice.</div>
@@ -89,7 +97,7 @@ python frc_mcp.py</pre>
 <div style="font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:rgba(200,168,75,.8);font-weight:700;margin-bottom:10px;">The full record &mdash; every artifact, one place</div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:6px 20px;font-size:13px;line-height:1.95;">
 <div><span style="color:rgba(255,255,255,.4);">Data &middot;</span> <a href="https://doi.org/10.5281/zenodo.21575105" style="color:#C8A84B;text-decoration:none;">Zenodo, DOI 10.5281/zenodo.21575105</a></div>
-<div><span style="color:rgba(255,255,255,.4);">Mirrors &middot;</span> <a href="https://huggingface.co/FinanceRateCalc" style="color:#C8A84B;text-decoration:none;">Hugging Face, 7 datasets</a></div>
+<div><span style="color:rgba(255,255,255,.4);">Mirrors &middot;</span> <a href="https://huggingface.co/FinanceRateCalc" style="color:#C8A84B;text-decoration:none;">Hugging Face, 9 datasets</a></div>
 <div><span style="color:rgba(255,255,255,.4);">Code &middot;</span> <a href="https://github.com/financeratecalc/financeratecalc.github.io/blob/main/scripts/reference_implementation.py" style="color:#C8A84B;text-decoration:none;">reference implementation</a></div>
 <div><span style="color:rgba(255,255,255,.4);">Agents &middot;</span> <a href="/mcp-server.html" style="color:#C8A84B;text-decoration:none;">MCP server</a></div>
 <div><span style="color:rgba(255,255,255,.4);">Method &middot;</span> <a href="/methodology.html" style="color:#C8A84B;text-decoration:none;">universe and denominator rules</a></div>
@@ -98,7 +106,7 @@ python frc_mcp.py</pre>
 <div><span style="color:rgba(255,255,255,.4);">Catalog &middot;</span> <a href="/data-catalog.html" style="color:#C8A84B;text-decoration:none;">all datasets</a></div>
 <div><span style="color:rgba(255,255,255,.4);">Errors &middot;</span> <a href="/corrections.html" style="color:#C8A84B;text-decoration:none;">corrections log</a></div>
 <div><span style="color:rgba(255,255,255,.4);">Checking &middot;</span> <a href="/reconciliation.html" style="color:#C8A84B;text-decoration:none;">how to reproduce this</a></div>
-<div><span style="color:rgba(255,255,255,.4);">Papers &middot;</span> <span style="color:rgba(255,255,255,.5);">SSRN abstract 7156938 (under review)</span></div>
+<div><span style="color:rgba(255,255,255,.4);">Papers &middot;</span> <a href="https://doi.org/10.2139/ssrn.7156938" style="color:#C8A84B;text-decoration:none;">10.2139/ssrn.7156938</a>, <a href="https://doi.org/10.2139/ssrn.7309319" style="color:#C8A84B;text-decoration:none;">7309319</a>, <a href="https://doi.org/10.2139/ssrn.7341481" style="color:#C8A84B;text-decoration:none;">7341481</a>, <a href="https://doi.org/10.2139/ssrn.7423798" style="color:#C8A84B;text-decoration:none;">7423798</a></div>
 <div><span style="color:rgba(255,255,255,.4);">Machines &middot;</span> <a href="/llms.txt" style="color:#C8A84B;text-decoration:none;">llms.txt</a></div>
 </div>
 <p style="font-size:11.5px;color:rgba(255,255,255,.38);margin:11px 0 0;line-height:1.75;">Each artifact is derived from the same public federal file and points back to the others, so anyone arriving at one can reach the rest. <b style="color:rgba(255,255,255,.55);">None of it has been independently reproduced</b> &mdash; that remains the open item, and the specification for closing it is in the reconciliation link above.</p></div>
