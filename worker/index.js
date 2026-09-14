@@ -170,6 +170,27 @@ async function validateLicense(key) {
   return res;
 }
 
+
+// ===== Usage tally (v1.8.0) =====
+// Counts only. KV keys are day + client + tool. No LEI list, no result, no IP,
+// no user identifier, nothing that could identify a person or a firm's book.
+// Its single purpose: tell us whether anyone outside this project is calling
+// the server, because we cannot answer "did demand appear" from memory.
+const OURS = /^(frc-selftest|curl|node|python|postman|insomnia)/i;
+function clientLabel(info) {
+  const n = String(info?.name || "unknown").trim().toLowerCase().replace(/[^a-z0-9._-]/g, "-").slice(0, 40);
+  return n || "unknown";
+}
+async function tally(env, client, event) {
+  if (!env || !env.CREDITS) return;
+  const day = new Date().toISOString().slice(0, 10);
+  const key = `tally:${day}:${client}:${event}`;
+  try {
+    const cur = Number(await env.CREDITS.get(key)) || 0;
+    await env.CREDITS.put(key, String(cur + 1), { expirationTtl: 60 * 60 * 24 * 400 });
+  } catch {}
+}
+
 // ===== Prepaid credit bucket (v1.4.0) =====
 // Human buys credits once (LemonSqueezy), pastes the key into their agent, agent spends per LEI.
 // KV stores ONLY sha256(key) -> {credits_total, credits_used, product, first_seen}. No LEI list, no result, no customer data.
@@ -452,20 +473,43 @@ export default {
       return json({ name: "financeratecalc", transport: "streamable-http", endpoint: "POST /", tools: TOOLS.map(t => t.name),
         note: "Remote MCP server. " + INSTRUCTIONS, docs: "https://financeratecalc.com/mcp-server.html" });
     if (request.method !== "POST") return json({ error: "POST JSON-RPC 2.0 messages to /" }, 405);
+
+    if (url.pathname === "/usage") {
+      if (!env || !env.CREDITS) return json({ error: "tally unavailable" }, 503);
+      const list = await env.CREDITS.list({ prefix: "tally:", limit: 1000 });
+      const rows = {};
+      for (const k of list.keys) {
+        const [, day, client, ...ev] = k.name.split(":");
+        const event = ev.join(":");
+        const v = Number(await env.CREDITS.get(k.name)) || 0;
+        rows[day] = rows[day] || {};
+        rows[day][client] = rows[day][client] || {};
+        rows[day][client][event] = v;
+      }
+      return json({ generated: new Date().toISOString(),
+        note: "Counts of MCP calls by day, client name as reported in initialize, and event. No IP, no user, no submitted data — only counts. Published openly because we ask others to be measurable and should be measurable ourselves.",
+        self_test_clients: "clients matching frc-selftest, curl, node, python, postman or insomnia are our own probes",
+        days: rows });
+    }
     let body;
     try { body = await request.json(); } catch { return json(rpcErr(null, -32700, "Parse error"), 400); }
     const msgs = Array.isArray(body) ? body : [body];
+    let clientName = "unknown";
     const out = [];
     for (const m of msgs) {
       if (!m || m.jsonrpc !== "2.0") { out.push(rpcErr(m && m.id, -32600, "Invalid request")); continue; }
-      if (m.method === "initialize")
+      if (m.method === "initialize") {
+        clientName = clientLabel(m.params?.clientInfo);
+        await tally(env, clientName, "initialize");
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.7.0" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.8.0" }, instructions: INSTRUCTIONS }));
+      }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
-      else if (m.method === "tools/list") out.push(rpc(m.id, { tools: TOOLS }));
+      else if (m.method === "tools/list") { await tally(env, clientName, "tools_list"); out.push(rpc(m.id, { tools: TOOLS })); }
       else if (m.method === "tools/call") {
         try {
+          await tally(env, clientName, "call:" + String(m.params?.name || "unknown").slice(0, 40));
           const result = await callTool(m.params?.name, m.params?.arguments, env);
           out.push(rpc(m.id, { content: [{ type: "text", text: JSON.stringify({ ...result, note: GUARDRAIL }, null, 1) }] }));
         } catch (e) {
