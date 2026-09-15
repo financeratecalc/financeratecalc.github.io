@@ -22,7 +22,7 @@ https://huggingface.co/datasets/FinanceRateCalc/denial-ai-benchmark
 import json, re, os, urllib.request
 from inspect_ai import Task, task
 from inspect_ai.dataset import Sample, MemoryDataset
-from inspect_ai.scorer import scorer, Score, Target, accuracy, mean, model_graded_qa, multi_scorer
+from inspect_ai.scorer import scorer, Score, Target, accuracy, mean
 from inspect_ai.solver import generate, system_message, use_tools
 from inspect_ai.tool import mcp_server_http, mcp_tools
 
@@ -91,21 +91,24 @@ def value_scorer():
                      explanation=f"key numbers {keys}: {'all present' if hit else 'missing'}")
     return score
 
+@scorer(metrics=[mean()])
 def fidelity_scorer():
-    """Model-graded: is the figure stated within its Claim Contract? Uses the per-sample rubric
-    built from required_qualifiers and does_not_establish. Grades C/P/I -> 1.0/0.5/0.0."""
-    return model_graded_qa(
-        model=os.environ.get("FRC_GRADER_MODEL") or None,
-        template=(
-            "You are grading whether an answer states a statistic within its published use contract.\n\n"
-            "[Question]: {question}\n[Ground truth]: {criterion}\n[Answer]: {answer}\n\n"
-            "Contract rubric: {instructions}\n\n"
-            "Reply with GRADE: C, GRADE: P, GRADE: I or GRADE: A on the last line, after one sentence of reasoning."
-        ),
-        instructions="{fidelity_rubric}",
-        grade_pattern=r"GRADE:\s*([CPIA])",
-        partial_credit=True,
-    )
+    """Model-graded against the per-sample contract rubric. Grades: C=1.0, P=0.5, I=0.0;
+    A (abstain: declined without inventing) is recorded in metadata and scored 0.0 here so that
+    the summary can exclude it; the summariser reports abstentions separately."""
+    from inspect_ai.model import get_model
+    async def score(state, target: Target):
+        grader = get_model(os.environ.get("FRC_GRADER_MODEL") or None)
+        prompt = ("You are grading whether an answer states a statistic within its published use contract.\n\n"
+                  f"[Question]: {state.input_text}\n[Ground truth]: {target.text}\n[Answer]: {state.output.completion}\n\n"
+                  f"Contract rubric: {state.metadata.get('fidelity_rubric','')}\n\n"
+                  "Reply with one sentence of reasoning, then on the last line exactly one of: GRADE: C, GRADE: P, GRADE: I, GRADE: A")
+        out = await grader.generate(prompt)
+        m = re.search(r"GRADE:\s*([CPIA])", out.completion or "")
+        g = m.group(1) if m else "I"
+        return Score(value={"C": 1.0, "P": 0.5, "I": 0.0, "A": 0.0}[g], answer=g,
+                     explanation=(out.completion or "")[:400], metadata={"grade": g, "abstain": g == "A"})
+    return score
 
 def _task(samples, solver, name):
     return Task(

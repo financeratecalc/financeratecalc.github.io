@@ -58,8 +58,9 @@ jobs:
           GRADE = {'C': 1.0, 'P': 0.5, 'I': 0.0, 'A': None}
           for s in log.get('samples', []):
               sc = s.get('scores', {})
-              fid = sc.get('model_graded_qa', {})
-              fv = fid.get('value'); fv = GRADE.get(fv, fv) if isinstance(fv, str) else fv
+              fid = sc.get('fidelity_scorer', {})
+              g = (fid.get('metadata') or {}).get('grade') or fid.get('answer')
+              fv = None if g == 'A' else fid.get('value')
               rows.append({'id': s.get('id'), 'value': sc.get('value_scorer', {}).get('value'), 'fidelity': fv,
                            'answer': text_of(s.get('output', {}).get('choices', [{}])[0].get('message', {}).get('content'))[:500],
                            'fidelity_explanation': (fid.get('explanation') or '')[:300],
@@ -71,7 +72,7 @@ jobs:
                  'note': 'Automated administration via Inspect; not comparable with human-graded Verdict Day rows until the two are reconciled.'}
           os.makedirs('eval/runs', exist_ok=True)
           out['condition'] = os.environ.get('INSPECT_TASK')
-          fn = 'eval/runs/' + out['run'][:10] + '-' + (model or 'model').replace('/', '_') + '-' + (os.environ.get('INSPECT_TASK') or 'task') + '.json'
+          fn = 'eval/runs/' + out['run'].replace(':', '').replace('-', '')[:15] + '-' + (model or 'model').replace('/', '_') + '-' + (os.environ.get('INSPECT_TASK') or 'task') + '.json'
           json.dump(out, open(fn, 'w'), indent=1)
           print(fn); print(json.dumps({k: v for k, v in out.items() if k != 'samples'}, indent=1))
           PY
@@ -85,7 +86,6 @@ jobs:
           rm -f eval/runs/last-run.log
           git add eval/runs
           git diff --staged --quiet || git commit -m "eval run $(date -u +%Y-%m-%dT%H:%MZ)"
-          git pull --rebase origin main || true
-          git push || true
+          for i in 1 2 3 4 5; do git pull --rebase origin main && git push && break || sleep $((i*7)); done
       - uses: actions/upload-artifact@v4
         with: { name: inspect-log, path: eval/logs }
