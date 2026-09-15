@@ -1,0 +1,296 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://financeratecalc.com/spec/claim-contract-1.0.schema.json",
+ "title": "Claim Contract 1.0 (draft 1)",
+ "$defs": {
+  "passport": {
+   "type": "object",
+   "required": [
+    "passport_version",
+    "passport_id",
+    "issuer",
+    "issued_at",
+    "canonical_url",
+    "sha256",
+    "claim",
+    "provenance",
+    "attribution",
+    "corrections"
+   ],
+   "properties": {
+    "passport_version": {
+     "type": "string"
+    },
+    "passport_id": {
+     "type": "string"
+    },
+    "issuer": {
+     "type": "string"
+    },
+    "issued_at": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "canonical_url": {
+     "type": "string",
+     "format": "uri"
+    },
+    "sha256": {
+     "type": "string",
+     "pattern": "^[a-f0-9]{64}$"
+    },
+    "claim": {
+     "type": "object",
+     "required": [
+      "metric",
+      "value",
+      "unit",
+      "subject",
+      "period",
+      "definition"
+     ],
+     "properties": {
+      "metric": {
+       "type": "string"
+      },
+      "value": {
+       "type": [
+        "number",
+        "string"
+       ]
+      },
+      "unit": {
+       "type": "string"
+      },
+      "subject": {
+       "type": "string"
+      },
+      "period": {
+       "type": "string"
+      },
+      "definition": {
+       "type": "string"
+      },
+      "n": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "note": {
+       "type": "string"
+      }
+     }
+    },
+    "provenance": {
+     "type": "object",
+     "required": [
+      "primary_source"
+     ],
+     "properties": {
+      "primary_source": {
+       "type": "string"
+      },
+      "dataset": {
+       "type": "string"
+      },
+      "code_history": {
+       "type": "string",
+       "format": "uri"
+      }
+     }
+    },
+    "use_boundary": {
+     "type": "object",
+     "properties": {
+      "allowed": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "prohibited": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "minimum_cell_size": {
+       "type": "integer"
+      }
+     }
+    },
+    "corrections": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "date",
+       "reason"
+      ],
+      "properties": {
+       "date": {
+        "type": "string",
+        "format": "date"
+       },
+       "from": {},
+       "to": {},
+       "reason": {
+        "type": "string"
+       },
+       "log": {
+        "type": "string",
+        "format": "uri"
+       }
+      }
+     }
+    },
+    "attribution": {
+     "type": "object",
+     "required": [
+      "license"
+     ],
+     "properties": {
+      "required_text": {
+       "type": "string"
+      },
+      "license": {
+       "type": "string"
+      }
+     }
+    },
+    "independent_reproduction_status": {
+     "type": "string"
+    }
+   }
+  },
+  "contract": {
+   "type": "object",
+   "required": [
+    "contract_version",
+    "passport_id",
+    "canonical_claim",
+    "required_qualifiers",
+    "does_not_establish",
+    "forbidden_transformations",
+    "test_vectors"
+   ],
+   "properties": {
+    "contract_version": {
+     "type": "string"
+    },
+    "passport_id": {
+     "type": "string"
+    },
+    "canonical_claim": {
+     "type": "object",
+     "required": [
+      "template"
+     ],
+     "properties": {
+      "template": {
+       "type": "string"
+      },
+      "required_fields": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "required_qualifiers": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "string"
+     }
+    },
+    "does_not_establish": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1
+    },
+    "forbidden_transformations": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "enum": [
+       "causal_attribution",
+       "individual_prediction",
+       "personalized_lender_recommendation",
+       "legal_conclusion",
+       "recommendation"
+      ]
+     }
+    },
+    "test_vectors": {
+     "type": "array",
+     "minItems": 2,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "proposed_use",
+       "expected_verdict"
+      ],
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "proposed_use": {
+        "type": "object"
+       },
+       "expected_verdict": {
+        "type": "string",
+        "enum": [
+         "pass",
+         "needs_qualifier",
+         "block"
+        ]
+       },
+       "reason_code": {
+        "type": "string"
+       }
+      }
+     }
+    }
+   }
+  },
+  "verdict": {
+   "type": "object",
+   "required": [
+    "verdict",
+    "reason_codes"
+   ],
+   "properties": {
+    "verdict": {
+     "enum": [
+      "pass",
+      "needs_qualifier",
+      "block"
+     ]
+    },
+    "reason_codes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "safe_sentence": {
+     "type": "string"
+    },
+    "required_attribution": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "oneOf": [
+  {
+   "$ref": "#/$defs/passport"
+  },
+  {
+   "$ref": "#/$defs/contract"
+  }
+ ]
+}
