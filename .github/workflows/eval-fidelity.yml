@@ -5,6 +5,9 @@ on:
       model:
         description: "Inspect model id"
         default: "anthropic/claude-sonnet-4-6"
+      condition:
+        description: "task: denial_ai_fidelity (no tools) or denial_ai_fidelity_with_source (MCP)"
+        default: "denial_ai_fidelity_with_source"
       grader:
         description: "Grader model for the fidelity scorer"
         default: "anthropic/claude-sonnet-4-6"
@@ -23,6 +26,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           INSPECT_EVAL_MODEL: ${{ github.event.inputs.model }}
           INSPECT_GRADER_MODEL: ${{ github.event.inputs.grader }}
+          INSPECT_TASK: ${{ github.event.inputs.condition }}
         run: |
           mkdir -p eval/runs
           python - <<'PY'
@@ -35,12 +39,14 @@ jobs:
           open("eval/runs/available-models.txt", "w").write("\n".join(ids) + "\n"); print(ids)
           PY
           set +e
-          FRC_GRADER_MODEL="$INSPECT_GRADER_MODEL" inspect eval eval/denial_ai_fidelity.py -T site="$PWD" --model "$INSPECT_EVAL_MODEL" --log-dir eval/logs --log-format json --max-connections 4 > eval/runs/last-run.log 2>&1
+          FRC_GRADER_MODEL="$INSPECT_GRADER_MODEL" inspect eval eval/denial_ai_fidelity.py@"$INSPECT_TASK" -T site="$PWD" --model "$INSPECT_EVAL_MODEL" --log-dir eval/logs --log-format json --max-connections 4 > eval/runs/last-run.log 2>&1
           rc=$?
           tail -c 4000 eval/runs/last-run.log > eval/runs/last-error.txt
           echo "exit=$rc" >> eval/runs/last-error.txt
           exit $rc
       - name: Summarise
+        env:
+          INSPECT_TASK: ${{ github.event.inputs.condition }}
         run: |
           python - <<'PY'
           import json, glob, os, datetime
@@ -48,19 +54,26 @@ jobs:
           log = json.load(open(logs[-1]))
           model = log.get('eval', {}).get('model')
           rows = []
+          def text_of(content):
+              if isinstance(content, str): return content
+              return " ".join(b.get('text', '') for b in content if isinstance(b, dict) and b.get('type') == 'text')
+          GRADE = {'C': 1.0, 'P': 0.5, 'I': 0.0}
           for s in log.get('samples', []):
               sc = s.get('scores', {})
-              rows.append({'id': s.get('id'), 'value': sc.get('value_scorer', {}).get('value'),
-                           'fidelity': sc.get('fidelity_scorer', {}).get('value'),
-                           'answer': (s.get('output', {}).get('choices', [{}])[0].get('message', {}).get('content') if isinstance(s.get('output', {}).get('choices', [{}])[0].get('message', {}).get('content'), str) else str(s.get('output', {}).get('choices', [{}])[0].get('message', {}).get('content')))[:400],
-                           'fidelity_explanation': sc.get('fidelity_scorer', {}).get('explanation', '')[:300]})
+              fid = sc.get('model_graded_qa', {})
+              fv = fid.get('value'); fv = GRADE.get(fv, fv) if isinstance(fv, str) else fv
+              rows.append({'id': s.get('id'), 'value': sc.get('value_scorer', {}).get('value'), 'fidelity': fv,
+                           'answer': text_of(s.get('output', {}).get('choices', [{}])[0].get('message', {}).get('content'))[:500],
+                           'fidelity_explanation': (fid.get('explanation') or '')[:300],
+                           'tool_calls': sum(1 for m in s.get('messages', []) if m.get('role') == 'assistant' and m.get('tool_calls'))})
           out = {'run': datetime.datetime.utcnow().isoformat(timespec='seconds') + 'Z', 'model': model,
                  'grader': os.environ.get('INSPECT_GRADER_MODEL'), 'battery': 'benchmark.json v1.2',
                  'n': len(rows), 'value_mean': sum((r['value'] or 0) for r in rows) / max(len(rows), 1),
                  'fidelity_mean': sum((r['fidelity'] or 0) for r in rows) / max(len(rows), 1), 'samples': rows,
                  'note': 'Automated administration via Inspect; not comparable with human-graded Verdict Day rows until the two are reconciled.'}
           os.makedirs('eval/runs', exist_ok=True)
-          fn = 'eval/runs/' + out['run'][:10] + '-' + (model or 'model').replace('/', '_') + '.json'
+          out['condition'] = os.environ.get('INSPECT_TASK')
+          fn = 'eval/runs/' + out['run'][:10] + '-' + (model or 'model').replace('/', '_') + '-' + (os.environ.get('INSPECT_TASK') or 'task') + '.json'
           json.dump(out, open(fn, 'w'), indent=1)
           print(fn); print(json.dumps({k: v for k, v in out.items() if k != 'samples'}, indent=1))
           PY

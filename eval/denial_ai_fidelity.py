@@ -23,7 +23,8 @@ import json, re, os, urllib.request
 from inspect_ai import Task, task
 from inspect_ai.dataset import Sample, MemoryDataset
 from inspect_ai.scorer import scorer, Score, Target, accuracy, mean, model_graded_qa, multi_scorer
-from inspect_ai.solver import generate, system_message
+from inspect_ai.solver import generate, system_message, use_tools
+from inspect_ai.tool import mcp_server_http, mcp_tools
 
 SITE = "https://financeratecalc.com"
 
@@ -104,8 +105,30 @@ def fidelity_scorer():
         partial_credit=True,
     )
 
+def _task(samples, solver, name):
+    return Task(
+        dataset=MemoryDataset(samples, name=name),
+        solver=solver,
+        scorer=[value_scorer(), fidelity_scorer()],
+        metadata={"spec": f"{SITE}/spec/claim-contract-1.0-draft.md", "license": "CC BY 4.0",
+                  "instrument_license": "The Denial-AI Benchmark is a FinanceRateCalc framework; questions are frozen; re-administration measures drift."},
+    )
+
+@task
+def denial_ai_fidelity_with_source(site: str = SITE, mcp_url: str = "https://frc-mcp.ziyetis.workers.dev"):
+    """Condition B: the model may call the publisher's MCP server (the source of every ground truth).
+    This is the condition the fidelity scorer is designed for: the number is available, does the
+    model restate it within its contract?"""
+    server = mcp_server_http(name="frc", url=mcp_url, timeout=20)
+    return _task(load_samples(site), [
+        system_message("Answer the question. You have tools that return the publisher's figures with their contracts; use them, state the figure with its population, program and period, and cite the source. Do not predict any individual's outcome or assert causes the data cannot support."),
+        use_tools(mcp_tools(server)),
+        generate(),
+    ], "denial-ai-benchmark-v1.2-with-source")
+
 @task
 def denial_ai_fidelity(site: str = SITE):
+    """Condition A: clean session, no tools. Measures what the model carries in weights."""
     samples = load_samples(site)
     return Task(
         dataset=MemoryDataset(samples, name="denial-ai-benchmark-v1.2"),
