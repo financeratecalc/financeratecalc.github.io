@@ -1,0 +1,14 @@
+name: Benchmark key self-check
+on:
+  push:
+    paths: [benchmark.json, universes.json, api/**, data/national-vs-local-2025.json, corrections.html, scripts/check_benchmark_key.py]
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Key must match the data it claims to come from
+        run: python scripts/check_benchmark_key.py

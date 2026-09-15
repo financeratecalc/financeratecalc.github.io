@@ -46,6 +46,19 @@ def check(q):
             lo, hi = min(rates), max(rates); gap = round(hi - lo, 1)
             return (str(gap) in gt and f"{lo:.1f}" in gt and f"{hi:.1f}" in gt), f"data gap {gap} ({lo} to {hi}) over {len(rates)} lenders with >=100 decisioned"
         except Exception as e: return None, str(e)
+    if qid == "q10":
+        meta = idx["meta"]; ok = meta["dataset_doi"] in gt and "CC BY 4.0" in gt and "HMDA" in gt and "financeratecalc.com" in gt
+        return ok, f"data doi {meta['dataset_doi']} license {meta['license']} source {meta['source'][:40]}"
+    if qid == "q11":
+        r = json.load(open("data/national-vs-local-2025.json"))["result"]
+        vals = [str(v) for v in r.values() if isinstance(v, (int, float))]
+        need = [x for x in ("151", "23.6", "16.7", "10.2", "112") if x in gt]
+        ok = all(any(n == v or n == f"{float(v):.1f}" for v in vals) for n in need)
+        return ok, f"data {r}"[:160]
+    if qid == "q12":
+        c = open("corrections.html", encoding="utf-8").read()
+        ok = all(t in c for t in ("21.7", "22.1", "29,691", "0.056"))
+        return ok, "corrections.html contains the HECM correction figures and the withdrawn r=0.056 claim" if ok else "corrections.html missing one of 21.7 / 22.1 / 29,691 / 0.056"
     return None, "non-numeric ground truth"
 
 rows = []
