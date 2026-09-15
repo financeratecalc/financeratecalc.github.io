@@ -1,0 +1,33 @@
+name: Publish benchmark to Hugging Face
+on:
+  workflow_dispatch:
+  push:
+    paths: [benchmark.json, benchmark-2026-09.json, scripts/build_hf_benchmark.py]
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q huggingface_hub
+      - name: Key must pass its own check before anything is published
+        run: python scripts/check_benchmark_key.py
+      - name: Build package from the site's JSON
+        run: python scripts/build_hf_benchmark.py --out hf-pkg && ls hf-pkg
+      - name: Upload (replaces older instrument CSVs)
+        env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}" }
+        run: |
+          python - <<'PY'
+          import os, glob
+          from huggingface_hub import HfApi
+          api = HfApi(token=os.environ["HF_TOKEN"]); repo = "FinanceRateCalc/denial-ai-benchmark"
+          existing = api.list_repo_files(repo, repo_type="dataset")
+          stale = [f for f in existing if f.startswith("denial_ai_benchmark_v1") and f not in [os.path.basename(p) for p in glob.glob("hf-pkg/*.csv")]]
+          ops = [ {"path_in_repo": os.path.basename(p), "path_or_fileobj": p} for p in glob.glob("hf-pkg/*") if not p.endswith("UPLOAD.md") ]
+          from huggingface_hub import CommitOperationAdd, CommitOperationDelete
+          operations = [CommitOperationAdd(**o) for o in ops] + [CommitOperationDelete(path_in_repo=f) for f in stale]
+          api.create_commit(repo_id=repo, repo_type="dataset", operations=operations,
+                            commit_message="v1.3: ground truths regenerated from data under named universes (universes.json); key self-check 12/12; July + Sept 15 results")
+          print("uploaded", [o["path_in_repo"] for o in ops], "deleted", stale)
+          PY
