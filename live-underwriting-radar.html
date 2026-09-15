@@ -121,7 +121,23 @@ async function loadIntelligence() {
     const resp = await fetch('/live-intelligence.json?t=' + Date.now());
     const data = await resp.json();
     
-    const ofi = data.ofi;
+    const ofi = data.ofi || {};
+    if (ofi.live === undefined) ofi.live = ofi.ofi;
+    if (ofi.overlay_ratio === undefined) ofi.overlay_ratio = 0;
+    // Honesty gate: when the pipeline found no classifiable signal, the index is a
+    // baseline constant, not a measurement. Say so instead of rendering it as live.
+    if (ofi.source === 'baseline' || !ofi.signal_count) {
+      document.getElementById('ofi-val').textContent = '—';
+      document.getElementById('ofi-val').style.color = 'rgba(255,255,255,0.35)';
+      document.getElementById('ofi-state').textContent = 'No live signal: 0 classifiable CFPB complaints in the last 7 days. Index not computed.';
+      document.getElementById('overlay-ratio').textContent = '—';
+      document.getElementById('overlay-bar').style.width = '0%';
+      document.getElementById('signal-count').textContent = '0 CFPB complaints analyzed';
+      const g = new Date(data.generated);
+      document.getElementById('generated-time').innerHTML = 'Last pipeline run: ' + g.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) + ' · no signal · <a href="/live-intelligence.json" style="color:rgba(200,164,74,0.4)">JSON</a>';
+      document.getElementById('macro-desc').textContent = 'The radar reports only what the last seven days of public complaint data support. With no classifiable signal, no index value is shown; the baseline constant is not a measurement.';
+      return;
+    }
     const delta = ofi.delta || 0;
     const deltaStr = delta > 0 ? '+' + delta.toFixed(1) : delta.toFixed(1);
     const ofiColor = ofi.live <= 40 ? '#6bffb8' : ofi.live <= 55 ? '#c8a44a' : '#ff6b6b';
