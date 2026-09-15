@@ -1,7 +1,7 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "https://financeratecalc.com/spec/claim-contract-1.0.schema.json",
- "title": "Claim Contract 1.0 (draft 2)",
+ "title": "Claim Contract 1.0 (draft 3)",
  "$defs": {
   "passport": {
    "type": "object",
@@ -218,7 +218,7 @@
        },
        "derived_from": {
         "type": "string",
-        "pattern": "^(claim\\.(period|definition|subject|unit|metric)|use_boundary\\.prohibited|provenance\\.dataset)"
+        "pattern": "^(claim\\.(period|definition|subject|unit|metric)|provenance\\.dataset|policy:[a-z_]+)$"
        }
       }
      }
@@ -266,6 +266,13 @@
        }
       }
      }
+    },
+    "editorial_notes": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "description": "publisher concerns; ignored by checkers"
     }
    }
   },

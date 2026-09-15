@@ -2,7 +2,7 @@
 
 **Machine-readable use conditions for published statistics.**
 
-Status: draft 2, 2026-09-15. Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
+Status: draft 3, 2026-09-15. Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
 Reference implementation: 189 claims at https://financeratecalc.com/claims.json (passport format 0.1, contract format 0.1, which this document generalises).
 
 ---
@@ -116,7 +116,12 @@ The contract answers *how may this number be restated*.
 
 ### 5.0 The derivation rule
 
-`does_not_establish` is the only field in which a publisher could smuggle an opinion, so it is the most constrained. **Every entry MUST name the passport field whose limit it follows from** (`derived_from`), and a reader MUST be able to confirm the derivation mechanically: a period limit follows from `claim.period`, a population limit from `claim.definition`, a prohibited use from `use_boundary.prohibited`. An entry that cannot be traced to a field is a preference, and preferences do not belong in a contract. "Does not establish borrower intent" is a preference; "does not establish a 2026 rate" is a theorem of `claim.period`. The field is a list of theorems, not a list of worries.
+`does_not_establish` is the only field in which a publisher could smuggle an opinion, so it is the most constrained. Every entry MUST name its source in `derived_from`, and the source is one of exactly two kinds:
+
+- **(a) a passport field** — `claim.period`, `claim.definition`, `claim.subject`, `claim.unit`, `provenance.dataset`. The test: delete that field and the entry becomes unsupported. "Does not establish a 2026 rate" is a theorem of `claim.period`; "does not establish an all-mortgage rate" is a theorem of `claim.definition`.
+- **(b) a named global policy clause** — an item of `use_boundary.prohibited`, cited by name (`policy:individual_prediction`, `policy:causal_attribution`, …). Policy clauses are defined once per publisher, apply to every claim, and are listed in `/claims.json`; a contract cites them, it does not restate them. Moving an opinion into a policy clause does not launder it: the policy list is short, public and the same for all 189 claims, so a reader can judge it once.
+
+An entry that fits neither is a concern, not a limit. Concerns are not forbidden; they belong in `editorial_notes`, a free-text field a checker ignores. "Does not establish lender intent" is a concern: no field and no policy clause makes it false to say, it is merely something the publisher would rather you did not say. The contract is a list of theorems and cited policies; the notes are the worries.
 
 ### 5.1 Verdicts
 
@@ -200,6 +205,7 @@ See `claim-contract-1.0.schema.json` alongside this document.
 - `claim.n` (cell size) added as recommended.
 - `needs_qualifier` verdict named explicitly; reason-code registry started.
 - Test vectors made normative and derivable (5.3); reference checker required to be publisher-agnostic.
-- `does_not_establish` entries must cite the field they derive from (5.0).
+- `does_not_establish` entries must cite either a passport field or a named policy clause (5.0); concerns move to `editorial_notes`.
+- Empirical check of the rule against the 189 reference contracts (750 entries, 2026-09-15): 190 derive from a passport field, 557 from a policy clause, 3 are unclassified and under review; 0 are concerns. The entries are 36 distinct sentences, 184 contracts sharing a four-entry template, which means the template is the thing to audit, not the contracts.
 - Conformance levels introduced, including an L4 the editor has not reached.
 - Adoption test moved from publisher-side copying to consumer-side attestation (10).
