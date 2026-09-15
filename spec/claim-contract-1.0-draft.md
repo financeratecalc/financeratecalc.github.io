@@ -2,7 +2,7 @@
 
 **Machine-readable use conditions for published statistics.**
 
-Status: draft 4, 2026-09-15. Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
+Status: draft 5, 2026-09-15. Reference checker: `tools/claimcheck/claimcheck.py`. Runnable fidelity task: `eval/denial_ai_fidelity.py` (Inspect AI). Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
 Reference implementation: 189 claims at https://financeratecalc.com/claims.json (passport format 0.1, contract format 0.1, which this document generalises).
 
 ---
@@ -78,7 +78,7 @@ The passport answers *what is this number and where did it come from*.
 
 Required fields: `passport_version`, `passport_id`, `issuer`, `issued_at`, `canonical_url`, `sha256`, `claim.metric`, `claim.value`, `claim.unit`, `claim.subject`, `claim.period`, `claim.definition`, `provenance.primary_source`, `attribution.license`, `corrections` (may be an empty array, but MUST be present: an absent log and an empty log are different statements).
 
-`sha256` is the hash of the claim object serialised canonically (sorted keys, no whitespace). A consumer that recomputes a different hash treats the passport as tampered or stale.
+`sha256` is the SHA-256 of the `claim` object alone, serialised as JSON with keys sorted, separators `,` and `:`, no whitespace, UTF-8. Hashing only `claim` means the hash changes when the number, unit, period, subject or definition change, and does not change when prose, links or attribution text change. A consumer that recomputes a different hash treats the passport as stale or tampered. (The reference implementation's passport 0.1 hashes differently; its 5 hand-written passports fail this check and will be regenerated. Recorded here rather than hidden.)
 
 ## 5. The contract (`/claims/<id>.contract.json`)
 
@@ -143,7 +143,7 @@ A checker returns exactly one of:
 
 ### 5.3 Test vectors are normative
 
-Every contract ships at least one `pass` and one `block` vector. A checker that does not reproduce a contract's own test vectors is not conforming for that contract.
+Every contract has at least one `pass` and one `block` vector, **explicit or derived**. Because vectors are derivable (below), a templated contract MAY omit the `test_vectors` array; a conforming checker derives them and tests itself against them. A checker that does not reproduce a contract's vectors, explicit or derived, is not conforming for that contract.
 
 The publisher writes the vectors, so the publisher sets both the exam and the answer key. Two requirements keep that honest:
 
@@ -160,7 +160,7 @@ A conforming checker exposes one function:
 check(passport, contract, proposed_use) -> { verdict, reason_codes[], safe_sentence, required_attribution }
 ```
 
-`proposed_use` is structured (population, period, scope, causal_assertion, individual_prediction, recommendation, legal_conclusion, attribution_present). `safe_sentence` is the canonical template rendered with the passport's value and required qualifiers: what the writer may say if it says nothing more. A checker MAY also accept free text and derive `proposed_use` from it, but the structured form is the interface; text extraction is an implementation detail and its accuracy is the implementer's claim, not the standard's.
+`proposed_use` is structured. **Convention: it describes deviations from the canonical claim.** A key that is absent is taken as contracted; a key that is present is compared. Keys: scope keys (`population`, `universe`, `metric_scope`, `program_scope`, `subject`), `period`, the four flags (`causal_assertion`, `individual_prediction`, `recommendation`, `legal_conclusion`), and `attribution_present`. A checker MAY also accept `proposed_sentence` (free text) and derive flags from it; that derivation is the checker's claim, not the standard's. `safe_sentence` is the canonical template rendered with the passport's value and required qualifiers: what the writer may say if it says nothing more. A checker MAY also accept free text and derive `proposed_use` from it, but the structured form is the interface; text extraction is an implementation detail and its accuracy is the implementer's claim, not the standard's.
 
 Reference implementation: the `check_claim_contract` tool on the FinanceRateCalc MCP server (https://frc-mcp.ziyetis.workers.dev), to be released as a standalone package taking any `claims.json`.
 
@@ -209,6 +209,7 @@ See `claim-contract-1.0.schema.json` alongside this document.
 - Test vectors made normative and derivable (5.3); reference checker required to be publisher-agnostic.
 - `does_not_establish` entries must cite either a passport field or a named policy clause (5.0); concerns move to `editorial_notes`.
 - Empirical check of the rule against the 189 reference contracts (750 entries, 2026-09-15): 190 derive from a passport field, 557 from a policy clause, 3 were unclassified by pattern and pass on reading; 0 are concerns. Two caveats bind this result. First, the contracts and the rule have the same author; the real test is whether a checker that does not know the author's intent classifies the 750 entries the same way, and that agreement rate is the first number the reference checker must report. Second, the 189 contracts are 36 distinct sentences: 5 hand-written contracts define a template that 184 instantiate. That is not a weakness of the evidence but the point of a standard: a publisher reaches L2 by writing about five contracts and templating the rest, not by writing 189.
+- Reference checker run, 2026-09-15 (author-blind classification, no `derived_from` labels read): 189 claims, 0 load errors; 14/14 explicit vectors reproduced; 939/939 derived vectors reproduced; 750 entries classified, 0 unclassified, 186 syntactic / 564 semantic; **18 distinct sentences** (an earlier draft said 36; that number came from a counting bug in the audit script and is corrected here, dated); 184 contracts carry no explicit vectors and rely on derivation; 5 passports fail the hash rule of §4. Conformance: L2 by the letter of this draft, L3 self-assessed, L4 not reached.
 - Known gap in the reference set: no single-lender, time-bounded claim (a "does this persist next year" contract). Every publisher error found in the week of 2026-09-08 was a time-limit error; the reference set needs a contract that exercises exactly that, and the editor's own site is the first place to add one.
 - Conformance levels introduced, including an L4 the editor has not reached.
 - Adoption test moved from publisher-side copying to consumer-side attestation (10).
