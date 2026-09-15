@@ -2,7 +2,7 @@
 
 **Machine-readable use conditions for published statistics.**
 
-Status: draft 3, 2026-09-15. Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
+Status: draft 4, 2026-09-15. Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
 Reference implementation: 189 claims at https://financeratecalc.com/claims.json (passport format 0.1, contract format 0.1, which this document generalises).
 
 ---
@@ -121,7 +121,9 @@ The contract answers *how may this number be restated*.
 - **(a) a passport field** — `claim.period`, `claim.definition`, `claim.subject`, `claim.unit`, `provenance.dataset`. The test: delete that field and the entry becomes unsupported. "Does not establish a 2026 rate" is a theorem of `claim.period`; "does not establish an all-mortgage rate" is a theorem of `claim.definition`.
 - **(b) a named global policy clause** — an item of `use_boundary.prohibited`, cited by name (`policy:individual_prediction`, `policy:causal_attribution`, …). Policy clauses are defined once per publisher, apply to every claim, and are listed in `/claims.json`; a contract cites them, it does not restate them. Moving an opinion into a policy clause does not launder it: the policy list is short, public and the same for all 189 claims, so a reader can judge it once.
 
-An entry that fits neither is a concern, not a limit. Concerns are not forbidden; they belong in `editorial_notes`, a free-text field a checker ignores. "Does not establish lender intent" is a concern: no field and no policy clause makes it false to say, it is merely something the publisher would rather you did not say. The contract is a list of theorems and cited policies; the notes are the worries.
+Each entry also declares `derivation_kind`: **`syntactic`** when the limit follows from the field's literal value (`claim.period = 2025` excludes 2026 by string comparison), **`semantic`** when it follows from what the field means (`claim.unit = share of explainable variance` excludes "38% of each individual denial" only for a reader who knows what explainable variance is; a max-minus-min spread is not a mean only for a reader who knows what a spread is). Both are legitimate. They need different checkers: a rule-based checker verifies syntactic derivations mechanically and MUST label semantic ones as requiring review rather than silently passing them. A conforming checker reports which of the two it applied to each entry.
+
+An entry that fits neither source is a concern, not a limit. Concerns are not forbidden; they belong in `editorial_notes`, a free-text field a checker ignores. "Does not establish lender intent" is a concern: no field and no policy clause makes it false to say, it is merely something the publisher would rather you did not say. The contract is a list of theorems and cited policies; the notes are the worries.
 
 ### 5.1 Verdicts
 
@@ -185,7 +187,7 @@ A fidelity test administers a fixed battery of questions whose answers are contr
 | level | requirement |
 |---|---|
 | **L1 Passport** | `/claims.json` + passports with required fields and correction logs |
-| **L2 Contract** | L1 + a contract per claim with test vectors |
+| **L2 Contract** | L1 + a contract per claim with test vectors. Contracts may be templated: the reference implementation reaches L2 with 5 hand-written contracts and one template instantiated 184 times |
 | **L3 Reproducible** | L2 + reproduce file per claim, and a public corrections log with dated entries |
 | **L4 Independently verified** | L3 + at least one claim recomputed from the primary source by a party unrelated to the publisher, with the rerun published and linked from the passport's `independent_reproduction_status` |
 
@@ -206,6 +208,7 @@ See `claim-contract-1.0.schema.json` alongside this document.
 - `needs_qualifier` verdict named explicitly; reason-code registry started.
 - Test vectors made normative and derivable (5.3); reference checker required to be publisher-agnostic.
 - `does_not_establish` entries must cite either a passport field or a named policy clause (5.0); concerns move to `editorial_notes`.
-- Empirical check of the rule against the 189 reference contracts (750 entries, 2026-09-15): 190 derive from a passport field, 557 from a policy clause, 3 are unclassified and under review; 0 are concerns. The entries are 36 distinct sentences, 184 contracts sharing a four-entry template, which means the template is the thing to audit, not the contracts.
+- Empirical check of the rule against the 189 reference contracts (750 entries, 2026-09-15): 190 derive from a passport field, 557 from a policy clause, 3 were unclassified by pattern and pass on reading; 0 are concerns. Two caveats bind this result. First, the contracts and the rule have the same author; the real test is whether a checker that does not know the author's intent classifies the 750 entries the same way, and that agreement rate is the first number the reference checker must report. Second, the 189 contracts are 36 distinct sentences: 5 hand-written contracts define a template that 184 instantiate. That is not a weakness of the evidence but the point of a standard: a publisher reaches L2 by writing about five contracts and templating the rest, not by writing 189.
+- Known gap in the reference set: no single-lender, time-bounded claim (a "does this persist next year" contract). Every publisher error found in the week of 2026-09-08 was a time-limit error; the reference set needs a contract that exercises exactly that, and the editor's own site is the first place to add one.
 - Conformance levels introduced, including an L4 the editor has not reached.
 - Adoption test moved from publisher-side copying to consumer-side attestation (10).
