@@ -30,17 +30,16 @@ def check(q):
     if qid == "q4":
         r = slp["ranked"][0]; return (r["state"] in gt and str(r["penalty_ratio"]) in gt and str(r["small_loan_denial_pct"]) in gt and str(r["big_loan_denial_pct"]) in gt), f"data {r}"
     if qid == "q5":
-        pm = nat["peer_medians"]; top_reason = max((k for k in pm if k != "denial_rate_pct"), key=lambda k: pm[k])
-        alt = rs["by_reason"]["dti"]["median_share_pct"]
-        return None, f"peer_medians dti {pm['dti']} (U-PEER-MEDIANS undefined); U-TOP100-WITH-REASONS median dti {alt}"
+        top_reason = max(rs["by_reason"], key=lambda k: rs["by_reason"][k]["median_share_pct"])
+        return (top_reason == "dti" and str(rs["by_reason"]["dti"]["median_share_pct"]) in gt), f"data top reason {top_reason} median {rs['by_reason'][top_reason]['median_share_pct']}"
     if qid == "q6":
         return (f"{slp['min_penalty']:.2f}" in gt or "1.19" in gt) and str(slp["max_penalty"]) in gt, f"data floor {slp['min_penalty']} ceiling {slp['max_penalty']} over {slp['states']} states (PR included)"
     if qid == "q7":
         lo, hi = min(d["denial_rate_pct"] for d in top), max(d["denial_rate_pct"] for d in top)
         return (f"{lo:.1f}" in gt and f"{hi:.1f}" in gt), f"data {lo}-{hi}"
     if qid == "q8":
-        pm = nat["peer_medians"]["incomplete"]; r = rs["by_reason"]["incomplete"]
-        return None, f"peer_medians {pm} (undefined universe) vs U-TOP100-WITH-REASONS median {r['median_share_pct']} max {r['max_share_pct']} {r['max_lender']}"
+        r = rs["by_reason"]["incomplete"]
+        return (str(r["median_share_pct"]) in gt and str(r["max_share_pct"]) in gt and r["max_lender"].split()[0].upper() in gt.upper()), f"data median {r['median_share_pct']} max {r['max_share_pct']} {r['max_lender']}"
     if qid == "q9":
         try:
             c = json.load(open("api/metro/cleveland-oh.json")); rates = [l["denial_rate_pct"] for l in c["lenders"] if l.get("decisioned_applications_here", 0) >= 100]

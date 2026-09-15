@@ -6,7 +6,7 @@ Inputs (repo root):
   benchmark.json           instrument v1.2: 12 frozen questions + ground truths + July scores
   benchmark-2026-09.json   September 15 Verdict Day results (8 systems)
 Outputs (--out DIR):
-  denial_ai_benchmark_v1_2.csv, results_2026-07.csv, results_2026-09.csv, README.md
+  denial_ai_benchmark_v1_3.csv, results_2026-07.csv, results_2026-09.csv, README.md
 Upload: huggingface-cli upload FinanceRateCalc/denial-ai-benchmark DIR . --repo-type dataset
 """
 import csv, json, sys, os, argparse
@@ -19,11 +19,11 @@ os.makedirs(a.out, exist_ok=True)
 
 B = json.load(open(os.path.join(a.root, "benchmark.json")))
 S = json.load(open(os.path.join(a.root, "benchmark-2026-09.json")))
-assert B["version"] == "1.2", B["version"]
+assert B["version"] in ("1.2", "1.3"), B["version"]
 assert S["battery_version"] == "benchmark-v1.2", S["battery_version"]
 
 # 1. instrument
-with open(os.path.join(a.out, "denial_ai_benchmark_v1_2.csv"), "w", newline="") as f:
+with open(os.path.join(a.out, "denial_ai_benchmark_v1_3.csv"), "w", newline="") as f:
     w = csv.writer(f); w.writerow(["id", "question", "ground_truth", "answer_type", "source"])
     for q in B["questions"]:
         w.writerow([q["id"], q["question"], q["ground_truth"], q.get("answer_type", ""), q.get("source", "")])
@@ -70,7 +70,7 @@ size_categories:
 - n<1K
 configs:
 - config_name: instrument
-  data_files: denial_ai_benchmark_v1_2.csv
+  data_files: denial_ai_benchmark_v1_3.csv
   default: true
 - config_name: results_2026_07
   data_files: results_2026-07.csv
@@ -94,7 +94,7 @@ by `scripts/build_hf_benchmark.py`. If a figure here disagrees with the site, th
 
 | file | config | contents |
 |---|---|---|
-| `denial_ai_benchmark_v1_2.csv` | `instrument` | id, question, ground_truth, answer_type, source |
+| `denial_ai_benchmark_v1_3.csv` | `instrument` | id, question, ground_truth, answer_type, source |
 | `results_2026-07.csv` | `results_2026_07` | per-system, per-question grade and points, {B['administration']} administration |
 | `results_2026-09.csv` | `results_2026_09` | per-system, per-question grade, fidelity and failure codes, {S['administration']} administration |
 
