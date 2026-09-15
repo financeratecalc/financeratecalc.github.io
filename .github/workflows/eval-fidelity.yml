@@ -45,8 +45,6 @@ jobs:
           echo "exit=$rc" >> eval/runs/last-error.txt
           exit $rc
       - name: Summarise
-        env:
-          INSPECT_TASK: ${{ github.event.inputs.condition }}
         run: |
           python - <<'PY'
           import json, glob, os, datetime
@@ -79,6 +77,7 @@ jobs:
           PY
         env:
           INSPECT_GRADER_MODEL: ${{ github.event.inputs.grader }}
+          INSPECT_TASK: ${{ github.event.inputs.condition }}
       - name: Commit run summary
         if: always()
         run: |
