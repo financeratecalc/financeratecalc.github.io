@@ -44,4 +44,4 @@ jobs:
         env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
         run: |
           body=$(cat hf-publish-result.txt 2>/dev/null || echo "no result file written; the upload step failed before the try block (import or syntax error)")
-          gh issue create --title "hf-publish run $(date -u +%Y-%m-%dT%H:%MZ): ${{ job.status }}" --body "$body" --label automation || true
+          gh issue create --title "hf-publish run $(date -u +%Y-%m-%dT%H:%MZ): ${{ job.status }}" --body "$body" || true
