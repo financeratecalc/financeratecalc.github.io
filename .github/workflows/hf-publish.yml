@@ -21,13 +21,24 @@ jobs:
           python - <<'PY'
           import os, glob
           from huggingface_hub import HfApi
-          api = HfApi(token=os.environ["HF_TOKEN"]); repo = "FinanceRateCalc/denial-ai-benchmark"
-          existing = api.list_repo_files(repo, repo_type="dataset")
-          stale = [f for f in existing if f.startswith("denial_ai_benchmark_v1") and f not in [os.path.basename(p) for p in glob.glob("hf-pkg/*.csv")]]
-          ops = [ {"path_in_repo": os.path.basename(p), "path_or_fileobj": p} for p in glob.glob("hf-pkg/*") if not p.endswith("UPLOAD.md") ]
-          from huggingface_hub import CommitOperationAdd, CommitOperationDelete
-          operations = [CommitOperationAdd(**o) for o in ops] + [CommitOperationDelete(path_in_repo=f) for f in stale]
-          api.create_commit(repo_id=repo, repo_type="dataset", operations=operations,
-                            commit_message="v1.3: ground truths regenerated from data under named universes (universes.json); key self-check 12/12; July + Sept 15 results")
-          print("uploaded", [o["path_in_repo"] for o in ops], "deleted", stale)
+          import traceback, sys
+          try:
+            api = HfApi(token=os.environ["HF_TOKEN"]); repo = "FinanceRateCalc/denial-ai-benchmark"
+            print("whoami:", api.whoami().get("name"))
+            existing = api.list_repo_files(repo, repo_type="dataset")
+            stale = [f for f in existing if f.startswith("denial_ai_benchmark_v1") and f not in [os.path.basename(p) for p in glob.glob("hf-pkg/*.csv")]]
+            ops = [ {"path_in_repo": os.path.basename(p), "path_or_fileobj": p} for p in glob.glob("hf-pkg/*") if not p.endswith("UPLOAD.md") ]
+            from huggingface_hub import CommitOperationAdd, CommitOperationDelete
+            operations = [CommitOperationAdd(**o) for o in ops] + [CommitOperationDelete(path_in_repo=f) for f in stale]
+            api.create_commit(repo_id=repo, repo_type="dataset", operations=operations,
+                              commit_message="v1.3: ground truths regenerated from data under named universes (universes.json); key self-check 12/12; July + Sept 15 results")
+            open("hf-publish-result.txt", "w").write("OK uploaded %s deleted %s\n" % ([o["path_in_repo"] for o in ops], stale))
+          except Exception:
+            open("hf-publish-result.txt", "w").write(traceback.format_exc()[-3000:]); sys.exit(1)
           PY
+      - name: Record result in the repo (readable even on failure)
+        if: always()
+        run: |
+          mkdir -p eval/runs && cp hf-publish-result.txt eval/runs/hf-publish-result.txt || true
+          git config user.name "frc-eval-bot"; git config user.email "bot@financeratecalc.com"
+          git add eval/runs/hf-publish-result.txt && (git diff --staged --quiet || git commit -m "hf publish result") && (git pull --rebase origin main && git push) || true
