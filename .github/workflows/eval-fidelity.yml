@@ -1,0 +1,62 @@
+name: Denial-AI fidelity eval (Inspect)
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Inspect model id"
+        default: "anthropic/claude-sonnet-4-6"
+      grader:
+        description: "Grader model for the fidelity scorer"
+        default: "anthropic/claude-sonnet-4-6"
+permissions:
+  contents: write
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q inspect_ai anthropic
+      - name: Run eval
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          INSPECT_EVAL_MODEL: ${{ github.event.inputs.model }}
+          INSPECT_GRADER_MODEL: ${{ github.event.inputs.grader }}
+        run: |
+          inspect eval eval/denial_ai_fidelity.py --model "$INSPECT_EVAL_MODEL" --model-role grader="$INSPECT_GRADER_MODEL" --log-dir eval/logs --log-format json --max-connections 4
+      - name: Summarise
+        run: |
+          python - <<'PY'
+          import json, glob, os, datetime
+          logs = sorted(glob.glob('eval/logs/*.json'))
+          log = json.load(open(logs[-1]))
+          model = log.get('eval', {}).get('model')
+          rows = []
+          for s in log.get('samples', []):
+              sc = s.get('scores', {})
+              rows.append({'id': s.get('id'), 'value': sc.get('value_scorer', {}).get('value'),
+                           'fidelity': sc.get('fidelity_scorer', {}).get('value'),
+                           'answer': (s.get('output', {}).get('choices', [{}])[0].get('message', {}).get('content') if isinstance(s.get('output', {}).get('choices', [{}])[0].get('message', {}).get('content'), str) else str(s.get('output', {}).get('choices', [{}])[0].get('message', {}).get('content')))[:400],
+                           'fidelity_explanation': sc.get('fidelity_scorer', {}).get('explanation', '')[:300]})
+          out = {'run': datetime.datetime.utcnow().isoformat(timespec='seconds') + 'Z', 'model': model,
+                 'grader': os.environ.get('INSPECT_GRADER_MODEL'), 'battery': 'benchmark.json v1.2',
+                 'n': len(rows), 'value_mean': sum((r['value'] or 0) for r in rows) / max(len(rows), 1),
+                 'fidelity_mean': sum((r['fidelity'] or 0) for r in rows) / max(len(rows), 1), 'samples': rows,
+                 'note': 'Automated administration via Inspect; not comparable with human-graded Verdict Day rows until the two are reconciled.'}
+          os.makedirs('eval/runs', exist_ok=True)
+          fn = 'eval/runs/' + out['run'][:10] + '-' + (model or 'model').replace('/', '_') + '.json'
+          json.dump(out, open(fn, 'w'), indent=1)
+          print(fn); print(json.dumps({k: v for k, v in out.items() if k != 'samples'}, indent=1))
+          PY
+        env:
+          INSPECT_GRADER_MODEL: ${{ github.event.inputs.grader }}
+      - name: Commit run summary
+        run: |
+          git config user.name "frc-eval-bot"; git config user.email "bot@financeratecalc.com"
+          git add eval/runs
+          git diff --staged --quiet || git commit -m "eval run: $(ls eval/runs | tail -1)"
+          git pull --rebase origin main || true
+          git push || true
+      - uses: actions/upload-artifact@v4
+        with: { name: inspect-log, path: eval/logs }
