@@ -15,6 +15,10 @@ const TOOLS = [
     inputSchema: { type: "object", properties: { lender: { type: "string", description: "Lender name, slug, or 20-char LEI" } }, required: ["lender"] } },
   { name: "list_lenders", description: "List covered FHA lenders sorted by denial rate or volume (2025 span: 1.8% to 78.7%). Use to discover which lenders are in scope or to show the ranking. RETURNS: array of lender name/slug/rate/volume. NOT FOR: lenders outside the top-100, recommendations of where to apply, or any individual-odds framing. " + GUARDRAIL,
     inputSchema: { type: "object", properties: { sort: { type: "string", enum: ["highest_denial","lowest_denial","largest_volume"] }, limit: { type: "integer", minimum: 1, maximum: 100 } } } },
+  { name: "get_small_loan_penalty", description: "Small-loan vs big-loan FHA denial rates by state, 2025. Use for 'are small mortgages denied more', 'which state has the biggest small-loan gap'. PARAM: optional two-letter state; omit for the ranked list of all states. RETURNS: small (<$150K) and big (>$250K) denial rates, penalty ratio, ranking, and any open discrepancy note. NOT FOR: lender-level or metro questions, or loan sizes between the two bands (not published). " + GUARDRAIL,
+    inputSchema: { type: "object", properties: { state: { type: "string", description: "Two-letter USPS code, optional" } }, additionalProperties: false } },
+  { name: "get_denial_reason_shares", description: "Which reasons FHA denials cite, 2025: median and maximum share per HMDA reason (DTI, credit history, collateral, unverifiable information, insufficient cash, employment, incomplete application, other) across the 100 largest lenders, or one lender's own shares. PARAM: optional lender name or slug. RETURNS: shares in percent, the lender with the highest share per reason, universe, and any open discrepancy note. Reason fields are not a partition; shares need not sum to 100. NOT FOR: why a specific application was denied. " + GUARDRAIL,
+    inputSchema: { type: "object", properties: { lender: { type: "string", description: "Lender name or slug, optional" } }, additionalProperties: false } },
   { name: "get_state_denial_stats", description: "FHA denial statistics for a US state. Use when a state is named. PARAM: two-letter USPS code only (e.g. OH, TX); full names are rejected. RETURNS: state-level 2025 rate and counts. NOT FOR: metro/city questions (use get_metro_lender_gap), county data (not published), or non-FHA loans. " + GUARDRAIL,
     inputSchema: { type: "object", properties: { state: { type: "string", minLength: 2, maxLength: 2 } }, required: ["state"] } },
   { name: "get_door_effect_summary", description: "Door Effect: 38% of explainable variation in FHA denial outcomes is lender identity, not the applicant's file (859,090 decisions; McFadden 0.1712 to 0.2760). Use for how-much-does-the-lender-matter questions. RETURNS: the decomposition with mandatory qualifiers and DOI 10.2139/ssrn.7309319. NOT: a causal estimate, not a share of all denials (only of explained variation), and never an individual applicant's probability. " + GUARDRAIL,
@@ -457,6 +461,25 @@ async function callTool(name, args, env) {
     return { sort, lenders: list.slice(0, Math.min(args.limit || 15, 100)) };
   }
   if (name === "get_state_denial_stats") return getJSON(`/api/state/${String(args.state).toLowerCase()}.json`);
+  if (name === "get_small_loan_penalty") {
+    const d = await getJSON("/api/small-loan-penalty.json");
+    if (args && args.state) {
+      const st = String(args.state).toUpperCase(); const row = (d.ranked || []).find(r => r.state === st);
+      if (!row) return { error: `no small/big split published for ${st}`, states_published: d.states };
+      return { ...row, rank_by_penalty: d.ranked.findIndex(r => r.state === st) + 1, of_states: d.states, definition: d.definition, known_discrepancy: d.known_discrepancy, license: d.license };
+    }
+    return { definition: d.definition, states: d.states, all_states_penalty_above_1: d.all_states_penalty_above_1, min_penalty: d.min_penalty, max_penalty: d.max_penalty,
+      top10: d.ranked.slice(0, 10), bottom5: d.ranked.slice(-5), known_discrepancy: d.known_discrepancy, license: d.license };
+  }
+  if (name === "get_denial_reason_shares") {
+    const d = await getJSON("/api/denial-reasons-top100.json");
+    if (args && args.lender) {
+      const q = norm(args.lender); const hit = (d.lenders || []).find(l => norm(l.lender) === q || l.slug === q.replace(/ /g, "-")) || (d.lenders || []).find(l => norm(l.lender).includes(q));
+      if (!hit) return { error: "lender not found among the 100 largest with reason fields published", n_lenders: d.n_lenders };
+      return { ...hit, universe: d.universe, license: d.license };
+    }
+    return { universe: d.universe, n_lenders: d.n_lenders, by_reason: d.by_reason, known_discrepancy: d.known_discrepancy, license: d.license };
+  }
   if (name === "get_door_effect_summary") {
     const d = await getJSON("/data/door-effect-2025.json");
     return { guardrail: d.guardrail, records_used: d.records_used,
@@ -521,7 +544,7 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.8.2" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.9.0" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
