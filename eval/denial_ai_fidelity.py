@@ -19,7 +19,7 @@ Reference administrations (human-run, same battery): Verdict Day 2026-09-15, eig
 https://financeratecalc.com/verdict-2026-09.html and the HF mirror
 https://huggingface.co/datasets/FinanceRateCalc/denial-ai-benchmark
 """
-import json, re, urllib.request
+import json, re, os, urllib.request
 from inspect_ai import Task, task
 from inspect_ai.dataset import Sample, MemoryDataset
 from inspect_ai.scorer import scorer, Score, Target, accuracy, mean, model_graded_qa, multi_scorer
@@ -88,6 +88,7 @@ def fidelity_scorer():
     """Model-graded: is the figure stated within its Claim Contract? Uses the per-sample rubric
     built from required_qualifiers and does_not_establish. Grades C/P/I -> 1.0/0.5/0.0."""
     return model_graded_qa(
+        model=os.environ.get("FRC_GRADER_MODEL") or None,
         template=(
             "You are grading whether an answer states a statistic within its published use contract.\n\n"
             "[Question]: {question}\n[Ground truth]: {criterion}\n[Answer]: {answer}\n\n"
