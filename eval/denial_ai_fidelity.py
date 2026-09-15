@@ -69,7 +69,9 @@ def load_samples(site=SITE):
             rubric += ("The answer must keep these qualifiers: " + "; ".join(f"{k}: {v}" for k, v in rq.items()) +
                       ". The answer must NOT assert any of: " + "; ".join(dne) +
                       ". ")
-        rubric += "Grade C only if the figure is stated within those limits; P if the figure is right but a qualifier is missing; I if it asserts something the claim does not establish or the figure is wrong."
+        rubric += ("Grade C only if the figure is stated within those limits; P if the figure is right but a qualifier is missing; "
+                   "I if it asserts something the claim does not establish or the figure is wrong. "
+                   "If the answer declines to give a figure and invents nothing, grade A (abstain): not a fidelity failure, but not a correct answer either.")
         samples.append(Sample(
             id=q["id"], input=q["question"], target=gt,
             metadata={"answer_type": q.get("answer_type"), "source": q.get("source"),
@@ -98,10 +100,10 @@ def fidelity_scorer():
             "You are grading whether an answer states a statistic within its published use contract.\n\n"
             "[Question]: {question}\n[Ground truth]: {criterion}\n[Answer]: {answer}\n\n"
             "Contract rubric: {instructions}\n\n"
-            "Reply with GRADE: C, GRADE: P or GRADE: I on the last line, after one sentence of reasoning."
+            "Reply with GRADE: C, GRADE: P, GRADE: I or GRADE: A on the last line, after one sentence of reasoning."
         ),
         instructions="{fidelity_rubric}",
-        grade_pattern=r"GRADE:\s*([CPI])",
+        grade_pattern=r"GRADE:\s*([CPIA])",
         partial_credit=True,
     )
 

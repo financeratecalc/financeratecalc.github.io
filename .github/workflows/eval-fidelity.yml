@@ -55,7 +55,7 @@ jobs:
           def text_of(content):
               if isinstance(content, str): return content
               return " ".join(b.get('text', '') for b in content if isinstance(b, dict) and b.get('type') == 'text')
-          GRADE = {'C': 1.0, 'P': 0.5, 'I': 0.0}
+          GRADE = {'C': 1.0, 'P': 0.5, 'I': 0.0, 'A': None}
           for s in log.get('samples', []):
               sc = s.get('scores', {})
               fid = sc.get('model_graded_qa', {})
@@ -67,7 +67,7 @@ jobs:
           out = {'run': datetime.datetime.utcnow().isoformat(timespec='seconds') + 'Z', 'model': model,
                  'grader': os.environ.get('INSPECT_GRADER_MODEL'), 'battery': 'benchmark.json v1.2',
                  'n': len(rows), 'value_mean': sum((r['value'] or 0) for r in rows) / max(len(rows), 1),
-                 'fidelity_mean': sum((r['fidelity'] or 0) for r in rows) / max(len(rows), 1), 'samples': rows,
+                 'fidelity_mean': (sum(r['fidelity'] for r in rows if r['fidelity'] is not None) / max(sum(1 for r in rows if r['fidelity'] is not None), 1)), 'abstained': sum(1 for r in rows if r['fidelity'] is None), 'samples': rows,
                  'note': 'Automated administration via Inspect; not comparable with human-graded Verdict Day rows until the two are reconciled.'}
           os.makedirs('eval/runs', exist_ok=True)
           out['condition'] = os.environ.get('INSPECT_TASK')
