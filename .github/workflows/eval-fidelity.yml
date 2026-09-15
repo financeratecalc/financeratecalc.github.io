@@ -35,7 +35,7 @@ jobs:
           open("eval/runs/available-models.txt", "w").write("\n".join(ids) + "\n"); print(ids)
           PY
           set +e
-          FRC_GRADER_MODEL="$INSPECT_GRADER_MODEL" inspect eval eval/denial_ai_fidelity.py --model "$INSPECT_EVAL_MODEL" --log-dir eval/logs --log-format json --max-connections 4 > eval/runs/last-run.log 2>&1
+          FRC_GRADER_MODEL="$INSPECT_GRADER_MODEL" inspect eval eval/denial_ai_fidelity.py -T site="$PWD" --model "$INSPECT_EVAL_MODEL" --log-dir eval/logs --log-format json --max-connections 4 > eval/runs/last-run.log 2>&1
           rc=$?
           tail -c 4000 eval/runs/last-run.log > eval/runs/last-error.txt
           echo "exit=$rc" >> eval/runs/last-error.txt

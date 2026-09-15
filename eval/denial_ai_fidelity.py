@@ -28,7 +28,11 @@ from inspect_ai.solver import generate, system_message
 SITE = "https://financeratecalc.com"
 
 def _get(url):
-    with urllib.request.urlopen(url, timeout=30) as r:
+    """Fetch JSON from the site, or from a local checkout when `site` is a filesystem path."""
+    if not url.startswith("http"):
+        return json.load(open(url, encoding="utf-8"))
+    req = urllib.request.Request(url, headers={"User-Agent": "denial-ai-fidelity/1.0 (Inspect AI task; +https://financeratecalc.com/spec/)", "Accept": "application/json"})
+    with urllib.request.urlopen(req, timeout=30) as r:
         return json.load(r)
 
 def _numbers(s):
@@ -49,7 +53,7 @@ def load_samples(site=SITE):
         for m, c in by_metric.items():
             cid = c.get("id", "").split(":")[-1]
             if (m and m.replace("_", " ") in hay) or (cid and cid.split("-")[0] in hay and cid in str(q.get("source", "")).lower()):
-                try: contract = _get(c["contract_url"])
+                try: contract = _get(c["contract_url"] if site.startswith("http") else os.path.join(site, c["contract_url"].split("financeratecalc.com/")[-1]))
                 except Exception: contract = None
                 break
         # generic rubric = the publisher's global policy clauses (spec 5.0 source (b)); every
