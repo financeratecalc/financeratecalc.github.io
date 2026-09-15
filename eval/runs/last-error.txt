@@ -1,57 +1,17 @@
-t[str] | None, tasks), task_args))
-                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/inspect_ai/_eval/loader.py", line 480, in load_tasks
-    for spec in load_task_spec(task_spec, task_args)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/inspect_ai/_eval/loader.py", line 494, in load_task_spec
-    return create_tasks([task_spec], task_args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/inspect_ai/_eval/loader.py", line 523, in create_tasks
-    tasks.extend(create_file_tasks(file, None, task_args))
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/inspect_ai/_eval/loader.py", line 553, in create_file_tasks
-    task = task_create(task_spec, **task_args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/inspect_ai/_eval/registry.py", line 111, in task_create
-    return cast(Task, create_registry_object("task", name, task_args))
-                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/inspect_ai/_util/registry.py", line 457, in create_registry_object
-    return _instantiate_registry_object(obj, args)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/inspect_ai/_util/registry.py", line 465, in _instantiate_registry_object
-    instance = obj(**registry_kwargs(**args))
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/inspect_ai/_eval/registry.py", line 210, in wrapper
-    return construct(*w_args, **w_kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/inspect_ai/_eval/registry.py", line 176, in construct
-    task_type(*w_args, **w_kwargs), *w_args, **w_kwargs
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/financeratecalc.github.io/financeratecalc.github.io/eval/denial_ai_fidelity.py", line 105, in denial_ai_fidelity
-    samples = load_samples(site)
-              ^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/financeratecalc.github.io/financeratecalc.github.io/eval/denial_ai_fidelity.py", line 38, in load_samples
-    bench = _get(f"{site}/benchmark.json")
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/financeratecalc.github.io/financeratecalc.github.io/eval/denial_ai_fidelity.py", line 31, in _get
-    with urllib.request.urlopen(url, timeout=30) as r:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 215, in urlopen
-    return opener.open(url, data, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 521, in open
-    response = meth(req, response)
-               ^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 630, in http_response
-    response = self.parent.error(
-               ^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 559, in error
-    return self._call_chain(*args)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 492, in _call_chain
-    result = func(*args)
-             ^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 639, in http_error_default
-    raise HTTPError(req.full_url, code, msg, hdrs, fp)
-urllib.error.HTTPError: HTTP Error 403: Forbidden
-exit=1
+Monitor from another shell: inspect ctl task list   (inspect ctl --help)
+╭──────────────────────────────────────────────────────────────────────────────╮
+│denial_ai_fidelity (12 samples): anthropic/claude-sonnet-4-6                  │
+╰──────────────────────────────────────────────────────────────────────────────╯
+max_connections: 4, site: ..., dataset: denial-ai-benchmark-v1.2                
+                                                                                
+total time:                    0:00:31                                          
+anthropic/claude-sonnet-4-6    9,316 tokens [I: 5,318, CW: 0, CR: 0, O: 3,998]  
+                                                                                
+value_scorer         model_graded_qa                                            
+accuracy      0.000  accuracy         0.500                                     
+                     stderr           0.123                                     
+                                                                                
+Log:                                                                            
+eval/logs/2026-09-15T12-11-57-00-00_denial-ai-fidelity_hhQj4DCXMFofnAProGkDXV.js
+on                                                                              
+                                                                                exit=0
