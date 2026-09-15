@@ -2,7 +2,7 @@
 
 **Machine-readable use conditions for published statistics.**
 
-Status: draft 1, 2026-09-15. Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
+Status: draft 2, 2026-09-15. Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
 Reference implementation: 189 claims at https://financeratecalc.com/claims.json (passport format 0.1, contract format 0.1, which this document generalises).
 
 ---
@@ -98,9 +98,10 @@ The contract answers *how may this number be restated*.
     "program_scope": "FHA only, not all mortgages"
   },
   "does_not_establish": [
-    "a denial rate for all US mortgage applications",
-    "a rate for purchase-only or refinance-only segments",
-    "any individual's denial probability"
+    {"statement": "a denial rate for all US mortgage applications",        "derived_from": "claim.definition (loan_type 2 only)"},
+    {"statement": "a rate for purchase-only or refinance-only segments",    "derived_from": "claim.definition (all loan purposes pooled)"},
+    {"statement": "any individual's denial probability",                    "derived_from": "use_boundary.prohibited"},
+    {"statement": "a rate for any period other than 2025",                  "derived_from": "claim.period"}
   ],
   "forbidden_transformations": [
     "causal_attribution", "individual_prediction", "personalized_lender_recommendation", "legal_conclusion"
@@ -112,6 +113,10 @@ The contract answers *how may this number be restated*.
   ]
 }
 ```
+
+### 5.0 The derivation rule
+
+`does_not_establish` is the only field in which a publisher could smuggle an opinion, so it is the most constrained. **Every entry MUST name the passport field whose limit it follows from** (`derived_from`), and a reader MUST be able to confirm the derivation mechanically: a period limit follows from `claim.period`, a population limit from `claim.definition`, a prohibited use from `use_boundary.prohibited`. An entry that cannot be traced to a field is a preference, and preferences do not belong in a contract. "Does not establish borrower intent" is a preference; "does not establish a 2026 rate" is a theorem of `claim.period`. The field is a list of theorems, not a list of worries.
 
 ### 5.1 Verdicts
 
@@ -131,7 +136,14 @@ A checker returns exactly one of:
 
 ### 5.3 Test vectors are normative
 
-Every contract ships at least one `pass` and one `block` vector. A checker that does not reproduce a contract's own test vectors is not conforming for that contract. This is how a publisher can verify any third-party checker, and how a checker can verify any publisher's contract, without either trusting the other's prose.
+Every contract ships at least one `pass` and one `block` vector. A checker that does not reproduce a contract's own test vectors is not conforming for that contract.
+
+The publisher writes the vectors, so the publisher sets both the exam and the answer key. Two requirements keep that honest:
+
+- **Vectors MUST be derivable.** The `pass` vector is the canonical claim's own `required_qualifiers` with every forbidden transformation set to false. The `block` vectors are each entry of `does_not_establish`, restated as a proposed use, with the reason code that its `derived_from` field implies. A conforming checker MUST be able to regenerate a contract's vectors from its passport and contract alone and MUST flag a hand-written vector that differs from the derived one. Vectors are therefore a cache, not an authority.
+- **The reference checker MUST be publisher-agnostic.** It takes any `/claims.json`, not the editor's. A checker that only reads its author's claims is a product manual, not an implementation.
+
+This is how a publisher can verify any third-party checker, and how a checker can verify any publisher's contract, without either trusting the other's prose.
 
 ## 6. The checker
 
@@ -156,7 +168,12 @@ A fidelity test administers a fixed battery of questions whose answers are contr
 - It does not rank publishers or certify truth. A contract says how a number may be used; whether the number is correct is the passport's provenance and the reproduce file, checkable by anyone.
 - It does not require signatures in 1.0. Integrity is sha256 plus public version history. Signatures are a 1.1 item.
 - It does not restrict reading. Contracts govern restatement, not access; a site using this specification with a crawler block is misusing it.
-- It does not encode opinions. `does_not_establish` lists inferences the data cannot support; it is not a place for the publisher's preferences.
+- It does not encode opinions. `does_not_establish` lists inferences the data cannot support, each traced to a field (5.0); it is not a place for the publisher's preferences.
+- It does not judge importance. A contract for a trivial number and a contract for a headline number have the same form; the standard has no field for "this one matters".
+- It does not replace peer review or reproduction. A contract can be internally consistent and wrong; only the reproduce file and an independent rerun can show that.
+- It does not govern humans. A journalist may write what they like; the contract tells a machine what the publisher can stand behind, and gives the journalist the same information if they want it.
+- It does not adjudicate disputes between publishers. Two publishers may contract contradictory claims; a consumer that finds both has a conflict to report, not a verdict.
+- It does not license the data. `attribution.license` records the licence that applies; the contract itself is CC BY 4.0 and adds no terms.
 
 ## 9. Conformance levels
 
@@ -165,12 +182,13 @@ A fidelity test administers a fixed battery of questions whose answers are contr
 | **L1 Passport** | `/claims.json` + passports with required fields and correction logs |
 | **L2 Contract** | L1 + a contract per claim with test vectors |
 | **L3 Reproducible** | L2 + reproduce file per claim, and a public corrections log with dated entries |
+| **L4 Independently verified** | L3 + at least one claim recomputed from the primary source by a party unrelated to the publisher, with the rerun published and linked from the passport's `independent_reproduction_status` |
 
-FinanceRateCalc, 2026-09-15: L3 for 189 claims (self-assessed; independent reproduction status: none yet).
+FinanceRateCalc, 2026-09-15: L3 for 189 claims, self-assessed. L4: not reached; no claim has been independently reproduced. L4 is defined so that the level exists before anyone, including the editor, has met it.
 
 ## 10. Adoption test
 
-This specification is declared alive if, within 90 days of publication, at least one publisher other than the editor exposes a conforming `/claims.json`. If none does, that result is published at https://financeratecalc.com/null-results.html with the same date discipline as any other null result.
+Publishers copying a format is not adoption; consumers checking against it is. This specification is declared alive if, within 90 days of publication, **at least one consumer unrelated to the editor (an AI laboratory, a newsroom, a data user) publicly states that it checks its own output against a Claim Contract**, naming the claims.json it checks against. A second, weaker signal is recorded but does not count on its own: another publisher exposing a conforming `/claims.json`. If neither occurs, the result is published at https://financeratecalc.com/null-results.html with the same date discipline as any other null result.
 
 ## Appendix A: JSON Schema
 
@@ -181,5 +199,7 @@ See `claim-contract-1.0.schema.json` alongside this document.
 - `corrections` promoted from the site-wide log to a required per-claim array.
 - `claim.n` (cell size) added as recommended.
 - `needs_qualifier` verdict named explicitly; reason-code registry started.
-- Test vectors made normative.
-- Conformance levels introduced.
+- Test vectors made normative and derivable (5.3); reference checker required to be publisher-agnostic.
+- `does_not_establish` entries must cite the field they derive from (5.0).
+- Conformance levels introduced, including an L4 the editor has not reached.
+- Adoption test moved from publisher-side copying to consumer-side attestation (10).
