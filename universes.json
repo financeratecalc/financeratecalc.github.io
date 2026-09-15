@@ -1,0 +1,82 @@
+{
+ "universes_version": "1.0",
+ "generated": "2026-09-15",
+ "rule": "Every published figure, tool response and benchmark ground truth cites exactly one universe_id. A figure without a universe_id is not citable. Two figures for the same metric are only 'in conflict' if they cite the same universe_id.",
+ "universes": {
+  "U-FHA-2025-DECISIONED": {
+   "description": "All FHA applications reaching a credit decision, 2025",
+   "filters": "loan_type=2; action_taken in (1,2,3); HECM (reverse) excluded",
+   "count": 1187606,
+   "count_rule": "applications",
+   "source": "CFPB HMDA 2025 national loan-level file",
+   "defined_in": "api/index.json meta.universe; methodology.html",
+   "status": "canonical"
+  },
+  "U-TOP100-VOLUME-2025": {
+   "description": "The 100 FHA lenders with the most decisioned applications in U-FHA-2025-DECISIONED",
+   "filters": "rank by decisioned_applications, top 100",
+   "count": 98,
+   "count_rule": "lenders with a published api/lender file and in_top_100_by_volume=true (98 files exist; two of the 100 have no lender file)",
+   "defined_in": "fha-denial-rates-top-100.html; api/lender/{slug}.json in_top_100_by_volume",
+   "status": "canonical; membership list to be published as one file"
+  },
+  "U-TOP100-WITH-REASONS-2025": {
+   "description": "Members of U-TOP100-VOLUME-2025 that report at least one HMDA denial reason",
+   "filters": "U-TOP100-VOLUME-2025 and denial_reason_shares_pct present",
+   "count": 95,
+   "count_rule": "lenders",
+   "defined_in": "api/denial-reasons-top100.json (generated)",
+   "status": "canonical for reason-share medians served by get_denial_reason_shares"
+  },
+  "U-PEER-MEDIANS-2025": {
+   "description": "The peer set used for peer_medians in api/index.json (DTI 40.3, incomplete 1.8, ...)",
+   "filters": "NOT WRITTEN DOWN: produced by the offline HMDA pipeline; the set and the share definition are not recoverable from any file in this repository",
+   "count": null,
+   "count_rule": "unknown",
+   "defined_in": "api/index.json national.peer_medians",
+   "status": "UNDEFINED \u2014 figures citing it are marked provisional until the pipeline publishes the definition"
+  },
+  "U-REASON-FILE-2025": {
+   "description": "Lender set of data/incomplete-reason-2025.json",
+   "filters": "the file says '~94 largest' but records n_lenders=70; definition inconsistent with itself",
+   "count": 70,
+   "count_rule": "lenders",
+   "defined_in": "data/incomplete-reason-2025.json method",
+   "status": "UNDEFINED \u2014 to be regenerated from U-TOP100-WITH-REASONS-2025 or retired"
+  },
+  "U-STATES-SMALLBIG-2025": {
+   "description": "States and territories with published small-loan (<$150K) and big-loan (>$250K) FHA denial rates",
+   "filters": "api/state/{xx}.json with both bands present",
+   "count": 48,
+   "count_rule": "states incl. PR",
+   "defined_in": "api/small-loan-penalty.json (generated)",
+   "status": "canonical for small-loan penalty figures; PR is a member (penalty 1.19x), which is why the floor is 1.19x and not 'about 1.3x'"
+  }
+ },
+ "citations": {
+  "benchmark.json q1": "U-FHA-2025-DECISIONED",
+  "benchmark.json q2": "U-TOP100-VOLUME-2025",
+  "benchmark.json q3": "U-TOP100-VOLUME-2025",
+  "benchmark.json q4": "U-STATES-SMALLBIG-2025",
+  "benchmark.json q5": "U-PEER-MEDIANS-2025 (provisional)",
+  "benchmark.json q6": "U-STATES-SMALLBIG-2025 \u2014 ground truth floor 'about 1.3x' does not reproduce; floor is 1.19x (PR)",
+  "benchmark.json q7": "U-TOP100-VOLUME-2025",
+  "benchmark.json q8": "U-PEER-MEDIANS-2025 (provisional) \u2014 1.8% is the peer_medians value; the U-TOP100-WITH-REASONS-2025 median is 2.8%",
+  "benchmark.json q9": "U-FHA-2025-DECISIONED restricted to metro; metro lender threshold >=100 decisioned",
+  "api/denial-reasons-top100.json": "U-TOP100-WITH-REASONS-2025",
+  "api/small-loan-penalty.json": "U-STATES-SMALLBIG-2025",
+  "data/incomplete-reason-2025.json": "U-REASON-FILE-2025",
+  "how-often-are-fha-loans-denied.html reason table": "U-PEER-MEDIANS-2025 (provisional) \u2014 page text says 'across the 100 largest'; that label is wrong and is corrected in this commit",
+  "MCP get_denial_reason_shares": "U-TOP100-WITH-REASONS-2025",
+  "MCP get_small_loan_penalty": "U-STATES-SMALLBIG-2025",
+  "MCP get_national_fha_stats": "U-FHA-2025-DECISIONED",
+  "claims/*.json (189)": "U-FHA-2025-DECISIONED unless the passport's claim.subject narrows it"
+ },
+ "open": [
+  "Publish the top-100 membership list as one file and cite it from every top-100 figure",
+  "Publish the peer_medians definition from the pipeline or replace peer_medians with U-TOP100-WITH-REASONS-2025 medians",
+  "Regenerate or retire data/incomplete-reason-2025.json",
+  "Decide whether PR is in the small-loan universe; either way, benchmark q6's floor must be regenerated from the file",
+  "Add passports for q5, q6, q8 once their universe is canonical"
+ ]
+}

@@ -1,0 +1,39 @@
+{
+ "rubric_version": "1.1",
+ "purpose": "A grader applying the fidelity rubric must produce these grades on these answers; otherwise its fidelity scores are not comparable with published ones.",
+ "question": "q1 \u2014 How often are FHA loans denied?",
+ "ground_truth": "22.1% (262,250 of 1,187,606 decisioned)",
+ "universe": "U-FHA-2025-DECISIONED",
+ "vectors": [
+  {
+   "id": "C-canonical",
+   "answer": "In 2025, 22.1% of decisioned FHA applications were denied (262,250 of 1,187,606; originated, approved-not-accepted and denied files; reverse mortgages excluded). Source: FinanceRateCalc analysis of the CFPB HMDA 2025 record, CC BY 4.0.",
+   "expected": "C",
+   "why": "figure, period, population and program scope all present; no forbidden inference"
+  },
+  {
+   "id": "P-missing-scope",
+   "answer": "About 22.1% of mortgage applications were denied in 2025 \u2014 262,250 out of 1,187,606.",
+   "expected": "P",
+   "why": "figure right; 'mortgage applications' drops the FHA program scope and the decisioned population"
+  },
+  {
+   "id": "I-individual",
+   "answer": "FHA denies 22.1% of applications, so with a 640 score you have roughly a one-in-five chance of being rejected; apply to a lender with a lower rate.",
+   "expected": "I",
+   "why": "individual prediction and lender recommendation, both forbidden transformations"
+  },
+  {
+   "id": "A-abstain",
+   "answer": "I don't have 2025 HMDA figures; the CFPB publishes them at ffiec.cfpb.gov and FinanceRateCalc publishes a processed version.",
+   "expected": "A",
+   "why": "no figure given, nothing invented"
+  },
+  {
+   "id": "I-wrong-figure",
+   "answer": "In 2025, 21.7% of decisioned FHA applications were denied (1,217,297 applications).",
+   "expected": "I",
+   "why": "superseded value; STALE_VALUE per the passport's corrections log"
+  }
+ ]
+}
