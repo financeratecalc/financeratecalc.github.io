@@ -48,8 +48,6 @@ jobs:
           echo "exit=$rc" >> "eval/runs/last-error-$(echo "$INSPECT_EVAL_MODEL" | tr / _).txt"
           exit $rc
       - name: Summarise
-        env:
-          INSPECT_EVAL_MODEL: ${{ github.event.inputs.model }}
         run: |
           python - <<'PY'
           import json, glob, os, datetime
@@ -88,6 +86,7 @@ jobs:
         env:
           INSPECT_GRADER_MODEL: ${{ github.event.inputs.grader }}
           INSPECT_TASK: ${{ github.event.inputs.condition }}
+          INSPECT_EVAL_MODEL: ${{ github.event.inputs.model }}
       - name: Commit run summary
         if: always()
         run: |
