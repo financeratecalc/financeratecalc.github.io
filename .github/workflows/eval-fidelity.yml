@@ -48,10 +48,16 @@ jobs:
           echo "exit=$rc" >> "eval/runs/last-error-$(echo "$INSPECT_EVAL_MODEL" | tr / _).txt"
           exit $rc
       - name: Summarise
+        env:
+          INSPECT_EVAL_MODEL: ${{ github.event.inputs.model }}
         run: |
           python - <<'PY'
           import json, glob, os, datetime
-          logs = sorted(glob.glob('eval/logs/*.json'))
+          logs = sorted(glob.glob('eval/logs/*'))
+          if not logs:
+              tail = open('eval/runs/last-run.log').read()[-4000:] if os.path.exists('eval/runs/last-run.log') else 'no run log'
+              name = 'eval/runs/last-error-' + os.environ.get('INSPECT_EVAL_MODEL', 'model').replace('/', '_') + '.txt'
+              open(name, 'w').write('NO INSPECT LOG WRITTEN\n' + tail); print(open(name).read()); raise SystemExit(1)
           log = json.load(open(logs[-1]))
           model = log.get('eval', {}).get('model')
           rows = []
