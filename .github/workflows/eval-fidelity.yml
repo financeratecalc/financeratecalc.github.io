@@ -13,6 +13,7 @@ on:
         default: "anthropic/claude-sonnet-4-6"
 permissions:
   contents: write
+  issues: write
 jobs:
   eval:
     runs-on: ubuntu-latest
@@ -105,5 +106,17 @@ jobs:
           git add eval/runs
           git diff --staged --quiet || git commit -m "eval run $(date -u +%Y-%m-%dT%H:%MZ)"
           for i in 1 2 3 4 5; do git pull --rebase origin main && git push && break || sleep $((i*7)); done
+      - name: Report to an issue (readable without log access)
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INSPECT_EVAL_MODEL: ${{ github.event.inputs.model }}
+        run: |
+          {
+            echo "## probe"; cat eval/runs/available-models.txt 2>/dev/null | head -40
+            echo; echo "## summary"; ls -t eval/runs/*.json 2>/dev/null | head -1 | xargs -r python3 -c "import json,sys;d=json.load(open(sys.argv[1]));print(json.dumps({k:v for k,v in d.items() if k!='samples'},indent=1));[print(s['id'],s['value'],s['fidelity'],s.get('tool_calls')) for s in d['samples']]"
+            echo; echo "## run tail"; tail -c 2500 eval/runs/last-run.log 2>/dev/null
+          } > report.md
+          gh issue create --title "eval $(echo "$INSPECT_EVAL_MODEL") ${{ job.status }} $(date -u +%H:%MZ)" --body-file report.md || true
       - uses: actions/upload-artifact@v4
         with: { name: inspect-log, path: eval/logs }
