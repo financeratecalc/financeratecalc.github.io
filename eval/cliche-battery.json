@@ -1,13 +1,27 @@
 {
  "generated": "2026-09-20",
- "version": "0.1",
+ "version": "0.2",
  "purpose": "Widely stated beliefs about FHA denials, each tested against the complete 2025 federal record where the record can see it, and declared untestable where it cannot. Used both as a public page and as an AI battery: what models believe versus what the record shows.",
  "counts": {
   "SUPPORTED": 3,
   "CONTRADICTED": 7,
   "PARTLY": 3,
-  "UNTESTABLE": 6
+  "NOT_IN_RECORD": 4,
+  "NOT_KNOWABLE_FROM_DATA": 2
  },
+ "verdict_definitions": {
+  "SUPPORTED": "the 2025 record supports the claim",
+  "CONTRADICTED": "the record contradicts it",
+  "PARTLY": "true for one universe or reading, not for the one usually meant",
+  "NOT_IN_RECORD": "this record cannot test it, but it may be knowable elsewhere (a program rule, another dataset)",
+  "NOT_KNOWABLE_FROM_DATA": "no observational data can settle it: it is a claim about intent, conduct or an unobserved counterfactual"
+ },
+ "instrument_corrections": [
+  {
+   "date": "2026-09-20",
+   "what": "v0.1 used one label, UNTESTABLE, for two different things: claims this record cannot test (c11, c13, c14, c19) and claims no data can settle (c10, c15). Models were scored as 'asserting the untestable' for stating a program rule (FHA's 580 / 3.5% guidance) that is knowable, just not from HMDA. Split into NOT_IN_RECORD and NOT_KNOWABLE_FROM_DATA. Also: the stance format forced a model that agreed with our own boundary reasoning (a low rate can reflect pre-screening) to answer FALSE; a stance UNSUPPORTED_BY_DATA was added. Found by reading all 16 rationales rather than trusting the count; the count fell from 16/57 to at most 6/57."
+  }
+ ],
  "claims": [
   {
    "id": "c01",
@@ -93,7 +107,7 @@
   {
    "id": "c10",
    "claim": "A low denial rate means a lender is easy to get approved with.",
-   "verdict": "UNTESTABLE",
+   "verdict": "NOT_KNOWABLE_FROM_DATA",
    "evidence": "A low observed rate can mean lenient underwriting, or an applicant mix that arrives pre-screened, or buyers steered away before filing. The record contains none of the three; only observed rates.",
    "tested_against": "\u2014",
    "universe": "\u2014",
@@ -102,7 +116,7 @@
   {
    "id": "c11",
    "claim": "FHA is easier to get than a conventional mortgage.",
-   "verdict": "UNTESTABLE",
+   "verdict": "NOT_IN_RECORD",
    "evidence": "This dataset is FHA only (loan_type 2). No conventional comparison is published here, and the two programs draw different applicants, so a raw comparison would not answer the question anyway.",
    "tested_against": "\u2014",
    "universe": "\u2014",
@@ -120,7 +134,7 @@
   {
    "id": "c13",
    "claim": "Your credit score is the single most important factor in an FHA denial.",
-   "verdict": "UNTESTABLE",
+   "verdict": "NOT_IN_RECORD",
    "evidence": "HMDA does not contain credit scores. The record can show that debt-to-income is the most-cited reason, but it cannot rank score against anything, so this belief cannot be confirmed or refuted from the public data.",
    "tested_against": "\u2014",
    "universe": "\u2014",
@@ -129,7 +143,7 @@
   {
    "id": "c14",
    "claim": "Refinance applications are denied about as often as purchase applications.",
-   "verdict": "UNTESTABLE",
+   "verdict": "NOT_IN_RECORD",
    "evidence": "Loan-purpose splits are not among this project's published figures for 2025; the 2023 purchase-only vs refinance figures circulating online come from another universe and vintage.",
    "tested_against": "\u2014",
    "universe": "\u2014",
@@ -138,7 +152,7 @@
   {
    "id": "c15",
    "claim": "A lender with a high denial rate is doing something wrong.",
-   "verdict": "UNTESTABLE",
+   "verdict": "NOT_KNOWABLE_FROM_DATA",
    "evidence": "An observed rate carries no information about conduct. High rates are screening signals about institutions, consistent with strict underwriting, a hard applicant mix, or filing practice; the record cannot distinguish them.",
    "tested_against": "\u2014",
    "universe": "\u2014",
@@ -174,7 +188,7 @@
   {
    "id": "c19",
    "claim": "A lender's strictness is the same for every kind of loan it makes.",
-   "verdict": "UNTESTABLE",
+   "verdict": "NOT_IN_RECORD",
    "evidence": "This project publishes conditional maps per lender (strictness by loan size and leverage cell) for some lenders, but a general test across all lenders is not published; treated as untestable in this battery.",
    "tested_against": "get_conditional_door_map",
    "universe": "\u2014",

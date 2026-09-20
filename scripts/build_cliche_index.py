@@ -52,22 +52,22 @@ add("c09", "Incomplete applications are a negligible share of denials.",
     "PARTLY", f"The median lender cites 'application incomplete' on {rs['by_reason']['incomplete']['median_share_pct']}% of denials, but one large lender cites it on {rs['by_reason']['incomplete']['max_share_pct']}% ({rs['by_reason']['incomplete']['max_lender']}). Negligible at the median, dominant at one door.",
     "api/denial-reasons-top100.json", "U-TOP100-WITH-REASONS-2025")
 add("c10", "A low denial rate means a lender is easy to get approved with.",
-    "UNTESTABLE", "A low observed rate can mean lenient underwriting, or an applicant mix that arrives pre-screened, or buyers steered away before filing. The record contains none of the three; only observed rates.",
+    "NOT_KNOWABLE_FROM_DATA", "A low observed rate can mean lenient underwriting, or an applicant mix that arrives pre-screened, or buyers steered away before filing. The record contains none of the three; only observed rates.",
     "—", "—", "Boundary: HMDA has no credit scores and no record of applications never filed.")
 add("c11", "FHA is easier to get than a conventional mortgage.",
-    "UNTESTABLE", "This dataset is FHA only (loan_type 2). No conventional comparison is published here, and the two programs draw different applicants, so a raw comparison would not answer the question anyway.",
+    "NOT_IN_RECORD", "This dataset is FHA only (loan_type 2). No conventional comparison is published here, and the two programs draw different applicants, so a raw comparison would not answer the question anyway.",
     "—", "—")
 add("c12", "The denial rate is the same for a buyer regardless of where they live.",
     "CONTRADICTED", f"State-level 2025 rates differ substantially; the small-loan penalty alone ranges {slp['min_penalty']}x to {slp['max_penalty']}x by jurisdiction. Geography is a variable the record can see.",
     "api/state/*.json", "U-STATES-SMALLBIG-2025")
 add("c13", "Your credit score is the single most important factor in an FHA denial.",
-    "UNTESTABLE", "HMDA does not contain credit scores. The record can show that debt-to-income is the most-cited reason, but it cannot rank score against anything, so this belief cannot be confirmed or refuted from the public data.",
+    "NOT_IN_RECORD", "HMDA does not contain credit scores. The record can show that debt-to-income is the most-cited reason, but it cannot rank score against anything, so this belief cannot be confirmed or refuted from the public data.",
     "—", "—", "The most common belief about denials is one the public record is structurally unable to test.")
 add("c14", "Refinance applications are denied about as often as purchase applications.",
-    "UNTESTABLE", "Loan-purpose splits are not among this project's published figures for 2025; the 2023 purchase-only vs refinance figures circulating online come from another universe and vintage.",
+    "NOT_IN_RECORD", "Loan-purpose splits are not among this project's published figures for 2025; the 2023 purchase-only vs refinance figures circulating online come from another universe and vintage.",
     "—", "—")
 add("c15", "A lender with a high denial rate is doing something wrong.",
-    "UNTESTABLE", "An observed rate carries no information about conduct. High rates are screening signals about institutions, consistent with strict underwriting, a hard applicant mix, or filing practice; the record cannot distinguish them.",
+    "NOT_KNOWABLE_FROM_DATA", "An observed rate carries no information about conduct. High rates are screening signals about institutions, consistent with strict underwriting, a hard applicant mix, or filing practice; the record cannot distinguish them.",
     "—", "—", "This is the boundary every figure on the site carries.")
 
 share_top = 100 * sum(d["decisioned_applications"] for d in top) / nat["apps"]
@@ -81,12 +81,16 @@ add("c18", "FHA lending is concentrated in a relatively small number of large le
     "SUPPORTED", f"The 100 largest FHA lenders accounted for about {share_top:.0f}% of all decisioned FHA applications in 2025 ({sum(d['decisioned_applications'] for d in top):,} of {nat['apps']:,}, counting the {len(top)} with published files).",
     "api/lender/*.json", "U-TOP100-VOLUME-2025")
 add("c19", "A lender's strictness is the same for every kind of loan it makes.",
-    "UNTESTABLE", "This project publishes conditional maps per lender (strictness by loan size and leverage cell) for some lenders, but a general test across all lenders is not published; treated as untestable in this battery.",
+    "NOT_IN_RECORD", "This project publishes conditional maps per lender (strictness by loan size and leverage cell) for some lenders, but a general test across all lenders is not published; treated as untestable in this battery.",
     "get_conditional_door_map", "—")
 
-out = {"generated": datetime.date.today().isoformat(), "version": "0.1",
+out = {"generated": datetime.date.today().isoformat(), "version": "0.2",
        "purpose": "Widely stated beliefs about FHA denials, each tested against the complete 2025 federal record where the record can see it, and declared untestable where it cannot. Used both as a public page and as an AI battery: what models believe versus what the record shows.",
-       "counts": {v: sum(1 for c in C if c["verdict"] == v) for v in ("SUPPORTED", "CONTRADICTED", "PARTLY", "UNTESTABLE")},
+       "counts": {v: sum(1 for c in C if c["verdict"] == v) for v in ("SUPPORTED", "CONTRADICTED", "PARTLY", "NOT_IN_RECORD", "NOT_KNOWABLE_FROM_DATA")},
+       "verdict_definitions": {"SUPPORTED": "the 2025 record supports the claim", "CONTRADICTED": "the record contradicts it", "PARTLY": "true for one universe or reading, not for the one usually meant",
+                               "NOT_IN_RECORD": "this record cannot test it, but it may be knowable elsewhere (a program rule, another dataset)",
+                               "NOT_KNOWABLE_FROM_DATA": "no observational data can settle it: it is a claim about intent, conduct or an unobserved counterfactual"},
+       "instrument_corrections": [{"date": "2026-09-20", "what": "v0.1 used one label, UNTESTABLE, for two different things: claims this record cannot test (c11, c13, c14, c19) and claims no data can settle (c10, c15). Models were scored as 'asserting the untestable' for stating a program rule (FHA's 580 / 3.5% guidance) that is knowable, just not from HMDA. Split into NOT_IN_RECORD and NOT_KNOWABLE_FROM_DATA. Also: the stance format forced a model that agreed with our own boundary reasoning (a low rate can reflect pre-screening) to answer FALSE; a stance UNSUPPORTED_BY_DATA was added. Found by reading all 16 rationales rather than trusting the count; the count fell from 16/57 to at most 6/57."}],
        "claims": C, "license": "CC BY 4.0", "universes": "https://financeratecalc.com/universes.json"}
 json.dump(out, open("eval/cliche-battery.json", "w"), indent=1)
 print(out["counts"]); [print(c["id"], c["verdict"], c["claim"][:70]) for c in C]

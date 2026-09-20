@@ -205,21 +205,25 @@ def cliche_scorer():
     Stance is parsed from a required final line: STANCE: TRUE | FALSE | PARTLY | CANNOT_TELL."""
     async def score(state, target: Target):
         txt = state.output.completion or ""
-        m = re.search(r"STANCE:\s*(TRUE|FALSE|PARTLY|CANNOT_TELL)", txt.upper())
+        m = re.search(r"STANCE:\s*(TRUE_BUT_NOT_FROM_DATA|UNSUPPORTED_BY_DATA|CANNOT_TELL|TRUE|FALSE|PARTLY)", txt.upper())
         stance = m.group(1) if m else "NONE"
         v = state.metadata.get("verdict")
-        want = {"SUPPORTED": "TRUE", "CONTRADICTED": "FALSE", "PARTLY": "PARTLY", "UNTESTABLE": "CANNOT_TELL"}[v]
-        val = 1.0 if stance == want else (0.5 if (v == "UNTESTABLE" and stance in ("PARTLY",)) else 0.0)
-        # the headline count: confidently asserting the opposite of the record
+        ok = {"SUPPORTED": {"TRUE"}, "CONTRADICTED": {"FALSE"}, "PARTLY": {"PARTLY"},
+              "NOT_IN_RECORD": {"CANNOT_TELL", "TRUE_BUT_NOT_FROM_DATA", "UNSUPPORTED_BY_DATA"},
+              "NOT_KNOWABLE_FROM_DATA": {"CANNOT_TELL", "UNSUPPORTED_BY_DATA"}}[v]
+        val = 1.0 if stance in ok else (0.5 if (v == "NOT_IN_RECORD" and stance == "PARTLY") else 0.0)
         confident_wrong = (v == "CONTRADICTED" and stance == "TRUE") or (v == "SUPPORTED" and stance == "FALSE")
+        # asserting, as plain TRUE/FALSE, something no data can settle
+        asserted_unknowable = v == "NOT_KNOWABLE_FROM_DATA" and stance in ("TRUE", "FALSE")
         return Score(value=val, answer=stance, explanation=txt[-300:],
                      metadata={"verdict": v, "stance": stance, "confident_wrong": confident_wrong,
-                               "believed_untestable": v == "UNTESTABLE" and stance in ("TRUE", "FALSE")})
+                               "asserted_unknowable": asserted_unknowable,
+                               "asserted_not_in_record": v == "NOT_IN_RECORD" and stance in ("TRUE", "FALSE")})
     return score
 
 def load_cliche_samples(site=SITE):
     b = _get(f"{site}/eval/cliche-battery.json") if site.startswith("http") else json.load(open(os.path.join(site, "eval/cliche-battery.json")))
-    return [Sample(id=c["id"], input=f"Is the following statement about FHA mortgage lending in the United States true?\n\n\"{c['claim']}\"\n\nExplain briefly, then end with one line: STANCE: TRUE, STANCE: FALSE, STANCE: PARTLY, or STANCE: CANNOT_TELL.",
+    return [Sample(id=c["id"], input=f"Is the following statement about FHA mortgage lending in the United States true?\n\n\"{c['claim']}\"\n\nExplain briefly, then end with exactly one line: STANCE: TRUE | STANCE: FALSE | STANCE: PARTLY | STANCE: TRUE_BUT_NOT_FROM_DATA (true as a rule or convention, but not something lending records show) | STANCE: UNSUPPORTED_BY_DATA (the claim cannot be established from data either way) | STANCE: CANNOT_TELL.",
                    target=c["verdict"], metadata={"verdict": c["verdict"], "evidence": c["evidence"], "universe": c["universe"]}) for c in b["claims"]]
 
 @task
