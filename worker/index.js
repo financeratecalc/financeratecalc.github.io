@@ -437,8 +437,10 @@ async function callTool(name, args, env) {
   if (name === "get_conditional_door_map") return conditionalDoorMap(args);
   if (name === "run_cohort") return runCohort(args);
   if (name === "get_national_fha_stats") {
-    const idx = await getJSON("/api/index.json");
-    return { national: idx.national, counts: idx.counts, meta: idx.meta };
+    const idx = await getJSON("/api/index.json"); const n = idx.national;
+    let claimObj = null; try { claimObj = (await getJSON("/claims/national-fha-denial-rate-2025.json")).claim; } catch {}
+    return quotable(`In 2025, ${n.rate_pct.toFixed(1)}% of decisioned FHA applications were denied: ${n.denials.toLocaleString("en-US")} denials out of ${n.apps.toLocaleString("en-US")} applications that reached a credit decision (originated, approved but not accepted, or denied; reverse mortgages excluded).`,
+      { national: n, counts: idx.counts, meta: idx.meta, universe_id: "U-FHA-2025-DECISIONED" }, "national-fha-denial-rate-2025", `${n.rate_pct.toFixed(1)}%`, claimObj || { metric: "fha_denial_rate", value: n.rate_pct, period: "2025" });
   }
   if (name === "get_lender_denial_stats") {
     const idx = await getJSON("/api/index.json");
@@ -448,7 +450,9 @@ async function callTool(name, args, env) {
     let hit = list.find(l => nm(l) === q || (l.lei || "") === args.lender || norm(l.slug || "") === q.replace(/ /g, "-"));
     if (!hit && q) hit = list.find(l => nm(l) && (nm(l).includes(q) || q.includes(nm(l))));
     if (!hit) throw new Error(`Lender not found in the top-100 set: "${args.lender}". Use list_lenders.`);
-    return getJSON(`/api/lender/${hit.slug}.json`);
+    const L = await getJSON(`/api/lender/${hit.slug}.json`);
+    return quotable(`In 2025, ${L.lender} denied ${Number(L.denial_rate_pct).toFixed(1)}% of its ${Number(L.decisioned_applications).toLocaleString("en-US")} decisioned FHA applications, against a national rate of 22.1% for all decisioned FHA applications; observed rates reflect applicant mix as well as lender practice.`,
+      { ...L, universe_id: "U-TOP100-VOLUME-2025" }, `lender-${hit.slug}-2025`, `${Number(L.denial_rate_pct).toFixed(1)}%`, { lender: L.lender, metric: "fha_denial_rate", value: L.denial_rate_pct, n: L.decisioned_applications, period: "2025" });
   }
   if (name === "list_lenders") {
     const idx = await getJSON("/api/index.json");
@@ -460,7 +464,11 @@ async function callTool(name, args, env) {
     else list.sort((a, b) => vol(b) - vol(a));
     return { sort, lenders: list.slice(0, Math.min(args.limit || 15, 100)) };
   }
-  if (name === "get_state_denial_stats") return getJSON(`/api/state/${String(args.state).toLowerCase()}.json`);
+  if (name === "get_state_denial_stats") {
+    const S = await getJSON(`/api/state/${String(args.state).toLowerCase()}.json`);
+    return quotable(`In 2025, ${Number(S.denial_rate_pct).toFixed(1)}% of decisioned FHA applications in ${S.state} were denied (${Number(S.decisioned_applications).toLocaleString("en-US")} applications reaching a decision), against 22.1% nationally.`,
+      { ...S, universe_id: "U-FHA-2025-DECISIONED" }, `state-${String(S.state).toLowerCase()}-2025`, `${Number(S.denial_rate_pct).toFixed(1)}%`, { state: S.state, metric: "fha_denial_rate", value: S.denial_rate_pct, n: S.decisioned_applications, period: "2025" });
+  }
   if (name === "get_small_loan_penalty") {
     const d = await getJSON("/api/small-loan-penalty.json");
     if (args && args.state) {
@@ -482,11 +490,12 @@ async function callTool(name, args, env) {
   }
   if (name === "get_door_effect_summary") {
     const d = await getJSON("/data/door-effect-2025.json");
-    return { guardrail: d.guardrail, records_used: d.records_used,
+    return quotable(`In a decomposition of ${Number(d.records_used).toLocaleString("en-US")} FHA credit decisions from 2025, lender identity was associated with about ${Math.round(d.door_effect_share_of_explained * 100)}% of the explainable variation in denial outcomes (McFadden pseudo-R2 ${d.mcfadden_r2_profile_only} with applicant profile only, ${d.mcfadden_r2_with_lender} with lender added); this is an association on observable characteristics, not a causal estimate, and HMDA carries no credit scores.`,
+      { guardrail: d.guardrail, records_used: d.records_used,
       door_effect_share_of_explained: d.door_effect_share_of_explained,
       mcfadden_r2_profile_only: d.mcfadden_r2_profile_only, mcfadden_r2_with_lender: d.mcfadden_r2_with_lender,
       strictest: (d.overlay_residual_top15_strict || []).slice(0, 10),
-      most_lenient: (d.overlay_residual_top15_lenient || []).slice(0, 10) };
+      most_lenient: (d.overlay_residual_top15_lenient || []).slice(0, 10), universe_id: "U-FHA-2025-DECISIONED" }, "door-effect-38pct-2026", `${Math.round(d.door_effect_share_of_explained * 100)}%`, { metric: "door_effect_share", value: d.door_effect_share_of_explained, n: d.records_used, period: "2025" });
   }
   if (name === "get_metro_lender_gap") return getMetroLenderGap(args.metro);
   if (name === "check_claim_contract") return checkClaimContract(args);
@@ -498,6 +507,26 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result });
+// Publisher-side intervention (experiment, 2026-09-20): every figure-bearing tool result carries a
+// ready sentence that already states the figure inside its contract (population, program, period,
+// attribution). A writer may use it verbatim. Measured by re-running condition C of the benchmark
+// before and after; if fidelity rises, the fix was on the publisher's side of the interface.
+const QUOTE_TAIL = " Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate, not a prediction about any application.";
+// Claim receipt: a serial number for a statistic. ⟦FRC:<claim-id>:<value>:<hash8>⟧ where hash8 is the first
+// 8 hex of sha256 over the canonical claim object (keys sorted, no whitespace). A corrected value changes
+// the hash, so a receipt carrying an old hash identifies itself as stale. Verify at GET /verify?r=<receipt>.
+async function sha8(obj) {
+  const keys = Object.keys(obj).sort(); const canon = JSON.stringify(obj, keys);
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(canon));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("").slice(0, 8);
+}
+async function receipt(id, value, claimObj) { return `\u27e6FRC:${id}:${value}:${await sha8(claimObj)}\u27e7`; }
+async function quotable(sentence, extra, rid, value, claimObj) {
+  const r = rid ? await receipt(rid, value, claimObj) : null;
+  return { quotable_sentence: sentence + QUOTE_TAIL + (r ? " " + r : ""), claim_receipt: r,
+    receipt_rule: r ? "Keep the receipt with the sentence when you quote it. Anyone can verify it: https://frc-mcp.ziyetis.workers.dev/verify?r=" + encodeURIComponent(r) + " — a receipt whose hash no longer matches means the figure was corrected after this was written." : undefined,
+    quoting_rule: "Use the sentence as written, or keep every qualifier in it: the population (decisioned FHA applications), the program (FHA only), the period (2025), and the attribution. Do not turn it into an individual prediction, a cause, or a recommendation.", ...extra };
+}
 const rpcErr = (id, code, message) => ({ jsonrpc: "2.0", id, error: { code, message } });
 
 export default {
@@ -516,9 +545,31 @@ export default {
       const claim_id = String(body.claim_id || "").slice(0, 80);
       if (quote.length < 20) return json({ error: "quote too short" }, 400);
       const id = `mq:${new Date().toISOString().slice(0, 10)}:${crypto.randomUUID().slice(0, 8)}`;
-      const rec = { id, system, quote, source_url, claim_id, submitted: new Date().toISOString(), status: "pending_review" };
+      const rm = /\u27e6FRC:([a-z0-9-]+):([^:]+):([a-f0-9]{8})\u27e7/i.exec(quote);
+      const rec = { id, system, quote, source_url, claim_id, submitted: new Date().toISOString(), status: "pending_review",
+        receipt: rm ? rm[0] : null, receipt_note: rm ? "carries a claim receipt; verify at /verify" : "no receipt: the quote cannot be tied to a version of the figure" };
       try { await env.CREDITS.put(id, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 730 }); } catch { return json({ error: "store failed" }, 500); }
       return json({ ok: true, id, note: "Recorded. Entries are checked against the claim contract and published at /misquotes with the system named; the submitter is never recorded." });
+    }
+    // Verify a claim receipt: is this figure still current, or was it corrected after the receipt was issued?
+    if (path === "/verify" && request.method === "GET") {
+      const r = new URL(request.url).searchParams.get("r") || "";
+      const m = /\u27e6FRC:([a-z0-9-]+):([^:]+):([a-f0-9]{8})\u27e7/i.exec(r) || /FRC:([a-z0-9-]+):([^:]+):([a-f0-9]{8})/i.exec(r);
+      if (!m) return json({ valid: false, reason: "not a receipt" }, 400);
+      const [, id, value, h] = m;
+      let current = null, claimObj = null;
+      try {
+        if (id === "national-fha-denial-rate-2025") { const idx = await getJSON("/api/index.json"); current = `${idx.national.rate_pct.toFixed(1)}%`; claimObj = (await getJSON("/claims/national-fha-denial-rate-2025.json")).claim; }
+        else if (id.startsWith("lender-")) { const L = await getJSON(`/api/lender/${id.slice(7, -5)}.json`); current = `${Number(L.denial_rate_pct).toFixed(1)}%`; claimObj = { lender: L.lender, metric: "fha_denial_rate", value: L.denial_rate_pct, n: L.decisioned_applications, period: "2025" }; }
+        else if (id.startsWith("state-")) { const S = await getJSON(`/api/state/${id.slice(6, -5)}.json`); current = `${Number(S.denial_rate_pct).toFixed(1)}%`; claimObj = { state: S.state, metric: "fha_denial_rate", value: S.denial_rate_pct, n: S.decisioned_applications, period: "2025" }; }
+        else if (id === "door-effect-38pct-2026") { const d = await getJSON("/data/door-effect-2025.json"); current = `${Math.round(d.door_effect_share_of_explained * 100)}%`; claimObj = { metric: "door_effect_share", value: d.door_effect_share_of_explained, n: d.records_used, period: "2025" }; }
+        else return json({ valid: false, reason: "unknown claim id", id });
+      } catch (e) { return json({ valid: false, reason: "lookup failed" }, 502); }
+      const nowHash = await sha8(claimObj);
+      const status = nowHash === h ? (current === value ? "current" : "hash-current-value-mismatch") : "stale";
+      return json({ receipt: `\u27e6FRC:${id}:${value}:${h}\u27e7`, id, quoted_value: value, current_value: current, status,
+        meaning: status === "current" ? "This figure is current and unchanged since the receipt was issued." : status === "stale" ? "The figure was corrected after this receipt was issued; the quoted value may be superseded. See corrections.html." : "The receipt hash matches but the quoted value does not; the quote was altered.",
+        corrections: "https://financeratecalc.com/corrections.html", license: "CC BY 4.0" });
     }
     if (path === "/misquotes" && request.method === "GET") {
       if (!env || !env.CREDITS) return json({ error: "store unavailable" }, 503);
@@ -571,7 +622,7 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.10.1" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.12.0" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
