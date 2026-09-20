@@ -110,39 +110,40 @@ jobs:
           INSPECT_GRADER_MODEL: ${{ github.event.inputs.grader }}
           INSPECT_TASK: ${{ github.event.inputs.condition }}
           INSPECT_EVAL_MODEL: ${{ github.event.inputs.model }}
-      - name: Commit run summary
+      - name: Save results via the GitHub API (no git plumbing)
         if: always()
-        run: |
-          git config user.name "frc-eval-bot"; git config user.email "bot@financeratecalc.com"
-          rm -f eval/runs/last-run.log
-          git add eval/runs
-          git diff --staged --quiet || git commit -m "eval run $(date -u +%Y-%m-%dT%H:%MZ)"
-          pushed=0
-          for i in 1 2 3 4 5; do
-            if git pull --rebase origin main && git push; then pushed=1; break; fi
-            sleep $((i*7))
-          done
-          if [ "$pushed" != "1" ]; then echo "PUSH FAILED - results not saved"; git log --oneline -1; exit 1; fi
-      - name: Job summary (always readable in the run page)
-        if: always()
-        run: |
-          {
-            echo "### probe"; sed -e 's/^/    /' eval/runs/available-models.txt 2>/dev/null | head -40
-            echo "### summary"; ls -t eval/runs/*.json 2>/dev/null | head -1 | xargs -r cat | head -c 3000
-            echo "### run tail"; tail -c 2000 eval/runs/last-run.log 2>/dev/null
-          } >> "$GITHUB_STEP_SUMMARY"
-      - name: Report to an issue (readable without log access)
-        if: always()
-        continue-on-error: true
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INSPECT_EVAL_MODEL: ${{ github.event.inputs.model }}
+          GH_PAT: ${{ secrets.EVAL_PAT }}
+          MODEL: ${{ github.event.inputs.model }}
+          TASK: ${{ github.event.inputs.condition }}
         run: |
-          {
-            echo "## probe"; cat eval/runs/available-models.txt 2>/dev/null | head -40
-            echo; echo "## summary"; ls -t eval/runs/*.json 2>/dev/null | head -1 | xargs -r python3 -c "import json,sys;d=json.load(open(sys.argv[1]));print(json.dumps({k:v for k,v in d.items() if k!='samples'},indent=1));[print(s['id'],s['value'],s['fidelity'],s.get('tool_calls')) for s in d['samples']]"
-            echo; echo "## run tail"; tail -c 2500 eval/runs/last-run.log 2>/dev/null
-          } > report.md
-          gh issue create --title "eval $(echo "$INSPECT_EVAL_MODEL") ${{ job.status }} $(date -u +%H:%MZ)" --body-file report.md || true
+          python - <<'PY'
+          import os, json, base64, glob, urllib.request, datetime
+          tok = os.environ.get("GH_PAT")
+          repo = "financeratecalc/financeratecalc.github.io"
+          stamp = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M")
+          name = f"{stamp}-{(os.environ.get('MODEL') or 'model').replace('/', '_')}-{os.environ.get('TASK') or 'task'}"
+          payload = {}
+          js = sorted(glob.glob("eval/runs/*.json"), key=os.path.getmtime)
+          if js: payload["summary"] = json.load(open(js[-1]))
+          for f in ("eval/runs/available-models.txt", "eval/runs/last-run.log"):
+              if os.path.exists(f): payload[os.path.basename(f)] = open(f, errors="replace").read()[-6000:]
+          body = json.dumps(payload, indent=1).encode()
+          def put(path, content, msg):
+              url = f"https://api.github.com/repos/{repo}/contents/{path}"
+              req = urllib.request.Request(url, method="GET", headers={"Authorization": f"token {tok}"})
+              sha = None
+              try:
+                  sha = json.load(urllib.request.urlopen(req)).get("sha")
+              except Exception: pass
+              data = {"message": msg, "content": base64.b64encode(content).decode(), "branch": "main"}
+              if sha: data["sha"] = sha
+              req = urllib.request.Request(url, method="PUT", data=json.dumps(data).encode(),
+                                           headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
+              with urllib.request.urlopen(req) as r: return r.status
+          if not tok:
+              print("NO EVAL_PAT SECRET"); raise SystemExit(1)
+          print("wrote", put(f"eval/runs/{name}.json", body, f"eval run {name}"))
+          PY
       - uses: actions/upload-artifact@v4
         with: { name: inspect-log, path: eval/logs }
