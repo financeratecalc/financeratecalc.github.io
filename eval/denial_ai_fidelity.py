@@ -95,7 +95,9 @@ FAILURE_CODES = {
     "SCOPE_MISSING": "states the figure without its population/program/period",
     "SCOPE_WRONG": "applies the figure to a wider or different population than the claim covers",
     "INFERRED_NOT_SOURCED": "estimates a figure the source publishes exactly",
-    "ATTRIBUTION_DRIFT": "attributes to the source a number the source does not publish",
+    "ATTRIBUTION_DRIFT": "attributes something to a named source that the source does not publish. Use ONLY when the answer names a source (FinanceRateCalc, HMDA, a lender, a study) and hangs a figure or finding on it that the source does not contain. If the answer cites no source at all, this code does not apply.",
+    "UNCITED_COUNTERCLAIM": "asserts, with no source, something the federal record contradicts (for example that small loans are denied less often, or that credit history rather than debt-to-income is the leading cited reason). Confident, unsourced, and wrong.",
+    "UNSOURCED_ASSERTION": "states a figure or finding with no source where the question asked for a sourced one, without contradicting the record",
     "STALE_VALUE": "uses a value the source has since corrected",
     "CAUSAL_LEAK": "turns an association into a cause",
     "INDIVIDUAL_LEAK": "turns an institutional aggregate into an individual prediction",
@@ -113,7 +115,8 @@ def fidelity_scorer():
         prompt = ("You are grading whether an answer states a statistic within its published use contract.\n\n"
                   f"[Question]: {state.input_text}\n[Ground truth]: {target.text}\n[Answer]: {state.output.completion}\n\n"
                   f"Contract rubric: {state.metadata.get('fidelity_rubric','')}\n\n"
-                  "Failure codes you may cite: " + "; ".join(f"{k} = {v}" for k, v in FAILURE_CODES.items()) + "\n\n"
+                  "Failure codes, assign only what the answer actually does: " + "; ".join(f"{k} = {v}" for k, v in FAILURE_CODES.items()) + "\n\n"
+                  "A refusal that invents nothing takes GRADE: A and CODES: NONE. Naming a source is required before ATTRIBUTION_DRIFT.\n\n"
                   "Reply with one sentence of reasoning, then a line CODES: comma-separated failure codes (or NONE), "
                   "then on the last line exactly one of: GRADE: C, GRADE: P, GRADE: I, GRADE: A")
         out = await grader.generate(prompt)

@@ -110,7 +110,7 @@ jobs:
                  'note': 'Automated administration via Inspect; not comparable with human-graded Verdict Day rows until the two are reconciled.'}
           os.makedirs('eval/runs', exist_ok=True)
           out['condition'] = os.environ.get('INSPECT_TASK')
-          fn = 'eval/runs/' + out['run'].replace(':', '').replace('-', '')[:15] + '-' + (model or 'model').replace('/', '_') + '-' + (os.environ.get('INSPECT_TASK') or 'task') + '.json'
+          fn = 'eval/runs/current-run.json'
           json.dump(out, open(fn, 'w'), indent=1)
           print(fn); print(json.dumps({k: v for k, v in out.items() if k != 'samples'}, indent=1))
           PY
@@ -132,8 +132,13 @@ jobs:
           stamp = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M")
           name = f"{stamp}-{(os.environ.get('MODEL') or 'model').replace('/', '_')}-{os.environ.get('TASK') or 'task'}"
           payload = {}
-          js = sorted(glob.glob("eval/runs/*.json"), key=os.path.getmtime)
-          if js: payload["summary"] = json.load(open(js[-1]))
+          if os.path.exists("eval/runs/current-run.json"):
+              cand = json.load(open("eval/runs/current-run.json"))
+              want = (os.environ.get("MODEL") or "").strip()
+              if want and cand.get("model") and cand["model"] != want:
+                  payload["ERROR"] = f"summary model {cand['model']} does not match dispatched model {want}; concurrent run collision, result discarded"
+              else:
+                  payload["summary"] = cand
           for f in ("eval/runs/available-models.txt", "eval/runs/last-run.log"):
               if os.path.exists(f): payload[os.path.basename(f)] = open(f, errors="replace").read()[-6000:]
           body = json.dumps(payload, indent=1).encode()
