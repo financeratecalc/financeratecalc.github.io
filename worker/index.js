@@ -504,6 +504,33 @@ export default {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
+    // Public misquote ledger: a reader submits an AI answer that quotes an FRC figure; stored verbatim
+    // with the system name and date, graded later against the claim contract, published as JSON.
+    // No personal data is recorded: system name, the quoted text (capped), an optional URL, a date.
+    if (path === "/misquote" && request.method === "POST") {
+      if (!env || !env.CREDITS) return json({ error: "store unavailable" }, 503);
+      let body = {}; try { body = await request.json(); } catch { return json({ error: "JSON body required" }, 400); }
+      const system = String(body.system || "unknown").replace(/[^A-Za-z0-9 ._-]/g, "").slice(0, 40);
+      const quote = String(body.quote || "").slice(0, 1500);
+      const source_url = String(body.url || "").slice(0, 300);
+      const claim_id = String(body.claim_id || "").slice(0, 80);
+      if (quote.length < 20) return json({ error: "quote too short" }, 400);
+      const id = `mq:${new Date().toISOString().slice(0, 10)}:${crypto.randomUUID().slice(0, 8)}`;
+      const rec = { id, system, quote, source_url, claim_id, submitted: new Date().toISOString(), status: "pending_review" };
+      try { await env.CREDITS.put(id, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 730 }); } catch { return json({ error: "store failed" }, 500); }
+      return json({ ok: true, id, note: "Recorded. Entries are checked against the claim contract and published at /misquotes with the system named; the submitter is never recorded." });
+    }
+    if (path === "/misquotes" && request.method === "GET") {
+      if (!env || !env.CREDITS) return json({ error: "store unavailable" }, 503);
+      const out = []; let cursor;
+      do {
+        const list = await env.CREDITS.list({ prefix: "mq:", limit: 1000, cursor });
+        for (const k of list.keys) { try { const v = await env.CREDITS.get(k.name); if (v) out.push(JSON.parse(v)); } catch {} }
+        cursor = list.list_complete ? undefined : list.cursor;
+      } while (cursor);
+      out.sort((a, b) => (a.submitted < b.submitted ? 1 : -1));
+      return json({ count: out.length, entries: out, note: "Public misquote ledger: AI answers quoting a FinanceRateCalc figure, submitted by readers, graded against the claim contract. Screening signals about AI systems, never about the submitter, who is not recorded.", license: "CC BY 4.0" });
+    }
     if (path === "/usage") {
       if (!env || !env.CREDITS) return json({ error: "tally unavailable" }, 503);
       const list = await env.CREDITS.list({ prefix: "tally:", limit: 1000 });
@@ -544,7 +571,7 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.10.0" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.10.1" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
