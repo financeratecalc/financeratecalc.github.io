@@ -11,6 +11,9 @@ on:
       grader:
         description: "Grader A for the fidelity scorer"
         default: "anthropic/claude-sonnet-4-6"
+      repeats:
+        description: "How many times to run the same model (frequency, not a single shot)"
+        default: "3"
       grader_b:
         description: "Grader B (optional, different provider) — disagreement is recorded"
         default: ""
@@ -44,6 +47,7 @@ jobs:
           INSPECT_EVAL_MODEL: ${{ github.event.inputs.model }}
           INSPECT_GRADER_MODEL: ${{ github.event.inputs.grader }}
           FRC_GRADER_B_MODEL: ${{ github.event.inputs.grader_b }}
+          REPEATS: ${{ github.event.inputs.repeats }}
           INSPECT_TASK: ${{ github.event.inputs.condition }}
         run: |
           mkdir -p eval/runs
@@ -67,7 +71,7 @@ jobs:
           open("eval/runs/available-models.txt", "w").write("\n\n".join(out) + "\n"); print("\n\n".join(out))
           PY
           set +e
-          FRC_GRADER_MODEL="$INSPECT_GRADER_MODEL" inspect eval eval/denial_ai_fidelity.py@"$INSPECT_TASK" -T site="$PWD" --model "$INSPECT_EVAL_MODEL" --log-dir eval/logs --log-format json --max-connections 4 > eval/runs/last-run.log 2>&1
+          FRC_GRADER_MODEL="$INSPECT_GRADER_MODEL" inspect eval eval/denial_ai_fidelity.py@"$INSPECT_TASK" -T site="$PWD" --model "$INSPECT_EVAL_MODEL" --epochs "${REPEATS:-3}" --log-dir eval/logs --log-format json --max-connections 4 > eval/runs/last-run.log 2>&1
           rc=$?
           tail -c 4000 eval/runs/last-run.log > "eval/runs/last-error-$(echo "$INSPECT_EVAL_MODEL" | tr / _).txt"
           echo "exit=$rc" >> "eval/runs/last-error-$(echo "$INSPECT_EVAL_MODEL" | tr / _).txt"
@@ -93,7 +97,7 @@ jobs:
               fid = sc.get('fidelity_scorer', {}); fidb = sc.get('fidelity_scorer_b', {})
               g = (fid.get('metadata') or {}).get('grade') or fid.get('answer')
               gb = (fidb.get('metadata') or {}).get('grade') or fidb.get('answer')
-              fv = None if g == 'A' else fid.get('value')
+              fv = None if g in ('A', 'N') else fid.get('value')
               rows.append({'id': s.get('id'), 'value': sc.get('value_scorer', {}).get('value'), 'fidelity': fv,
                            'answer': text_of(s.get('output', {}).get('choices', [{}])[0].get('message', {}).get('content'))[:500],
                            'fidelity_explanation': (fid.get('explanation') or '')[:300],

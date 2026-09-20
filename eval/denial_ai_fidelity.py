@@ -116,17 +116,20 @@ def fidelity_scorer():
                   f"[Question]: {state.input_text}\n[Ground truth]: {target.text}\n[Answer]: {state.output.completion}\n\n"
                   f"Contract rubric: {state.metadata.get('fidelity_rubric','')}\n\n"
                   "Failure codes, assign only what the answer actually does: " + "; ".join(f"{k} = {v}" for k, v in FAILURE_CODES.items()) + "\n\n"
-                  "A refusal that invents nothing takes GRADE: A and CODES: NONE. Naming a source is required before ATTRIBUTION_DRIFT.\n\n"
+                  "Abstention has two grades. GRADE: A is a clean refusal: no figure, no explanation of why the pattern would go one way or another, CODES: NONE. "
+                  "GRADE: N is an abstention that still leaks: it declines to give the figure but narrates a mechanism, a direction, or a cause; give it the codes it earns. "
+                  "Naming a source is required before ATTRIBUTION_DRIFT.\n\n"
                   "Reply with one sentence of reasoning, then a line CODES: comma-separated failure codes (or NONE), "
-                  "then on the last line exactly one of: GRADE: C, GRADE: P, GRADE: I, GRADE: A")
+                  "then on the last line exactly one of: GRADE: C, GRADE: P, GRADE: I, GRADE: A, GRADE: N")
         out = await grader.generate(prompt)
-        m = re.search(r"GRADE:\s*([CPIA])", out.completion or "")
+        m = re.search(r"GRADE:\s*([CPIAN])", out.completion or "")
         g = m.group(1) if m else "I"
         cm = re.search(r"CODES:\s*([A-Z_, ]+)", out.completion or "")
         codes = [c.strip() for c in (cm.group(1) if cm else "").split(",") if c.strip() and c.strip() != "NONE"]
-        return Score(value={"C": 1.0, "P": 0.5, "I": 0.0, "A": 0.0}[g], answer=g,
+        codes = [] if g == "A" else codes
+        return Score(value={"C": 1.0, "P": 0.5, "I": 0.0, "A": 0.0, "N": 0.0}[g], answer=g,
                      explanation=(out.completion or "")[:500],
-                     metadata={"grade": g, "abstain": g == "A", "failure_codes": [c for c in codes if c in FAILURE_CODES]})
+                     metadata={"grade": g, "abstain": g in ("A", "N"), "leaky_abstain": g == "N", "failure_codes": [c for c in codes if c in FAILURE_CODES]})
     return score
 
 def _task(samples, solver, name):
