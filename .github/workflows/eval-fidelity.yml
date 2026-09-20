@@ -6,11 +6,14 @@ on:
         description: "Inspect model id"
         default: "anthropic/claude-sonnet-4-6"
       condition:
-        description: "task: denial_ai_fidelity (no tools) or denial_ai_fidelity_with_source (MCP)"
+        description: "denial_ai_fidelity (A: no tools) | denial_ai_fidelity_web (B: web search) | denial_ai_fidelity_with_source (C: MCP)"
         default: "denial_ai_fidelity_with_source"
       grader:
-        description: "Grader model for the fidelity scorer"
+        description: "Grader A for the fidelity scorer"
         default: "anthropic/claude-sonnet-4-6"
+      grader_b:
+        description: "Grader B (optional, different provider) — disagreement is recorded"
+        default: ""
 permissions:
   contents: write
   issues: write
@@ -19,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.EVAL_PAT || secrets.GITHUB_TOKEN }}
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: pip install -q inspect_ai anthropic openai google-genai xai_sdk mcp
@@ -30,6 +35,7 @@ jobs:
           XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
           INSPECT_EVAL_MODEL: ${{ github.event.inputs.model }}
           INSPECT_GRADER_MODEL: ${{ github.event.inputs.grader }}
+          FRC_GRADER_B_MODEL: ${{ github.event.inputs.grader_b }}
           INSPECT_TASK: ${{ github.event.inputs.condition }}
         run: |
           mkdir -p eval/runs
@@ -76,17 +82,23 @@ jobs:
           GRADE = {'C': 1.0, 'P': 0.5, 'I': 0.0, 'A': None}
           for s in log.get('samples', []):
               sc = s.get('scores', {})
-              fid = sc.get('fidelity_scorer', {})
+              fid = sc.get('fidelity_scorer', {}); fidb = sc.get('fidelity_scorer_b', {})
               g = (fid.get('metadata') or {}).get('grade') or fid.get('answer')
+              gb = (fidb.get('metadata') or {}).get('grade') or fidb.get('answer')
               fv = None if g == 'A' else fid.get('value')
               rows.append({'id': s.get('id'), 'value': sc.get('value_scorer', {}).get('value'), 'fidelity': fv,
                            'answer': text_of(s.get('output', {}).get('choices', [{}])[0].get('message', {}).get('content'))[:500],
                            'fidelity_explanation': (fid.get('explanation') or '')[:300],
-                           'tool_calls': sum(1 for m in s.get('messages', []) if m.get('role') == 'assistant' and m.get('tool_calls'))})
+                           'tool_calls': sum(1 for m in s.get('messages', []) if m.get('role') == 'assistant' and m.get('tool_calls')),
+                           'failure_codes': (fid.get('metadata') or {}).get('failure_codes', []),
+                           'grade_a': g, 'grade_b': gb, 'graders_agree': (None if not gb else g == gb)})
           out = {'run': datetime.datetime.utcnow().isoformat(timespec='seconds') + 'Z', 'model': model,
                  'grader': os.environ.get('INSPECT_GRADER_MODEL'), 'battery': 'benchmark.json v1.2',
                  'n': len(rows), 'value_mean': sum((r['value'] or 0) for r in rows) / max(len(rows), 1),
-                 'fidelity_mean': (sum(r['fidelity'] for r in rows if r['fidelity'] is not None) / max(sum(1 for r in rows if r['fidelity'] is not None), 1)), 'abstained': sum(1 for r in rows if r['fidelity'] is None), 'samples': rows,
+                 'fidelity_mean': (sum(r['fidelity'] for r in rows if r['fidelity'] is not None) / max(sum(1 for r in rows if r['fidelity'] is not None), 1)), 'abstained': sum(1 for r in rows if r['fidelity'] is None),
+                 'failure_code_counts': {c: sum(1 for r in rows for x in r['failure_codes'] if x == c) for c in sorted({x for r in rows for x in r['failure_codes']})},
+                 'grader_agreement': (lambda a: None if not a else round(sum(1 for x in a if x) / len(a), 3))([r['graders_agree'] for r in rows if r['graders_agree'] is not None]),
+                 'samples': rows,
                  'note': 'Automated administration via Inspect; not comparable with human-graded Verdict Day rows until the two are reconciled.'}
           os.makedirs('eval/runs', exist_ok=True)
           out['condition'] = os.environ.get('INSPECT_TASK')

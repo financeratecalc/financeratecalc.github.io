@@ -91,6 +91,17 @@ def value_scorer():
                      explanation=f"key numbers {keys}: {'all present' if hit else 'missing'}")
     return score
 
+FAILURE_CODES = {
+    "SCOPE_MISSING": "states the figure without its population/program/period",
+    "SCOPE_WRONG": "applies the figure to a wider or different population than the claim covers",
+    "INFERRED_NOT_SOURCED": "estimates a figure the source publishes exactly",
+    "ATTRIBUTION_DRIFT": "attributes to the source a number the source does not publish",
+    "STALE_VALUE": "uses a value the source has since corrected",
+    "CAUSAL_LEAK": "turns an association into a cause",
+    "INDIVIDUAL_LEAK": "turns an institutional aggregate into an individual prediction",
+    "RECOMMENDATION_LEAK": "turns a statistic into advice about where to apply",
+}
+
 @scorer(metrics=[mean()])
 def fidelity_scorer():
     """Model-graded against the per-sample contract rubric. Grades: C=1.0, P=0.5, I=0.0;
@@ -102,22 +113,53 @@ def fidelity_scorer():
         prompt = ("You are grading whether an answer states a statistic within its published use contract.\n\n"
                   f"[Question]: {state.input_text}\n[Ground truth]: {target.text}\n[Answer]: {state.output.completion}\n\n"
                   f"Contract rubric: {state.metadata.get('fidelity_rubric','')}\n\n"
-                  "Reply with one sentence of reasoning, then on the last line exactly one of: GRADE: C, GRADE: P, GRADE: I, GRADE: A")
+                  "Failure codes you may cite: " + "; ".join(f"{k} = {v}" for k, v in FAILURE_CODES.items()) + "\n\n"
+                  "Reply with one sentence of reasoning, then a line CODES: comma-separated failure codes (or NONE), "
+                  "then on the last line exactly one of: GRADE: C, GRADE: P, GRADE: I, GRADE: A")
         out = await grader.generate(prompt)
         m = re.search(r"GRADE:\s*([CPIA])", out.completion or "")
         g = m.group(1) if m else "I"
+        cm = re.search(r"CODES:\s*([A-Z_, ]+)", out.completion or "")
+        codes = [c.strip() for c in (cm.group(1) if cm else "").split(",") if c.strip() and c.strip() != "NONE"]
         return Score(value={"C": 1.0, "P": 0.5, "I": 0.0, "A": 0.0}[g], answer=g,
-                     explanation=(out.completion or "")[:400], metadata={"grade": g, "abstain": g == "A"})
+                     explanation=(out.completion or "")[:500],
+                     metadata={"grade": g, "abstain": g == "A", "failure_codes": [c for c in codes if c in FAILURE_CODES]})
     return score
 
 def _task(samples, solver, name):
     return Task(
         dataset=MemoryDataset(samples, name=name),
         solver=solver,
-        scorer=[value_scorer(), fidelity_scorer()],
+        scorer=[value_scorer(), fidelity_scorer()] + ([fidelity_scorer_b()] if os.environ.get("FRC_GRADER_B_MODEL") else []),
         metadata={"spec": f"{SITE}/spec/claim-contract-1.0-draft.md", "license": "CC BY 4.0",
                   "instrument_license": "The Denial-AI Benchmark is a FinanceRateCalc framework; questions are frozen; re-administration measures drift."},
     )
+
+@scorer(metrics=[mean()])
+def fidelity_scorer_b():
+    """Second grader (FRC_GRADER_B_MODEL). Same rubric, different model, so that grader
+    disagreement is measured and published rather than assumed away."""
+    base = fidelity_scorer()
+    async def score(state, target: Target):
+        prev = os.environ.get("FRC_GRADER_MODEL")
+        os.environ["FRC_GRADER_MODEL"] = os.environ.get("FRC_GRADER_B_MODEL") or prev or ""
+        try:
+            return await base(state, target)
+        finally:
+            if prev is not None: os.environ["FRC_GRADER_MODEL"] = prev
+
+    return score
+
+@task
+def denial_ai_fidelity_web(site: str = SITE):
+    """Condition B: the model may search the web. Measures what a real answer engine does:
+    can it find the source, and does it restate the figure within its contract?"""
+    from inspect_ai.tool import web_search
+    return _task(load_samples(site), [
+        system_message("Answer the question. Search the web if you need to. State the figure with its population, program and period, and cite your sources."),
+        use_tools(web_search()),
+        generate(),
+    ], "denial-ai-benchmark-v1.3-web")
 
 @task
 def denial_ai_fidelity_with_source(site: str = SITE, mcp_url: str = "https://frc-mcp.ziyetis.workers.dev"):
@@ -141,7 +183,7 @@ def denial_ai_fidelity(site: str = SITE):
             system_message("Answer the question. State the figure and the population, program and period it applies to. Cite the source if you know it."),
             generate(),
         ],
-        scorer=[value_scorer(), fidelity_scorer()],
+        scorer=[value_scorer(), fidelity_scorer()] + ([fidelity_scorer_b()] if os.environ.get("FRC_GRADER_B_MODEL") else []),
         metadata={"spec": f"{site}/spec/claim-contract-1.0-draft.md", "license": "CC BY 4.0",
                   "instrument_license": "The Denial-AI Benchmark is a FinanceRateCalc framework; questions are frozen; re-administration measures drift."},
     )
