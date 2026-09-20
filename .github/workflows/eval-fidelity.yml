@@ -26,7 +26,15 @@ jobs:
           token: ${{ secrets.EVAL_PAT || secrets.GITHUB_TOKEN }}
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: pip install -q inspect_ai anthropic openai google-genai xai_sdk mcp
+      - name: Install eval dependencies
+        run: |
+          pip install -q inspect_ai anthropic openai google-genai mcp
+          # xai-sdk is the PyPI name; inspect imports it as xai_sdk. Installed
+          # separately and verified, because a missing provider fails the whole
+          # run with an error that looks like a model problem.
+          pip install -q xai-sdk || echo "xai-sdk unavailable — Grok conditions will be skipped"
+          python -c "import inspect_ai; print('inspect_ai ok')"
+          python -c "import xai_sdk; print('xai_sdk ok')" || echo "xai_sdk NOT importable"
       - name: Run eval
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
