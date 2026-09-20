@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Misquote Ledger — how AI systems restate our figures | FinanceRateCalc</title>
+<meta name="description" content="A public ledger of AI answers that quote FinanceRateCalc figures, submitted by readers and graded against each figure's published use contract. The submitter is never recorded.">
+<link rel="canonical" href="https://financeratecalc.com/misquotes.html">
+<style>body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding:36px 18px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:29px;color:#f5f2ea;line-height:1.2;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:19px;color:#f5f2ea;margin:30px 0 8px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B} .mono{font-family:'DM Mono',monospace;font-size:12.5px}
+.card{border:1px solid #23262e;border-radius:12px;padding:16px 18px;background:#0d0f14;margin:14px 0;font-size:15px}
+.tag{display:inline-block;font-family:'DM Mono',monospace;font-size:10.5px;padding:2px 8px;border-radius:4px;background:rgba(160,160,160,.15);color:#b8b4a9;margin-bottom:8px}
+.tag.pending{background:rgba(200,168,75,.12);color:#C8A84B} .tag.graded{background:rgba(120,200,140,.12);color:#8fd3a3}
+label{display:block;font-family:'DM Mono',monospace;font-size:11px;color:#C8A84B;letter-spacing:1px;margin:14px 0 4px}
+input,textarea,select{width:100%;box-sizing:border-box;background:#08090c;color:#e8e4da;border:1px solid #2c303a;border-radius:8px;padding:10px;font-family:inherit;font-size:14px}
+textarea{min-height:120px} button{margin-top:14px;background:#C8A84B;color:#08090c;border:0;border-radius:8px;padding:11px 18px;font-weight:600;cursor:pointer}
+.quote{white-space:pre-wrap;color:#cbc7bb;font-size:14px;border-left:3px solid #2c303a;padding-left:12px;margin:8px 0}
+.small{font-size:12.5px;color:#8a8678}</style></head>
+<body><div class="wrap">
+<div class="kicker">FinanceRateCalc &middot; Misquote ledger</div>
+<h1>How AI systems restate our figures</h1>
+<p class="sub">Every statistic on this site ships with a <a href="/spec/claim-contract-1.0-draft.md">use contract</a>: the population it covers, the period, and the inferences it does not support. This ledger records what happens to those figures once an AI answer engine restates them. Readers submit the answer; we grade it against the contract; the graded entry is published with the system named.</p>
+
+<div class="card"><b>The rule.</b> The submitter is never recorded &mdash; no name, no email, no IP is stored. What is published is the quoted answer, the system that produced it, the date, and the grade. Entries stay marked <span class="tag pending">pending review</span> until graded; a pending entry is a submission, not a finding. Grades follow the <a href="/eval/rubric-vectors.json">public rubric vectors</a>; a wrong figure is a wrong figure, a right figure with its population dropped is a fidelity failure, and a refusal that invents nothing is not a failure at all.</div>
+
+<h2>Submit an answer</h2>
+<p class="sub">Saw an AI answer that quotes a FinanceRateCalc number &mdash; a denial rate, a lender figure, a metro gap? Paste it here as the system produced it. Ten seconds; no account.</p>
+<div class="card">
+<label for="system">Which system produced it?</label>
+<select id="system"><option>ChatGPT</option><option>Perplexity</option><option>Claude</option><option>Gemini</option><option>Copilot</option><option>Grok</option><option>Other</option></select>
+<label for="quote">The answer, as produced (the part that quotes us)</label>
+<textarea id="quote" placeholder="Paste the sentence or paragraph. Include the number and how the system framed it."></textarea>
+<label for="url">Link to the answer, if it has one (optional)</label>
+<input id="url" placeholder="https://">
+<label for="claim">Which figure, if you know (optional)</label>
+<input id="claim" placeholder="e.g. national FHA denial rate 2025, or a lender name">
+<button id="send">Submit to the ledger</button>
+<div id="msg" class="small" style="margin-top:10px"></div>
+</div>
+
+<h2>The ledger</h2>
+<p class="sub small" id="count">Loading&hellip;</p>
+<div id="graded"></div>
+<h2 id="pending-h" style="display:none">Pending review</h2>
+<div id="pending"></div>
+
+<h2>Why this exists</h2>
+<p class="sub">On 18 September 2026 an answer engine cited this site as its primary source for the 2025 FHA denial rate, got every lender figure right, and then attributed to us a count we have never published. The number was right; the attribution drifted. That is the failure this ledger is built to see: not invention, but omission and drift, which no accuracy score catches. Our own benchmark administers a fixed battery to AI systems each month; this page is the other direction &mdash; the wild, reported by the people who read the answers.</p>
+<p class="small">Entries are screening signals about AI systems, never claims about any person. Machine-readable: <a href="https://frc-mcp.ziyetis.workers.dev/misquotes">/misquotes</a> (JSON, CC BY 4.0). Method: <a href="/methodology.html">methodology</a> &middot; <a href="/corrections.html">corrections</a>.</p>
+</div>
+<script>
+const API = "https://frc-mcp.ziyetis.workers.dev";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+async function load() {
+  try {
+    const r = await fetch(API + "/misquotes"); const d = await r.json();
+    const g = d.entries.filter(e => e.status !== "pending_review"), p = d.entries.filter(e => e.status === "pending_review");
+    document.getElementById("count").textContent = `${d.count} entr${d.count === 1 ? "y" : "ies"}: ${g.length} graded, ${p.length} pending review.`;
+    const card = e => `<div class="card"><span class="tag ${e.status === "pending_review" ? "pending" : "graded"}">${e.status === "pending_review" ? "pending review" : "graded: " + esc(e.grade || "")}</span><div><b>${esc(e.system)}</b> <span class="small">&middot; ${esc((e.submitted || "").slice(0, 10))}${e.claim_id ? " &middot; " + esc(e.claim_id) : ""}</span></div><div class="quote">${esc(e.quote)}</div>${e.verdict ? `<div class="small">${esc(e.verdict)}</div>` : ""}${e.source_url ? `<div class="small"><a href="${esc(e.source_url)}" rel="nofollow noopener">source</a></div>` : ""}</div>`;
+    document.getElementById("graded").innerHTML = g.length ? g.map(card).join("") : '<p class="small">No graded entries yet. Graded entries appear here with the system named and the contract verdict.</p>';
+    if (p.length) { document.getElementById("pending-h").style.display = ""; document.getElementById("pending").innerHTML = p.map(card).join(""); }
+  } catch (e) { document.getElementById("count").textContent = "Ledger unavailable right now."; }
+}
+document.getElementById("send").onclick = async () => {
+  const body = { system: document.getElementById("system").value, quote: document.getElementById("quote").value.trim(), url: document.getElementById("url").value.trim(), claim_id: document.getElementById("claim").value.trim() };
+  const m = document.getElementById("msg");
+  if (body.quote.length < 20) { m.textContent = "Paste at least a sentence."; return; }
+  try {
+    const r = await fetch(API + "/misquote", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const d = await r.json();
+    m.textContent = d.ok ? "Recorded as " + d.id + ". It will appear under pending review, then be graded." : (d.error || "Could not record.");
+    if (d.ok) { document.getElementById("quote").value = ""; load(); }
+    if (typeof gtag === "function") gtag("event", "misquote_submit", { system: body.system, ok: !!d.ok });
+  } catch (e) { m.textContent = "Could not reach the ledger."; }
+};
+load();
+</script></body></html>
