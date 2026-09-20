@@ -56,6 +56,8 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":
 async function load() {
   try {
     const r = await fetch(API + "/misquotes"); const d = await r.json();
+    let overlay = {}; try { const o = await (await fetch("/eval/misquotes-graded.json", { cache: "no-store" })).json(); (o.graded || []).forEach(x => overlay[x.id] = x); } catch (e) {}
+    d.entries.forEach(e => { const o = overlay[e.id]; if (o) { e.status = "graded"; e.grade = o.grade; e.verdict = o.verdict + (o.codes && o.codes.length ? " Codes: " + o.codes.join(", ") + "." : "") + (o.found_by ? " Found by: " + o.found_by : ""); } });
     const g = d.entries.filter(e => e.status !== "pending_review"), p = d.entries.filter(e => e.status === "pending_review");
     document.getElementById("count").textContent = `${d.count} entr${d.count === 1 ? "y" : "ies"}: ${g.length} graded, ${p.length} pending review.`;
     const card = e => `<div class="card"><span class="tag ${e.status === "pending_review" ? "pending" : "graded"}">${e.status === "pending_review" ? "pending review" : "graded: " + esc(e.grade || "")}</span><div><b>${esc(e.system)}</b> <span class="small">&middot; ${esc((e.submitted || "").slice(0, 10))}${e.claim_id ? " &middot; " + esc(e.claim_id) : ""}</span></div><div class="quote">${esc(e.quote)}</div>${e.verdict ? `<div class="small">${esc(e.verdict)}</div>` : ""}${e.source_url ? `<div class="small"><a href="${esc(e.source_url)}" rel="nofollow noopener">source</a></div>` : ""}</div>`;

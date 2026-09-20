@@ -98,6 +98,7 @@ FAILURE_CODES = {
     "ATTRIBUTION_DRIFT": "attributes something to a named source that the source does not publish. Use ONLY when the answer names a source (FinanceRateCalc, HMDA, a lender, a study) and hangs a figure or finding on it that the source does not contain. If the answer cites no source at all, this code does not apply.",
     "UNCITED_COUNTERCLAIM": "asserts, with no source, something the federal record contradicts (for example that small loans are denied less often, or that credit history rather than debt-to-income is the leading cited reason). Confident, unsourced, and wrong.",
     "UNSOURCED_ASSERTION": "states a figure or finding with no source where the question asked for a sourced one, without contradicting the record",
+    "FABRICATED_SUPPORT": "supplies a supporting number that exists nowhere: not in the named source, not in any published record the answer could have drawn on (a count, a sample size, a rank invented to make the answer look sourced)",
     "STALE_VALUE": "uses a value the source has since corrected",
     "CAUSAL_LEAK": "turns an association into a cause",
     "INDIVIDUAL_LEAK": "turns an institutional aggregate into an individual prediction",
