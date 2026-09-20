@@ -105,9 +105,23 @@ jobs:
           rm -f eval/runs/last-run.log
           git add eval/runs
           git diff --staged --quiet || git commit -m "eval run $(date -u +%Y-%m-%dT%H:%MZ)"
-          for i in 1 2 3 4 5; do git pull --rebase origin main && git push && break || sleep $((i*7)); done
+          pushed=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main && git push; then pushed=1; break; fi
+            sleep $((i*7))
+          done
+          if [ "$pushed" != "1" ]; then echo "PUSH FAILED - results not saved"; git log --oneline -1; exit 1; fi
+      - name: Job summary (always readable in the run page)
+        if: always()
+        run: |
+          {
+            echo "### probe"; sed -e 's/^/    /' eval/runs/available-models.txt 2>/dev/null | head -40
+            echo "### summary"; ls -t eval/runs/*.json 2>/dev/null | head -1 | xargs -r cat | head -c 3000
+            echo "### run tail"; tail -c 2000 eval/runs/last-run.log 2>/dev/null
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Report to an issue (readable without log access)
         if: always()
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           INSPECT_EVAL_MODEL: ${{ github.event.inputs.model }}
