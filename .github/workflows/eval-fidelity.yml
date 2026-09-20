@@ -98,7 +98,11 @@ jobs:
               g = (fid.get('metadata') or {}).get('grade') or fid.get('answer')
               gb = (fidb.get('metadata') or {}).get('grade') or fidb.get('answer')
               fv = None if g in ('A', 'N') else fid.get('value')
+              cl = sc.get('cliche_scorer', {})
               rows.append({'id': s.get('id'), 'value': sc.get('value_scorer', {}).get('value'), 'fidelity': fv,
+                           'stance': (cl.get('metadata') or {}).get('stance'), 'verdict': (cl.get('metadata') or {}).get('verdict'),
+                           'confident_wrong': (cl.get('metadata') or {}).get('confident_wrong'), 'believed_untestable': (cl.get('metadata') or {}).get('believed_untestable'),
+                           'cliche_score': cl.get('value'),
                            'answer': text_of(s.get('output', {}).get('choices', [{}])[0].get('message', {}).get('content'))[:500],
                            'fidelity_explanation': (fid.get('explanation') or '')[:300],
                            'tool_calls': sum(1 for m in s.get('messages', []) if m.get('role') == 'assistant' and m.get('tool_calls')),
@@ -109,7 +113,7 @@ jobs:
           for r in rows: byq[r['id']].append(r)
           questions = {}
           for qid, rs in sorted(byq.items()):
-              grades = [r['grade_a'] for r in rs]
+              grades = [r['grade_a'] or r.get('stance') for r in rs]
               codes = sorted({c for r in rs for c in r['failure_codes']})
               consistent = len(set(grades)) == 1
               questions[qid] = {'runs': len(rs), 'grades': grades, 'consistent': consistent,
@@ -128,6 +132,11 @@ jobs:
                  'code_frequency': {c: f"{sum(1 for r in rows for x in r['failure_codes'] if x == c)}/{total}"
                                     for c in sorted({x for r in rows for x in r['failure_codes']})},
                  'grader_agreement': (lambda a: None if not a else f"{sum(1 for x in a if x)}/{len(a)}")([r['graders_agree'] for r in rows if r['graders_agree'] is not None]),
+                 'cliche': (None if not any(r['stance'] for r in rows) else {
+                     'agree_with_record': f"{sum(1 for r in rows if r['cliche_score'] == 1.0)}/{total}",
+                     'confident_wrong': f"{sum(1 for r in rows if r['confident_wrong'])}/{total}",
+                     'asserted_the_untestable': f"{sum(1 for r in rows if r['believed_untestable'])}/{total}",
+                     'by_claim': {q: {'verdict': rs[0]['verdict'], 'stances': [r['stance'] for r in rs]} for q, rs in byq.items()}}),
                  'reporting_rule': 'Repeats are the same question asked again, not independent questions: report fractions of runs (two of three), never percentages, and always show the denominator as questions x repeats.',
                  'note': 'Automated administration via Inspect; a separate series from the hand-graded Verdict Day rows and not comparable with them.',
                  'questions': questions, 'samples': rows}
