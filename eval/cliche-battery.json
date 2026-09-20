@@ -1,0 +1,186 @@
+{
+ "generated": "2026-09-20",
+ "version": "0.1",
+ "purpose": "Widely stated beliefs about FHA denials, each tested against the complete 2025 federal record where the record can see it, and declared untestable where it cannot. Used both as a public page and as an AI battery: what models believe versus what the record shows.",
+ "counts": {
+  "SUPPORTED": 3,
+  "CONTRADICTED": 7,
+  "PARTLY": 3,
+  "UNTESTABLE": 6
+ },
+ "claims": [
+  {
+   "id": "c01",
+   "claim": "Small mortgages are denied less often than large ones \u2014 there is less money at risk.",
+   "verdict": "CONTRADICTED",
+   "evidence": "In every one of 48 jurisdictions with a published split, loans under $150K were denied more often than loans over $250K; the ratio ran from 1.19x to 4.45x.",
+   "tested_against": "api/small-loan-penalty.json",
+   "universe": "U-STATES-SMALLBIG-2025",
+   "note": ""
+  },
+  {
+   "id": "c02",
+   "claim": "The most common reason an FHA application is denied is credit history.",
+   "verdict": "CONTRADICTED",
+   "evidence": "Across the 95 of the 100 largest lenders that report reasons, the reason with the highest median share is dti (40.8%); credit history's median is 25.9%.",
+   "tested_against": "api/denial-reasons-top100.json",
+   "universe": "U-TOP100-WITH-REASONS-2025",
+   "note": "Reason fields are not a partition; a denial may cite up to four."
+  },
+  {
+   "id": "c03",
+   "claim": "About one in seven FHA applications is denied (roughly 14%).",
+   "verdict": "PARTLY",
+   "evidence": "That figure is 2023 and purchase-only. Counting every 2025 FHA application that reached a decision, 22.1% were denied (262,250 of 1,187,606). Both numbers are right for their universe; neither is 'the' FHA denial rate.",
+   "tested_against": "api/index.json",
+   "universe": "U-FHA-2025-DECISIONED",
+   "note": ""
+  },
+  {
+   "id": "c04",
+   "claim": "FHA denial rates are broadly similar from lender to lender, because FHA rules are the same everywhere.",
+   "verdict": "CONTRADICTED",
+   "evidence": "Among the 100 largest FHA lenders in 2025, denial rates ran from 1.8% to 78.7% inside the same program.",
+   "tested_against": "api/lender/*.json",
+   "universe": "U-TOP100-VOLUME-2025",
+   "note": ""
+  },
+  {
+   "id": "c05",
+   "claim": "Whether you are denied is about your file, not about which lender you chose.",
+   "verdict": "CONTRADICTED",
+   "evidence": "Lender identity is associated with about 38% of the explainable variation in FHA denial outcomes (859,090 decisioned 2025 FHA applications); McFadden R2 increase from applicant-only model (0.171) to applicant+lender model (0.276); (0.276-0.171)/0.276.",
+   "tested_against": "claims/door-effect-38pct-2026.json",
+   "universe": "U-FHA-2025-DECISIONED",
+   "note": "Association on observable characteristics, not causation; HMDA carries no credit scores."
+  },
+  {
+   "id": "c06",
+   "claim": "In expensive markets, denials are mostly about the property (appraisal, condition), not the borrower.",
+   "verdict": "CONTRADICTED",
+   "evidence": "The share of denials citing collateral falls as loan size rises: 25.9% under $100K versus 14.1% at $300-400K. Collateral-driven denial is a cheap-house phenomenon.",
+   "tested_against": "data/collateral-denials-2025.json",
+   "universe": "U-FHA-2025-DECISIONED",
+   "note": "What the record cannot see: buyers steered away before an application exists (see invisible-denials)."
+  },
+  {
+   "id": "c07",
+   "claim": "Big national lenders are stricter than local lenders.",
+   "verdict": "PARTLY",
+   "evidence": "In 151 metros where both compete, national-footprint lenders averaged 23.6% versus 16.7% for local/regional ones, and were stricter in 112 of 151. But local lenders hold both extremes (1.8% and 78.7%): 'local' is not a category you can act on.",
+   "tested_against": "data/national-vs-local-2025.json",
+   "universe": "U-FHA-2025-DECISIONED",
+   "note": ""
+  },
+  {
+   "id": "c08",
+   "claim": "Within one city, FHA lenders are roughly interchangeable.",
+   "verdict": "CONTRADICTED",
+   "evidence": "In Cleveland, OH, lenders with at least 100 decisions ranged from 6.4% to 80.1% in 2025, a 73.7-point gap.",
+   "tested_against": "api/metro/cleveland-oh.json",
+   "universe": "U-FHA-2025-DECISIONED restricted to metro",
+   "note": ""
+  },
+  {
+   "id": "c09",
+   "claim": "Incomplete applications are a negligible share of denials.",
+   "verdict": "PARTLY",
+   "evidence": "The median lender cites 'application incomplete' on 2.8% of denials, but one large lender cites it on 75.2% (Carrington Mortgage Services LLC). Negligible at the median, dominant at one door.",
+   "tested_against": "api/denial-reasons-top100.json",
+   "universe": "U-TOP100-WITH-REASONS-2025",
+   "note": ""
+  },
+  {
+   "id": "c10",
+   "claim": "A low denial rate means a lender is easy to get approved with.",
+   "verdict": "UNTESTABLE",
+   "evidence": "A low observed rate can mean lenient underwriting, or an applicant mix that arrives pre-screened, or buyers steered away before filing. The record contains none of the three; only observed rates.",
+   "tested_against": "\u2014",
+   "universe": "\u2014",
+   "note": "Boundary: HMDA has no credit scores and no record of applications never filed."
+  },
+  {
+   "id": "c11",
+   "claim": "FHA is easier to get than a conventional mortgage.",
+   "verdict": "UNTESTABLE",
+   "evidence": "This dataset is FHA only (loan_type 2). No conventional comparison is published here, and the two programs draw different applicants, so a raw comparison would not answer the question anyway.",
+   "tested_against": "\u2014",
+   "universe": "\u2014",
+   "note": ""
+  },
+  {
+   "id": "c12",
+   "claim": "The denial rate is the same for a buyer regardless of where they live.",
+   "verdict": "CONTRADICTED",
+   "evidence": "State-level 2025 rates differ substantially; the small-loan penalty alone ranges 1.19x to 4.45x by jurisdiction. Geography is a variable the record can see.",
+   "tested_against": "api/state/*.json",
+   "universe": "U-STATES-SMALLBIG-2025",
+   "note": ""
+  },
+  {
+   "id": "c13",
+   "claim": "Your credit score is the single most important factor in an FHA denial.",
+   "verdict": "UNTESTABLE",
+   "evidence": "HMDA does not contain credit scores. The record can show that debt-to-income is the most-cited reason, but it cannot rank score against anything, so this belief cannot be confirmed or refuted from the public data.",
+   "tested_against": "\u2014",
+   "universe": "\u2014",
+   "note": "The most common belief about denials is one the public record is structurally unable to test."
+  },
+  {
+   "id": "c14",
+   "claim": "Refinance applications are denied about as often as purchase applications.",
+   "verdict": "UNTESTABLE",
+   "evidence": "Loan-purpose splits are not among this project's published figures for 2025; the 2023 purchase-only vs refinance figures circulating online come from another universe and vintage.",
+   "tested_against": "\u2014",
+   "universe": "\u2014",
+   "note": ""
+  },
+  {
+   "id": "c15",
+   "claim": "A lender with a high denial rate is doing something wrong.",
+   "verdict": "UNTESTABLE",
+   "evidence": "An observed rate carries no information about conduct. High rates are screening signals about institutions, consistent with strict underwriting, a hard applicant mix, or filing practice; the record cannot distinguish them.",
+   "tested_against": "\u2014",
+   "universe": "\u2014",
+   "note": "This is the boundary every figure on the site carries."
+  },
+  {
+   "id": "c16",
+   "claim": "Most FHA applications that reach a decision are approved.",
+   "verdict": "SUPPORTED",
+   "evidence": "77.9% of decisioned 2025 FHA applications were not denied (925,356 of 1,187,606).",
+   "tested_against": "api/index.json",
+   "universe": "U-FHA-2025-DECISIONED",
+   "note": ""
+  },
+  {
+   "id": "c17",
+   "claim": "Debt-to-income is one of the main reasons FHA applications are denied.",
+   "verdict": "SUPPORTED",
+   "evidence": "It is the reason with the highest median share across the 95 of the 100 largest lenders that report reasons: 40.8%.",
+   "tested_against": "api/denial-reasons-top100.json",
+   "universe": "U-TOP100-WITH-REASONS-2025",
+   "note": ""
+  },
+  {
+   "id": "c18",
+   "claim": "FHA lending is concentrated in a relatively small number of large lenders.",
+   "verdict": "SUPPORTED",
+   "evidence": "The 100 largest FHA lenders accounted for about 78% of all decisioned FHA applications in 2025 (928,266 of 1,187,606, counting the 98 with published files).",
+   "tested_against": "api/lender/*.json",
+   "universe": "U-TOP100-VOLUME-2025",
+   "note": ""
+  },
+  {
+   "id": "c19",
+   "claim": "A lender's strictness is the same for every kind of loan it makes.",
+   "verdict": "UNTESTABLE",
+   "evidence": "This project publishes conditional maps per lender (strictness by loan size and leverage cell) for some lenders, but a general test across all lenders is not published; treated as untestable in this battery.",
+   "tested_against": "get_conditional_door_map",
+   "universe": "\u2014",
+   "note": ""
+  }
+ ],
+ "license": "CC BY 4.0",
+ "universes": "https://financeratecalc.com/universes.json"
+}

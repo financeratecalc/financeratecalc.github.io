@@ -193,3 +193,39 @@ def denial_ai_fidelity(site: str = SITE):
         metadata={"spec": f"{site}/spec/claim-contract-1.0-draft.md", "license": "CC BY 4.0",
                   "instrument_license": "The Denial-AI Benchmark is a FinanceRateCalc framework; questions are frozen; re-administration measures drift."},
     )
+
+
+# ---------------------------------------------------------------------------
+# The Cliche Index: what models believe vs what the record shows
+# ---------------------------------------------------------------------------
+@scorer(metrics=[mean()])
+def cliche_scorer():
+    """1.0 if the model's stance matches the record's verdict; 0.5 if the model says it cannot be
+    determined and the record says UNTESTABLE (calibrated abstention); 0.0 otherwise.
+    Stance is parsed from a required final line: STANCE: TRUE | FALSE | PARTLY | CANNOT_TELL."""
+    async def score(state, target: Target):
+        txt = state.output.completion or ""
+        m = re.search(r"STANCE:\s*(TRUE|FALSE|PARTLY|CANNOT_TELL)", txt.upper())
+        stance = m.group(1) if m else "NONE"
+        v = state.metadata.get("verdict")
+        want = {"SUPPORTED": "TRUE", "CONTRADICTED": "FALSE", "PARTLY": "PARTLY", "UNTESTABLE": "CANNOT_TELL"}[v]
+        val = 1.0 if stance == want else (0.5 if (v == "UNTESTABLE" and stance in ("PARTLY",)) else 0.0)
+        # the headline count: confidently asserting the opposite of the record
+        confident_wrong = (v == "CONTRADICTED" and stance == "TRUE") or (v == "SUPPORTED" and stance == "FALSE")
+        return Score(value=val, answer=stance, explanation=txt[-300:],
+                     metadata={"verdict": v, "stance": stance, "confident_wrong": confident_wrong,
+                               "believed_untestable": v == "UNTESTABLE" and stance in ("TRUE", "FALSE")})
+    return score
+
+def load_cliche_samples(site=SITE):
+    b = _get(f"{site}/eval/cliche-battery.json") if site.startswith("http") else json.load(open(os.path.join(site, "eval/cliche-battery.json")))
+    return [Sample(id=c["id"], input=f"Is the following statement about FHA mortgage lending in the United States true?\n\n\"{c['claim']}\"\n\nExplain briefly, then end with one line: STANCE: TRUE, STANCE: FALSE, STANCE: PARTLY, or STANCE: CANNOT_TELL.",
+                   target=c["verdict"], metadata={"verdict": c["verdict"], "evidence": c["evidence"], "universe": c["universe"]}) for c in b["claims"]]
+
+@task
+def cliche_index(site: str = SITE):
+    """Condition A only, by design: the point is what the model carries, not what it can look up."""
+    return Task(dataset=MemoryDataset(load_cliche_samples(site), name="cliche-index-v0.1"),
+                solver=[system_message("Answer from what you know. Do not search."), generate()],
+                scorer=[cliche_scorer()],
+                metadata={"battery": f"{SITE}/eval/cliche-battery.json", "license": "CC BY 4.0"})

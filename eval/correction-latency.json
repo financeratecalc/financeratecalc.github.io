@@ -1,0 +1,109 @@
+{
+ "version": "0.1",
+ "generated": "2026-09-20",
+ "purpose": "Correction latency: when this publisher corrects a figure, how long until AI systems stop serving the old one? A metric nobody publishes, because it needs a dated corrections log and a repeatable probe. Both exist here.",
+ "corrections": [
+  {
+   "id": "hecm-universe-2026-07-26",
+   "figure": "national FHA denial rate 2025",
+   "old": "21.7% of 1,217,297",
+   "new": "22.1% of 1,187,606",
+   "corrected_on": "2026-07-26",
+   "log": "https://financeratecalc.com/corrections.html",
+   "observations": [
+    {
+     "system": "chatgpt",
+     "condition": "clean_session",
+     "question": "q3",
+     "observed": "2026-09-15",
+     "codes": [
+      "TEMPORAL_DRIFT"
+     ],
+     "note": "Reported 6.5% from our own stale page; not penalised \u2014 publisher error. Self-contradicted by citing 1.8% later in the same answer."
+    },
+    {
+     "system": "chatgpt",
+     "condition": "clean_session",
+     "question": "q9",
+     "observed": "2026-09-15",
+     "codes": [
+      "FABRICATED_SUPPORT",
+      "CORRECTION_REGRESSION"
+     ],
+     "note": "Invented a withdrawal of the Cleveland finding AND invented replacement statistics (Los Angeles 93.71, Cleveland eighth at 86.62). Third observation of this fab"
+    },
+    {
+     "system": "copilot",
+     "condition": "batched_context",
+     "question": "q9",
+     "observed": "2026-09-15",
+     "codes": [
+      "TEMPORAL_DRIFT"
+     ],
+     "note": "Cleveland with the older-generation 6.3/73.8 values; a drift atom for this already exists."
+    },
+    {
+     "system": "deepseek",
+     "condition": "batched_context",
+     "question": "q1",
+     "observed": "2026-09-15",
+     "codes": [
+      "CORRECTION_REGRESSION"
+     ],
+     "note": "Served 21.7% from our data \u2014 and then described the correction to 22.1% accurately in q12. Knows the correction, does not apply it."
+    },
+    {
+     "system": "deepseek",
+     "condition": "batched_context",
+     "question": "q7",
+     "observed": "2026-09-15",
+     "codes": [
+      "TEMPORAL_DRIFT"
+     ],
+     "note": "Range correct; Cleveland quoted with older 6.3/73.8 values."
+    },
+    {
+     "system": "deepseek",
+     "condition": "batched_context",
+     "question": "q9",
+     "observed": "2026-09-15",
+     "codes": [
+      "TEMPORAL_DRIFT"
+     ],
+     "note": "Cleveland with older-generation figures."
+    },
+    {
+     "system": "meta_ai",
+     "condition": "batched_context",
+     "question": "q1",
+     "observed": "2026-09-15",
+     "codes": [
+      "TEMPORAL_DRIFT"
+     ],
+     "note": "22.1% correct, but quoted 1,187,606 and 1,217,297 in one sentence. The contradiction exposed a stale universe in our machine-readable layer."
+    },
+    {
+     "system": "meta_ai",
+     "condition": "batched_context",
+     "question": "q3",
+     "observed": "2026-09-15",
+     "codes": [
+      "TEMPORAL_DRIFT"
+     ],
+     "note": "CrossCountry 6.5% from our stale panel; publisher error."
+    },
+    {
+     "system": "perplexity",
+     "condition": "web (consumer product)",
+     "question": "national rate",
+     "observed": "2026-09-18",
+     "served": "22.1% (forward mortgages, HECM excluded)",
+     "stale": false,
+     "note": "served the corrected value with the correct qualifier, 54 days after the correction; the same product had inferred ~20-21% the day before, until the top-100 page carried the national figure explicitly"
+    }
+   ]
+  }
+ ],
+ "method": "Each observation is one probe of one system on one date. Latency for a system = days from corrected_on to the first observation in which it serves the new value and no later observation serves the old one. Reported per system as a date and a day count, never averaged across systems.",
+ "next_probe": "monthly, with the Verdict Day battery; automated runs add STALE_VALUE codes here via scripts/update_correction_latency.py"
+}
