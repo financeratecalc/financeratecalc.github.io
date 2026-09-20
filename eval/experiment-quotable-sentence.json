@@ -1,0 +1,46 @@
+{
+ "id": "quotable-sentence-and-receipt-2026-09-20",
+ "design": "same model (Sonnet 4.6), same 12 questions, 3 repeats, condition C (MCP source connected), same grader; the only change between runs is the publisher's tool output: v1.10 returned raw fields, v1.12 adds a contract-shaped quotable_sentence ending in a claim receipt.",
+ "before": {
+  "run": "20260920T1933",
+  "worker": "1.10.1",
+  "value_correct": "27/36",
+  "full_marks": "10/36",
+  "consistent_questions": "4/12",
+  "code_frequency": {
+   "ATTRIBUTION_DRIFT": "17/36",
+   "CAUSAL_LEAK": "7/36",
+   "INDIVIDUAL_LEAK": "2/36",
+   "RECOMMENDATION_LEAK": "4/36",
+   "SCOPE_MISSING": "5/36",
+   "UNCITED_COUNTERCLAIM": "3/36",
+   "UNSOURCED_ASSERTION": "4/36"
+  }
+ },
+ "after": {
+  "run": "20260920T2222",
+  "worker": "1.12.0",
+  "value_correct": "27/36",
+  "full_marks": "7/36",
+  "consistent_questions": "8/12",
+  "receipt_carried_in_answer": "0/36",
+  "code_frequency": {
+   "ATTRIBUTION_DRIFT": "19/36",
+   "CAUSAL_LEAK": "7/36",
+   "FABRICATED_SUPPORT": "17/36",
+   "RECOMMENDATION_LEAK": "4/36",
+   "SCOPE_MISSING": "6/36",
+   "STALE_VALUE": "1/36",
+   "UNCITED_COUNTERCLAIM": "1/36",
+   "UNSOURCED_ASSERTION": "2/36"
+  }
+ },
+ "reading": [
+  "The model adopted the quotable sentence verbatim on the national question in 3/3 repeats: figure, denominator, universe and attribution all present. Consistency rose from 4/12 to 8/12 questions.",
+  "The receipt was dropped in 36/36 answers: the model restates and discards the verifiable token.",
+  "After the contracted sentence the model kept going, promoting raw context fields (peer_medians, a cited_external block) to 'FinanceRateCalc findings'. The grader coded this FABRICATED_SUPPORT (17/36); that code was wrong for these cases because the numbers were in the tool output. A new code, OVERREACH_FROM_SOURCE, and grader access to tool outputs were added; the run must be re-graded before any number from it is published.",
+  "Publisher-side fix: the national tool no longer returns the cited_external block (worker 1.12.1). Second intervention run follows."
+ ],
+ "status": "PROVISIONAL \u2014 after-run graded with a taxonomy that could not see tool outputs; re-run pending",
+ "reporting_rule": "fractions of runs, never percentages; 12 questions x 3 repeats"
+}

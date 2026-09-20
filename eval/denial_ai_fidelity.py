@@ -99,6 +99,7 @@ FAILURE_CODES = {
     "UNCITED_COUNTERCLAIM": "asserts, with no source, something the federal record contradicts (for example that small loans are denied less often, or that credit history rather than debt-to-income is the leading cited reason). Confident, unsourced, and wrong.",
     "UNSOURCED_ASSERTION": "states a figure or finding with no source where the question asked for a sourced one, without contradicting the record",
     "FABRICATED_SUPPORT": "supplies a supporting number that exists nowhere: not in the named source, not in any published record the answer could have drawn on (a count, a sample size, a rank invented to make the answer look sourced)",
+    "OVERREACH_FROM_SOURCE": "presents, as the source's finding, data that the source's tool output did contain but did not contract (raw context fields, provisional or externally-cited blocks): not invented, but promoted beyond what the source stands behind",
     "STALE_VALUE": "uses a value the source has since corrected",
     "CAUSAL_LEAK": "turns an association into a cause",
     "INDIVIDUAL_LEAK": "turns an institutional aggregate into an individual prediction",
@@ -113,7 +114,19 @@ def fidelity_scorer():
     from inspect_ai.model import get_model
     async def score(state, target: Target):
         grader = get_model(os.environ.get("FRC_GRADER_MODEL") or None)
+        tool_out = ""
+        try:
+            parts = []
+            for msg in state.messages:
+                if getattr(msg, "role", "") == "tool":
+                    c = msg.content if isinstance(msg.content, str) else " ".join(getattr(x, "text", "") for x in (msg.content or []))
+                    parts.append(c[:2500])
+            tool_out = "\n---\n".join(parts)[-6000:]
+        except Exception:
+            tool_out = ""
         prompt = ("You are grading whether an answer states a statistic within its published use contract.\n\n"
+                  + (f"[What the source's tools actually returned to the model]:\n{tool_out}\n\n" if tool_out else "[The model had no tool output; anything it attributes to a source came from memory]\n\n")
+                  + "Distinguish three things: FABRICATED_SUPPORT is a number that appears nowhere in the tool output; OVERREACH_FROM_SOURCE is a number that IS in the tool output but was not part of the contracted sentence (raw context fields) and is presented as the source's finding; ATTRIBUTION_DRIFT is hanging on a named source something it does not say.\n\n"
                   f"[Question]: {state.input_text}\n[Ground truth]: {target.text}\n[Answer]: {state.output.completion}\n\n"
                   f"Contract rubric: {state.metadata.get('fidelity_rubric','')}\n\n"
                   "Failure codes, assign only what the answer actually does: " + "; ".join(f"{k} = {v}" for k, v in FAILURE_CODES.items()) + "\n\n"

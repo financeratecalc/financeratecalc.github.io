@@ -440,7 +440,8 @@ async function callTool(name, args, env) {
     const idx = await getJSON("/api/index.json"); const n = idx.national;
     let claimObj = null; try { claimObj = (await getJSON("/claims/national-fha-denial-rate-2025.json")).claim; } catch {}
     return quotable(`In 2025, ${n.rate_pct.toFixed(1)}% of decisioned FHA applications were denied: ${n.denials.toLocaleString("en-US")} denials out of ${n.apps.toLocaleString("en-US")} applications that reached a credit decision (originated, approved but not accepted, or denied; reverse mortgages excluded).`,
-      { national: n, counts: idx.counts, meta: idx.meta, universe_id: "U-FHA-2025-DECISIONED" }, "national-fha-denial-rate-2025", `${n.rate_pct.toFixed(1)}%`, claimObj || { metric: "fha_denial_rate", value: n.rate_pct, period: "2025" });
+      { national: { apps: n.apps, denials: n.denials, rate_pct: n.rate_pct, hecm_excluded: n.hecm_excluded }, counts: idx.counts, meta: idx.meta, universe_id: "U-FHA-2025-DECISIONED",
+        not_included: "peer_medians (reason shares) are cited_external in universes.json and are not returned here; use get_denial_reason_shares, whose universe is U-TOP100-WITH-REASONS-2025." }, "national-fha-denial-rate-2025", `${n.rate_pct.toFixed(1)}%`, claimObj || { metric: "fha_denial_rate", value: n.rate_pct, period: "2025" });
   }
   if (name === "get_lender_denial_stats") {
     const idx = await getJSON("/api/index.json");
@@ -622,7 +623,7 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.12.0" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.12.1" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
