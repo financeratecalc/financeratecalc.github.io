@@ -104,16 +104,33 @@ jobs:
                            'tool_calls': sum(1 for m in s.get('messages', []) if m.get('role') == 'assistant' and m.get('tool_calls')),
                            'failure_codes': (fid.get('metadata') or {}).get('failure_codes', []),
                            'grade_a': g, 'grade_b': gb, 'graders_agree': (None if not gb else g == gb)})
+          import collections
+          byq = collections.defaultdict(list)
+          for r in rows: byq[r['id']].append(r)
+          questions = {}
+          for qid, rs in sorted(byq.items()):
+              grades = [r['grade_a'] for r in rs]
+              codes = sorted({c for r in rs for c in r['failure_codes']})
+              consistent = len(set(grades)) == 1
+              questions[qid] = {'runs': len(rs), 'grades': grades, 'consistent': consistent,
+                                'value': f"{sum(1 for r in rs if r['value'])}/{len(rs)}",
+                                'codes': codes}
+          epochs = max((len(v) for v in byq.values()), default=1)
+          total = len(rows)
           out = {'run': datetime.datetime.utcnow().isoformat(timespec='seconds') + 'Z', 'model': model,
-                 'grader': os.environ.get('INSPECT_GRADER_MODEL'), 'battery': 'benchmark.json v1.2',
-                 'n': len(rows), 'value_mean': sum((r['value'] or 0) for r in rows) / max(len(rows), 1),
-                 'fidelity_mean': (sum(r['fidelity'] for r in rows if r['fidelity'] is not None) / max(sum(1 for r in rows if r['fidelity'] is not None), 1)), 'abstained': sum(1 for r in rows if r['fidelity'] is None),
-                 'failure_code_counts': {c: sum(1 for r in rows for x in r['failure_codes'] if x == c) for c in sorted({x for r in rows for x in r['failure_codes']})},
-                 'grader_agreement': (lambda a: None if not a else round(sum(1 for x in a if x) / len(a), 3))([r['graders_agree'] for r in rows if r['graders_agree'] is not None]),
-                 'samples': rows,
-                 'note': 'Automated administration via Inspect; not comparable with human-graded Verdict Day rows until the two are reconciled.'}
-          os.makedirs('eval/runs', exist_ok=True)
-          out['condition'] = os.environ.get('INSPECT_TASK')
+                 'grader': os.environ.get('INSPECT_GRADER_MODEL'), 'grader_b': os.environ.get('FRC_GRADER_B_MODEL') or None,
+                 'battery': 'benchmark.json v1.3', 'condition': os.environ.get('INSPECT_TASK'),
+                 'design': f"{len(byq)} questions x {epochs} repeats", 'answers': total,
+                 'value_correct': f"{sum(1 for r in rows if r['value'])}/{total}",
+                 'clean_abstain': f"{sum(1 for r in rows if r['grade_a'] == 'A')}/{total}",
+                 'leaky_abstain': f"{sum(1 for r in rows if r['grade_a'] == 'N')}/{total}",
+                 'consistent_questions': f"{sum(1 for q in questions.values() if q['consistent'])}/{len(byq)}",
+                 'code_frequency': {c: f"{sum(1 for r in rows for x in r['failure_codes'] if x == c)}/{total}"
+                                    for c in sorted({x for r in rows for x in r['failure_codes']})},
+                 'grader_agreement': (lambda a: None if not a else f"{sum(1 for x in a if x)}/{len(a)}")([r['graders_agree'] for r in rows if r['graders_agree'] is not None]),
+                 'reporting_rule': 'Repeats are the same question asked again, not independent questions: report fractions of runs (two of three), never percentages, and always show the denominator as questions x repeats.',
+                 'note': 'Automated administration via Inspect; a separate series from the hand-graded Verdict Day rows and not comparable with them.',
+                 'questions': questions, 'samples': rows}
           fn = 'eval/runs/current-run.json'
           json.dump(out, open(fn, 'w'), indent=1)
           print(fn); print(json.dumps({k: v for k, v in out.items() if k != 'samples'}, indent=1))
