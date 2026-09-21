@@ -9,11 +9,11 @@ on:
         description: "A denial_ai_fidelity | B denial_ai_fidelity_web | C denial_ai_fidelity_with_source | D denial_ai_fidelity_with_receipts | cliche_index"
         default: "denial_ai_fidelity_with_source"
       grader:
-        description: "Grader A for the fidelity scorer"
-        default: "anthropic/claude-sonnet-4-6"
+        description: "Grader A for the fidelity scorer (default: Haiku, the cheapest adequate grader; publication runs may use Sonnet)"
+        default: "anthropic/claude-haiku-4-5-20251001"
       repeats:
-        description: "How many times to run the same model (frequency, not a single shot)"
-        default: "3"
+        description: "Repeats. 1 for exploration, 3 for publication runs only (cost scales linearly)"
+        default: "1"
       grader_b:
         description: "Grader B (optional, different provider) — disagreement is recorded"
         default: ""

@@ -2,7 +2,7 @@
 
 **Machine-readable use conditions for published statistics.**
 
-Status: draft 5, 2026-09-15. Reference checker: `tools/claimcheck/claimcheck.py`. Runnable fidelity task: `eval/denial_ai_fidelity.py` (Inspect AI). Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
+Status: draft 6, 2026-09-21. Reference checker: `tools/claimcheck/claimcheck.py`. Runnable fidelity task: `eval/denial_ai_fidelity.py` (Inspect AI). Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
 Reference implementation: 189 claims at https://financeratecalc.com/claims.json (passport format 0.1, contract format 0.1, which this document generalises).
 
 ---
@@ -170,6 +170,24 @@ Accuracy asks: did the system state the right value? Fidelity asks: did it state
 
 A fidelity test administers a fixed battery of questions whose answers are contracted claims, and grades each answer twice: value (from the passport) and fidelity (from the contract's verdicts). Reference administration: The Denial-AI Benchmark, Verdict Day 2026-09-15, eight systems, twelve questions, results at https://huggingface.co/datasets/FinanceRateCalc/denial-ai-benchmark. The battery, grading rubric and results are the empirical basis for this specification; a runnable task file (Inspect AI format) is the companion deliverable so that any laboratory can administer it without the publisher.
 
+## 7a. The claim receipt
+
+A **claim receipt** is a serial number for a statistic:
+
+```
+⟦FRC:<claim-id>:<value>:<hash8>⟧      e.g.  ⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b⟧
+```
+
+`hash8` is the first eight hex characters of the SHA-256 of the canonical `claim` object (§4). A corrected value changes the hash, so a receipt carrying an old hash identifies itself as stale without any lookup. A publisher exposes `GET /verify?r=<receipt>` returning `current`, `stale` (hash no longer matches: the figure was corrected after the receipt was issued) or `altered` (hash matches, quoted value does not). The value inside a receipt MUST NOT contain a colon.
+
+Receipts are issued in the structured tool result (`claim_receipt`, `figure_with_receipt`) and inside `quotable_sentence`, attached to the number. What was measured (2026-09-20/21, reference implementation, one model, 12 questions x 3 repeats):
+
+- A receipt placed at the end of the sentence survived restatement in 0/36 answers; attached to the number, 1/36. A text token does not survive paraphrase.
+- A client instructed to write every figure with its receipt carried it in 14/36, i.e. on every question whose tool returned one, in every repeat. Receipt survival is a property of the **client**, not of the placement.
+- The same client, when one figure had no receipt, forged a receipt-shaped string for it (`FABRICATED_RECEIPT`). Consequence, now a rule: **a publisher issues receipts on every figure-bearing endpoint or on none.** Partial coverage invites forgery.
+
+The receipt's two other jobs do not depend on survival in prose: verification of any quoted figure, and stale-version detection in a misquote ledger.
+
 ## 8. What this specification does not do
 
 - It does not rank publishers or certify truth. A contract says how a number may be used; whether the number is correct is the passport's provenance and the reproduce file, checkable by anyone.
@@ -213,3 +231,4 @@ See `claim-contract-1.0.schema.json` alongside this document.
 - Known gap in the reference set: no single-lender, time-bounded claim (a "does this persist next year" contract). Every publisher error found in the week of 2026-09-08 was a time-limit error; the reference set needs a contract that exercises exactly that, and the editor's own site is the first place to add one.
 - Conformance levels introduced, including an L4 the editor has not reached.
 - Adoption test moved from publisher-side copying to consumer-side attestation (10).
+- Draft 6: claim receipt (7a) with its first measurements; coverage-or-nothing rule; FABRICATED_RECEIPT and OVERREACH_FROM_SOURCE added to the failure taxonomy (now 13 codes).
