@@ -172,7 +172,7 @@ def fidelity_scorer_b():
     return score
 
 @task
-def denial_ai_fidelity_web(site: str = SITE):
+def denial_ai_fidelity_web(site: str = SITE, mcp_url: str = ""):
     """Condition B: the model may search the web. Measures what a real answer engine does:
     can it find the source, and does it restate the figure within its contract?"""
     from inspect_ai.tool import web_search
@@ -195,7 +195,7 @@ def denial_ai_fidelity_with_source(site: str = SITE, mcp_url: str = "https://frc
     ], "denial-ai-benchmark-v1.2-with-source")
 
 @task
-def denial_ai_fidelity(site: str = SITE):
+def denial_ai_fidelity(site: str = SITE, mcp_url: str = ""):
     """Condition A: clean session, no tools. Measures what the model carries in weights."""
     samples = load_samples(site)
     return Task(
@@ -242,7 +242,7 @@ def load_cliche_samples(site=SITE):
                    target=c["verdict"], metadata={"verdict": c["verdict"], "evidence": c["evidence"], "universe": c["universe"]}) for c in b["claims"]]
 
 @task
-def cliche_index(site: str = SITE):
+def cliche_index(site: str = SITE, mcp_url: str = ""):
     """Condition A only, by design: the point is what the model carries, not what it can look up."""
     return Task(dataset=MemoryDataset(load_cliche_samples(site), name="cliche-index-v0.1"),
                 solver=[system_message("Answer from what you know. Do not search."), generate()],

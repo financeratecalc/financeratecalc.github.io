@@ -646,7 +646,7 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.14.0" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.14.1" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
@@ -661,6 +661,12 @@ export default {
         }
       }
       else if (m.id !== undefined) out.push(rpcErr(m.id, -32601, `Method not found: ${m.method}`));
+    }
+    // ?mode=raw — experimental control: strip the publisher-side intervention fields (quotable sentence,
+    // receipt, quoting rules) so the same worker can serve the pre-intervention condition for comparison.
+    if (new URL(request.url).searchParams.get("mode") === "raw") {
+      const strip = o => { if (o && typeof o === "object") { for (const k of ["quotable_sentence", "claim_receipt", "figure_with_receipt", "receipt_rule", "quoting_rule"]) delete o[k]; } return o; };
+      for (const m of out) { try { const c = m.result && m.result.content && m.result.content[0]; if (c && c.text) c.text = JSON.stringify(strip(JSON.parse(c.text))); } catch {} }
     }
     const extra = newSession ? { "Mcp-Session-Id": newSession } : {};
     if (out.length === 0) return new Response(null, { status: 202, headers: { ...CORS, ...extra } });
