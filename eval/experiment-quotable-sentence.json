@@ -97,5 +97,20 @@
    "Next placement to test, not today: the receipt as a structured field the client is asked to return (a tool-result annotation), not as text inside the sentence; and asking the model explicitly to cite by receipt in the system prompt of the eval, which changes the condition and must be reported as a fourth condition."
   ],
   "status": "MEASURED"
+ },
+ "condition_D_receipt_aware_client": {
+  "run": "20260921T02xx (see eval/runs/*with_receipts*)",
+  "worker": "1.13.0",
+  "design": "same tools and questions as C; the client instruction asks for every figure to be written with its claim receipt from the structured field",
+  "receipt_carried_in_answer": "14/36 (C: 1/36)",
+  "full_marks": "11/36 (C: 5/36)",
+  "fabricated_support": "9/36 (C: 13/36)",
+  "reading": [
+   "A receipt-aware client carries the receipt on every question whose tool returns one (national, lender, metro: 3/3 repeats each). Receipt survival is bounded by receipt coverage, not by the model.",
+   "Asking for the receipt also reduced fabrication and raised full marks in the same run; the instruction makes the model quote rather than restate.",
+   "New failure: for the metro question, whose tool returned no receipt at that time, the model invented a receipt-shaped string from the passport id (no hash). /verify rejects it, but the behaviour is now a code: FABRICATED_RECEIPT. Rule learned: a receipt convention must cover every figure-bearing tool or none; partial coverage invites forgery.",
+   "Fix deployed in worker 1.14.0: receipts on metro, small-loan and reason-share tools; /verify knows all ids."
+  ],
+  "status": "MEASURED; D to be re-run on 1.14.0 for full coverage"
  }
 }

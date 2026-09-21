@@ -475,10 +475,15 @@ async function callTool(name, args, env) {
     if (args && args.state) {
       const st = String(args.state).toUpperCase(); const row = (d.ranked || []).find(r => r.state === st);
       if (!row) return { error: `no small/big split published for ${st}`, states_published: d.states };
-      return { ...row, rank_by_penalty: d.ranked.findIndex(r => r.state === st) + 1, of_states: d.states, definition: d.definition, known_discrepancy: d.known_discrepancy, license: d.license };
+      return quotable(`In 2025, FHA applications under $150,000 in ${st} were denied at ${row.small_loan_denial_pct}% against ${row.big_loan_denial_pct}% for loans over $250,000, a small-loan penalty of ${row.penalty_ratio}x (rank ${d.ranked.findIndex(r => r.state === st) + 1} of ${d.states} jurisdictions with a published split).`,
+        { ...row, rank_by_penalty: d.ranked.findIndex(r => r.state === st) + 1, of_states: d.states, definition: d.definition, known_discrepancy: d.known_discrepancy, license: d.license, universe_id: d.universe_id },
+        `small-loan-penalty-${st.toLowerCase()}-2025`, `${row.penalty_ratio}x`, { state: st, metric: "small_loan_penalty_ratio", value: row.penalty_ratio, small: row.small_loan_denial_pct, big: row.big_loan_denial_pct, period: "2025" });
     }
-    return { definition: d.definition, states: d.states, all_states_penalty_above_1: d.all_states_penalty_above_1, min_penalty: d.min_penalty, max_penalty: d.max_penalty,
-      top10: d.ranked.slice(0, 10), bottom5: d.ranked.slice(-5), known_discrepancy: d.known_discrepancy, license: d.license };
+    const r0 = d.ranked[0], rn = d.ranked[d.ranked.length - 1];
+    return quotable(`In 2025, in all ${d.states} US jurisdictions with a published loan-size split, FHA applications under $150,000 were denied more often than loans over $250,000; the small-loan penalty ranged from ${d.min_penalty}x (${rn.state}) to ${d.max_penalty}x (${r0.state}, ${r0.small_loan_denial_pct}% vs ${r0.big_loan_denial_pct}%).`,
+      { definition: d.definition, states: d.states, all_states_penalty_above_1: d.all_states_penalty_above_1, min_penalty: d.min_penalty, max_penalty: d.max_penalty,
+      top10: d.ranked.slice(0, 10), bottom5: d.ranked.slice(-5), known_discrepancy: d.known_discrepancy, license: d.license, universe_id: d.universe_id },
+      "small-loan-penalty-range-2025", `${d.min_penalty}x-${d.max_penalty}x`, { metric: "small_loan_penalty_range", min: d.min_penalty, max: d.max_penalty, states: d.states, period: "2025" });
   }
   if (name === "get_denial_reason_shares") {
     const d = await getJSON("/api/denial-reasons-top100.json");
@@ -487,7 +492,11 @@ async function callTool(name, args, env) {
       if (!hit) return { error: "lender not found among the 100 largest with reason fields published", n_lenders: d.n_lenders };
       return { ...hit, universe: d.universe, license: d.license };
     }
-    return { universe: d.universe, n_lenders: d.n_lenders, by_reason: d.by_reason, known_discrepancy: d.known_discrepancy, license: d.license };
+    const top = Object.keys(d.by_reason).sort((a, b) => d.by_reason[b].median_share_pct - d.by_reason[a].median_share_pct)[0];
+    const inc = d.by_reason.incomplete;
+    return quotable(`Across the ${d.n_lenders} of the 100 largest FHA lenders that report denial reasons in 2025, the reason with the highest median share was ${top.replace(/_/g, " ")} at ${d.by_reason[top].median_share_pct}% of cited reasons; "application incomplete" had a median share of ${inc.median_share_pct}% but reached ${inc.max_share_pct}% at ${inc.max_lender}. Reason fields are not a partition.`,
+      { universe: d.universe, n_lenders: d.n_lenders, by_reason: d.by_reason, known_discrepancy: d.known_discrepancy, license: d.license, universe_id: d.universe_id },
+      "denial-reason-shares-top100-2025", `${top}-${d.by_reason[top].median_share_pct}%`, { metric: "denial_reason_median_shares", top_reason: top, top_median: d.by_reason[top].median_share_pct, incomplete_median: inc.median_share_pct, incomplete_max: inc.max_share_pct, n_lenders: d.n_lenders, period: "2025" });
   }
   if (name === "get_door_effect_summary") {
     const d = await getJSON("/data/door-effect-2025.json");
@@ -498,7 +507,13 @@ async function callTool(name, args, env) {
       strictest: (d.overlay_residual_top15_strict || []).slice(0, 10),
       most_lenient: (d.overlay_residual_top15_lenient || []).slice(0, 10), universe_id: "U-FHA-2025-DECISIONED" }, "door-effect-38pct-2026", `${Math.round(d.door_effect_share_of_explained * 100)}%`, { metric: "door_effect_share", value: d.door_effect_share_of_explained, n: d.records_used, period: "2025" });
   }
-  if (name === "get_metro_lender_gap") return getMetroLenderGap(args.metro);
+  if (name === "get_metro_lender_gap") {
+    const P = await getMetroLenderGap(args.metro); const c = P.claim || {};
+    const metro = c.subject || c.metro || String(args.metro); const gap = c.value != null ? c.value : c.gap_pp;
+    const lo = c.min_rate_pct != null ? c.min_rate_pct : c.low; const hi = c.max_rate_pct != null ? c.max_rate_pct : c.high;
+    const sent = `In 2025, among FHA lenders with at least 100 decisioned applications in ${metro}, lender-level denial rates ranged from ${lo != null ? Number(lo).toFixed(1) + "%" : "the lowest"} to ${hi != null ? Number(hi).toFixed(1) + "%" : "the highest"}, a gap of ${Number(gap).toFixed(1)} percentage points inside the same federal program.`;
+    return quotable(sent, { ...P, universe_id: "U-FHA-2025-DECISIONED restricted to metro; lenders with >=100 decisioned" }, `metro-gap-${String(P.passport_id || "").replace(/^frc:claim:metro-gap-/, "").replace(/-2025$/, "")}-2025`, `${Number(gap).toFixed(1)}pp`, c);
+  }
   if (name === "check_claim_contract") return checkClaimContract(args);
   throw new Error(`Unknown tool: ${name}`);
 }
@@ -568,6 +583,10 @@ export default {
         else if (id.startsWith("lender-")) { const L = await getJSON(`/api/lender/${id.slice(7, -5)}.json`); current = `${Number(L.denial_rate_pct).toFixed(1)}%`; claimObj = { lender: L.lender, metric: "fha_denial_rate", value: L.denial_rate_pct, n: L.decisioned_applications, period: "2025" }; }
         else if (id.startsWith("state-")) { const S = await getJSON(`/api/state/${id.slice(6, -5)}.json`); current = `${Number(S.denial_rate_pct).toFixed(1)}%`; claimObj = { state: S.state, metric: "fha_denial_rate", value: S.denial_rate_pct, n: S.decisioned_applications, period: "2025" }; }
         else if (id === "door-effect-38pct-2026") { const d = await getJSON("/data/door-effect-2025.json"); current = `${Math.round(d.door_effect_share_of_explained * 100)}%`; claimObj = { metric: "door_effect_share", value: d.door_effect_share_of_explained, n: d.records_used, period: "2025" }; }
+        else if (id.startsWith("metro-gap-")) { const P = await getJSON(`/claims/${id}.json`); current = `${Number(P.claim.value != null ? P.claim.value : P.claim.gap_pp).toFixed(1)}pp`; claimObj = P.claim; }
+        else if (id.startsWith("small-loan-penalty-") && id !== "small-loan-penalty-range-2025") { const d = await getJSON("/api/small-loan-penalty.json"); const st = id.slice(19, -5).toUpperCase(); const row = d.ranked.find(r => r.state === st); current = `${row.penalty_ratio}x`; claimObj = { state: st, metric: "small_loan_penalty_ratio", value: row.penalty_ratio, small: row.small_loan_denial_pct, big: row.big_loan_denial_pct, period: "2025" }; }
+        else if (id === "small-loan-penalty-range-2025") { const d = await getJSON("/api/small-loan-penalty.json"); current = `${d.min_penalty}x-${d.max_penalty}x`; claimObj = { metric: "small_loan_penalty_range", min: d.min_penalty, max: d.max_penalty, states: d.states, period: "2025" }; }
+        else if (id === "denial-reason-shares-top100-2025") { const d = await getJSON("/api/denial-reasons-top100.json"); const top = Object.keys(d.by_reason).sort((a, b) => d.by_reason[b].median_share_pct - d.by_reason[a].median_share_pct)[0]; const inc = d.by_reason.incomplete; current = `${top}-${d.by_reason[top].median_share_pct}%`; claimObj = { metric: "denial_reason_median_shares", top_reason: top, top_median: d.by_reason[top].median_share_pct, incomplete_median: inc.median_share_pct, incomplete_max: inc.max_share_pct, n_lenders: d.n_lenders, period: "2025" }; }
         else return json({ valid: false, reason: "unknown claim id", id });
       } catch (e) { return json({ valid: false, reason: "lookup failed" }, 502); }
       const nowHash = await sha8(claimObj);
@@ -627,7 +646,7 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.13.0" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.14.0" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
