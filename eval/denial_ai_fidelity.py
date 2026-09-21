@@ -247,3 +247,17 @@ def cliche_index(site: str = SITE):
                 solver=[system_message("Answer from what you know. Do not search."), generate()],
                 scorer=[cliche_scorer()],
                 metadata={"battery": f"{SITE}/eval/cliche-battery.json", "license": "CC BY 4.0"})
+
+
+@task
+def denial_ai_fidelity_with_receipts(site: str = SITE, mcp_url: str = "https://frc-mcp.ziyetis.workers.dev"):
+    """Condition D: source connected AND the client honours the receipt convention. The tool results are
+    unchanged from C; only the client's instruction differs: figures are to be written with the claim
+    receipt returned in the tool result (structured field `claim_receipt` / `figure_with_receipt`).
+    Measures what a receipt-aware client would carry, as opposed to C which measures a naive one."""
+    server = mcp_server_http(name="frc", url=mcp_url, timeout=20)
+    return _task(load_samples(site), [
+        system_message("Answer the question using the tools. Every FinanceRateCalc figure you state must be written together with its claim receipt, exactly as returned in the tool result's `figure_with_receipt` field (for example: 22.1% \u27e6FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b\u27e7). The receipt is part of the figure; a figure without its receipt is unverifiable. State the population, program and period. Do not predict any individual's outcome, assert causes the data cannot support, or recommend a lender."),
+        use_tools(mcp_tools(server)),
+        generate(),
+    ], "denial-ai-benchmark-v1.3-with-receipts")
