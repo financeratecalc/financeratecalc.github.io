@@ -41,7 +41,7 @@
   "After the contracted sentence the model kept going, promoting raw context fields (peer_medians, a cited_external block) to 'FinanceRateCalc findings'. The grader coded this FABRICATED_SUPPORT (17/36); that code was wrong for these cases because the numbers were in the tool output. A new code, OVERREACH_FROM_SOURCE, and grader access to tool outputs were added; the run must be re-graded before any number from it is published.",
   "Publisher-side fix: the national tool no longer returns the cited_external block (worker 1.12.1). Second intervention run follows."
  ],
- "status": "MEASURED \u2014 before/after with the corrected grader; the first after-run (20260920T2222) is superseded and kept only for the record of the grader error",
+ "status": "MEASURED with a comparable baseline (2026-09-21); receipt placements measured; condition D measured on partial coverage; full-coverage D pending",
  "reporting_rule": "fractions of runs, never percentages; 12 questions x 3 repeats",
  "after_2": {
   "run": "20260920T2238",
@@ -115,5 +115,42 @@
  },
  "grader_comparability": {
   "note": "2026-09-21: the baseline (20260920T1933) was graded by the first grader (blind to tool outputs) and never re-graded; run logs are not in the repository. Full-marks figures across baseline and intervention are NOT comparable. An earlier reading in this file and in the paper draft ('10 -> 11', then '5 -> 11') was wrong: 5/36 belongs to the receipt-on-the-number run, not the baseline. Within the corrected grader: 11 (1.12.1), 5 (1.13.0), 11 (condition D, 1.13.0). To obtain a comparable baseline, re-run condition C against a worker mode that returns raw fields (no quotable_sentence), with the corrected grader. Cost: one run."
+ },
+ "comparable_baseline": {
+  "run": "20260921T2003",
+  "worker": "1.14.1 ?mode=raw (intervention fields stripped)",
+  "grader": "Sonnet 4.6, same as all post-intervention runs",
+  "value_correct": "27/36",
+  "full_marks": "11/36",
+  "partial": "14/36",
+  "code_frequency": {
+   "ATTRIBUTION_DRIFT": "10/36",
+   "CAUSAL_LEAK": "5/36",
+   "FABRICATED_SUPPORT": "12/36",
+   "OVERREACH_FROM_SOURCE": "9/36",
+   "SCOPE_MISSING": "6/36",
+   "RECOMMENDATION_LEAK": "2/36",
+   "UNSOURCED_ASSERTION": "1/36",
+   "SCOPE_WRONG": "1/36",
+   "INFERRED_NOT_SOURCED": "1/36",
+   "UNCITED_COUNTERCLAIM": "1/36"
+  },
+  "vs_intervention_1_12_1": {
+   "full_marks": "11/36 -> 11/36",
+   "partial": "14/36 -> 14/36",
+   "value": "27/36 -> 27/36",
+   "ATTRIBUTION_DRIFT": "10 -> 6",
+   "FABRICATED_SUPPORT": "12 -> 8",
+   "SCOPE_MISSING": "6 -> 4",
+   "OVERREACH_FROM_SOURCE": "9 -> 16",
+   "UNSOURCED_ASSERTION": "1 -> 5"
+  },
+  "reading": [
+   "Under one grader, the contract-shaped sentence changed no headline score: value 27/36, full marks 11/36, partial 14/36 in both conditions. The intervention does not raise how often the model gets full credit.",
+   "What it changed is the kind of failure. Fabrication fell (12 -> 8) and drift fell (10 -> 6) and scope omissions fell (6 -> 4); overreach rose (9 -> 16). The model stops inventing and starts repeating what the tool gave it beyond the contracted sentence. Same penalty, different behaviour: less made up, more copied.",
+   "Question-level: q6 (metro gap) went P/I/P -> C/C/C, the clearest case of a sentence being the whole answer; q8 went C/C/C -> C/P/P and q3 P/P/P -> P/P/I, i.e. the sentence did not help everywhere and hurt in two places within noise.",
+   "The earlier claims of a doubling (10 -> 11 across graders; 5 -> 11 misread) are both retired by this run. n=36 per condition, one model, one grader; grader agreement still unmeasured."
+  ],
+  "status": "MEASURED \u2014 comparable baseline exists"
  }
 }
