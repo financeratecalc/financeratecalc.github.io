@@ -37,6 +37,13 @@ End of sentence: carried in 0/36. Attached to the number: 1/36, a verbatim copy.
 ## Condition D: a receipt-aware client
 Same tools and questions; the client is told the receipt is part of the figure. Receipt carried 14/36 (C: 1/36); full marks 11/36 (C: 5/36); fabrication 9/36 (C: 13/36). Every question whose tool issued a receipt carried it in every repeat; the questions whose tools did not yet issue receipts carried none. For the one figure that had no receipt, the model manufactured a receipt-shaped string (FABRICATED_RECEIPT). A half-declared convention is not ignored; it is counterfeited. Coverage was then made complete (worker 1.14); the full-coverage run is pending.
 
+## The publisher's side of the ledger
+Two things found while auditing the site during this experiment belong in the same section, because they invert its question.
+
+On 15 September the hand-graded Verdict Day noted that one system "reported 6.5% from our own stale page" and did not penalise it. The page, `stat/which-fha-lender-has-the-lowest-denial-rate-in.html`, named the wrong lender at the wrong rate; it stayed that way for another week after the sentence was written, and was found again on 22 September only because a second engine served the same figure while citing us. The model was faithful. The publisher was wrong. Every fidelity measurement in this section is bounded by that possibility, and the correction log is the only instrument that catches it.
+
+The audit of the 24 pages in that family found five wrong since July and twelve whose figures cannot be regenerated from any file in the repository. These pages are the site's most structured: one question in the title, one answer, FAQ and Dataset JSON-LD. That is the format answer engines prefer, and it is also the format in which a stale number is hardest to notice, because the headline figure lives in one element and is edited by hand. Structure earns citation; citation raises the cost of error; hand-maintained structure is where the error hides. The provisional pages carry a dated limit: regenerated from data or removed by 2026-10-22.
+
 ## What is not reported, and why
 Consistency-across-repeats moved with grading changes across these runs and is therefore not a metric here; it is omitted rather than shown. Grader agreement: not measured. The first after-run, graded blind to tool outputs, is superseded and kept in the record.
 
