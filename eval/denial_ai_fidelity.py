@@ -101,6 +101,7 @@ FAILURE_CODES = {
     "FABRICATED_SUPPORT": "supplies a supporting number that exists nowhere: not in the named source, not in any published record the answer could have drawn on (a count, a sample size, a rank invented to make the answer look sourced)",
     "OVERREACH_FROM_SOURCE": "presents, as the source's finding, data that the source's tool output did contain but did not contract (raw context fields, provisional or externally-cited blocks): not invented, but promoted beyond what the source stands behind",
     "FABRICATED_RECEIPT": "writes a claim receipt (⟦FRC:…⟧) that the tool did not return — a receipt-shaped string invented to satisfy a citation rule; verifiable receipts end in an 8-hex hash returned by the tool",
+    "SOURCE_LAUNDERED": "states the source's figures and universe correctly but names no source, or attributes them only to the underlying government dataset ('independently derived from HMDA'): right number, right contract, publisher erased",
     "STALE_VALUE": "uses a value the source has since corrected",
     "CAUSAL_LEAK": "turns an association into a cause",
     "INDIVIDUAL_LEAK": "turns an institutional aggregate into an individual prediction",
