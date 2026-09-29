@@ -32,4 +32,4 @@ Per aitraining.jobs (rates as quoted there, unverified against the platforms):
 
 ## Order
 
-1 → 3 → 4 this week (all mine to do once the adapter is rollout-tested, which needs one paid run: 12 questions × 1 repeat, ≈ $0.50). 2 only if the owner wants hourly work.
+1 → 3 → 4 this week. The adapter is rollout-tested (2026-09-29, Haiku, 12/12, 0 errors). 2 only if the owner wants hourly work.

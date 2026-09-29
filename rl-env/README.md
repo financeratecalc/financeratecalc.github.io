@@ -3,7 +3,7 @@
 **Domain:** US mortgage credit decisions (the 2025 federal HMDA record, 1,187,606 FHA decisions).
 **Task:** answer a question about a published statistic by calling the publisher's live tools, then restate the figure inside its use contract, carrying a verifiable claim receipt and inventing nothing.
 **Reward:** computed with no model. Value match from the answer key; receipt validity by recomputing the receipt's hash from the publisher's data files; forgery and red-line penalties. A judged fidelity signal exists separately and is optional.
-**Status:** the Inspect AI version has been administered 9 times (2026-09-20 to 2026-09-22) on one frontier model; the verifiers package passes `validate` 12/12 (model-free) against verifiers 0.3.1; first model rollout via .github/workflows/rl-env-smoke.yml.
+**Status:** the Inspect AI version has been administered 9 times (2026-09-20 to 2026-09-22) on one frontier model. The verifiers package passes `validate` 12/12 (model-free) and completed its first end-to-end rollout on 2026-09-29 (run file `eval/runs/20260929T0359-rlenv-smoke-claude-haiku-4-5-20251001.json`): 12 tasks, 0 errors, mean reward 0.75, 9 receipts found, 9 valid against the offline verifier, 0 forged, 0 red-line hits. Rewards discriminate: 7 tasks at 1.0, 4 at 0.5 (figure without receipt, or receipt without the key figure), 1 at 0..
 **License:** CC BY 4.0 (data, questions, code). Editor: Ziya Yetiş, FinanceRateCalc.
 
 ## Why this environment is hard
@@ -51,6 +51,17 @@ Known limits of the deterministic signals, stated so nobody has to discover them
 | D, receipt-aware client, full coverage | 27/27 | 1/36 | 23/36 | 2 |
 
 Fractions of runs, denominator questions × repeats; one model, one grader, one day per row; the full-marks collapse in the last row is suspected to be the grader reading longer tool output and is under a second-grader check. The three textual questions were not value-scorable by the instrument until 2026-09-29 and are excluded from the value column.
+
+## First rollout (verifiers, Claude Haiku 4.5, null harness, 12 × 1, 2026-09-29)
+
+| task | reward | value | valid receipt |
+|---|---|---|---|
+| q1, q3, q4, q5, q6, q8, q9 | 1.0 | yes | yes |
+| q2, q7, q10 | 0.5 | yes | none carried |
+| q11 | 0.5 | no | yes (2) |
+| q12 | 0.0 | no | none |
+
+One model, one rollout per task; a smoke test of the plumbing, not a measurement. The offline verifier agreed with the live `/verify` on every receipt the model carried once nested claim objects were hashed the way `JSON.stringify` does (fixed the same day; the first rollout had read one valid metro receipt as stale).
 
 ## Using it
 
