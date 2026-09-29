@@ -37,6 +37,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           FRC_SITE_ROOT: ${{ github.workspace }}
         run: |
+          set -o pipefail
           cd rl-env && eval frc-citation \
             --model "${{ github.event.inputs.model }}" \
             --client.base_url "${{ github.event.inputs.base_url }}" \
@@ -45,7 +46,8 @@ jobs:
             --no-push --no-rich --run.dir smoke \
             --env.taskset.task.tools.runtime.type subprocess \
             --env.agent.harness.id null --env.agent.runtime.type subprocess \
-            --output-dir /tmp/vfout 2>&1 | tail -60
+            --output-dir /tmp/vfout 2>&1 | tee /tmp/eval.log | tail -60
+          find /tmp/vfout -maxdepth 3 | head -40
       - name: Summarise
         if: always()
         run: |
@@ -72,6 +74,9 @@ jobs:
                   except Exception: pass
           out["metrics_sum"] = {k: sum(v) for k, v in met.items()}
           out["errors"] = sum(1 for r in rows if r.get("error"))
+          out["files"] = sorted(glob.glob("/tmp/vfout/**/*", recursive=True))[:60]
+          out["log_tail"] = open("/tmp/eval.log", errors="replace").read()[-8000:] if os.path.exists("/tmp/eval.log") else ""
+          if rows: out["first_row_keys"] = sorted(rows[0].keys()); out["first_row"] = json.dumps(rows[0])[:3000]
           os.makedirs("eval/runs", exist_ok=True)
           json.dump(out, open("/tmp/smoke-summary.json", "w"), indent=1)
           print(json.dumps(out, indent=1))
