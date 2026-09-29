@@ -3,7 +3,7 @@
 **Domain:** US mortgage credit decisions (the 2025 federal HMDA record, 1,187,606 FHA decisions).
 **Task:** answer a question about a published statistic by calling the publisher's live tools, then restate the figure inside its use contract, carrying a verifiable claim receipt and inventing nothing.
 **Reward:** computed with no model. Value match from the answer key; receipt validity by recomputing the receipt's hash from the publisher's data files; forgery and red-line penalties. A judged fidelity signal exists separately and is optional.
-**Status:** the Inspect AI version has been administered 9 times (2026-09-20 to 2026-09-22) on one frontier model; the verifiers adapter is import-tested against verifiers 0.3.1 and not yet rollout-tested.
+**Status:** the Inspect AI version has been administered 9 times (2026-09-20 to 2026-09-22) on one frontier model; the verifiers package passes `validate` 12/12 (model-free) against verifiers 0.3.1; first model rollout via .github/workflows/rl-env-smoke.yml.
 **License:** CC BY 4.0 (data, questions, code). Editor: Ziya Yetiş, FinanceRateCalc.
 
 ## Why this environment is hard
@@ -16,11 +16,11 @@ That is the shape of a useful environment: the naive policy scores near zero on 
 
 | file | what |
 |---|---|
-| `questions.json` | the frozen 12-question battery (benchmark.json v1.3) with per-question `key_numbers`, ground truth, universe id |
-| `verify_offline.py` | recomputes any claim receipt `⟦FRC:<id>:<value>:<hash8>⟧` from the repository's data files; identical to the live `/verify` endpoint; no network |
-| `rewards.py` | deterministic rewards: value, receipt, forgery penalty, red-line penalty, composite; self-test with `python rewards.py ..` |
-| `judge.py` | optional judged fidelity (C/P/I/A/N + 14 failure codes), the exact rubric the Inspect reference uses |
-| `taskset.py` | verifiers v1 taskset: `CitationTaskset`, `CitationTask` with `@reward`/`@metric`, `FRCToolset` proxying the live MCP server |
+| `frc_citation/questions.json` | the frozen 12-question battery (benchmark.json v1.3) with per-question `key_numbers`, ground truth, universe id |
+| `frc_citation/verify_offline.py` | recomputes any claim receipt `⟦FRC:<id>:<value>:<hash8>⟧` from the repository's data files; identical to the live `/verify` endpoint; no network |
+| `frc_citation/rewards.py` | deterministic rewards: value, receipt, forgery penalty, red-line penalty, composite; self-test with `python rewards.py ..` |
+| `frc_citation/judge.py` | optional judged fidelity (C/P/I/A/N + 14 failure codes), the exact rubric the Inspect reference uses |
+| `frc_citation/` | installable verifiers v1 package (`pip install -e rl-env`): `FrcCitationTaskset`, `FrcCitationTask` with `@reward`/`@metric`, `servers/tool.py` proxying the live MCP server; `validate frc-citation` passes 12/12 model-free |
 | `../eval/denial_ai_fidelity.py` | the executed reference (Inspect AI), conditions A/B/C/D |
 | `../eval/runs/` | every automated run, saved as it came, grader named |
 
@@ -57,7 +57,8 @@ Fractions of runs, denominator questions × repeats; one model, one grader, one 
 ```bash
 pip install verifiers            # 0.3.x
 export FRC_SITE_ROOT=/path/to/financeratecalc.github.io   # for offline receipt verification
-cd rl-env && python rewards.py ..                          # self-test of the deterministic rewards
+pip install -e rl-env && cd rl-env && validate frc-citation --runtime.type subprocess   # model-free check, 12/12
+python -m frc_citation.rewards ..   # reward self-test
 ```
 Inspect reference: `inspect eval eval/denial_ai_fidelity.py@denial_ai_fidelity_with_receipts --model <model> -T mcp_url=https://frc-mcp.ziyetis.workers.dev --epochs 3`.
 

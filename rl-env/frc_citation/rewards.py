@@ -17,7 +17,7 @@ trainer can choose to train on deterministic rewards only.
 """
 from __future__ import annotations
 import re
-from verify_offline import Verifier
+from frc_citation.verify_offline import Verifier
 
 # --- value -------------------------------------------------------------------
 

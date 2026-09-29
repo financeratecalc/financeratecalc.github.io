@@ -1,0 +1,98 @@
+name: rl-env smoke test (verifiers)
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Model id on an OpenAI-compatible endpoint"
+        default: "claude-haiku-4-5-20251001"
+      base_url:
+        description: "OpenAI-compatible base URL"
+        default: "https://api.anthropic.com/v1"
+      api_key_var:
+        description: "Secret name holding the key (ANTHROPIC_API_KEY | OPENAI_API_KEY)"
+        default: "ANTHROPIC_API_KEY"
+      num_tasks:
+        description: "How many of the 12 questions"
+        default: "12"
+      num_rollouts:
+        description: "Rollouts per task"
+        default: "1"
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Install
+        run: |
+          pip install -q "verifiers>=0.3.1" uv
+          pip install -q -e rl-env
+      - name: Validate (model-free)
+        run: cd rl-env && validate frc-citation --runtime.type subprocess --no-rich -o /tmp/vfval 2>&1 | tail -20
+      - name: Rollout
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          FRC_SITE_ROOT: ${{ github.workspace }}
+        run: |
+          cd rl-env && eval frc-citation \
+            --model "${{ github.event.inputs.model }}" \
+            --client.base_url "${{ github.event.inputs.base_url }}" \
+            --client.api_key-var "${{ github.event.inputs.api_key_var }}" \
+            --num-tasks "${{ github.event.inputs.num_tasks }}" --num-rollouts "${{ github.event.inputs.num_rollouts }}" \
+            --no-push --no-rich --run.dir smoke \
+            --env.taskset.task.tools.runtime.type subprocess \
+            --env.agent.harness.id null --env.agent.runtime.type subprocess \
+            --output-dir /tmp/vfout 2>&1 | tail -60
+      - name: Summarise
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, glob, os, statistics
+          rows = []
+          for f in glob.glob("/tmp/vfout/smoke/traces.jsonl") + glob.glob("/tmp/vfout/**/traces.jsonl", recursive=True):
+              for line in open(f):
+                  try: rows.append(json.loads(line))
+                  except Exception: pass
+              if rows: break
+          out = {"n": len(rows), "model": "${{ github.event.inputs.model }}"}
+          def get(r, *ks):
+              for k in ks:
+                  r = r.get(k, {}) if isinstance(r, dict) else {}
+              return r
+          rewards = [r.get("reward") for r in rows if isinstance(r.get("reward"), (int, float))]
+          out["reward_mean"] = statistics.mean(rewards) if rewards else None
+          out["reward_by_task"] = {str(get(r, "task", "data").get("name") or i): r.get("reward") for i, r in enumerate(rows)}
+          met = {}
+          for r in rows:
+              for k, v in (r.get("metrics") or {}).items():
+                  try: met.setdefault(k, []).append(float(v))
+                  except Exception: pass
+          out["metrics_sum"] = {k: sum(v) for k, v in met.items()}
+          out["errors"] = sum(1 for r in rows if r.get("error"))
+          os.makedirs("eval/runs", exist_ok=True)
+          json.dump(out, open("/tmp/smoke-summary.json", "w"), indent=1)
+          print(json.dumps(out, indent=1))
+          PY
+      - name: Save summary via the GitHub API
+        if: always()
+        env:
+          GH_PAT: ${{ secrets.EVAL_PAT }}
+          MODEL: ${{ github.event.inputs.model }}
+        run: |
+          python - <<'PY'
+          import os, json, base64, urllib.request, datetime
+          tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"
+          stamp = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M")
+          name = f"eval/runs/{stamp}-rlenv-smoke-{os.environ['MODEL']}.json"
+          body = open("/tmp/smoke-summary.json", "rb").read() if os.path.exists("/tmp/smoke-summary.json") else b'{"error":"no summary"}'
+          url = f"https://api.github.com/repos/{repo}/contents/{name}"
+          data = {"message": f"rl-env smoke {stamp}", "content": base64.b64encode(body).decode(), "branch": "main"}
+          req = urllib.request.Request(url, method="PUT", data=json.dumps(data).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
+          print(urllib.request.urlopen(req).status)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: vf-run, path: /tmp/vfout }
