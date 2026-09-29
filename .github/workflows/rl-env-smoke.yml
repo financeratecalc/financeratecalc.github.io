@@ -64,19 +64,36 @@ jobs:
               for k in ks:
                   r = r.get(k, {}) if isinstance(r, dict) else {}
               return r
-          rewards = [r.get("reward") for r in rows if isinstance(r.get("reward"), (int, float))]
-          out["reward_mean"] = statistics.mean(rewards) if rewards else None
-          out["reward_by_task"] = {str(get(r, "task", "data").get("name") or i): r.get("reward") for i, r in enumerate(rows)}
-          met = {}
+          per = {}
+          def final_text(t):
+              msgs = t.get("messages") or t.get("trace") or []
+              for m in reversed(msgs):
+                  if isinstance(m, dict) and m.get("role") == "assistant":
+                      c = m.get("content")
+                      if isinstance(c, str): return c
+                      if isinstance(c, list): return " ".join(p.get("text", "") for p in c if isinstance(p, dict))
+              return ""
           for r in rows:
-              for k, v in (r.get("metrics") or {}).items():
-                  try: met.setdefault(k, []).append(float(v))
+              name = get(r, "task", "data").get("name")
+              for t in (r.get("traces") or [r]):
+                  rw = (t.get("rewards") or {}).get("reward")
+                  score = rw.get("score") if isinstance(rw, dict) else rw
+                  per[name] = {"reward": score, "metrics": t.get("metrics"), "ok": t.get("ok"), "errors": [e.get("message", "")[:200] for e in (t.get("errors") or [])],
+                               "final": final_text(t)[:400], "trace_keys": sorted(t.keys())[:40]}
+          scores = [v["reward"] for v in per.values() if isinstance(v["reward"], (int, float))]
+          out["reward_mean"] = statistics.mean(scores) if scores else None
+          out["reward_by_task"] = {k: v["reward"] for k, v in per.items()}
+          met = {}
+          for v in per.values():
+              for k, x in (v["metrics"] or {}).items():
+                  try: met.setdefault(k, []).append(float(x))
                   except Exception: pass
           out["metrics_sum"] = {k: sum(v) for k, v in met.items()}
-          out["errors"] = sum(1 for r in rows if r.get("error"))
+          out["per_task"] = per
+          out["errors"] = sum(1 for v in per.values() if v["errors"])
           out["files"] = sorted(glob.glob("/tmp/vfout/**/*", recursive=True))[:60]
           out["log_tail"] = open("/tmp/eval.log", errors="replace").read()[-8000:] if os.path.exists("/tmp/eval.log") else ""
-          if rows: out["first_row_keys"] = sorted(rows[0].keys()); out["first_row"] = json.dumps(rows[0])[:3000]
+          out["log_tail"] = out["log_tail"][-3000:]
           os.makedirs("eval/runs", exist_ok=True)
           json.dump(out, open("/tmp/smoke-summary.json", "w"), indent=1)
           print(json.dumps(out, indent=1))
