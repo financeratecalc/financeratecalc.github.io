@@ -75,7 +75,7 @@ def load_samples(site=SITE):
         samples.append(Sample(
             id=q["id"], input=q["question"], target=gt,
             metadata={"answer_type": q.get("answer_type"), "source": q.get("source"),
-                      "key_numbers": sorted(_numbers(gt)), "fidelity_rubric": rubric,
+                      "key_numbers": (q.get("key_numbers") or sorted(_numbers(gt))), "fidelity_rubric": rubric,
                       "battery_version": bench["version"], "administration_reference": bench.get("administration")},
         ))
     return samples
@@ -84,9 +84,9 @@ def load_samples(site=SITE):
 def value_scorer():
     """1 if every key number of the ground truth appears in the answer, else 0. No model involved."""
     async def score(state, target: Target):
-        ans = state.output.completion.replace(",", "")
-        keys = [k.replace(",", "") for k in state.metadata.get("key_numbers", [])]
-        hit = all(k.rstrip("%") in ans for k in keys) if keys else (target.text.lower() in ans.lower())
+        ans = state.output.completion.replace(",", "").lower()
+        keys = [k.replace(",", "").lower() for k in state.metadata.get("key_numbers", [])]
+        hit = all(k.rstrip("%") in ans for k in keys) if keys else (target.text.lower() in ans)
         return Score(value=1.0 if hit else 0.0, answer=state.output.completion[:300],
                      explanation=f"key numbers {keys}: {'all present' if hit else 'missing'}")
     return score

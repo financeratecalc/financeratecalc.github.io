@@ -185,7 +185,7 @@ Receipts are not optional per figure. A publisher either issues a receipt on **e
 - A receipt placed at the end of the sentence survived restatement in 0/36 answers; attached to the number, 1/36. A text token does not survive paraphrase.
 - A client instructed to write every figure with its receipt carried it in 14/36, i.e. on every question whose tool returned one, in every repeat. Receipt survival is a property of the **client**, not of the placement.
 - The same client, when one figure had no receipt, forged a receipt-shaped string for it (`FABRICATED_RECEIPT`). This is why the rule above is coverage-or-nothing: a half-declared convention is not ignored by the consumer, it is counterfeited.
-- At full coverage (every figure-bearing tool issues a receipt) the same client carried the receipt in 23/36 and still forged one in 2/36. Coverage removes the excuse, not the behaviour; hence the verify-before-print rule. Value correctness was 27/36 in every run of the series; the receipt changes what surrounds the figure, not the figure.
+- At full coverage (every figure-bearing tool issues a receipt) the same client carried the receipt in 23/36 and still forged one in 2/36. Coverage removes the excuse, not the behaviour; hence the verify-before-print rule. Value correctness on the nine numeric questions was 27/27 in every run of the series (the three textual questions were not value-scorable by the instrument until 2026-09-29); the receipt changes what surrounds the figure, not the figure.
 
 The receipt's two other jobs do not depend on survival in prose: verification of any quoted figure, and stale-version detection in a misquote ledger.
 
