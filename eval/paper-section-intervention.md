@@ -4,7 +4,7 @@
 
 ## The two claims this section makes
 1. **What a publisher can change from its side of the interface is where the model stops, not whether it continues.** A contract-shaped sentence fixes the population, program, period and attribution of a figure on the questions the sentence covers; past the edge of the sentence the model keeps writing, and the publisher has no lever there.
-2. **Verification dies on the publisher's side and lives on the client's.** A receipt embedded in prose survives restatement in 0/36 and 1/36 answers; a client instructed to treat the receipt as part of the figure carries it in 14/36, i.e. on every question whose tool issued one, in every repeat.
+2. **Verification dies on the publisher's side and lives on the client's.** A receipt embedded in prose survives restatement in 0/36 and 1/36 answers; a client instructed to treat the receipt as part of the figure carries it in 14/36 at partial coverage and 23/36 at full coverage, i.e. on the questions whose tool issued one.
 
 The numbers below are evidence for these two sentences, not headlines of their own.
 
@@ -35,7 +35,7 @@ FABRICATED_SUPPORT stayed at 8/36: numbers in no tool output. The residual the p
 End of sentence: carried in 0/36. Attached to the number: 1/36, a verbatim copy. A text token does not survive paraphrase, wherever it is placed.
 
 ## Condition D: a receipt-aware client
-Same tools and questions; the client is told the receipt is part of the figure. Receipt carried 14/36 (C: 1/36); full marks 11/36 (C: 5/36); fabrication 9/36 (C: 13/36). Every question whose tool issued a receipt carried it in every repeat; the questions whose tools did not yet issue receipts carried none. For the one figure that had no receipt, the model manufactured a receipt-shaped string (FABRICATED_RECEIPT). A half-declared convention is not ignored; it is counterfeited. Coverage was then made complete (worker 1.14); the full-coverage run is pending.
+Same tools and questions; the client is told the receipt is part of the figure. Receipt carried 14/36 (C: 1/36); full marks 11/36 (C: 5/36); fabrication 9/36 (C: 13/36). Every question whose tool issued a receipt carried it in every repeat; the questions whose tools did not yet issue receipts carried none. For the one figure that had no receipt, the model manufactured a receipt-shaped string (FABRICATED_RECEIPT). A half-declared convention is not ignored; it is counterfeited. Coverage was then made complete (worker 1.14.1) and D re-run on 2026-09-22: receipt carried 23/36 (Fisher p = 0.06 against 14/36; p < 0.001 against 1/36 in prose); FABRICATED_RECEIPT persisted at 2/36, both on q10, so full coverage removes the excuse, not the behaviour, and a client must verify before printing. Full marks fell to 1/36 while OVERREACH_FROM_SOURCE rose to 28/36 with value (27/36) and consistency unchanged; the tool outputs are longer in 1.14.1 and the grader marks everything beyond the returned fields as overreach. Recorded as a single-grader limit, not as a finding about receipts.
 
 ## The publisher's side of the ledger
 Two things found while auditing the site during this experiment belong in the same section, because they invert its question.

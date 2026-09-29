@@ -2,7 +2,7 @@
 
 **Machine-readable use conditions for published statistics.**
 
-Status: draft 6, 2026-09-21. Reference checker: `tools/claimcheck/claimcheck.py`. Runnable fidelity task: `eval/denial_ai_fidelity.py` (Inspect AI). Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
+Status: draft 7, 2026-09-29. Reference checker: `tools/claimcheck/claimcheck.py`. Runnable fidelity task: `eval/denial_ai_fidelity.py` (Inspect AI). Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
 Reference implementation: 189 claims at https://financeratecalc.com/claims.json (passport format 0.1, contract format 0.1, which this document generalises).
 
 ---
@@ -180,11 +180,12 @@ A **claim receipt** is a serial number for a statistic:
 
 `hash8` is the first eight hex characters of the SHA-256 of the canonical `claim` object (§4). A corrected value changes the hash, so a receipt carrying an old hash identifies itself as stale without any lookup. A publisher exposes `GET /verify?r=<receipt>` returning `current`, `stale` (hash no longer matches: the figure was corrected after the receipt was issued) or `altered` (hash matches, quoted value does not). The value inside a receipt MUST NOT contain a colon.
 
-Receipts are not optional per figure. A publisher either issues a receipt on **every** figure-bearing endpoint (`claim_receipt`, `figure_with_receipt`, and inside `quotable_sentence` attached to the number) or issues none. This is a conformance rule, not advice: a conforming L2 publisher that issues any receipt MUST issue one on every figure-bearing endpoint, and a checker MUST flag an endpoint that returns a figure without one as non-conforming. What was measured (2026-09-20/21, reference implementation, one model, 12 questions x 3 repeats):
+Receipts are not optional per figure. A publisher either issues a receipt on **every** figure-bearing endpoint (`claim_receipt`, `figure_with_receipt`, and inside `quotable_sentence` attached to the number) or issues none. This is a conformance rule, not advice: a conforming L2 publisher that issues any receipt MUST issue one on every figure-bearing endpoint, and a checker MUST flag an endpoint that returns a figure without one as non-conforming. A client that prints receipts MUST verify each one against the publisher's `/verify` before printing it: forgery was observed at full coverage as well as partial. What was measured (2026-09-20/22, reference implementation, one model, one grader, 12 questions x 3 repeats):
 
 - A receipt placed at the end of the sentence survived restatement in 0/36 answers; attached to the number, 1/36. A text token does not survive paraphrase.
 - A client instructed to write every figure with its receipt carried it in 14/36, i.e. on every question whose tool returned one, in every repeat. Receipt survival is a property of the **client**, not of the placement.
 - The same client, when one figure had no receipt, forged a receipt-shaped string for it (`FABRICATED_RECEIPT`). This is why the rule above is coverage-or-nothing: a half-declared convention is not ignored by the consumer, it is counterfeited.
+- At full coverage (every figure-bearing tool issues a receipt) the same client carried the receipt in 23/36 and still forged one in 2/36. Coverage removes the excuse, not the behaviour; hence the verify-before-print rule. Value correctness was 27/36 in every run of the series; the receipt changes what surrounds the figure, not the figure.
 
 The receipt's two other jobs do not depend on survival in prose: verification of any quoted figure, and stale-version detection in a misquote ledger.
 
@@ -231,4 +232,5 @@ See `claim-contract-1.0.schema.json` alongside this document.
 - Known gap in the reference set: no single-lender, time-bounded claim (a "does this persist next year" contract). Every publisher error found in the week of 2026-09-08 was a time-limit error; the reference set needs a contract that exercises exactly that, and the editor's own site is the first place to add one.
 - Conformance levels introduced, including an L4 the editor has not reached.
 - Adoption test moved from publisher-side copying to consumer-side attestation (10).
-- Draft 6: claim receipt (7a) with its first measurements; coverage-or-nothing rule; FABRICATED_RECEIPT and OVERREACH_FROM_SOURCE added to the failure taxonomy (now 13 codes).
+- Draft 6: claim receipt (7a) with its first measurements; coverage-or-nothing rule; FABRICATED_RECEIPT and OVERREACH_FROM_SOURCE added to the failure taxonomy (13 codes).
+- Draft 7: full-coverage measurement of the receipt-aware client (23/36 carried, 2/36 forged); verify-before-print MUST for clients; SOURCE_LAUNDERED added to the taxonomy 2026-09-22 (14 codes): the correct figure served with the source omitted.
