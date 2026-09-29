@@ -67,11 +67,11 @@ class FrcCitationTask(vf.Task[FrcCitationData, vf.State, FrcCitationTaskConfig])
         return FrcCitationTask._verifiers[root]
 
     @vf.reward(weight=1.0)
-    def reward(self, trace: vf.Trace) -> float:
+    async def reward(self, trace: vf.Trace) -> float:
         return composite(_final_text(trace), self.data.key_numbers, self._v())["reward"]
 
     @vf.metric
-    def signals(self, trace: vf.Trace) -> dict:
+    async def signals(self, trace: vf.Trace) -> dict:
         c = composite(_final_text(trace), self.data.key_numbers, self._v())
         s = c["receipt_signals"]
         return {"value": c["value"], "receipt": c["receipt"], "forgery": c["forgery"], "red_line": c["red_line"],
