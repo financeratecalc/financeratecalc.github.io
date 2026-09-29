@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The automated series — fidelity runs, by machine | FinanceRateCalc</title>
+<meta name="description" content="Every automated administration of the Denial-AI fidelity task: model, condition, grader, value correctness, full marks, receipt survival and failure codes, as fractions of runs. A separate series from the hand-graded Verdict Day.">
+<link rel="canonical" href="https://financeratecalc.com/verdict-automated.html">
+<style>body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:980px;margin:0 auto;padding:36px 18px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:29px;color:#f5f2ea;line-height:1.2;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:19px;color:#f5f2ea;margin:30px 0 8px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B} .mono{font-family:'DM Mono',monospace;font-size:12.5px}
+.card{border:1px solid #23262e;border-radius:12px;padding:16px 18px;background:#0d0f14;margin:14px 0;font-size:15px}
+.small{font-size:12.5px;color:#8a8678}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+th,td{border-bottom:1px solid #23262e;padding:8px 6px;text-align:left;vertical-align:top}
+th{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:1px;color:#C8A84B;text-transform:uppercase}
+td.mono{font-size:12px;color:#cbc7bb}
+tr.sup td{color:#6d6a61;text-decoration:line-through}
+.codes span{display:inline-block;font-family:'DM Mono',monospace;font-size:10.5px;padding:1px 6px;border-radius:4px;background:rgba(160,160,160,.12);color:#b8b4a9;margin:2px 3px 2px 0}
+.wrapx{overflow-x:auto}
+</style></head>
+<body><div class="wrap">
+<div class="kicker">FinanceRateCalc &middot; Denial-AI benchmark &middot; automated series</div>
+<h1>The automated series</h1>
+<p class="sub">Each row is one administration of the <a href="/spec/claim-contract-1.0-draft.md">fidelity task</a> by machine: a model answers the frozen twelve-question battery under a named condition, a grader model scores every answer against the figure's use contract, and the run file is saved as it came. This series is separate from the hand-graded <a href="/verdict-day.html">Verdict Day</a> and is never combined with it.</p>
+
+<div class="card"><b>How to read a row.</b> Figures are fractions of runs, never percentages; the denominator is questions &times; repeats. <i>Value</i> is computed with no model from the passport. <i>Full marks</i> is grade C: value present, every required qualifier present, nothing beyond the contract. <i>Receipt carried</i> counts answers that reproduced the figure's <a href="/claims/index.html">claim receipt</a>. Codes are not a partition: one answer can carry several. Every row names its grader; where two graders ran, their agreement is shown. Struck-through rows are superseded (kept in the record, not cited). Conditions: <b>A</b> no tools &middot; <b>B</b> web search &middot; <b>C</b> our MCP server connected &middot; <b>D</b> as C, with a receipt-aware client &middot; <b>Clich&eacute;</b> the 19-claim <a href="/eval/cliche-battery.json">folk-claim battery</a>.</div>
+
+<div class="wrapx"><table id="t"><thead><tr><th>run (UTC)</th><th>model</th><th>condition</th><th>worker</th><th>design</th><th>value</th><th>full marks</th><th>abstain clean / leaky</th><th>consistent q</th><th>receipt carried</th><th>codes (answers)</th><th>grader</th><th>agreement</th></tr></thead><tbody></tbody></table></div>
+<p class="small" id="meta">Loading&hellip;</p>
+
+<h2>Known limits</h2>
+<ul class="sub" id="limits"></ul>
+
+<h2>Why a separate series</h2>
+<p class="sub">Verdict Day is eight consumer products, one session each, graded by hand against a published rubric; it measures what a member of the public gets. This series is one model at a time, three repeats, graded by another model; it measures what changes when the publisher changes what it ships. The first is slow and wide, the second fast and narrow, and a figure from one cannot be compared with a figure from the other. What they share is the battery, the contracts, the failure codes and the reporting rule.</p>
+<p class="small">Task file: <a href="https://github.com/financeratecalc/financeratecalc.github.io/blob/main/eval/denial_ai_fidelity.py">eval/denial_ai_fidelity.py</a> (Inspect AI) &middot; run files: <a href="https://github.com/financeratecalc/financeratecalc.github.io/tree/main/eval/runs">eval/runs/</a> &middot; this table: <a href="/eval/verdict-automated.json">verdict-automated.json</a> &middot; rubric: <a href="/eval/rubric-vectors.json">rubric-vectors.json</a> &middot; <a href="/corrections.html">corrections</a>. CC BY 4.0. Screening signals about AI systems, never claims about any person or evidence of misconduct by any lender.</p>
+</div>
+<script>
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const cond = c => ({denial_ai_fidelity:"A", denial_ai_fidelity_web:"B", denial_ai_fidelity_with_source:"C", denial_ai_fidelity_with_receipts:"D", cliche_index:"Cliché"}[c] || c);
+const fr = v => v == null ? "—" : v;
+(async () => {
+  try {
+    const d = await (await fetch("/eval/verdict-automated.json", {cache:"no-store"})).json();
+    const tb = document.querySelector("#t tbody");
+    const rows = (d.rows || []).slice().sort((a,b) => (a.run||"").localeCompare(b.run||""));
+    for (const r of rows) {
+      const tr = document.createElement("tr"); if (r.superseded) tr.className = "sup";
+      const codes = Object.entries(r.code_frequency || {}).sort((a,b)=>parseInt(b[1])-parseInt(a[1])).map(([k,v]) => `<span>${esc(k)} ${esc(v)}</span>`).join("");
+      let cl = "";
+      if (r.cliche) { const c = r.cliche; cl = `<span>agree ${esc(c.agree_with_record)}</span><span>confident-wrong ${esc(c.confident_wrong)}</span>` + (c.asserted_unknowable ? `<span>asserted-unknowable ${esc(c.asserted_unknowable)}</span><span>asserted-not-in-record ${esc(c.asserted_not_in_record)}</span>` : `<span>asserted-untestable(v0.1) ${esc(c.asserted_the_untestable)}</span>`); }
+      tr.innerHTML = `<td class="mono">${esc((r.run||"").replace("T"," ").slice(0,16))}</td><td class="mono">${esc((r.model||"").split("/").pop())}</td><td>${esc(cond(r.condition))}</td><td class="mono">${esc(r.worker_version||"")}</td><td class="mono">${esc(r.design)}</td><td>${fr(r.value_correct)}</td><td>${fr(r.full_marks)}</td><td>${fr(r.clean_abstain)} / ${fr(r.leaky_abstain)}</td><td>${fr(r.consistent_questions)}</td><td>${fr(r.receipt_carried)}</td><td class="codes">${codes || cl || "—"}</td><td class="mono">${esc((r.grader||"").split("/").pop())}</td><td class="mono">${r.grader_agreement == null ? "not measured" : esc(typeof r.grader_agreement === "object" ? JSON.stringify(r.grader_agreement) : r.grader_agreement)}</td>`;
+      tb.appendChild(tr);
+    }
+    document.getElementById("meta").textContent = `${rows.length} runs. Table generated ${d.generated}. ${d.reporting_rule || ""}`;
+    const ul = document.getElementById("limits"); (d.known_limits || []).forEach(x => { const li = document.createElement("li"); li.textContent = x; ul.appendChild(li); });
+  } catch (e) { document.getElementById("meta").textContent = "Could not load eval/verdict-automated.json."; }
+})();
+</script>
+</body></html>
