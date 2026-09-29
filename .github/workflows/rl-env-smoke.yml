@@ -115,6 +115,35 @@ jobs:
           req = urllib.request.Request(url, method="PUT", data=json.dumps(data).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
           print(urllib.request.urlopen(req).status)
           PY
+      - name: Legacy vf-eval (community-repo package)
+        if: always()
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          pip install -q -e rl-env/community/frc_citation
+          cd rl-env/community/frc_citation && vf-eval frc-citation -m "${{ github.event.inputs.model }}" -b "${{ github.event.inputs.base_url }}" -k "${{ github.event.inputs.api_key_var }}" -n "${{ github.event.inputs.num_tasks }}" -r "${{ github.event.inputs.num_rollouts }}" -s -d 2>&1 | tail -40
+          find outputs -type f | head; cp -r outputs /tmp/vf-legacy-outputs || true
+      - name: Save legacy outputs via the GitHub API
+        if: always()
+        env:
+          GH_PAT: ${{ secrets.EVAL_PAT }}
+        run: |
+          python - <<'PY'
+          import os, json, base64, glob, urllib.request
+          tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"
+          for f in glob.glob("/tmp/vf-legacy-outputs/**/*", recursive=True):
+              if os.path.isdir(f): continue
+              rel = "rl-env/community/frc_citation/outputs/" + os.path.relpath(f, "/tmp/vf-legacy-outputs")
+              url = f"https://api.github.com/repos/{repo}/contents/{rel}"
+              sha = None
+              try: sha = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={"Authorization": f"token {tok}"}))).get("sha")
+              except Exception: pass
+              data = {"message": f"vf-eval outputs: {rel}", "content": base64.b64encode(open(f,"rb").read()).decode(), "branch": "main"}
+              if sha: data["sha"] = sha
+              req = urllib.request.Request(url, method="PUT", data=json.dumps(data).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
+              print(rel, urllib.request.urlopen(req).status)
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: vf-run, path: /tmp/vfout }
