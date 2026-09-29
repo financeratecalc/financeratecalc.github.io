@@ -29,8 +29,19 @@ def _js_num(x):
     return x
 
 
+def _filter(x, allowed):
+    """JSON.stringify(obj, keysArray) applies the key whitelist at every depth and emits
+    keys in the array's (sorted) order; nested keys absent from the top-level list are
+    dropped. Reproduced here so nested claim objects hash identically."""
+    if isinstance(x, dict):
+        return {k: _filter(v, allowed) for k, v in x.items() if k in allowed}
+    if isinstance(x, list):
+        return [_filter(v, allowed) for v in x]
+    return _js_num(x)
+
+
 def sha8(obj: dict) -> str:
-    canon = json.dumps({k: _js_num(v) for k, v in obj.items()}, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    canon = json.dumps(_filter(obj, set(obj.keys())), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
     return hashlib.sha256(canon.encode("utf-8")).hexdigest()[:8]
 
 
