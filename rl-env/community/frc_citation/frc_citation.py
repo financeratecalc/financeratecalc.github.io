@@ -159,15 +159,19 @@ def red_line_hits(text: str) -> list[str]:
 
 
 def _final_text(completion) -> str:
+    """Last assistant message text. At scoring time messages may be dicts or objects
+    (ChatCompletionMessage); both are handled."""
     if isinstance(completion, str):
         return completion
-    for m in reversed(completion or []):
-        if isinstance(m, dict) and m.get("role") == "assistant":
-            c = m.get("content")
-            if isinstance(c, str):
-                return c
-            if isinstance(c, list):
-                return " ".join(p.get("text", "") for p in c if isinstance(p, dict))
+    for m in reversed(list(completion or [])):
+        role = m.get("role") if isinstance(m, dict) else getattr(m, "role", None)
+        if role != "assistant":
+            continue
+        c = m.get("content") if isinstance(m, dict) else getattr(m, "content", None)
+        if isinstance(c, str):
+            return c
+        if isinstance(c, list):
+            return " ".join((p.get("text", "") if isinstance(p, dict) else getattr(p, "text", "")) for p in c)
     return ""
 
 
