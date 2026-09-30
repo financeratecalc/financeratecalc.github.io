@@ -29,11 +29,20 @@ When a language model restates a statistic, the value usually survives and the c
 3. **Train and publish**: fine-tune a small open model (7–8B) on the deterministic reward and report whether receipt-carrying and non-forgery transfer to held-out claims and to a second publisher's contracts. Null results published with the same date discipline as positive ones.
 4. **A second publisher**: instantiate contracts for one unrelated public statistics publisher (government or academic), so the standard is tested outside its author's site; the adoption test in the spec (a consumer publicly attesting it checks against a claims.json within 90 days) is the pre-registered success criterion.
 
+### What is open and what is not
+Everything the grant touches is public under CC BY 4.0: the specification, the checker, the task file, the environment, the run files, the corrections log and the paper. The publisher site that hosts the reference implementation is a one-person research site with a $29 metro report card and no revenue from lenders; the grant funds none of that, and no grant money goes to the site's commercial side. The reference implementation is on one publisher's data only because that is where the author could generate every number from source; deliverable 4 moves the standard onto a second, unrelated publisher precisely so it does not remain one site's format.
+
+### Comparable work Manifund has funded
+Inspect Evals (the registry this task is written for; $50K across three regrantors), Hallucination Detector ($6K), Bayesian modelling of LLM capabilities from evals ($19K). This project sits between the first two: a domain eval in Inspect format whose object is a specific honesty failure.
+
 ### Why this is AI safety work
 It is a measurement of a specific honesty failure (faithful-looking restatement that silently drops the conditions under which a claim is true), in a regulated real-world domain, with a reward that cannot be gamed by pleasing a judge, and with the publisher's own errors in the same ledger. The environment is small, deterministic, and cheap to run, which is exactly what makes it reusable by other labs.
 
 ### Track record
 Ziya Yetiş, 23 years in bank credit (Turkey), founder of FinanceRateCalc; four SSRN working papers on the HMDA record (7156938, 7309319, 7341481, 7423798); benchmark on Hugging Face; MCP server in the public registry; every measurement, correction and failed run public in the repository.
+
+## Eligibility
+Individual applicant, based in Turkey. The program lists individuals and international applicants as eligible; payout method for Turkey to be confirmed with Manifund before withdrawal.
 
 ## Budget
 Minimum funding: **$6,000** — API quotas for two providers (~$2,500 across ~200 questions × 3 repeats × 4 conditions × 2 graders), compute for one small fine-tune (~$1,500), the rest as stipend for six months of evenings.
