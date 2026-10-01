@@ -603,7 +603,9 @@ export default {
       try { await tally(env, "verify", `${channel}:${status}`); } catch {}
       return json({ receipt: `\u27e6FRC:${id}:${value}:${h}${chan ? ":" + channel : ""}\u27e7`, id, quoted_value: value, current_value: current, status, issued,
         meaning: status === "current" ? "This figure is current and unchanged since the receipt was issued." : status === "stale" ? "The figure was corrected after this receipt was issued; the quoted value may be superseded. See corrections.html." : "The receipt hash matches but the quoted value does not; the quote was altered.",
-        corrections: "https://financeratecalc.com/corrections.html", license: "CC BY 4.0" });
+        corrections: "https://financeratecalc.com/corrections.html", license: "CC BY 4.0",
+        transparency: { note: "The snapshot of every claim's value and hash is signed with Sigstore by the publisher's repository workflow and timestamped in the public Rekor log; verify the receipt against it without this server.",
+          snapshot: "https://financeratecalc.com/rl-env/frc_citation/receipts-snapshot.json", bundle: "https://financeratecalc.com/transparency/receipts-snapshot.sigstore.json", log: "https://financeratecalc.com/transparency/log.json" } });
     }
     if (path === "/misquotes" && request.method === "GET") {
       if (!env || !env.CREDITS) return json({ error: "store unavailable" }, 503);
@@ -656,7 +658,7 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.15.0" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.15.1" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));

@@ -2,7 +2,7 @@
 
 **Machine-readable use conditions for published statistics.**
 
-Status: draft 8, 2026-10-01. Reference checker: `tools/claimcheck/claimcheck.py`. Runnable fidelity task: `eval/denial_ai_fidelity.py` (Inspect AI). Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
+Status: draft 9, 2026-10-01. Reference checker: `tools/claimcheck/claimcheck.py`. Runnable fidelity task: `eval/denial_ai_fidelity.py` (Inspect AI). Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
 Reference implementation: 189 claims at https://financeratecalc.com/claims.json (passport format 0.1, contract format 0.1, which this document generalises).
 
 ---
@@ -205,6 +205,14 @@ Privacy rule. A verifier records at most counts of (channel, status) pairs. It M
 
 Reporting rule. Channel observations are published as counts per channel per status, and as a per-system table when the misquote ledger holds the quoting system; never as claims about any person.
 
+### 7c. Claim transparency (draft 9)
+
+A conforming L3 publisher SHOULD, and an L4 publisher MUST, publish a **signed snapshot**: a file listing every claim id it issues receipts for with the claim's current value and hash8, signed with a keyless Sigstore signature whose identity is the publisher's own build workflow, and recorded in the public Rekor transparency log. Each regeneration of the snapshot is a new log entry with a timestamp the publisher cannot alter or remove.
+
+Consequences. A receipt whose hash8 appears in a signed snapshot was provably issued by the publisher; one that appears in no snapshot was never issued (forgery); one that appears in an earlier snapshot but not the latest was issued before a correction, and the two log entries date the correction. A consumer, a grader, or an RL reward can therefore verify a receipt **without calling the publisher**, and a publisher can no longer correct a figure silently, because the log is not the publisher's. The publisher's `/verify` endpoint becomes a convenience, not a trust root.
+
+Reference implementation: `transparency/` in the FinanceRateCalc repository (`receipts-snapshot.sigstore.json`, `log.json`, verify command in the README); first entry Rekor log index 3039652842, 2026-10-01.
+
 ## 8. What this specification does not do
 
 - It does not rank publishers or certify truth. A contract says how a number may be used; whether the number is correct is the passport's provenance and the reproduce file, checkable by anyone.
@@ -249,5 +257,6 @@ See `claim-contract-1.0.schema.json` alongside this document.
 - Conformance levels introduced, including an L4 the editor has not reached.
 - Adoption test moved from publisher-side copying to consumer-side attestation (10).
 - Draft 6: claim receipt (7a) with its first measurements; coverage-or-nothing rule; FABRICATED_RECEIPT and OVERREACH_FROM_SOURCE added to the failure taxonomy (13 codes).
+- Draft 9: claim transparency (7c): the receipts snapshot is signed keylessly with Sigstore and timestamped in Rekor, so receipts verify without the publisher and corrections cannot be silent; L4 MUST, L3 SHOULD.
 - Draft 8: issue-channel segment (7b): a receipt may name the door and month it was issued through; verifier accepts both forms, records only (channel, status) counts. Deployed 2026-10-01 across MCP (m), 151 site pages (p/l/s/t/w) and the Hugging Face instrument (h).
 - Draft 7: full-coverage measurement of the receipt-aware client (23/36 carried, 2/36 forged); verify-before-print MUST for clients; SOURCE_LAUNDERED added to the taxonomy 2026-09-22 (14 codes): the correct figure served with the source omitted.

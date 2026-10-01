@@ -32,7 +32,7 @@ jobs:
         id: snap
         run: |
           python scripts/build_receipts_snapshot.py | tee /tmp/snap.json
-          echo "sha256=$(python -c 'import json;print(json.load(open("/tmp/snap.json"))["sha256"])')" >> $GITHUB_OUTPUT
+          echo "sha256=$(sha256sum rl-env/frc_citation/receipts-snapshot.json | cut -c1-64)" >> $GITHUB_OUTPUT
       - name: Sign keylessly (Sigstore / Rekor)
         run: |
           cosign sign-blob --yes rl-env/frc_citation/receipts-snapshot.json \
@@ -44,10 +44,12 @@ jobs:
           python - <<'PY'
           import json, datetime, os
           b = json.load(open("transparency/receipts-snapshot.sigstore.json"))
-          # Rekor log index lives in the bundle's verification material
+          # cosign sign-blob --bundle writes the legacy bundle: {base64Signature, cert, rekorBundle:{SignedEntryTimestamp, Payload:{body, integratedTime, logIndex, logID}}}
+          pl = (b.get("rekorBundle") or {}).get("Payload") or {}
           entries = (b.get("verificationMaterial") or {}).get("tlogEntries") or []
-          idx = entries[0].get("logIndex") if entries else None
-          ts = entries[0].get("integratedTime") if entries else None
+          idx = pl.get("logIndex") or (entries[0].get("logIndex") if entries else None)
+          ts = pl.get("integratedTime") or (entries[0].get("integratedTime") if entries else None)
+          if ts: ts = datetime.datetime.utcfromtimestamp(int(ts)).strftime("%Y-%m-%dT%H:%M:%SZ")
           log = {"generated": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
                  "snapshot_sha256": "${{ steps.snap.outputs.sha256 }}", "rekor_log_index": idx,
                  "integrated_time": ts, "commit": os.environ.get("GITHUB_SHA"),
@@ -55,7 +57,8 @@ jobs:
                  "verify_command": "cosign verify-blob receipts-snapshot.json --bundle receipts-snapshot.sigstore.json --certificate-identity-regexp '^https://github.com/financeratecalc/financeratecalc.github.io/' --certificate-oidc-issuer https://token.actions.githubusercontent.com"}
           hist = "transparency/log.json"
           H = json.load(open(hist)) if os.path.exists(hist) else {"entries": []}
-          H["entries"].append(log); H["latest"] = log
+          H["entries"] = [e for e in H["entries"] if e.get("rekor_log_index")] + [log]; H["latest"] = log
+          log["rekor_url"] = f"https://search.sigstore.dev/?logIndex={idx}" if idx else None
           json.dump(H, open(hist, "w"), indent=1)
           print(json.dumps(log, indent=1))
           PY
