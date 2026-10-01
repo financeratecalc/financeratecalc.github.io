@@ -1,0 +1,83 @@
+name: Claim transparency (Sigstore signature of the receipts snapshot)
+# Every time a claim's value or hash changes, the receipts snapshot is regenerated from the data
+# files and signed keylessly with Sigstore: the signing identity is this workflow in this repository,
+# the signature and a timestamp go to the public, append-only Rekor log. Anyone can then verify a
+# claim receipt against the signed snapshot without asking the publisher, and a correction becomes
+# a dated log entry the publisher cannot remove. No keys, no cost.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "api/index.json"
+      - "api/lender/**"
+      - "api/state/**"
+      - "api/small-loan-penalty.json"
+      - "api/denial-reasons-top100.json"
+      - "data/door-effect-2025.json"
+      - "claims/metro-gap-*.json"
+      - "claims/national-fha-denial-rate-2025.json"
+      - "scripts/build_receipts_snapshot.py"
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: sigstore/cosign-installer@v3
+      - name: Regenerate the snapshot from the data files
+        id: snap
+        run: |
+          python scripts/build_receipts_snapshot.py | tee /tmp/snap.json
+          echo "sha256=$(python -c 'import json;print(json.load(open("/tmp/snap.json"))["sha256"])')" >> $GITHUB_OUTPUT
+      - name: Sign keylessly (Sigstore / Rekor)
+        run: |
+          cosign sign-blob --yes rl-env/frc_citation/receipts-snapshot.json \
+            --bundle transparency/receipts-snapshot.sigstore.json
+          cosign verify-blob rl-env/frc_citation/receipts-snapshot.json \
+            --bundle transparency/receipts-snapshot.sigstore.json \
+            --certificate-identity-regexp "^https://github.com/financeratecalc/financeratecalc.github.io/" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com
+          python - <<'PY'
+          import json, datetime, os
+          b = json.load(open("transparency/receipts-snapshot.sigstore.json"))
+          # Rekor log index lives in the bundle's verification material
+          entries = (b.get("verificationMaterial") or {}).get("tlogEntries") or []
+          idx = entries[0].get("logIndex") if entries else None
+          ts = entries[0].get("integratedTime") if entries else None
+          log = {"generated": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                 "snapshot_sha256": "${{ steps.snap.outputs.sha256 }}", "rekor_log_index": idx,
+                 "integrated_time": ts, "commit": os.environ.get("GITHUB_SHA"),
+                 "identity": "https://github.com/financeratecalc/financeratecalc.github.io/.github/workflows/claims-transparency.yml@" + os.environ.get("GITHUB_REF", ""),
+                 "verify_command": "cosign verify-blob receipts-snapshot.json --bundle receipts-snapshot.sigstore.json --certificate-identity-regexp '^https://github.com/financeratecalc/financeratecalc.github.io/' --certificate-oidc-issuer https://token.actions.githubusercontent.com"}
+          hist = "transparency/log.json"
+          H = json.load(open(hist)) if os.path.exists(hist) else {"entries": []}
+          H["entries"].append(log); H["latest"] = log
+          json.dump(H, open(hist, "w"), indent=1)
+          print(json.dumps(log, indent=1))
+          PY
+      - name: Publish snapshot, bundle and log via the GitHub API
+        env:
+          GH_PAT: ${{ secrets.EVAL_PAT }}
+        run: |
+          python - <<'PY'
+          import os, json, base64, urllib.request
+          tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"
+          def put(path, msg):
+              url = f"https://api.github.com/repos/{repo}/contents/{path}"
+              sha = None
+              try: sha = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={"Authorization": f"token {tok}"}))).get("sha")
+              except Exception: pass
+              data = {"message": msg, "content": base64.b64encode(open(path, "rb").read()).decode(), "branch": "main"}
+              if sha: data["sha"] = sha
+              req = urllib.request.Request(url, method="PUT", data=json.dumps(data).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
+              print(path, urllib.request.urlopen(req).status)
+          for p in ["rl-env/frc_citation/receipts-snapshot.json", "rl-env/community/frc_citation/receipts-snapshot.json",
+                    "transparency/receipts-snapshot.sigstore.json", "transparency/log.json"]:
+              if p.startswith("rl-env/community"):
+                  open(p, "wb").write(open("rl-env/frc_citation/receipts-snapshot.json", "rb").read())
+              put(p, "claim transparency: signed receipts snapshot")
+          PY
