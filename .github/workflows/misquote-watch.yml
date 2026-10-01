@@ -1,0 +1,67 @@
+name: Nightly misquote watch (web condition, 3 questions, Haiku)
+# Built 2026-10-01. The schedule is commented out until the owner says to run it:
+# cost per night ≈ $0.05 (3 questions x 1 repeat, Haiku + web search + Haiku grader).
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: "17 3 * * *"
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q inspect_ai anthropic mcp
+      - name: Run the web condition on the three corrected figures
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FRC_GRADER_MODEL: anthropic/claude-haiku-4-5-20251001
+          INSPECT_EVAL_MODEL: anthropic/claude-haiku-4-5-20251001
+        run: |
+          inspect eval eval/denial_ai_fidelity.py@denial_ai_fidelity_web --model anthropic/claude-haiku-4-5-20251001 \
+            --sample-id q1,q4,q6 --epochs 1 --log-dir eval/logs --no-log-realtime 2>&1 | tail -20 || true
+      - name: Summarise into the correction-latency observations
+        run: |
+          python - <<'PY'
+          import json, glob, os, re, datetime, zipfile
+          logs = sorted(glob.glob("eval/logs/*.eval") + glob.glob("eval/logs/*.json"))
+          obs = []
+          today = datetime.date.today().isoformat()
+          for f in logs[-1:]:
+              try:
+                  if f.endswith(".eval"):
+                      z = zipfile.ZipFile(f); samples = [json.load(z.open(n)) for n in z.namelist() if n.startswith("samples/") and n.endswith(".json")]
+                  else:
+                      samples = json.load(open(f)).get("samples", [])
+              except Exception as e:
+                  print("could not read", f, e); samples = []
+              for s in samples:
+                  qid = str(s.get("id")); text = ((s.get("output") or {}).get("completion") or "")
+                  sc = s.get("scores") or {}
+                  fid = (sc.get("fidelity_scorer") or {}); codes = (fid.get("metadata") or {}).get("failure_codes", [])
+                  stale = {"q1": "21.7%", "q4": "3.2x", "q6": "1.3x"}.get(qid, "")
+                  current = {"q1": "22.1%", "q4": "4.45x", "q6": "1.19x"}.get(qid, "")
+                  obs.append({"system": "anthropic/claude-haiku-4-5 (web condition, automated)", "condition": "web_automated", "question": qid,
+                              "observed": today, "served_stale": bool(stale and stale in text), "served_current": bool(current and current in text),
+                              "codes": codes, "grade": fid.get("answer")})
+          p = "eval/correction-latency.json"; d = json.load(open(p))
+          d.setdefault("automated_observations", []).extend(obs)
+          d["automated_observations"] = d["automated_observations"][-365:]
+          json.dump(d, open(p, "w"), indent=1, ensure_ascii=False)
+          print(json.dumps(obs, indent=1))
+          PY
+      - name: Save via the GitHub API
+        env:
+          GH_PAT: ${{ secrets.EVAL_PAT }}
+        run: |
+          python - <<'PY'
+          import os, json, base64, urllib.request
+          tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"; path = "eval/correction-latency.json"
+          url = f"https://api.github.com/repos/{repo}/contents/{path}"
+          sha = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={"Authorization": f"token {tok}"})))["sha"]
+          data = {"message": "misquote watch: nightly observations", "content": base64.b64encode(open(path, "rb").read()).decode(), "sha": sha, "branch": "main"}
+          req = urllib.request.Request(url, method="PUT", data=json.dumps(data).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
+          print(urllib.request.urlopen(req).status)
+          PY
