@@ -176,6 +176,17 @@ Dataset:
 }}
 ```
 
+
+## Runnable task and RL environment (added 2026-10-01)
+
+The battery is also a runnable evaluation and a training environment, both in the site repository:
+
+- **Inspect AI task** `eval/denial_ai_fidelity.py` (UK AISI format): four conditions (no tools / web / publisher MCP source / receipt-aware client), a value scorer that uses no model, a model grader with public rubric vectors, 14 failure codes. Nine saved administrations in `eval/runs/`, grader named per row; the series is published at https://financeratecalc.com/verdict-automated.html (separate from the hand-graded Verdict Day rows in this dataset and not comparable with them).
+- **verifiers environment** `rl-env/` (`frc-citation`): the same 12 questions with deterministic rewards: value match, claim-receipt validity recomputed offline from the publisher's data (identical to the live `/verify`), forgery penalty, red-line penalty. `validate` 12/12; first rollouts 2026-10-01: mean reward 0.75, 9/9 receipts valid, 0 forged (Claude Haiku 4.5, 12 x 1). A self-contained package for community environment hubs is in `rl-env/community/`.
+- **Claim receipts**: every figure in the answer key carries `⟦FRC:<id>:<value>:<hash8>⟧`; verify any quote at https://financeratecalc.com/verify.html.
+
+Headline from the automated series (one model, one grader, 12 x 3): the figure was right on every numeric question in every run; full contract credit was earned in 1/36 to 11/36 answers; a receipt survived in 0/36 as prose and 23/36 with a receipt-aware client, with 2/36 forged even at full coverage. Fractions of runs, never percentages.
+
 Related FinanceRateCalc papers: doi:10.2139/ssrn.7309319 (The Door Effect), doi:10.2139/ssrn.7341481 (Persistent Doors), doi:10.2139/ssrn.7423798 (What Denial Rates Cannot See).
 
 The Denial-AI Benchmark™ is a FinanceRateCalc framework. Not affiliated with any AI vendor; no lender or AI vendor funds or previews this work.
