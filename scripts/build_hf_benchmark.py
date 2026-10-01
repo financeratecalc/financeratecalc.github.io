@@ -23,10 +23,26 @@ assert B["version"] in ("1.2", "1.3"), B["version"]
 assert S["battery_version"] == "benchmark-v1.2", S["battery_version"]
 
 # 1. instrument
+# claim receipts for the questions whose answer is one contracted claim (issue channel h = Hugging Face)
+import sys as _sys, datetime as _dt
+_sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "rl-env"))
+try:
+    from frc_citation.verify_offline import Verifier as _V, sha8 as _sha8
+    _v = _V(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+    _ch = f"h{str(_dt.datetime.utcnow().year)[2:]}{_dt.datetime.utcnow().month:02d}"
+    _RID = {"q1": "national-fha-denial-rate-2025", "q2": "lender-amerisave-mortgage-2025", "q3": "lender-flat-branch-mortgage-2025",
+            "q4": "small-loan-penalty-id-2025", "q5": "denial-reason-shares-top100-2025", "q6": "small-loan-penalty-range-2025",
+            "q8": "denial-reason-shares-top100-2025", "q9": "metro-gap-cleveland-oh-2025"}
+    def _receipt(qid):
+        rid = _RID.get(qid)
+        if not rid: return ""
+        cur, obj = _v.claim_object(rid); return f"\u27e6FRC:{rid}:{cur}:{_sha8(obj)}:{_ch}\u27e7"
+except Exception as _e:
+    print("receipts unavailable:", _e); _receipt = lambda qid: ""
 with open(os.path.join(a.out, "denial_ai_benchmark_v1_3.csv"), "w", newline="") as f:
-    w = csv.writer(f); w.writerow(["id", "question", "ground_truth", "answer_type", "source"])
+    w = csv.writer(f); w.writerow(["id", "question", "ground_truth", "answer_type", "source", "claim_receipt"])
     for q in B["questions"]:
-        w.writerow([q["id"], q["question"], q["ground_truth"], q.get("answer_type", ""), q.get("source", "")])
+        w.writerow([q["id"], q["question"], q["ground_truth"], q.get("answer_type", ""), q.get("source", ""), _receipt(q["id"])])
 
 # 2. July administration (scores embedded per question)
 with open(os.path.join(a.out, "results_2026-07.csv"), "w", newline="") as f:
@@ -94,7 +110,7 @@ by `scripts/build_hf_benchmark.py`. If a figure here disagrees with the site, th
 
 | file | config | contents |
 |---|---|---|
-| `denial_ai_benchmark_v1_3.csv` | `instrument` | id, question, ground_truth, answer_type, source |
+| `denial_ai_benchmark_v1_3.csv` | `instrument` | id, question, ground_truth, answer_type, source, claim_receipt (⟦FRC:id:value:hash8:hYYMM⟧; verify at https://financeratecalc.com/verify.html; the trailing segment is the issue channel, h = this dataset) |
 | `results_2026-07.csv` | `results_2026_07` | per-system, per-question grade and points, {B['administration']} administration |
 | `results_2026-09.csv` | `results_2026_09` | per-system, per-question grade, fidelity and failure codes, {S['administration']} administration |
 

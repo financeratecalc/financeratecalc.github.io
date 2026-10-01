@@ -12,6 +12,8 @@ The figure is easy; the sentence is hard. In every administration to date the mo
 
 That is the shape of a useful environment: the naive policy scores near zero on the deterministic reward, the ceiling is reachable (a verbatim quote of the tool's `quotable_sentence` with its receipt scores 1.0), and the gap is exactly the behaviour labs want to train: quoting a source without drifting from it.
 
+**Issue channel (2026-10-01):** receipts may carry a fifth segment `:<channel><YYMM>` naming the door and month they were issued through (m MCP, p/l/s/t/w site pages, h Hugging Face). Hash and rewards are unchanged; the verifier accepts both forms and reports the channel.
+
 ## Files
 
 | file | what |

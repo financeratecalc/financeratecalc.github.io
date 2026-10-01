@@ -19,7 +19,7 @@ button{margin-top:12px;background:#C8A84B;color:#08090c;border:0;border-radius:8
 <body><div class="wrap">
 <div class="kicker">FinanceRateCalc &middot; Claim receipts</div>
 <h1>Verify a figure</h1>
-<p class="sub">Every statistic on this site carries a receipt like <span class="mono">&#10214;FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b&#10215;</span>: the claim id, the value, and the first eight characters of a hash of the claim itself. If we ever correct the figure, the hash changes, so an old quote identifies itself. Paste a receipt from any page, answer, or article.</p>
+<p class="sub">Every statistic on this site carries a receipt like <span class="mono">&#10214;FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:p2610&#10215;</span>: the claim id, the value, the first eight characters of a hash of the claim itself, and the door it was issued through with the month (p = answer page, l = lender page, s = state page, t = top-100 table, w = other page, m = MCP tool, h = Hugging Face). If we ever correct the figure, the hash changes, so an old quote identifies itself. Paste a receipt from any page, answer, or article.</p>
 <div class="card">
 <input id="r" placeholder="⟦FRC:…⟧ or FRC:id:value:hash" autocomplete="off">
 <button id="go">Verify</button>
@@ -36,7 +36,8 @@ async function go(){const r=inp.value.trim(); if(!r) return; out.style.display="
  try{const d=await (await fetch(API+encodeURIComponent(r))).json();
   if(d.valid===false){out.className="res invalid";out.innerHTML=`<div class="big">Not a receipt we issued</div><div>${d.reason||""}${d.id?` — unknown claim id <span class="mono">${d.id}</span>`:""}</div>`;return;}
   const st=d.status==="hash-current-value-mismatch"?"altered":d.status; out.className="res "+st;
-  out.innerHTML=`<div class="big">${st==="current"?"Current":st==="stale"?"Stale — corrected since issued":"Altered"}</div><div>Claim <span class="mono">${d.id}</span> · quoted <b>${d.quoted_value}</b> · current <b>${d.current_value}</b></div><div class="small" style="margin-top:6px">${d.meaning||""}</div>`;
+  const iss=d.issued&&d.issued.channel&&d.issued.channel!=="none"?`<div class="small" style="margin-top:6px">Issued through: <b>${d.issued.channel_meaning}</b> (${d.issued.channel}), ${d.issued.issued_month}. The channel letter says which of our doors this copy came through and how old it is.</div>`:`<div class="small" style="margin-top:6px">No issue channel on this receipt (issued before October 2026, or the segment was dropped when the figure was copied).</div>`;
+  out.innerHTML=`<div class="big">${st==="current"?"Current":st==="stale"?"Stale — corrected since issued":"Altered"}</div><div>Claim <span class="mono">${d.id}</span> · quoted <b>${d.quoted_value}</b> · current <b>${d.current_value}</b></div><div class="small" style="margin-top:6px">${d.meaning||""}</div>${iss}`;
  }catch(e){out.className="res invalid";out.textContent="Could not reach the verifier. Try again in a moment.";}}
 document.getElementById("go").onclick=go; inp.addEventListener("keydown",e=>{if(e.key==="Enter")go();});
 const q=new URLSearchParams(location.search).get("r"); if(q){inp.value=q; go();}

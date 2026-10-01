@@ -18,8 +18,9 @@ Statuses: current  = hash matches today's claim object and the quoted value is t
 from __future__ import annotations
 import hashlib, json, os, re
 
-RECEIPT_RE = re.compile(r"⟦FRC:([a-z0-9-]+):([^:⟧]+):([a-f0-9]{8})⟧", re.I)
-LOOSE_RE = re.compile(r"FRC:([a-z0-9-]+):([^:\s⟧]+):([a-f0-9]{8})", re.I)
+RECEIPT_RE = re.compile(r"⟦FRC:([a-z0-9-]+):([^:⟧]+):([a-f0-9]{8})(?::([a-z][0-9]{4}))?⟧", re.I)
+CHANNELS = {"m": "MCP tool output", "w": "site page", "p": "answer page", "l": "lender page", "s": "state page", "t": "top-100 table", "h": "Hugging Face dataset", "a": "API JSON", "r": "RL environment"}
+LOOSE_RE = re.compile(r"FRC:([a-z0-9-]+):([^:\s⟧]+):([a-f0-9]{8})(?::([a-z][0-9]{4}))?", re.I)
 
 
 def _js_num(x):
@@ -89,16 +90,18 @@ class Verifier:
         if not m:
             return {"status": "malformed", "receipt": receipt}
         cid, value, h = m.group(1), m.group(2), m.group(3).lower()
+        chan = (m.group(4) or "").lower()
+        issued = {"channel": chan[:1], "channel_meaning": CHANNELS.get(chan[:1], "unknown"), "issued_month": f"20{chan[1:3]}-{chan[3:5]}"} if chan else {"channel": "none"}
         try:
             got = self.claim_object(cid)
         except (FileNotFoundError, StopIteration, KeyError):
             got = None
         if got is None:
-            return {"id": cid, "status": "unknown-id", "quoted_value": value}
+            return {"id": cid, "status": "unknown-id", "quoted_value": value, "issued": issued}
         current, obj = got
         now = sha8(obj)
         status = "current" if (now == h and current == value) else ("altered" if now == h else "stale")
-        return {"id": cid, "status": status, "quoted_value": value, "current_value": current, "hash_now": now, "hash_quoted": h}
+        return {"id": cid, "status": status, "quoted_value": value, "current_value": current, "hash_now": now, "hash_quoted": h, "issued": issued}
 
     def find_all(self, text: str) -> list[dict]:
         """Every receipt-shaped string in a text, checked. Loose (bracketless) forms are
@@ -107,7 +110,7 @@ class Verifier:
         seen, out = set(), []
         for rx in (RECEIPT_RE, LOOSE_RE):
             for m in rx.finditer(text):
-                key = (m.group(1).lower(), m.group(2), m.group(3).lower())
+                key = (m.group(1).lower(), m.group(2), m.group(3).lower(), (m.group(4) or "").lower())
                 if key in seen:
                     continue
                 seen.add(key); out.append(self.check(m.group(0)))

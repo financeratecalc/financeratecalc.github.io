@@ -2,7 +2,7 @@
 
 **Machine-readable use conditions for published statistics.**
 
-Status: draft 7, 2026-09-29. Reference checker: `tools/claimcheck/claimcheck.py`. Runnable fidelity task: `eval/denial_ai_fidelity.py` (Inspect AI). Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
+Status: draft 8, 2026-10-01. Reference checker: `tools/claimcheck/claimcheck.py`. Runnable fidelity task: `eval/denial_ai_fidelity.py` (Inspect AI). Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
 Reference implementation: 189 claims at https://financeratecalc.com/claims.json (passport format 0.1, contract format 0.1, which this document generalises).
 
 ---
@@ -189,6 +189,22 @@ Receipts are not optional per figure. A publisher either issues a receipt on **e
 
 The receipt's two other jobs do not depend on survival in prose: verification of any quoted figure, and stale-version detection in a misquote ledger.
 
+### 7b. The issue channel (draft 8)
+
+A receipt MAY carry a fifth segment naming the door it left by and the month it was issued:
+
+```
+⟦FRC:<claim-id>:<value>:<hash8>:<channel><YYMM>⟧      e.g.  ⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:m2610⟧
+```
+
+`channel` is one lowercase letter from the publisher's declared list; the reference implementation uses `m` MCP tool output, `p` answer page, `l` lender page, `s` state page, `t` top-100 table, `w` other site page, `h` Hugging Face dataset, `a` API JSON, `r` RL environment. `YYMM` is the issue month. The segment is provenance metadata, not integrity: the hash covers segments 2–4 only, a verifier MUST accept a receipt with or without it, and the same figure issued through two channels is the same claim with two receipts.
+
+What it is for. A statistic found in the wild then says which of the publisher's doors it came through and how old the copy is, without a probe. A receipt with `w` in an answer engine's output means the engine read the page; `m` means a tool-using agent; `h` means the dataset; and a receipt with `p2609` seen in 2027 is a copy made in September 2026 whatever the quoting system claims about freshness. Across systems, the channel letters make the supply chain of a figure observable: whether system B's number came from the publisher or from system A's restatement of it.
+
+Privacy rule. A verifier records at most counts of (channel, status) pairs. It MUST NOT record who verified, from where, or what else they verified. The reference `/verify` keeps a daily tally per (channel, status) and nothing else.
+
+Reporting rule. Channel observations are published as counts per channel per status, and as a per-system table when the misquote ledger holds the quoting system; never as claims about any person.
+
 ## 8. What this specification does not do
 
 - It does not rank publishers or certify truth. A contract says how a number may be used; whether the number is correct is the passport's provenance and the reproduce file, checkable by anyone.
@@ -233,4 +249,5 @@ See `claim-contract-1.0.schema.json` alongside this document.
 - Conformance levels introduced, including an L4 the editor has not reached.
 - Adoption test moved from publisher-side copying to consumer-side attestation (10).
 - Draft 6: claim receipt (7a) with its first measurements; coverage-or-nothing rule; FABRICATED_RECEIPT and OVERREACH_FROM_SOURCE added to the failure taxonomy (13 codes).
+- Draft 8: issue-channel segment (7b): a receipt may name the door and month it was issued through; verifier accepts both forms, records only (channel, status) counts. Deployed 2026-10-01 across MCP (m), 151 site pages (p/l/s/t/w) and the Hugging Face instrument (h).
 - Draft 7: full-coverage measurement of the receipt-aware client (23/36 carried, 2/36 forged); verify-before-print MUST for clients; SOURCE_LAUNDERED added to the taxonomy 2026-09-22 (14 codes): the correct figure served with the source omitted.

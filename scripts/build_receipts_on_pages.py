@@ -23,9 +23,14 @@ V = Verifier(ROOT)
 STYLE = "font-family:'DM Mono',monospace;font-size:11.5px;color:rgba(200,168,75,.85);display:inline-block;margin:6px 0 2px"
 
 
-def receipt(cid):
+import datetime
+def chan(code):
+    d = datetime.datetime.utcnow(); return f"{code}{str(d.year)[2:]}{d.month:02d}"
+
+def receipt(cid, code="w"):
+    """Receipt with an issue-channel segment: p answer page, l lender page, s state page, t top-100 table, w other site page."""
     cur, obj = V.claim_object(cid)
-    return cur, f"⟦FRC:{cid}:{cur}:{sha8(obj)}⟧"
+    return cur, f"⟦FRC:{cid}:{cur}:{sha8(obj)}:{chan(code)}⟧"
 
 
 def line(cid, r, note="claim receipt"):
@@ -62,10 +67,10 @@ def add_jsonld_identifier(html, r):
     return re.sub(r'<script type="application/ld\+json">(\{.*?\})</script>', fix, html, flags=re.S)
 
 
-def patch(path, cid, anchor_re, expect_value_in_anchor=True, note="claim receipt"):
+def patch(path, cid, anchor_re, expect_value_in_anchor=True, note="claim receipt", code="w"):
     html = open(path, encoding="utf-8").read()
     try:
-        cur, r = receipt(cid)
+        cur, r = receipt(cid, code)
     except Exception as e:
         return ("no-claim", f"{cid}: {e}")
     html = strip_old(html, cid)
@@ -87,18 +92,18 @@ def main():
 
     # national answer page
     rec(patch(os.path.join(ROOT, "how-often-are-fha-loans-denied.html"), "national-fha-denial-rate-2025",
-              r'<div class="answer">In 2025, 22\.1% of decisioned FHA applications were denied[^<]*'))
+              r'<div class="answer">In 2025, 22\.1% of decisioned FHA applications were denied[^<]*', code="p"))
     # top-100: the range sentence, two receipts
     p = os.path.join(ROOT, "fha-denial-rates-top-100.html")
     anchor = r'\(Amerisave Mortgage Company\)</b> &mdash; roughly a <b class="mono">44&times;</b> spread on the same federal program\.'
-    rec(patch(p, "lender-flat-branch-mortgage-2025", anchor, False, "Flat Branch receipt"))
-    rec(patch(p, "lender-amerisave-mortgage-2025", anchor, False, "AmeriSave receipt"))
+    rec(patch(p, "lender-flat-branch-mortgage-2025", anchor, False, "Flat Branch receipt", code="t"))
+    rec(patch(p, "lender-amerisave-mortgage-2025", anchor, False, "AmeriSave receipt", code="t"))
     # lender pages
     for f in sorted(glob.glob(os.path.join(ROOT, "*-fha-denial-rate.html"))):
         slug = os.path.basename(f)[:-len("-fha-denial-rate.html")]
         if not os.path.exists(os.path.join(ROOT, "api", "lender", slug + ".json")):
             rec(("no-claim", slug)); continue
-        rec(patch(f, f"lender-{slug}-2025", r"<p style=\"font-size:15px;color:#fff;font-weight:700;margin-bottom:8px;\">[^<]*FHA denial rate in 2025 was [0-9.]+%\.</p>"))
+        rec(patch(f, f"lender-{slug}-2025", r"<p style=\"font-size:15px;color:#fff;font-weight:700;margin-bottom:8px;\">[^<]*FHA denial rate in 2025 was [0-9.]+%\.</p>", code="l"))
     # older-template lender pages whose file slug differs from the data slug
     ALIAS = {'rocket':'rocket-mortgage','pennymac':'pennymac-loan-services','freedom':'freedom-mortgage','guild':'guild-mortgage',
              'wells-fargo':'wells-fargo-bank','us-bank-n-a':'us-bank','crosscountry':'crosscountry-mortgage','loandepot':'loandepotcom',
@@ -108,7 +113,7 @@ def main():
     for s_, a_ in ALIAS.items():
         f = os.path.join(ROOT, f"{s_}-fha-denial-rate.html")
         if os.path.exists(f):
-            rec(patch(f, f"lender-{a_}-2025", r"denied <span class=\"mono\">[0-9.]+%</span> of its [\d,]+ decisioned FHA applications in 2025</b>|[A-Za-z&.,' ]+ denied [0-9.]+% of its FHA applications in 2025"))
+            rec(patch(f, f"lender-{a_}-2025", r"denied <span class=\"mono\">[0-9.]+%</span> of its [\d,]+ decisioned FHA applications in 2025</b>|[A-Za-z&.,' ]+ denied [0-9.]+% of its FHA applications in 2025", code="l"))
     # state pages
     names = {}
     for f in glob.glob(os.path.join(ROOT, "api", "state", "*.json")):
@@ -122,10 +127,10 @@ def main():
         if not st or not os.path.exists(os.path.join(ROOT, "api", "state", st + ".json")):
             continue
         html = open(f, encoding="utf-8").read()
-        cur, r = receipt(f"state-{st}-2025")
+        cur, r = receipt(f"state-{st}-2025", "s")
         if cur not in html:
             rec(("value-mismatch", f"state-{st}: page lacks {cur}")); continue
-        rec(patch(f, f"state-{st}-2025", r"<h1>FHA denial rates in [^<]*<em>[^<]*</em>[^<]*</h1>", False, f"statewide rate {cur}, claim receipt"))
+        rec(patch(f, f"state-{st}-2025", r"<h1>FHA denial rates in [^<]*<em>[^<]*</em>[^<]*</h1>", False, f"statewide rate {cur}, claim receipt", code="s"))
     # small-loan stat page (Idaho)
     rec(patch(os.path.join(ROOT, "stat", "is-the-smallloan-penalty-worse-in-expensive-states.html"), "small-loan-penalty-id-2025",
               r'<div class="big">4\.45x</div>'))

@@ -536,7 +536,13 @@ async function sha8(obj) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(canon));
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("").slice(0, 8);
 }
-async function receipt(id, value, claimObj) { return `\u27e6FRC:${id}:${value}:${await sha8(claimObj)}\u27e7`; }
+// Issue channel (v1.15.0, 2026-10-01): a fifth segment names the door the receipt left by and the month,
+// e.g. m2610 = MCP tool output, October 2026; w = site page, p = answer page, l = lender page, s = state page,
+// t = top-100 table, h = Hugging Face, a = API JSON. The hash is unchanged (integrity is segments 2-4); the
+// channel is provenance metadata, so a receipt found in the wild says which door it came through and how old
+// the copy is. /verify accepts receipts with or without the segment and records only (channel, status) counts.
+function channelCode(ch) { const d = new Date(); return `${ch}${String(d.getUTCFullYear()).slice(2)}${String(d.getUTCMonth() + 1).padStart(2, "0")}`; }
+async function receipt(id, value, claimObj, ch = "m") { return `\u27e6FRC:${id}:${value}:${await sha8(claimObj)}:${channelCode(ch)}\u27e7`; }
 async function quotable(sentence, extra, rid, value, claimObj) {
   const r = rid ? await receipt(rid, value, claimObj) : null;
   // Placement experiment 2 (2026-09-21): the receipt is attached to the number itself, not to the end of
@@ -565,7 +571,7 @@ export default {
       const claim_id = String(body.claim_id || "").slice(0, 80);
       if (quote.length < 20) return json({ error: "quote too short" }, 400);
       const id = `mq:${new Date().toISOString().slice(0, 10)}:${crypto.randomUUID().slice(0, 8)}`;
-      const rm = /\u27e6FRC:([a-z0-9-]+):([^:]+):([a-f0-9]{8})\u27e7/i.exec(quote);
+      const rm = /\u27e6FRC:([a-z0-9-]+):([^:\u27e7]+):([a-f0-9]{8})(?::[a-z][0-9]{4})?\u27e7/i.exec(quote);
       const rec = { id, system, quote, source_url, claim_id, submitted: new Date().toISOString(), status: "pending_review",
         receipt: rm ? rm[0] : null, receipt_note: rm ? "carries a claim receipt; verify at /verify" : "no receipt: the quote cannot be tied to a version of the figure" };
       try { await env.CREDITS.put(id, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 730 }); } catch { return json({ error: "store failed" }, 500); }
@@ -574,9 +580,10 @@ export default {
     // Verify a claim receipt: is this figure still current, or was it corrected after the receipt was issued?
     if (path === "/verify" && request.method === "GET") {
       const r = new URL(request.url).searchParams.get("r") || "";
-      const m = /\u27e6FRC:([a-z0-9-]+):([^:]+):([a-f0-9]{8})\u27e7/i.exec(r) || /FRC:([a-z0-9-]+):([^:]+):([a-f0-9]{8})/i.exec(r);
+      const m = /\u27e6FRC:([a-z0-9-]+):([^:\u27e7]+):([a-f0-9]{8})(?::([a-z][0-9]{4}))?\u27e7/i.exec(r) || /FRC:([a-z0-9-]+):([^:\s\u27e7]+):([a-f0-9]{8})(?::([a-z][0-9]{4}))?/i.exec(r);
       if (!m) return json({ valid: false, reason: "not a receipt" }, 400);
-      const [, id, value, h] = m;
+      const [, id, value, h, chan] = m;
+      const channel = chan ? chan.toLowerCase() : "none";
       let current = null, claimObj = null;
       try {
         if (id === "national-fha-denial-rate-2025") { const idx = await getJSON("/api/index.json"); current = `${idx.national.rate_pct.toFixed(1)}%`; claimObj = (await getJSON("/claims/national-fha-denial-rate-2025.json")).claim; }
@@ -591,7 +598,10 @@ export default {
       } catch (e) { return json({ valid: false, reason: "lookup failed" }, 502); }
       const nowHash = await sha8(claimObj);
       const status = nowHash === h ? (current === value ? "current" : "hash-current-value-mismatch") : "stale";
-      return json({ receipt: `\u27e6FRC:${id}:${value}:${h}\u27e7`, id, quoted_value: value, current_value: current, status,
+      const CH = { m: "MCP tool output", w: "site page", p: "answer page", l: "lender page", s: "state page", t: "top-100 table", h: "Hugging Face dataset", a: "API JSON", r: "RL environment" };
+      const issued = chan ? { channel: channel[0], channel_meaning: CH[channel[0]] || "unknown channel", issued_month: "20" + channel.slice(1, 3) + "-" + channel.slice(3, 5) } : { channel: "none", channel_meaning: "receipt issued before channel tagging (pre-October 2026) or segment dropped in copying" };
+      try { await tally(env, "verify", `${channel}:${status}`); } catch {}
+      return json({ receipt: `\u27e6FRC:${id}:${value}:${h}${chan ? ":" + channel : ""}\u27e7`, id, quoted_value: value, current_value: current, status, issued,
         meaning: status === "current" ? "This figure is current and unchanged since the receipt was issued." : status === "stale" ? "The figure was corrected after this receipt was issued; the quoted value may be superseded. See corrections.html." : "The receipt hash matches but the quoted value does not; the quote was altered.",
         corrections: "https://financeratecalc.com/corrections.html", license: "CC BY 4.0" });
     }
@@ -646,7 +656,7 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.14.1" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.15.0" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));

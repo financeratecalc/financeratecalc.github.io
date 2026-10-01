@@ -91,8 +91,8 @@ def frc_call(tool: str, arguments_json: str = "{}") -> str:
 
 # ----------------------------------------------------------------------------- receipts
 
-RECEIPT_RE = re.compile(r"⟦FRC:([a-z0-9-]+):([^:⟧]+):([a-f0-9]{8})⟧", re.I)
-LOOSE_RE = re.compile(r"FRC:([a-z0-9-]+):([^:\s⟧]+):([a-f0-9]{8})", re.I)
+RECEIPT_RE = re.compile(r"⟦FRC:([a-z0-9-]+):([^:⟧]+):([a-f0-9]{8})(?::([a-z][0-9]{4}))?⟧", re.I)
+LOOSE_RE = re.compile(r"FRC:([a-z0-9-]+):([^:\s⟧]+):([a-f0-9]{8})(?::([a-z][0-9]{4}))?", re.I)
 
 with open(os.path.join(HERE, "receipts-snapshot.json"), encoding="utf-8") as _f:
     SNAPSHOT = json.load(_f)["receipts"]

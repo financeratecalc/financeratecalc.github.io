@@ -11,6 +11,8 @@
 ### Why it is hard
 On the Inspect reference (Claude Sonnet 4.6, 12 × 3, 2026-09-20..22) the model got every numeric figure right in every repeat and earned full contract credit in 1/36 to 11/36 answers; it carried the receipt in 0/36 as prose and 23/36 when told the receipt is part of the figure, forging one in 2/36 even at full receipt coverage. The reward here scores exactly that gap.
 
+**Issue channel (2026-10-01):** receipts may carry a fifth segment `:<channel><YYMM>` naming the door and month they were issued through (m MCP, p/l/s/t/w site pages, h Hugging Face). Hash and rewards are unchanged; the verifier accepts both forms and reports the channel.
+
 ### Datasets
 - **Primary**: `questions.json` (12 questions, curated `key_numbers` per question, universe id). Frozen battery v1.3 of the Denial-AI Benchmark (also on Hugging Face: FinanceRateCalc/denial-ai-benchmark).
 - **Receipts**: `receipts-snapshot.json`, 386 claim ids → (current value, hash8), generated 2026-09-29 from the publisher's data files with the same canonicalisation as the live `/verify`.
