@@ -24,6 +24,12 @@ Branch content: `rl-env/community/frc_citation/` copied to `environments/frc_cit
 
 Needs a fork of prime-environments under the financeratecalc account (one click on GitHub: Fork). Then the branch is pushed from here and the PR opened.
 
-## C. Inspect Evals (UK AISI) — PR
+## C. Inspect Evals Register (UK AISI) — issue, not PR
 
-`eval/denial_ai_fidelity.py` + README following their template; no payment; after A/B.
+Inspect Evals no longer accepts code; evals are *registered* (pinned commit of the upstream repo). Requirements met on 2026-10-01: root `pyproject.toml` with `[project]` and `inspect_ai` dependency; `@task` functions in `eval/denial_ai_fidelity.py`; `eval/__init__.py`; assets pinnable via `FRC_SITE=<raw URL at commit>`.
+
+Steps (yours, ~5 minutes): open https://github.com/UKGovernmentBEIS/inspect_evals/issues/new?template=register-submission.yml and fill:
+- **arXiv URL**: the form asks for arXiv. We have SSRN only; enter the SSRN DOI of the fifth paper once posted (or https://doi.org/10.2139/ssrn.7156938 for the benchmark paper) and say so in the notes. If arXiv is mandatory, the paper must be posted to arXiv first (cs.CY/cs.CL; needs an endorser) — tell me and I prepare the arXiv version.
+- **Source URL**: `https://github.com/financeratecalc/financeratecalc.github.io/blob/<40-char commit sha>/eval/denial_ai_fidelity.py#L199` (one task per issue; start with `denial_ai_fidelity_with_source`, line of its `def`). I will give you the exact URL with the SHA.
+- **Maintainers**: your GitHub username.
+A bot validates and opens the PR. Then two models' `.eval` logs for a full run go to their log uploader (we have Haiku and Sonnet logs as workflow artifacts; I will download and hand them to you).

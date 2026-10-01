@@ -26,7 +26,10 @@ from inspect_ai.scorer import scorer, Score, Target, accuracy, mean
 from inspect_ai.solver import generate, system_message, use_tools
 from inspect_ai.tool import mcp_server_http, mcp_tools
 
-SITE = "https://financeratecalc.com"
+SITE = os.environ.get("FRC_SITE", "https://financeratecalc.com")
+# For a pinned administration (Inspect Evals Register), point FRC_SITE at the repository at a commit, e.g.
+#   FRC_SITE=https://raw.githubusercontent.com/financeratecalc/financeratecalc.github.io/<40-char sha>
+# benchmark.json and claims.json are then read from that commit instead of the live site.
 
 def _get(url):
     """Fetch JSON from the site, or from a local checkout when `site` is a filesystem path."""
