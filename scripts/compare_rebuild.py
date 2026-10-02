@@ -12,19 +12,22 @@ rep["national"] = {"rebuilt": {"apps": n["apps"], "denials": n["denials"], "rate
                    "published": {"apps": idx["apps"], "denials": idx["denials"], "rate_pct": idx["rate_pct"]},
                    "match": n["apps"] == idx["apps"] and n["denials"] == idx["denials"]}
 def slugify(s): import re; return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
-pub = {}
+pub = {}; by_lei = {}
 for f in glob.glob(os.path.join(ROOT, "api/lender/*.json")):
     d = json.load(open(f)); pub[os.path.basename(f)[:-5]] = d
+    if d.get("lei"): by_lei[d["lei"]] = (os.path.basename(f)[:-5], d)
 L = rb.get("lenders") or []
 rows = L if isinstance(L, list) else list(L.values())
 matched = mism = missing = 0; mismatches = []
 for r in rows:
-    slug = r.get("slug") or slugify(r.get("lender") or r.get("name") or "")
-    p = pub.get(slug)
+    hit = by_lei.get(r.get("lei"))
+    slug = hit[0] if hit else (r.get("slug") or slugify(r.get("lender") or r.get("name") or ""))
+    p = hit[1] if hit else pub.get(slug)
     if not p: missing += 1; continue
-    ok = abs(float(r.get("denial_rate_pct", r.get("rate_pct", -1))) - float(p["denial_rate_pct"])) < 0.05 and int(r.get("decisioned_applications", r.get("apps", -1))) == int(p["decisioned_applications"])
+    rate = float(r.get("rate", r.get("denial_rate_pct", r.get("rate_pct", -1)))); apps = int(r.get("apps", r.get("decisioned_applications", -1)))
+    ok = abs(rate - float(p["denial_rate_pct"])) < 0.05 and apps == int(p["decisioned_applications"])
     matched += ok; mism += (not ok)
-    if not ok and len(mismatches) < 20: mismatches.append({"slug": slug, "rebuilt": r, "published": {k: p[k] for k in ("denial_rate_pct", "decisioned_applications")}})
+    if not ok and len(mismatches) < 20: mismatches.append({"slug": slug, "rebuilt": {"rate": rate, "apps": apps}, "published": {k: p[k] for k in ("denial_rate_pct", "decisioned_applications")}})
 rep["lenders"] = {"rebuilt_rows": len(rows), "published_files": len(pub), "matched": matched, "mismatched": mism, "not_in_published": missing, "examples": mismatches}
 S = rb.get("states") or {}
 srows = S if isinstance(S, dict) else {x.get("state"): x for x in S}
