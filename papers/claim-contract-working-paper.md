@@ -80,6 +80,8 @@ Test vectors are normative and derivable: the pass vector is the canonical claim
 
 A receipt is a serial number for a statistic: `⟦FRC:<claim-id>:<value>:<hash8>⟧`, where hash8 is the first eight hex characters of the passport hash. A corrected value changes the hash, so a receipt carrying an old hash identifies itself as stale without a lookup. The publisher exposes `GET /verify?r=` returning `current`, `stale` or `altered`.
 
+Three additions were made after the first administrations (spec drafts 9–10, 2026-10-01/02). **Issue channel:** a receipt may carry a fifth segment `:<channel><YYMM>` naming the door it was issued through (MCP tool, site page, dataset, API, RL environment) and the month; the hash does not cover it and a verifier accepts both forms, so a figure found in the wild says where it came from and how old the copy is without a probe. **Claim transparency:** the publisher signs a snapshot of every issued (id, value, hash8) keylessly with Sigstore, identity being the build workflow, and the signature is entered in the public Rekor log; a receipt absent from every snapshot was never issued, one present in an earlier snapshot only was issued before a correction, and a consumer or an RL reward can verify without calling the publisher. **Build provenance:** the published figures are recomputed from the CFPB file inside an attested hosted build (SLSA v1 provenance, Build L2) and compared with the shipped files; on 2026-10-02 the national, 98 lender and 52 state figures reproduced exactly. This is computational reproduction with no human in the chain, not independent replication: L4 is unchanged.
+
 Two conformance rules follow from §5.4 and are stated here so that the specification is read with its evidence. Receipts are coverage-or-nothing: a publisher that issues any receipt must issue one on every figure-bearing endpoint. And a client that prints receipts must verify each one against the publisher before printing it, because forgery was observed at full coverage as well as partial.
 
 ### 3.7 Conformance and adoption
@@ -182,6 +184,8 @@ Each publisher correction is logged with the date, and each later probe of a sys
 
 The HECM universe correction (2026-07-26, 21.7% → 22.1%) was picked up by one web-connected system within a day of the site banner that announced it. The small-loan universe correction produced the instructive case: on 2026-09-22 one system served the old 3.2× because the publisher's own stat page still carried it. That latency was the publisher's, not the engine's, and it is logged that way.
 
+Latency has one cause the publisher can remove: consuming systems have nowhere to listen. Since 2026-10-02 the corrections log is also published as a feed (`/corrections.json`: every entry, error family and correction atom, with claim ids and old/new values where stated, derived from the human log and never hand-edited; spec §7d). Whether any system polls it is the next measurement, and the latency series will say.
+
 ### 6.3 The misquote ledger
 
 A public endpoint accepts a reported misquote (system, date, figure served, claim id, receipt if any) without recording the submitter; a graded overlay applies the §4.3 codes. Three entries are graded at the time of writing: a web system that attributed a figure ("1,504 lenders") to the publisher that the publisher does not state (P; ATTRIBUTION_DRIFT, FABRICATED_SUPPORT); a system that served the correct 4.45× small-loan penalty with no source (C on fidelity, 0 on attribution; SOURCE_LAUNDERED, the fourteenth code, added for this case); and a system that served the stale 3.2× with the wrong scope while citing the publisher (I; STALE_VALUE, SCOPE_WRONG, ATTRIBUTION_DRIFT). Entries not graded are shown as pending.
@@ -200,7 +204,7 @@ Eleven publisher-error families are logged between July and September on the pub
 
 Stated in the order of how much they bound the results.
 
-1. **One grader, one provider.** Every figure in §5 passed through one model-based grader. The full-coverage run shows that the grader's reading of longer tool output can move the full-marks figure from 11/36 to 1/36 with value and consistency unchanged. The second-provider grader was planned and not run (credit). Until it runs, §5 is one instrument's reading.
+1. **One grader, one provider.** Observed results are sensitive to evaluation configuration; the current study cannot separate model behaviour from grader and prompt-condition effects. Every figure in §5 passed through one model-based grader. The full-coverage run shows that the grader's reading of longer tool output can move the full-marks figure from 11/36 to 1/36 with value and consistency unchanged. The second-provider grader was planned and not run (credit). Until it runs, §5 is one instrument's reading.
 2. **One model, one day, one account, one region.** Nothing generalises to other systems. The hand-graded series covered eight systems and is a different instrument.
 3. **n = 36 per condition.** No per-code difference in §5.2 is significant; the receipt-survival differences in §5.4 are, but on a mechanism (a client instruction) rather than a model property.
 4. **The author is publisher, grader designer and operator.** The mitigations are structural (§1); they do not remove the conflict.
