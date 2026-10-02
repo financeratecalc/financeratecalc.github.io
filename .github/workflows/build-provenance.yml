@@ -1,114 +1,68 @@
-name: Build provenance (recompute figures from the CFPB file, attest)
-# Downloads the public CFPB HMDA 2025 FHA file from the FFIEC data browser, pins its SHA-256,
-# runs scripts/reference_implementation.py at this commit, compares the result with the figures
-# the site publishes (api/index.json, api/lender/*.json, api/state/*.json), and, when they agree,
-# signs a provenance statement (input hash -> code commit -> output hash) with Sigstore and
-# records it in Rekor via GitHub's build-provenance attestation. A disagreement is written to
-# transparency/provenance-check.json and nothing is attested: a mismatch is a publisher error
-# to log, not to paper over.
+name: Build provenance (recompute from the CFPB file, attest)
+# Downloads the public CFPB HMDA 2025 FHA extract, runs the published reference implementation
+# at this commit, compares the result with the published data files, and attests the report
+# with SLSA build provenance (GitHub OIDC identity -> Sigstore/Rekor). The chain is then:
+# receipt hash -> signed snapshot -> this attestation -> SHA-256 of the CFPB input file.
 on:
   workflow_dispatch:
     inputs:
-      attest:
-        description: "Attest if the recomputation matches (true/false)"
-        default: "true"
+      source_url:
+        description: "CFPB file URL (FHA extract)"
+        default: "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&loan_types=2"
 permissions:
   contents: read
   id-token: write
   attestations: write
 jobs:
-  recompute:
+  rebuild:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - name: Download the CFPB HMDA 2025 FHA file (FFIEC data browser, nationwide, loan_type 2)
+      - name: Download the CFPB file
         run: |
-          curl -sSL --retry 3 -o /tmp/hmda_2025_fha.csv "https://ffiec.cfpb.gov/v2/data-browser-api/view/nationwide/csv?years=2025&loan_types=2"
+          curl -L --retry 3 --max-time 3600 -o /tmp/hmda_2025_fha.csv "${{ github.event.inputs.source_url }}"
           ls -la /tmp/hmda_2025_fha.csv; head -c 600 /tmp/hmda_2025_fha.csv; echo
-          sha256sum /tmp/hmda_2025_fha.csv | tee /tmp/input.sha256
-          wc -l /tmp/hmda_2025_fha.csv
-      - name: Recompute with the reference implementation at this commit
+          echo "INPUT_SHA=$(sha256sum /tmp/hmda_2025_fha.csv | cut -c1-64)" >> $GITHUB_ENV
+          echo "INPUT_BYTES=$(stat -c%s /tmp/hmda_2025_fha.csv)" >> $GITHUB_ENV
+      - name: Run the reference implementation
         run: |
           python scripts/reference_implementation.py /tmp/hmda_2025_fha.csv 2>&1 | tail -25
           ls -la /tmp/frc_rebuild.json
-      - name: Compare with the published figures
-        id: cmp
+      - name: Compare with the published data files
         run: |
-          python - <<'PY'
-          import json, glob, os, hashlib, datetime
-          R = json.load(open("/tmp/frc_rebuild.json"))
-          out = {"generated": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"), "commit": os.environ.get("GITHUB_SHA"),
-                 "input": {"url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/nationwide/csv?years=2025&loan_types=2",
-                           "sha256": open("/tmp/input.sha256").read().split()[0], "bytes": os.path.getsize("/tmp/hmda_2025_fha.csv")},
-                 "output_sha256": hashlib.sha256(open("/tmp/frc_rebuild.json", "rb").read()).hexdigest(), "checks": []}
-          pub = json.load(open("api/index.json"))["national"]
-          nat = R["national"]
-          out["checks"].append({"figure": "national", "published": pub, "recomputed": nat, "match": all(nat.get(k) == pub.get(k) for k in ("apps", "denials", "rate_pct"))})
-          # lenders: match by slug where the rebuild carries one, else by name
-          mism, n = [], 0
-          lend = R.get("lenders") or []
-          byname = {}
-          for L in (lend if isinstance(lend, list) else lend.values()):
-              key = (L.get("slug") or L.get("lender") or L.get("name") or "").lower()
-              byname[key] = L
-          for f in sorted(glob.glob("api/lender/*.json")):
-              d = json.load(open(f)); k = (d.get("slug") or "").lower(); L = byname.get(k) or byname.get((d.get("lender") or "").lower())
-              if not L: continue
-              n += 1
-              rr = L.get("denial_rate_pct", L.get("rate_pct")); ra = L.get("decisioned_applications", L.get("apps"))
-              if rr != d["denial_rate_pct"] or (ra is not None and ra != d["decisioned_applications"]):
-                  mism.append({"slug": d["slug"], "published": [d["denial_rate_pct"], d["decisioned_applications"]], "recomputed": [rr, ra]})
-          out["checks"].append({"figure": "lenders", "compared": n, "mismatches": mism, "match": n > 0 and not mism})
-          sm, sn = [], 0
-          st = R.get("states") or {}
-          for f in sorted(glob.glob("api/state/*.json")):
-              d = json.load(open(f)); S = st.get(d["state"]) if isinstance(st, dict) else next((x for x in st if x.get("state") == d["state"]), None)
-              if not S: continue
-              sn += 1
-              rr = S.get("denial_rate_pct", S.get("rate_pct")); ra = S.get("decisioned_applications", S.get("apps"))
-              if rr != d["denial_rate_pct"] or (ra is not None and ra != d["decisioned_applications"]):
-                  sm.append({"state": d["state"], "published": [d["denial_rate_pct"], d["decisioned_applications"]], "recomputed": [rr, ra]})
-          out["checks"].append({"figure": "states", "compared": sn, "mismatches": sm, "match": sn > 0 and not sm})
-          out["all_match"] = all(c["match"] for c in out["checks"])
-          out["rebuild_keys"] = sorted(R.keys())
-          out["lender_sample"] = (lend[0] if isinstance(lend, list) and lend else (next(iter(lend.values())) if isinstance(lend, dict) and lend else None))
-          os.makedirs("transparency", exist_ok=True)
-          json.dump(out, open("transparency/provenance-check.json", "w"), indent=1, ensure_ascii=False)
-          print(json.dumps({k: v for k, v in out.items() if k not in ("lender_sample",)}, indent=1)[:4000])
-          open(os.environ["GITHUB_OUTPUT"], "a").write(f"all_match={'true' if out['all_match'] else 'false'}\n")
-          PY
-      - name: Attest the recomputed output (only when everything matches)
-        if: steps.cmp.outputs.all_match == 'true' && github.event.inputs.attest == 'true'
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-path: /tmp/frc_rebuild.json
-      - name: Record the attestation pointer
-        if: always()
-        run: |
+          python scripts/compare_rebuild.py /tmp/frc_rebuild.json "$INPUT_SHA"
           python - <<'PY'
           import json, os
-          p = "transparency/provenance-check.json"; d = json.load(open(p))
-          d["attested"] = "${{ steps.cmp.outputs.all_match }}" == "true" and "${{ github.event.inputs.attest }}" == "true"
-          d["attestations_url"] = "https://github.com/financeratecalc/financeratecalc.github.io/attestations"
-          json.dump(d, open(p, "w"), indent=1, ensure_ascii=False)
+          r = json.load(open("provenance/rebuild-report.json"))
+          r["input"] = {"url": "${{ github.event.inputs.source_url }}", "sha256": os.environ["INPUT_SHA"], "bytes": int(os.environ["INPUT_BYTES"])}
+          r["code"] = {"repository": "financeratecalc/financeratecalc.github.io", "commit": os.environ["GITHUB_SHA"], "script": "scripts/reference_implementation.py"}
+          r["workflow"] = "${{ github.workflow }} / run ${{ github.run_id }}"
+          json.dump(r, open("provenance/rebuild-report.json", "w"), indent=1)
           PY
-      - name: Publish the check via the GitHub API
+      - name: Attest build provenance of the report (SLSA, Sigstore)
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: provenance/rebuild-report.json
+      - name: Publish the report via the GitHub API
         if: always()
         env:
           GH_PAT: ${{ secrets.EVAL_PAT }}
         run: |
           python - <<'PY'
-          import os, json, base64, urllib.request
-          tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"; p = "transparency/provenance-check.json"
-          url = f"https://api.github.com/repos/{repo}/contents/{p}"
-          sha = None
-          try: sha = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={"Authorization": f"token {tok}"}))).get("sha")
-          except Exception: pass
-          data = {"message": "build provenance: recomputation check", "content": base64.b64encode(open(p, "rb").read()).decode(), "branch": "main"}
-          if sha: data["sha"] = sha
-          req = urllib.request.Request(url, method="PUT", data=json.dumps(data).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
-          print(urllib.request.urlopen(req).status)
+          import os, json, base64, urllib.request, datetime
+          tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"
+          stamp = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M")
+          for path, dest in [("provenance/rebuild-report.json", "provenance/rebuild-report.json"), ("provenance/rebuild-report.json", f"provenance/history/rebuild-{stamp}.json")]:
+              if not os.path.exists(path): continue
+              url = f"https://api.github.com/repos/{repo}/contents/{dest}"
+              sha = None
+              try: sha = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={"Authorization": f"token {tok}"}))).get("sha")
+              except Exception: pass
+              data = {"message": f"build provenance: rebuild report {stamp}", "content": base64.b64encode(open(path, "rb").read()).decode(), "branch": "main"}
+              if sha: data["sha"] = sha
+              req = urllib.request.Request(url, method="PUT", data=json.dumps(data).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
+              print(dest, urllib.request.urlopen(req).status)
           PY
