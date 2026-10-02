@@ -3,8 +3,8 @@
 `rebuild-report.json` is produced by `.github/workflows/build-provenance.yml`: a GitHub-hosted runner
 downloads the public CFPB HMDA 2025 FHA extract (URL and SHA-256 recorded in the report), runs
 `scripts/reference_implementation.py` at the commit recorded in the report, and compares the result
-with the published data files. The report is then attested with GitHub build provenance (SLSA v1 provenance predicate, Build Level 2 as issued by
-GitHub-hosted runners; GitHub OIDC identity, Sigstore, Rekor), so the chain from a claim receipt to the federal input file has no human
+with the published data files. The report is then attested with GitHub build provenance (SLSA v1 provenance predicate as issued by GitHub's attestation action on hosted runners,
+which GitHub documents as Build Level 2; nobody has certified this chain at any level; GitHub OIDC identity, Sigstore, Rekor), so the chain from a claim receipt to the federal input file has no human
 computer in it:
 
     receipt hash8 → signed receipts snapshot (transparency/) → this attested rebuild report → SHA-256 of the CFPB file
