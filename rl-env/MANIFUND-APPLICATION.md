@@ -5,7 +5,9 @@ Paste into manifund.org → Create project. Fields follow their form; trim where
 ---
 
 ## Title
-Source-faithful citation: a self-verifying evaluation and RL environment for how models restate published statistics
+Source-faithful citation: a self-verifying eval for how AI restates statistics
+
+(shorter options if the box is still tight: "Self-verifying eval: do AIs restate statistics faithfully?" / "Faithful citation eval with deterministic rewards")
 
 ## One-line summary
 Frontier models get the number right and the sentence wrong. This project ships a public, model-free way to measure that (Claim Contract 1.0 + claim receipts), an Inspect eval and a verifiers RL environment with deterministic rewards, and uses a small grant to scale the battery, run a second-provider grader, and train a small open model on the reward.
