@@ -79,6 +79,8 @@ Inspect reference: `inspect eval eval/denial_ai_fidelity.py@denial_ai_fidelity_w
 
 Not a benchmark of language models in general: one model has been measured. Not a claim that receipts improve fidelity: they make a quoted figure verifiable, which is a different property. Not evidence about any lender: every figure is a historical aggregate from a public federal record, associational, never a prediction about a person, never evidence of misconduct. The publisher's own errors are graded in the same ledger as the models' (`../corrections.html`, twelve families since July 2026; the twelfth is in this instrument).
 
+**On the Prime Intellect Environments Hub:** https://app.primeintellect.ai/dashboard/environments/financeratecalc/frc-citation (`prime env install financeratecalc/frc-citation`).
+
 ## Related
 
 Specification: `../spec/claim-contract-1.0-draft.md`. Papers: SSRN 7156938, 7309319, 7341481, 7423798 and `../papers/claim-contract-working-paper.md`. Misquote ledger: https://financeratecalc.com/misquotes.html. Benchmark on Hugging Face: FinanceRateCalc/denial-ai-benchmark.

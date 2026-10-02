@@ -30,6 +30,8 @@ Per aitraining.jobs (rates as quoted there, unverified against the platforms):
 
 - Dataset FinanceRateCalc/denial-ai-benchmark. Add the environment card as a dataset card section and link `rl-env/`. No payment; discoverability.
 
+**Published on the Hub 2026-10-02:** https://app.primeintellect.ai/dashboard/environments/financeratecalc/frc-citation — install with `prime env install financeratecalc/frc-citation`. (The community-environments repo no longer accepts PRs; the Hub is the channel. Research-program form submitted the same day.)
+
 ## Order
 
 1 → 3 → 4 this week. The adapter is rollout-tested (2026-09-29, Haiku, 12/12, 0 errors). 2 only if the owner wants hourly work.

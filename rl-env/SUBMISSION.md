@@ -18,7 +18,11 @@ Answers to paste. Adjust the personal fields.
 
 **Links:** https://github.com/financeratecalc/financeratecalc.github.io/tree/main/rl-env · spec: /spec/claim-contract-1.0-draft.md · runs: /eval/runs · https://financeratecalc.com/verdict-automated.html
 
-## B. Pull request to PrimeIntellect-ai/prime-environments
+## B. Prime Intellect Hub — DONE 2026-10-02
+
+Published as `financeratecalc/frc-citation`: https://app.primeintellect.ai/dashboard/environments/financeratecalc/frc-citation. The PR route is closed upstream (pull requests disabled); the fork branch `financeratecalc/community-environments:frc-citation` holds the same package. Research-program form (A) submitted 2026-10-02. Inspect Register issue: https://github.com/UKGovernmentBEIS/inspect_evals/issues/2613.
+
+## B (old). Pull request to PrimeIntellect-ai/prime-environments
 
 Branch content: `rl-env/community/frc_citation/` copied to `environments/frc_citation/` (pyproject, module, README, questions.json, receipts-snapshot.json, outputs/). Title: "frc-citation: source-faithful citation of published statistics, deterministic rewards". Body: the paragraph above plus the rubric table from the README and the `vf-eval` line.
 
