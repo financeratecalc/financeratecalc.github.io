@@ -8,7 +8,7 @@ on:
     inputs:
       source_url:
         description: "CFPB file URL (FHA extract)"
-        default: "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&loan_types=2"
+        default: "https://ffiec.cfpb.gov/v2/data-browser-api/view/nationwide/csv?years=2025&loan_types=2"
 permissions:
   contents: read
   id-token: write
@@ -23,7 +23,7 @@ jobs:
         with: { python-version: "3.12" }
       - name: Download the CFPB file
         run: |
-          curl -L --retry 3 --max-time 3600 -o /tmp/hmda_2025_fha.csv -w "http %{http_code} type %{content_type} bytes %{size_download}\n" "${{ github.event.inputs.source_url }}" 2>&1 | tee -a /tmp/run.log
+          curl -L --compressed --retry 3 --max-time 3600 -o /tmp/hmda_2025_fha.csv -w "http %{http_code} type %{content_type} bytes %{size_download}\n" "${{ github.event.inputs.source_url }}" 2>&1 | tee -a /tmp/run.log
           ls -la /tmp/hmda_2025_fha.csv | tee -a /tmp/run.log; head -c 800 /tmp/hmda_2025_fha.csv | tee -a /tmp/run.log; echo; wc -l /tmp/hmda_2025_fha.csv | tee -a /tmp/run.log
           echo "INPUT_SHA=$(sha256sum /tmp/hmda_2025_fha.csv | cut -c1-64)" >> $GITHUB_ENV
           echo "INPUT_BYTES=$(stat -c%s /tmp/hmda_2025_fha.csv)" >> $GITHUB_ENV
