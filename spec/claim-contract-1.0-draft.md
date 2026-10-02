@@ -211,6 +211,8 @@ A conforming L3 publisher SHOULD, and an L4 publisher MUST, publish a **signed s
 
 Consequences. A receipt whose hash8 appears in a signed snapshot was provably issued by the publisher; one that appears in no snapshot was never issued (forgery); one that appears in an earlier snapshot but not the latest was issued before a correction, and the two log entries date the correction. A consumer, a grader, or an RL reward can therefore verify a receipt **without calling the publisher**, and a publisher can no longer correct a figure silently, because the log is not the publisher's. The publisher's `/verify` endpoint becomes a convenience, not a trust root.
 
+Build provenance (draft 9, same day). A publisher SHOULD additionally recompute its figures from the primary source in a hosted, attested build (SLSA provenance: input hash, code commit, output hash, workflow identity) and publish the comparison with its published files. The reference implementation did so on 2026-10-02: national, 98 lender and 52 state figures reproduced exactly from the CFPB file (`provenance/`). This is computational reproduction with no human computer in the chain, not independent replication; L4 is unchanged.
+
 Reference implementation: `transparency/` in the FinanceRateCalc repository (`receipts-snapshot.sigstore.json`, `log.json`, verify command in the README); first entry Rekor log index 3039652842, 2026-10-01.
 
 ## 8. What this specification does not do
