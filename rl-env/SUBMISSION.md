@@ -37,3 +37,7 @@ Steps (yours, ~5 minutes): open https://github.com/UKGovernmentBEIS/inspect_eval
 - **Source URL**: `https://github.com/financeratecalc/financeratecalc.github.io/blob/<40-char commit sha>/eval/denial_ai_fidelity.py#L199` (one task per issue; start with `denial_ai_fidelity_with_source`, line of its `def`). I will give you the exact URL with the SHA.
 - **Maintainers**: your GitHub username.
 A bot validates and opens the PR. Then two models' `.eval` logs for a full run go to their log uploader (we have Haiku and Sonnet logs as workflow artifacts; I will download and hand them to you).
+
+## D. Perplexity publisher program — SENT 2026-10-02
+
+Written application to press@perplexity.ai (no public program address exists), two offers: (1) the graded ledger entries on how Perplexity restates FRC figures (2026-09-20, 2026-09-22), (2) the correction feed `corrections.json` (spec §7d). No call requested. Follow-up: one resend on 2026-10-12 if no reply, then closed. Expected money if accepted: small (revenue share is pro-rated by citations and visits); expected value: first external acceptance, API/partner-team access for the feed.
