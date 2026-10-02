@@ -28,7 +28,7 @@ That is the shape of a useful environment: the naive policy scores near zero on 
 
 ## The tools
 
-The publisher's MCP server (`https://frc-mcp.ziyetis.workers.dev`, 14 tools, worker 1.14.1) returns for every figure: the value, its universe id, a contract-shaped `quotable_sentence`, the claim receipt, a `receipt_rule` and a `quoting_rule`. `?mode=raw` strips the intervention fields for a control condition. The server is public, rate-limited, and free; a trainer that wants to run thousands of rollouts should mirror the `api/` and `claims/` directories and serve them locally (the tools are thin readers over those files).
+The publisher's MCP server (`https://frc-mcp.ziyetis.workers.dev`, 14 tools, worker 1.14.1) returns for every figure: the value, its universe id, a contract-shaped `quotable_sentence`, the claim receipt, a `receipt_rule` and a `quoting_rule`. `?mode=raw` strips the intervention fields for a control condition. The server is public, rate-limited, and free. For training at scale the package ships a **replay cache** (`frc_citation/fixtures/tool-cache.json`, recorded from the live server by `record_tool_cache.py`, re-recorded by the `record-tool-cache` workflow after any correction): every call the battery needs is served from the file and never touches the network; a miss falls through to the server, or with `FRC_OFFLINE=1` returns an error object to the model, so a rollout can be run with zero network. Receipts in the cache carry the issue month of the recording and verify offline.
 
 ## Rewards in one table
 

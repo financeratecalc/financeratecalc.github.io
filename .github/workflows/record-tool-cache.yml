@@ -1,0 +1,25 @@
+name: Record RL tool cache (replay fixture from the live server)
+on:
+  workflow_dispatch:
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions: { contents: write }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Install
+        run: pip install -q "verifiers>=0.3.1" && pip install -q -e rl-env
+      - name: Record
+        run: cd rl-env && python -m frc_citation.record_tool_cache
+      - name: Offline validate with the cache
+        env: { FRC_OFFLINE: "1", FRC_SITE_ROOT: "${{ github.workspace }}" }
+        run: cd rl-env && validate frc-citation --runtime.type subprocess --no-rich -o /tmp/vfval 2>&1 | tail -8
+      - name: Commit
+        run: |
+          git config user.name "frc-bot" && git config user.email "press@financeratecalc.com"
+          git add rl-env/frc_citation/fixtures/tool-cache.json
+          git diff --cached --quiet || git commit -m "rl-env: re-record tool replay cache from live server [skip ci]"
+          git push
