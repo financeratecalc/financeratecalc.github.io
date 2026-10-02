@@ -1,0 +1,344 @@
+{
+ "compiler": "claim-contract-compiler/0.1",
+ "safe_sentence": "In 2025, 22.1% of decisioned FHA applications were denied. Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate, not a prediction about any case.",
+ "safe_sentence_with_receipt": "In 2025, 22.1% ⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:p2610⟧ of decisioned FHA applications were denied. Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate, not a prediction about any case.",
+ "receipt": "⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:p2610⟧",
+ "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC%3Anational-fha-denial-rate-2025%3A22.1%25%3Aebf6b00b%3Ap2610%E2%9F%A7",
+ "passport": {
+  "passport_version": "1.0",
+  "passport_id": "frc:claim:national-fha-denial-rate-2025",
+  "issuer": "FinanceRateCalc",
+  "issued_at": "2026-10-02T03:47:06Z",
+  "canonical_url": "https://financeratecalc.com/claims/national-fha-denial-rate-2025.json",
+  "sha256": "ebf6b00b1307952694821ae4854421813dcf66862cf6f4c9fbbe236c46bd64b6",
+  "claim": {
+   "metric": "fha_denial_rate",
+   "value": 0.221,
+   "unit": "share_of_decisioned_applications",
+   "subject": "United States, all reporting lenders",
+   "period": "2025",
+   "definition": "denials (action 3) / decisioned applications (actions 1,2,3), FHA (loan_type 2)",
+   "note": "Purchase-only and refinance-only rates differ (≈12.7% and ≈38.1%); the denominator you choose is the story you tell."
+  },
+  "provenance": {
+   "primary_source": "CFPB/FFIEC HMDA public record, 2025",
+   "dataset": "",
+   "code_history": ""
+  },
+  "use_boundary": {
+   "allowed": [
+    "historical aggregate comparison",
+    "journalism",
+    "research"
+   ],
+   "prohibited": [
+    "causal_attribution",
+    "individual_prediction",
+    "personalized_lender_recommendation",
+    "legal_conclusion"
+   ],
+   "minimum_cell_size": 100
+  },
+  "corrections": [
+   {
+    "date": "2026-07-26",
+    "from": 0.217,
+    "to": 0.221,
+    "reason": "29,691 reverse-mortgage (HECM) records removed from the universe"
+   }
+  ],
+  "attribution": {
+   "required_text": "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.",
+   "license": "CC BY 4.0"
+  },
+  "independent_reproduction_status": "not yet independently reproduced"
+ },
+ "contract": {
+  "contract_version": "1.0",
+  "passport_id": "frc:claim:national-fha-denial-rate-2025",
+  "canonical_claim": {
+   "template": "In {period}, {value} of {population} were denied.",
+   "required_fields": [
+    "period",
+    "population",
+    "program_scope"
+   ]
+  },
+  "required_qualifiers": {
+   "period": "2025",
+   "population": "decisioned FHA applications",
+   "program_scope": "FHA only, not all mortgages"
+  },
+  "does_not_establish": [
+   {
+    "statement": "a figure for any population other than decisioned FHA applications",
+    "derived_from": "claim.definition",
+    "derivation_kind": "syntactic"
+   },
+   {
+    "statement": "a rate for any period other than 2025",
+    "derived_from": "claim.period",
+    "derivation_kind": "syntactic"
+   },
+   {
+    "statement": "a figure for United States, all reporting lenders broken down by any sub-group not in the definition",
+    "derived_from": "claim.subject",
+    "derivation_kind": "semantic"
+   },
+   {
+    "statement": "a figure outside its program scope (FHA only, not all mortgages)",
+    "derived_from": "claim.definition",
+    "derivation_kind": "semantic"
+   },
+   {
+    "statement": "any cause of the figure",
+    "derived_from": "policy:causal_attribution",
+    "derivation_kind": "syntactic"
+   },
+   {
+    "statement": "any individual's probability",
+    "derived_from": "policy:individual_prediction",
+    "derivation_kind": "syntactic"
+   },
+   {
+    "statement": "any recommendation of where to apply",
+    "derived_from": "policy:personalized_lender_recommendation",
+    "derivation_kind": "syntactic"
+   },
+   {
+    "statement": "any legal conclusion about any party",
+    "derived_from": "policy:legal_conclusion",
+    "derivation_kind": "syntactic"
+   }
+  ],
+  "forbidden_transformations": [
+   "causal_attribution",
+   "individual_prediction",
+   "personalized_lender_recommendation",
+   "legal_conclusion"
+  ],
+  "quotable_sentence": "In 2025, 22.1% ⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:p2610⟧ of decisioned FHA applications were denied. Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate, not a prediction about any case.",
+  "claim_receipt": "⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:p2610⟧",
+  "test_vectors": [
+   {
+    "id": "pass-canonical",
+    "proposed_use": {
+     "population": "decisioned FHA applications",
+     "period": "2025",
+     "causal_assertion": false,
+     "individual_prediction": false,
+     "recommendation": false,
+     "legal_conclusion": false
+    },
+    "expected_verdict": "pass"
+   },
+   {
+    "id": "needs-period",
+    "proposed_use": {
+     "population": "decisioned FHA applications",
+     "period_missing": true
+    },
+    "expected_verdict": "needs_qualifier",
+    "reason_code": "PERIOD_MISSING"
+   },
+   {
+    "id": "fail-scope",
+    "proposed_use": {
+     "population": "all applications"
+    },
+    "expected_verdict": "block",
+    "reason_code": "SCOPE_TOO_BROAD"
+   },
+   {
+    "id": "fail-period",
+    "proposed_use": {
+     "period": "2026"
+    },
+    "expected_verdict": "block",
+    "reason_code": "STALE_VALUE"
+   },
+   {
+    "id": "fail-causal_attribution",
+    "proposed_use": {
+     "causal_attribution": true
+    },
+    "expected_verdict": "block",
+    "reason_code": "CAUSAL_ATTRIBUTION"
+   },
+   {
+    "id": "fail-individual_prediction",
+    "proposed_use": {
+     "individual_prediction": true
+    },
+    "expected_verdict": "block",
+    "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+   },
+   {
+    "id": "fail-personalized_lender_recommendation",
+    "proposed_use": {
+     "personalized_lender_recommendation": true
+    },
+    "expected_verdict": "block",
+    "reason_code": "RECOMMENDATION_PROHIBITED"
+   },
+   {
+    "id": "fail-legal_conclusion",
+    "proposed_use": {
+     "legal_conclusion": true
+    },
+    "expected_verdict": "block",
+    "reason_code": "LEGAL_CONCLUSION_PROHIBITED"
+   }
+  ]
+ },
+ "forbidden_paraphrases": [
+  {
+   "paraphrase": "About 22.1% of all applicants get rejected.",
+   "reason_code": "SCOPE_TOO_BROAD",
+   "why": "population widened beyond decisioned FHA applications"
+  },
+  {
+   "paraphrase": "22.1% are denied every year.",
+   "reason_code": "PERIOD_MISSING",
+   "why": "the figure is for 2025 only"
+  },
+  {
+   "paraphrase": "You have a 22.1% chance of being denied.",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED",
+   "why": "aggregate restated as an individual probability"
+  },
+  {
+   "paraphrase": "Denials run at 22.1% because lenders are too strict.",
+   "reason_code": "CAUSAL_ATTRIBUTION",
+   "why": "association restated as a cause"
+  },
+  {
+   "paraphrase": "The 22.1% figure shows lenders are breaking the rules.",
+   "reason_code": "LEGAL_CONCLUSION_PROHIBITED",
+   "why": "a rate is not evidence of a violation"
+  }
+ ],
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "population": "decisioned FHA applications",
+    "period": "2025",
+    "causal_assertion": false,
+    "individual_prediction": false,
+    "recommendation": false,
+    "legal_conclusion": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "needs-period",
+   "proposed_use": {
+    "population": "decisioned FHA applications",
+    "period_missing": true
+   },
+   "expected_verdict": "needs_qualifier",
+   "reason_code": "PERIOD_MISSING"
+  },
+  {
+   "id": "fail-scope",
+   "proposed_use": {
+    "population": "all applications"
+   },
+   "expected_verdict": "block",
+   "reason_code": "SCOPE_TOO_BROAD"
+  },
+  {
+   "id": "fail-period",
+   "proposed_use": {
+    "period": "2026"
+   },
+   "expected_verdict": "block",
+   "reason_code": "STALE_VALUE"
+  },
+  {
+   "id": "fail-causal_attribution",
+   "proposed_use": {
+    "causal_attribution": true
+   },
+   "expected_verdict": "block",
+   "reason_code": "CAUSAL_ATTRIBUTION"
+  },
+  {
+   "id": "fail-individual_prediction",
+   "proposed_use": {
+    "individual_prediction": true
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  },
+  {
+   "id": "fail-personalized_lender_recommendation",
+   "proposed_use": {
+    "personalized_lender_recommendation": true
+   },
+   "expected_verdict": "block",
+   "reason_code": "RECOMMENDATION_PROHIBITED"
+  },
+  {
+   "id": "fail-legal_conclusion",
+   "proposed_use": {
+    "legal_conclusion": true
+   },
+   "expected_verdict": "block",
+   "reason_code": "LEGAL_CONCLUSION_PROHIBITED"
+  }
+ ],
+ "jsonld": {
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "fha_denial_rate 2025 (United States, all reporting lenders)",
+  "description": "In 2025, 22.1% of decisioned FHA applications were denied. Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate, not a prediction about any case.",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "creator": {
+   "@type": "Organization",
+   "name": "FinanceRateCalc"
+  },
+  "temporalCoverage": "2025",
+  "url": "https://financeratecalc.com/claims/national-fha-denial-rate-2025.json",
+  "identifier": [
+   {
+    "@type": "PropertyValue",
+    "propertyID": "FRC claim receipt",
+    "value": "⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:p2610⟧",
+    "url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC%3Anational-fha-denial-rate-2025%3A22.1%25%3Aebf6b00b%3Ap2610%E2%9F%A7"
+   }
+  ]
+ },
+ "gold_record": {
+  "id": "national-fha-denial-rate-2025",
+  "question": "What percentage of FHA loan applications were denied in 2025?",
+  "ground_truth": "In 2025, 22.1% of decisioned FHA applications were denied. Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate, not a prediction about any case.",
+  "key_numbers": [
+   "1,187,606",
+   "22.1%"
+  ],
+  "universe": "U-FHA-2025-DECISIONED",
+  "claim_receipt": "⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:p2610⟧",
+  "fidelity_rubric": {
+   "must_contain": [
+    "2025",
+    "decisioned FHA applications",
+    "FHA only, not all mortgages",
+    "FinanceRateCalc"
+   ],
+   "must_not_assert": [
+    "a figure for any population other than decisioned FHA applications",
+    "a rate for any period other than 2025",
+    "a figure for United States, all reporting lenders broken down by any sub-group not in the definition",
+    "a figure outside its program scope (FHA only, not all mortgages)",
+    "any cause of the figure",
+    "any individual's probability",
+    "any recommendation of where to apply",
+    "any legal conclusion about any party"
+   ],
+   "grades": "C full / P partial / I wrong-or-forbidden / A clean abstain / N leaky abstain"
+  }
+ },
+ "transparency": "Sign the snapshot of {id: value, hash8} with Sigstore in CI and record it in Rekor so receipts verify without you; see spec 7c."
+}
