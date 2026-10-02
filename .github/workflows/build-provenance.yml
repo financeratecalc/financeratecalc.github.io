@@ -23,17 +23,18 @@ jobs:
         with: { python-version: "3.12" }
       - name: Download the CFPB file
         run: |
-          curl -L --retry 3 --max-time 3600 -o /tmp/hmda_2025_fha.csv "${{ github.event.inputs.source_url }}"
-          ls -la /tmp/hmda_2025_fha.csv; head -c 600 /tmp/hmda_2025_fha.csv; echo
+          curl -L --retry 3 --max-time 3600 -o /tmp/hmda_2025_fha.csv -w "http %{http_code} type %{content_type} bytes %{size_download}\n" "${{ github.event.inputs.source_url }}" 2>&1 | tee -a /tmp/run.log
+          ls -la /tmp/hmda_2025_fha.csv | tee -a /tmp/run.log; head -c 800 /tmp/hmda_2025_fha.csv | tee -a /tmp/run.log; echo; wc -l /tmp/hmda_2025_fha.csv | tee -a /tmp/run.log
           echo "INPUT_SHA=$(sha256sum /tmp/hmda_2025_fha.csv | cut -c1-64)" >> $GITHUB_ENV
           echo "INPUT_BYTES=$(stat -c%s /tmp/hmda_2025_fha.csv)" >> $GITHUB_ENV
       - name: Run the reference implementation
         run: |
-          python scripts/reference_implementation.py /tmp/hmda_2025_fha.csv 2>&1 | tail -25
-          ls -la /tmp/frc_rebuild.json
+          set -o pipefail
+          python scripts/reference_implementation.py /tmp/hmda_2025_fha.csv 2>&1 | tee -a /tmp/run.log | tail -25
+          ls -la /tmp/frc_rebuild.json | tee -a /tmp/run.log
       - name: Compare with the published data files
         run: |
-          python scripts/compare_rebuild.py /tmp/frc_rebuild.json "$INPUT_SHA"
+          python scripts/compare_rebuild.py /tmp/frc_rebuild.json "$INPUT_SHA" 2>&1 | tee -a /tmp/run.log
           python - <<'PY'
           import json, os
           r = json.load(open("provenance/rebuild-report.json"))
@@ -55,7 +56,7 @@ jobs:
           import os, json, base64, urllib.request, datetime
           tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"
           stamp = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M")
-          for path, dest in [("provenance/rebuild-report.json", "provenance/rebuild-report.json"), ("provenance/rebuild-report.json", f"provenance/history/rebuild-{stamp}.json")]:
+          for path, dest in [("provenance/rebuild-report.json", "provenance/rebuild-report.json"), ("provenance/rebuild-report.json", f"provenance/history/rebuild-{stamp}.json"), ("/tmp/run.log", "provenance/last-run.log")]:
               if not os.path.exists(path): continue
               url = f"https://api.github.com/repos/{repo}/contents/{dest}"
               sha = None
