@@ -29,6 +29,7 @@ tr.sup td{color:#6d6a61;text-decoration:line-through}
 
 <div class="wrapx"><table id="t"><thead><tr><th>run (UTC)</th><th>model</th><th>condition</th><th>worker</th><th>design</th><th>value</th><th>full marks</th><th>abstain clean / leaky</th><th>consistent q</th><th>receipt carried</th><th>codes (answers)</th><th>grader</th><th>agreement</th></tr></thead><tbody></tbody></table></div>
 <p class="small" id="meta">Loading&hellip;</p>
+<div class="card" id="sightings"><b>External sightings of a claim receipt:</b> <span id="sight-n">loading&hellip;</span> <span class="small">(weekly count of our receipts or contracts appearing anywhere outside this site: GitHub, Hugging Face, the misquote ledger. This is the adoption measurement; zero is published as zero. Data: <a href="/eval/sightings.json">eval/sightings.json</a>.)</span></div>
 
 <h2>Known limits</h2>
 <ul class="sub" id="limits"></ul>
@@ -55,6 +56,7 @@ const fr = v => v == null ? "—" : v;
       tb.appendChild(tr);
     }
     document.getElementById("meta").textContent = `${rows.length} runs. Table generated ${d.generated}. ${d.reporting_rule || ""}`;
+    try { const sg = await (await fetch("/eval/sightings.json", {cache:"no-store"})).json(); const L = sg.latest || {}; document.getElementById("sight-n").textContent = `${L.external_sightings_total ?? "n/a"} as of ${L.date || "?"}`; } catch (e) { document.getElementById("sight-n").textContent = "not yet counted"; }
     const ul = document.getElementById("limits"); (d.known_limits || []).forEach(x => { const li = document.createElement("li"); li.textContent = x; ul.appendChild(li); });
   } catch (e) { document.getElementById("meta").textContent = "Could not load eval/verdict-automated.json."; }
 })();

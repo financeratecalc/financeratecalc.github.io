@@ -77,7 +77,7 @@ Inspect reference: `inspect eval eval/denial_ai_fidelity.py@denial_ai_fidelity_w
 
 ## What this is not
 
-Not a benchmark of language models in general: one model has been measured. Not a claim that receipts improve fidelity: they make a quoted figure verifiable, which is a different property. Not evidence about any lender: every figure is a historical aggregate from a public federal record, associational, never a prediction about a person, never evidence of misconduct. The publisher's own errors are graded in the same ledger as the models' (`../corrections.html`, twelve families since July 2026; the twelfth is in this instrument).
+None of the layers is new on its own (content hashes, Sigstore, verifiable rewards all predate this); what is new is their combination on a single published statistic, and the publisher grading its own errors with the models' codes. Not a benchmark of language models in general: one model has been measured. Not a claim that receipts improve fidelity: they make a quoted figure verifiable, which is a different property. Not evidence about any lender: every figure is a historical aggregate from a public federal record, associational, never a prediction about a person, never evidence of misconduct. The publisher's own errors are graded in the same ledger as the models' (`../corrections.html`, twelve families since July 2026; the twelfth is in this instrument).
 
 **On the Prime Intellect Environments Hub:** https://app.primeintellect.ai/dashboard/environments/financeratecalc/frc-citation (`prime env install financeratecalc/frc-citation`).
 
