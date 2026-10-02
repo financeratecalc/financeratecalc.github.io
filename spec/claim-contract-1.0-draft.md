@@ -2,7 +2,7 @@
 
 **Machine-readable use conditions for published statistics.**
 
-Status: draft 9, 2026-10-01. Reference checker: `tools/claimcheck/claimcheck.py`. Runnable fidelity task: `eval/denial_ai_fidelity.py` (Inspect AI). Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
+Status: draft 10, 2026-10-02. Reference checker: `tools/claimcheck/claimcheck.py`. Runnable fidelity task: `eval/denial_ai_fidelity.py` (Inspect AI). Editor: Ziya Yetiş (FinanceRateCalc). License: CC BY 4.0.
 Reference implementation: 189 claims at https://financeratecalc.com/claims.json (passport format 0.1, contract format 0.1, which this document generalises).
 
 ---
@@ -214,6 +214,14 @@ Consequences. A receipt whose hash8 appears in a signed snapshot was provably is
 Build provenance (draft 9, same day). A publisher SHOULD additionally recompute its figures from the primary source in a hosted, attested build (SLSA v1 provenance, Build L2 as issued by GitHub attestations: input hash, code commit, output hash, workflow identity) and publish the comparison with its published files. The reference implementation did so on 2026-10-02: national, 98 lender and 52 state figures reproduced exactly from the CFPB file (`provenance/`). This is computational reproduction with no human computer in the chain, not independent replication; L4 is unchanged.
 
 Reference implementation: `transparency/` in the FinanceRateCalc repository (`receipts-snapshot.sigstore.json`, `log.json`, verify command in the README); first entry Rekor log index 3039652842, 2026-10-01.
+
+### 7d. Correction feed (draft 10)
+
+A conforming L3 publisher MUST publish its corrections log in a machine-readable form at a stable URL, linked from the human log with `<link rel="alternate" type="application/json">`. Each item carries at least: a stable id, the date the old value stopped being current, the claim ids touched, and `old_value`/`new_value` where the correction changed a value. The feed is derived from the human log and is never a superset of it: an item absent from the log is absent from the feed.
+
+What it is for. Correction latency, the time between a publisher's correction and the last time a consuming system serves the old value, is the one fidelity failure the publisher can shorten on its own, and today it cannot, because consuming systems have nowhere to listen. A system that polls the feed and intersects `claim_ids` with the figures it attributes to the publisher can retire a stale value the day it is corrected instead of on its next crawl. The reference implementation measured 58 days without such a feed (`eval/correction-latency.json`) and publishes the feed so that the number can be measured again with one.
+
+Reference implementation: `https://financeratecalc.com/corrections.json` (`scripts/build_corrections_feed.py`), 22 items on 2026-10-02: 4 dated corrections, 11 error families, 7 correction atoms.
 
 ## 8. What this specification does not do
 
