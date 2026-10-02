@@ -19,3 +19,13 @@ cosign verify-blob receipts-snapshot.json --bundle receipts-snapshot.sigstore.js
 A receipt whose hash8 is not in any signed snapshot was never issued by this publisher. A receipt
 whose hash8 is in an older snapshot but not the latest was issued before a correction; the two log
 entries date the change.
+
+`eval-runs-manifest.json` + `.sigstore.json`: SHA-256 of every saved automated evaluation run,
+signed the same way, so published benchmark results are tamper-evident and cannot be pruned
+without a visible gap in the log.
+
+`provenance-check.json`: the result of recomputing the published figures from the public CFPB
+file inside GitHub Actions (`build-provenance.yml`): input file hash, code commit, output hash,
+and whether every published national, lender and state figure matched. When they match, the
+recomputed output is attested with GitHub build provenance (SLSA), visible under the repository's
+Attestations tab and in Rekor.

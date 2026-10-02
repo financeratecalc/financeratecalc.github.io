@@ -17,6 +17,7 @@ on:
       - "claims/metro-gap-*.json"
       - "claims/national-fha-denial-rate-2025.json"
       - "scripts/build_receipts_snapshot.py"
+      - "eval/runs/**"
 permissions:
   contents: read
   id-token: write
@@ -33,8 +34,19 @@ jobs:
         run: |
           python scripts/build_receipts_snapshot.py | tee /tmp/snap.json
           echo "sha256=$(sha256sum rl-env/frc_citation/receipts-snapshot.json | cut -c1-64)" >> $GITHUB_OUTPUT
+      - name: Manifest of evaluation runs (so results are tamper-evident too)
+        run: |
+          python - <<'PY'
+          import glob, hashlib, json, datetime, os
+          rows = {os.path.basename(f): hashlib.sha256(open(f, "rb").read()).hexdigest() for f in sorted(glob.glob("eval/runs/*.json"))}
+          json.dump({"generated": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"), "count": len(rows),
+                     "note": "SHA-256 of every saved automated run file; signed alongside the receipts snapshot so published results cannot be altered or pruned silently", "runs": rows},
+                    open("transparency/eval-runs-manifest.json", "w"), indent=1)
+          print(len(rows), "run files")
+          PY
       - name: Sign keylessly (Sigstore / Rekor)
         run: |
+          cosign sign-blob --yes transparency/eval-runs-manifest.json --bundle transparency/eval-runs-manifest.sigstore.json
           cosign sign-blob --yes rl-env/frc_citation/receipts-snapshot.json \
             --bundle transparency/receipts-snapshot.sigstore.json
           cosign verify-blob rl-env/frc_citation/receipts-snapshot.json \
@@ -42,7 +54,7 @@ jobs:
             --certificate-identity-regexp "^https://github.com/financeratecalc/financeratecalc.github.io/" \
             --certificate-oidc-issuer https://token.actions.githubusercontent.com
           python - <<'PY'
-          import json, datetime, os
+          import json, datetime, os, hashlib
           b = json.load(open("transparency/receipts-snapshot.sigstore.json"))
           # cosign sign-blob --bundle writes the legacy bundle: {base64Signature, cert, rekorBundle:{SignedEntryTimestamp, Payload:{body, integratedTime, logIndex, logID}}}
           pl = (b.get("rekorBundle") or {}).get("Payload") or {}
@@ -50,7 +62,9 @@ jobs:
           idx = pl.get("logIndex") or (entries[0].get("logIndex") if entries else None)
           ts = pl.get("integratedTime") or (entries[0].get("integratedTime") if entries else None)
           if ts: ts = datetime.datetime.utcfromtimestamp(int(ts)).strftime("%Y-%m-%dT%H:%M:%SZ")
+          rb = json.load(open("transparency/eval-runs-manifest.sigstore.json")); rp = (rb.get("rekorBundle") or {}).get("Payload") or {}
           log = {"generated": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                 "eval_runs_manifest_rekor_log_index": rp.get("logIndex"), "eval_runs_manifest_sha256": hashlib.sha256(open("transparency/eval-runs-manifest.json","rb").read()).hexdigest(),
                  "snapshot_sha256": "${{ steps.snap.outputs.sha256 }}", "rekor_log_index": idx,
                  "integrated_time": ts, "commit": os.environ.get("GITHUB_SHA"),
                  "identity": "https://github.com/financeratecalc/financeratecalc.github.io/.github/workflows/claims-transparency.yml@" + os.environ.get("GITHUB_REF", ""),
@@ -79,7 +93,8 @@ jobs:
               req = urllib.request.Request(url, method="PUT", data=json.dumps(data).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
               print(path, urllib.request.urlopen(req).status)
           for p in ["rl-env/frc_citation/receipts-snapshot.json", "rl-env/community/frc_citation/receipts-snapshot.json",
-                    "transparency/receipts-snapshot.sigstore.json", "transparency/log.json"]:
+                    "transparency/receipts-snapshot.sigstore.json", "transparency/log.json",
+                    "transparency/eval-runs-manifest.json", "transparency/eval-runs-manifest.sigstore.json"]:
               if p.startswith("rl-env/community"):
                   open(p, "wb").write(open("rl-env/frc_citation/receipts-snapshot.json", "rb").read())
               put(p, "claim transparency: signed receipts snapshot")
