@@ -79,7 +79,7 @@ One model, one rollout per task; a smoke test of the plumbing, not a measurement
 FRC_OFFLINE=1 FRC_SITE_ROOT=/path/to/site validate frc-citation-temporal --runtime.type subprocess   # 34/34 model-free
 python -m frc_citation.temporal /path/to/site    # snapshot + reward self-test
 ```
-Status: validated model-free; no rollout yet.
+Status: validated model-free. First rollout (Haiku 4.5, 34 × 1, 2026-10-03T16:14, run file `eval/runs/20261003T1614-rlenv-smoke-frc-citation-temporal-claude-haiku-4-5-20251001.json`) is **void as a temporal measurement**: the tool server read the epoch from the wrong attribute of the task object verifiers hands it, so every date was served the current figures; what it measured is the static task again (mean 0.47, 0 forged). Kept in the record, not cited. Fixed the same hour; second rollout below.
 
 ## Using it
 

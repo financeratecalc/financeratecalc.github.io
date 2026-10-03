@@ -21,7 +21,10 @@ class FrcTemporalToolset(FrcCitationToolset):
     _site_root: str = os.environ.get("FRC_SITE_ROOT", os.path.join(HERE, "..", ".."))
 
     async def setup_task(self, task) -> None:
-        data = getattr(task, "data", None)
+        # verifiers hands the server the rollout's TaskData (interception `/task` serves
+        # `trace.task.data`), not the Task; accept either. First rollout (2026-10-03T16:14)
+        # read `task.data` on a TaskData, got None, and served every date the current figures.
+        data = task if hasattr(task, "epoch") else getattr(task, "data", None)
         eid = getattr(data, "epoch", None) if data is not None else None
         self._epoch = epoch_by_id(eid) if eid else None
         root = getattr(data, "site_root", None) if data is not None else None

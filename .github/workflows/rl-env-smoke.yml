@@ -117,6 +117,15 @@ jobs:
           data = {"message": f"rl-env smoke {stamp}", "content": base64.b64encode(body).decode(), "branch": "main"}
           req = urllib.request.Request(url, method="PUT", data=json.dumps(data).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
           print(urllib.request.urlopen(req).status)
+          # raw traces (tool outputs included) so a run can be audited, gzip+base64 to stay under the API limit
+          import gzip, glob
+          tr = glob.glob("/tmp/vfout/smoke/traces.jsonl") + glob.glob("/tmp/vfout/**/traces.jsonl", recursive=True)
+          if tr:
+              raw = gzip.compress(open(tr[0], "rb").read())
+              tname = name.replace(".json", ".traces.jsonl.gz")
+              data = {"message": f"rl-env smoke traces {stamp}", "content": base64.b64encode(raw).decode(), "branch": "main"}
+              req = urllib.request.Request(f"https://api.github.com/repos/{repo}/contents/{tname}", method="PUT", data=json.dumps(data).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
+              print(tname, len(raw), urllib.request.urlopen(req).status)
           PY
       - name: Legacy vf-eval (community-repo package)
         if: always()
