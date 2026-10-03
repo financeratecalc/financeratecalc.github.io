@@ -17,6 +17,9 @@ on:
       num_rollouts:
         description: "Rollouts per task"
         default: "1"
+      taskset:
+        description: "frc-citation | frc-citation-temporal"
+        default: "frc-citation"
 jobs:
   smoke:
     runs-on: ubuntu-latest
@@ -30,7 +33,7 @@ jobs:
           pip install -q "verifiers>=0.3.1" uv
           pip install -q -e rl-env
       - name: Validate (model-free)
-        run: cd rl-env && validate frc-citation --runtime.type subprocess --no-rich -o /tmp/vfval 2>&1 | tail -20
+        run: cd rl-env && validate ${{ inputs.taskset }} --runtime.type subprocess --no-rich -o /tmp/vfval 2>&1 | tail -20
       - name: Rollout
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -38,7 +41,7 @@ jobs:
           FRC_SITE_ROOT: ${{ github.workspace }}
         run: |
           set -o pipefail
-          cd rl-env && python -c 'from verifiers.v1.cli.eval.main import main; main()' frc-citation \
+          cd rl-env && python -c 'from verifiers.v1.cli.eval.main import main; main()' ${{ inputs.taskset }} \
             --model "${{ github.event.inputs.model }}" \
             --client.base_url "${{ github.event.inputs.base_url }}" \
             --client.api_key-var "${{ github.event.inputs.api_key_var }}" \

@@ -65,6 +65,20 @@ Fractions of runs, denominator questions × repeats; one model, one grader, one 
 
 One model, one rollout per task; a smoke test of the plumbing, not a measurement. The offline verifier agreed with the live `/verify` on every receipt the model carried once nested claim objects were hashed the way `JSON.stringify` does (fixed the same day; the first rollout had read one valid metro receipt as stale).
 
+## Temporal variant: `frc-citation-temporal` (2026-10-03)
+
+In every citation environment we know of the correct answer is fixed, so a policy that memorised the figure is indistinguishable from one that checked it. This publisher's figures changed on dated, logged occasions (26 July: the HECM universe correction, 21.7% → 22.1%; 15 September: universe definitions for the reason shares and the small-loan floor). `epochs.json` turns that log into three dated states of the truth. Each episode is dated ("Today is 2026-07-20. …"); the tools return what the publisher published on that date, with a receipt hashed from that date's claim object; the reward is that date's value and receipt. 34 episodes: 12 questions × 3 dates, minus two whose published answer on the first date is not documented; 28 are controls whose answer did not change (the policy must not change its answer when the truth did not).
+
+Two signals the static environment cannot compute: **temporal_error** (−0.5): the answer carries a receipt that is valid for a different date of the same claim, the right figure from the wrong date, which is what memorisation looks like. **recalled** (−0.25): the receipt's issue channel is a site page or dataset (p/l/s/t/w/h) although the episode's only tool issues m or r, so the receipt came from the model's memory of the web, not from the tool. A verbatim copy of the tool's sentence scores 1.0 on every episode; the current figure recalled from training data scores 1.0 on the current date and 0 on 2026-07-20.
+
+Ground truth is `fixtures/epoch-snapshot.json` (value and hash8 per claim per epoch, 386 × 3), produced by the reward code and signed in the same Sigstore/Rekor workflow as the live snapshot, so the dated reference a trainer rewards against is itself tamper-evident. Superseded epochs are reconstructions from the corrections log and say so; their receipts carry channel `r` and were never issued live.
+
+```bash
+FRC_OFFLINE=1 FRC_SITE_ROOT=/path/to/site validate frc-citation-temporal --runtime.type subprocess   # 34/34 model-free
+python -m frc_citation.temporal /path/to/site    # snapshot + reward self-test
+```
+Status: validated model-free; no rollout yet.
+
 ## Using it
 
 ```bash

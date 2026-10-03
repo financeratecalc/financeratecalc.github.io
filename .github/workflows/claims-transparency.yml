@@ -34,6 +34,7 @@ jobs:
         id: snap
         run: |
           python scripts/build_receipts_snapshot.py | tee /tmp/snap.json
+          pip install -q "verifiers>=0.3.1" && pip install -q -e rl-env && python scripts/build_epoch_snapshot.py
           echo "sha256=$(sha256sum rl-env/frc_citation/receipts-snapshot.json | cut -c1-64)" >> $GITHUB_OUTPUT
       - name: Manifest of evaluation runs (so results are tamper-evident too)
         run: |
@@ -48,6 +49,7 @@ jobs:
       - name: Sign keylessly (Sigstore / Rekor)
         run: |
           cosign sign-blob --yes transparency/eval-runs-manifest.json --bundle transparency/eval-runs-manifest.sigstore.json
+          cosign sign-blob --yes rl-env/frc_citation/fixtures/epoch-snapshot.json --bundle transparency/epoch-snapshot.sigstore.json
           cosign sign-blob --yes rl-env/frc_citation/receipts-snapshot.json \
             --bundle transparency/receipts-snapshot.sigstore.json
           cosign verify-blob rl-env/frc_citation/receipts-snapshot.json \
@@ -95,7 +97,8 @@ jobs:
               print(path, urllib.request.urlopen(req).status)
           for p in ["rl-env/frc_citation/receipts-snapshot.json", "rl-env/community/frc_citation/receipts-snapshot.json",
                     "transparency/receipts-snapshot.sigstore.json", "transparency/log.json",
-                    "transparency/eval-runs-manifest.json", "transparency/eval-runs-manifest.sigstore.json"]:
+                    "transparency/eval-runs-manifest.json", "transparency/eval-runs-manifest.sigstore.json",
+                    "rl-env/frc_citation/fixtures/epoch-snapshot.json", "transparency/epoch-snapshot.sigstore.json"]:
               if p.startswith("rl-env/community"):
                   open(p, "wb").write(open("rl-env/frc_citation/receipts-snapshot.json", "rb").read())
               put(p, "claim transparency: signed receipts snapshot")
