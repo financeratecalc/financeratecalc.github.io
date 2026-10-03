@@ -1,10 +1,12 @@
-"""Temporal source fidelity: the same questions, asked on three dates on which the
-publisher's published figures differed, rewarded against the figure that was current
-on that date.
+"""Temporal source fidelity: an evaluation task (34 dated episodes, verifiers format,
+not a training environment): the same questions asked on three dates on which the
+publisher's published figures differed, rewarded against the figure current on that date.
 
-Why this exists. In every citation environment we know of the correct answer is
-fixed, so a policy that memorised the figure is indistinguishable from one that
-checked it. Here the publisher's own dated corrections log supplies three states of
+Why this exists. Time-sensitive QA (TimeQA, TempLAMA, StreamingQA, FreshQA) changes
+the answer because the world changed; here the answer changes because the source
+corrected itself, on dates its corrections log records, and the dated reference is
+signed. In a static citation task a policy that memorised the figure is
+indistinguishable from one that checked it. Here the publisher's own dated corrections log supplies three states of
 the truth (epochs.json). An episode is dated; the tools return what the publisher
 published on that date, with a receipt hashed from that date's claim object; the
 reward is the receipt and value of that date. A policy that recalls a figure from
@@ -18,7 +20,9 @@ Two signals the static environment cannot compute:
     recalled         the answer carries a receipt whose issue channel is a site page or a
                      dataset (p/l/s/t/w/h) although the only tool available in the episode
                      issues channel m or r: the receipt came from the model's memory of the
-                     web, not from the tool it was given
+                     web, not from the tool it was given. Forward-looking: channel-tagged
+                     receipts exist on the web only since 2026-10-01, so it can fire only for
+                     models trained on data that includes them.
 
 No model is called. Epoch receipts for superseded values were never issued live
 (channel r = RL environment); the current epoch uses the live claim objects.
