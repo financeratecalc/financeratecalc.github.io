@@ -111,7 +111,7 @@ jobs:
           import os, json, base64, urllib.request, datetime
           tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"
           stamp = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M")
-          name = f"eval/runs/{stamp}-rlenv-smoke-{os.environ['MODEL']}.json"
+          name = f"eval/runs/{stamp}-rlenv-smoke-${{ inputs.taskset }}-{os.environ["MODEL"]}.json"
           body = open("/tmp/smoke-summary.json", "rb").read() if os.path.exists("/tmp/smoke-summary.json") else b'{"error":"no summary"}'
           url = f"https://api.github.com/repos/{repo}/contents/{name}"
           data = {"message": f"rl-env smoke {stamp}", "content": base64.b64encode(body).decode(), "branch": "main"}
