@@ -1,0 +1,23 @@
+name: Publish frc-mcp to the official MCP Registry
+# Publishes worker/server.json under the io.github.financeratecalc namespace using the
+# repository's OIDC identity (no personal token). Re-run after bumping the version.
+on:
+  workflow_dispatch:
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install mcp-publisher
+        run: |
+          curl -sSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          sudo mv mcp-publisher /usr/local/bin/ && mcp-publisher --help | head -5
+      - name: Validate and publish
+        working-directory: worker
+        run: |
+          cat server.json
+          mcp-publisher login github-oidc
+          mcp-publisher publish
