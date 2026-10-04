@@ -68,7 +68,10 @@ for fn in os.listdir(os.path.join(root, "api", "lender")):
 try:
     with open(os.path.join(root, "data", "lei-names.json"), encoding="utf-8") as fh:
         for lei, nm in (json.load(fh).get("names") or {}).items():
-            names.setdefault(lei, {"name": nm, "slug": None})
+            if isinstance(nm, dict):
+                nm = nm.get("legal_name") or nm.get("name")
+            if nm:
+                names.setdefault(lei, {"name": nm, "slug": None})
 except FileNotFoundError:
     pass
 

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Door Report: FHA denial rates by lender for borrowers like you (state, loan size, purpose) | FinanceRateCalc</title>
+<meta name="description" content="Pick your state, loan-size band and purpose. See the 2025 FHA denial rate of every lender with at least 100 decisions in that cohort, from the federal HMDA record. Every lender listed, none ranked or recommended; historical observations, not predictions.">
+<link rel="canonical" href="https://financeratecalc.com/door-report.html">
+<style>body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.6}
+.wrap{max-width:900px;margin:0 auto;padding:36px 18px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:29px;color:#f5f2ea;line-height:1.2;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:19px;color:#f5f2ea;margin:28px 0 8px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B} .mono{font-family:'DM Mono',monospace;font-size:12.5px}
+.card{border:1px solid #23262e;border-radius:12px;padding:16px 18px;background:#0d0f14;margin:14px 0;font-size:15px}
+.pick{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
+@media (max-width:640px){.pick{grid-template-columns:1fr}}
+label{display:block;font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:1px;color:#C8A84B;text-transform:uppercase;margin-bottom:4px}
+select{width:100%;background:#0d0f14;color:#e8e4da;border:1px solid #23262e;border-radius:8px;padding:9px 10px;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
+th,td{border-bottom:1px solid #23262e;padding:8px 6px;text-align:left;vertical-align:top}
+th{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:1px;color:#C8A84B;text-transform:uppercase}
+td.n{text-align:right;font-family:'DM Mono',monospace;font-size:12.5px}
+.small{font-size:12.5px;color:#8a8678}
+.rule{border-left:3px solid rgba(200,168,75,.5);padding:10px 14px;background:rgba(255,255,255,.02);font-size:13.5px;color:#cbc7bb;margin:14px 0}
+</style></head>
+<body><div class="wrap">
+<div class="kicker">FinanceRateCalc &middot; Door Report &middot; free</div>
+<h1>FHA denial rates by lender, for borrowers like you</h1>
+<p class="sub">Same federal program, same year: lenders denied FHA applications at very different rates. Pick the cohort that looks like your application and see <b>every</b> lender with at least 100 decisions in it. Nothing here is ranked, highlighted or recommended; the table is alphabetical, and that is a rule of the product, not a style choice (<a href="#rules">why</a>).</p>
+
+<div class="pick">
+<div><label for="st">State</label><select id="st"></select></div>
+<div><label for="band">Loan amount</label><select id="band"><option value="all">Any amount</option><option value="u150">Under $150,000</option><option value="150-250">$150,000 – $250,000</option><option value="250p">$250,000 and over</option></select></div>
+<div><label for="purp">Purpose</label><select id="purp"><option value="all">Any purpose</option><option value="purchase">Home purchase</option><option value="refinance">Refinance</option><option value="improvement">Home improvement</option><option value="other">Other</option></select></div>
+</div>
+
+<div class="card" id="cell">Loading the cohort table&hellip;</div>
+<div class="wrapx"><table id="t"><thead><tr><th>Lender (alphabetical)</th><th class="n">Decisions</th><th class="n">Denials</th><th class="n">Denial rate</th></tr></thead><tbody></tbody></table></div>
+<p class="small" id="prov"></p>
+
+<div class="rule" id="rules"><b>What this table is and is not.</b> It is the 2025 federal HMDA record (CFPB), FHA forward loans that reached a credit decision, reverse mortgages excluded, cut by state, loan-amount band and purpose, and counted per lender. Rates reflect who applied to each lender as much as how each lender decided, and the cohort here does not include your credit profile, income or property. It is <b>not</b> a prediction that you will be approved or denied anywhere, <b>not</b> a recommendation of any lender, and <b>not</b> evidence that any lender did anything wrong. Two product rules are enforced in code and tested on every change: every qualifying lender is listed and the order is alphabetical, never by rate; and this caveat appears on every cohort in the same size. FinanceRateCalc takes no money from lenders and sells no leads.</div>
+
+<h2>Where this comes from</h2>
+<p class="sub">Built by <a href="https://github.com/financeratecalc/financeratecalc.github.io/blob/main/scripts/door_report_cells.py">scripts/door_report_cells.py</a> from the CFPB file in a hosted workflow; the data file records the input file's SHA-256 and the code commit. The same record, counted the other ways, is on the <a href="/fha-denial-rates-top-100.html">top-100 lender table</a>, the <a href="/fha-lenders-by-state.html">state pages</a> and the <a href="/door-effect.html">door-effect analysis</a>. Method: <a href="/methodology.html">methodology</a>. Corrections: <a href="/corrections.html">corrections log</a>. CC BY 4.0.</p>
+</div>
+<script>
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = n => n == null ? "—" : Number(n).toLocaleString("en-US");
+const STATES = ["AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"];
+let DATA = null;
+const stSel = document.getElementById("st");
+for (const s of STATES) { const o = document.createElement("option"); o.value = s; o.textContent = s; stSel.appendChild(o); }
+const q = new URLSearchParams(location.search);
+stSel.value = STATES.includes((q.get("state") || "").toUpperCase()) ? q.get("state").toUpperCase() : "TX";
+if (q.get("band")) document.getElementById("band").value = q.get("band");
+if (q.get("purpose")) document.getElementById("purp").value = q.get("purpose");
+function render() {
+  if (!DATA) return;
+  const st = stSel.value, band = document.getElementById("band").value, purp = document.getElementById("purp").value;
+  const key = `${st}|${band}|${purp}`;
+  const c = DATA.data[key];
+  const tb = document.querySelector("#t tbody"); tb.innerHTML = "";
+  history.replaceState(null, "", `?state=${st}&band=${band}&purpose=${purp}`);
+  if (!c) { document.getElementById("cell").innerHTML = `No lender reached ${DATA.min_cell} decisions in this cohort. Widen the loan amount or purpose.`; return; }
+  const rows = c.lenders.slice().sort((a, b) => String(a.name || a.lei).localeCompare(String(b.name || b.lei)));  // alphabetical: product rule 1
+  document.getElementById("cell").innerHTML = `<b>${esc(st)}</b>, ${esc(bandLabel(band))}, ${esc(purpLabel(purp))}: <b>${fmt(c.decisions)}</b> decisioned FHA applications in 2025, <b>${fmt(c.denials)}</b> denied (<b>${esc(c.denial_rate_pct)}%</b>). ${rows.length} lenders with at least ${DATA.min_cell} decisions, listed alphabetically. <span class="small">Historical observation; not a prediction about any application; not a recommendation; not evidence of misconduct.</span>`;
+  for (const r of rows) {
+    const tr = document.createElement("tr");
+    const name = r.slug ? `<a href="/${esc(r.slug)}-fha-denial-rate.html">${esc(r.name || r.lei)}</a>` : esc(r.name || r.lei);
+    tr.innerHTML = `<td>${name}<div class="small mono">${esc(r.lei)}</div></td><td class="n">${fmt(r.decisions)}</td><td class="n">${fmt(r.denials)}</td><td class="n">${esc(r.denial_rate_pct)}%</td>`;
+    tb.appendChild(tr);
+  }
+}
+function bandLabel(b) { return {all: "any loan amount", "u150": "loans under $150,000", "150-250": "loans $150,000–$250,000", "250p": "loans $250,000 and over"}[b] || b; }
+function purpLabel(p) { return {all: "any purpose", purchase: "home purchase", refinance: "refinance", improvement: "home improvement", other: "other purpose"}[p] || p; }
+(async () => {
+  try {
+    DATA = await (await fetch("/data/door-report-cells-2025.json", {cache: "no-store"})).json();
+    document.getElementById("prov").textContent = `Data generated ${DATA.generated}; ${DATA.cells} cohorts; input file SHA-256 ${DATA.input_sha256 || "n/a"}; code commit ${(DATA.code_commit || "").slice(0, 12)}. Universe: ${DATA.universe}.`;
+    render();
+  } catch (e) { document.getElementById("cell").textContent = "The cohort table is being rebuilt from the CFPB file; please try again shortly."; }
+})();
+for (const id of ["st", "band", "purp"]) document.getElementById(id).addEventListener("change", render);
+</script>
+</body></html>
