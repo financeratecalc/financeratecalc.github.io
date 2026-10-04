@@ -630,9 +630,11 @@ export default {
     }
     if (path === "/usage") {
       if (!env || !env.CREDITS) return json({ error: "tally unavailable" }, 503);
-      const list = await env.CREDITS.list({ prefix: "tally:", limit: 1000 });
+      // paginate: the tally passed 1,000 keys in September (directory probes create keys), which cut /usage off at 2026-09-26
+      const keys = []; let cursor;
+      do { const page = await env.CREDITS.list({ prefix: "tally:", limit: 1000, cursor }); keys.push(...page.keys); cursor = page.list_complete ? undefined : page.cursor; } while (cursor);
       const rows = {};
-      for (const k of list.keys) {
+      for (const k of keys) {
         const [, day, client, ...ev] = k.name.split(":");
         const event = ev.join(":");
         const v = Number((k.metadata && k.metadata.n) || 0);
@@ -668,7 +670,7 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.16.0" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.16.1" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
