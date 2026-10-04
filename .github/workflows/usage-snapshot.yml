@@ -1,0 +1,41 @@
+name: Usage snapshot (who is calling the tools)
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 5 * * *"
+jobs:
+  snap:
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch /usage and /misquotes, summarise
+        run: |
+          python - <<'PY'
+          import json, urllib.request, datetime, re, collections
+          u = json.load(urllib.request.urlopen("https://frc-mcp.ziyetis.workers.dev/usage", timeout=30))
+          rows = u.get("rows") or u.get("usage") or {k: v for k, v in u.items() if re.match(r"\d{4}-\d{2}-\d{2}$", k)}
+          selftest = re.compile(r"frc-selftest|curl|node|python|postman|insomnia", re.I)
+          by_day = {}; by_client = collections.Counter(); by_tool = collections.Counter(); verify = collections.Counter()
+          for day, clients in sorted(rows.items()):
+              tot = ext = 0
+              for client, events in clients.items():
+                  for ev, n in events.items():
+                      n = int(n)
+                      if client == "verify":
+                          verify[ev] += n; continue
+                      tot += n
+                      if not selftest.search(client):
+                          ext += n; by_client[client] += n; by_tool[ev] += n
+              by_day[day] = {"all_calls": tot, "external_calls": ext}
+          out = {"generated": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                 "days": by_day, "external_calls_total": sum(d["external_calls"] for d in by_day.values()),
+                 "external_clients": by_client.most_common(30), "external_tools": by_tool.most_common(30),
+                 "verify_by_channel_status": dict(verify), "raw_note": u.get("note")}
+          json.dump(out, open("eval/usage-snapshot.json", "w"), indent=1)
+          print(json.dumps(out, indent=1)[:4000])
+          PY
+      - name: Commit
+        run: |
+          git config user.name frc-bot && git config user.email press@financeratecalc.com
+          git add eval/usage-snapshot.json && (git diff --cached --quiet || git commit -m "usage snapshot [skip ci]") && git push
