@@ -41,3 +41,15 @@ A bot validates and opens the PR. Then two models' `.eval` logs for a full run g
 ## D. Perplexity publisher program — SENT 2026-10-02
 
 Written application to press@perplexity.ai (no public program address exists), two offers: (1) the graded ledger entries on how Perplexity restates FRC figures (2026-09-20, 2026-09-22), (2) the correction feed `corrections.json` (spec §7d). No call requested. Follow-up: one resend on 2026-10-12 if no reply, then closed. Expected money if accepted: small (revenue share is pro-rated by citations and visits); expected value: first external acceptance, API/partner-team access for the feed.
+
+## E. Publisher outreach (free 10-figure scan) — log
+
+| date sent | publisher | channel | framing | follow-up due | status |
+|---|---|---|---|---|---|
+| 2026-10-04 | LendingTree | press mailbox | their own denial studies | 2026-10-14 | sent |
+| 2026-10-04 | Bankrate | PR manager | rate-survey qualifiers | 2026-10-14 | sent |
+| 2026-10-04 | NerdWallet | press mailbox | methodology notes dropped | 2026-10-14 | sent |
+| 2026-10-04 | Zillow Research | press mailbox | "do you measure this?" | 2026-10-14 | sent |
+| 2026-10-02 | Perplexity (publisher program) | press mailbox | ledger evidence + corrections feed | 2026-10-12 | sent |
+
+Rule: one follow-up per publisher, ten days after the first email, then closed. Replies and scan deliveries are logged here with dates; no reply text is reproduced.
