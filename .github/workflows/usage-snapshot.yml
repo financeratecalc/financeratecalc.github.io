@@ -14,7 +14,7 @@ jobs:
           python - <<'PY'
           import json, urllib.request, datetime, re, collections
           u = json.load(urllib.request.urlopen("https://frc-mcp.ziyetis.workers.dev/usage", timeout=30))
-          rows = u.get("rows") or u.get("usage") or {k: v for k, v in u.items() if re.match(r"\d{4}-\d{2}-\d{2}$", k)}
+          rows = u.get("days") or {}
           selftest = re.compile(r"frc-selftest|curl|node|python|postman|insomnia", re.I)
           by_day = {}; by_client = collections.Counter(); by_tool = collections.Counter(); verify = collections.Counter()
           for day, clients in sorted(rows.items()):
