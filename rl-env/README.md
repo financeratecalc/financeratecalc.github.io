@@ -103,4 +103,4 @@ None of the layers is new on its own (content hashes, Sigstore, verifiable rewar
 
 ## Related
 
-Specification: `../spec/claim-contract-1.0-draft.md`. Papers: SSRN 7156938, 7309319, 7341481, 7423798 and `../papers/claim-contract-working-paper.md`. Misquote ledger: https://financeratecalc.com/misquotes.html. Benchmark on Hugging Face: FinanceRateCalc/denial-ai-benchmark.
+Specification: `../spec/claim-contract-1.0-draft.md`. Papers: SSRN 7156938, 7309319, 7341481, 7423798 and 7578778 (`../papers/claim-contract-working-paper.md`). Misquote ledger: https://financeratecalc.com/misquotes.html. Benchmark on Hugging Face: FinanceRateCalc/denial-ai-benchmark.

@@ -4,7 +4,7 @@
 
 **Ziya Yetiş** — FinanceRateCalc, Adana, Turkey — press@financeratecalc.com
 
-Working paper, draft 2, 2026-10-04 (draft 1: 2026-09-29). Companion to SSRN 7156938, 7309319, 7341481 and 7423798. Specification, checker, task file, run files and the misquote ledger are public under CC BY 4.0 at financeratecalc.com and github.com/financeratecalc.
+Working paper, draft 2, 2026-10-04 (draft 1: 2026-09-29). SSRN 7578778, doi:10.2139/ssrn.7578778 (approved 2026-10-09). Companion to SSRN 7156938, 7309319, 7341481 and 7423798. Specification, checker, task file, run files and the misquote ledger are public under CC BY 4.0 at financeratecalc.com and github.com/financeratecalc.
 
 ---
 
