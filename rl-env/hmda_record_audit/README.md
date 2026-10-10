@@ -43,3 +43,14 @@ cd rl-env && validate hmda-record-audit --runtime.type subprocess
 ```
 Rollouts go through `.github/workflows/rl-env-smoke.yml` with `taskset=hmda-record-audit`.
 License CC BY 4.0. Part of FinanceRateCalc; companion to `frc-citation`.
+
+## First rollout (2026-10-10, claude-haiku-4-5, 60 tasks = 30 A + 30 B, 1 repeat, cost ≈ $0.15)
+Mean reward 0.567. Run file: `eval/runs/20261010T0932-rlenv-smoke-hmda-record-audit-claude-haiku-4-5-20251001.json`.
+* **Task A, 30/30 at 0.5:** LTV and upfront MIP correct in every task; the annual MIP rate wrong in every task.
+  The model applied the pre-2023 FHA table (0.80–0.85%) instead of ML 2023-05 (0.50–0.55%), so the monthly
+  figure was wrong too. A superseded regulatory figure served as current: the same failure the temporal
+  task measures for statistics, here for a rule table.
+* **Task B, 19/30 exact, 11/30 at 0:** every failure was a false positive on a record where no rule fires;
+  the model listed conditional rules (e.g. "if Action Taken is 4, 5 or 6 then CLTV must be NA") on originated
+  loans without checking the condition. 0 invented ids; 0 outcome predictions; 60/60 parseable JSON.
+One model, one repeat: a smoke test, not a finding about models in general.
