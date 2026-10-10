@@ -33,8 +33,13 @@ synthetic smoke tasks. Universe: FHA forward loans, 2025, reverse mortgages excl
 * The rulebook is a subset (18 of several hundred edits), chosen for fields present in the public LAR.
 * Public `debt_to_income_ratio` is bucketed text; the decimal-misplacement check applies only to numeric values.
 * Perturbed records are real records with one field changed; they are labelled as such.
-* Domain review: the rule selection and the arithmetic were reviewed by a bank credit officer (23 years);
-  30 tasks were hand-checked (see `fixtures/review.md` once it exists).
+* Domain review (2026-10-11, bank credit officer, 23 years): the rules test **reporting consistency under the
+  HMDA Filing Instructions Guide, not what is possible inside a lender's file.** In practice a denied file may
+  carry pricing fields (rate, rate spread, intended purchaser) and a withdrawn or incomplete file may carry an
+  appraised value and an LTV, because pricing and appraisal happen before the decision; the public record must
+  nevertheless report those fields as NA for those actions. An approved file carrying a denial-reason code is an
+  error in both worlds. A model that treats the rulebook as "what a banker would find impossible" will over-fire
+  on the pricing and valuation rules; the rulebook is the reporting rule, quoted. Hand-check of 30 tasks: in progress.
 
 **On the Prime Intellect Environments Hub (2026-10-10):** https://app.primeintellect.ai/dashboard/environments/financeratecalc/hmda-record-audit (`prime env install financeratecalc/hmda-record-audit`).
 
