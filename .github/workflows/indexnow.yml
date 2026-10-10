@@ -1,0 +1,60 @@
+name: IndexNow (Bing) — notify changed pages on deploy
+on:
+  push:
+    branches: [main]
+    paths: ["**/*.html", "sitemap*.xml", "llms.txt", "robots.txt"]
+  workflow_dispatch:
+    inputs:
+      all_sitemap_urls:
+        description: "true = submit every URL in sitemap.xml (first run)"
+        default: "false"
+permissions:
+  contents: read
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - name: Collect URLs
+        id: urls
+        run: |
+          python - <<'PY'
+          import subprocess, re, os, json
+          key = "034a1b143f957bf0814b83f942a09160"
+          urls = []
+          if "${{ github.event.inputs.all_sitemap_urls }}" == "true":
+              for f in ["sitemap.xml"] + [x for x in os.listdir(".") if x.startswith("sitemap") and x.endswith(".xml")]:
+                  if os.path.exists(f):
+                      urls += re.findall(r"<loc>(.*?)</loc>", open(f, encoding="utf-8").read())
+              # sitemap index: expand children
+              more = []
+              for u in urls:
+                  if u.endswith(".xml"):
+                      fn = u.split("financeratecalc.com/")[-1]
+                      if os.path.exists(fn):
+                          more += re.findall(r"<loc>(.*?)</loc>", open(fn, encoding="utf-8").read())
+              urls = [u for u in urls + more if not u.endswith(".xml")]
+          else:
+              changed = subprocess.run(["git", "diff", "--name-only", "HEAD~1", "HEAD"], capture_output=True, text=True).stdout.split()
+              for f in changed:
+                  if f.endswith(".html") and os.path.exists(f) and "noindex" not in open(f, encoding="utf-8", errors="ignore").read(4000):
+                      urls.append("https://financeratecalc.com/" + ("" if f == "index.html" else f))
+          urls = sorted(set(urls))[:10000]
+          json.dump(urls, open("/tmp/urls.json", "w"))
+          print(len(urls), "urls")
+          PY
+      - name: Submit to IndexNow
+        run: |
+          python - <<'PY'
+          import json, urllib.request
+          urls = json.load(open("/tmp/urls.json"))
+          if not urls:
+              print("nothing to submit"); raise SystemExit
+          body = {"host": "financeratecalc.com", "key": "034a1b143f957bf0814b83f942a09160", "keyLocation": "https://financeratecalc.com/034a1b143f957bf0814b83f942a09160.txt", "urlList": urls}
+          req = urllib.request.Request("https://api.indexnow.org/IndexNow", data=json.dumps(body).encode(), headers={"Content-Type": "application/json; charset=utf-8"}, method="POST")
+          try:
+              r = urllib.request.urlopen(req, timeout=60); print("status", r.status, len(urls))
+          except urllib.error.HTTPError as e:
+              print("http", e.code, e.read()[:200])
+          PY
