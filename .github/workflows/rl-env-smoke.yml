@@ -128,7 +128,7 @@ jobs:
               print(tname, len(raw), urllib.request.urlopen(req).status)
           PY
       - name: Legacy vf-eval (community-repo package)
-        if: always()
+        if: always() && inputs.taskset == 'frc-citation'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -137,7 +137,7 @@ jobs:
           cd rl-env/community/frc_citation && vf-eval frc-citation -m "${{ github.event.inputs.model }}" -b "${{ github.event.inputs.base_url }}" -k "${{ github.event.inputs.api_key_var }}" -n "${{ github.event.inputs.num_tasks }}" -r "${{ github.event.inputs.num_rollouts }}" -s -d 2>&1 | tail -40
           find outputs -type f | head; cp -r outputs /tmp/vf-legacy-outputs || true
       - name: Save legacy outputs via the GitHub API
-        if: always()
+        if: always() && inputs.taskset == 'frc-citation'
         env:
           GH_PAT: ${{ secrets.EVAL_PAT }}
         run: |

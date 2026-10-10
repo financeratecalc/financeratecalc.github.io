@@ -96,7 +96,16 @@ def build_prompt(task_type: str, record: dict) -> str:
 class HmdaRecordAuditTaskset(vf.Taskset[AuditTask, AuditTasksetConfig]):
     def load(self) -> list[AuditTask]:
         with open(self.config.fixtures, encoding="utf-8") as f:
-            tasks = json.load(f)["tasks"]
+            raw = json.load(f)["tasks"]
+        # interleave A and B so that any prefix (--num-tasks N) is balanced across task types
+        a = [t for t in raw if t["type"] == "arith"]
+        b = [t for t in raw if t["type"] != "arith"]
+        tasks = []
+        for i in range(max(len(a), len(b))):
+            if i < len(a):
+                tasks.append(a[i])
+            if i < len(b):
+                tasks.append(b[i])
         return [AuditTask(AuditData(idx=i, name=t["id"], prompt=build_prompt(t["type"], t["record"]),
                                     system_prompt=SYSTEM_PROMPT, tid=t["id"], task_type=t["type"],
                                     record=t["record"], truth=t["truth"]), self.config.task)
