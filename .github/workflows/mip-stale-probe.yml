@@ -1,0 +1,46 @@
+name: MIP stale-rate probe (deterministic grading)
+on:
+  workflow_dispatch:
+    inputs:
+      models:
+        description: "comma-separated: anthropic:<model>|openai:<model>"
+        default: "anthropic:claude-haiku-4-5-20251001,anthropic:claude-sonnet-4-5-20250929,openai:gpt-4.1-mini,openai:gpt-4.1"
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Run
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          mkdir -p /tmp/out
+          IFS=',' read -ra MS <<< "${{ github.event.inputs.models }}"
+          for m in "${MS[@]}"; do
+            prov="${m%%:*}"; model="${m#*:}"
+            if [ "$prov" = "anthropic" ]; then base="https://api.anthropic.com/v1"; keyvar="ANTHROPIC_API_KEY"; else base="https://api.openai.com/v1"; keyvar="OPENAI_API_KEY"; fi
+            python eval/mip_stale_probe.py "$model" "$base" "$keyvar" "/tmp/out/$model.json" || echo "failed $model"
+          done
+          ls -la /tmp/out
+      - name: Publish results via the GitHub API
+        env:
+          GH_PAT: ${{ secrets.EVAL_PAT }}
+        run: |
+          python - <<'PY'
+          import os, json, base64, urllib.request, glob, datetime as dt
+          stamp = dt.datetime.now(dt.UTC).strftime("%Y%m%dT%H%M")
+          runs = [json.load(open(f)) for f in sorted(glob.glob("/tmp/out/*.json"))]
+          out = {"generated": stamp, "runs": runs, "summary": [r["summary"] for r in runs]}
+          p = f"eval/runs/{stamp}-mip-stale-probe.json"
+          tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"
+          body = {"message": f"mip stale-rate probe {stamp} [skip ci]", "content": base64.b64encode(json.dumps(out, indent=1).encode()).decode(), "branch": "main"}
+          req = urllib.request.Request(f"https://api.github.com/repos/{repo}/contents/{p}", method="PUT", data=json.dumps(body).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
+          print(urllib.request.urlopen(req).status, p)
+          print(json.dumps(out["summary"], indent=1))
+          PY
