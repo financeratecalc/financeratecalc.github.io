@@ -30,6 +30,8 @@ Per aitraining.jobs (rates as quoted there, unverified against the platforms):
 
 - Dataset FinanceRateCalc/denial-ai-benchmark. Add the environment card as a dataset card section and link `rl-env/`. No payment; discoverability.
 
+**Second environment published 2026-10-10:** https://app.primeintellect.ai/dashboard/environments/financeratecalc/hmda-record-audit (public-record audit; see rl-env/hmda_record_audit/README.md).
+
 **Published on the Hub 2026-10-02:** https://app.primeintellect.ai/dashboard/environments/financeratecalc/frc-citation — install with `prime env install financeratecalc/frc-citation`. (The community-environments repo no longer accepts PRs; the Hub is the channel. Research-program form submitted the same day.)
 
 ## Order

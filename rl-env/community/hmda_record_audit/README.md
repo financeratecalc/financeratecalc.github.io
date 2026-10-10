@@ -36,6 +36,8 @@ synthetic smoke tasks. Universe: FHA forward loans, 2025, reverse mortgages excl
 * Domain review: the rule selection and the arithmetic were reviewed by a bank credit officer (23 years);
   30 tasks were hand-checked (see `fixtures/review.md` once it exists).
 
+**On the Prime Intellect Environments Hub (2026-10-10):** https://app.primeintellect.ai/dashboard/environments/financeratecalc/hmda-record-audit (`prime env install financeratecalc/hmda-record-audit`).
+
 ## Run
 ```
 pip install -e rl-env
