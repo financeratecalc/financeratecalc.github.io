@@ -47,16 +47,19 @@ def ask(model, base_url, key, text):
     return d["choices"][0]["message"]["content"]
 
 
-def first_rate(text):
-    m = re.search(r"(\d+(?:\.\d+)?)\s*%", text)
-    if m:
-        return float(m.group(1))
+def first_rate(text, ltv=None):
+    """The rate the answer gives: the first percentage that is not the question's LTV and is below 2%
+    (MIP rates are 0.15–1.05%; LTVs restated in the answer are 75–96.5%)."""
+    for m in re.finditer(r"(\d+(?:\.\d+)?)\s*%", text):
+        v = float(m.group(1))
+        if v < 2.0 and (ltv is None or abs(v - ltv) > 0.01):
+            return v
     m = re.search(r"(\d+)\s*(?:bps|basis points)", text, re.IGNORECASE)
     return float(m.group(1)) / 100 if m else None
 
 
-def grade(answer, truth):
-    r = first_rate(answer)
+def grade(answer, truth, ltv=None):
+    r = first_rate(answer, ltv)
     rates = {float(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s*%", answer)}
     return {"first_rate": r, "correct": r is not None and abs(r - truth) < 0.005,
             "stale_rate_present": bool({0.80, 0.85, 1.00, 1.05, 0.45} & rates),
@@ -75,7 +78,7 @@ def main(model, base_url, key_env, out, with_rule="0"):
         except Exception as e:  # noqa: BLE001 - record the failure, keep probing
             ans = f"[error] {e}"
         rows.append({"qid": qid, "amount": amount, "ltv": ltv, "term": term, "truth": truth, "question": text,
-                     "answer": ans, **grade(ans, truth)})
+                     "answer": ans, **grade(ans, truth, ltv)})
     summary = {"model": model, "condition": "with_rule" if with_rule else "no_source", "n": len(rows), "correct": sum(r["correct"] for r in rows),
                "stale_rate_present": sum(r["stale_rate_present"] for r in rows),
                "mentions_2023_change": sum(r["mentions_2023_change"] for r in rows),
