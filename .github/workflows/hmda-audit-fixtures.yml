@@ -15,10 +15,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
+      - name: Install
+        run: pip install -q "verifiers>=0.3.1" && pip install -q -e rl-env
       - name: Download the CFPB file
         run: curl -L --compressed --retry 3 --max-time 3600 -o /tmp/hmda_2025_fha.csv -w "http %{http_code} bytes %{size_download}\n" "${{ github.event.inputs.source_url }}"
       - name: Build fixtures
-        run: python scripts/hmda_audit_sample.py /tmp/hmda_2025_fha.csv rl-env/hmda_record_audit/fixtures
+        run: python scripts/hmda_audit_sample.py /tmp/hmda_2025_fha.csv rl-env/hmda_record_audit/fixtures 2>&1 | tee /tmp/build.log | tail -5
       - name: Publish via the GitHub API
         env:
           GH_PAT: ${{ secrets.EVAL_PAT }}
