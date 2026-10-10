@@ -1,0 +1,38 @@
+name: hmda-record-audit fixtures (from the CFPB file)
+on:
+  workflow_dispatch:
+    inputs:
+      source_url:
+        description: "CFPB file URL (FHA extract)"
+        default: "https://ffiec.cfpb.gov/v2/data-browser-api/view/nationwide/csv?years=2025&loan_types=2"
+permissions:
+  contents: read
+jobs:
+  fixtures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Download the CFPB file
+        run: curl -L --compressed --retry 3 --max-time 3600 -o /tmp/hmda_2025_fha.csv -w "http %{http_code} bytes %{size_download}\n" "${{ github.event.inputs.source_url }}"
+      - name: Build fixtures
+        run: python scripts/hmda_audit_sample.py /tmp/hmda_2025_fha.csv rl-env/hmda_record_audit/fixtures
+      - name: Publish via the GitHub API
+        env:
+          GH_PAT: ${{ secrets.EVAL_PAT }}
+        run: |
+          python - <<'PY'
+          import os, json, base64, urllib.request
+          p = "rl-env/hmda_record_audit/fixtures/tasks.json"
+          tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"
+          url = f"https://api.github.com/repos/{repo}/contents/{p}"
+          sha = None
+          try: sha = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={"Authorization": f"token {tok}"}))).get("sha")
+          except Exception: pass
+          body = {"message": "hmda-record-audit fixtures rebuilt from the CFPB file [skip ci]", "content": base64.b64encode(open(p, "rb").read()).decode(), "branch": "main"}
+          if sha: body["sha"] = sha
+          req = urllib.request.Request(url, method="PUT", data=json.dumps(body).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
+          print(urllib.request.urlopen(req).status, os.path.getsize(p))
+          PY
