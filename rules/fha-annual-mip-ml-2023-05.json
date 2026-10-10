@@ -1,0 +1,111 @@
+{
+ "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+ "title": "FHA annual mortgage insurance premium (MIP) rates, forward mortgages",
+ "issuer_of_rule": "U.S. Department of Housing and Urban Development, Mortgagee Letter 2023-05",
+ "effective_from": "2023-03-20",
+ "effective_to": null,
+ "supersedes": "Mortgagee Letter 2015-01 table (0.45\u20131.05%)",
+ "base_loan_threshold_usd": 726200,
+ "upfront_mip_rate": 0.0175,
+ "definitions": {
+  "term": "gt15 = loan term over 15 years; le15 = 15 years or less",
+  "base_loan": "le726200 = base loan amount up to $726,200; gt726200 = above",
+  "ltv": "loan-to-value bands as in the letter: le90 (<=90%), 90to95 (>90 to <=95), gt95 (>95); for le15: le90/gt90 (<=726,200) and le78/78to90/gt90 (>726,200)"
+ },
+ "cells": [
+  {
+   "term": "gt15",
+   "base_loan": "le726200",
+   "ltv": "le90",
+   "annual_mip_bps": 50,
+   "annual_mip_rate": 0.005
+  },
+  {
+   "term": "gt15",
+   "base_loan": "le726200",
+   "ltv": "90to95",
+   "annual_mip_bps": 50,
+   "annual_mip_rate": 0.005
+  },
+  {
+   "term": "gt15",
+   "base_loan": "le726200",
+   "ltv": "gt95",
+   "annual_mip_bps": 55,
+   "annual_mip_rate": 0.0055
+  },
+  {
+   "term": "gt15",
+   "base_loan": "gt726200",
+   "ltv": "le90",
+   "annual_mip_bps": 70,
+   "annual_mip_rate": 0.007
+  },
+  {
+   "term": "gt15",
+   "base_loan": "gt726200",
+   "ltv": "90to95",
+   "annual_mip_bps": 70,
+   "annual_mip_rate": 0.007
+  },
+  {
+   "term": "gt15",
+   "base_loan": "gt726200",
+   "ltv": "gt95",
+   "annual_mip_bps": 75,
+   "annual_mip_rate": 0.0075
+  },
+  {
+   "term": "le15",
+   "base_loan": "le726200",
+   "ltv": "le90",
+   "annual_mip_bps": 15,
+   "annual_mip_rate": 0.0015
+  },
+  {
+   "term": "le15",
+   "base_loan": "le726200",
+   "ltv": "gt90",
+   "annual_mip_bps": 40,
+   "annual_mip_rate": 0.004
+  },
+  {
+   "term": "le15",
+   "base_loan": "gt726200",
+   "ltv": "le78",
+   "annual_mip_bps": 15,
+   "annual_mip_rate": 0.0015
+  },
+  {
+   "term": "le15",
+   "base_loan": "gt726200",
+   "ltv": "78to90",
+   "annual_mip_bps": 40,
+   "annual_mip_rate": 0.004
+  },
+  {
+   "term": "le15",
+   "base_loan": "gt726200",
+   "ltv": "gt90",
+   "annual_mip_bps": 65,
+   "annual_mip_rate": 0.0065
+  }
+ ],
+ "contract": {
+  "required_qualifiers": [
+   "term",
+   "base loan amount vs $726,200",
+   "LTV band",
+   "case number assignment date on or after 2023-03-20"
+  ],
+  "does_not_establish": [
+   "the premium for case numbers assigned before 2023-03-20",
+   "the premium on HECM/reverse or Title I loans",
+   "the exact monthly amount, which HUD amortises on the average outstanding balance"
+  ],
+  "safe_sentence_template": "For an FHA forward loan with a case number assigned on or after 20 March 2023, a base loan amount {base_loan} and LTV {ltv} on a term {term}, the annual MIP is {annual_mip_rate_pct} of the base loan amount (HUD Mortgagee Letter 2023-05)."
+ },
+ "machine_readable_by": "FinanceRateCalc, from the public HUD letter; not an official HUD file; CC BY 4.0; corrections: https://financeratecalc.com/corrections.html",
+ "verify": "https://financeratecalc.com/verify.html",
+ "sha256": "425451eaa45ef8a9be1d3fae2288f1906e06a91aeb3d8b320c511e70f876d466"
+}

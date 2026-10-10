@@ -6,7 +6,7 @@ Letter 2023-05 (threshold $726,200). Grading is deterministic: the first percent
 the answer is compared with the truth; the answer is also flagged if it carries a pre-2023 rate
 (0.80/0.85/1.00/1.05) and whether it names the 2023 change. No model grades anything here.
 
-usage: mip_stale_probe.py <model> <base_url> <api_key_env> <out.json>
+usage: mip_stale_probe.py <model> <base_url> <api_key_env> <out.json> [with_rule 0|1]
 """
 import datetime as dt
 import json
@@ -24,8 +24,15 @@ QUESTIONS = [
 STALE = {0.80, 0.85, 1.00, 1.05, 0.45, 0.70, 0.95}  # pre-2023 annual MIP cells (0.70/0.95 overlap post-2023 for >726,200; handled below)
 
 
-def prompt(amount, ltv, term):
-    return (f"Today is October 2026. For an FHA purchase loan with a base loan amount of ${amount:,}, a loan-to-value "
+RULE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "rules", "fha-annual-mip-ml-2023-05.json")
+
+
+def prompt(amount, ltv, term, with_rule=False):
+    head = ""
+    if with_rule:
+        with open(RULE_PATH, encoding="utf-8") as fh:
+            head = ("You have this machine-readable copy of the rule (treat it as the source):\n" + fh.read() + "\n\n")
+    return head + (f"Today is October 2026. For an FHA purchase loan with a base loan amount of ${amount:,}, a loan-to-value "
             f"ratio of {ltv}% and a {term}-year term, with the FHA case number assigned this year, what is the annual "
             "mortgage insurance premium (MIP) rate? Answer first with the rate as a percentage of the loan amount "
             "(for example 0.00%), then name the HUD policy document that sets it.")
@@ -57,18 +64,19 @@ def grade(answer, truth):
             "mentions_ml_2023_05": bool(re.search(r"2023[- ]0?5", answer))}
 
 
-def main(model, base_url, key_env, out):
+def main(model, base_url, key_env, out, with_rule="0"):
     key = os.environ[key_env]
+    with_rule = with_rule == "1"
     rows = []
     for qid, amount, ltv, term, truth in QUESTIONS:
-        text = prompt(amount, ltv, term)
+        text = prompt(amount, ltv, term, with_rule)
         try:
             ans = ask(model, base_url, key, text)
         except Exception as e:  # noqa: BLE001 - record the failure, keep probing
             ans = f"[error] {e}"
         rows.append({"qid": qid, "amount": amount, "ltv": ltv, "term": term, "truth": truth, "question": text,
                      "answer": ans, **grade(ans, truth)})
-    summary = {"model": model, "n": len(rows), "correct": sum(r["correct"] for r in rows),
+    summary = {"model": model, "condition": "with_rule" if with_rule else "no_source", "n": len(rows), "correct": sum(r["correct"] for r in rows),
                "stale_rate_present": sum(r["stale_rate_present"] for r in rows),
                "mentions_2023_change": sum(r["mentions_2023_change"] for r in rows),
                "errors": sum(r["answer"].startswith("[error]") for r in rows)}
@@ -80,4 +88,4 @@ def main(model, base_url, key_env, out):
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:5])
+    main(*sys.argv[1:6])

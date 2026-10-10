@@ -4,7 +4,10 @@ on:
     inputs:
       models:
         description: "comma-separated: anthropic:<model>|openai:<model>"
-        default: "anthropic:claude-haiku-4-5-20251001,anthropic:claude-sonnet-4-5-20250929,openai:gpt-4.1-mini,openai:gpt-4.1"
+        default: "anthropic:claude-haiku-4-5-20251001,anthropic:claude-sonnet-4-5-20250929"
+      with_rule:
+        description: "1 = prompt carries rules/fha-annual-mip-ml-2023-05.json (with-source condition)"
+        default: "0"
 permissions:
   contents: read
 jobs:
@@ -25,7 +28,7 @@ jobs:
           for m in "${MS[@]}"; do
             prov="${m%%:*}"; model="${m#*:}"
             if [ "$prov" = "anthropic" ]; then base="https://api.anthropic.com/v1"; keyvar="ANTHROPIC_API_KEY"; else base="https://api.openai.com/v1"; keyvar="OPENAI_API_KEY"; fi
-            python eval/mip_stale_probe.py "$model" "$base" "$keyvar" "/tmp/out/$model.json" || echo "failed $model"
+            python eval/mip_stale_probe.py "$model" "$base" "$keyvar" "/tmp/out/$model.json" "${{ github.event.inputs.with_rule }}" || echo "failed $model"
           done
           ls -la /tmp/out
       - name: Publish results via the GitHub API
@@ -37,7 +40,7 @@ jobs:
           stamp = dt.datetime.now(dt.UTC).strftime("%Y%m%dT%H%M")
           runs = [json.load(open(f)) for f in sorted(glob.glob("/tmp/out/*.json"))]
           out = {"generated": stamp, "runs": runs, "summary": [r["summary"] for r in runs]}
-          p = f"eval/runs/{stamp}-mip-stale-probe.json"
+          p = f"eval/runs/{stamp}-mip-stale-probe" + ("-with-rule" if "${{ github.event.inputs.with_rule }}" == "1" else "") + ".json"
           tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"
           body = {"message": f"mip stale-rate probe {stamp} [skip ci]", "content": base64.b64encode(json.dumps(out, indent=1).encode()).decode(), "branch": "main"}
           req = urllib.request.Request(f"https://api.github.com/repos/{repo}/contents/{p}", method="PUT", data=json.dumps(body).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
