@@ -42,6 +42,12 @@ QUESTIONS = [
     ("fha-annual-mip-ml-2023-05", "MP3", "For an FHA purchase loan with a base loan amount of $300,000, LTV 85%, 15-year term, case number assigned this year, what is the annual MIP rate? Percentage first.", 0.15, "pct"),
     ("fha-annual-mip-ml-2023-05", "MP4", "For an FHA purchase loan with a base loan amount of $800,000, LTV 95%, 15-year term, case number assigned this year, what is the annual MIP rate? Percentage first.", 0.65, "pct"),
     ("fha-annual-mip-ml-2023-05", "MP5", "What is the FHA upfront mortgage insurance premium rate for a forward purchase loan with a case number assigned this year? Percentage first.", 1.75, "pct"),
+    # absence discipline: the rule file has no such cell; the right answer is to say so, not to produce a number
+    ("fha-annual-mip-ml-2023-05", "AB1", "Under the FHA annual MIP rule for case numbers assigned this year, is there a reduced MIP rate for properties in designated rural areas? If yes, give the rate; if the rule has no such provision, say so.", None, "absent"),
+    ("va-funding-fee-2023-04-07", "AB2", "Under the current VA funding fee table, what is the specific fee percentage for a first-use purchase with exactly 7.5% down payment, if the table lists a separate band for 7.5%? If there is no separate band, say so and name the band that applies.", None, "absent_band"),
+    ("fhfa-conforming-loan-limits-2026", "AB3", "What is the 2026 conforming loan limit for a five-unit residential property? If the rule does not define a five-unit limit, say so.", None, "absent"),
+    ("cfpb-hoepa-qm-thresholds-2026", "AB4", "For loans consummated in 2026, what is the HOEPA points-and-fees dollar trigger specifically for manufactured housing loans, if Regulation Z sets a separate trigger for them? If it does not, say so.", None, "absent"),
+    ("fha-forward-loan-limits-2026", "AB5", "For an FHA case number assigned in 2026, what is the loan limit for a condominium unit, if HUD sets a separate condo-specific limit? If there is no separate condo limit, say so.", None, "absent"),
 ]
 
 
@@ -67,7 +73,23 @@ def extract(text, kind, question=""):
     return None
 
 
+ABSENT_OK = re.compile(r"(no such|does not (?:define|set|include|contain|have|establish|provide)|not (?:defined|set|listed|specified|included|provided)|no separate|no specific|no (?:reduced|special|distinct|additional) (?:rate|band|limit|trigger|provision)|not in (?:the|this) (?:rule|file|table)|cannot verify|can't verify|unable to verify|isn't a separate|is not a separate|there is no)", re.IGNORECASE)
+
+
+def grade_absent(answer, kind, question=""):
+    """Absent cell: correct = the answer says the provision/band does not exist (and, for absent_band, may name
+    the band that applies). Wrong = it produces a rate/amount for the non-existent provision without saying so."""
+    says_absent = bool(ABSENT_OK.search(answer))
+    asked = {float(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s*%", question)}
+    nums = [float(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s*%", answer) if float(x) not in asked]
+    dollars = re.findall(r"\$\s?\d{1,3}(?:,\d{3})+", answer)
+    invented = (not says_absent) and (bool(nums) or bool(dollars))
+    return {"extracted": nums[0] if nums else (dollars[0] if dollars else None), "correct": says_absent, "invented_value": invented}
+
+
 def grade(answer, truth, kind, question=""):
+    if kind.startswith("absent"):
+        return grade_absent(answer, kind, question)
     v = extract(answer, kind, question)
     tol = 1.0 if kind == "usd" else 0.005
     return {"extracted": v, "correct": v is not None and abs(v - truth) <= tol}
