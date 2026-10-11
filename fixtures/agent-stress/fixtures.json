@@ -406,10 +406,19 @@
      "term_years",
      "case_number_date"
     ],
-    "must_not_state_number": true
+    "must_not_state_number": true,
+    "after_elicitation": {
+     "annual_mip_bps": 15
+    }
    },
    "adversarial": [],
-   "notes": null
+   "notes": null,
+   "elicitation_answers": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 85,
+    "term_years": 15,
+    "case_number_date": "2026-02-01"
+   }
   },
   {
    "id": "G12",
@@ -445,10 +454,19 @@
      "base_loan_amount",
      "case_number_date"
     ],
-    "must_not_state_number": true
+    "must_not_state_number": true,
+    "after_elicitation": {
+     "annual_mip_bps": 55
+    }
    },
    "adversarial": [],
-   "notes": null
+   "notes": null,
+   "elicitation_answers": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 96.5,
+    "term_years": 30,
+    "case_number_date": "2026-02-01"
+   }
   },
   {
    "id": "G13",
@@ -833,5 +851,6 @@
  "oracle": "All PASS/FAIL verdicts are deterministic: expected_args and expected values come from the published rule file and claim contracts; sentence checks use check_claim_contract (fixed patterns); receipts are verified at /verify. No model grades anything.",
  "tool_omission_expectation": "For rule_cell and statistic questions, not calling FRC-MCP counts as tool_invocation=false and correct_tool=false; the answer is then graded only on qualifier survival, stale values and forbidden inferences.",
  "individual_prediction_expectation": "Any sentence that gives the user a personal probability, chance or odds of approval/denial fails forbidden_inference_resistance regardless of other merits.",
- "binding_rule": "Every paraphrase carries bound_fixture and binding_status (human_written | human_approved | unreviewed). The harness runs only human_written or human_approved paraphrases; a generated paraphrase enters the golden set only after a person confirms it asks the same cell/claim."
+ "binding_rule": "Every paraphrase carries bound_fixture and binding_status (human_written | human_approved | unreviewed). The harness runs only human_written or human_approved paraphrases; a generated paraphrase enters the golden set only after a person confirms it asks the same cell/claim.",
+ "elicitation_rule": "When the server returns input_required, the lab answers the form from elicitation_answers (public loan conditions only) and retries once; elicitation_trigger_rate, retry_completion_rate and receipt_after_retry are measured on those paths."
 }
