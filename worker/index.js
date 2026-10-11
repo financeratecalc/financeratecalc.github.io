@@ -661,7 +661,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.23.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.24.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -869,6 +869,9 @@ export default {
       else if (m.method === "ping") out.push(rpc(m.id, {}));
       else if (m.method === "server/discover") out.push(rpc(m.id, DISCOVER));
       else if (m.method === "tools/list") out.push(rpc(m.id, { tools: TOOLS, ttlMs: 3600000, cacheScope: "public" }));
+      else if (m.method === "resources/list") out.push(rpc(m.id, { resources: [], ttlMs: 3600000, cacheScope: "public" }));
+      else if (m.method === "prompts/list") out.push(rpc(m.id, { prompts: [], ttlMs: 3600000, cacheScope: "public" }));
+      else if (m.method === "resources/templates/list") out.push(rpc(m.id, { resourceTemplates: [], ttlMs: 3600000, cacheScope: "public" }));
       else if (m.method === "tools/call") {
         try {
           // 2026-07-28 stateless clients identify themselves per request in _meta; use it for the tally label when present.
