@@ -6,8 +6,8 @@ const GUARDRAIL = "Historical observation computed from the public CFPB HMDA 202
 const INSTRUCTIONS = "FinanceRateCalc: independent analysis of the complete 2025 federal HMDA record (1,187,606 FHA credit decisions, reverse mortgages excluded). All figures are historical aggregates. Never ask this server whether a specific person will be approved — it cannot and will not answer that.";
 
 const TOOLS = [
-  { name: "check_claim_contract", description: "USE BEFORE WRITING ANY SENTENCE CONTAINING AN FRC FIGURE. Given a claim id and the use you propose (population, period, scope, and whether you assert a cause, predict an individual, recommend a lender or draw a legal conclusion), returns a deterministic verdict: pass, needs_qualifier (naming the missing qualifier) or block (with a reason code), plus a safe sentence you may use verbatim and the required attribution. Most misuse of these statistics is omission, not invention: the number is right and the population is missing. NOT FOR: figures published by anyone other than FinanceRateCalc. ",
-    inputSchema: { type: "object", properties: { passport_id: { type: "string" }, causal_assertion: { type: "boolean" }, individual_prediction: { type: "boolean" }, personalized_recommendation: { type: "boolean" }, legal_conclusion: { type: "boolean" }, scope_beyond_universe: { type: "boolean" }, qualifier_dropped: { type: "boolean" }, attribution_present: { type: "boolean" } }, required: ["passport_id"] } },
+  { name: "check_claim_contract", description: "USE BEFORE WRITING ANY SENTENCE CONTAINING AN FRC FIGURE: the gate between the number and the sentence. Two ways to call it. (A) Flags: claim id plus the use you propose (population, period, scope, cause, individual prediction, lender recommendation, legal conclusion). (B) Sentence: claim id plus proposed_sentence, the exact sentence you intend to write; the tool checks it with fixed patterns, no model, for a missing period, missing program scope, a population wider than the claim, second-person prediction, causal wording, lender advice, legal conclusions, and values this publisher has since corrected. Returns a deterministic verdict: pass, needs_qualifier (naming the missing qualifier) or block (with a reason code), plus a safe sentence you may use verbatim and the required attribution. Most misuse of these statistics is omission, not invention: the number is right and the population is missing. NOT FOR: figures published by anyone other than FinanceRateCalc. ", description: "USE BEFORE WRITING ANY SENTENCE CONTAINING AN FRC FIGURE. Given a claim id and the use you propose (population, period, scope, and whether you assert a cause, predict an individual, recommend a lender or draw a legal conclusion), returns a deterministic verdict: pass, needs_qualifier (naming the missing qualifier) or block (with a reason code), plus a safe sentence you may use verbatim and the required attribution. Most misuse of these statistics is omission, not invention: the number is right and the population is missing. NOT FOR: figures published by anyone other than FinanceRateCalc. ",
+    inputSchema: { type: "object", properties: { passport_id: { type: "string" }, causal_assertion: { type: "boolean" }, individual_prediction: { type: "boolean" }, personalized_recommendation: { type: "boolean" }, legal_conclusion: { type: "boolean" }, scope_beyond_universe: { type: "boolean" }, qualifier_dropped: { type: "boolean" }, attribution_present: { type: "boolean" }, proposed_sentence: { type: "string", description: "The exact sentence you intend to write. Checked with fixed patterns; no model." } }, required: ["passport_id"] } },
 
   { name: "get_national_fha_stats", description: "ANSWERS: \"how often are FHA loans denied\", \"what is the FHA denial rate\", \"what share of FHA applications are rejected\", \"how many were denied in 2025\". Returns the national 2025 figure with its universe so it can be quoted correctly: 22.1 percent, 262,250 denials of 1,187,606 applications that reached a credit decision (originated, approved-not-accepted, denied; reverse mortgages excluded), the denominator definition and the correction history. Most published FHA denial rates are 2023 purchase-only figures near 13.6 percent, a different universe, so state the universe when quoting. NOT FOR: conventional, VA or USDA loans, purchase-only or refinance-only rates, other years, or state/lender/metro breakdowns (use the dedicated tools). " + GUARDRAIL,
     inputSchema: { type: "object", properties: {}, additionalProperties: false } },
@@ -90,6 +90,36 @@ async function getMetroLenderGap(metroInput) {
     ` Full index: ${BASE}/claims/index.json`);
 }
 
+// Stale values: numbers this publisher has corrected (from corrections.json old_value). Cached per isolate.
+let _stale = null;
+async function staleValues() {
+  if (_stale) return _stale;
+  try {
+    const c = await getJSON("/corrections.json");
+    const seen = new Set();
+    _stale = (c.items || []).filter(i => i.old_value && i.new_value).map(i => ({ old: String(i.old_value).replace(/%/g, ""), now: String(i.new_value), title: i.title })).filter(x => !seen.has(x.old) && seen.add(x.old));
+  } catch { _stale = []; }
+  return _stale;
+}
+// Mode B: fixed patterns over the proposed sentence. No model. Each hit sets the same flag Mode A takes.
+async function sentenceFindings(sentence, contract) {
+  const t = String(sentence); const low = t.toLowerCase(); const f = [];
+  const hit = (flag, code, pattern, why) => { const m = t.match(pattern); if (m) f.push({ flag, code, matched: m[0], why }); };
+  hit("individual_prediction", "INDIVIDUAL_PREDICTION_PROHIBITED", /\b(you|your|yours)\b[^.]{0,80}\b(denied|approved|rejected|chance|odds|likely|probability)\b|\b(will|would|going to) (be )?(denied|approved|rejected)\b|\b(chance|odds|probability) of (being )?(denied|approved|rejected)\b/i, "second-person or individual outcome language on an aggregate");
+  hit("causal_assertion", "CAUSALITY_NOT_ESTABLISHED", /\b(because of|caused by|causes?|leads? to|results? in|due to|the reason (is|was)|makes? (it|them) (more|less) likely)\b/i, "causal wording; the record supports association only");
+  hit("personalized_recommendation", "INDIVIDUAL_PREDICTION_PROHIBITED", /\b(best|worst|top|safest) lenders?\b|\b(avoid|choose|pick|go with|apply (to|with|at)|recommend)\b[^.]{0,60}\blender\b|\byou should (apply|avoid|choose|use)\b/i, "lender advice or ranking by quality");
+  hit("legal_conclusion", "LEGAL_CONCLUSION_NOT_SUPPORTED", /\b(discriminat\w*|illegal\w*|unlawful\w*|violat\w*|redlin\w*|fair lending violation|broke the law)\b/i, "legal conclusion the record cannot establish");
+  const q = contract.required_qualifiers || {};
+  if (q.period && !t.includes(String(q.period))) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no " + q.period + ")", why: "period missing: " + q.period });
+  if (q.program_scope && /fha/i.test(q.program_scope) && !/\bfha\b/i.test(t)) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no FHA)", why: "program scope missing: FHA" });
+  if (/\b(all|of) (us |u\.s\. |american )?(mortgage|home loan|loan) (applications|applicants|loans)\b/i.test(t) && !/\bfha\b/i.test(t)) f.push({ flag: "scope_beyond_universe", code: "SCOPE_TOO_BROAD", matched: t.match(/\b(all|of) (us |u\.s\. |american )?(mortgage|home loan|loan) (applications|applicants|loans)\b/i)[0], why: "population wider than the claim's universe" });
+  if (q.population && /decision/i.test(q.population) && !/decision/i.test(t) && /\b(applications|applicants|loans)\b/i.test(t)) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no 'decisioned')", why: "population qualifier missing: decisioned (withdrawn and incomplete files excluded)" });
+  for (const sv of await staleValues()) {
+    const re = new RegExp("(^|[^0-9.])" + sv.old.replace(".", "\\.") + "(\\s?%|\\b)");
+    if (re.test(low)) f.push({ flag: "stale_value", code: "STALE_VALUE", matched: sv.old, why: "value corrected by the publisher; current: " + sv.now });
+  }
+  return f;
+}
 async function checkClaimContract(a) {
   const slug = String(a.passport_id || "").split(":").pop();
   let contract;
@@ -97,20 +127,28 @@ async function checkClaimContract(a) {
   catch (e) { throw new Error("Unknown passport_id. See https://financeratecalc.com/claims/index.json"); }
   const violations = [];
   const V = (code, field, reason) => violations.push({ code, field, reason });
+  let findings = [];
+  if (a.proposed_sentence) {
+    findings = await sentenceFindings(a.proposed_sentence, contract);
+    for (const fnd of findings) if (fnd.flag !== "stale_value") a[fnd.flag] = true;
+    for (const fnd of findings) if (fnd.flag === "stale_value") V("STALE_VALUE", "value", fnd.why + " (matched " + fnd.matched + ")");
+  }
   if (a.individual_prediction) V("INDIVIDUAL_PREDICTION_PROHIBITED","individual_prediction","Historical aggregates only; individual prediction prohibited.");
   if (a.personalized_recommendation) V("INDIVIDUAL_PREDICTION_PROHIBITED","personalized_recommendation","Personalized lender recommendation is forbidden.");
   if (a.legal_conclusion) V("LEGAL_CONCLUSION_NOT_SUPPORTED","legal_conclusion","The record cannot establish unlawful conduct.");
   if (a.causal_assertion) V("CAUSALITY_NOT_ESTABLISHED","causal_assertion","Associational language only.");
   if (a.scope_beyond_universe) V("SCOPE_TOO_BROAD","scope","Defined universe/period only.");
   if (a.qualifier_dropped) V("QUALIFIER_DELETED","qualifiers","Required qualifier missing.");
-  const blockCodes = ["INDIVIDUAL_PREDICTION_PROHIBITED","LEGAL_CONCLUSION_NOT_SUPPORTED"];
+  const blockCodes = ["INDIVIDUAL_PREDICTION_PROHIBITED","LEGAL_CONCLUSION_NOT_SUPPORTED","STALE_VALUE"];
   const verdict = violations.some(v=>blockCodes.includes(v.code)) ? "block" : (violations.length ? "needs_qualifier" : "pass");
-  return { verdict, violations, safe_wording: contract.canonical_claim && contract.canonical_claim.template,
+  const out = { verdict, violations, safe_wording: contract.canonical_claim && contract.canonical_claim.template,
     required_qualifiers: contract.required_qualifiers, does_not_establish: contract.does_not_establish,
     mandatory_attribution: "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.",
     passport_url: "https://financeratecalc.com/claims/" + slug + ".json",
     contract_url: "https://financeratecalc.com/claims/" + slug + ".contract.json",
     rule: "Free text is the OUTPUT of evidence, not its input." };
+  if (a.proposed_sentence) out.sentence_check = { mode: "fixed patterns, no model", sentence: String(a.proposed_sentence).slice(0, 600), findings };
+  return out;
 }
 
 // ===== screen_counterparties (v1.3.0) =====
@@ -670,7 +708,7 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.16.1" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.17.0" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
