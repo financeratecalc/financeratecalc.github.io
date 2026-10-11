@@ -53,19 +53,22 @@ def ask(model, base_url, key, text):
         return json.load(r)["choices"][0]["message"]["content"]
 
 
-def extract(text, kind):
+def extract(text, kind, question=""):
+    """First dollar amount, or the first percentage under 10% that does not merely restate a percentage
+    from the question (down payment, LTV)."""
     if kind == "usd":
         m = re.search(r"\$\s?(\d{1,3}(?:,\d{3})+|\d{4,})", text)
         return float(m.group(1).replace(",", "")) if m else None
+    asked = {float(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s*%", question)}
     for m in re.finditer(r"(\d+(?:\.\d+)?)\s*%", text):
         v = float(m.group(1))
-        if v < 10:
+        if v < 10 and v not in asked:
             return v
     return None
 
 
-def grade(answer, truth, kind):
-    v = extract(answer, kind)
+def grade(answer, truth, kind, question=""):
+    v = extract(answer, kind, question)
     tol = 1.0 if kind == "usd" else 0.005
     return {"extracted": v, "correct": v is not None and abs(v - truth) <= tol}
 
@@ -84,7 +87,7 @@ def main(model, base_url, key_env, out, with_rule="0"):
             ans = ask(model, base_url, key, text)
         except Exception as e:  # noqa: BLE001
             ans = f"[error] {e}"
-        rows.append({"rule": rule, "qid": qid, "question": q, "truth": truth, "kind": kind, "answer": ans, **grade(ans, truth, kind)})
+        rows.append({"rule": rule, "qid": qid, "question": q, "truth": truth, "kind": kind, "answer": ans, **grade(ans, truth, kind, q)})
     by_rule = {}
     for r in rows:
         by_rule.setdefault(r["rule"], [0, 0]); by_rule[r["rule"]][1] += 1; by_rule[r["rule"]][0] += int(r["correct"])
