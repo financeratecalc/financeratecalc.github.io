@@ -48,7 +48,7 @@ Without a source, two Claude models answered this question 0.55% and 0.45% (Stal
 <p style="margin:6px 0 0;font-size:13px">Every figure-bearing result carries a <a href="/spec/proof-object-0.1.md">Proof Object</a> (id, value, receipt, verify and resolve URLs, vintage, scope). Resolve any FRC id or receipt: <code>https://frc-mcp.ziyetis.workers.dev/resolve/&lt;id&gt;</code>.</p></div>
 <h2>Remote connection (no install)</h2><p>Connect any MCP-capable client or agent directly over HTTP — nothing to install:</p>
 <pre style="background:#0d0f14;border:1px solid #C8A84B;border-radius:8px;padding:14px;overflow-x:auto;font-size:13px">https://frc-mcp.ziyetis.workers.dev</pre>
-<p>Streamable HTTP transport; twelve tools, same hard limit (historical aggregates only — no individual predictions). Custom domain coming.</p>
+<p>Streamable HTTP; sixteen tools; same hard limit (historical aggregates only, no individual predictions). Speaks MCP 2026-07-28 (stateless requests, <code>server/discover</code>, <code>resultType</code> on every result, cacheable <code>tools/list</code>, multi-round-trip elicitation for missing public conditions) and the 2025 revisions with sessions. Discovery over GET: <a href="https://frc-mcp.ziyetis.workers.dev/server-card">/server-card</a> — what the server can and cannot answer, machine-readable.</p>
 <h2>Install (live now)</h2><p>Any MCP host (Claude Desktop, agent frameworks) — add to your MCP config:</p>
 <pre style="background:#0d0f14;border:1px solid #C8A84B;border-radius:8px;padding:14px;overflow-x:auto;font-size:13px">{
   "mcpServers": {
@@ -73,7 +73,7 @@ python frc_mcp.py</pre>
   }
 }</pre>
 
-<h2>Tools (16, server v1.19.0)</h2>
+<h2>Tools (16, server v1.20.0)</h2>
 <p style="font-size:13.5px;color:rgba(255,255,255,.55);">Generated from the server source (<code>worker/index.js</code>). Every response carries the same guardrail: historical aggregates from the public 2025 HMDA record, never an individual prediction.</p>
 <table>
 <tr><th>Tool</th><th>What it does</th><th>Access</th></tr>

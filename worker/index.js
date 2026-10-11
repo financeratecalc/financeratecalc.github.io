@@ -610,7 +610,23 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const rpc = (id, result) => ({ jsonrpc: "2.0", id, result });
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.20.0" };
+const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
+// 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
+const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
+// Discovery block served by server/discover, /server-card and /.well-known/mcp/server-card.json: what this server can and
+// cannot answer, in machine-readable form, so an agent configurator can decide before connecting.
+const DISCOVER = {
+  serverInfo: SERVER_INFO, protocolVersions: PROTOCOLS, capabilities: { tools: { listChanged: false }, extensions: {} },
+  instructions: INSTRUCTIONS,
+  domain: "us-mortgage-evidence",
+  can_answer: ["historical FHA denial rates: national, state, metro, lender (2025 HMDA record)", "denial-reason shares, small-loan penalty, door effect, conditional cells", "which dated regulatory cell applies: FHA MIP, FHA/FHFA loan limits, HOEPA/QM thresholds, VA funding fee", "whether a proposed sentence preserves a figure's contract (period, population, program, attribution, forbidden inferences)", "whether a claim or rule receipt is current"],
+  cannot_answer: ["whether any individual will be approved or denied", "which lender a person should choose", "whether a lender acted unlawfully or discriminated", "any figure not published by FinanceRateCalc"],
+  evidence_fields_on_every_figure: ["id", "value", "receipt", "verify_url", "resolve_url", "source_url", "source_vintage", "effective_from", "method_version", "verification_status", "scope"],
+  proof_object_spec: "https://financeratecalc.com/spec/proof-object-0.1.md", resolver: "https://frc-mcp.ziyetis.workers.dev/resolve/<id>",
+  endpoint: "https://frc-mcp.ziyetis.workers.dev", transport: "streamable-http", auth: "none", license: "CC-BY-4.0",
+  registry: "io.github.financeratecalc/frc-mcp", website: "https://financeratecalc.com/mcp-server.html"
+};
 // Publisher-side intervention (experiment, 2026-09-20): every figure-bearing tool result carries a
 // ready sentence that already states the figure inside its contract (population, program, period,
 // attribution). A writer may use it verbatim. Measured by re-running condition C of the benchmark
@@ -679,6 +695,9 @@ export default {
       return json({ ok: true, id, note: "Recorded. Entries are checked against the claim contract and published at /misquotes with the system named; the submitter is never recorded." });
     }
     // Verify a claim receipt: is this figure still current, or was it corrected after the receipt was issued?
+    // Discovery over plain GET (v1.20.0): the same block server/discover returns. The well-known path is a convention some
+    // catalogs read; it is served here regardless, since it costs nothing and says what the server will and will not answer.
+    if ((path === "/server-card" || path === "/.well-known/mcp/server-card.json" || path === "/server/discover") && request.method === "GET") return json(DISCOVER);
     // Universal resolver (v1.19.0): any FRC identifier -> its machine-readable object. frc:claim:<id>, frc:rule:<id>, or a receipt.
     if (path.startsWith("/resolve") && request.method === "GET") {
       const raw = decodeURIComponent(path.slice("/resolve".length).replace(/^\//, ""));
@@ -781,15 +800,35 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.19.0" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: SERVER_INFO, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
-      else if (m.method === "tools/list") out.push(rpc(m.id, { tools: TOOLS }));
+      else if (m.method === "server/discover") out.push(rpc(m.id, DISCOVER));
+      else if (m.method === "tools/list") out.push(rpc(m.id, { tools: TOOLS, ttlMs: 3600000, cacheScope: "public" }));
       else if (m.method === "tools/call") {
         try {
+          // 2026-07-28 stateless clients identify themselves per request in _meta; use it for the tally label when present.
+          const meta = m.params?._meta || {};
+          const ci = meta["io.modelcontextprotocol/clientInfo"]; if (ci && !m.params?.clientInfo) clientName = clientLabel(ci);
           await tally(env, clientName, "call:" + String(m.params?.name || "unknown").slice(0, 40));
-          const result = await callTool(m.params?.name, m.params?.arguments, env);
+          let args = { ...(m.params?.arguments || {}) };
+          // MRTR retry: a client that answered an elicitation sends inputResponses on the retried request; merge accepted content.
+          const responses = m.params?.inputResponses || meta.inputResponses;
+          if (Array.isArray(responses)) for (const r of responses) if (r && r.action === "accept" && r.content && typeof r.content === "object") args = { ...args, ...r.content };
+          const elicit = meta["io.modelcontextprotocol/clientCapabilities"]?.elicitation;
+          const mrtr = elicit !== undefined && (elicit.form !== undefined || Object.keys(elicit).length === 0);
+          const result = await callTool(m.params?.name, args, env);
+          // MRTR: when the tool blocked on missing public conditions and the client can show a form, ask for exactly those fields
+          // (never income, score, SSN or any credential; only the parameters the published table is keyed by).
+          if (mrtr && result && result.verdict === "block" && Array.isArray(result.reason_codes) && result.reason_codes.includes("CONDITION_MISSING") && Array.isArray(result.required_fields)) {
+            const FIELDS = { base_loan_amount: { type: "number", title: "Base loan amount (USD)", minimum: 1 }, ltv_pct: { type: "number", title: "Loan-to-value (%)", minimum: 1, maximum: 200 }, term_years: { type: "integer", title: "Loan term (years)", minimum: 1, maximum: 40 }, case_number_date: { type: "string", title: "FHA case number assignment date", format: "date" } };
+            const props = {}; for (const f of result.required_fields) if (FIELDS[f]) props[f] = FIELDS[f];
+            out.push({ jsonrpc: "2.0", id: m.id, result: { resultType: "input_required", requestState: "frc:" + String(m.params?.name) + ":" + Date.now().toString(36),
+              inputRequests: [{ method: "elicitation/create", params: { mode: "form", message: "To resolve the exact rule cell I need the public loan parameters the table is keyed by; I do not guess them. No income, score or identifiers are requested.", requestedSchema: { type: "object", properties: props, required: Object.keys(props) } } }],
+              _meta: { "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
+            continue;
+          }
           out.push(rpc(m.id, { content: [{ type: "text", text: JSON.stringify({ ...result, note: GUARDRAIL }, null, 1) }] }));
         } catch (e) {
           out.push(rpc(m.id, { content: [{ type: "text", text: String(e.message || e) }], isError: true }));
