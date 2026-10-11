@@ -1,0 +1,41 @@
+name: Publish negative-knowledge dataset to Hugging Face
+on:
+  workflow_dispatch:
+  push:
+    paths: [corrections.json, eval/misquotes-graded.json, eval/correction-latency.json, eval/rubric-vectors.json, scripts/build_hf_negative_knowledge.py]
+permissions:
+  contents: write
+  issues: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q huggingface_hub
+      - name: Build package from the site's JSON
+        run: python scripts/build_hf_negative_knowledge.py --out hf-nk && ls hf-nk
+      - name: Upload
+        env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}" }
+        run: |
+          python - <<'PY'
+          import os, glob, sys, traceback
+          from huggingface_hub import HfApi, CommitOperationAdd
+          try:
+            api = HfApi(token=os.environ["HF_TOKEN"]); repo = "FinanceRateCalc/negative-knowledge"
+            print("whoami:", api.whoami().get("name"))
+            api.create_repo(repo, repo_type="dataset", exist_ok=True)
+            ops = [CommitOperationAdd(path_in_repo=os.path.basename(p), path_or_fileobj=p) for p in sorted(glob.glob("hf-nk/*"))]
+            api.create_commit(repo_id=repo, repo_type="dataset", operations=ops,
+                              commit_message="rebuild from site JSON (corrections, misquotes, latency, rubric vectors, failure codes)")
+            open("hf-nk-result.txt", "w").write("OK uploaded %s\n" % [o.path_in_repo for o in ops])
+          except Exception:
+            open("hf-nk-result.txt", "w").write(traceback.format_exc()[-3000:]); sys.exit(1)
+          PY
+      - name: Report result as an issue
+        if: always()
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: |
+          body=$(cat hf-nk-result.txt 2>/dev/null || echo "no result file written")
+          gh issue create --title "hf-negative-knowledge run $(date -u +%Y-%m-%dT%H:%MZ): ${{ job.status }}" --body "$body" || true
