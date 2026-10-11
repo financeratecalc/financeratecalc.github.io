@@ -57,6 +57,17 @@ const TOOLS = [
     inputSchema: { type: "object", properties: {
       lender: { type: "string", description: "Lender name or 20-char LEI. Omit to list every lender with a published conditional surface." }
     } } }
+  ,{ name: "get_rule",
+    description: "ANSWERS: \"what is the current FHA loan limit\", \"what are the 2026 HOEPA / QM thresholds\", \"what is the VA funding fee table\", \"which FHA MIP table is in force\". PARAM: rule_id (from the index) or omit to list every published rule. Returns the machine-readable rule: cells, effective dates, issuer document, required qualifiers, what the table does not establish, sha256. Read the cell yourself and quote the effective date with the number; without a source, models answered 3/25 dated questions correctly, with this file 25/25. NOT FOR: rules not in the index, or anything before the effective date.",
+    inputSchema: { type: "object", properties: { rule_id: { type: "string", description: "e.g. frc:rule:hud-ml-2023-05-annual-mip. Omit to list." } } } }
+  ,{ name: "resolve_fha_annual_mip",
+    description: "ANSWERS: \"what is the FHA annual MIP for a $300,000 loan at 85% LTV over 15 years\", \"what MIP rate applies to my FHA case\". PARAMS: base_loan_amount (USD), ltv_pct (e.g. 96.5), term_years, case_number_date (YYYY-MM-DD). Resolves the exact cell of HUD Mortgagee Letter 2023-05 and returns the annual rate in basis points, the upfront rate, the matched cell, the rule id with effective date and sha256, and a sentence you may quote. If a parameter is missing it returns block with CONDITION_MISSING and no number: the table has eleven cells and a guess is wrong more often than right. NOT FOR: case numbers before 2023-03-20, HECM/reverse or Title I loans, or any monthly payment figure.",
+    inputSchema: { type: "object", properties: {
+      base_loan_amount: { type: "number", description: "Base loan amount in USD, before upfront MIP is financed" },
+      ltv_pct: { type: "number", description: "Loan-to-value in percent, e.g. 96.5" },
+      term_years: { type: "number", description: "Loan term in years" },
+      case_number_date: { type: "string", description: "FHA case number assignment date, YYYY-MM-DD" }
+    } } }
 ];
 
 async function getJSON(path) {
@@ -149,6 +160,40 @@ async function checkClaimContract(a) {
     rule: "Free text is the OUTPUT of evidence, not its input." };
   if (a.proposed_sentence) out.sentence_check = { mode: "fixed patterns, no model", sentence: String(a.proposed_sentence).slice(0, 600), findings };
   return out;
+}
+
+
+// ===== rules (v1.18.0): machine-readable regulatory tables with effective dates =====
+async function getRule(a) {
+  const idx = await getJSON("/rules/index.json");
+  if (!a || !a.rule_id) return { rules: idx.rules, purpose: idx.purpose, index_url: BASE + "/rules/index.json", note: "Pass rule_id to receive the full table." };
+  const want = String(a.rule_id).trim();
+  const hit = (idx.rules || []).find(r => r.rule_id === want || r.rule_id.endsWith(want) || r.url.endsWith(want) || r.url.endsWith(want + ".json"));
+  if (!hit) throw new Error("Unknown rule_id. Published rules: " + (idx.rules || []).map(r => r.rule_id).join(", "));
+  const rule = await getJSON(hit.url.replace(BASE, ""));
+  return { rule, index_entry: hit, rule_url: hit.url, attribution: "FinanceRateCalc machine-readable transcription of the issuer's document; not an official file of the issuer. CC BY 4.0. Quote the effective date with the number." };
+}
+async function resolveFhaAnnualMip(a) {
+  a = a || {};
+  const missing = ["base_loan_amount", "ltv_pct", "term_years", "case_number_date"].filter(k => a[k] === undefined || a[k] === null || a[k] === "");
+  const rule = await getJSON("/rules/fha-annual-mip-ml-2023-05.json");
+  const base = { rule_id: rule.rule_id, issuer_document: rule.issuer_of_rule, effective_from: rule.effective_from, effective_to: rule.effective_to, rule_url: BASE + "/rules/fha-annual-mip-ml-2023-05.json", does_not_establish: rule.contract && rule.contract.does_not_establish };
+  if (missing.length) return { verdict: "block", reason_codes: ["CONDITION_MISSING"], required_fields: missing, annual_mip_bps: null, safe_sentence: null, why: "The table has " + rule.cells.length + " cells keyed by term, base loan amount and LTV, and applies only to case numbers assigned on or after " + rule.effective_from + ". Ask for the missing conditions; do not guess a cell.", ...base };
+  const amt = Number(a.base_loan_amount), ltv = Number(a.ltv_pct), term = Number(a.term_years);
+  const date = String(a.case_number_date).slice(0, 10);
+  if (!(amt > 0) || !(ltv > 0) || !(term > 0) || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return { verdict: "block", reason_codes: ["CONDITION_INVALID"], annual_mip_bps: null, safe_sentence: null, why: "Amount, LTV and term must be positive numbers; date must be YYYY-MM-DD.", ...base };
+  if (date < rule.effective_from) return { verdict: "block", reason_codes: ["RULE_NOT_IN_FORCE"], annual_mip_bps: null, safe_sentence: null, why: "Case number assigned before " + rule.effective_from + "; this rule does not establish the earlier table (" + rule.supersedes + ").", ...base };
+  const thr = rule.base_loan_threshold_usd;
+  const termKey = term > 15 ? "gt15" : "le15";
+  const baseKey = amt > thr ? "gt" + thr : "le" + thr;
+  let ltvKey;
+  if (termKey === "gt15") ltvKey = ltv <= 90 ? "le90" : (ltv <= 95 ? "90to95" : "gt95");
+  else if (baseKey === "le" + thr) ltvKey = ltv <= 90 ? "le90" : "gt90";
+  else ltvKey = ltv <= 78 ? "le78" : (ltv <= 90 ? "78to90" : "gt90");
+  const cell = rule.cells.find(c => c.term === termKey && c.base_loan === baseKey && c.ltv === ltvKey);
+  if (!cell) return { verdict: "block", reason_codes: ["CELL_NOT_FOUND"], annual_mip_bps: null, safe_sentence: null, why: "No cell for " + [termKey, baseKey, ltvKey].join("/") + "; the table is published at rule_url.", ...base };
+  const sentence = "For an FHA forward mortgage with a case number assigned on " + date + ", base loan amount $" + amt.toLocaleString("en-US") + " (" + (amt > thr ? "above" : "at or below") + " $" + thr.toLocaleString("en-US") + "), LTV " + ltv + "% and a " + term + "-year term, the annual MIP is " + cell.annual_mip_bps + " basis points (" + (cell.annual_mip_rate * 100).toFixed(2) + "% of the base loan amount per year) and the upfront MIP is " + (rule.upfront_mip_rate * 100).toFixed(2) + "%, per HUD Mortgagee Letter 2023-05, effective " + rule.effective_from + ". Source: FinanceRateCalc rule file " + rule.rule_id + ".";
+  return { verdict: "pass", reason_codes: [], inputs: { base_loan_amount: amt, ltv_pct: ltv, term_years: term, case_number_date: date }, matched_cell: cell, annual_mip_bps: cell.annual_mip_bps, annual_mip_rate: cell.annual_mip_rate, upfront_mip_rate: rule.upfront_mip_rate, safe_sentence: sentence, required_qualifiers: rule.contract && rule.contract.required_qualifiers, ...base, verification_status: "transcribed from the issuer's letter; cell values deterministic; not legal or underwriting advice", method_version: "resolve_fha_annual_mip v1" };
 }
 
 // ===== screen_counterparties (v1.3.0) =====
@@ -473,6 +518,8 @@ async function callTool(name, args, env) {
   if (name === "screen_counterparties_quote") return quoteCounterparties(args);
   if (name === "list_cohorts") return listCohorts();
   if (name === "get_conditional_door_map") return conditionalDoorMap(args);
+  if (name === "get_rule") return getRule(args);
+  if (name === "resolve_fha_annual_mip") return resolveFhaAnnualMip(args);
   if (name === "run_cohort") return runCohort(args);
   if (name === "get_national_fha_stats") {
     const idx = await getJSON("/api/index.json"); const n = idx.national;
@@ -708,7 +755,7 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.17.0" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.18.0" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
