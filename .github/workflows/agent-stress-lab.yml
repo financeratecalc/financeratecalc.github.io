@@ -22,16 +22,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: "22" }
-      - name: Condition B, with FRC-MCP tools
+      - name: Paired run — A (no tools) and B (tools) per question in random order, fresh context each
         env: { ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}" }
-        run: node scripts/frc_agent_stress_lab.mjs --adapter anthropic --model "${{ inputs.model }}" --paraphrases "${{ inputs.paraphrases }}" --adversarial "${{ inputs.adversarial }}" --out eval/frc-agent-stress-report.json 2>&1 | tail -30
-      - name: Condition A, control without tools
-        env: { ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}" }
-        run: node scripts/frc_agent_stress_lab.mjs --adapter anthropic --model "${{ inputs.model }}" --paraphrases "${{ inputs.paraphrases }}" --adversarial "${{ inputs.adversarial }}" --tools 0 --out eval/frc-agent-stress-report-control.json 2>&1 | tail -30
+        run: node scripts/frc_agent_stress_lab.mjs --adapter anthropic --model "${{ inputs.model }}" --paraphrases "${{ inputs.paraphrases }}" --adversarial "${{ inputs.adversarial }}" --paired 1 --out eval/frc-agent-stress-report.json 2>&1 | tail -40
       - name: Commit the reports (whatever they say)
         if: always()
         run: |
           git config user.name "frc-stress-lab" && git config user.email "press@financeratecalc.com"
-          git add eval/frc-agent-stress-report.json eval/frc-agent-stress-report-control.json 2>/dev/null || true
+          git add eval/frc-agent-stress-report.json eval/frc-agent-stress-report-control.json eval/frc-agent-stress-report-paired.json 2>/dev/null || true
           git diff --cached --quiet || git commit -m "agent stress lab pilot reports [skip ci]"
           git pull --rebase -q origin main && git push -q origin main
