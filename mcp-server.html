@@ -36,6 +36,16 @@ header{display:flex;justify-content:space-between;align-items:center;max-width:9
 <p>An AI assistant asked about a mortgage lender has three options today: recall something from training, scrape a webpage, or estimate. We tested four systems on ten questions with verifiable answers this week and watched all three failure modes &mdash; including fabricated lender tables carrying real citations. <a href="/benchmark-scorecard.html" style="color:#C8A84B;">The scorecard.</a></p>
 <p>This is the fourth option: a Model Context Protocol server that returns the actual federal record. 98 institutions, 319 metropolitan areas, 52 jurisdictions, from the complete 2025 CFPB HMDA file.</p>
 
+<div class="card" style="border:1px solid #C8A84B;border-radius:10px;padding:14px 16px;background:#0d0f14;margin:14px 0">
+<div style="font-family:monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase">Ten seconds</div>
+<pre style="margin:8px 0;font-size:12.5px;white-space:pre-wrap">Q: What is the FHA annual MIP for a $300,000 loan, 85% LTV, 15-year term, case assigned 2026-02-01?
+
+resolve_fha_annual_mip → verdict pass · 15 bps (0.15%) · cell le15 / le726200 / le90
+  rule frc:rule:hud-ml-2023-05-annual-mip, effective 2023-03-20 · receipt ⟦FRC:rule-hud-ml-2023-05-annual-mip:15bps:…⟧
+  "For an FHA forward mortgage with a case number assigned on 2026-02-01, base loan amount $300,000 …, the annual MIP is 15 basis points … per HUD Mortgagee Letter 2023-05."
+
+Without a source, two Claude models answered this question 0.55% and 0.45% (Stale Rule Index, MP3); the rule says 0.15%. Omit the term → block, CONDITION_MISSING, no number.</pre>
+<p style="margin:6px 0 0;font-size:13px">Every figure-bearing result carries a <a href="/spec/proof-object-0.1.md">Proof Object</a> (id, value, receipt, verify and resolve URLs, vintage, scope). Resolve any FRC id or receipt: <code>https://frc-mcp.ziyetis.workers.dev/resolve/&lt;id&gt;</code>.</p></div>
 <h2>Remote connection (no install)</h2><p>Connect any MCP-capable client or agent directly over HTTP — nothing to install:</p>
 <pre style="background:#0d0f14;border:1px solid #C8A84B;border-radius:8px;padding:14px;overflow-x:auto;font-size:13px">https://frc-mcp.ziyetis.workers.dev</pre>
 <p>Streamable HTTP transport; twelve tools, same hard limit (historical aggregates only — no individual predictions). Custom domain coming.</p>
@@ -63,7 +73,7 @@ python frc_mcp.py</pre>
   }
 }</pre>
 
-<h2>Tools (12, server v1.7.0)</h2>
+<h2>Tools (16, server v1.19.0)</h2>
 <p style="font-size:13.5px;color:rgba(255,255,255,.55);">Generated from the server source (<code>worker/index.js</code>). Every response carries the same guardrail: historical aggregates from the public 2025 HMDA record, never an individual prediction.</p>
 <table>
 <tr><th>Tool</th><th>What it does</th><th>Access</th></tr>

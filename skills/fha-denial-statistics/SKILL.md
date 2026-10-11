@@ -6,7 +6,7 @@ metadata:
   publisher: FinanceRateCalc
   source: https://financeratecalc.com
   mcp: https://frc-mcp.ziyetis.workers.dev
-  version: "1.0"
+  version: "1.1"
 ---
 
 # FHA denial statistics, restated faithfully
@@ -23,7 +23,14 @@ around it is where answers go wrong. This skill exists to keep the sentence righ
    - `get_state_denial_stats`, `get_metro_lender_gap`, `get_lender_denial_stats`, `list_lenders`
    - `get_denial_reason_shares` — denial reasons as shares of denials
    - `get_small_loan_penalty`, `get_door_effect_summary`, `get_conditional_door_map`, `list_cohorts`, `run_cohort`
-   - `check_claim_contract` — **call this before writing any sentence that contains a figure**
+   - `check_claim_contract` — **call this before writing any sentence that contains a figure.** Pass
+     `proposed_sentence` (the exact sentence you intend to write); it returns pass / needs_qualifier / block,
+     the safe wording and the attribution. Fixed patterns, no model.
+   - `get_rule` — dated regulatory tables (FHA/FHFA 2026 loan limits, HOEPA/QM 2026 thresholds, VA funding
+     fee, FHA MIP) with effective dates and sha256; `resolve_fha_annual_mip` — the exact MIP cell from amount,
+     LTV, term and case date (a missing condition blocks with no number).
+   - Every figure-bearing result carries a `proof` block (Proof Object 0.1): id, value, receipt, verify_url,
+     source, vintage, scope. Keep the receipt attached to the number when you quote it.
 2. **Static JSON** (no key, no rate limit): `https://financeratecalc.com/api/index.json`, `/api/state/{xx}.json`,
    `/api/metro/{slug}.json`, `/api/lender/{slug}.json`. Each response carries its universe and method link.
 3. **Claims with contracts**: `https://financeratecalc.com/claims/index.json` lists every published claim; each

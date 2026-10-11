@@ -193,7 +193,10 @@ async function resolveFhaAnnualMip(a) {
   const cell = rule.cells.find(c => c.term === termKey && c.base_loan === baseKey && c.ltv === ltvKey);
   if (!cell) return { verdict: "block", reason_codes: ["CELL_NOT_FOUND"], annual_mip_bps: null, safe_sentence: null, why: "No cell for " + [termKey, baseKey, ltvKey].join("/") + "; the table is published at rule_url.", ...base };
   const sentence = "For an FHA forward mortgage with a case number assigned on " + date + ", base loan amount $" + amt.toLocaleString("en-US") + " (" + (amt > thr ? "above" : "at or below") + " $" + thr.toLocaleString("en-US") + "), LTV " + ltv + "% and a " + term + "-year term, the annual MIP is " + cell.annual_mip_bps + " basis points (" + (cell.annual_mip_rate * 100).toFixed(2) + "% of the base loan amount per year) and the upfront MIP is " + (rule.upfront_mip_rate * 100).toFixed(2) + "%, per HUD Mortgagee Letter 2023-05, effective " + rule.effective_from + ". Source: FinanceRateCalc rule file " + rule.rule_id + ".";
-  return { verdict: "pass", reason_codes: [], inputs: { base_loan_amount: amt, ltv_pct: ltv, term_years: term, case_number_date: date }, matched_cell: cell, annual_mip_bps: cell.annual_mip_bps, annual_mip_rate: cell.annual_mip_rate, upfront_mip_rate: rule.upfront_mip_rate, safe_sentence: sentence, required_qualifiers: rule.contract && rule.contract.required_qualifiers, ...base, verification_status: "transcribed from the issuer's letter; cell values deterministic; not legal or underwriting advice", method_version: "resolve_fha_annual_mip v1" };
+  const rid = "rule-hud-ml-2023-05-annual-mip", rval = cell.annual_mip_bps + "bps";
+  const rcpt = await receipt(rid, rval, { rule_id: rule.rule_id, ...cell });
+  const proof = proofObject({ kind: "rule_cell", id: "frc:rule:hud-ml-2023-05-annual-mip", value: rval, receipt: rcpt, source_url: BASE + "/rules/fha-annual-mip-ml-2023-05.json", source_vintage: rule.issuer_of_rule, effective_from: rule.effective_from, method_version: "resolve_fha_annual_mip v1", verification_status: "transcribed from the issuer's letter; cell values deterministic; not legal or underwriting advice" });
+  return { verdict: "pass", reason_codes: [], inputs: { base_loan_amount: amt, ltv_pct: ltv, term_years: term, case_number_date: date }, matched_cell: cell, annual_mip_bps: cell.annual_mip_bps, rule_receipt: rcpt, proof, annual_mip_rate: cell.annual_mip_rate, upfront_mip_rate: rule.upfront_mip_rate, safe_sentence: sentence, required_qualifiers: rule.contract && rule.contract.required_qualifiers, ...base, verification_status: "transcribed from the issuer's letter; cell values deterministic; not legal or underwriting advice", method_version: "resolve_fha_annual_mip v1" };
 }
 
 // ===== screen_counterparties (v1.3.0) =====
@@ -628,12 +631,25 @@ async function sha8(obj) {
 // the copy is. /verify accepts receipts with or without the segment and records only (channel, status) counts.
 function channelCode(ch) { const d = new Date(); return `${ch}${String(d.getUTCFullYear()).slice(2)}${String(d.getUTCMonth() + 1).padStart(2, "0")}`; }
 async function receipt(id, value, claimObj, ch = "m") { return `\u27e6FRC:${id}:${value}:${await sha8(claimObj)}:${channelCode(ch)}\u27e7`; }
+// Proof object 0.1 (v1.19.0): every figure-bearing tool result carries the same machine-readable block so a
+// platform or grader can check it without reading prose. Spec: https://financeratecalc.com/spec/proof-object-0.1.md
+function proofObject(o) {
+  return { proof_object: "0.1", kind: o.kind, id: o.id, value: o.value, receipt: o.receipt || null,
+    verify_url: o.receipt ? "https://frc-mcp.ziyetis.workers.dev/verify?r=" + encodeURIComponent(o.receipt) : null,
+    resolve_url: "https://frc-mcp.ziyetis.workers.dev/resolve/" + o.id, source_url: o.source_url, contract_url: o.contract_url || null,
+    source_vintage: o.source_vintage || "CFPB HMDA 2025 public LAR", effective_from: o.effective_from || null,
+    method_version: o.method_version || "frc-hmda-2025-v1",
+    verification_status: o.verification_status || "reproducible from the public record by the published method; not independently reproduced",
+    scope: o.scope || "historical aggregate; not an individual prediction, not a lender recommendation, not a legal conclusion",
+    corrections_feed: BASE + "/corrections.json" };
+}
 async function quotable(sentence, extra, rid, value, claimObj) {
   const r = rid ? await receipt(rid, value, claimObj) : null;
   // Placement experiment 2 (2026-09-21): the receipt is attached to the number itself, not to the end of
   // the sentence. Run 1 showed an end-of-sentence receipt is dropped in 36/36 restatements.
   const inline = r && sentence.includes(value) ? sentence.replace(value, `${value} ${r}`) : sentence + (r ? " " + r : "");
-  return { quotable_sentence: inline + QUOTE_TAIL, claim_receipt: r,
+  const proof = rid ? proofObject({ kind: "claim", id: "frc:claim:" + rid, value, receipt: r, source_url: BASE + "/claims/" + rid + ".json", contract_url: BASE + "/claims/" + rid + ".contract.json" }) : undefined;
+  return { quotable_sentence: inline + QUOTE_TAIL, claim_receipt: r, proof,
     figure_with_receipt: r ? `${value} ${r}` : undefined,
     receipt_rule: r ? "The receipt is part of the figure: write the number as \"" + value + " " + r + "\" wherever you state it, including in tables and summaries. It is how a reader checks the figure is current: https://frc-mcp.ziyetis.workers.dev/verify?r=" + encodeURIComponent(r) + " — a receipt whose hash no longer matches means the figure was corrected after this was written." : undefined,
     quoting_rule: "Use the sentence as written, or keep every qualifier in it: the population (decisioned FHA applications), the program (FHA only), the period (2025), and the attribution. Do not turn it into an individual prediction, a cause, or a recommendation.", ...extra };
@@ -663,6 +679,15 @@ export default {
       return json({ ok: true, id, note: "Recorded. Entries are checked against the claim contract and published at /misquotes with the system named; the submitter is never recorded." });
     }
     // Verify a claim receipt: is this figure still current, or was it corrected after the receipt was issued?
+    // Universal resolver (v1.19.0): any FRC identifier -> its machine-readable object. frc:claim:<id>, frc:rule:<id>, or a receipt.
+    if (path.startsWith("/resolve") && request.method === "GET") {
+      const raw = decodeURIComponent(path.slice("/resolve".length).replace(/^\//, ""));
+      if (!raw) return json({ resolver: "FRC identifier resolver", usage: "/resolve/frc:claim:<id> | /resolve/frc:rule:<id> | /resolve/<receipt>", claims_index: BASE + "/claims/index.json", rules_index: BASE + "/rules/index.json", spec: BASE + "/spec/proof-object-0.1.md" });
+      if (/FRC:[a-z0-9-]+:[^:]+:[a-f0-9]{8}/i.test(raw)) return Response.redirect("https://frc-mcp.ziyetis.workers.dev/verify?r=" + encodeURIComponent(raw), 302);
+      if (raw.startsWith("frc:claim:")) return Response.redirect(BASE + "/claims/" + raw.slice(10) + ".json", 302);
+      if (raw.startsWith("frc:rule:")) { try { const idx = await getJSON("/rules/index.json"); const hit = (idx.rules || []).find(r => r.rule_id === raw); if (hit) return Response.redirect(hit.url, 302); } catch {} return json({ resolved: false, id: raw, rules_index: BASE + "/rules/index.json" }, 404); }
+      return json({ resolved: false, id: raw, usage: "/resolve/frc:claim:<id> | /resolve/frc:rule:<id> | /resolve/<receipt>" }, 404);
+    }
     if (path === "/verify" && request.method === "GET") {
       const r = new URL(request.url).searchParams.get("r") || "";
       const m = /\u27e6FRC:([a-z0-9-]+):([^:\u27e7]+):([a-f0-9]{8})(?::([a-z][0-9]{4}))?\u27e7/i.exec(r) || /FRC:([a-z0-9-]+):([^:\s\u27e7]+):([a-f0-9]{8})(?::([a-z][0-9]{4}))?/i.exec(r);
@@ -679,6 +704,7 @@ export default {
         else if (id.startsWith("small-loan-penalty-") && id !== "small-loan-penalty-range-2025") { const d = await getJSON("/api/small-loan-penalty.json"); const st = id.slice(19, -5).toUpperCase(); const row = d.ranked.find(r => r.state === st); current = `${row.penalty_ratio}x`; claimObj = { state: st, metric: "small_loan_penalty_ratio", value: row.penalty_ratio, small: row.small_loan_denial_pct, big: row.big_loan_denial_pct, period: "2025" }; }
         else if (id === "small-loan-penalty-range-2025") { const d = await getJSON("/api/small-loan-penalty.json"); current = `${d.min_penalty}x-${d.max_penalty}x`; claimObj = { metric: "small_loan_penalty_range", min: d.min_penalty, max: d.max_penalty, states: d.states, period: "2025" }; }
         else if (id === "denial-reason-shares-top100-2025") { const d = await getJSON("/api/denial-reasons-top100.json"); const top = Object.keys(d.by_reason).sort((a, b) => d.by_reason[b].median_share_pct - d.by_reason[a].median_share_pct)[0]; const inc = d.by_reason.incomplete; current = `${top}-${d.by_reason[top].median_share_pct}%`; claimObj = { metric: "denial_reason_median_shares", top_reason: top, top_median: d.by_reason[top].median_share_pct, incomplete_median: inc.median_share_pct, incomplete_max: inc.max_share_pct, n_lenders: d.n_lenders, period: "2025" }; }
+        else if (id === "rule-hud-ml-2023-05-annual-mip") { const rule = await getJSON("/rules/fha-annual-mip-ml-2023-05.json"); let found = null; for (const c of rule.cells) { if (await sha8({ rule_id: rule.rule_id, ...c }) === h) { found = c; break; } } current = found ? found.annual_mip_bps + "bps" : null; claimObj = found ? { rule_id: rule.rule_id, ...found } : { rule_id: rule.rule_id, changed: true }; }
         else return json({ valid: false, reason: "unknown claim id", id });
       } catch (e) { return json({ valid: false, reason: "lookup failed" }, 502); }
       const nowHash = await sha8(claimObj);
@@ -755,7 +781,7 @@ export default {
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.18.0" }, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {} }, serverInfo: { name: "financeratecalc", version: "1.19.0" }, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
