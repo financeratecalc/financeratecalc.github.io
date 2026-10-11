@@ -1,0 +1,114 @@
+{
+ "suite": "frc-mcp-conformance-2026",
+ "suite_version": "1.0",
+ "endpoint": "https://frc-mcp.ziyetis.workers.dev",
+ "server": {
+  "name": "financeratecalc",
+  "title": "FinanceRateCalc mortgage evidence",
+  "version": "1.21.0"
+ },
+ "protocol_versions": [
+  "2026-07-28",
+  "2025-11-25",
+  "2025-06-18",
+  "2025-03-26"
+ ],
+ "generated_at": "2026-10-11T15:20:35.997Z",
+ "tests": 15,
+ "passed": 15,
+ "conformance": "PASS",
+ "method": "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
+ "results": [
+  {
+   "id": "01",
+   "name": "server/discover answers with protocol versions, capabilities and task table",
+   "pass": true,
+   "evidence": "versions=2026-07-28,2025-11-25,2025-06-18,2025-03-26 tasks=4"
+  },
+  {
+   "id": "02",
+   "name": "tools/list is deterministic across two calls",
+   "pass": true,
+   "evidence": "16 tools, same order"
+  },
+  {
+   "id": "03",
+   "name": "tools/list carries cache metadata (ttlMs, cacheScope)",
+   "pass": true,
+   "evidence": "ttlMs=3600000 scope=public"
+  },
+  {
+   "id": "04",
+   "name": "2026 client, missing term and date -> input_required with exactly those fields",
+   "pass": true,
+   "evidence": "required=term_years,case_number_date"
+  },
+  {
+   "id": "05",
+   "name": "2026 client, only date missing -> input_required for the date alone, no number",
+   "pass": true,
+   "evidence": "required=case_number_date"
+  },
+  {
+   "id": "06",
+   "name": "retry with inputResponses resolves the cell (15 bps) and returns complete",
+   "pass": true,
+   "evidence": "verdict=pass bps=15"
+  },
+  {
+   "id": "07",
+   "name": "all conditions present -> complete, correct cell for three known inputs",
+   "pass": true,
+   "evidence": "cells ok/ok/ok"
+  },
+  {
+   "id": "08",
+   "name": "case date before the rule's effective date -> block RULE_NOT_IN_FORCE, no number",
+   "pass": true,
+   "evidence": "codes=RULE_NOT_IN_FORCE"
+  },
+  {
+   "id": "09",
+   "name": "borrower attributes (income, credit score) are refused, not used",
+   "pass": true,
+   "evidence": "rejected=credit_score,income"
+  },
+  {
+   "id": "10",
+   "name": "2025 client (no elicitation capability), missing fields -> block CONDITION_MISSING, no number",
+   "pass": true,
+   "evidence": "required_fields=term_years,case_number_date"
+  },
+  {
+   "id": "11",
+   "name": "2025 initialize handshake still works and returns a session",
+   "pass": true,
+   "evidence": "server=financeratecalc session=yes"
+  },
+  {
+   "id": "12",
+   "name": "rule receipt from test 06 verifies as current; a tampered value does not",
+   "pass": true,
+   "evidence": "current=current tampered=hash-current-value-mismatch"
+  },
+  {
+   "id": "13",
+   "name": "sentence gate: stale value + second-person prediction -> block with both codes",
+   "pass": true,
+   "evidence": "codes=STALE_VALUE,INDIVIDUAL_PREDICTION_PROHIBITED,SCOPE_TOO_BROAD,QUALIFIER_DELETED"
+  },
+  {
+   "id": "14",
+   "name": "sentence gate: canonical sentence -> pass",
+   "pass": true,
+   "evidence": "verdict=pass"
+  },
+  {
+   "id": "15",
+   "name": "resolver: frc:rule id redirects to the rule file",
+   "pass": true,
+   "evidence": "status=302"
+  }
+ ],
+ "sha256": "0754939a4a4e009954df521e0a1d3214db1218f434230b9398e54b35d01f4f53"
+}

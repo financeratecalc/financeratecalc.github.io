@@ -1,0 +1,29 @@
+name: frc-mcp conformance (live endpoint)
+# Runs the deterministic suite against the deployed worker and publishes eval/frc-mcp-conformance.json.
+# Triggered after each worker deploy, weekly, and by hand. No model, no cost beyond the HTTP calls.
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Deploy MCP Worker"]
+    types: [completed]
+  schedule:
+    - cron: "17 6 * * 1"
+permissions:
+  contents: write
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: Run suite against the live endpoint
+        run: node scripts/frc_mcp_conformance.mjs https://frc-mcp.ziyetis.workers.dev eval/frc-mcp-conformance.json || echo "SUITE FAILED" >> conformance.failed
+      - name: Commit the report
+        run: |
+          git config user.name "frc-conformance" && git config user.email "press@financeratecalc.com"
+          git add eval/frc-mcp-conformance.json
+          git diff --cached --quiet || git commit -m "frc-mcp conformance report [skip ci]"
+          git pull --rebase -q origin main && git push -q origin main
+      - name: Fail the job if the suite failed (after publishing the report)
+        run: test ! -f conformance.failed

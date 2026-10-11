@@ -175,6 +175,9 @@ async function getRule(a) {
 }
 async function resolveFhaAnnualMip(a) {
   a = a || {};
+  const FORBIDDEN = ["income", "annual_income", "monthly_income", "credit_score", "fico", "ssn", "social_security", "dob", "date_of_birth", "name", "borrower_name", "address", "account_number", "card_number", "employer", "race", "ethnicity", "sex", "age"];
+  const sent = Object.keys(a).filter(k => FORBIDDEN.includes(String(k).toLowerCase()));
+  if (sent.length) return { verdict: "block", reason_codes: ["FORBIDDEN_INPUT"], rejected_fields: sent, annual_mip_bps: null, safe_sentence: null, why: "This tool resolves a published table keyed only by loan amount, LTV, term and case date. Borrower attributes are neither needed nor accepted and are not stored." };
   const missing = ["base_loan_amount", "ltv_pct", "term_years", "case_number_date"].filter(k => a[k] === undefined || a[k] === null || a[k] === "");
   const rule = await getJSON("/rules/fha-annual-mip-ml-2023-05.json");
   const base = { rule_id: rule.rule_id, issuer_document: rule.issuer_of_rule, effective_from: rule.effective_from, effective_to: rule.effective_to, rule_url: BASE + "/rules/fha-annual-mip-ml-2023-05.json", does_not_establish: rule.contract && rule.contract.does_not_establish };
@@ -610,7 +613,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.20.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.21.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -622,6 +625,12 @@ const DISCOVER = {
   domain: "us-mortgage-evidence",
   can_answer: ["historical FHA denial rates: national, state, metro, lender (2025 HMDA record)", "denial-reason shares, small-loan penalty, door effect, conditional cells", "which dated regulatory cell applies: FHA MIP, FHA/FHFA loan limits, HOEPA/QM thresholds, VA funding fee", "whether a proposed sentence preserves a figure's contract (period, population, program, attribution, forbidden inferences)", "whether a claim or rule receipt is current"],
   cannot_answer: ["whether any individual will be approved or denied", "which lender a person should choose", "whether a lender acted unlawfully or discriminated", "any figure not published by FinanceRateCalc"],
+  tasks: [
+    { task: "resolve_fha_annual_mip", when_to_use: ["FHA annual MIP rate", "dated FHA mortgage insurance rule", "loan-amount and LTV dependent FHA premium"], required_fields: ["base_loan_amount", "ltv_pct", "term_years", "case_number_date"], returns: ["matched_cell", "rule_id", "safe_sentence", "receipt", "proof"], does_not_return: ["approval_probability", "borrower_prediction", "monthly_payment", "lender_recommendation"], on_missing_input: "input_required (2026 clients) or block CONDITION_MISSING (2025 clients); never a guessed number" },
+    { task: "get_rule", when_to_use: ["current FHA or FHFA loan limit", "HOEPA / QM thresholds for a year", "VA funding fee table", "which MIP table is in force"], required_fields: [], returns: ["rule cells", "effective dates", "issuer document", "sha256"], does_not_return: ["anything before the effective date", "rules not in the index"] },
+    { task: "check_claim_contract", when_to_use: ["before writing any sentence that states a FinanceRateCalc figure"], required_fields: ["passport_id"], optional_fields: ["proposed_sentence"], returns: ["verdict pass|needs_qualifier|block", "reason codes", "safe_wording", "attribution"], does_not_return: ["figures of other publishers"] },
+    { task: "get_national_fha_stats | get_state_denial_stats | get_lender_denial_stats | get_metro_lender_gap | get_small_loan_penalty | get_denial_reason_shares | get_door_effect_summary", when_to_use: ["historical FHA denial statistics from the 2025 HMDA record"], returns: ["figure with universe and period", "quotable_sentence", "claim_receipt", "proof"], does_not_return: ["individual outcomes", "lender rankings by quality", "causes"] }
+  ],
   evidence_fields_on_every_figure: ["id", "value", "receipt", "verify_url", "resolve_url", "source_url", "source_vintage", "effective_from", "method_version", "verification_status", "scope"],
   proof_object_spec: "https://financeratecalc.com/spec/proof-object-0.1.md", resolver: "https://frc-mcp.ziyetis.workers.dev/resolve/<id>",
   endpoint: "https://frc-mcp.ziyetis.workers.dev", transport: "streamable-http", auth: "none", license: "CC-BY-4.0",
@@ -697,6 +706,7 @@ export default {
     // Verify a claim receipt: is this figure still current, or was it corrected after the receipt was issued?
     // Discovery over plain GET (v1.20.0): the same block server/discover returns. The well-known path is a convention some
     // catalogs read; it is served here regardless, since it costs nothing and says what the server will and will not answer.
+    if (path === "/conformance" && request.method === "GET") { try { return json(await getJSON("/eval/frc-mcp-conformance.json")); } catch { return json({ error: "no conformance run published yet", suite: "https://github.com/financeratecalc/financeratecalc.github.io/blob/main/scripts/frc_mcp_conformance.mjs" }, 404); } }
     if ((path === "/server-card" || path === "/.well-known/mcp/server-card.json" || path === "/server/discover") && request.method === "GET") return json(DISCOVER);
     // Universal resolver (v1.19.0): any FRC identifier -> its machine-readable object. frc:claim:<id>, frc:rule:<id>, or a receipt.
     if (path.startsWith("/resolve") && request.method === "GET") {
