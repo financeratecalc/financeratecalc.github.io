@@ -1,0 +1,520 @@
+{
+ "fixture_version": "1.0",
+ "generated": "2026-10-11",
+ "purpose": "Published expectations for the live frc-mcp evidence behaviour. Each fixture names the rule, the source document, the inputs and the exact expected status, value, cell and reason codes. Deterministic; no model.",
+ "fixtures": [
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV01",
+   "title": "valid FHA annual MIP case",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 85,
+    "term_years": 15,
+    "case_number_date": "2026-02-01"
+   },
+   "expected_status": "pass",
+   "group": "evidence_conformance",
+   "expected_value": 15,
+   "expected_cell": {
+    "term": "le15",
+    "base_loan": "le726200",
+    "ltv": "le90"
+   }
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV02",
+   "title": "missing loan amount (2025 client)",
+   "client": "2025",
+   "input": {
+    "ltv_pct": 85,
+    "term_years": 15,
+    "case_number_date": "2026-02-01"
+   },
+   "expected_status": "block",
+   "group": "legacy_client_compatibility",
+   "expected_reason_codes": [
+    "CONDITION_MISSING"
+   ],
+   "expected_required_fields": [
+    "base_loan_amount"
+   ]
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV03",
+   "title": "missing LTV (2026 client) -> input_required",
+   "client": "2026",
+   "input": {
+    "base_loan_amount": 300000,
+    "term_years": 15,
+    "case_number_date": "2026-02-01"
+   },
+   "expected_status": "input_required",
+   "group": "modern_client_mrtr_flow",
+   "expected_required_fields": [
+    "ltv_pct"
+   ]
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV04",
+   "title": "missing term (2026 client) -> input_required",
+   "client": "2026",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 85,
+    "case_number_date": "2026-02-01"
+   },
+   "expected_status": "input_required",
+   "group": "modern_client_mrtr_flow",
+   "expected_required_fields": [
+    "term_years"
+   ]
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV05",
+   "title": "missing case date (2025 client)",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 85,
+    "term_years": 15
+   },
+   "expected_status": "block",
+   "group": "legacy_client_compatibility",
+   "expected_reason_codes": [
+    "CONDITION_MISSING"
+   ],
+   "expected_required_fields": [
+    "case_number_date"
+   ]
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV06",
+   "title": "boundary: LTV exactly 90 (<=90 band), >15y",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 90,
+    "term_years": 30,
+    "case_number_date": "2026-02-01"
+   },
+   "expected_status": "pass",
+   "group": "boundary_tests",
+   "expected_value": 50,
+   "expected_cell": {
+    "term": "gt15",
+    "base_loan": "le726200",
+    "ltv": "le90"
+   }
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV07",
+   "title": "boundary: LTV exactly 95 (90to95 band), >15y",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 95,
+    "term_years": 30,
+    "case_number_date": "2026-02-01"
+   },
+   "expected_status": "pass",
+   "group": "boundary_tests",
+   "expected_value": 50,
+   "expected_cell": {
+    "term": "gt15",
+    "base_loan": "le726200",
+    "ltv": "90to95"
+   }
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV08",
+   "title": "just outside: LTV 95.01 (>95 band), >15y",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 95.01,
+    "term_years": 30,
+    "case_number_date": "2026-02-01"
+   },
+   "expected_status": "pass",
+   "group": "boundary_tests",
+   "expected_value": 55,
+   "expected_cell": {
+    "term": "gt15",
+    "base_loan": "le726200",
+    "ltv": "gt95"
+   }
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV09",
+   "title": "loan amount exactly at the $726,200 threshold (<= band)",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 726200,
+    "ltv_pct": 96.5,
+    "term_years": 30,
+    "case_number_date": "2026-02-01"
+   },
+   "expected_status": "pass",
+   "group": "boundary_tests",
+   "expected_value": 55,
+   "expected_cell": {
+    "term": "gt15",
+    "base_loan": "le726200",
+    "ltv": "gt95"
+   }
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV10",
+   "title": "loan amount one dollar above the threshold (> band)",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 726201,
+    "ltv_pct": 96.5,
+    "term_years": 30,
+    "case_number_date": "2026-02-01"
+   },
+   "expected_status": "pass",
+   "group": "boundary_tests",
+   "expected_value": 75,
+   "expected_cell": {
+    "term": "gt15",
+    "base_loan": "gt726200",
+    "ltv": "gt95"
+   }
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV11",
+   "title": "case date one day before the rule start",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 85,
+    "term_years": 15,
+    "case_number_date": "2023-03-19"
+   },
+   "expected_status": "block",
+   "group": "boundary_tests",
+   "expected_reason_codes": [
+    "RULE_NOT_IN_FORCE"
+   ]
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV12",
+   "title": "case date equal to the rule start",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 85,
+    "term_years": 15,
+    "case_number_date": "2023-03-20"
+   },
+   "expected_status": "pass",
+   "group": "boundary_tests",
+   "expected_value": 15,
+   "expected_cell": {
+    "term": "le15",
+    "base_loan": "le726200",
+    "ltv": "le90"
+   }
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV13",
+   "title": "case date after the rule start",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 85,
+    "term_years": 15,
+    "case_number_date": "2025-07-01"
+   },
+   "expected_status": "pass",
+   "group": "boundary_tests",
+   "expected_value": 15,
+   "expected_cell": {
+    "term": "le15",
+    "base_loan": "le726200",
+    "ltv": "le90"
+   }
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV14",
+   "title": "wrong program (VA) requested from the FHA resolver -> no number",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 85,
+    "term_years": 15,
+    "case_number_date": "2026-02-01",
+    "program": "VA"
+   },
+   "expected_status": "block",
+   "group": "evidence_conformance",
+   "expected_reason_codes": [
+    "PROGRAM_MISMATCH"
+   ],
+   "note": "the resolver covers FHA forward mortgages only; a stated other program must not resolve a cell"
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV15",
+   "title": "unsupported term (0 years)",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 85,
+    "term_years": 0,
+    "case_number_date": "2026-02-01"
+   },
+   "expected_status": "block",
+   "group": "evidence_conformance",
+   "expected_reason_codes": [
+    "CONDITION_INVALID"
+   ]
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV16",
+   "title": "fake source document id on the sentence gate",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:national-fha-denial-rate-2025",
+    "proposed_sentence": "In 2025, 22.1% of decisioned FHA applications were denied, per HUD Mortgagee Letter 2024-99."
+   },
+   "expected_status": "block",
+   "group": "receipt_integrity",
+   "expected_reason_codes": [
+    "DOCUMENT_ID_MISMATCH"
+   ],
+   "note": "the sentence names a document that is not this claim's source"
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV17",
+   "title": "source document / value mismatch: 0.55% attributed to the 15-year <=90 LTV cell",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:hud-ml-2023-05-annual-mip",
+    "proposed_sentence": "Under HUD Mortgagee Letter 2023-05, a 15-year FHA loan at 85% LTV and $300,000 carries an annual MIP of 0.55%."
+   },
+   "expected_status": "block",
+   "group": "receipt_integrity",
+   "expected_reason_codes": [
+    "VALUE_MISMATCH"
+   ],
+   "note": "the document is right, the value is from another cell"
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV18",
+   "title": "receipt tampering: value changed inside a valid receipt",
+   "client": "2025",
+   "input": {
+    "verify": true,
+    "from_fixture": "EV01",
+    "tamper": {
+     "15bps": "55bps"
+    }
+   },
+   "expected_status": "not_current",
+   "group": "receipt_integrity"
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV19",
+   "title": "forbidden borrower input (income, credit score)",
+   "client": "2025",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 85,
+    "term_years": 15,
+    "case_number_date": "2026-02-01",
+    "income": 50000,
+    "credit_score": 640
+   },
+   "expected_status": "block",
+   "group": "forbidden_input_tests",
+   "expected_reason_codes": [
+    "FORBIDDEN_INPUT"
+   ]
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "resolve_fha_annual_mip v1",
+   "tool": "resolve_fha_annual_mip",
+   "unit": "bps_per_year_of_base_loan",
+   "id": "EV20",
+   "title": "multi-field retry flow (2026): ask, answer, resolve",
+   "client": "2026",
+   "input": {
+    "base_loan_amount": 300000,
+    "ltv_pct": 85,
+    "retry_with": {
+     "term_years": 15,
+     "case_number_date": "2026-02-01"
+    }
+   },
+   "expected_status": "pass",
+   "group": "modern_client_mrtr_flow",
+   "expected_value": 15,
+   "expected_cell": {
+    "term": "le15",
+    "base_loan": "le726200",
+    "ltv": "le90"
+   }
+  }
+ ]
+}

@@ -1,0 +1,127 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "frc-mcp evidence conformance report",
+ "type": "object",
+ "required": [
+  "suite",
+  "suite_version",
+  "fixture_version",
+  "endpoint",
+  "generated_at",
+  "tests",
+  "passed",
+  "status",
+  "groups",
+  "independent_reproduction_status",
+  "statement",
+  "results",
+  "report_sha256"
+ ],
+ "properties": {
+  "suite": {
+   "const": "frc-mcp-evidence-conformance"
+  },
+  "suite_version": {
+   "type": "string"
+  },
+  "fixture_version": {
+   "type": "string"
+  },
+  "endpoint": {
+   "type": "string",
+   "format": "uri"
+  },
+  "server_version": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "protocol_version": {
+   "type": "string"
+  },
+  "generated_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "tests": {
+   "type": "integer"
+  },
+  "passed": {
+   "type": "integer"
+  },
+  "status": {
+   "enum": [
+    "evidence_fixture_pass",
+    "evidence_fixture_fail"
+   ]
+  },
+  "groups": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "tests": {
+      "type": "integer"
+     },
+     "passed": {
+      "type": "integer"
+     }
+    }
+   }
+  },
+  "independent_reproduction_status": {
+   "const": "not_independently_reproduced"
+  },
+  "statement": {
+   "type": "string"
+  },
+  "labels": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "results": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "title",
+     "group",
+     "expected_status",
+     "pass"
+    ],
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "title": {
+      "type": "string"
+     },
+     "group": {
+      "type": "string"
+     },
+     "client": {
+      "type": "string"
+     },
+     "expected_status": {
+      "type": "string"
+     },
+     "observed": {},
+     "pass": {
+      "type": "boolean"
+     },
+     "error": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "report_sha256": {
+   "type": "string",
+   "pattern": "^[a-f0-9]{64}$"
+  }
+ }
+}

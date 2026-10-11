@@ -131,7 +131,44 @@ async function sentenceFindings(sentence, contract) {
   }
   return f;
 }
+// Document ids a sentence may name: HUD Mortgagee Letters, Federal Register cites. Compared with the source the claim or rule actually rests on.
+function namedDocuments(t) {
+  const out = [];
+  for (const m of String(t).matchAll(/mortgagee letter\s*(\d{4}-\d{2})|\bML\s*(\d{4}-\d{2})/gi)) out.push("HUD-ML-" + (m[1] || m[2]));
+  for (const m of String(t).matchAll(/(\d{2,3})\s*FR\s*(\d{3,6})/gi)) out.push("FR-" + m[1] + "-" + m[2]);
+  return out;
+}
+// Rule-passport mode of the gate (v1.22.0): a sentence that quotes a rule cell is checked against the resolved cell. MIP only for now.
+async function checkRuleSentence(ruleRef, sentence) {
+  const idx = await getJSON("/rules/index.json");
+  const hit = (idx.rules || []).find(r => r.rule_id === ruleRef || r.rule_id.endsWith(ruleRef));
+  if (!hit) throw new Error("Unknown rule id. See https://financeratecalc.com/rules/index.json");
+  const t = String(sentence || "");
+  const violations = []; const V = (code, field, reason) => violations.push({ code, field, reason });
+  const docs = namedDocuments(t);
+  const ruleDoc = hit.rule_id.includes("hud-ml-2023-05") ? "HUD-ML-2023-05" : null;
+  for (const d of docs) if (ruleDoc && d.startsWith("HUD-ML-") && d !== ruleDoc) V("DOCUMENT_ID_MISMATCH", "source", "sentence names " + d + "; this rule rests on " + ruleDoc);
+  let resolved = null;
+  if (hit.rule_id.includes("hud-ml-2023-05")) {
+    const amt = t.match(/\$\s?([\d,]{5,9})/); const ltv = t.match(/(\d{2,3}(?:\.\d+)?)\s?%\s?LTV/i) || t.match(/LTV\s?(?:of\s)?(\d{2,3}(?:\.\d+)?)\s?%/i); const term = t.match(/(\d{1,2})[- ]year/i);
+    const dm = t.match(/(20\d{2}-\d{2}-\d{2})/);
+    if (amt && ltv && term) {
+      resolved = await resolveFhaAnnualMip({ base_loan_amount: Number(amt[1].replace(/,/g, "")), ltv_pct: Number(ltv[1]), term_years: Number(term[1]), case_number_date: dm ? dm[1] : "2026-01-01" });
+      if (resolved.verdict === "pass") {
+        const pcts = [...t.matchAll(/(\d(?:\.\d+)?)\s?%/g)].map(m => Number(m[1])).filter(v => v < 2 && v !== Number(ltv[1]));
+        const bps = [...t.matchAll(/(\d{1,3})\s?(?:bps|basis points)/gi)].map(m => Number(m[1]));
+        const stated = bps.length ? bps[0] : (pcts.length ? Math.round(pcts[0] * 100) : null);
+        if (stated !== null && stated !== resolved.annual_mip_bps) V("VALUE_MISMATCH", "value", "sentence states " + stated + " bps; the cell for these conditions is " + resolved.annual_mip_bps + " bps (" + [resolved.matched_conditions.term, resolved.matched_conditions.base_loan, resolved.matched_conditions.ltv].join("/") + ")");
+      } else V(resolved.reason_codes[0] || "CONDITION_INVALID", "conditions", resolved.why);
+    } else V("QUALIFIER_DELETED", "conditions", "a MIP sentence must state base loan amount, LTV and term; missing: " + [!amt && "amount", !ltv && "LTV", !term && "term"].filter(Boolean).join(", "));
+  }
+  const blockCodes = ["DOCUMENT_ID_MISMATCH", "VALUE_MISMATCH", "RULE_NOT_IN_FORCE", "PROGRAM_MISMATCH"];
+  const verdict = violations.some(v => blockCodes.includes(v.code)) ? "block" : (violations.length ? "needs_qualifier" : "pass");
+  return { verdict, violations, mode: "rule sentence check, fixed patterns, no model", rule_id: hit.rule_id, rule_url: hit.url, safe_wording: resolved && resolved.safe_sentence || null, resolved_cell: resolved && resolved.matched_cell || null,
+    mandatory_attribution: "Source: FinanceRateCalc rule file " + hit.rule_id + " (transcribed from " + (ruleDoc || "the issuer document") + "); not legal or underwriting advice.", sentence_check: { sentence: t.slice(0, 600) } };
+}
 async function checkClaimContract(a) {
+  if (/^frc:rule:/.test(String(a.passport_id || ""))) return checkRuleSentence(String(a.passport_id), a.proposed_sentence);
   const slug = String(a.passport_id || "").split(":").pop();
   let contract;
   try { contract = await getJSON(`/claims/${slug}.contract.json`); }
@@ -143,6 +180,7 @@ async function checkClaimContract(a) {
     findings = await sentenceFindings(a.proposed_sentence, contract);
     for (const fnd of findings) if (fnd.flag !== "stale_value") a[fnd.flag] = true;
     for (const fnd of findings) if (fnd.flag === "stale_value") V("STALE_VALUE", "value", fnd.why + " (matched " + fnd.matched + ")");
+    for (const d of namedDocuments(a.proposed_sentence)) V("DOCUMENT_ID_MISMATCH", "source", "sentence attributes the figure to " + d + "; this claim rests on the CFPB HMDA 2025 record, not on that document");
   }
   if (a.individual_prediction) V("INDIVIDUAL_PREDICTION_PROHIBITED","individual_prediction","Historical aggregates only; individual prediction prohibited.");
   if (a.personalized_recommendation) V("INDIVIDUAL_PREDICTION_PROHIBITED","personalized_recommendation","Personalized lender recommendation is forbidden.");
@@ -150,7 +188,7 @@ async function checkClaimContract(a) {
   if (a.causal_assertion) V("CAUSALITY_NOT_ESTABLISHED","causal_assertion","Associational language only.");
   if (a.scope_beyond_universe) V("SCOPE_TOO_BROAD","scope","Defined universe/period only.");
   if (a.qualifier_dropped) V("QUALIFIER_DELETED","qualifiers","Required qualifier missing.");
-  const blockCodes = ["INDIVIDUAL_PREDICTION_PROHIBITED","LEGAL_CONCLUSION_NOT_SUPPORTED","STALE_VALUE"];
+  const blockCodes = ["INDIVIDUAL_PREDICTION_PROHIBITED","LEGAL_CONCLUSION_NOT_SUPPORTED","STALE_VALUE","DOCUMENT_ID_MISMATCH"];
   const verdict = violations.some(v=>blockCodes.includes(v.code)) ? "block" : (violations.length ? "needs_qualifier" : "pass");
   const out = { verdict, violations, safe_wording: contract.canonical_claim && contract.canonical_claim.template,
     required_qualifiers: contract.required_qualifiers, does_not_establish: contract.does_not_establish,
@@ -176,6 +214,7 @@ async function getRule(a) {
 async function resolveFhaAnnualMip(a) {
   a = a || {};
   const FORBIDDEN = ["income", "annual_income", "monthly_income", "credit_score", "fico", "ssn", "social_security", "dob", "date_of_birth", "name", "borrower_name", "address", "account_number", "card_number", "employer", "race", "ethnicity", "sex", "age"];
+  if (a.program !== undefined && a.program !== null && String(a.program).trim() !== "" && !/^fha(\s|$|[-_ ]?forward)/i.test(String(a.program).trim())) return { verdict: "block", reason_codes: ["PROGRAM_MISMATCH"], annual_mip_bps: null, safe_sentence: null, why: "This resolver covers FHA forward mortgages (HUD ML 2023-05) only; program '" + String(a.program).slice(0, 20) + "' has its own table. See get_rule for VA funding fee and other published rules." };
   const sent = Object.keys(a).filter(k => FORBIDDEN.includes(String(k).toLowerCase()));
   if (sent.length) return { verdict: "block", reason_codes: ["FORBIDDEN_INPUT"], rejected_fields: sent, annual_mip_bps: null, safe_sentence: null, why: "This tool resolves a published table keyed only by loan amount, LTV, term and case date. Borrower attributes are neither needed nor accepted and are not stored." };
   const missing = ["base_loan_amount", "ltv_pct", "term_years", "case_number_date"].filter(k => a[k] === undefined || a[k] === null || a[k] === "");
@@ -199,7 +238,9 @@ async function resolveFhaAnnualMip(a) {
   const rid = "rule-hud-ml-2023-05-annual-mip", rval = cell.annual_mip_bps + "bps";
   const rcpt = await receipt(rid, rval, { rule_id: rule.rule_id, ...cell });
   const proof = proofObject({ kind: "rule_cell", id: "frc:rule:hud-ml-2023-05-annual-mip", value: rval, receipt: rcpt, source_url: BASE + "/rules/fha-annual-mip-ml-2023-05.json", source_vintage: rule.issuer_of_rule, effective_from: rule.effective_from, method_version: "resolve_fha_annual_mip v1", verification_status: "transcribed from the issuer's letter; cell values deterministic; not legal or underwriting advice" });
-  return { verdict: "pass", reason_codes: [], inputs: { base_loan_amount: amt, ltv_pct: ltv, term_years: term, case_number_date: date }, matched_cell: cell, annual_mip_bps: cell.annual_mip_bps, rule_receipt: rcpt, proof, annual_mip_rate: cell.annual_mip_rate, upfront_mip_rate: rule.upfront_mip_rate, safe_sentence: sentence, required_qualifiers: rule.contract && rule.contract.required_qualifiers, ...base, verification_status: "transcribed from the issuer's letter; cell values deterministic; not legal or underwriting advice", method_version: "resolve_fha_annual_mip v1" };
+  return { verdict: "pass", reason_codes: [], inputs: { base_loan_amount: amt, ltv_pct: ltv, term_years: term, case_number_date: date }, matched_cell: cell, annual_mip_bps: cell.annual_mip_bps, rule_receipt: rcpt, proof,
+    source_document_id: "HUD-ML-2023-05", source_fragment: "annual MIP table, row " + [termKey, baseKey, ltvKey].join("/"), matched_conditions: { term: termKey, base_loan: baseKey, ltv: ltvKey }, resolved_value: cell.annual_mip_bps, unit: "bps_per_year_of_base_loan",
+    limitations: ["not legal advice", "not underwriting advice", "not an individual approval prediction", "monthly amount not computed (HUD amortises on average outstanding balance)"], annual_mip_rate: cell.annual_mip_rate, upfront_mip_rate: rule.upfront_mip_rate, safe_sentence: sentence, required_qualifiers: rule.contract && rule.contract.required_qualifiers, ...base, verification_status: "transcribed from the issuer's letter; cell values deterministic; not legal or underwriting advice", method_version: "resolve_fha_annual_mip v1" };
 }
 
 // ===== screen_counterparties (v1.3.0) =====
@@ -613,7 +654,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.21.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.22.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -626,11 +667,14 @@ const DISCOVER = {
   can_answer: ["historical FHA denial rates: national, state, metro, lender (2025 HMDA record)", "denial-reason shares, small-loan penalty, door effect, conditional cells", "which dated regulatory cell applies: FHA MIP, FHA/FHFA loan limits, HOEPA/QM thresholds, VA funding fee", "whether a proposed sentence preserves a figure's contract (period, population, program, attribution, forbidden inferences)", "whether a claim or rule receipt is current"],
   cannot_answer: ["whether any individual will be approved or denied", "which lender a person should choose", "whether a lender acted unlawfully or discriminated", "any figure not published by FinanceRateCalc"],
   tasks: [
-    { task: "resolve_fha_annual_mip", when_to_use: ["FHA annual MIP rate", "dated FHA mortgage insurance rule", "loan-amount and LTV dependent FHA premium"], required_fields: ["base_loan_amount", "ltv_pct", "term_years", "case_number_date"], returns: ["matched_cell", "rule_id", "safe_sentence", "receipt", "proof"], does_not_return: ["approval_probability", "borrower_prediction", "monthly_payment", "lender_recommendation"], on_missing_input: "input_required (2026 clients) or block CONDITION_MISSING (2025 clients); never a guessed number" },
-    { task: "get_rule", when_to_use: ["current FHA or FHFA loan limit", "HOEPA / QM thresholds for a year", "VA funding fee table", "which MIP table is in force"], required_fields: [], returns: ["rule cells", "effective dates", "issuer document", "sha256"], does_not_return: ["anything before the effective date", "rules not in the index"] },
-    { task: "check_claim_contract", when_to_use: ["before writing any sentence that states a FinanceRateCalc figure"], required_fields: ["passport_id"], optional_fields: ["proposed_sentence"], returns: ["verdict pass|needs_qualifier|block", "reason codes", "safe_wording", "attribution"], does_not_return: ["figures of other publishers"] },
-    { task: "get_national_fha_stats | get_state_denial_stats | get_lender_denial_stats | get_metro_lender_gap | get_small_loan_penalty | get_denial_reason_shares | get_door_effect_summary", when_to_use: ["historical FHA denial statistics from the 2025 HMDA record"], returns: ["figure with universe and period", "quotable_sentence", "claim_receipt", "proof"], does_not_return: ["individual outcomes", "lender rankings by quality", "causes"] }
+    { task_id: "resolve_fha_annual_mip", title: "Resolve the FHA annual MIP cell", trigger_phrases: ["FHA MIP", "mortgage insurance premium", "annual MIP rate", "FHA insurance cost per year"], example_question: "What is the FHA annual MIP for a $300,000 loan at 85% LTV over 15 years, case assigned 2026-02-01?", example_tool_path: ["resolve_fha_annual_mip"], task: "resolve_fha_annual_mip", when_to_use: ["FHA annual MIP rate", "dated FHA mortgage insurance rule", "loan-amount and LTV dependent FHA premium"], required_fields: ["base_loan_amount", "ltv_pct", "term_years", "case_number_date"], returns: ["matched_cell", "rule_id", "safe_sentence", "receipt", "proof"], does_not_return: ["approval_probability", "borrower_prediction", "monthly_payment", "lender_recommendation"], on_missing_input: "input_required (2026 clients) or block CONDITION_MISSING (2025 clients); never a guessed number" },
+    { task_id: "get_rule", title: "Read a dated regulatory table", trigger_phrases: ["loan limit 2026", "HOEPA threshold", "QM points and fees", "VA funding fee", "conforming limit"], example_question: "What is the 2026 FHA one-unit loan limit floor?", example_tool_path: ["get_rule"], task: "get_rule", when_to_use: ["current FHA or FHFA loan limit", "HOEPA / QM thresholds for a year", "VA funding fee table", "which MIP table is in force"], required_fields: [], returns: ["rule cells", "effective dates", "issuer document", "sha256"], does_not_return: ["anything before the effective date", "rules not in the index"] },
+    { task_id: "verify_mortgage_claim", title: "Check a sentence against the figure's contract", trigger_phrases: ["is this sentence correct", "can I say", "verify this statistic", "before I quote"], example_question: "Can I write: 'About 22% of mortgage applications were denied in 2025'?", example_tool_path: ["check_claim_contract"], task: "check_claim_contract", when_to_use: ["before writing any sentence that states a FinanceRateCalc figure"], required_fields: ["passport_id"], optional_fields: ["proposed_sentence"], returns: ["verdict pass|needs_qualifier|block", "reason codes", "safe_wording", "attribution"], does_not_return: ["figures of other publishers"] },
+    { task_id: "retrieve_hmda_denial_statistic", title: "Retrieve a 2025 FHA denial statistic with its contract and receipt", trigger_phrases: ["FHA denial rate", "how often are FHA loans denied", "denial rate in <state>", "<lender> denial rate", "why are FHA loans denied", "small loan penalty"], example_question: "What was the FHA denial rate in Ohio in 2025?", example_tool_path: ["get_state_denial_stats", "check_claim_contract"], task: "get_national_fha_stats | get_state_denial_stats | get_lender_denial_stats | get_metro_lender_gap | get_small_loan_penalty | get_denial_reason_shares | get_door_effect_summary", when_to_use: ["historical FHA denial statistics from the 2025 HMDA record"], returns: ["figure with universe and period", "quotable_sentence", "claim_receipt", "proof"], does_not_return: ["individual outcomes", "lender rankings by quality", "causes"] },
+    { task_id: "resolve_conditional_door_pattern", title: "How a lender's denial gap moves across published cells", trigger_phrases: ["does the lender gap depend on loan size", "where is <lender> strictest", "conditional door"], example_question: "Does AmeriSave's peer-adjusted gap change with loan amount?", example_tool_path: ["get_conditional_door_map"], task: "get_conditional_door_map | list_cohorts | run_cohort", when_to_use: ["lender strictness by state, loan amount, income, DTI or CLTV band"], required_fields: ["lender (for the map) or cohort_id (for a cohort)"], returns: ["cells with counts", "peer-adjusted gap", "minimum-cell rule"], does_not_return: ["suppressed small cells", "individual outcomes"] },
+    { task_id: "run_counterparty_screen", title: "Screen a list of LEIs against the public-data outlier model", trigger_phrases: ["screen these lenders", "counterparty screen", "outlier lenders"], example_question: "Screen these 12 LEIs.", example_tool_path: ["screen_counterparties_quote", "screen_counterparties"], task: "screen_counterparties | screen_counterparties_quote", when_to_use: ["batch screening of named institutions by LEI"], required_fields: ["leis"], returns: ["screening signal per LEI with coverage"], does_not_return: ["evidence of misconduct", "credit decisions"], note: "preview free; larger batches licensed; an agent cannot pay on a person's behalf" }
   ],
+  positioning: "A machine-readable mortgage evidence server for AI agents: resolves dated mortgage rule cells, requests missing public conditions instead of guessing, validates claim scope, and returns reproducible receipts. It does not provide individual approval predictions, lender recommendations or legal conclusions.",
   evidence_fields_on_every_figure: ["id", "value", "receipt", "verify_url", "resolve_url", "source_url", "source_vintage", "effective_from", "method_version", "verification_status", "scope"],
   proof_object_spec: "https://financeratecalc.com/spec/proof-object-0.1.md", resolver: "https://frc-mcp.ziyetis.workers.dev/resolve/<id>",
   endpoint: "https://frc-mcp.ziyetis.workers.dev", transport: "streamable-http", auth: "none", license: "CC-BY-4.0",
@@ -706,6 +750,8 @@ export default {
     // Verify a claim receipt: is this figure still current, or was it corrected after the receipt was issued?
     // Discovery over plain GET (v1.20.0): the same block server/discover returns. The well-known path is a convention some
     // catalogs read; it is served here regardless, since it costs nothing and says what the server will and will not answer.
+    if (path === "/evidence-conformance" && request.method === "GET") { try { return json(await getJSON("/eval/frc-mcp-evidence-conformance.json")); } catch { return json({ error: "no evidence-conformance run published yet" }, 404); } }
+    if (path === "/conformance/history" && request.method === "GET") { try { return json(await getJSON("/eval/frc-mcp-conformance-history.json")); } catch { return json({ error: "no history yet" }, 404); } }
     if (path === "/conformance" && request.method === "GET") { try { return json(await getJSON("/eval/frc-mcp-conformance.json")); } catch { return json({ error: "no conformance run published yet", suite: "https://github.com/financeratecalc/financeratecalc.github.io/blob/main/scripts/frc_mcp_conformance.mjs" }, 404); } }
     if ((path === "/server-card" || path === "/.well-known/mcp/server-card.json" || path === "/server/discover") && request.method === "GET") return json(DISCOVER);
     // Universal resolver (v1.19.0): any FRC identifier -> its machine-readable object. frc:claim:<id>, frc:rule:<id>, or a receipt.

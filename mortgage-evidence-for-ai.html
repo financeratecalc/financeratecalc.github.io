@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage evidence for AI agents: machine-readable rules, statistics and receipts | FinanceRateCalc</title>
+<meta name="description" content="What an AI agent gets from FinanceRateCalc: dated US mortgage rule tables with a deterministic cell resolver, 2025 FHA denial statistics with use contracts, a gate that checks a sentence before it is written, and receipts anyone can verify. What it does not get: approval predictions, lender recommendations, legal conclusions.">
+<link rel="canonical" href="https://financeratecalc.com/mortgage-evidence-for-ai.html">
+<style>body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.6}.wrap{max-width:900px;margin:0 auto;padding:36px 18px 70px}h1{font-family:Georgia,serif;font-size:27px;color:#f5f2ea;line-height:1.25}h2{font-family:Georgia,serif;font-size:19px;color:#f5f2ea;margin-top:28px}.kicker{font-family:monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}a{color:#C8A84B}table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}th,td{border-bottom:1px solid #23262e;padding:7px 6px;text-align:left;vertical-align:top}th{font-family:monospace;font-size:10.5px;color:#C8A84B;text-transform:uppercase}td.n{text-align:right;font-family:monospace}.card{border:1px solid #23262e;border-radius:12px;padding:14px 16px;background:#0d0f14;margin:14px 0;font-size:14.5px}.small{font-size:12.5px;color:#8a8678}li{margin:4px 0;font-size:13.5px}code{font-family:monospace;font-size:12.5px;color:#C8A84B}pre{background:#0d0f14;border:1px solid #23262e;border-radius:8px;padding:12px;overflow-x:auto;font-size:12.5px;white-space:pre-wrap}.cta a{display:inline-block;margin:4px 8px 4px 0;padding:6px 10px;border:1px solid #C8A84B;border-radius:8px;text-decoration:none;font-size:13px}</style></head>
+<body><div class="wrap">
+<div class="kicker">FinanceRateCalc &middot; for agents and their builders &middot; 2026-10-11</div>
+<h1>Mortgage evidence for AI agents</h1>
+<p>FinanceRateCalc is a machine-readable mortgage evidence server for AI agents. It resolves dated mortgage rule cells, requests missing public conditions instead of guessing, validates claim scope, and returns reproducible receipts. It does not provide individual approval predictions, lender recommendations or legal conclusions.</p>
+<h2>What an agent can get</h2>
+<table><thead><tr><th>need</th><th>tool / file</th><th>what comes back</th></tr></thead><tbody>
+<tr><td>Which FHA MIP cell applies</td><td><code>resolve_fha_annual_mip</code></td><td>cell, bps, receipt, quotable sentence; <i>input_required</i> or <i>block</i> when a condition is missing</td></tr>
+<tr><td>Current loan limits, HOEPA/QM thresholds, VA fee, MIP table</td><td><code>get_rule</code> · <a href="/rules/index.json">rules/index.json</a></td><td>cells with effective dates, issuer document, sha256</td></tr>
+<tr><td>A 2025 FHA denial statistic</td><td><code>get_national_fha_stats</code>, state, lender, metro, reasons, small-loan penalty</td><td>figure with period, population, program; quotable sentence; claim receipt; proof object</td></tr>
+<tr><td>Is this sentence safe to write?</td><td><code>check_claim_contract</code> with <code>proposed_sentence</code></td><td>pass / needs_qualifier / block, reason codes, safe wording, attribution</td></tr>
+<tr><td>Is this receipt still current?</td><td><a href="https://frc-mcp.ziyetis.workers.dev/verify">GET /verify?r=…</a></td><td>current / stale (with the correction) / tampered</td></tr>
+<tr><td>What can this server answer at all?</td><td><code>server/discover</code> · <a href="https://frc-mcp.ziyetis.workers.dev/server-card">/server-card</a></td><td>task catalogue with when-to-use, required fields, what is never returned</td></tr>
+</tbody></table>
+<h2>How a figure travels</h2>
+<p>Every figure-bearing result carries a <a href="/spec/proof-object-0.1.md">Proof Object</a>: id, value, receipt, verify and resolve URLs, source, vintage, effective date, method version, scope. An agent quotes the value with the receipt attached to the number; a platform can refuse a financial figure without one; a grader scores the restatement on six checks (<a href="/samples/scoring-a-correct-number.html">worked example</a>).</p>
+<h2>Connect</h2>
+<pre>Endpoint: https://frc-mcp.ziyetis.workers.dev   (streamable HTTP, no key; MCP 2026-07-28 and 2025 revisions)
+Registry: io.github.financeratecalc/frc-mcp
+Skill:    https://financeratecalc.com/skills/fha-denial-statistics/SKILL.md
+Map:      https://financeratecalc.com/llms.txt</pre>
+<h2>What is measured, and what is not claimed</h2>
+<p>A deterministic suite runs against the live endpoint after every deploy and weekly: protocol behaviour (15 tests) and published evidence fixtures (20 tests). Results, passes and failures alike, are at <a href="/conformance.html">/conformance.html</a>. These are the publisher's own tests; nothing here is independently reproduced, and no result is a security, legal or underwriting certification.</p>
+<p class="cta"><a href="https://frc-mcp.ziyetis.workers.dev/verify">Verify a figure</a> <a href="/mcp-server.html">Use the MCP evidence server</a> <a href="/conformance.html">Run or read the conformance suite</a> <a href="/rules/">View the rule tables</a> <a href="/methodology.html">Read the methodology</a></p><p class="small">Last updated 2026-10-11. Open data, CC BY 4.0. No lender money, no lead sales. <a href="/corrections.html">Corrections</a> · <a href="/methodology.html">Methodology</a>.</p>
+</div></body></html>

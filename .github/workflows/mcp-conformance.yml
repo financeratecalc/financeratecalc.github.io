@@ -17,12 +17,16 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: "22" }
-      - name: Run suite against the live endpoint
-        run: node scripts/frc_mcp_conformance.mjs https://frc-mcp.ziyetis.workers.dev eval/frc-mcp-conformance.json || echo "SUITE FAILED" >> conformance.failed
-      - name: Commit the report
+      - name: Protocol suite against the live endpoint
+        run: node scripts/frc_mcp_conformance.mjs https://frc-mcp.ziyetis.workers.dev eval/frc-mcp-conformance.json || echo "PROTOCOL SUITE FAILED" >> conformance.failed
+      - name: Evidence suite (published fixtures) against the live endpoint
+        run: node scripts/frc_mcp_evidence_conformance.mjs https://frc-mcp.ziyetis.workers.dev eval/frc-mcp-evidence-conformance.json || echo "EVIDENCE SUITE FAILED" >> conformance.failed
+      - name: Append to the history index (never overwrites)
+        run: node scripts/frc_conformance_history.mjs
+      - name: Commit the reports
         run: |
           git config user.name "frc-conformance" && git config user.email "press@financeratecalc.com"
-          git add eval/frc-mcp-conformance.json
+          git add eval/frc-mcp-conformance.json eval/frc-mcp-evidence-conformance.json eval/frc-mcp-conformance-history.json
           git diff --cached --quiet || git commit -m "frc-mcp conformance report [skip ci]"
           git pull --rebase -q origin main && git push -q origin main
       - name: Fail the job if the suite failed (after publishing the report)

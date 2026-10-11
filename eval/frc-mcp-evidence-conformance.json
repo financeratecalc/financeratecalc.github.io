@@ -1,0 +1,397 @@
+{
+ "suite": "frc-mcp-evidence-conformance",
+ "suite_version": "1.0",
+ "fixture_version": "1.0",
+ "endpoint": "https://frc-mcp.ziyetis.workers.dev",
+ "server_version": "1.22.0",
+ "protocol_version": "2026-07-28 (fixtures marked client=2025 use the 2025 path)",
+ "generated_at": "2026-10-11T15:36:25.693Z",
+ "tests": 20,
+ "passed": 20,
+ "status": "evidence_fixture_pass",
+ "groups": {
+  "evidence_conformance": {
+   "tests": 3,
+   "passed": 3
+  },
+  "legacy_client_compatibility": {
+   "tests": 2,
+   "passed": 2
+  },
+  "modern_client_mrtr_flow": {
+   "tests": 3,
+   "passed": 3
+  },
+  "boundary_tests": {
+   "tests": 8,
+   "passed": 8
+  },
+  "receipt_integrity": {
+   "tests": 3,
+   "passed": 3
+  },
+  "forbidden_input_tests": {
+   "tests": 1,
+   "passed": 1
+  }
+ },
+ "independent_reproduction_status": "not_independently_reproduced",
+ "statement": "Published protocol and fixture-level evidence behavior passed the declared test set. This is not an independent accuracy, security, legal or underwriting certification.",
+ "labels": [
+  "evidence_fixture_pass_or_fail_as_stated",
+  "not_independently_reproduced",
+  "not_a_security_certification",
+  "not_an_underwriting_certification"
+ ],
+ "results": [
+  {
+   "id": "EV01",
+   "title": "valid FHA annual MIP case",
+   "group": "evidence_conformance",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": [],
+    "value": 15,
+    "cell": {
+     "term": "le15",
+     "base_loan": "le726200",
+     "ltv": "le90"
+    },
+    "unit": "bps_per_year_of_base_loan",
+    "source_document_id": "HUD-ML-2023-05"
+   },
+   "pass": true
+  },
+  {
+   "id": "EV02",
+   "title": "missing loan amount (2025 client)",
+   "group": "legacy_client_compatibility",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "CONDITION_MISSING"
+    ],
+    "value": null,
+    "required": [
+     "base_loan_amount"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV03",
+   "title": "missing LTV (2026 client) -> input_required",
+   "group": "modern_client_mrtr_flow",
+   "client": "2026",
+   "expected_status": "input_required",
+   "observed": {
+    "resultType": "input_required",
+    "required": [
+     "ltv_pct"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV04",
+   "title": "missing term (2026 client) -> input_required",
+   "group": "modern_client_mrtr_flow",
+   "client": "2026",
+   "expected_status": "input_required",
+   "observed": {
+    "resultType": "input_required",
+    "required": [
+     "term_years"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV05",
+   "title": "missing case date (2025 client)",
+   "group": "legacy_client_compatibility",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "CONDITION_MISSING"
+    ],
+    "value": null,
+    "required": [
+     "case_number_date"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV06",
+   "title": "boundary: LTV exactly 90 (<=90 band), >15y",
+   "group": "boundary_tests",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": [],
+    "value": 50,
+    "cell": {
+     "term": "gt15",
+     "base_loan": "le726200",
+     "ltv": "le90"
+    },
+    "unit": "bps_per_year_of_base_loan",
+    "source_document_id": "HUD-ML-2023-05"
+   },
+   "pass": true
+  },
+  {
+   "id": "EV07",
+   "title": "boundary: LTV exactly 95 (90to95 band), >15y",
+   "group": "boundary_tests",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": [],
+    "value": 50,
+    "cell": {
+     "term": "gt15",
+     "base_loan": "le726200",
+     "ltv": "90to95"
+    },
+    "unit": "bps_per_year_of_base_loan",
+    "source_document_id": "HUD-ML-2023-05"
+   },
+   "pass": true
+  },
+  {
+   "id": "EV08",
+   "title": "just outside: LTV 95.01 (>95 band), >15y",
+   "group": "boundary_tests",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": [],
+    "value": 55,
+    "cell": {
+     "term": "gt15",
+     "base_loan": "le726200",
+     "ltv": "gt95"
+    },
+    "unit": "bps_per_year_of_base_loan",
+    "source_document_id": "HUD-ML-2023-05"
+   },
+   "pass": true
+  },
+  {
+   "id": "EV09",
+   "title": "loan amount exactly at the $726,200 threshold (<= band)",
+   "group": "boundary_tests",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": [],
+    "value": 55,
+    "cell": {
+     "term": "gt15",
+     "base_loan": "le726200",
+     "ltv": "gt95"
+    },
+    "unit": "bps_per_year_of_base_loan",
+    "source_document_id": "HUD-ML-2023-05"
+   },
+   "pass": true
+  },
+  {
+   "id": "EV10",
+   "title": "loan amount one dollar above the threshold (> band)",
+   "group": "boundary_tests",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": [],
+    "value": 75,
+    "cell": {
+     "term": "gt15",
+     "base_loan": "gt726200",
+     "ltv": "gt95"
+    },
+    "unit": "bps_per_year_of_base_loan",
+    "source_document_id": "HUD-ML-2023-05"
+   },
+   "pass": true
+  },
+  {
+   "id": "EV11",
+   "title": "case date one day before the rule start",
+   "group": "boundary_tests",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "RULE_NOT_IN_FORCE"
+    ],
+    "value": null
+   },
+   "pass": true
+  },
+  {
+   "id": "EV12",
+   "title": "case date equal to the rule start",
+   "group": "boundary_tests",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": [],
+    "value": 15,
+    "cell": {
+     "term": "le15",
+     "base_loan": "le726200",
+     "ltv": "le90"
+    },
+    "unit": "bps_per_year_of_base_loan",
+    "source_document_id": "HUD-ML-2023-05"
+   },
+   "pass": true
+  },
+  {
+   "id": "EV13",
+   "title": "case date after the rule start",
+   "group": "boundary_tests",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": [],
+    "value": 15,
+    "cell": {
+     "term": "le15",
+     "base_loan": "le726200",
+     "ltv": "le90"
+    },
+    "unit": "bps_per_year_of_base_loan",
+    "source_document_id": "HUD-ML-2023-05"
+   },
+   "pass": true
+  },
+  {
+   "id": "EV14",
+   "title": "wrong program (VA) requested from the FHA resolver -> no number",
+   "group": "evidence_conformance",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "PROGRAM_MISMATCH"
+    ],
+    "value": null
+   },
+   "pass": true
+  },
+  {
+   "id": "EV15",
+   "title": "unsupported term (0 years)",
+   "group": "evidence_conformance",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "CONDITION_INVALID"
+    ],
+    "value": null
+   },
+   "pass": true
+  },
+  {
+   "id": "EV16",
+   "title": "fake source document id on the sentence gate",
+   "group": "receipt_integrity",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "DOCUMENT_ID_MISMATCH"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV17",
+   "title": "source document / value mismatch: 0.55% attributed to the 15-year <=90 LTV cell",
+   "group": "receipt_integrity",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "VALUE_MISMATCH"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV18",
+   "title": "receipt tampering: value changed inside a valid receipt",
+   "group": "receipt_integrity",
+   "client": "2025",
+   "expected_status": "not_current",
+   "observed": {
+    "original": "current",
+    "tampered": "hash-current-value-mismatch"
+   },
+   "pass": true
+  },
+  {
+   "id": "EV19",
+   "title": "forbidden borrower input (income, credit score)",
+   "group": "forbidden_input_tests",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "FORBIDDEN_INPUT"
+    ],
+    "value": null
+   },
+   "pass": true
+  },
+  {
+   "id": "EV20",
+   "title": "multi-field retry flow (2026): ask, answer, resolve",
+   "group": "modern_client_mrtr_flow",
+   "client": "2026",
+   "expected_status": "pass",
+   "observed": {
+    "resultType": "input_required",
+    "required": [
+     "term_years",
+     "case_number_date"
+    ],
+    "after_retry": {
+     "verdict": "pass",
+     "value": 15,
+     "cell": {
+      "term": "le15",
+      "base_loan": "le726200",
+      "ltv": "le90"
+     }
+    }
+   },
+   "pass": true
+  }
+ ],
+ "report_sha256": "a6922a36391038328ac84bacfbabd2bb60c64ee8027c2781e0867ef0c6688df1"
+}
