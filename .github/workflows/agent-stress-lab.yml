@@ -1,0 +1,37 @@
+name: Agent Stress Lab (pilot, manual)
+# Runs the agent-under-test over the stress fixtures with the live FRC-MCP tools (condition B) and without them
+# (condition A, control). Deterministic oracle; the model is only the subject. Manual only; costs API credit.
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: model id
+        default: claude-haiku-4-5-20251001
+      paraphrases:
+        description: paraphrases per fixture (0-3)
+        default: "3"
+      adversarial:
+        description: run adversarial prompts (1/0)
+        default: "1"
+permissions:
+  contents: write
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: Condition B, with FRC-MCP tools
+        env: { ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}" }
+        run: node scripts/frc_agent_stress_lab.mjs --adapter anthropic --model "${{ inputs.model }}" --paraphrases "${{ inputs.paraphrases }}" --adversarial "${{ inputs.adversarial }}" --out eval/frc-agent-stress-report.json 2>&1 | tail -30
+      - name: Condition A, control without tools
+        env: { ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}" }
+        run: node scripts/frc_agent_stress_lab.mjs --adapter anthropic --model "${{ inputs.model }}" --paraphrases "${{ inputs.paraphrases }}" --adversarial "${{ inputs.adversarial }}" --tools 0 --out eval/frc-agent-stress-report-control.json 2>&1 | tail -30
+      - name: Commit the reports (whatever they say)
+        if: always()
+        run: |
+          git config user.name "frc-stress-lab" && git config user.email "press@financeratecalc.com"
+          git add eval/frc-agent-stress-report.json eval/frc-agent-stress-report-control.json 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "agent stress lab pilot reports [skip ci]"
+          git pull --rebase -q origin main && git push -q origin main
