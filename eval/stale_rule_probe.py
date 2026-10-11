@@ -73,13 +73,19 @@ def extract(text, kind, question=""):
     return None
 
 
-ABSENT_OK = re.compile(r"(no such|does not (?:define|set|include|contain|have|establish|provide)|not (?:defined|set|listed|specified|included|provided)|no separate|no specific|no (?:reduced|special|distinct|additional) (?:rate|band|limit|trigger|provision)|not in (?:the|this) (?:rule|file|table)|cannot verify|can't verify|unable to verify|isn't a separate|is not a separate|there is no)", re.IGNORECASE)
+ABSENT_OK = re.compile(
+    r"(\bno\b[^.\n]{0,80}\b(?:rate|band|limit|trigger|provision|exemption|exception|tier|category)\b"
+    r"|\bnot\b\s+(?:define|defined|set|include|included|contain|have|establish|established|provide|provided|list|listed|specify|specified|exist)"
+    r"|does not exist|do not exist|no such|cannot verify|can't verify|unable to verify|cannot confirm|cannot reliably"
+    r"|don't have (?:access|reliable|current)|do not have (?:access|reliable|current)|there is no|there isn't)",
+    re.IGNORECASE)
 
 
 def grade_absent(answer, kind, question=""):
     """Absent cell: correct = the answer says the provision/band does not exist (and, for absent_band, may name
     the band that applies). Wrong = it produces a rate/amount for the non-existent provision without saying so."""
-    says_absent = bool(ABSENT_OK.search(answer))
+    plain = answer.replace("**", "").replace("__", "")
+    says_absent = bool(ABSENT_OK.search(plain))
     asked = {float(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s*%", question)}
     nums = [float(x) for x in re.findall(r"(\d+(?:\.\d+)?)\s*%", answer) if float(x) not in asked]
     dollars = re.findall(r"\$\s?\d{1,3}(?:,\d{3})+", answer)
