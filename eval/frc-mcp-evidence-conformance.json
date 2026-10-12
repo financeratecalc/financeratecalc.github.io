@@ -1,13 +1,13 @@
 {
  "suite": "frc-mcp-evidence-conformance",
- "suite_version": "1.0",
- "fixture_version": "1.0",
+ "suite_version": "1.1",
+ "fixture_version": "1.1",
  "endpoint": "https://frc-mcp.ziyetis.workers.dev",
- "server_version": "1.26.0",
+ "server_version": "1.27.0",
  "protocol_version": "2026-07-28 (fixtures marked client=2025 use the 2025 path)",
- "generated_at": "2026-10-11T19:52:44.666Z",
- "tests": 20,
- "passed": 20,
+ "generated_at": "2026-10-12T08:01:09.571Z",
+ "tests": 33,
+ "passed": 33,
  "status": "evidence_fixture_pass",
  "groups": {
   "evidence_conformance": {
@@ -27,12 +27,16 @@
    "passed": 8
   },
   "receipt_integrity": {
-   "tests": 3,
-   "passed": 3
+   "tests": 4,
+   "passed": 4
   },
   "forbidden_input_tests": {
    "tests": 1,
    "passed": 1
+  },
+  "rule_sentence_gate": {
+   "tests": 12,
+   "passed": 12
   }
  },
  "independent_reproduction_status": "not_independently_reproduced",
@@ -391,7 +395,185 @@
     }
    },
    "pass": true
+  },
+  {
+   "id": "EV21",
+   "title": "FHA limit sentence, correct floor and ceiling, one unit, year stated",
+   "group": "rule_sentence_gate",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": []
+   },
+   "pass": true
+  },
+  {
+   "id": "EV22",
+   "title": "cross-rule provenance error: the MIP base-loan threshold quoted as the FHA loan limit",
+   "group": "rule_sentence_gate",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "VALUE_MISMATCH",
+     "VALUE_FROM_OTHER_RULE"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV23",
+   "title": "superseded year value quoted as current",
+   "group": "rule_sentence_gate",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "VALUE_MISMATCH",
+     "STALE_VALUE"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV24",
+   "title": "wrong year on a correct figure",
+   "group": "rule_sentence_gate",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "PERIOD_MISMATCH"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV25",
+   "title": "ceiling quoted as floor, with the wrong Mortgagee Letter",
+   "group": "rule_sentence_gate",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "DOCUMENT_ID_MISMATCH",
+     "VALUE_MISMATCH"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV26",
+   "title": "FHA limit figure with no units or tier",
+   "group": "rule_sentence_gate",
+   "client": "2025",
+   "expected_status": "needs_qualifier",
+   "observed": {
+    "verdict": "needs_qualifier",
+    "codes": [
+     "QUALIFIER_DELETED"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV27",
+   "title": "conforming baseline, correct",
+   "group": "rule_sentence_gate",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": []
+   },
+   "pass": true
+  },
+  {
+   "id": "EV28",
+   "title": "conforming baseline, 2025 value",
+   "group": "rule_sentence_gate",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "VALUE_MISMATCH",
+     "STALE_VALUE"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV29",
+   "title": "HOEPA total loan amount threshold, correct",
+   "group": "rule_sentence_gate",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": []
+   },
+   "pass": true
+  },
+  {
+   "id": "EV30",
+   "title": "HOEPA points-and-fees trigger, 2025 value",
+   "group": "rule_sentence_gate",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "VALUE_MISMATCH",
+     "STALE_VALUE"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV31",
+   "title": "VA funding fee, first use, less than 5% down, correct",
+   "group": "rule_sentence_gate",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": []
+   },
+   "pass": true
+  },
+  {
+   "id": "EV32",
+   "title": "VA funding fee, subsequent use quoted with the first-use rate, plus an approval claim",
+   "group": "rule_sentence_gate",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "VALUE_MISMATCH",
+     "INDIVIDUAL_PREDICTION_PROHIBITED"
+    ]
+   },
+   "pass": true
+  },
+  {
+   "id": "EV33",
+   "title": "loan-limit receipt from the gate verifies; the 2025 ceiling substituted into it does not",
+   "group": "receipt_integrity",
+   "client": "2025",
+   "expected_status": "not_current",
+   "observed": {
+    "original": "current",
+    "tampered": "hash-current-value-mismatch"
+   },
+   "pass": true
   }
  ],
- "report_sha256": "a6922a36391038328ac84bacfbabd2bb60c64ee8027c2781e0867ef0c6688df1"
+ "report_sha256": "1d171a57b1ccf961510e7bad7a9ccfa70ae1d3a92d38c3da78bae8a652bc3fb0"
 }
