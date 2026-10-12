@@ -42,7 +42,15 @@
     } else {
       // AI olmayan ama referrer'siz gelen trafigi de isaretle (karsilastirma icin)
       if(!ref && !document.location.search && typeof gtag!=='undefined'){
-        gtag('event','direct_or_hidden_referrer',{landing_page: location.pathname});
+        // Imza alanlari (kisisel veri degil): otomasyon bayragi, saat dilimi, tarayici markasi, ekran.
+        // Referrer'siz "ilk ziyaret"lerin insan mi, bir cevap motorunun sayfa getiricisi mi oldugunu ayirmak icin.
+        var fp = {landing_page: location.pathname};
+        try{ fp.webdriver = navigator.webdriver ? 'yes' : 'no'; }catch(e){}
+        try{ fp.tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; }catch(e){}
+        try{ var b = (navigator.userAgentData && navigator.userAgentData.brands) ? navigator.userAgentData.brands.map(function(x){return x.brand+' '+x.version;}).join('|') : (navigator.userAgent||'').replace(/^Mozilla\/5\.0 \(/,'').slice(0,80); fp.ua_brand = b; }catch(e){}
+        try{ fp.screen = (screen.width||0)+'x'+(screen.height||0)+(window.devicePixelRatio?('@'+window.devicePixelRatio):''); }catch(e){}
+        try{ fp.langs = (navigator.languages||[]).slice(0,3).join(','); }catch(e){}
+        gtag('event','direct_or_hidden_referrer', fp);
       }
     }
   }catch(e){}
