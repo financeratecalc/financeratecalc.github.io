@@ -20,5 +20,14 @@ await t("RP01", "For an FHA case number assigned 2026-02-01, a $300,000 base loa
 await t("RP03", "For 2026, the FHA two-unit loan limit floor is $693,050 and the two-unit ceiling is $1,599,375.", false);
 await t("RP03", "For 2026, the FHA one-unit loan limit floor is $541,287 and the high-cost ceiling is $1,249,125.", true);
 await t("RP02", "x".repeat(700), false);
+// second audit (2026-10-13 02:01): word "term" alone; year not bound to the figure
+await t("RP06", "This term is confusing.", false);
+await t("RP06", "The term of the loan matters a lot in general.", false);
+await t("RP06", "Please provide the loan term.", true);
+await t("RP06", "The loan term was not specified, so the rate cannot be determined.", true);
+await t("RP05", "For 2026, the FHA one-unit floor is $524,225 according to a 2025 summary.", false);
+await t("RP05", "For 2025, the FHA one-unit floor is $541,287; for 2026, the floor is $524,225.", false);
+await t("RP05", "For 2025, the FHA one-unit floor was $524,225; for 2026 it is $541,287.", true);
+await t("RP05", "The 2025 floor ($524,225) is superseded by the 2026 floor ($541,287).", true);
 
 console.log(bad ? `${bad} FAILED` : "all ok"); process.exit(bad ? 1 : 0);

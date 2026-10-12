@@ -1,6 +1,6 @@
 # Mortgage evidence repair report
 
-Pack 1.0 · grader https://frc-mcp.ziyetis.workers.dev (deterministic sentence gate, no model; network required) · 2026-10-12T22:57:50.352Z · **0/6 pass**
+Pack 1.0 · grader https://frc-mcp.ziyetis.workers.dev (deterministic sentence gate, no model; network required) · 2026-10-12T23:02:37.310Z · **0/6 pass**
 
 ## RP01 — FHA annual MIP: the cell, not a neighbouring cell: REPAIR
 
@@ -80,7 +80,7 @@ Pack 1.0 · grader https://frc-mcp.ziyetis.workers.dev (deterministic sentence g
 
 **App said.** For 2025, the FHA one-unit loan limit floor is $541,287 according to a 2026 summary.
 
-**Grader.** the claim is dated 2025 with a figure that belongs to 2026 (gate: PERIOD_MISMATCH)
+**Grader.** a 2026 figure is bound to 2025 in its clause
 
 **Expected.** {"verdict":"prior_year_or_abstain","prior_year":"2025","prior_value":524225,"prior_source":"the rule file's supersedes field: 2025 one-unit floor $524,225 (HUD ML 2024-21)","current_year":"2026","current_values":[541287,1249125,1209750],"abstain_pattern":"does not cover|not cover|not apply|does not apply|different table|prior year|previous year|separate table|only covers 2026|applies to 2026 only","note":"Two acceptance paths, both explicit: (a) the 2025 figure ($524,225) given as a 2025 figure; (b) the output says the 2026 table does not cover 2025 and states no figure for 2025. Fails on PERIOD_MISMATCH (a 2026 figure dated 2025), on any dollar figure outside the two years' tables, and on a blocked-but-codeless answer."}
 

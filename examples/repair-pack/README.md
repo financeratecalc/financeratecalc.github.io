@@ -28,8 +28,8 @@ Full reports: [wrong-app.repair-report.md](sample-outputs/wrong-app.repair-repor
 | RP02 | $726,200 quoted as the FHA loan limit; it is the MIP base-loan threshold | gate pass with `$541,287` bound to the floor |
 | RP03 | floor and ceiling swapped: right numbers, wrong roles | both bindings correct, on the 1-unit cells |
 | RP04 | QM points-and-fees cap of another tier (5%) on the ≥ $137,958 tier (3%) | `3%` bound to that tier |
-| RP05 | a 2026 figure dated 2025 because the source was a 2026 document | path (a): the 2025 figure ($524,225) given as a 2025 figure; or path (b): the app says the 2026 table does not cover 2025 and states no figure. Any other dollar figure fails |
-| RP06 | term missing → a rate anyway | no rate stated (percent, bps or spelled out) **and** the missing term asked for or named; empty or unrelated answers fail |
+| RP05 | a 2026 figure dated 2025 because the source was a 2026 document | path (a): the 2025 figure ($524,225) bound to 2025 in its own clause (a source year does not count); or path (b): the app says the 2026 table does not cover 2025 and states no figure. Any other dollar figure fails |
+| RP06 | term missing → a rate anyway | no rate stated (percent, bps or spelled out) **and** the term explicitly requested or its absence stated; the word "term" alone, empty or unrelated answers fail |
 
 Each case in [`cases.json`](cases.json) carries the question, the expected cell or binding, the source document and fragment, the common failure, the fix hint and the rule file URL. The report prints all of it for every failing case, so a coding agent can work from the report alone.
 
@@ -51,7 +51,7 @@ node examples/repair-pack/run_offline.mjs my-outputs.json out/
 
 Node 18+. No key, no account; the grader is a public endpoint. `FRC_ENDPOINT` points the pack at another copy of the gate for tests.
 
-**Grader self-test:** `node examples/repair-pack/grader_selftest.mjs` runs the counterexamples an external audit found on 2026-10-13 (an empty answer, "Hello.", a 3% rate and a spelled-out rate all passed RP06; "$999,999" passed RP05) plus their mirrors. Every line must print `ok`.
+**Grader self-test:** `node examples/repair-pack/grader_selftest.mjs` runs the counterexamples an external audit found on 2026-10-13 (an empty answer, "Hello.", a 3% rate and a spelled-out rate all passed RP06; "$999,999" passed RP05) plus a second audit the same day ("This term is confusing." passed RP06; a 2025 figure dated 2026, and two right figures on swapped years, passed RP05) and their mirrors. Every line must print `ok`.
 
 ## What it is not
 

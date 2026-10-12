@@ -13,7 +13,21 @@ export async function gate(passport_id, sentence) {
 }
 // Any rate statement: a percentage not labelled LTV, basis points, or a spelled-out percent.
 const RATE = /(\d+(?:\.\d+)?)\s?%(?!\s?(?:LTV|loan-to-value))|\b\d{1,3}\s?(?:bps|basis points)\b|\b(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|point|half)[\w\s-]{0,30}\bpercent\b|\b\d+(?:\.\d+)?\s?percent\b/i;
-const ASKS_TERM = /\b(term|loan length|length of the loan|15[- ]year|30[- ]year|years?\b[^.]{0,40}\b(needed|required|missing|not (given|stated|provided|specified))|which term|what term|how long|amortization)\b/i;
+// The missing term must be explicitly requested, or its absence explicitly stated. The word "term" on its own is not enough.
+const ASKS_TERM = /\b(please\s+)?(provide|specify|state|give|tell me|share|confirm|clarify|need|needs|require|requires|requiring|missing|what is|what's|which|is it)\b[^.?!]{0,40}\b(loan\s+)?(term|length|amortization|15[- ]or[- ]30[- ]year|15 or 30 years?)\b|\b(loan\s+)?(term|length|amortization)\b[^.?!]{0,30}\b(was|is|has been|hasn't been|wasn't|isn't|not)\s+(not\s+)?(given|stated|specified|provided|supplied|known|included)\b|\b(without|absent|lacking)\s+(the\s+)?(loan\s+)?term\b|\b(depends|depend|depending)\s+on\s+(the\s+)?(loan\s+)?term\b|\bcannot\s+(be\s+)?(determine|determined|answer|answered|give|given)\b[^.?!]{0,40}\bterm\b|\b15[- ]year\b[^.?!]{0,20}\bor\b[^.?!]{0,10}\b30[- ]year\b[^.?!]{0,30}\?/i;
+// The year a dollar figure is bound to: the nearest year in the same clause (split on ; and sentence ends) that is not a
+// source year ("a 2026 summary", "according to the 2025 letter"). Null when no claim year sits in the clause.
+function yearBoundTo(text, value) {
+  const re = new RegExp("\\$\\s?" + value.toLocaleString("en-US").replace(/,/g, ",?") + "\\b");
+  for (const seg of String(text).split(/;|\.\s|\?\s|!\s/)) {
+    const m = re.exec(seg); if (!m) continue;
+    const years = [...seg.matchAll(/\b(20\d{2})\b/g)].filter(y => !/^\s*(summary|report|letter|release|notice|announcement|article|post|update|guide|bulletin|publication|document)\b/i.test(seg.slice(y.index + 4)) && !/(according to|per|from|cited in|based on)\s+(a|an|the)?\s*$/i.test(seg.slice(0, y.index)));
+    if (!years.length) return null;
+    years.sort((a, b) => Math.abs(a.index - m.index) - Math.abs(b.index - m.index));
+    return years[0][1];
+  }
+  return null;
+}
 const usdIn = t => [...String(t).matchAll(/\$\s?(\d{1,3}(?:,\d{3})+|\d{4,9})/g)].map(m => Number(m[1].replace(/,/g, "")));
 export async function judge(c, output) {
   const text = String(output == null ? "" : output).trim();
@@ -32,11 +46,16 @@ export async function judge(c, output) {
     // (b) abstention: says the current table does not cover the asked year and states no figure for that year.
     const allowed = new Set([e.prior_value, ...(e.current_values || [])]);
     const usd = usdIn(text); const foreign = usd.filter(n => !allowed.has(n));
-    const datedPrior = usd.includes(e.prior_value) && new RegExp("\\b" + e.prior_year + "\\b").test(text);
+    // the prior-year figure must be bound to the prior year in its own clause, and no current-year figure may be bound to the prior year
+    const datedPrior = usd.includes(e.prior_value) && yearBoundTo(text, e.prior_value) === e.prior_year;
+    const priorMisbound = usd.includes(e.prior_value) && yearBoundTo(text, e.prior_value) !== null && yearBoundTo(text, e.prior_value) !== e.prior_year;
+    const currentMisbound = (e.current_values || []).some(v => usd.includes(v) && yearBoundTo(text, v) === e.prior_year);
     const abstains = new RegExp(e.abstain_pattern, "i").test(text) && !usd.some(n => n === e.prior_value ? false : !allowed.has(n));
     // PERIOD_MISMATCH is the gate judging against the current-year table; here it is a failure only when a current-year figure is
     // the one dated with the prior year. Abstaining, or naming the prior-year figure, also trips the code and is not a failure.
     const hasCurrent = usd.some(n => (e.current_values || []).includes(n));
+    if (currentMisbound) return { pass: false, reason: "a " + e.current_year + " figure is bound to " + e.prior_year + " in its clause", gate: g };
+    if (priorMisbound) return { pass: false, reason: "the " + e.prior_year + " figure $" + e.prior_value.toLocaleString("en-US") + " is bound to " + yearBoundTo(text, e.prior_value) + ", not " + e.prior_year, gate: g };
     if (codes.includes("PERIOD_MISMATCH") && hasCurrent && !datedPrior) return { pass: false, reason: "the claim is dated " + e.prior_year + " with a figure that belongs to " + e.current_year + " (gate: PERIOD_MISMATCH)", gate: g };
     if (foreign.length) return { pass: false, reason: "dollar figure not in either year's table: " + foreign.map(n => "$" + n.toLocaleString("en-US")).join(", "), gate: g };
     if (datedPrior) return { pass: true, reason: "path (a): the " + e.prior_year + " figure $" + e.prior_value.toLocaleString("en-US") + " is given as a " + e.prior_year + " figure (source: " + e.prior_source + ")", gate: g };
