@@ -6,7 +6,7 @@ const GUARDRAIL = "Historical observation computed from the public CFPB HMDA 202
 const INSTRUCTIONS = "FinanceRateCalc: independent analysis of the complete 2025 federal HMDA record (1,187,606 FHA credit decisions, reverse mortgages excluded). All figures are historical aggregates. Never ask this server whether a specific person will be approved — it cannot and will not answer that.";
 
 const TOOLS = [
-  { name: "check_claim_contract", title: "Check a sentence against a figure's contract", annotations: { title: "Check a sentence against a figure's contract", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "Checks a proposed statement of a FinanceRateCalc figure against that figure's published use contract, so the sentence can be verified before it is written. Two input modes. (A) Flags: claim id plus the use you propose (population, period, scope, cause, individual prediction, lender recommendation, legal conclusion). (B) Sentence: claim id plus proposed_sentence, the exact sentence you intend to write; the tool checks it with fixed patterns, no model, for a missing period, missing program scope, a population wider than the claim, second-person prediction, causal wording, lender advice, legal conclusions, and values this publisher has since corrected. Returns a deterministic verdict: pass, needs_qualifier (naming the missing qualifier) or block (with a reason code), plus a safe sentence you may use verbatim and the required attribution. Most misuse of these statistics is omission, not invention: the number is right and the population is missing. NOT FOR: figures published by anyone other than FinanceRateCalc. (C) Rule sentence: passport_id of a rule file (frc:rule:…, five tables: FHA annual MIP, FHA forward loan limits 2026, FHFA conforming limits 2026, CFPB HOEPA/QM thresholds 2026, VA funding fee) plus proposed_sentence; the cell the sentence's qualifiers name is resolved and every dollar or percent figure is classified as current, superseded (STALE_VALUE), belonging to a different rule (VALUE_FROM_OTHER_RULE, e.g. the $726,200 MIP threshold quoted as a loan limit), or not in the table (VALUE_MISMATCH / UNVERIFIED_VALUE); the year, units, tier, use and down-payment band are checked, and a passing sentence returns a verifiable rule receipt. ", inputSchema: { type: "object", properties: { passport_id: { type: "string" }, causal_assertion: { type: "boolean" }, individual_prediction: { type: "boolean" }, personalized_recommendation: { type: "boolean" }, legal_conclusion: { type: "boolean" }, scope_beyond_universe: { type: "boolean" }, qualifier_dropped: { type: "boolean" }, attribution_present: { type: "boolean" }, proposed_sentence: { type: "string", description: "The exact sentence you intend to write. Checked with fixed patterns; no model." } }, required: ["passport_id"] } },
+  { name: "check_claim_contract", title: "Check a sentence against a figure's contract", annotations: { title: "Check a sentence against a figure's contract", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "Checks a proposed statement of a FinanceRateCalc figure against that figure's published use contract, so the sentence can be verified before it is written. Two input modes. (A) Flags: claim id plus the use you propose (population, period, scope, cause, individual prediction, lender recommendation, legal conclusion). (B) Sentence: claim id plus proposed_sentence, the exact sentence you intend to write; the tool checks it with fixed patterns, no model, for a missing period, missing program scope, a population wider than the claim, second-person prediction, causal wording, lender advice, legal conclusions, and values this publisher has since corrected. Returns a deterministic verdict: pass, needs_qualifier (naming the missing qualifier) or block (with a reason code), plus a safe sentence you may use verbatim and the required attribution. Most misuse of these statistics is omission, not invention: the number is right and the population is missing. NOT FOR: figures published by anyone other than FinanceRateCalc. (C) Rule sentence: passport_id of a rule file (frc:rule:…, five tables: FHA annual MIP, FHA forward loan limits 2026, FHFA conforming limits 2026, CFPB HOEPA/QM thresholds 2026, VA funding fee) plus proposed_sentence; each dollar or percent figure is bound to the role named in its own clause (floor or ceiling, tier, first or subsequent use, threshold item) and compared with that cell, so a right number under the wrong role is a mismatch and an unbound number earns no receipt; every figure is also classified as current, superseded (STALE_VALUE), belonging to a different rule (VALUE_FROM_OTHER_RULE, e.g. the $726,200 MIP threshold quoted as a loan limit), or not in the table (VALUE_MISMATCH / UNVERIFIED_VALUE); the year, units, tier, use, down-payment band and stated dates are checked (a date before the rule's start blocks; a missing MIP case date is never assumed), and a passing sentence with at least one bound figure returns a verifiable rule receipt. ", inputSchema: { type: "object", properties: { passport_id: { type: "string" }, causal_assertion: { type: "boolean" }, individual_prediction: { type: "boolean" }, personalized_recommendation: { type: "boolean" }, legal_conclusion: { type: "boolean" }, scope_beyond_universe: { type: "boolean" }, qualifier_dropped: { type: "boolean" }, attribution_present: { type: "boolean" }, proposed_sentence: { type: "string", description: "The exact sentence you intend to write. Checked with fixed patterns; no model." } }, required: ["passport_id"] } },
 
   { name: "get_national_fha_stats", title: "National FHA denial rate 2025", annotations: { title: "National FHA denial rate 2025", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"how often are FHA loans denied\", \"what is the FHA denial rate\", \"what share of FHA applications are rejected\", \"how many were denied in 2025\". Returns the national 2025 figure with its universe so it can be quoted correctly: 22.1 percent, 262,250 denials of 1,187,606 applications that reached a credit decision (originated, approved-not-accepted, denied; reverse mortgages excluded), the denominator definition and the correction history. Most published FHA denial rates are 2023 purchase-only figures near 13.6 percent, a different universe, so state the universe when quoting. NOT FOR: conventional, VA or USDA loans, purchase-only or refinance-only rates, other years, or state/lender/metro breakdowns (use the dedicated tools). " + GUARDRAIL,
     inputSchema: { type: "object", properties: {}, additionalProperties: false } },
@@ -211,6 +211,35 @@ function checkYear(t, rule, V) {
   if (!years.includes(yr)) { const other = years.find(y => y !== yr); if (other) V("PERIOD_MISMATCH", "period", "sentence says " + other + "; this table applies to " + yr + " only"); else V("QUALIFIER_DELETED", "period", "year missing: this table applies to " + yr + " only"); }
 }
 const unitsIn = t => { const m = t.match(/\b(one|1|single|two|2|three|3|four|4)[- ](unit|family)/i); if (!m) return null; return { one: 1, "1": 1, single: 1, two: 2, "2": 2, three: 3, "3": 3, four: 4, "4": 4 }[m[1].toLowerCase()]; };
+// Clauses of a sentence: a figure is bound only to the role named in its own clause.
+function splitClauses(t) { return String(t).split(/;|,(?!\d{3}(?!\d))|\s+and\s+|\s+while\s+|\s+whereas\s+|\s+but\s+/i).map(x => x.trim()).filter(Boolean); }
+// Bind each dollar (or percent) figure to the first role whose pattern matches inside the figure's clause. Figures in a
+// clause that names no role are returned as unbound. Roles are tried in order, so the more specific pattern goes first.
+function bindFigures(t, roles, kind) {
+  const bound = [], unbound = [];
+  for (const cl of splitClauses(t)) {
+    const figs = kind === "usd" ? [...cl.matchAll(/\$\s?(\d{1,3}(?:,\d{3})+|\d{4,9})/g)].map(m => Number(m[1].replace(/,/g, ""))) : [...cl.matchAll(/(\d+(?:\.\d+)?)\s?%/g)].map(m => Number(m[1]));
+    if (!figs.length) continue;
+    const role = (roles.find(([, re]) => re.test(cl)) || [null])[0];
+    for (const value of figs) (role ? bound : unbound).push({ value, role, clause: cl });
+  }
+  return { bound, unbound };
+}
+const MONTHS = { january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7, august: 8, september: 9, october: 10, november: 11, december: 12 };
+// Dates a sentence states: ISO, "March 20, 2023", "20 March 2023". Returns ISO strings.
+function sentenceDates(t) {
+  const out = [...String(t).matchAll(/\b(20\d{2}-\d{2}-\d{2})\b/g)].map(m => m[1]);
+  for (const m of String(t).matchAll(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+(\d{1,2}),?\s+(20\d{2})\b/gi)) out.push(m[3] + "-" + String(MONTHS[m[1].toLowerCase()]).padStart(2, "0") + "-" + m[2].padStart(2, "0"));
+  for (const m of String(t).matchAll(/\b(\d{1,2})\s+(january|february|march|april|may|june|july|august|september|october|november|december)\s+(20\d{2})\b/gi)) out.push(m[3] + "-" + String(MONTHS[m[2].toLowerCase()]).padStart(2, "0") + "-" + m[1].padStart(2, "0"));
+  return out;
+}
+// Open-ended rules (effective_to null): a stated date or year before the rule's start means the table does not apply.
+function checkInForce(t, rule, V) {
+  const from = String(rule.effective_from || ""); if (!from || rule.effective_to) return;
+  for (const d of sentenceDates(t)) if (d < from) V("RULE_NOT_IN_FORCE", "date", "sentence dates the event " + d + "; this table applies from " + from);
+  const years = [...String(t).matchAll(/\b(?:in|closing in|closed in|during|for)\s+(20\d{2})\b/gi)].map(m => m[1]);
+  for (const y of years) if (y < from.slice(0, 4)) V("RULE_NOT_IN_FORCE", "date", "sentence places the event in " + y + "; this table applies from " + from);
+}
 // Rule-passport mode of the gate (v1.22.0, generalised v1.27.0): a sentence that quotes a rule is checked against the rule's
 // cells. MIP sentences resolve the exact cell; loan-limit, threshold and funding-fee sentences resolve the cell their
 // qualifiers name; every dollar or percent figure is classified as current, superseded, another rule's, or unknown.
@@ -227,67 +256,120 @@ async function checkRuleSentence(ruleRef, sentence) {
     if (d.startsWith("HUD-ML-") && (rd.issuer !== "HUD" || d !== ruleDoc)) V("DOCUMENT_ID_MISMATCH", "source", "sentence names " + d + "; this rule rests on " + (ruleDoc || "the issuer document"));
     if (d.startsWith("FR-") && rd.issuer !== "CFPB") V("DOCUMENT_ID_MISMATCH", "source", "sentence cites a Federal Register notice (" + d + "); this rule rests on " + (ruleDoc || "the issuer document"));
   }
-  let resolved = null, safe = null, cell = null, figures = null;
+  let resolved = null, safe = null, cell = null, figures = null; const bindings = [];
   if (slug === "hud-ml-2023-05-annual-mip") {
-    const amt = t.match(/\$\s?([\d,]{5,9})/); const ltv = t.match(/(\d{2,3}(?:\.\d+)?)\s?%\s?LTV/i) || t.match(/LTV\s?(?:of\s)?(\d{2,3}(?:\.\d+)?)\s?%/i); const term = t.match(/(\d{1,2})[- ]year/i);
-    const dm = t.match(/(20\d{2}-\d{2}-\d{2})/);
+    // The base loan amount is the dollar figure whose clause calls it a loan; with several candidates and no such clause, the
+    // sentence is ambiguous and no cell is resolved. The case-number date is never assumed: absent, the current table is
+    // used for the cell and the sentence is marked as missing its date qualifier.
+    const amts = bindFigures(t, [["loan", /\b(base loan|loan amount|loan of|mortgage of|a \$|loan at|borrow\w*|principal)\b|\$\s?[\d,]+\s?(loan|mortgage)\b/i]], "usd");
+    const amtVal = amts.bound.length === 1 ? amts.bound[0].value : (amts.bound.length === 0 && amts.unbound.length === 1 ? amts.unbound[0].value : null);
+    const amt = amtVal != null ? [null, String(amtVal)] : null;
+    if (!amt && amts.bound.length + amts.unbound.length > 1) V("QUALIFIER_DELETED", "conditions", "several dollar figures and none is tied to the loan amount in its clause (" + [...amts.bound, ...amts.unbound].map(f => fmtUsd(f.value)).join(", ") + "); say which is the base loan amount");
+    const ltv = t.match(/(\d{2,3}(?:\.\d+)?)\s?%\s?LTV/i) || t.match(/LTV\s?(?:of\s)?(\d{2,3}(?:\.\d+)?)\s?%/i); const term = t.match(/(\d{1,2})[- ]year/i);
+    const dates = sentenceDates(t); const dateQual = dates.length || /\bon or after\b|\bsince (20 )?march 2023\b|\bsince 2023-03-20\b/i.test(t);
+    if (!dateQual) V("QUALIFIER_DELETED", "conditions", "case-number date not stated; the current table (effective 2023-03-20) was used, and the sentence must say the case number was assigned on or after 20 March 2023");
     if (amt && ltv && term) {
-      resolved = await resolveFhaAnnualMip({ base_loan_amount: Number(amt[1].replace(/,/g, "")), ltv_pct: Number(ltv[1]), term_years: Number(term[1]), case_number_date: dm ? dm[1] : "2026-01-01" });
+      resolved = await resolveFhaAnnualMip({ base_loan_amount: Number(amt[1].replace(/,/g, "")), ltv_pct: Number(ltv[1]), term_years: Number(term[1]), case_number_date: dates.length ? dates.sort()[0] : new Date().toISOString().slice(0, 10) });
       if (resolved.verdict === "pass") {
         const pcts = [...t.matchAll(/(\d(?:\.\d+)?)\s?%/g)].map(m => Number(m[1])).filter(v => v < 2 && v !== Number(ltv[1]));
         const bps = [...t.matchAll(/(\d{1,3})\s?(?:bps|basis points)/gi)].map(m => Number(m[1]));
         const stated = bps.length ? bps[0] : (pcts.length ? Math.round(pcts[0] * 100) : null);
         if (stated !== null && stated !== resolved.annual_mip_bps) V("VALUE_MISMATCH", "value", "sentence states " + stated + " bps; the cell for these conditions is " + resolved.annual_mip_bps + " bps (" + [resolved.matched_conditions.term, resolved.matched_conditions.base_loan, resolved.matched_conditions.ltv].join("/") + ")");
+        else if (stated !== null) bindings.push({ figure: stated + " bps", role: "annual_mip", cell: [resolved.matched_conditions.term, resolved.matched_conditions.base_loan, resolved.matched_conditions.ltv].join("/") });
+        else V("QUALIFIER_DELETED", "value", "no MIP rate stated");
         safe = resolved.safe_sentence; cell = resolved.matched_cell;
       } else V(resolved.reason_codes[0] || "CONDITION_INVALID", "conditions", resolved.why);
-    } else V("QUALIFIER_DELETED", "conditions", "a MIP sentence must state base loan amount, LTV and term; missing: " + [!amt && "amount", !ltv && "LTV", !term && "term"].filter(Boolean).join(", "));
+    } else if (!violations.some(v => v.field === "conditions" && /several dollar/.test(v.reason))) V("QUALIFIER_DELETED", "conditions", "a MIP sentence must state base loan amount, LTV and term; missing: " + [!amt && "amount", !ltv && "LTV", !term && "term"].filter(Boolean).join(", "));
     // the loan amount itself and the LTV are inputs, not quoted values; only other dollar figures are classified
     figures = classifyFigures(t, self, others, V, { ignoreUsd: amt ? [Number(amt[1].replace(/,/g, ""))] : [], strictUsd: false, strictPct: false });
   } else if (slug === "fha-forward-loan-limits-2026" || slug === "fhfa-conforming-loan-limits-2026") {
     checkYear(t, self.rule, V);
     const fha = slug.startsWith("fha"); const units = unitsIn(t);
-    const tier = /\b(floor|low[- ]cost|minimum|baseline|most (counties|of the (us|u\.s\.|country)))\b/i.test(t) ? "floor" : /\b(ceiling|high[- ]cost|maximum)\b/i.test(t) ? "ceiling" : null;
-    const akhi = /\b(alaska|hawaii|guam|virgin islands)\b/i.test(t);
     if (fha && /\b(conforming|fannie|freddie|fhfa)\b/i.test(t) && !/\bfha\b/i.test(t)) V("PROGRAM_MISMATCH", "program", "sentence describes conforming (FHFA) limits; this rule is the FHA forward limit table");
     if (!fha && /\bfha\b/i.test(t) && !/\b(conforming|fannie|freddie|fhfa)\b/i.test(t)) V("PROGRAM_MISMATCH", "program", "sentence describes FHA limits; this rule is the FHFA conforming limit table");
-    if (fha) {
-      const c = self.rule.cells.find(x => x.units === (units || 1)); cell = c ? { units: c.units, floor_usd: c.floor_usd, ceiling_usd: c.ceiling_usd } : null;
-      if (c) safe = "For FHA forward mortgages with case numbers assigned in 2026, the " + c.units + "-unit loan limit is " + fmtUsd(c.floor_usd) + " in low-cost counties and " + fmtUsd(c.ceiling_usd) + " in high-cost counties; most counties sit between (HUD Mortgagee Letter 2025-23). Not a county value.";
-      if (tier && c) { const want = tier === "floor" ? c.floor_usd : c.ceiling_usd; const sn = sentenceNumbers(t); const wrong = sn.usd.filter(n => n !== want && self.numbers.usd.has(n)); if (sn.usd.length && !sn.usd.includes(want)) V("VALUE_MISMATCH", "value", "sentence quotes " + sn.usd.map(fmtUsd).join(", ") + " for the " + (c.units) + "-unit " + tier + "; the cell is " + fmtUsd(want) + (wrong.length ? " (" + fmtUsd(wrong[0]) + " is " + self.numbers.usd.get(wrong[0]) + ")" : "")); }
-      if (!tier && !units) V("QUALIFIER_DELETED", "qualifiers", "state the number of units and whether the figure is the floor (low-cost counties) or the ceiling (high-cost counties); county values differ");
-    } else {
-      const area = akhi ? (tier === "ceiling" ? "Alaska, Hawaii, Guam, US Virgin Islands ceiling" : "Alaska, Hawaii, Guam, US Virgin Islands baseline") : tier === "ceiling" ? "high-cost ceiling" : tier === "floor" ? "baseline (most of the US)" : null;
-      const c = area ? self.rule.cells.find(x => x.area === area) : null; cell = c || null;
-      if (c) safe = "For mortgages acquired by Fannie Mae and Freddie Mac in 2026, the one-unit conforming loan limit for the " + c.area + " is " + fmtUsd(c.limit_usd) + " (FHFA, 2025-11-25). High-cost counties have county-specific values.";
-      if (c) { const sn = sentenceNumbers(t); const wrong = sn.usd.filter(n => n !== c.limit_usd && self.numbers.usd.has(n)); if (sn.usd.length && !sn.usd.includes(c.limit_usd)) V("VALUE_MISMATCH", "value", "sentence quotes " + sn.usd.map(fmtUsd).join(", ") + " for the " + c.area + "; the cell is " + fmtUsd(c.limit_usd) + (wrong.length ? " (" + fmtUsd(wrong[0]) + " is " + self.numbers.usd.get(wrong[0]) + ")" : "")); }
-      else V("QUALIFIER_DELETED", "qualifiers", "state whether the figure is the baseline (most of the US), the high-cost ceiling, or the Alaska/Hawaii/Guam/USVI value");
-      if (units && units !== 1) V("QUALIFIER_DELETED", "qualifiers", "this table carries one-unit values only; " + units + "-unit values are in the FHFA county table");
-    }
+    // Each dollar figure is bound to the role named in its own clause (floor / ceiling / baseline / Alaska-Hawaii), then
+    // compared with that role's cell value. A right number under the wrong role is a mismatch; an unbound number is a
+    // missing qualifier and never earns a receipt.
+    const roles = fha
+      ? [["floor", /\b(floor|low[- ]cost|minimum|most counties)\b/i], ["ceiling", /\b(ceiling|high[- ]cost|maximum)\b/i]]
+      : [["akhi_ceiling", /\b(alaska|hawaii|guam|virgin islands)\b[^;.]{0,80}\b(ceiling|high[- ]cost|maximum)\b|\b(ceiling|high[- ]cost|maximum)\b[^;.]{0,80}\b(alaska|hawaii|guam|virgin islands)\b/i], ["akhi_baseline", /\b(alaska|hawaii|guam|virgin islands)\b/i], ["ceiling", /\b(ceiling|high[- ]cost|maximum)\b/i], ["baseline", /\b(baseline|floor|most of the (us|u\.s\.|country)|standard)\b/i]];
+    const b = bindFigures(t, roles, "usd");
+    let c = null;
+    if (fha) { c = self.rule.cells.find(x => x.units === (units || 1)); cell = c ? { units: c.units, floor_usd: c.floor_usd, ceiling_usd: c.ceiling_usd } : null;
+      if (c) safe = "For FHA forward mortgages with case numbers assigned in 2026, the " + c.units + "-unit loan limit is " + fmtUsd(c.floor_usd) + " in low-cost counties and " + fmtUsd(c.ceiling_usd) + " in high-cost counties; most counties sit between (HUD Mortgagee Letter 2025-23). Not a county value."; }
+    const expect = role => fha ? (role === "floor" ? c.floor_usd : c.ceiling_usd) : (self.rule.cells.find(x => x.area === { baseline: "baseline (most of the US)", ceiling: "high-cost ceiling", akhi_baseline: "Alaska, Hawaii, Guam, US Virgin Islands baseline", akhi_ceiling: "Alaska, Hawaii, Guam, US Virgin Islands ceiling" }[role]) || {}).limit_usd;
+    if (!fha) { const first = b.bound[0]; if (first) { cell = self.rule.cells.find(x => x.limit_usd === expect(first.role)) || null; if (cell) safe = "For mortgages acquired by Fannie Mae and Freddie Mac in 2026, the one-unit conforming loan limit for the " + cell.area + " is " + fmtUsd(cell.limit_usd) + " (FHFA, 2025-11-25). High-cost counties have county-specific values."; } }
+    if (fha && !c) V("CONDITION_INVALID", "units", "the table carries 1- to 4-unit limits");
+    for (const f of b.bound) { const want = expect(f.role); if (want == null) continue; if (f.value !== want) { const other = self.numbers.usd.get(f.value); V("VALUE_MISMATCH", "value", fmtUsd(f.value) + " is bound to the " + f.role.replace("_", " ") + (fha ? " (" + (units || 1) + "-unit)" : "") + "; that cell is " + fmtUsd(want) + (other ? " (" + fmtUsd(f.value) + " is the " + other + ")" : "")); } else bindings.push({ figure: fmtUsd(f.value), role: f.role, cell: fha ? (units || 1) + "-unit " + f.role : f.role }); }
+    for (const f of b.unbound) V("QUALIFIER_DELETED", "qualifiers", fmtUsd(f.value) + " is not tied to a role in its clause; say whether it is the " + (fha ? "floor (low-cost counties) or the ceiling (high-cost counties), and the number of units" : "baseline, the high-cost ceiling, or the Alaska/Hawaii/Guam/USVI value"));
+    if (!fha && units && units !== 1) V("QUALIFIER_DELETED", "qualifiers", "this table carries one-unit values only; " + units + "-unit values are in the FHFA county table");
+    if (fha && b.bound.length && !units) V("QUALIFIER_DELETED", "qualifiers", "number of units not stated; the figure was checked against the 1-unit cell");
     figures = classifyFigures(t, self, others, V, { strictUsd: true, strictPct: false });
   } else if (slug === "cfpb-hoepa-qm-thresholds-2026") {
     checkYear(t, self.rule, V);
-    const hoepaAmt = /hoepa|high[- ]cost mortgage/i.test(t) && /\b(total loan amount|loan amount threshold|loan threshold)\b/i.test(t);
-    const hoepaFee = /hoepa|high[- ]cost mortgage/i.test(t) && /points[- ]and[- ]fees|dollar trigger|fee trigger/i.test(t);
+    const roles = [["hoepa_amount", /\b(hoepa|high[- ]cost mortgage)\b[^;.]{0,80}\b(total loan amount|loan amount threshold|loan threshold)\b|\b(total loan amount|loan amount threshold|loan threshold)\b[^;.]{0,80}\b(hoepa|high[- ]cost)\b/i], ["hoepa_fee", /\b(hoepa|high[- ]cost mortgage)\b[^;.]{0,80}\b(points[- ]and[- ]fees|dollar trigger|fee trigger)\b|\b(points[- ]and[- ]fees|dollar trigger|fee trigger)\b[^;.]{0,80}\b(hoepa|high[- ]cost)\b/i]];
     const qm = /\b(qualified mortgage|QM)\b/.test(t);
-    const want = hoepaAmt ? self.rule.cells[0] : hoepaFee ? self.rule.cells[1] : null;
-    if (want) { cell = want; const sn = sentenceNumbers(t); const wrong = sn.usd.filter(n => n !== want.value_usd && self.numbers.usd.has(n)); if (sn.usd.length && !sn.usd.includes(want.value_usd)) V("VALUE_MISMATCH", "value", "sentence quotes " + sn.usd.map(fmtUsd).join(", ") + " for the " + want.item + "; the cell is " + fmtUsd(want.value_usd) + (wrong.length ? " (" + fmtUsd(wrong[0]) + " is " + self.numbers.usd.get(wrong[0]) + ")" : "")); safe = "For loans consummated in 2026, the " + want.item + " under Regulation Z is " + fmtUsd(want.value_usd) + " (CFPB annual adjustment, 90 FR, docket 2025-22773). Whether a specific loan is a high-cost mortgage also depends on its APR and fees."; }
-    else if (qm) { const sn = sentenceNumbers(t); if (!sn.usd.length && !/\btier|total loan amount\b/i.test(t)) V("QUALIFIER_DELETED", "qualifiers", "QM points-and-fees caps depend on the total loan amount tier; state the tier"); safe = "For loans consummated in 2026, the qualified-mortgage points-and-fees cap is 3% of the total loan amount for loans of $137,958 or more, with higher percentage or fixed-dollar caps in four lower tiers (CFPB, 90 FR, docket 2025-22773)."; }
-    else if (!hoepaAmt && !hoepaFee) V("QUALIFIER_DELETED", "qualifiers", "state which threshold the figure is: HOEPA total loan amount, HOEPA points-and-fees trigger, or a QM points-and-fees tier");
-    figures = classifyFigures(t, self, others, V, { strictUsd: true, strictPct: true });
+    if (qm) {
+      // QM tier: the loan-amount bound in the sentence picks the tier cell by direction ("or more" = lower bound, "less than" = upper bound);
+      // the cap stated in the same sentence is then compared with that cell's cap. Bound and cap are separate claims.
+      const sn = sentenceNumbers(t);
+      const bounds = [...t.matchAll(/\$\s?(\d{1,3}(?:,\d{3})+|\d{4,9})\s?(or more|and up|or higher|or above|and above|\+)|\b(at least|from|above|over|more than|>=?)\s?\$\s?(\d{1,3}(?:,\d{3})+|\d{4,9})|\b(less than|under|below|up to|<)\s?\$\s?(\d{1,3}(?:,\d{3})+|\d{4,9})|\$\s?(\d{1,3}(?:,\d{3})+|\d{4,9})\s?(to|-|–|and)\s?(less than\s?)?\$\s?(\d{1,3}(?:,\d{3})+|\d{4,9})/gi)];
+      const tierCells = self.rule.cells.filter(x => /^QM/.test(x.item)).map(x => { const nums = [...x.item.matchAll(/\$\s?([\d,]+)/g)].map(m => Number(m[1].replace(/,/g, ""))); return { cell: x, lower: /^QM cap, <|^QM cap, \$[\d,]+ to/.test(x.item) ? (/to/.test(x.item) ? nums[0] : null) : nums[0], upper: /to < \$|^QM cap, < \$/.test(x.item) ? nums[nums.length - 1] : null }; });
+      let tier = null;
+      for (const m of bounds) {
+        if (m[1]) { const n = Number(m[1].replace(/,/g, "")); tier = tierCells.find(x => x.lower === n && x.upper === null); if (!tier) V("VALUE_MISMATCH", "tier", fmtUsd(n) + " 'or more' is not the lower bound of a tier; tiers: " + tierCells.map(x => x.cell.item).join(" | ")); }
+        else if (m[4]) { const n = Number(m[4].replace(/,/g, "")); tier = tierCells.find(x => x.lower === n); if (!tier) V("VALUE_MISMATCH", "tier", fmtUsd(n) + " is not the lower bound of a tier"); }
+        else if (m[6]) { const n = Number(m[6].replace(/,/g, "")); tier = tierCells.find(x => x.upper === n && x.lower === null); if (!tier) tier = tierCells.find(x => x.upper === n); if (!tier) V("VALUE_MISMATCH", "tier", fmtUsd(n) + " is not the upper bound of a tier"); }
+        else if (m[7]) { const lo = Number(m[7].replace(/,/g, "")), hi = Number(m[10].replace(/,/g, "")); tier = tierCells.find(x => x.lower === lo && x.upper === hi); if (!tier) V("VALUE_MISMATCH", "tier", fmtUsd(lo) + " to " + fmtUsd(hi) + " is not a published tier"); }
+        if (tier) break;
+      }
+      const boundNums = bounds.flatMap(m => [m[1], m[4], m[6], m[7], m[10]].filter(Boolean).map(x => Number(x.replace(/,/g, ""))));
+      if (tier) { cell = tier.cell; const wantPct = tier.cell.cap ? Number(String(tier.cell.cap).match(/(\d+(?:\.\d+)?)\s?%/)[1]) : null; const wantUsd = tier.cell.cap_usd || null;
+        const caps = sn.pct, capUsd = sn.usd.filter(n => !boundNums.includes(n));
+        if (wantPct != null) { for (const p of caps) if (p !== wantPct) V("VALUE_MISMATCH", "value", p + "% is bound to the tier '" + tier.cell.item + "'; that cell's cap is " + wantPct + "%" + (self.numbers.pct.has(p) ? " (" + p + "% is the cap of '" + self.numbers.pct.get(p) + "')" : "")); for (const n of capUsd) V("VALUE_MISMATCH", "value", fmtUsd(n) + " is stated as the cap for '" + tier.cell.item + "'; that cell's cap is a percentage, " + wantPct + "%"); if (caps.includes(wantPct)) bindings.push({ figure: wantPct + "%", role: "cap", cell: tier.cell.item }); }
+        else { for (const n of capUsd) if (n !== wantUsd) V("VALUE_MISMATCH", "value", fmtUsd(n) + " is bound to the tier '" + tier.cell.item + "'; that cell's cap is " + fmtUsd(wantUsd)); for (const p of caps) V("VALUE_MISMATCH", "value", p + "% is stated as the cap for '" + tier.cell.item + "'; that cell's cap is a dollar amount, " + fmtUsd(wantUsd)); if (capUsd.includes(wantUsd)) bindings.push({ figure: fmtUsd(wantUsd), role: "cap", cell: tier.cell.item }); }
+        safe = "For loans consummated in 2026, the qualified-mortgage points-and-fees cap for '" + tier.cell.item.replace(/^QM cap, /, "a total loan amount ") + "' is " + (tier.cell.cap || fmtUsd(tier.cell.cap_usd)) + " (CFPB, 90 FR, docket 2025-22773).";
+        if (!caps.length && !capUsd.length) V("QUALIFIER_DELETED", "value", "tier identified but no cap stated");
+      } else if (!violations.some(v => v.field === "tier")) V("QUALIFIER_DELETED", "qualifiers", "QM points-and-fees caps depend on the total loan amount tier; state the tier (e.g. 'loans of $137,958 or more')");
+      figures = classifyFigures(t, self, others, V, { strictUsd: true, strictPct: true });
+    } else {
+      const b = bindFigures(t, roles, "usd");
+      const expect = role => role === "hoepa_amount" ? self.rule.cells[0] : self.rule.cells[1];
+      for (const f of b.bound) { const want = expect(f.role); if (f.value !== want.value_usd) { const other = self.numbers.usd.get(f.value); V("VALUE_MISMATCH", "value", fmtUsd(f.value) + " is bound to the " + want.item + "; that cell is " + fmtUsd(want.value_usd) + (other ? " (" + fmtUsd(f.value) + " is the " + other + ")" : "")); } else { bindings.push({ figure: fmtUsd(f.value), role: f.role, cell: want.item }); cell = cell || want; } }
+      for (const f of b.unbound) V("QUALIFIER_DELETED", "qualifiers", fmtUsd(f.value) + " is not tied to a threshold in its clause; say whether it is the HOEPA total loan amount threshold, the HOEPA points-and-fees trigger, or a QM tier cap");
+      if (cell) safe = "For loans consummated in 2026, the " + cell.item + " under Regulation Z is " + fmtUsd(cell.value_usd) + " (CFPB annual adjustment, 90 FR, docket 2025-22773). Whether a specific loan is a high-cost mortgage also depends on its APR and fees.";
+      if (!b.bound.length && !b.unbound.length) V("QUALIFIER_DELETED", "qualifiers", "state which threshold the figure is: HOEPA total loan amount, HOEPA points-and-fees trigger, or a QM points-and-fees tier");
+      figures = classifyFigures(t, self, others, V, { strictUsd: true, strictPct: true });
+    }
   } else if (slug === "va-funding-fee-2023-04-07") {
-    const first = /\bfirst[- ](time )?use\b|\bfirst VA loan\b/i.test(t), subs = /\bsubsequent\b|\bsecond (use|VA loan)\b|\bused (the|their) (benefit|entitlement) before\b/i.test(t);
-    const irrrl = /\birrrl\b|streamline/i.test(t), cashout = /cash[- ]out/i.test(t);
+    checkInForce(t, self.rule, V);
     const sn = sentenceNumbers(t);
-    const bandPhrase = /\b(less than|under|below)\s?5\s?%/i.test(t) ? "less than 5%" : /\b5\s?%\s?(to|-|–|up to|but less than)\s?(less than\s?)?10\s?%|\b(at least|from)\s?5\s?%/i.test(t) ? "5% to less than 10%" : /\b10\s?%\s?(or more|and up|or higher|\+)|\b(at least|more than|over)\s?10\s?%/i.test(t) ? "10% or more" : null;
-    const dp = sn.down.length ? sn.down[0] : (/\b(no|zero|0) (money )?down\b|\bnothing down\b/i.test(t) ? 0 : null);
-    const band = bandPhrase || (dp === null ? null : dp < 5 ? "less than 5%" : dp < 10 ? "5% to less than 10%" : "10% or more");
-    let c = null;
-    if (irrrl) c = self.rule.cells.find(x => /IRRRL/.test(x.use));
-    else if (cashout && (first || subs)) c = self.rule.cells.find(x => x.use === "cash-out refinance, " + (subs ? "subsequent" : "first") + " use");
-    else if ((first || subs) && band) c = self.rule.cells.find(x => x.use === "purchase or construction, " + (subs ? "subsequent" : "first") + " use" && x.down_payment === band);
     const fees = sn.pct.filter(p => p !== 5 && p !== 10);
-    if (c) { cell = c; if (fees.length && !fees.includes(c.fee_pct)) V("VALUE_MISMATCH", "value", "sentence quotes " + fees.map(p => p + "%").join(", ") + " for " + c.use + (c.down_payment ? ", " + c.down_payment + " down" : "") + "; the cell is " + c.fee_pct + "%"); safe = "For VA home loans closing on or after 7 April 2023, the funding fee for " + c.use + (c.down_payment ? " with " + c.down_payment + " down" : "") + " is " + c.fee_pct + "% of the loan amount; veterans with a service-connected disability rating and some others are exempt (38 U.S.C. 3729)."; }
-    else V("QUALIFIER_DELETED", "qualifiers", "state first vs subsequent use, loan purpose (purchase, cash-out refinance, IRRRL) and, for purchases, the down-payment band" + (/\bexempt/i.test(t) ? "" : "; exemption status also matters"));
+    // Each fee percentage is bound to the use / purpose / band named in its own clause; a sentence may quote several cells.
+    const clauses = splitClauses(t);
+    let anyCell = null;
+    for (const cl of clauses) {
+      const feeHere = [...cl.matchAll(/(\d+(?:\.\d+)?)\s?%(?!\s?(?:down|LTV))/gi)].map(m => Number(m[1])).filter(p => p !== 5 && p !== 10);
+      if (!feeHere.length) continue;
+      const ctx = cl + " " + (clauses.indexOf(cl) > 0 ? "" : "");
+      const scope = t.slice(0, t.indexOf(cl) + cl.length); // qualifiers may sit earlier in the sentence
+      const first = /\bfirst[- ](time )?use\b|\bfirst VA loan\b/i.test(scope), subs = /\bsubsequent\b|\bsecond (use|VA loan)\b|\bused (the|their) (benefit|entitlement) before\b/i.test(scope);
+      const irrrl = /\birrrl\b|streamline/i.test(scope), cashout = /cash[- ]out/i.test(scope);
+      const bandPhrase = /\b(less than|under|below)\s?5\s?%/i.test(scope) ? "less than 5%" : /\b5\s?%\s?(to|-|–|up to|but less than)\s?(less than\s?)?10\s?%|\b(at least|from)\s?5\s?%/i.test(scope) ? "5% to less than 10%" : /\b10\s?%\s?(or more|and up|or higher|\+)|\b(at least|more than|over)\s?10\s?%/i.test(scope) ? "10% or more" : null;
+      const dp = sn.down.length ? sn.down[0] : (/\b(no|zero|0) (money )?down\b|\bnothing down\b/i.test(scope) ? 0 : null);
+      const band = bandPhrase || (dp === null ? null : dp < 5 ? "less than 5%" : dp < 10 ? "5% to less than 10%" : "10% or more");
+      // when both uses are named, the one nearest the figure in this clause wins
+      const useHere = /\bsubsequent\b/i.test(cl) ? "subsequent" : /\bfirst\b/i.test(cl) ? "first" : subs && !first ? "subsequent" : first && !subs ? "first" : null;
+      let c = null;
+      if (irrrl) c = self.rule.cells.find(x => /IRRRL/.test(x.use));
+      else if (cashout && useHere) c = self.rule.cells.find(x => x.use === "cash-out refinance, " + useHere + " use");
+      else if (useHere && band) c = self.rule.cells.find(x => x.use === "purchase or construction, " + useHere + " use" && x.down_payment === band);
+      if (c) { anyCell = anyCell || c; for (const p of feeHere) { if (p !== c.fee_pct) V("VALUE_MISMATCH", "value", p + "% is bound to " + c.use + (c.down_payment ? ", " + c.down_payment + " down" : "") + "; that cell is " + c.fee_pct + "%"); else bindings.push({ figure: p + "%", role: "fee", cell: c.use + (c.down_payment ? ", " + c.down_payment + " down" : "") }); } }
+      else V("QUALIFIER_DELETED", "qualifiers", feeHere.map(p => p + "%").join(", ") + " is not tied to a cell: state first vs subsequent use, loan purpose (purchase, cash-out refinance, IRRRL) and, for purchases, the down-payment band" + (/\bexempt/i.test(t) ? "" : "; exemption status also matters"));
+    }
+    cell = anyCell;
+    if (cell) safe = "For VA home loans closing on or after 7 April 2023, the funding fee for " + cell.use + (cell.down_payment ? " with " + cell.down_payment + " down" : "") + " is " + cell.fee_pct + "% of the loan amount; veterans with a service-connected disability rating and some others are exempt (38 U.S.C. 3729).";
+    if (!fees.length) V("QUALIFIER_DELETED", "value", "no fee percentage stated");
     if (/\b(approved|will qualify|eligible for a VA loan)\b/i.test(t)) V("INDIVIDUAL_PREDICTION_PROHIBITED", "individual_prediction", "the fee table says nothing about eligibility or approval");
     figures = classifyFigures(t, self, others, V, { strictUsd: false, strictPct: true, ignorePct: [5, 10, ...sn.down] });
   } else figures = classifyFigures(t, self, others, V, { strictUsd: true, strictPct: true });
@@ -295,8 +377,10 @@ async function checkRuleSentence(ruleRef, sentence) {
   const seen = new Set(); const uniq = violations.filter(v => { const k = v.code + "|" + v.reason; if (seen.has(k)) return false; seen.add(k); return true; });
   const verdict = uniq.some(v => blockCodes.includes(v.code)) ? "block" : (uniq.length ? "needs_qualifier" : "pass");
   let rule_receipt = null;
-  if (cell && verdict === "pass") { try { rule_receipt = await receipt("rule-" + slug, cellValue(cell), { rule_id: hit.rule_id, ...cell }); } catch {} }
-  return { verdict, violations: uniq, mode: "rule sentence check, fixed patterns, no model; figures classified against all " + rules.length + " rule files", rule_id: hit.rule_id, rule_url: hit.url, safe_wording: safe, resolved_cell: cell, matched_figures: figures ? figures.matched : [],
+  // A receipt is issued only when the verdict is pass, a cell was resolved, and at least one figure was bound to that cell and
+  // matched it. A sentence with no bound figure has nothing to verify and gets no receipt.
+  if (cell && verdict === "pass" && bindings.length) { try { rule_receipt = await receipt("rule-" + slug, cellValue(cell), { rule_id: hit.rule_id, ...cell }); } catch {} }
+  return { verdict, violations: uniq, mode: "rule sentence check, fixed patterns, no model; each figure bound to the role named in its clause and compared with that cell; figures also classified against all " + rules.length + " rule files", rule_id: hit.rule_id, rule_url: hit.url, safe_wording: safe, resolved_cell: cell, bound_figures: bindings, matched_figures: figures ? figures.matched : [],
     rule_receipt, verify_url: rule_receipt ? "https://frc-mcp.ziyetis.workers.dev/verify?r=" + encodeURIComponent(rule_receipt) : null,
     mandatory_attribution: "Source: FinanceRateCalc rule file " + hit.rule_id + " (transcribed from " + (ruleDoc || "the issuer document") + "); not legal or underwriting advice.", sentence_check: { sentence: t.slice(0, 600) } };
 }
@@ -805,7 +889,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.27.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.28.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });

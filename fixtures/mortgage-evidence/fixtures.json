@@ -1,7 +1,7 @@
 {
- "fixture_version": "1.1",
+ "fixture_version": "1.2",
  "generated": "2026-10-12",
- "purpose": "Published expectations for the live frc-mcp evidence behaviour. Each fixture names the rule, the source document, the inputs and the exact expected status, value, cell and reason codes. Deterministic; no model. Fixture 1.1 (2026-10-12) adds the rule-sentence gate on the four non-MIP rule files, including a cross-rule provenance error observed in the wild.",
+ "purpose": "Published expectations for the live frc-mcp evidence behaviour. Each fixture names the rule, the source document, the inputs and the exact expected status, value, cell and reason codes. Deterministic; no model. Fixture 1.1 (2026-10-12) adds the rule-sentence gate on the four non-MIP rule files, including a cross-rule provenance error observed in the wild. Fixture 1.2 (2026-10-12) adds figure-role binding: a right number under the wrong role, a published percentage on the wrong tier, an assumed date, and a stated date before the rule's start.",
  "fixtures": [
   {
    "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
@@ -536,7 +536,8 @@
    "expected_status": "pass",
    "group": "rule_sentence_gate",
    "expected_reason_codes": [],
-   "note": "both cells quoted correctly with units, tiers and year"
+   "note": "both cells quoted correctly with units, tiers and year",
+   "expected_receipt": true
   },
   {
    "rule_id": "frc:rule:fha-forward-loan-limits-2026",
@@ -664,7 +665,8 @@
     "VALUE_MISMATCH",
     "STALE_VALUE",
     "VALUE_FROM_OTHER_RULE"
-   ]
+   ],
+   "expected_receipt": false
   },
   {
    "rule_id": "frc:rule:fhfa-conforming-loan-limits-2026",
@@ -829,6 +831,228 @@
    "expected_status": "not_current",
    "group": "receipt_integrity",
    "note": "receipts now cover every rule file's cells, not only MIP"
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v3 (role binding)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV34",
+   "title": "right numbers, roles swapped: ceiling written as floor and floor as ceiling",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "For 2026, the FHA one-unit loan limit floor is $1,249,125 and the high-cost ceiling is $541,287."
+   },
+   "expected_status": "block",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "VALUE_MISMATCH"
+   ],
+   "note": "both figures are in the table; each is bound to the wrong role in its clause. Reported by an external reviewer on 2026-10-12 against 1.27.0, which passed it.",
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:cfpb-hoepa-qm-thresholds-2026",
+   "source_document_id": "FR-90-2025-22773",
+   "source_url": "https://financeratecalc.com/rules/cfpb-hoepa-qm-thresholds-2026.json",
+   "source_vintage": "CFPB final rule, 90 FR, docket 2025-22773",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v3 (role binding)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV35",
+   "title": "QM cap: a published percentage attached to the wrong tier",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:cfpb-hoepa-qm-thresholds-2026",
+    "proposed_sentence": "For 2026, the QM points-and-fees cap is 5% for loans of $137,958 or more."
+   },
+   "expected_status": "block",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "VALUE_MISMATCH"
+   ],
+   "note": "5% is the cap of the $27,592-$82,775 tier; the >= $137,958 tier is 3%. 1.27.0 passed it because both numbers exist somewhere in the table.",
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "check_claim_contract rule mode v3 (role binding)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV36",
+   "title": "MIP sentence with no case-number date: no assumed date, no receipt",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:hud-ml-2023-05-annual-mip",
+    "proposed_sentence": "A 15-year FHA loan at 85% LTV and $300,000 carries an annual MIP of 0.15%."
+   },
+   "expected_status": "needs_qualifier",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "QUALIFIER_DELETED"
+   ],
+   "note": "1.27.0 silently assumed 2026-01-01; the date qualifier is now required for a pass and the cell is checked against the current table",
+   "expected_absent_codes": [
+    "VALUE_MISMATCH"
+   ],
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:va-funding-fee-2023-04-07",
+   "source_document_id": "38-USC-3729",
+   "source_url": "https://financeratecalc.com/rules/va-funding-fee-2023-04-07.json",
+   "source_vintage": "38 U.S.C. 3729 as amended by P.L. 116-23",
+   "effective_date": "2023-04-07",
+   "method_version": "check_claim_contract rule mode v3 (role binding)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV37",
+   "title": "VA fee quoted for a 2020 closing: table not in force",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:va-funding-fee-2023-04-07",
+    "proposed_sentence": "For a VA purchase closing in 2020, first use with less than 5% down, the funding fee is 2.15%."
+   },
+   "expected_status": "block",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "RULE_NOT_IN_FORCE"
+   ],
+   "note": "the rate is the current cell, but the stated closing year precedes 2023-04-07",
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "check_claim_contract rule mode v3 (role binding)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV38",
+   "title": "MIP sentence with a distractor dollar figure: the loan amount is the one bound to 'loan'",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:hud-ml-2023-05-annual-mip",
+    "proposed_sentence": "For a case number assigned 2026-02-01, the base loan amount is $300,000 at 85% LTV over 15 years, and the upfront MIP would be about $5,250; the annual MIP is 0.15%."
+   },
+   "expected_status": "pass",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [],
+   "note": "$5,250 is not the loan amount and is in no table; the cell resolves from $300,000",
+   "expected_receipt": true
+  },
+  {
+   "rule_id": "frc:rule:cfpb-hoepa-qm-thresholds-2026",
+   "source_document_id": "FR-90-2025-22773",
+   "source_url": "https://financeratecalc.com/rules/cfpb-hoepa-qm-thresholds-2026.json",
+   "source_vintage": "CFPB final rule, 90 FR, docket 2025-22773",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v3 (role binding)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV39",
+   "title": "HOEPA pair with the two thresholds swapped",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:cfpb-hoepa-qm-thresholds-2026",
+    "proposed_sentence": "For 2026, the HOEPA total loan amount threshold is $1,380 and the HOEPA points-and-fees trigger is $27,592."
+   },
+   "expected_status": "block",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "VALUE_MISMATCH"
+   ],
+   "note": "both values published, both bound to the wrong item",
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:va-funding-fee-2023-04-07",
+   "source_document_id": "38-USC-3729",
+   "source_url": "https://financeratecalc.com/rules/va-funding-fee-2023-04-07.json",
+   "source_vintage": "38 U.S.C. 3729 as amended by P.L. 116-23",
+   "effective_date": "2023-04-07",
+   "method_version": "check_claim_contract rule mode v3 (role binding)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV40",
+   "title": "VA two cells in one sentence, rates swapped between first and subsequent use",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:va-funding-fee-2023-04-07",
+    "proposed_sentence": "For a first-use VA purchase with less than 5% down the fee is 3.3%, and for subsequent use it is 2.15%."
+   },
+   "expected_status": "block",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "VALUE_MISMATCH"
+   ],
+   "note": "each percentage is bound to the use named in its own clause",
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:va-funding-fee-2023-04-07",
+   "source_document_id": "38-USC-3729",
+   "source_url": "https://financeratecalc.com/rules/va-funding-fee-2023-04-07.json",
+   "source_vintage": "38 U.S.C. 3729 as amended by P.L. 116-23",
+   "effective_date": "2023-04-07",
+   "method_version": "check_claim_contract rule mode v3 (role binding)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV41",
+   "title": "VA two cells in one sentence, both right",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:va-funding-fee-2023-04-07",
+    "proposed_sentence": "For a first-use VA purchase with less than 5% down the fee is 2.15%, and for subsequent use it is 3.3%."
+   },
+   "expected_status": "pass",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [],
+   "note": "two bound figures, two cells; receipt on the first",
+   "expected_receipt": true
+  },
+  {
+   "rule_id": "frc:rule:cfpb-hoepa-qm-thresholds-2026",
+   "source_document_id": "FR-90-2025-22773",
+   "source_url": "https://financeratecalc.com/rules/cfpb-hoepa-qm-thresholds-2026.json",
+   "source_vintage": "CFPB final rule, 90 FR, docket 2025-22773",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v3 (role binding)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV42",
+   "title": "QM dollar cap on the middle tier, right",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:cfpb-hoepa-qm-thresholds-2026",
+    "proposed_sentence": "In 2026 the QM points-and-fees cap for loans from $82,775 to less than $137,958 is $4,139."
+   },
+   "expected_status": "pass",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [],
+   "note": "tier resolved from both bounds; the dollar cap bound to that tier",
+   "expected_receipt": true
   }
  ]
 }
