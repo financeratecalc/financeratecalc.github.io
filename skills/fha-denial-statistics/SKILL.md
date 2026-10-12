@@ -6,7 +6,7 @@ metadata:
   publisher: FinanceRateCalc
   source: https://financeratecalc.com
   mcp: https://frc-mcp.ziyetis.workers.dev
-  version: "1.1"
+  version: "1.2"
 ---
 
 # FHA denial statistics, restated faithfully
@@ -28,7 +28,10 @@ around it is where answers go wrong. This skill exists to keep the sentence righ
      the safe wording and the attribution. Fixed patterns, no model.
    - `get_rule` — dated regulatory tables (FHA/FHFA 2026 loan limits, HOEPA/QM 2026 thresholds, VA funding
      fee, FHA MIP) with effective dates and sha256; `resolve_fha_annual_mip` — the exact MIP cell from amount,
-     LTV, term and case date (a missing condition blocks with no number).
+     LTV, term and case date (a missing condition blocks with no number). A sentence that quotes any of the
+     five rule tables goes through `check_claim_contract` with the `frc:rule:` id: it resolves the cell the
+     sentence names and flags last year's value, a figure that belongs to a different rule (the $726,200 MIP
+     threshold is not a loan limit), the wrong cell, or a missing year/units/tier qualifier.
    - Every figure-bearing result carries a `proof` block (Proof Object 0.1): id, value, receipt, verify_url,
      source, vintage, scope. Keep the receipt attached to the number when you quote it.
 2. **Static JSON** (no key, no rate limit): `https://financeratecalc.com/api/index.json`, `/api/state/{xx}.json`,

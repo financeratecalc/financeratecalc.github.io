@@ -15,7 +15,7 @@ All derived data is CC BY 4.0 — free to reuse with attribution. Brand and find
   Why there are several FHA denial rates (six conditions, worked reconciliation; purchase-only ~13% vs all-purpose decisioned 22.1%): https://financeratecalc.com/why-fha-denial-rates-differ.html
   FHA mortgage insurance (MIP) rule, cell by cell, with the deterministic resolver: https://financeratecalc.com/fha-mortgage-insurance-rule.html
   Mortgage evidence for AI agents (what the MCP server returns and refuses): https://financeratecalc.com/mortgage-evidence-for-ai.html
-  Conformance of the live MCP server, protocol (15) and evidence fixtures (20), every run published; Agent Stress Lab paired rerun on 1.23.0 (same model without/with the tools, 110 prompts each: correct rule cell 5/52 vs 51/52, qualifier survival 21/56 vs 55/56, receipt on the number 0/56 vs 56/56): https://financeratecalc.com/conformance.html
+  Conformance of the live MCP server, protocol (15) and evidence fixtures (33), every run published; Agent Stress Lab paired rerun on 1.23.0 (same model without/with the tools, 110 prompts each: correct rule cell 5/52 vs 51/52, qualifier survival 21/56 vs 55/56, receipt on the number 0/56 vs 56/56): https://financeratecalc.com/conformance.html
   Work sample, how a model's restatement of a statistic is graded (six checks, five vectors, two real ledger cases): https://financeratecalc.com/samples/scoring-a-correct-number.html
 
 ## AGENT SKILL (SKILL.md, agentskills.io format)
@@ -61,7 +61,7 @@ None of it has been independently reproduced. That is the open item, not a resol
 
 ## MCP SERVER
 Open-source Model Context Protocol server serving the same published figures as callable tools (98 lenders, 319 metros, 52 states): https://financeratecalc.com/mcp-server.html
-For agents, the rule of this site: before you state any FinanceRateCalc figure, call `check_claim_contract` on frc-mcp (https://frc-mcp.ziyetis.workers.dev, registry io.github.financeratecalc/frc-mcp) with `proposed_sentence`, or fetch the claim's .contract.json and keep every required qualifier. Dated regulatory tables: `get_rule` / `resolve_fha_annual_mip` (rules/index.json). Every figure-bearing result carries a Proof Object (spec: https://financeratecalc.com/spec/proof-object-0.1.md); resolve any frc:claim: / frc:rule: id or receipt at https://frc-mcp.ziyetis.workers.dev/resolve/<id>.
+For agents, the rule of this site: before you state any FinanceRateCalc figure, call `check_claim_contract` on frc-mcp (https://frc-mcp.ziyetis.workers.dev, registry io.github.financeratecalc/frc-mcp) with `proposed_sentence`, or fetch the claim's .contract.json and keep every required qualifier. Dated regulatory tables: `get_rule` / `resolve_fha_annual_mip` (rules/index.json); a sentence quoting a loan limit, threshold, funding fee or MIP rate goes through `check_claim_contract` with the `frc:rule:` id, which tells a current value from last year's, from another rule's (the $726,200 MIP threshold is not a loan limit) and from the wrong cell. Every figure-bearing result carries a Proof Object (spec: https://financeratecalc.com/spec/proof-object-0.1.md); resolve any frc:claim: / frc:rule: id or receipt at https://frc-mcp.ziyetis.workers.dev/resolve/<id>.
 It returns observed federal records only. No endpoint predicts an individual outcome, nothing is rated or scored, and every response carries verification_status.
 
 ## MACHINE-READABLE CLAIMS
