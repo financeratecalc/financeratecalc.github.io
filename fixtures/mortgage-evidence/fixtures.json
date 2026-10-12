@@ -1,7 +1,7 @@
 {
- "fixture_version": "1.0",
- "generated": "2026-10-11",
- "purpose": "Published expectations for the live frc-mcp evidence behaviour. Each fixture names the rule, the source document, the inputs and the exact expected status, value, cell and reason codes. Deterministic; no model.",
+ "fixture_version": "1.1",
+ "generated": "2026-10-12",
+ "purpose": "Published expectations for the live frc-mcp evidence behaviour. Each fixture names the rule, the source document, the inputs and the exact expected status, value, cell and reason codes. Deterministic; no model. Fixture 1.1 (2026-10-12) adds the rule-sentence gate on the four non-MIP rule files, including a cross-rule provenance error observed in the wild.",
  "fixtures": [
   {
    "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
@@ -515,6 +515,320 @@
     "base_loan": "le726200",
     "ltv": "le90"
    }
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV21",
+   "title": "FHA limit sentence, correct floor and ceiling, one unit, year stated",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "For 2026, the FHA one-unit loan limit floor is $541,287 and the high-cost ceiling is $1,249,125."
+   },
+   "expected_status": "pass",
+   "group": "rule_sentence_gate",
+   "expected_reason_codes": [],
+   "note": "both cells quoted correctly with units, tiers and year"
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV22",
+   "title": "cross-rule provenance error: the MIP base-loan threshold quoted as the FHA loan limit",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "The 2026 FHA loan limit is $726,200 for a one-unit home in most counties."
+   },
+   "expected_status": "block",
+   "group": "rule_sentence_gate",
+   "expected_reason_codes": [
+    "VALUE_FROM_OTHER_RULE",
+    "VALUE_MISMATCH"
+   ],
+   "note": "the figure exists, but in HUD ML 2023-05 (MIP base-loan threshold), not in the limit table; observed in a Perplexity answer on 2026-10-12"
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV23",
+   "title": "superseded year value quoted as current",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "The FHA one-unit floor for 2026 is $524,225."
+   },
+   "expected_status": "block",
+   "group": "rule_sentence_gate",
+   "expected_reason_codes": [
+    "STALE_VALUE",
+    "VALUE_MISMATCH"
+   ],
+   "note": "$524,225 is the 2025 floor named in the rule's supersedes field"
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV24",
+   "title": "wrong year on a correct figure",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "In 2025 the FHA single-family floor was $541,287."
+   },
+   "expected_status": "block",
+   "group": "rule_sentence_gate",
+   "expected_reason_codes": [
+    "PERIOD_MISMATCH"
+   ],
+   "note": "the figure is the 2026 floor; the sentence dates it 2025"
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV25",
+   "title": "ceiling quoted as floor, with the wrong Mortgagee Letter",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "The FHA one-unit floor in 2026 is $1,249,125 per Mortgagee Letter 2023-05."
+   },
+   "expected_status": "block",
+   "group": "rule_sentence_gate",
+   "expected_reason_codes": [
+    "DOCUMENT_ID_MISMATCH",
+    "VALUE_MISMATCH"
+   ],
+   "note": "two errors: the document is the MIP letter, and the number is the ceiling cell"
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV26",
+   "title": "FHA limit figure with no units or tier",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "FHA loan limits for 2026 are $541,287."
+   },
+   "expected_status": "needs_qualifier",
+   "group": "rule_sentence_gate",
+   "expected_reason_codes": [
+    "QUALIFIER_DELETED"
+   ],
+   "note": "correct number, but a limit without units and tier misleads: most counties sit between floor and ceiling",
+   "expected_absent_codes": [
+    "VALUE_MISMATCH",
+    "STALE_VALUE",
+    "VALUE_FROM_OTHER_RULE"
+   ]
+  },
+  {
+   "rule_id": "frc:rule:fhfa-conforming-loan-limits-2026",
+   "source_document_id": "FHFA-2025-11-25",
+   "source_url": "https://financeratecalc.com/rules/fhfa-conforming-loan-limits-2026.json",
+   "source_vintage": "FHFA news release 2025-11-25",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV27",
+   "title": "conforming baseline, correct",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fhfa-conforming-loan-limits-2026",
+    "proposed_sentence": "The 2026 baseline conforming loan limit for a one-unit property is $832,750."
+   },
+   "expected_status": "pass",
+   "group": "rule_sentence_gate",
+   "expected_reason_codes": [],
+   "note": "baseline cell quoted correctly"
+  },
+  {
+   "rule_id": "frc:rule:fhfa-conforming-loan-limits-2026",
+   "source_document_id": "FHFA-2025-11-25",
+   "source_url": "https://financeratecalc.com/rules/fhfa-conforming-loan-limits-2026.json",
+   "source_vintage": "FHFA news release 2025-11-25",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV28",
+   "title": "conforming baseline, 2025 value",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fhfa-conforming-loan-limits-2026",
+    "proposed_sentence": "The 2026 baseline conforming limit is $806,500."
+   },
+   "expected_status": "block",
+   "group": "rule_sentence_gate",
+   "expected_reason_codes": [
+    "STALE_VALUE",
+    "VALUE_MISMATCH"
+   ],
+   "note": "$806,500 is the 2025 baseline"
+  },
+  {
+   "rule_id": "frc:rule:cfpb-hoepa-qm-thresholds-2026",
+   "source_document_id": "FR-90-2025-22773",
+   "source_url": "https://financeratecalc.com/rules/cfpb-hoepa-qm-thresholds-2026.json",
+   "source_vintage": "CFPB final rule, 90 FR, docket 2025-22773",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV29",
+   "title": "HOEPA total loan amount threshold, correct",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:cfpb-hoepa-qm-thresholds-2026",
+    "proposed_sentence": "For 2026, the HOEPA total loan amount threshold is $27,592."
+   },
+   "expected_status": "pass",
+   "group": "rule_sentence_gate",
+   "expected_reason_codes": [],
+   "note": "cell quoted correctly with year"
+  },
+  {
+   "rule_id": "frc:rule:cfpb-hoepa-qm-thresholds-2026",
+   "source_document_id": "FR-90-2025-22773",
+   "source_url": "https://financeratecalc.com/rules/cfpb-hoepa-qm-thresholds-2026.json",
+   "source_vintage": "CFPB final rule, 90 FR, docket 2025-22773",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV30",
+   "title": "HOEPA points-and-fees trigger, 2025 value",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:cfpb-hoepa-qm-thresholds-2026",
+    "proposed_sentence": "For 2026, the HOEPA points-and-fees trigger is $1,348."
+   },
+   "expected_status": "block",
+   "group": "rule_sentence_gate",
+   "expected_reason_codes": [
+    "STALE_VALUE",
+    "VALUE_MISMATCH"
+   ],
+   "note": "$1,348 is the 2025 trigger; 2026 is $1,380"
+  },
+  {
+   "rule_id": "frc:rule:va-funding-fee-2023-04-07",
+   "source_document_id": "38-USC-3729",
+   "source_url": "https://financeratecalc.com/rules/va-funding-fee-2023-04-07.json",
+   "source_vintage": "38 U.S.C. 3729 as amended by P.L. 116-23",
+   "effective_date": "2023-04-07",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV31",
+   "title": "VA funding fee, first use, less than 5% down, correct",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:va-funding-fee-2023-04-07",
+    "proposed_sentence": "The VA funding fee for a first-use purchase with less than 5% down is 2.15%."
+   },
+   "expected_status": "pass",
+   "group": "rule_sentence_gate",
+   "expected_reason_codes": [],
+   "note": "cell resolved from use and down-payment band; the 5% in the band phrase is not read as a fee"
+  },
+  {
+   "rule_id": "frc:rule:va-funding-fee-2023-04-07",
+   "source_document_id": "38-USC-3729",
+   "source_url": "https://financeratecalc.com/rules/va-funding-fee-2023-04-07.json",
+   "source_vintage": "38 U.S.C. 3729 as amended by P.L. 116-23",
+   "effective_date": "2023-04-07",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV32",
+   "title": "VA funding fee, subsequent use quoted with the first-use rate, plus an approval claim",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:va-funding-fee-2023-04-07",
+    "proposed_sentence": "The VA funding fee for subsequent use with 3% down is 2.15%, so you will be approved."
+   },
+   "expected_status": "block",
+   "group": "rule_sentence_gate",
+   "expected_reason_codes": [
+    "VALUE_MISMATCH",
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "subsequent use under 5% down is 3.3%; the fee table says nothing about approval"
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v2",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV33",
+   "title": "loan-limit receipt from the gate verifies; the 2025 ceiling substituted into it does not",
+   "client": "2025",
+   "input": {
+    "verify": true,
+    "from_fixture": "EV21",
+    "tamper": {
+     "1249125usd": "1209750usd"
+    }
+   },
+   "expected_status": "not_current",
+   "group": "receipt_integrity",
+   "note": "receipts now cover every rule file's cells, not only MIP"
   }
  ]
 }

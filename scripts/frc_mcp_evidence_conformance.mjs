@@ -27,7 +27,8 @@ for (const f of FX.fixtures) {
       const r = await rpc("tools/call", { name: "check_claim_contract", arguments: { passport_id: inp.passport_id, proposed_sentence: inp.proposed_sentence } });
       const t = text(r); const codes = (t?.violations || []).map(v => v.code);
       row.observed = { verdict: t?.verdict, codes: [...new Set(codes)] };
-      row.pass = t?.verdict === f.expected_status && (f.expected_reason_codes || []).every(c => codes.includes(c));
+      if (t?.rule_receipt) receipts[f.id] = t.rule_receipt;
+      row.pass = t?.verdict === f.expected_status && (f.expected_reason_codes || []).every(c => codes.includes(c)) && !(f.expected_absent_codes || []).some(c => codes.includes(c));
     } else if (inp.verify) {
       const rc = receipts[inp.from_fixture]; if (!rc) throw new Error("no receipt from " + inp.from_fixture);
       let tampered = rc; for (const [k, v] of Object.entries(inp.tamper)) tampered = tampered.replace(k, v);
@@ -70,7 +71,7 @@ const groups = {};
 for (const r of results) { groups[r.group] = groups[r.group] || { tests: 0, passed: 0 }; groups[r.group].tests++; if (r.pass) groups[r.group].passed++; }
 const passed = results.filter(r => r.pass).length;
 const disc = (await rpc("server/discover", {})).result || {};
-const report = { suite: "frc-mcp-evidence-conformance", suite_version: "1.0", fixture_version: FX.fixture_version, endpoint: EP, server_version: disc.serverInfo?.version || null, protocol_version: "2026-07-28 (fixtures marked client=2025 use the 2025 path)",
+const report = { suite: "frc-mcp-evidence-conformance", suite_version: "1.1", fixture_version: FX.fixture_version, endpoint: EP, server_version: disc.serverInfo?.version || null, protocol_version: "2026-07-28 (fixtures marked client=2025 use the 2025 path)",
   generated_at: new Date().toISOString(), tests: results.length, passed, status: passed === results.length ? "evidence_fixture_pass" : "evidence_fixture_fail", groups,
   independent_reproduction_status: "not_independently_reproduced",
   statement: "Published protocol and fixture-level evidence behavior passed the declared test set. This is not an independent accuracy, security, legal or underwriting certification.",
