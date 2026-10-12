@@ -1,7 +1,7 @@
 {
- "fixture_version": "1.3",
+ "fixture_version": "1.4",
  "generated": "2026-10-12",
- "purpose": "Published expectations for the live frc-mcp evidence behaviour. Each fixture names the rule, the source document, the inputs and the exact expected status, value, cell and reason codes. Deterministic; no model. Fixture 1.1 (2026-10-12) adds the rule-sentence gate on the four non-MIP rule files, including a cross-rule provenance error observed in the wild. Fixture 1.2 (2026-10-12) adds figure-role binding: a right number under the wrong role, a published percentage on the wrong tier, an assumed date, and a stated date before the rule's start. Fixture 1.3 (2026-10-12) adds per-claim condition binding (units, use, band read from the figure's own clause), every-rate checking, and a whole-result receipt scan.",
+ "purpose": "Published expectations for the live frc-mcp evidence behaviour. Each fixture names the rule, the source document, the inputs and the exact expected status, value, cell and reason codes. Deterministic; no model. Fixture 1.1 (2026-10-12) adds the rule-sentence gate on the four non-MIP rule files, including a cross-rule provenance error observed in the wild. Fixture 1.2 (2026-10-12) adds figure-role binding: a right number under the wrong role, a published percentage on the wrong tier, an assumed date, and a stated date before the rule's start. Fixture 1.3 (2026-10-12) adds per-claim condition binding (units, use, band read from the figure's own clause), every-rate checking, and a whole-result receipt scan. Fixture 1.4 (2026-10-12): claim year vs source year; two roles in one clause left unbound.",
  "fixtures": [
   {
    "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
@@ -1230,6 +1230,111 @@
     "VALUE_MISMATCH"
    ],
    "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v5 (claim year vs source year; one role per clause)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV50",
+   "title": "claim dated 2025, source dated 2026: the source year does not satisfy the claim's period",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "For 2025, the FHA one-unit loan limit floor is $541,287 according to a 2026 summary."
+   },
+   "expected_status": "block",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "PERIOD_MISMATCH"
+   ],
+   "note": "1.29.0 passed because 2026 appeared somewhere in the sentence; claim years ('for 2025') and source years ('a 2026 summary') are now read separately",
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v5 (claim year vs source year; one role per clause)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV51",
+   "title": "two roles in one clause: 'the floor equals the ceiling at $541,287'",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "For 2026, the FHA one-unit floor equals the ceiling at $541,287."
+   },
+   "expected_status": "needs_qualifier",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "QUALIFIER_DELETED"
+   ],
+   "note": "declared scope is one role per clause; a clause naming both is ambiguous, not verified, no receipt. 1.29.0 bound the figure to the first role and passed.",
+   "expected_absent_codes": [
+    "VALUE_MISMATCH"
+   ],
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v5 (claim year vs source year; one role per clause)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV52",
+   "title": "only a source year, no claim period",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "The FHA one-unit floor is $541,287 according to a 2026 summary."
+   },
+   "expected_status": "needs_qualifier",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "QUALIFIER_DELETED"
+   ],
+   "note": "the document's year is not the claim's period",
+   "expected_absent_codes": [
+    "PERIOD_MISMATCH",
+    "VALUE_MISMATCH"
+   ],
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v5 (claim year vs source year; one role per clause)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV53",
+   "title": "claim year right, source year different (the letter is from 2025): pass",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "For 2026, the FHA one-unit floor is $541,287 according to HUD's 2025 letter."
+   },
+   "expected_status": "pass",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [],
+   "note": "mirror of EV50: a different source year must not trip the period check",
+   "expected_receipt": true
   }
  ]
 }

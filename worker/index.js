@@ -204,11 +204,23 @@ function classifyFigures(t, self, others, V, opts = {}) {
   return { sn, matched };
 }
 // Year-bound rules (2026 tables): the sentence must carry the year, and must not carry a different one.
+// Year-bound rules (2026 tables). A year that dates the claim ("for 2025", "in 2025", "the 2025 limit") is compared with the
+// table's year; a year that dates a document ("a 2026 summary", "according to the 2026 letter") is not the claim's period.
+// A year that fits neither pattern is ambiguous: it never satisfies the period and, when it differs from the table's year,
+// it is reported as ambiguous rather than as a mismatch.
 function checkYear(t, rule, V) {
   const yr = String(rule.effective_from || "").slice(0, 4); const to = String(rule.effective_to || "").slice(0, 4);
   if (!to || yr !== to) return;
-  const years = [...t.matchAll(/\b(20\d{2})\b/g)].map(m => m[1]);
-  if (!years.includes(yr)) { const other = years.find(y => y !== yr); if (other) V("PERIOD_MISMATCH", "period", "sentence says " + other + "; this table applies to " + yr + " only"); else V("QUALIFIER_DELETED", "period", "year missing: this table applies to " + yr + " only"); }
+  const all = [...t.matchAll(/\b(20\d{2})\b/g)].map(m => m[1]);
+  if (!all.length) { V("QUALIFIER_DELETED", "period", "year missing: this table applies to " + yr + " only"); return; }
+  const claimYears = new Set([...t.matchAll(/\b(?:for|in|during|as of|effective|starting)\s+(20\d{2})\b|\b(20\d{2})\s+(?:fha|fhfa|conforming|loan|limit|limits|baseline|floor|ceiling|hoepa|qm|threshold|thresholds|cap|caps|table|values?)\b|^\s*(20\d{2})[,:]/gi)].map(m => m[1] || m[2] || m[3]));
+  const sourceYears = new Set([...t.matchAll(/\b(20\d{2})\s+(?:summary|report|letter|release|notice|announcement|article|post|update|guide|bulletin|publication|document)\b|\b(?:according to|per|from|cited in|based on)\s+(?:a|an|the)?\s*(20\d{2})\b/gi)].map(m => m[1] || m[2]));
+  for (const y of claimYears) if (y !== yr) V("PERIOD_MISMATCH", "period", "the claim is dated " + y + "; this table applies to " + yr + " only");
+  if (claimYears.has(yr)) return;
+  const loose = all.filter(y => !claimYears.has(y) && !sourceYears.has(y));
+  if (loose.includes(yr) && !loose.some(y => y !== yr)) return; // a bare mention of the table's own year, nothing else
+  for (const y of loose) if (y !== yr) V("QUALIFIER_DELETED", "period", y + " appears but it is not clear whether it dates the claim or a source; the claim's period must be stated (this table applies to " + yr + ")");
+  if (!claimYears.size && !loose.includes(yr)) V("QUALIFIER_DELETED", "period", "the claim's period is not stated" + (sourceYears.size ? " (" + [...sourceYears].join(", ") + " dates a source, not the claim)" : "") + "; this table applies to " + yr + " only");
 }
 const unitsIn = t => { const m = t.match(/\b(one|1|single|two|2|three|3|four|4)[- ](unit|family)/i); if (!m) return null; return { one: 1, "1": 1, single: 1, two: 2, "2": 2, three: 3, "3": 3, four: 4, "4": 4 }[m[1].toLowerCase()]; };
 // Clauses of a sentence: a figure is bound only to the role named in its own clause.
@@ -220,8 +232,12 @@ function bindFigures(t, roles, kind) {
   for (const cl of splitClauses(t)) {
     const figs = kind === "usd" ? [...cl.matchAll(/\$\s?(\d{1,3}(?:,\d{3})+|\d{4,9})/g)].map(m => Number(m[1].replace(/,/g, ""))) : [...cl.matchAll(/(\d+(?:\.\d+)?)\s?%/g)].map(m => Number(m[1]));
     if (!figs.length) continue;
-    const role = (roles.find(([, re]) => re.test(cl)) || [null])[0];
-    for (const value of figs) (role ? bound : unbound).push({ value, role, clause: cl });
+    // every role named in the clause; a more specific role subsumes the general ones it contains (e.g. "Alaska ceiling" subsumes "ceiling")
+    let hits = roles.filter(([, re]) => re.test(cl)).map(([name, , subsumes]) => ({ name, subsumes: subsumes || [] }));
+    const sub = new Set(hits.flatMap(h => h.subsumes)); hits = hits.filter(h => !sub.has(h.name));
+    const role = hits.length === 1 ? hits[0].name : null;
+    const ambiguous = hits.length > 1 ? hits.map(h => h.name) : null;
+    for (const value of figs) (role ? bound : unbound).push({ value, role, clause: cl, ambiguous });
   }
   return { bound, unbound };
 }
@@ -293,7 +309,7 @@ async function checkRuleSentence(ruleRef, sentence) {
     // missing qualifier and never earns a receipt.
     const roles = fha
       ? [["floor", /\b(floor|low[- ]cost|minimum|most counties)\b/i], ["ceiling", /\b(ceiling|high[- ]cost|maximum)\b/i]]
-      : [["akhi_ceiling", /\b(alaska|hawaii|guam|virgin islands)\b[^;.]{0,80}\b(ceiling|high[- ]cost|maximum)\b|\b(ceiling|high[- ]cost|maximum)\b[^;.]{0,80}\b(alaska|hawaii|guam|virgin islands)\b/i], ["akhi_baseline", /\b(alaska|hawaii|guam|virgin islands)\b/i], ["ceiling", /\b(ceiling|high[- ]cost|maximum)\b/i], ["baseline", /\b(baseline|floor|most of the (us|u\.s\.|country)|standard)\b/i]];
+      : [["akhi_ceiling", /\b(alaska|hawaii|guam|virgin islands)\b[^;.]{0,80}\b(ceiling|high[- ]cost|maximum)\b|\b(ceiling|high[- ]cost|maximum)\b[^;.]{0,80}\b(alaska|hawaii|guam|virgin islands)\b/i, ["akhi_baseline", "ceiling"]], ["akhi_baseline", /\b(alaska|hawaii|guam|virgin islands)\b/i, ["baseline"]], ["ceiling", /\b(ceiling|high[- ]cost|maximum)\b/i], ["baseline", /\b(baseline|floor|most of the (us|u\.s\.|country)|standard)\b/i]];
     const b = bindFigures(t, roles, "usd");
     let c = null;
     // units are read from the figure's own clause; the sentence-level mention is used only when the sentence names units exactly once
@@ -310,7 +326,7 @@ async function checkRuleSentence(ruleRef, sentence) {
       if (f.value !== want) { const other = self.numbers.usd.get(f.value); V("VALUE_MISMATCH", "value", fmtUsd(f.value) + " is bound to the " + f.role.replace("_", " ") + (fha ? " (" + u + "-unit)" : "") + "; that cell is " + fmtUsd(want) + (other ? " (" + fmtUsd(f.value) + " is the " + other + ")" : "")); }
       else { bindings.push({ figure: fmtUsd(f.value), role: f.role, cell: fha ? u + "-unit " + f.role : f.role }); if (fha && !cell) cell = (cc => cc ? { units: cc.units, floor_usd: cc.floor_usd, ceiling_usd: cc.ceiling_usd } : null)(self.rule.cells.find(x => x.units === u)); }
     }
-    for (const f of b.unbound) V("QUALIFIER_DELETED", "qualifiers", fmtUsd(f.value) + " is not tied to a role in its clause; say whether it is the " + (fha ? "floor (low-cost counties) or the ceiling (high-cost counties), and the number of units" : "baseline, the high-cost ceiling, or the Alaska/Hawaii/Guam/USVI value"));
+    for (const f of b.unbound) V("QUALIFIER_DELETED", "qualifiers", f.ambiguous ? fmtUsd(f.value) + " sits in a clause that names " + f.ambiguous.join(" and ") + "; one figure, one role per clause, so the binding is ambiguous and not verified" : fmtUsd(f.value) + " is not tied to a role in its clause; say whether it is the " + (fha ? "floor (low-cost counties) or the ceiling (high-cost counties), and the number of units" : "baseline, the high-cost ceiling, or the Alaska/Hawaii/Guam/USVI value"));
     if (!fha && units && units !== 1) V("QUALIFIER_DELETED", "qualifiers", "this table carries one-unit values only; " + units + "-unit values are in the FHFA county table");
     if (fha && b.bound.length && unitMentions === 0) V("QUALIFIER_DELETED", "qualifiers", "number of units not stated; the figures were checked against the 1-unit cells");
     figures = classifyFigures(t, self, others, V, { strictUsd: true, strictPct: false });
@@ -345,7 +361,7 @@ async function checkRuleSentence(ruleRef, sentence) {
       const b = bindFigures(t, roles, "usd");
       const expect = role => role === "hoepa_amount" ? self.rule.cells[0] : self.rule.cells[1];
       for (const f of b.bound) { const want = expect(f.role); if (f.value !== want.value_usd) { const other = self.numbers.usd.get(f.value); V("VALUE_MISMATCH", "value", fmtUsd(f.value) + " is bound to the " + want.item + "; that cell is " + fmtUsd(want.value_usd) + (other ? " (" + fmtUsd(f.value) + " is the " + other + ")" : "")); } else { bindings.push({ figure: fmtUsd(f.value), role: f.role, cell: want.item }); cell = cell || want; } }
-      for (const f of b.unbound) V("QUALIFIER_DELETED", "qualifiers", fmtUsd(f.value) + " is not tied to a threshold in its clause; say whether it is the HOEPA total loan amount threshold, the HOEPA points-and-fees trigger, or a QM tier cap");
+      for (const f of b.unbound) V("QUALIFIER_DELETED", "qualifiers", f.ambiguous ? fmtUsd(f.value) + " sits in a clause that names both HOEPA thresholds; the binding is ambiguous and not verified" : fmtUsd(f.value) + " is not tied to a threshold in its clause; say whether it is the HOEPA total loan amount threshold, the HOEPA points-and-fees trigger, or a QM tier cap");
       if (cell) safe = "For loans consummated in 2026, the " + cell.item + " under Regulation Z is " + fmtUsd(cell.value_usd) + " (CFPB annual adjustment, 90 FR, docket 2025-22773). Whether a specific loan is a high-cost mortgage also depends on its APR and fees.";
       if (!b.bound.length && !b.unbound.length) V("QUALIFIER_DELETED", "qualifiers", "state which threshold the figure is: HOEPA total loan amount, HOEPA points-and-fees trigger, or a QM points-and-fees tier");
       figures = classifyFigures(t, self, others, V, { strictUsd: true, strictPct: true });
@@ -902,7 +918,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.29.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.30.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
