@@ -34,14 +34,21 @@ const fmt = n => Number.isInteger(n) ? n.toLocaleString("en-US") : String(n);
 function classify(line, ctx, Q, path) {
   const win = ctx.toLowerCase(); const l = line.toLowerCase();
   const isTest = /(^|\/)(test|tests|fixtures?|mocks?|__tests__|spec|bench|benchmark|tasks|eval|samples?)(\/|$)|\.(test|spec)\./i.test(path) || /mock|fixture|benchmark/.test(win);
+  const yearsLine = [...line.matchAll(/\b(20\d{2})\b/g)].map(m => Number(m[1]));
   const yearsNear = [...ctx.matchAll(/\b(20\d{2})\b/g)].map(m => Number(m[1]));
-  const ownYear = yearsNear.includes(Q.year), laterYear = yearsNear.some(y => y > Q.year), currentWord = /\b(current|currently|today|now|this year|as of 2026|for 2026|in 2026|2026)\b/.test(win);
+  const ownYearLine = yearsLine.includes(Q.year) || (Q.role_check && yearsLine.includes(2023));
+  const ownYear = ownYearLine || yearsNear.includes(Q.year);
+  const currentLine = /\b(current|currently|today|now|this year|as of 2026|for 2026|in 2026|2026)\b/.test(l);
+  const laterYear = yearsNear.some(y => y >= 2026), currentWord = currentLine || /\b(current|currently|today|now|this year)\b/.test(win);
   const hasCurrentValue = ctx.replace(/,/g, "").includes(String(Q.current_num).replace(/,/g, ""));
   if (hasCurrentValue) return { cls: "changelog", why: "the current value appears beside the old one" };
+  // a figure labelled with its own year on the same line is historical and correct, unless that same line calls it current
+  if (ownYearLine && !currentLine) return { cls: "dated_correct", why: "labelled with its own year (" + (Q.role_check ? 2023 : Q.year) + ") on the same line: historical and correct" };
   if (Q.role_check) { if (/\b(loan limit|lending limit|max(imum)? loan|borrow up to)\b/.test(win) && !/\b(mip|mortgage insurance|threshold|premium)\b/.test(win)) return { cls: "role_misuse_candidate", why: "$726,200 named as a loan limit; it is the MIP base-loan threshold (and the 2023 conforming baseline)" }; return { cls: "unresolved", why: "$726,200 present; role not clear from context" }; }
   if (isTest) return { cls: "test_or_mock", why: "test, fixture, mock, benchmark or sample path: external-claim mismatch, not necessarily a project bug" + (currentWord || laterYear ? "; labelled as current/2026" : "") };
-  if (ownYear && !currentWord && !laterYear) return { cls: "dated_correct", why: "labelled with its own year (" + Q.year + "): historical and correct" };
-  if (currentWord || laterYear) return { cls: "presented_as_current", why: (laterYear ? "a later year appears beside the " + Q.year + " value" : "called current/2026") + "; official " + Q.current };
+  if (ownYear && !currentWord && !laterYear) return { cls: "dated_correct", why: "labelled with its own year (" + Q.year + ") nearby: historical and correct" };
+  if (currentLine) return { cls: "presented_as_current", why: "the line calls the " + Q.year + " value current or 2026; official " + Q.current };
+  if (currentWord || laterYear) return { cls: "presented_as_current", why: (laterYear ? "2026 appears beside the " + Q.year + " value" : "called current nearby") + "; official " + Q.current, confidence: "lower" };
   if (/[=:]\s*\$?\s*['"]?\$?\s*[\d,.]+\s*['"]?\s*[,;)]?\s*$/.test(line.trim()) && !ownYear) return { cls: "presented_as_current", why: "unlabelled constant in code; the running value is the " + Q.year + " figure" };
   return { cls: "unresolved", why: "no year label and no currency signal in the surrounding lines" };
 }
@@ -55,7 +62,8 @@ for (const h of hits.filter(h => h.repo)) {
     const idx = lines.findIndex(x => needle.test(x));
     if (idx < 0) { h.context = { cls: "unresolved", why: "constant not found in fetched file (search index may be stale)" }; continue; }
     const ctx = lines.slice(Math.max(0, idx - 2), idx + 3).join("\n");
-    h.line = idx + 1; h.excerpt = lines[idx].trim().slice(0, 240); h.context = classify(lines[idx], ctx, Q, h.path);
+    const L = lines[idx]; const mpos = L.search(needle); const seg = L.length > 300 ? L.slice(Math.max(0, mpos - 140), mpos + 160) : L;
+    h.line = idx + 1; h.excerpt = seg.trim().slice(0, 300); h.context = classify(seg, L.length > 300 ? seg : ctx, Q, h.path);
     h.evidence = { stale_value: h.stale, stale_year: Q.year, official_current: Q.current, official_source: Q.source, frc_rule: Q.rule, repair_case: Q.repair_case };
     if (h.context.cls === "presented_as_current" || h.context.cls === "role_misuse_candidate") h.draft = { title: "Update " + (Q.role_check ? "the $726,200 figure: it is the FHA MIP threshold, not a loan limit" : Q.meaning + " to the 2026 value"), body: "Line " + h.line + " of " + h.path + " reads: `" + h.excerpt + "`. " + (Q.role_check ? "$726,200 is the base-loan threshold in HUD Mortgagee Letter 2023-05 (FHA annual MIP table) and the 2023 conforming baseline; it is not a current loan limit. 2026: FHA one-unit floor $541,287, conforming baseline $832,750." : "That is the " + Q.year + " figure (" + Q.meaning + "). For 2026 the official value is " + Q.current + ".") + " Source: " + Q.source + ". Machine-readable table with effective dates: https://financeratecalc.com/rules/index.json (" + Q.rule + "). If the page is meant to describe " + Q.year + ", a year label beside the figure would make that clear and this note can be closed." };
     await sleep(300);
