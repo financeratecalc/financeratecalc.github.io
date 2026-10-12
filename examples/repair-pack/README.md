@@ -24,12 +24,12 @@ Full reports: [wrong-app.repair-report.md](sample-outputs/wrong-app.repair-repor
 
 | id | what goes wrong | the test |
 |---|---|---|
-| RP01 | FHA annual MIP: a neighbouring cell (0.55%, 0.50%) instead of the one the conditions select (15 bps) | gate pass with `15 bps` bound to the cell |
+| RP01 | FHA annual MIP: a neighbouring cell (0.55%, 0.50%) instead of the one the conditions select (15 bps) | gate pass, resolved cell = le15 / le726200 / le90, `15 bps` bound to it |
 | RP02 | $726,200 quoted as the FHA loan limit; it is the MIP base-loan threshold | gate pass with `$541,287` bound to the floor |
-| RP03 | floor and ceiling swapped: right numbers, wrong roles | both bindings correct |
+| RP03 | floor and ceiling swapped: right numbers, wrong roles | both bindings correct, on the 1-unit cells |
 | RP04 | QM points-and-fees cap of another tier (5%) on the ≥ $137,958 tier (3%) | `3%` bound to that tier |
-| RP05 | a 2026 figure dated 2025 because the source was a 2026 document | no PERIOD_MISMATCH; the 2025 figure named as 2025 or the table declared not to apply |
-| RP06 | term missing → a rate anyway | no rate stated; the app asks for the term |
+| RP05 | a 2026 figure dated 2025 because the source was a 2026 document | path (a): the 2025 figure ($524,225) given as a 2025 figure; or path (b): the app says the 2026 table does not cover 2025 and states no figure. Any other dollar figure fails |
+| RP06 | term missing → a rate anyway | no rate stated (percent, bps or spelled out) **and** the missing term asked for or named; empty or unrelated answers fail |
 
 Each case in [`cases.json`](cases.json) carries the question, the expected cell or binding, the source document and fragment, the common failure, the fix hint and the rule file URL. The report prints all of it for every failing case, so a coding agent can work from the report alone.
 
@@ -43,13 +43,15 @@ npx promptfoo@latest view
 ```
 The assertion ([`gate_assert.js`](gate_assert.js)) sends each answer to the gate and returns pass/fail with the reason, the source and the fix. Put the config in your CI and the six cases rerun whenever your prompt, model or calculation code changes.
 
-**Without promptfoo (stored answers, no model):**
+**Without promptfoo (stored answers, no model; network to the grader is still required):**
 ```
 node examples/repair-pack/run_offline.mjs my-outputs.json out/
 ```
-`my-outputs.json` is `{ "RP01": "<your app's answer>", ... }`. Writes `repair-report.md` and `report.json`; exit code 0 only on 6/6.
+`my-outputs.json` is `{ "RP01": "<your app's answer>", ... }`. Writes `repair-report.md` and `report.json`. Exit 0 on 6/6, 2 when a case needs repair, 3 when the grader could not be reached (those cases are marked NOT GRADED, never counted as your app's failure). Answers over 600 characters are refused with a reason, not cut.
 
-Node 18+. No key, no account; the grader is a public endpoint. `FRC_ENDPOINT` overrides it for offline tests.
+Node 18+. No key, no account; the grader is a public endpoint. `FRC_ENDPOINT` points the pack at another copy of the gate for tests.
+
+**Grader self-test:** `node examples/repair-pack/grader_selftest.mjs` runs the counterexamples an external audit found on 2026-10-13 (an empty answer, "Hello.", a 3% rate and a spelled-out rate all passed RP06; "$999,999" passed RP05) plus their mirrors. Every line must print `ok`.
 
 ## What it is not
 

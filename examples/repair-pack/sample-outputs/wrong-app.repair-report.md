@@ -1,6 +1,6 @@
 # Mortgage evidence repair report
 
-Pack 1.0 · grader https://frc-mcp.ziyetis.workers.dev (deterministic sentence gate, no model) · 2026-10-12T22:47:09.430Z · **0/6 pass**
+Pack 1.0 · grader https://frc-mcp.ziyetis.workers.dev (deterministic sentence gate, no model; network required) · 2026-10-12T22:56:51.650Z · **0/6 pass**
 
 ## RP01 — FHA annual MIP: the cell, not a neighbouring cell: REPAIR
 
@@ -80,9 +80,9 @@ Pack 1.0 · grader https://frc-mcp.ziyetis.workers.dev (deterministic sentence g
 
 **App said.** For 2025, the FHA one-unit loan limit floor is $541,287 according to a 2026 summary.
 
-**Grader.** gate returned PERIOD_MISMATCH: the claim is dated with a year the figure does not belong to
+**Grader.** the claim is dated 2025 with a figure that belongs to 2026 (gate: PERIOD_MISMATCH)
 
-**Expected.** {"verdict":"absent_codes","codes":["PERIOD_MISMATCH"],"must_match":"524,225|does not cover|not cover|not apply|does not apply|different table|prior year|previous year|2025 limits","note":"The 2026 table does not cover 2025. A correct app says so and/or names the 2025 figure ($524,225) as a 2025 figure. It never writes 'for 2025 ... $541,287'. Graded: the gate must not return PERIOD_MISMATCH, and the output must either name the 2025 figure or say the 2026 table does not apply."}
+**Expected.** {"verdict":"prior_year_or_abstain","prior_year":"2025","prior_value":524225,"prior_source":"the rule file's supersedes field: 2025 one-unit floor $524,225 (HUD ML 2024-21)","current_year":"2026","current_values":[541287,1249125,1209750],"abstain_pattern":"does not cover|not cover|not apply|does not apply|different table|prior year|previous year|separate table|only covers 2026|applies to 2026 only","note":"Two acceptance paths, both explicit: (a) the 2025 figure ($524,225) given as a 2025 figure; (b) the output says the 2026 table does not cover 2025 and states no figure for 2025. Fails on PERIOD_MISMATCH (a 2026 figure dated 2025), on any dollar figure outside the two years' tables, and on a blocked-but-codeless answer."}
 
 **Source.** HUD Mortgagee Letter 2025-23 (2026 limits); the 2025 limits came from ML 2024-21 — 2026 one-unit floor $541,287 supersedes the 2025 floor $524,225. (https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json)
 
@@ -90,7 +90,7 @@ Pack 1.0 · grader https://frc-mcp.ziyetis.workers.dev (deterministic sentence g
 
 **Fix.** Keep the year the figure applies to separate from the year of the document you read it in. The gate reads 'for 2025' as the claim year and 'a 2026 summary' as a source year, and returns PERIOD_MISMATCH.
 
-**Test that must pass after the fix.** Rerun this case: the gate must return no PERIOD_MISMATCH and a correctly dated figure.
+**Test that must pass after the fix.** Rerun this case: the gate must return path (a) the prior-year figure dated correctly, or path (b) explicit abstention.
 
 ## RP06 — A missing condition produces a question, not a number: REPAIR
 
@@ -100,7 +100,7 @@ Pack 1.0 · grader https://frc-mcp.ziyetis.workers.dev (deterministic sentence g
 
 **Grader.** a rate was stated although the term is missing
 
-**Expected.** {"verdict":"no_number","note":"The term is missing; the 15-year and 30-year cells differ (15 vs 50 bps). The right output asks for the term or states that the rate depends on it, and does not state a rate."}
+**Expected.** {"verdict":"no_number","note":"The term is missing; the 15-year and 30-year cells differ (15 vs 50 bps). Pass requires both: no rate stated (percent, bps or spelled out) AND the missing term asked for or named. Empty or unrelated output fails."}
 
 **Source.** HUD Mortgagee Letter 2023-05 — Rates differ by term: <= 15 years vs > 15 years. (https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json)
 

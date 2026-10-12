@@ -2,7 +2,7 @@
   "pack": "frc-mortgage-evidence-repair-pack",
   "version": "1.0",
   "generated": "2026-10-13",
-  "purpose": "Six questions a mortgage calculator or assistant answers wrong in a specific way: the number exists, but it is bound to the wrong role, tier, year or condition, or it is produced when a condition is missing. Each case names the rule, the source document, the expected cell and the test that must pass after the fix. The grader is FinanceRateCalc's deterministic sentence gate (check_claim_contract); no model judges the output.",
+  "purpose": "Six questions a mortgage calculator or assistant answers wrong in a specific way: the number exists, but it is bound to the wrong role, tier, year or condition, or it is produced when a condition is missing. Each case names the rule, the source document, the expected cell and the test that must pass after the fix. The grader is FinanceRateCalc's deterministic sentence gate (check_claim_contract); no model judges the output. Grader v1.1 (2026-10-13, after an external audit): RP06 requires the term to be asked for, not only the absence of a rate; RP05 has two explicit acceptance paths; resolved cell and units are compared, not only the bound value; outputs over 600 characters are refused, not cut; grader failures are reported as grader_error.",
   "grader": {
     "endpoint": "https://frc-mcp.ziyetis.workers.dev",
     "tool": "check_claim_contract",
@@ -88,12 +88,18 @@
       "question": "According to a 2026 summary, what was the FHA one-unit loan limit floor for 2025? Answer in one sentence that names the year the figure applies to.",
       "passport_id": "frc:rule:fha-forward-loan-limits-2026",
       "expected": {
-        "verdict": "absent_codes",
-        "codes": [
-          "PERIOD_MISMATCH"
+        "verdict": "prior_year_or_abstain",
+        "prior_year": "2025",
+        "prior_value": 524225,
+        "prior_source": "the rule file's supersedes field: 2025 one-unit floor $524,225 (HUD ML 2024-21)",
+        "current_year": "2026",
+        "current_values": [
+          541287,
+          1249125,
+          1209750
         ],
-        "must_match": "524,225|does not cover|not cover|not apply|does not apply|different table|prior year|previous year|2025 limits",
-        "note": "The 2026 table does not cover 2025. A correct app says so and/or names the 2025 figure ($524,225) as a 2025 figure. It never writes 'for 2025 ... $541,287'. Graded: the gate must not return PERIOD_MISMATCH, and the output must either name the 2025 figure or say the 2026 table does not apply."
+        "abstain_pattern": "does not cover|not cover|not apply|does not apply|different table|prior year|previous year|separate table|only covers 2026|applies to 2026 only",
+        "note": "Two acceptance paths, both explicit: (a) the 2025 figure ($524,225) given as a 2025 figure; (b) the output says the 2026 table does not cover 2025 and states no figure for 2025. Fails on PERIOD_MISMATCH (a 2026 figure dated 2025), on any dollar figure outside the two years' tables, and on a blocked-but-codeless answer."
       },
       "common_failure": "'For 2025, the floor is $541,287 according to a 2026 summary': the figure is the 2026 floor; the sentence dates it 2025 and leans on the source year. A grader that accepts any mention of 2026 passes it.",
       "source_document": "HUD Mortgagee Letter 2025-23 (2026 limits); the 2025 limits came from ML 2024-21",
@@ -108,7 +114,7 @@
       "passport_id": "frc:rule:hud-ml-2023-05-annual-mip",
       "expected": {
         "verdict": "no_number",
-        "note": "The term is missing; the 15-year and 30-year cells differ (15 vs 50 bps). The right output asks for the term or states that the rate depends on it, and does not state a rate."
+        "note": "The term is missing; the 15-year and 30-year cells differ (15 vs 50 bps). Pass requires both: no rate stated (percent, bps or spelled out) AND the missing term asked for or named. Empty or unrelated output fails."
       },
       "common_failure": "'0.50%' or '0.55%': the app picks the most common term and answers. Any stated rate is a failure here, including the right one for an assumed term.",
       "source_document": "HUD Mortgagee Letter 2023-05",
