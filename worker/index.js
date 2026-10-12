@@ -998,7 +998,7 @@ function fmtClaimValue(c) {
   if (/ratio|x$/.test(u)) return v + "x";
   return String(c.value);
 }
-async function claimState(id) {
+async function claimState(id, h) {
   let current = null, claimObj = null;
   if (id === "national-fha-denial-rate-2025") { const idx = await getJSON("/api/index.json"); current = `${idx.national.rate_pct.toFixed(1)}%`; claimObj = (await getJSON("/claims/national-fha-denial-rate-2025.json")).claim; }
   else if (id.startsWith("lender-")) { const L = await getJSON(`/api/lender/${id.slice(7, -5)}.json`); current = `${Number(L.denial_rate_pct).toFixed(1)}%`; claimObj = { lender: L.lender, metric: "fha_denial_rate", value: L.denial_rate_pct, n: L.decisioned_applications, period: "2025" }; }
@@ -1008,7 +1008,7 @@ async function claimState(id) {
   else if (id.startsWith("small-loan-penalty-") && id !== "small-loan-penalty-range-2025") { const d = await getJSON("/api/small-loan-penalty.json"); const st = id.slice(19, -5).toUpperCase(); const row = d.ranked.find(r => r.state === st); current = `${row.penalty_ratio}x`; claimObj = { state: st, metric: "small_loan_penalty_ratio", value: row.penalty_ratio, small: row.small_loan_denial_pct, big: row.big_loan_denial_pct, period: "2025" }; }
   else if (id === "small-loan-penalty-range-2025") { const d = await getJSON("/api/small-loan-penalty.json"); current = `${d.min_penalty}x-${d.max_penalty}x`; claimObj = { metric: "small_loan_penalty_range", min: d.min_penalty, max: d.max_penalty, states: d.states, period: "2025" }; }
   else if (id === "denial-reason-shares-top100-2025") { const d = await getJSON("/api/denial-reasons-top100.json"); const top = Object.keys(d.by_reason).sort((a, b) => d.by_reason[b].median_share_pct - d.by_reason[a].median_share_pct)[0]; const inc = d.by_reason.incomplete; current = `${top}-${d.by_reason[top].median_share_pct}%`; claimObj = { metric: "denial_reason_median_shares", top_reason: top, top_median: d.by_reason[top].median_share_pct, incomplete_median: inc.median_share_pct, incomplete_max: inc.max_share_pct, n_lenders: d.n_lenders, period: "2025" }; }
-  else if (id.startsWith("rule-")) { const rr = (await allRules()).find(r => ruleSlug(r.rule.rule_id) === id.slice(5)); if (!rr) return json({ valid: false, reason: "unknown rule id", id }); const rule = rr.rule; let found = null; for (const c of rule.cells) { if (await sha8({ rule_id: rule.rule_id, ...c }) === h) { found = c; break; } } current = found ? cellValue(found) : null; claimObj = found ? { rule_id: rule.rule_id, ...found } : { rule_id: rule.rule_id, changed: true }; }
+  else if (id.startsWith("rule-")) { const rr = (await allRules()).find(r => ruleSlug(r.rule.rule_id) === id.slice(5)); if (!rr) return null; const rule = rr.rule; let found = null; for (const c of rule.cells) { if (await sha8({ rule_id: rule.rule_id, ...c }) === h) { found = c; break; } } current = found ? cellValue(found) : null; claimObj = found ? { rule_id: rule.rule_id, ...found } : { rule_id: rule.rule_id, changed: true }; }
   else { let P = null; try { P = await getJSON(`/claims/${id}.json`); } catch { return null; } if (!P || !P.claim) return null; current = fmtClaimValue(P.claim); claimObj = P.claim; }
   return { current, claimObj };
 }
@@ -1087,7 +1087,7 @@ export default {
       const channel = chan ? chan.toLowerCase() : "none";
       let current = null, claimObj = null;
       try {
-        const st = await claimState(id);
+        const st = await claimState(id, h);
         if (!st) return json({ valid: false, reason: "unknown claim id", id });
         current = st.current; claimObj = st.claimObj;
       } catch (e) { return json({ valid: false, reason: "lookup failed" }, 502); }
