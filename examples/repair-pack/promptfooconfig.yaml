@@ -1,0 +1,22 @@
+# FinanceRateCalc mortgage evidence repair pack — promptfoo config
+# Tests YOUR app, not FRC. Replace the provider below with the app or model you ship; the grader is FRC's deterministic sentence gate.
+#   npx promptfoo@latest eval -c examples/repair-pack/promptfooconfig.yaml
+#   npx promptfoo@latest view
+description: "Six mortgage-rule questions whose answers go wrong in a specific way (right number, wrong role / tier / year / condition). Graded by FinanceRateCalc's check_claim_contract; no model judges."
+providers:
+  # Replace with your app. Examples: openai:gpt-4.1-mini, anthropic:messages:claude-haiku-4-5-20251001, or exec:./my-app.sh
+  - id: echo
+    label: "replace-me-with-your-app"
+prompts:
+  - "{{case.question}}"
+defaultTest:
+  assert:
+    - type: javascript
+      value: file://gate_assert.js
+tests:
+  - vars: { case: file://cases.json#cases.0 }
+  - vars: { case: file://cases.json#cases.1 }
+  - vars: { case: file://cases.json#cases.2 }
+  - vars: { case: file://cases.json#cases.3 }
+  - vars: { case: file://cases.json#cases.4 }
+  - vars: { case: file://cases.json#cases.5 }

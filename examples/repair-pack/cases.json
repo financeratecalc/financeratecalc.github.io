@@ -1,0 +1,120 @@
+{
+  "pack": "frc-mortgage-evidence-repair-pack",
+  "version": "1.0",
+  "generated": "2026-10-13",
+  "purpose": "Six questions a mortgage calculator or assistant answers wrong in a specific way: the number exists, but it is bound to the wrong role, tier, year or condition, or it is produced when a condition is missing. Each case names the rule, the source document, the expected cell and the test that must pass after the fix. The grader is FinanceRateCalc's deterministic sentence gate (check_claim_contract); no model judges the output.",
+  "grader": {
+    "endpoint": "https://frc-mcp.ziyetis.workers.dev",
+    "tool": "check_claim_contract",
+    "mode": "rule sentence check, fixed patterns, no model",
+    "conformance": "https://financeratecalc.com/conformance.html"
+  },
+  "cases": [
+    {
+      "id": "RP01",
+      "title": "FHA annual MIP: the cell, not a neighbouring cell",
+      "question": "What is the FHA annual mortgage insurance premium for a $300,000 base loan at 85% LTV over 15 years, case number assigned 2026-02-01? Answer in one sentence with the rate.",
+      "passport_id": "frc:rule:hud-ml-2023-05-annual-mip",
+      "expected": {
+        "verdict": "pass",
+        "annual_mip_bps": 15,
+        "cell": {
+          "term": "le15",
+          "base_loan": "le726200",
+          "ltv": "le90"
+        }
+      },
+      "common_failure": "0.55% (the >15-year, >95% LTV cell) or 0.50% (the >15-year, <=90% cell): the term or LTV band is dropped and the most-quoted cell is returned.",
+      "source_document": "HUD Mortgagee Letter 2023-05",
+      "source_fragment": "Term <= 15 years, base loan <= $726,200, LTV <= 90%: 15 bps per year of base loan amount.",
+      "rule_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+      "fix_hint": "Resolve the cell from all four conditions (term, base loan vs $726,200, LTV band, case date >= 2023-03-20). resolve_fha_annual_mip returns the cell with a receipt; check_claim_contract returns VALUE_MISMATCH with the right cell when the sentence names another."
+    },
+    {
+      "id": "RP02",
+      "title": "The MIP base-loan threshold is not the FHA loan limit",
+      "question": "What is the 2026 FHA loan limit for a one-unit home in a low-cost county? Answer in one sentence with the dollar amount.",
+      "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+      "expected": {
+        "verdict": "pass",
+        "figure_usd": 541287,
+        "role": "floor",
+        "units": 1
+      },
+      "common_failure": "$726,200: a figure that exists in a HUD document, but it is the base-loan threshold in the MIP table (ML 2023-05), not a loan limit. Observed in a search engine's answer on 2026-10-12.",
+      "source_document": "HUD Mortgagee Letter 2025-23",
+      "source_fragment": "One-unit forward mortgage limit for case numbers assigned on or after 2026-01-01: floor $541,287; ceiling $1,249,125.",
+      "rule_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+      "fix_hint": "Take limits from the limits table, not from any HUD figure that matches a dollar pattern. The gate returns VALUE_FROM_OTHER_RULE naming the table the figure actually belongs to."
+    },
+    {
+      "id": "RP03",
+      "title": "Floor and ceiling bound to the right roles",
+      "question": "For 2026, what are the FHA one-unit loan limit floor and ceiling? Answer in one sentence naming both.",
+      "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+      "expected": {
+        "verdict": "pass",
+        "bindings": {
+          "floor": 541287,
+          "ceiling": 1249125
+        },
+        "units": 1
+      },
+      "common_failure": "'the floor is $1,249,125 and the ceiling is $541,287': both numbers are in the table, each is attached to the wrong word. A grader that looks for the numbers anywhere in the sentence passes it.",
+      "source_document": "HUD Mortgagee Letter 2025-23",
+      "source_fragment": "One-unit: floor $541,287 (low-cost counties); ceiling $1,249,125 (high-cost counties).",
+      "rule_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+      "fix_hint": "Bind each figure to its role in the clause where it appears. The gate reads roles per clause and returns VALUE_MISMATCH per figure, with the cell the figure actually belongs to."
+    },
+    {
+      "id": "RP04",
+      "title": "QM points-and-fees cap bound to the right loan-amount tier",
+      "question": "For loans consummated in 2026, what is the qualified-mortgage points-and-fees cap for a loan of $137,958 or more? Answer in one sentence.",
+      "passport_id": "frc:rule:cfpb-hoepa-qm-thresholds-2026",
+      "expected": {
+        "verdict": "pass",
+        "cap_pct": 3,
+        "tier": "QM points-and-fees cap, loan >= $137,958"
+      },
+      "common_failure": "5%: a published cap, for the $27,592-$82,775 tier. The bound and the cap both exist in the table; they belong to different rows.",
+      "source_document": "CFPB final rule, 90 FR, docket 2025-22773",
+      "source_fragment": "Loan amount >= $137,958: 3% of the total loan amount. $82,775 to < $137,958: $4,139. $27,592 to < $82,775: 5%. $17,245 to < $27,592: $1,380. < $17,245: 8%.",
+      "rule_url": "https://financeratecalc.com/rules/cfpb-hoepa-qm-thresholds-2026.json",
+      "fix_hint": "Select the tier from the loan-amount bound and its direction ('or more' = lower bound), then read that tier's cap. The gate resolves the tier the same way and returns VALUE_MISMATCH with the tier's cap."
+    },
+    {
+      "id": "RP05",
+      "title": "The claim's year is not the source document's year",
+      "question": "According to a 2026 summary, what was the FHA one-unit loan limit floor for 2025? Answer in one sentence that names the year the figure applies to.",
+      "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+      "expected": {
+        "verdict": "absent_codes",
+        "codes": [
+          "PERIOD_MISMATCH"
+        ],
+        "must_match": "524,225|does not cover|not cover|not apply|does not apply|different table|prior year|previous year|2025 limits",
+        "note": "The 2026 table does not cover 2025. A correct app says so and/or names the 2025 figure ($524,225) as a 2025 figure. It never writes 'for 2025 ... $541,287'. Graded: the gate must not return PERIOD_MISMATCH, and the output must either name the 2025 figure or say the 2026 table does not apply."
+      },
+      "common_failure": "'For 2025, the floor is $541,287 according to a 2026 summary': the figure is the 2026 floor; the sentence dates it 2025 and leans on the source year. A grader that accepts any mention of 2026 passes it.",
+      "source_document": "HUD Mortgagee Letter 2025-23 (2026 limits); the 2025 limits came from ML 2024-21",
+      "source_fragment": "2026 one-unit floor $541,287 supersedes the 2025 floor $524,225.",
+      "rule_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+      "fix_hint": "Keep the year the figure applies to separate from the year of the document you read it in. The gate reads 'for 2025' as the claim year and 'a 2026 summary' as a source year, and returns PERIOD_MISMATCH."
+    },
+    {
+      "id": "RP06",
+      "title": "A missing condition produces a question, not a number",
+      "question": "What is the FHA annual MIP for a $300,000 loan at 85% LTV, case number assigned 2026-02-01? Answer in one sentence.",
+      "passport_id": "frc:rule:hud-ml-2023-05-annual-mip",
+      "expected": {
+        "verdict": "no_number",
+        "note": "The term is missing; the 15-year and 30-year cells differ (15 vs 50 bps). The right output asks for the term or states that the rate depends on it, and does not state a rate."
+      },
+      "common_failure": "'0.50%' or '0.55%': the app picks the most common term and answers. Any stated rate is a failure here, including the right one for an assumed term.",
+      "source_document": "HUD Mortgagee Letter 2023-05",
+      "source_fragment": "Rates differ by term: <= 15 years vs > 15 years.",
+      "rule_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+      "fix_hint": "Treat term, base loan amount, LTV and case date as required inputs; ask when one is missing. Over MCP, resolve_fha_annual_mip returns input_required (2026 clients) or block CONDITION_MISSING (2025 clients) and never a guessed number."
+    }
+  ]
+}

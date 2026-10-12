@@ -1,0 +1,24 @@
+name: repair-pack example (live)
+# Runs the repair pack's two sample apps against the live gate and commits the reports, so the README's example is produced, not typed.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "52 6 * * 1"
+permissions:
+  contents: write
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: node examples/repair-pack/run_offline.mjs examples/repair-pack/sample-outputs/wrong-app.json /tmp/w || test $? -eq 2
+      - run: node examples/repair-pack/run_offline.mjs examples/repair-pack/sample-outputs/right-app.json /tmp/r
+      - run: |
+          cp /tmp/w/repair-report.md examples/repair-pack/sample-outputs/wrong-app.repair-report.md
+          cp /tmp/r/repair-report.md examples/repair-pack/sample-outputs/right-app.repair-report.md
+          git config user.name "frc-example" && git config user.email "press@financeratecalc.com"
+          git add examples/repair-pack/sample-outputs
+          git diff --cached --quiet || git commit -m "repair-pack example: sample reports refreshed [skip ci]"
+          git pull --rebase -q origin main && git push -q origin main
