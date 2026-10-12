@@ -1,0 +1,22 @@
+name: stale constant scan (code search)
+# Weekly list of public repos carrying superseded FHA/FHFA/MIP/VA constants. Deterministic; no model; nothing is posted or opened.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 7 * * 1"
+permissions:
+  contents: write
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: node scripts/stale_constant_scan.mjs
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+      - run: |
+          git config user.name "frc-scan" && git config user.email "press@financeratecalc.com"
+          git add eval/stale-constants-scan.json eval/stale-constants-scan.md
+          git diff --cached --quiet || git commit -m "stale constant scan [skip ci]"
+          git pull --rebase -q origin main && git push -q origin main
