@@ -86,7 +86,7 @@
       '</div>'+adj, SITE+'/fha-denial-rates-top-100.html');
   }
   function state(el,d,c){
-    var pen = d.small_loan_penalty ? '<div style="font-size:12.5px;color:'+c.mut+';margin-top:9px;">Under $150K: <b style="color:'+c.fg+'">'+d.small_loan_denial_pct.toFixed(1)+'%</b> denied. Above $250K: <b style="color:'+c.fg+'">'+d.big_loan_denial_pct.toFixed(1)+'%</b>. A '+d.small_loan_penalty.toFixed(2)+'&times; penalty on the cheapest way into a house.</div>' : '';
+    var pen = d.small_loan_penalty ? '<div style="font-size:12.5px;color:'+c.mut+';margin-top:9px;">Under $150K: <b style="color:'+c.fg+'">'+d.small_loan_denial_pct.toFixed(1)+'%</b> denied. Above $250K: <b style="color:'+c.fg+'">'+d.big_loan_denial_pct.toFixed(1)+'%</b>. '+d.small_loan_penalty.toFixed(2)+'&times; the rate for the smaller loans. Unadjusted comparison; it does not identify the cause.</div>' : '';
     el.innerHTML=shell(c,d.state+': '+d.denial_rate_pct.toFixed(1)+'% of FHA applications denied','FHA denials by state · 2025',
       '<div style="font-size:12.5px;color:'+c.mut+';">'+d.decisioned_applications.toLocaleString()+' applications reached a credit decision. National rate: '+d.national_denial_rate_pct.toFixed(1)+'%.</div>'+pen,
       SITE+'/salary-vs-denial-risk-by-state.html');
