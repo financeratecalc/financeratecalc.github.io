@@ -1,7 +1,7 @@
 {
- "fixture_version": "1.2",
+ "fixture_version": "1.3",
  "generated": "2026-10-12",
- "purpose": "Published expectations for the live frc-mcp evidence behaviour. Each fixture names the rule, the source document, the inputs and the exact expected status, value, cell and reason codes. Deterministic; no model. Fixture 1.1 (2026-10-12) adds the rule-sentence gate on the four non-MIP rule files, including a cross-rule provenance error observed in the wild. Fixture 1.2 (2026-10-12) adds figure-role binding: a right number under the wrong role, a published percentage on the wrong tier, an assumed date, and a stated date before the rule's start.",
+ "purpose": "Published expectations for the live frc-mcp evidence behaviour. Each fixture names the rule, the source document, the inputs and the exact expected status, value, cell and reason codes. Deterministic; no model. Fixture 1.1 (2026-10-12) adds the rule-sentence gate on the four non-MIP rule files, including a cross-rule provenance error observed in the wild. Fixture 1.2 (2026-10-12) adds figure-role binding: a right number under the wrong role, a published percentage on the wrong tier, an assumed date, and a stated date before the rule's start. Fixture 1.3 (2026-10-12) adds per-claim condition binding (units, use, band read from the figure's own clause), every-rate checking, and a whole-result receipt scan.",
  "fixtures": [
   {
    "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
@@ -1053,6 +1053,183 @@
    "expected_reason_codes": [],
    "note": "tier resolved from both bounds; the dollar cap bound to that tier",
    "expected_receipt": true
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "check_claim_contract rule mode v4 (per-claim conditions)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV43",
+   "title": "MIP sentence without a date: no receipt anywhere in the result, including safe_wording",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:hud-ml-2023-05-annual-mip",
+    "proposed_sentence": "For an FHA forward loan of $300,000 at 85% LTV with a 15-year term, the annual MIP is 0.15%."
+   },
+   "expected_status": "needs_qualifier",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "QUALIFIER_DELETED"
+   ],
+   "note": "1.28.0 kept the top-level rule_receipt empty but the resolver's receipted sentence leaked through safe_wording; the runner now scans the whole result for a receipt glyph",
+   "expected_absent_codes": [
+    "VALUE_MISMATCH"
+   ],
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v4 (per-claim conditions)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV44",
+   "title": "units carried from the first claim into the second: two-unit floor quoted with the one-unit value",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "For 2026, the FHA one-unit floor is $541,287 and the FHA two-unit floor is $541,287."
+   },
+   "expected_status": "block",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "VALUE_MISMATCH"
+   ],
+   "note": "units are read per clause; 1.28.0 used the sentence's first unit mention for both figures and passed",
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:fha-forward-loan-limits-2026",
+   "source_document_id": "HUD-ML-2025-23",
+   "source_url": "https://financeratecalc.com/rules/fha-forward-loan-limits-2026.json",
+   "source_vintage": "HUD Mortgagee Letter 2025-23",
+   "effective_date": "2026-01-01",
+   "method_version": "check_claim_contract rule mode v4 (per-claim conditions)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV45",
+   "title": "two unit counts, both floors right",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:fha-forward-loan-limits-2026",
+    "proposed_sentence": "For 2026, the FHA one-unit floor is $541,287 and the FHA two-unit floor is $693,050."
+   },
+   "expected_status": "pass",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [],
+   "note": "mirror of EV44; 1.28.0 blocked this one for the same reason",
+   "expected_receipt": true
+  },
+  {
+   "rule_id": "frc:rule:va-funding-fee-2023-04-07",
+   "source_document_id": "38-USC-3729",
+   "source_url": "https://financeratecalc.com/rules/va-funding-fee-2023-04-07.json",
+   "source_vintage": "38 U.S.C. 3729 as amended by P.L. 116-23",
+   "effective_date": "2023-04-07",
+   "method_version": "check_claim_contract rule mode v4 (per-claim conditions)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV46",
+   "title": "down-payment band carried from the first claim: subsequent use with 10% down quoted at 3.3%",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:va-funding-fee-2023-04-07",
+    "proposed_sentence": "For a VA purchase closing on 2026-02-01, first-use with 3% down has a 2.15% fee and subsequent use with 10% down has a 3.3% fee."
+   },
+   "expected_status": "block",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "VALUE_MISMATCH"
+   ],
+   "note": "the subsequent-use 10%-or-more cell is 1.25%; 1.28.0 read the band from the sentence's first down figure",
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:va-funding-fee-2023-04-07",
+   "source_document_id": "38-USC-3729",
+   "source_url": "https://financeratecalc.com/rules/va-funding-fee-2023-04-07.json",
+   "source_vintage": "38 U.S.C. 3729 as amended by P.L. 116-23",
+   "effective_date": "2023-04-07",
+   "method_version": "check_claim_contract rule mode v4 (per-claim conditions)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV47",
+   "title": "two VA cells with different bands, both right",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:va-funding-fee-2023-04-07",
+    "proposed_sentence": "For a VA purchase closing on 2026-02-01, first-use with 3% down has a 2.15% fee and subsequent use with 10% down has a 1.25% fee."
+   },
+   "expected_status": "pass",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [],
+   "note": "mirror of EV46",
+   "expected_receipt": true
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "check_claim_contract rule mode v4 (per-claim conditions)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV48",
+   "title": "a right MIP rate followed by a wrong one in the same sentence",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:hud-ml-2023-05-annual-mip",
+    "proposed_sentence": "For an FHA forward loan of $300,000 at 85% LTV with a 15-year term and case number assigned on 2026-02-01, the annual MIP is 0.15% and the annual MIP is 0.55%."
+   },
+   "expected_status": "block",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "VALUE_MISMATCH"
+   ],
+   "note": "every rate figure is a claim about the resolved cell; 1.28.0 checked only the first",
+   "expected_receipt": false
+  },
+  {
+   "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
+   "source_document_id": "HUD-ML-2023-05",
+   "source_url": "https://financeratecalc.com/rules/fha-annual-mip-ml-2023-05.json",
+   "source_vintage": "HUD Mortgagee Letter 2023-05",
+   "effective_date": "2023-03-20",
+   "method_version": "check_claim_contract rule mode v4 (per-claim conditions)",
+   "tool": "check_claim_contract",
+   "unit": null,
+   "id": "EV49",
+   "title": "'on or after' with no date is not a date qualifier",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:rule:hud-ml-2023-05-annual-mip",
+    "proposed_sentence": "For an FHA forward loan of $300,000 at 85% LTV with a 15-year term and a case number assigned on or after the rule date, the annual MIP is 0.15%."
+   },
+   "expected_status": "needs_qualifier",
+   "group": "figure_role_binding",
+   "expected_reason_codes": [
+    "QUALIFIER_DELETED"
+   ],
+   "note": "1.28.0 accepted the bare phrase",
+   "expected_absent_codes": [
+    "VALUE_MISMATCH"
+   ],
+   "expected_receipt": false
   }
  ]
 }
