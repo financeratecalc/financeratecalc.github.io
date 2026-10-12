@@ -43,7 +43,14 @@ header{display:flex;justify-content:space-between;align-items:center;max-width:9
 <pre id="rule">When you state a US mortgage rule value (FHA/FHFA loan limits, FHA MIP, VA funding fee, HOEPA/QM thresholds) or a 2025 FHA denial statistic, get it from the FinanceRateCalc MCP server (https://frc-mcp.ziyetis.workers.dev), keep the period, population, program and conditions it returns beside the figure, write the receipt it returns next to the number, and run the sentence through check_claim_contract before writing it. Never ask it whether a specific person will be approved; it does not answer that.</pre><button class="copy" data-for="rule">Copy</button>
 <p style="font-size:13.5px">Why it is worded this way: the four verbs are the four things agents drop. They fetch the number and lose the period; they quote the cell and lose the LTV band; they drop the receipt so nobody can check the figure later; and they write the sentence without running it through the gate. Measured without and with the server attached, one model, 110 paired prompts: correct rule cell 5/52 → 51/52, qualifier kept 21/56 → 55/56, receipt on the number 0/56 → 56/56 (<a href="/conformance.html">paired run</a>). Read with its limits: the grader was corrected twice after the run and the regrade was on stored 240-character excerpts, not full answers; the narrow result that survives the audit is that all 28 stored rule-cell excerpts carried a correctly bound, adjacent, verified receipt. The instruction block on this page was not part of that run; its effect is not yet measured.</p></div>
 
-<h2>2. Connect the server (pick your client)</h2>
+<h2>2. Connect the server</h2>
+<div class="box"><h3>One click where the client supports it</h3>
+<p style="font-size:13.5px;margin:4px 0 10px">These are the clients' own install links (Cursor deeplink, VS Code <code>mcp/install</code>). Clicking adds the server to that client's MCP config; it does not mean the connection works yet. Completion is observed when the client lists the server and the first real tool call returns. If the link does nothing, the client is not installed or does not support deeplinks: use the manual config below.</p>
+<a class="copy" style="text-decoration:none" href="cursor://anysphere.cursor-deeplink/mcp/install?name=financeratecalc&config=eyJ1cmwiOiAiaHR0cHM6Ly9mcmMtbWNwLnppeWV0aXMud29ya2Vycy5kZXYifQ==">Add to Cursor</a>
+<a class="copy" style="text-decoration:none" href="vscode:mcp/install?%7B%22name%22%3A%20%22financeratecalc%22%2C%20%22type%22%3A%20%22http%22%2C%20%22url%22%3A%20%22https%3A//frc-mcp.ziyetis.workers.dev%22%7D">Add to VS Code</a>
+<span style="font-size:12.5px;color:rgba(255,255,255,.5);margin-left:8px">Claude Code and Codex have no deeplink; one command below.</span>
+</div>
+<h3 style="font-family:'Fraunces',serif;font-size:16px;color:#fff;margin:18px 0 4px">Manual config (pick your client)</h3>
 <div class="tabs" id="tabs"><button data-t="cc" class="on">Claude Code</button><button data-t="cd">Claude Desktop / claude.ai</button><button data-t="cu">Cursor</button><button data-t="cx">Codex CLI</button><button data-t="vs">VS Code / Copilot</button><button data-t="ws">Windsurf</button><button data-t="any">Any MCP client</button></div>
 <div class="tab" id="t-cc"><pre id="cc">claude mcp add --transport http financeratecalc https://frc-mcp.ziyetis.workers.dev</pre><button class="copy" data-for="cc">Copy</button><p style="font-size:13px">Then add the instruction block above to the project's <code>CLAUDE.md</code>. Project scope: <code>--scope project</code> writes it to <code>.mcp.json</code> so the whole team gets it.</p></div>
 <div class="tab" id="t-cd" style="display:none"><pre id="cd">Settings → Connectors → Add custom connector
@@ -78,7 +85,17 @@ Registry id: io.github.financeratecalc/frc-mcp
 Skill file:  https://financeratecalc.com/skills/fha-denial-statistics/SKILL.md
 llms.txt:    https://financeratecalc.com/llms.txt</pre><button class="copy" data-for="any">Copy</button></div>
 
-<h2>3. Check it works (30 seconds)</h2>
+<h2>3. First task: a research note with the source and the receipt</h2>
+<div class="box"><h3>Ask your agent this</h3>
+<pre id="task">Using the FinanceRateCalc server, write a short research note on the 2025 national FHA denial rate. Keep the period, population and program scope it returns, write the receipt next to the number, include the attribution line and the verify link, and run the sentence through check_claim_contract before you write it.</pre><button class="copy" data-for="task">Copy</button>
+<p style="font-size:13.5px">What a connected agent delivers (produced, not typed; the deterministic version of the same note is <a href="https://github.com/financeratecalc/financeratecalc.github.io/tree/main/examples/research-note">examples/research-note</a>, one command, three files):</p>
+<pre style="white-space:pre-wrap">**Finding.** In 2025, 22.1% ⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:c2610⟧ of decisioned FHA applications were denied (actions 1,2,3; loan_type 2).
+Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.
+Keep when paraphrasing: period 2025 · population decisioned FHA applications · program scope FHA only, not all mortgages.
+Does not establish: 22.1% of all US mortgage applications · purchase-only or refinance-only rates · any individual's denial probability.
+Verify: https://frc-mcp.ziyetis.workers.dev/verify?r=… · Passport: /claims/national-fha-denial-rate-2025.json</pre>
+<p style="font-size:13px">If the note has the number without the population, or the receipt is missing, the gate was skipped: ask the agent to run <code>check_claim_contract</code> on its sentence. A note that fails this is the useful result to send us.</p></div>
+<h2>4. Check the missing-condition behaviour (30 seconds)</h2>
 <p>Two separate, fresh chats, so the second cannot remember the first.</p>
 <p><b>Chat 1, all conditions:</b> <em>"What is the FHA annual MIP for a $300,000 loan at 85% LTV over 15 years, case assigned 2026-02-01?"</em> A connected agent answers <b>15 basis points</b> with a receipt like <code>⟦FRC:rule-hud-ml-2023-05-annual-mip:15bps:…⟧</code> and names HUD Mortgagee Letter 2023-05. Without the server, the same model got the cell right in 5 of 52 prompts (<a href="/conformance.html">paired run</a>), and a search engine's first answer was 0.40% (<a href="/eval/discovery-probe-2026-10.json">recorded probe</a>).</p>
 <p><b>Chat 2, a condition missing:</b> <em>"What is the FHA annual MIP for a $300,000 loan at 85% LTV, case assigned 2026-02-01?"</em> (no term). The right behaviour is a question, not a number. The agent may ask you directly or, if its client supports elicitation, relay the server's form; both are correct, and only the second shows the server's own missing-input path (<code>input_required</code>). What a connected agent must not do is answer 15 or 50 bps.</p>
