@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Cite a finding: the sentence, the receipt and the attribution, ready to paste | FinanceRateCalc</title>
+<meta name="description" content="Pick any FinanceRateCalc claim and copy it as text, Markdown, HTML or BibTeX with its qualifiers, attribution and a verifiable receipt. The same card as JSON for agents: GET /cite/<id>.">
+<link rel="canonical" href="https://financeratecalc.com/cite.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script src="/assets/ai-referral.js" defer></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;line-height:1.85}
+.wrap{max-width:800px;margin:0 auto;padding:34px 22px 80px}
+h1{font-family:'Fraunces',serif;font-size:clamp(25px,4.3vw,35px);font-weight:900;line-height:1.18}
+h1 em{color:#C8A84B;font-style:italic}
+h2{font-family:'Fraunces',serif;font-size:19px;color:#C8A84B;margin:30px 0 8px}
+p{color:rgba(255,255,255,.66);font-size:15px;margin:12px 0}
+pre{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:15px 18px;overflow-x:auto;font-family:'DM Mono',monospace;font-size:12.5px;color:rgba(255,255,255,.8);line-height:1.7;margin:12px 0}
+code{background:rgba(255,255,255,.06);padding:2px 7px;border-radius:5px;font-family:'DM Mono',monospace;font-size:12.5px;color:#C8A84B}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+th,td{padding:10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}
+th{color:rgba(200,168,75,.85);font-size:10.5px;text-transform:uppercase;letter-spacing:.09em}
+td:first-child{color:#fff;font-weight:600;font-family:'DM Mono',monospace;font-size:12.5px} td{color:rgba(255,255,255,.6)}
+.warn{border-left:3px solid #e8845a;background:rgba(232,132,90,.05);padding:15px 19px;border-radius:0 12px 12px 0;margin:16px 0;font-size:14.5px;color:rgba(255,255,255,.7)}
+.legal{font-size:10.5px;color:rgba(255,255,255,.3);line-height:1.8;margin-top:28px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px}
+header{display:flex;justify-content:space-between;align-items:center;max-width:960px;margin:0 auto;padding:18px 22px}
+.logo{font-family:'Fraunces',serif;font-weight:900;color:#fff;text-decoration:none;font-size:18px}
+.logo em{color:#C8A84B;font-style:italic}
+</style>
+<style>
+.copy{display:inline-block;margin:6px 6px 0 0;padding:6px 12px;border:1px solid #C8A84B;border-radius:7px;background:transparent;color:#C8A84B;font:600 12px 'DM Sans',sans-serif;cursor:pointer}
+.copy:hover{background:rgba(200,168,75,.12)} .copy.ok{background:#C8A84B;color:#08090c}
+.card{border:1px solid #C8A84B;border-radius:12px;padding:18px 20px;margin:16px 0;background:rgba(200,168,75,.05)}
+.card .s{font-size:17px;color:#fff;line-height:1.7} .card .a{font-size:13px;color:rgba(255,255,255,.55);margin-top:8px}
+.card .r{font-family:'DM Mono',monospace;font-size:12px;color:#C8A84B;word-break:break-all;margin-top:8px}
+select,input{background:#0d0f14;color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:9px 11px;font:14px 'DM Sans',sans-serif;width:100%;margin:6px 0}
+.small{font-size:12.5px;color:rgba(255,255,255,.45)}
+</style>
+</head><body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/use-frc.html" style="font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;">Use FRC in your agent</a></header>
+<div class="wrap">
+<h1>Cite a finding, <em>with the receipt</em>.</h1>
+<p>One claim, the sentence we would accept, the attribution, and a receipt a reader can verify. Copy it the way your document needs it. Agents get the same card as JSON: <code>GET https://frc-mcp.ziyetis.workers.dev/cite/&lt;claim-id&gt;</code>.</p>
+<label class="small" for="pick">Claim</label>
+<select id="pick"><option value="">Loading claims…</option></select>
+<input id="filter" placeholder="Filter: type a metro, lender or metric">
+<div id="card" class="card" style="display:none">
+  <div class="s" id="sent"></div>
+  <div class="a" id="attr"></div>
+  <div class="r" id="rcpt"></div>
+  <div style="margin-top:10px"><button class="copy" data-f="plain">Copy text</button><button class="copy" data-f="markdown">Copy Markdown</button><button class="copy" data-f="html">Copy HTML</button><button class="copy" data-f="bibtex">Copy BibTeX</button></div>
+  <div class="small" style="margin-top:10px" id="links"></div>
+  <div class="small" style="margin-top:6px" id="quals"></div>
+</div>
+<div id="err" class="small" style="display:none;color:#e8845a"></div>
+<h2>What the receipt is</h2>
+<p>⟦FRC:id:value:hash:channel⟧ is a serial number for the figure: the hash covers the claim object behind it, the channel says which door it left by (this page issues <code>c</code>). Paste the receipt into <a href="https://frc-mcp.ziyetis.workers.dev/verify">/verify</a> at any later date: <b>current</b> means the figure has not changed; <b>stale</b> routes you to the correction. Spec: <a href="/spec/proof-object-0.1.md">Proof Object 0.1</a>.</p>
+<p class="legal">Open data, CC BY 4.0. Every claim: <a href="/claims/" style="color:#C8A84B">claim passports</a>. Corrections: <a href="/corrections.html" style="color:#C8A84B">corrections log</a>.</p>
+</div>
+<script>
+const EP='https://frc-mcp.ziyetis.workers.dev'; let all=[], cur=null;
+const q=new URLSearchParams(location.search); const pick=document.getElementById('pick'), filt=document.getElementById('filter');
+function fill(list){pick.innerHTML='<option value="">Choose a claim ('+list.length+')</option>'+list.map(c=>'<option value="'+c.id+'">'+c.id+(c.metric?' — '+c.metric:'')+'</option>').join('');}
+fetch('/claims/index.json').then(r=>r.json()).then(j=>{const arr=Array.isArray(j)?j:(j.claims||j.items||[]);all=arr.map(c=>({id:String(c.id||c.passport_id||c.claim_id||'').replace(/^frc:claim:/,''),metric:c.metric||(c.claim&&c.claim.metric)||''})).filter(c=>c.id);
+ const pri=['national-fha-denial-rate-2025','door-effect-38pct-2026','amerisave-fha-denial-rate-2025','major-lender-span-2025','collateral-denials-by-loan-size-2025'];all.sort((a,b)=>(pri.indexOf(b.id)>=0?1:0)-(pri.indexOf(a.id)>=0?1:0)||a.id.localeCompare(b.id));fill(all);const id=q.get('id');if(id){pick.value=id;load(id);}}).catch(()=>{pick.innerHTML='<option value="national-fha-denial-rate-2025">national-fha-denial-rate-2025</option>';});
+filt.addEventListener('input',()=>{const v=filt.value.toLowerCase();fill(all.filter(c=>(c.id+' '+c.metric).toLowerCase().includes(v)));});
+pick.addEventListener('change',()=>{if(pick.value){history.replaceState(null,'','?id='+pick.value);load(pick.value);}});
+async function load(id){document.getElementById('err').style.display='none';try{const r=await fetch(EP+'/cite/'+encodeURIComponent(id));const j=await r.json();if(!j.cited)throw new Error(j.reason||'not found');cur=j;
+ document.getElementById('sent').textContent=j.sentence_with_receipt;document.getElementById('attr').textContent=j.attribution;document.getElementById('rcpt').textContent=j.receipt;
+ document.getElementById('links').innerHTML='<a href="'+j.verify_url+'">Verify this receipt</a> · <a href="'+j.passport_url+'">Passport JSON</a>'+(j.contract_url?' · <a href="'+j.contract_url+'">Use contract</a>':'')+' · <a href="'+EP+'/cite/'+encodeURIComponent(id)+'">This card as JSON</a>';
+ document.getElementById('quals').textContent=j.required_qualifiers?'Keep when you paraphrase: '+Object.entries(j.required_qualifiers).map(([k,v])=>k+' = '+v).join(' · '):'';
+ document.getElementById('card').style.display='';}catch(e){document.getElementById('card').style.display='none';const el=document.getElementById('err');el.textContent='Could not load this claim: '+e.message;el.style.display='';}}
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{if(!cur)return;const t=cur.formats[b.dataset.f];try{await navigator.clipboard.writeText(t);const o=b.textContent;b.textContent='Copied';b.classList.add('ok');setTimeout(()=>{b.textContent=o;b.classList.remove('ok')},1600);}catch(e){window.prompt('Copy:',t);}}));
+</script>
+</body></html>

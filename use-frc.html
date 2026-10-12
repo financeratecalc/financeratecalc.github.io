@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Use FRC in your agent: three lines for Claude Code, Cursor, Codex and any MCP client | FinanceRateCalc</title>
+<meta name="description" content="Paste three lines into CLAUDE.md, AGENTS.md or .cursorrules and your coding agent fetches mortgage rule cells and FHA denial statistics from FinanceRateCalc with the period, conditions and receipt attached. MCP configs for Claude Code, Claude Desktop, Cursor, Codex, Windsurf, VS Code.">
+<link rel="canonical" href="https://financeratecalc.com/use-frc.html">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script>
+<script src="/assets/ai-referral.js" defer></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#08090c;color:#fff;line-height:1.85}
+.wrap{max-width:800px;margin:0 auto;padding:34px 22px 80px}
+h1{font-family:'Fraunces',serif;font-size:clamp(25px,4.3vw,35px);font-weight:900;line-height:1.18}
+h1 em{color:#C8A84B;font-style:italic}
+h2{font-family:'Fraunces',serif;font-size:19px;color:#C8A84B;margin:30px 0 8px}
+p{color:rgba(255,255,255,.66);font-size:15px;margin:12px 0}
+pre{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:15px 18px;overflow-x:auto;font-family:'DM Mono',monospace;font-size:12.5px;color:rgba(255,255,255,.8);line-height:1.7;margin:12px 0}
+code{background:rgba(255,255,255,.06);padding:2px 7px;border-radius:5px;font-family:'DM Mono',monospace;font-size:12.5px;color:#C8A84B}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+th,td{padding:10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}
+th{color:rgba(200,168,75,.85);font-size:10.5px;text-transform:uppercase;letter-spacing:.09em}
+td:first-child{color:#fff;font-weight:600;font-family:'DM Mono',monospace;font-size:12.5px} td{color:rgba(255,255,255,.6)}
+.warn{border-left:3px solid #e8845a;background:rgba(232,132,90,.05);padding:15px 19px;border-radius:0 12px 12px 0;margin:16px 0;font-size:14.5px;color:rgba(255,255,255,.7)}
+.legal{font-size:10.5px;color:rgba(255,255,255,.3);line-height:1.8;margin-top:28px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px}
+header{display:flex;justify-content:space-between;align-items:center;max-width:960px;margin:0 auto;padding:18px 22px}
+.logo{font-family:'Fraunces',serif;font-weight:900;color:#fff;text-decoration:none;font-size:18px}
+.logo em{color:#C8A84B;font-style:italic}
+</style>
+<style>
+.copy{display:inline-block;margin:6px 0 0;padding:6px 12px;border:1px solid #C8A84B;border-radius:7px;background:transparent;color:#C8A84B;font:600 12px 'DM Sans',sans-serif;cursor:pointer}
+.copy:hover{background:rgba(200,168,75,.12)} .copy.ok{background:#C8A84B;color:#08090c}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0} .tabs button{padding:6px 11px;border:1px solid rgba(255,255,255,.14);border-radius:7px;background:transparent;color:rgba(255,255,255,.7);font:600 12px 'DM Sans',sans-serif;cursor:pointer} .tabs button.on{border-color:#C8A84B;color:#C8A84B}
+.box{border:1px solid rgba(200,168,75,.35);border-radius:12px;padding:16px 18px;margin:14px 0;background:rgba(200,168,75,.04)}
+.box h3{font-family:'Fraunces',serif;font-size:16px;color:#fff;margin-bottom:4px}
+</style>
+</head><body>
+<header><a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a><a href="/mcp-server.html" style="font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;">MCP server</a></header>
+<div class="wrap">
+<h1>Use FRC <em>inside</em> the agent you already run.</h1>
+<p>You do not come to this site; your agent does. Two steps: connect the server once, then tell the agent when to use it. The instruction block is the part most people skip, and it is the part that decides whether the agent calls the server or guesses.</p>
+
+<h2>1. The instruction block (paste into CLAUDE.md, AGENTS.md or .cursorrules)</h2>
+<div class="box"><h3>One paragraph, any agent</h3>
+<pre id="rule">When you state a US mortgage rule value (FHA/FHFA loan limits, FHA MIP, VA funding fee, HOEPA/QM thresholds) or a 2025 FHA denial statistic, get it from the FinanceRateCalc MCP server (https://frc-mcp.ziyetis.workers.dev), keep the period, population, program and conditions it returns beside the figure, write the receipt it returns next to the number, and run the sentence through check_claim_contract before writing it. Never ask it whether a specific person will be approved; it does not answer that.</pre><button class="copy" data-for="rule">Copy</button>
+<p style="font-size:13.5px">Why it is worded this way: the four verbs are the four things agents drop. They fetch the number and lose the period; they quote the cell and lose the LTV band; they drop the receipt so nobody can check the figure later; and they write the sentence without running it through the gate. Measured without and with the server attached: correct rule cell 5/52 → 51/52, qualifier kept 21/56 → 55/56, receipt on the number 0/56 → 56/56 (<a href="/conformance.html">paired run, 110 prompts</a>).</p></div>
+
+<h2>2. Connect the server (pick your client)</h2>
+<div class="tabs" id="tabs"><button data-t="cc" class="on">Claude Code</button><button data-t="cd">Claude Desktop / claude.ai</button><button data-t="cu">Cursor</button><button data-t="cx">Codex CLI</button><button data-t="vs">VS Code / Copilot</button><button data-t="ws">Windsurf</button><button data-t="any">Any MCP client</button></div>
+<div class="tab" id="t-cc"><pre id="cc">claude mcp add --transport http financeratecalc https://frc-mcp.ziyetis.workers.dev</pre><button class="copy" data-for="cc">Copy</button><p style="font-size:13px">Then add the instruction block above to the project's <code>CLAUDE.md</code>. Project scope: <code>--scope project</code> writes it to <code>.mcp.json</code> so the whole team gets it.</p></div>
+<div class="tab" id="t-cd" style="display:none"><pre id="cd">Settings → Connectors → Add custom connector
+Name: FinanceRateCalc
+URL:  https://frc-mcp.ziyetis.workers.dev</pre><button class="copy" data-for="cd">Copy URL</button><p style="font-size:13px">No authentication. The instruction block goes into the project instructions or a style/preference note.</p></div>
+<div class="tab" id="t-cu" style="display:none"><pre id="cu">// .cursor/mcp.json
+{
+  "mcpServers": {
+    "financeratecalc": { "url": "https://frc-mcp.ziyetis.workers.dev" }
+  }
+}</pre><button class="copy" data-for="cu">Copy</button><p style="font-size:13px">Instruction block → <code>.cursorrules</code> or a rule in <code>.cursor/rules/</code>.</p></div>
+<div class="tab" id="t-cx" style="display:none"><pre id="cx"># ~/.codex/config.toml
+[mcp_servers.financeratecalc]
+url = "https://frc-mcp.ziyetis.workers.dev"</pre><button class="copy" data-for="cx">Copy</button><p style="font-size:13px">Instruction block → <code>AGENTS.md</code> in the repo root.</p></div>
+<div class="tab" id="t-vs" style="display:none"><pre id="vs">// .vscode/mcp.json
+{
+  "servers": {
+    "financeratecalc": { "type": "http", "url": "https://frc-mcp.ziyetis.workers.dev" }
+  }
+}</pre><button class="copy" data-for="vs">Copy</button><p style="font-size:13px">Instruction block → <code>.github/copilot-instructions.md</code>.</p></div>
+<div class="tab" id="t-ws" style="display:none"><pre id="ws">// ~/.codeium/windsurf/mcp_config.json
+{
+  "mcpServers": {
+    "financeratecalc": { "serverUrl": "https://frc-mcp.ziyetis.workers.dev" }
+  }
+}</pre><button class="copy" data-for="ws">Copy</button></div>
+<div class="tab" id="t-any" style="display:none"><pre id="any">Endpoint (Streamable HTTP, MCP 2026-07-28 and 2025 revisions, no auth):
+https://frc-mcp.ziyetis.workers.dev
+
+Discovery:   GET https://frc-mcp.ziyetis.workers.dev/server-card
+Registry id: io.github.financeratecalc/frc-mcp
+Skill file:  https://financeratecalc.com/skills/fha-denial-statistics/SKILL.md
+llms.txt:    https://financeratecalc.com/llms.txt</pre><button class="copy" data-for="any">Copy</button></div>
+
+<h2>3. Check it works (30 seconds)</h2>
+<p>Ask the agent: <em>"What is the FHA annual MIP for a $300,000 loan at 85% LTV over 15 years, case assigned 2026-02-01?"</em> A connected agent answers <b>15 basis points</b> with a receipt like <code>⟦FRC:rule-hud-ml-2023-05-annual-mip:15bps:…⟧</code> and names HUD Mortgagee Letter 2023-05. Without the server, the same model got the cell right in 5 of 52 prompts (<a href="/conformance.html">paired run</a>), and a search engine's first answer was 0.40% (<a href="/eval/discovery-probe-2026-10.json">recorded probe</a>). Then ask it to leave out the term: a connected agent asks for it instead of guessing.</p>
+
+<h2>What the server will not do</h2>
+<p>Predict whether a specific applicant will be approved; rank or recommend lenders; state causes; draw legal conclusions; accept income, credit score or any borrower attribute as input. These are refused with a reason code, not answered. Historical aggregates and dated rule tables only.</p>
+
+<h2>For the person, not the agent</h2>
+<p>Need one finding with its receipt for a document? <a href="/cite.html">Cite a finding</a> gives you the sentence, the attribution and the receipt, copyable as text, Markdown, HTML or BibTeX.</p>
+<p class="legal">Open data, CC BY 4.0. Server source: <a href="https://github.com/financeratecalc/financeratecalc.github.io/tree/main/worker" style="color:#C8A84B">worker/index.js</a>. Conformance on every deploy: <a href="/conformance.html" style="color:#C8A84B">conformance.html</a>.</p>
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{const t=document.getElementById(b.dataset.for).innerText;try{await navigator.clipboard.writeText(t);b.textContent='Copied';b.classList.add('ok');setTimeout(()=>{b.textContent=b.textContent==='Copied'?'Copy':b.textContent;b.classList.remove('ok')},1600);}catch(e){window.prompt('Copy:',t);}}));
+document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.tab').forEach(x=>x.style.display='none');document.getElementById('t-'+b.dataset.t).style.display='';}));
+</script>
+</body></html>

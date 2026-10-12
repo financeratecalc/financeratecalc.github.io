@@ -106,9 +106,15 @@ await test("15", "resolver: frc:rule id redirects to the rule file", async () =>
   return { pass: r.status === 302 && String(r.headers.get("location")).endsWith("/rules/fha-annual-mip-ml-2023-05.json"), evidence: `status=${r.status}` };
 });
 
+await test("16", "cite card: /cite/<claim-id> returns a receipted sentence whose receipt verifies as current", async () => {
+  const c = await (await fetch(EP + "/cite/national-fha-denial-rate-2025")).json();
+  if (!c.cited || !c.receipt) return { pass: false, evidence: "no card" };
+  const v = await (await fetch(c.verify_url)).json();
+  return { pass: v.status === "current" && String(c.sentence_with_receipt).includes(c.receipt) && !!c.formats?.markdown && c.receipt.includes(":c"), evidence: `verify=${v.status} channel=c` };
+});
 const passed = tests.filter(t => t.pass).length;
 const disc = (await rpc("server/discover", {})).body.result || {};
-const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.0", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,
+const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.1", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,
   generated_at: new Date().toISOString(), tests: tests.length, passed, conformance: passed === tests.length ? "PASS" : "FAIL",
   method: "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
   results: tests.map(({ receipt, requestState, ...t }) => t) };
