@@ -8,7 +8,8 @@
     <script src="https://financeratecalc.com/embed/frc.js" async></script>
 
     No tracking, no cookies, no dependencies. Data: CFPB HMDA 2025.
-    Attribution line is part of the widget and is not removed — that is the licence. */
+    CC BY 4.0: keep appropriate attribution to FinanceRateCalc, a link to the licence, and indicate any changes;
+    the attribution line rendered by the widget is the simplest way to do this. */
 (function(){
   var API='https://financeratecalc.com/api/';
   var SITE='https://financeratecalc.com';
@@ -68,7 +69,7 @@
       return '<tr><td style="padding:6px 8px 6px 0;font-weight:600;font-size:13px;">'+esc(x.lender)+'</td>'+
         '<td style="padding:6px 0;width:44%;">'+bar(c,x.denial_rate_pct,max)+'</td>'+
         '<td style="padding:6px 0 6px 10px;text-align:right;font-variant-numeric:tabular-nums;font-size:13px;font-weight:700;">'+x.denial_rate_pct.toFixed(1)+'%</td></tr>';}).join('');
-    var pen = d.small_loan_penalty ? '<div style="font-size:12.5px;color:'+c.mut+';margin-top:9px;">Loans under $150K were denied at <b style="color:'+c.fg+'">'+d.small_loan_denial_pct.toFixed(1)+'%</b> versus <b style="color:'+c.fg+'">'+d.big_loan_denial_pct.toFixed(1)+'%</b> above $250K &mdash; a '+d.small_loan_penalty.toFixed(2)+'&times; penalty.</div>' : '';
+    var pen = d.small_loan_penalty ? '<div style="font-size:12.5px;color:'+c.mut+';margin-top:9px;">Loans under $150K were denied at <b style="color:'+c.fg+'">'+d.small_loan_denial_pct.toFixed(1)+'%</b> versus <b style="color:'+c.fg+'">'+d.big_loan_denial_pct.toFixed(1)+'%</b> above $250K &mdash; '+d.small_loan_penalty.toFixed(2)+'&times; the rate. Unadjusted comparison; it does not identify the cause.</div>' : '';
     var spread = d.spread_between_lenders_pts ? '<div style="font-size:12.5px;color:'+c.mut+';margin-top:6px;">A <b style="color:'+c.fg+'">'+d.spread_between_lenders_pts.toFixed(1)+'-point</b> spread between the highest-volume lenders here, in the same federal loan program.</div>' : '';
     el.innerHTML=shell(c,d.metro+': '+d.denial_rate_pct.toFixed(1)+'% of FHA applications denied',
       'FHA denials by lender · 2025',
