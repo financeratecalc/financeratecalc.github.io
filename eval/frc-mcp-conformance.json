@@ -1,11 +1,11 @@
 {
  "suite": "frc-mcp-conformance-2026",
- "suite_version": "1.0",
+ "suite_version": "1.1",
  "endpoint": "https://frc-mcp.ziyetis.workers.dev",
  "server": {
   "name": "financeratecalc",
   "title": "FinanceRateCalc mortgage evidence",
-  "version": "1.30.0"
+  "version": "1.31.0"
  },
  "protocol_versions": [
   "2026-07-28",
@@ -13,10 +13,10 @@
   "2025-06-18",
   "2025-03-26"
  ],
- "generated_at": "2026-10-12T10:50:43.256Z",
- "tests": 15,
+ "generated_at": "2026-10-12T14:59:30.291Z",
+ "tests": 16,
  "passed": 15,
- "conformance": "PASS",
+ "conformance": "FAIL",
  "method": "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
  "results": [
   {
@@ -88,8 +88,8 @@
   {
    "id": "12",
    "name": "rule receipt from test 06 verifies as current; a tampered value does not",
-   "pass": true,
-   "evidence": "current=current tampered=hash-current-value-mismatch"
+   "pass": false,
+   "evidence": "current=undefined tampered=undefined"
   },
   {
    "id": "13",
@@ -108,7 +108,13 @@
    "name": "resolver: frc:rule id redirects to the rule file",
    "pass": true,
    "evidence": "status=302"
+  },
+  {
+   "id": "16",
+   "name": "cite card: /cite/<claim-id> returns a receipted sentence whose receipt verifies as current",
+   "pass": true,
+   "evidence": "verify=current channel=c"
   }
  ],
- "sha256": "1cfc7cd6c1149be8e9f447c5d36575406f59a20be8c05ac4b8cfffdcef661d3c"
+ "sha256": "bd1af16614d77159348dcbba45bde01eb77c800ad45187aa37bac752454e9c35"
 }
