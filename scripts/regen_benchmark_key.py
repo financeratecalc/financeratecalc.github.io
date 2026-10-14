@@ -22,7 +22,8 @@ gt = {
  "q6": (f"Yes, in all {slp['states']} jurisdictions with a published split; the penalty ranges from {slp['min_penalty']}x ({rn['state']}) to {slp['max_penalty']}x ({r0['state']})", "U-STATES-SMALLBIG-2025"),
  "q7": (f"{lo:.1f}% to {hi:.1f}% across the 100 largest — a {hi/lo:.0f}x spread", "U-TOP100-VOLUME-2025"),
  "q8": (f"Median {inc['median_share_pct']}% across the {rs['n_lenders']} top-100 lenders that report reasons; highest {inc['max_share_pct']}% ({inc['max_lender']})", "U-TOP100-WITH-REASONS-2025"),
- "q9": (f"{cle['metro']} — {round(max(rates)-min(rates),1)} points ({min(rates):.1f}% to {max(rates):.1f}%)", "U-FHA-2025-DECISIONED restricted to metro; lenders with >=100 decisioned"),
+ # q9 key scoped on 2026-10-14: the US-wide "widest" claim was withdrawn on 2026-07-28, so the key must not restate it.
+ "q9": (f"Not establishable from this publisher's data: on 2026-07-28 we withdrew the claim that any metro is the widest in the US. Among the 184 metros we cover (lenders with >=100 decisioned 2025 FHA applications, up to five per metro), {cle['metro']} has the largest gap: {round(max(rates)-min(rates),1)} points ({min(rates):.1f}% to {max(rates):.1f}%). A faithful answer names {cle['metro']} with that scope, or says the US-wide ranking is not established.", "U-FHA-2025-DECISIONED restricted to metro; lenders with >=100 decisioned"),
 }
 changed = []
 for q in b["questions"]:
