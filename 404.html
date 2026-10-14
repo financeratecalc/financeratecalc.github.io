@@ -9,6 +9,7 @@ a{color:#C8A84B;text-decoration:none}.k{font-family:'DM Mono',monospace;font-siz
 </head>
 <body><div class="wrap"><div class="k">404 · FinanceRateCalc</div>
 <h1>This page is a data point, not a verdict.</h1>
+<p id="dym" style="color:#C8A84B;font-size:14px;min-height:1.4em"></p>
 <p style="color:#b8b4a9">The page you asked for was removed or never built — usually because it didn't meet our publication bar. What you're probably looking for lives here:</p>
 <div class="links">
 <a href="/fha-loan-denied-now-what.html">The Denial Map</a>
@@ -17,4 +18,32 @@ a{color:#C8A84B;text-decoration:none}.k{font-family:'DM Mono',monospace;font-siz
 <a href="/mortgage-ai-accuracy-index.html">AI Accuracy Index</a>
 <a href="/">Home</a></div>
 <p style="font-size:13px;color:#9a958a;margin-top:26px">Measured, not assumed. · <a href="/about.html">About</a> · <a href="/press.html">Press</a></p>
-</div></body></html>
+</div>
+<script>
+/* Smart 404 (2026-10-14): a requested URL that matches one of the site's templated families is resolved to the nearest
+   existing page and the visitor is sent there; every miss is reported to GA with the path so the pattern can be read. */
+(function(){
+  var path=location.pathname, q=location.search;
+  try{ if(typeof gtag!=='undefined') gtag('event','not_found',{missing_path:path.slice(0,200), referrer:(document.referrer||'').slice(0,120)}); }catch(e){}
+  var go=function(u,why){ try{ if(typeof gtag!=='undefined') gtag('event','not_found_redirect',{missing_path:path.slice(0,200), target:u, rule:why}); }catch(e){}
+    var el=document.getElementById('dym'); if(el){ el.innerHTML='Taking you to the nearest published page: <a href="'+u+'">'+u+'</a>'; }
+    setTimeout(function(){ location.replace(u); }, 150); };
+  var nearest=function(arr,n){ var best=null,bd=1e18; for(var i=0;i<arr.length;i++){ var d=Math.abs(arr[i]-n); if(d<bd){bd=d;best=arr[i];} } return best; };
+  var slugNear=function(arr,s){ s=s.toLowerCase(); if(arr.indexOf(s)>=0) return s; var head=s.split('-')[0]; var c=arr.filter(function(x){return x.indexOf(head)===0;}); return c.length?c[0]:null; };
+  fetch('/assets/404-manifest.json').then(function(r){return r.json();}).then(function(M){
+    var m;
+    if((m=path.match(/^\/how-much-house-can-a-(\d+)-year-old-afford/))){ var n=nearest(M.age,+m[1]); if(n!==null) return go('/how-much-house-can-a-'+n+'-year-old-afford.html','age'); }
+    if((m=path.match(/^\/can-i-afford-a-house-on-(\d+)k?-salary/))){ var v=+m[1]; if(v>1000) v=Math.round(v/1000); var n=nearest(M.salary,v); if(n!==null) return go('/can-i-afford-a-house-on-'+n+'k-salary.html','salary'); }
+    if((m=path.match(/^\/down-payment-for-(\d+)k?-house/))){ var v=+m[1]; if(v>10000) v=Math.round(v/1000); var n=nearest(M.down_house,v); if(n!==null) return go('/down-payment-for-'+n+'k-house.html','down_house'); }
+    if((m=path.match(/^\/how-much-house-can-i-buy-with-(\d+)k?-down/))){ var v=+m[1]; if(v>1000) v=Math.round(v/1000); var n=nearest(M.buy_with_down,v); if(n!==null) return go('/how-much-house-can-i-buy-with-'+n+'k-down.html','buy_with_down'); }
+    if((m=path.match(/^\/can-i-get-(?:a-)?mortgage-with-(?:a-)?(\d{3})-credit-score/))){ var n=nearest(M.credit,+m[1]); if(n!==null) return go('/can-i-get-mortgage-with-'+n+'-credit-score.html','credit'); }
+    if((m=path.match(/^\/mortgage-(\d+)k?-at-(\d+)[-.](\d+)-percent/))){ var amts=Object.keys(M.mortgage_rate).map(Number); var a=nearest(amts,+m[1]>10000?Math.round(+m[1]/1000):+m[1]); var rates=M.mortgage_rate[String(a)]||[]; var want=+m[2]+ +m[3]/10; var best=null,bd=99; rates.forEach(function(r){var p=r.split('-'); var val=+p[0]+ +p[1]/10; if(Math.abs(val-want)<bd){bd=Math.abs(val-want);best=r;}}); if(a!==null&&best) return go('/mortgage-'+a+'k-at-'+best+'-percent.html','mortgage_rate'); }
+    if((m=path.match(/^\/home-affordability-([a-z-]+)/))){ var c=slugNear(M.affordability_city,m[1]); if(c) return go('/home-affordability-'+c+'.html','affordability_city'); }
+    if((m=path.match(/^\/metro\/([a-z0-9-]+)/))){ var c=slugNear(M.metro,m[1]); if(c) return go('/metro/'+c+'.html','metro'); }
+    if((m=path.match(/^\/mortgage-([a-z-]+)/))){ var c=slugNear(M.mortgage_city,m[1]); if(c) return go('/mortgage-'+c+'.html','mortgage_city'); var c2=slugNear(M.metro,m[1]); if(c2) return go('/metro/'+c2+'.html','metro_from_mortgage'); }
+    if((m=path.match(/^\/denial-code-([a-z0-9-]+)/))){ var c=slugNear(M.denial_code,m[1]); return go(c?'/denial-code-'+c+'.html':'/denial-code-lookup.html','denial_code'); }
+    if(/\.html$/.test(path)===false && path!=='/' ){ var guess=path.replace(/\/$/,'')+'.html'; return fetch(guess,{method:'HEAD'}).then(function(r){ if(r.ok) go(guess,'add_html'); }); }
+  }).catch(function(){});
+})();
+</script>
+</body></html>
