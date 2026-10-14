@@ -1,0 +1,48 @@
+name: Footnote receipts — live verify (manual)
+# Checks every distinct receipt carried by the evidence footnotes against the live /verify endpoint.
+# Manual only: each check is tallied by the worker as an f-channel verify, so a scheduled run would
+# drown any outside f-channel signal in our own checks. Every run is recorded with its date so the
+# weekly report can subtract it.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify footnote receipts live
+        run: |
+          python3 - <<'PY'
+          import glob, html, json, re, time, urllib.parse, urllib.request, datetime
+          rs = {}
+          for f in glob.glob("**/*.html", recursive=True):
+              s = open(f, encoding="utf-8", errors="ignore").read()
+              for m in re.finditer(r'data-frc-footnote="([^"]+)" data-receipt="([^"]+)"', s):
+                  rs.setdefault(html.unescape(m.group(2)), {"claim": m.group(1), "pages": 0})["pages"] += 1
+          out = {"run_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "endpoint": "https://frc-mcp.ziyetis.workers.dev/verify",
+                 "note": "Our own check: these requests appear in the worker's verify tally as f:<status>. Subtract them when reading f-channel traffic.",
+                 "distinct_receipts": len(rs), "status_counts": {}, "not_current": []}
+          for r, meta in sorted(rs.items()):
+              try:
+                  req = urllib.request.Request(out["endpoint"] + "?r=" + urllib.parse.quote(r), headers={"User-Agent": "frc-footnote-selfcheck"})
+                  j = json.load(urllib.request.urlopen(req, timeout=30))
+                  st = j.get("status", "invalid")
+                  ch = (j.get("issued") or {}).get("channel")
+              except Exception as e:
+                  st, ch = "error:" + type(e).__name__, None
+              out["status_counts"][st] = out["status_counts"].get(st, 0) + 1
+              if st != "current" or ch != "f":
+                  out["not_current"].append({"receipt": r, "claim": meta["claim"], "pages": meta["pages"], "status": st, "channel": ch})
+              time.sleep(0.2)
+          json.dump(out, open("eval/footnote-receipts-live.json", "w"), indent=1, ensure_ascii=False)
+          print(json.dumps({k: out[k] for k in ("distinct_receipts", "status_counts")}), len(out["not_current"]), "not current or wrong channel")
+          PY
+      - name: Commit report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add eval/footnote-receipts-live.json
+          git commit -m "footnote receipts live check [skip ci]" || exit 0
+          git pull --rebase && git push

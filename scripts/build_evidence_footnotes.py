@@ -21,6 +21,8 @@ embed fragments. Place detection is conservative: a city name that belongs to mo
 state, or a page that names more than one state, falls back to the national figure; a wrong
 state would be worse than a general one.
 
+State footnotes carry a labelled datum, not a sentence: the sentence gate needs a passport, and states have none.
+
 Usage:  python3 scripts/build_evidence_footnotes.py [--dry-run] [--report eval/evidence-footnotes.json]
 """
 import datetime, glob, html as H, json, os, re, sys, urllib.parse
@@ -198,8 +200,10 @@ def choose(rel, title, body=""):
         d = STATES[st]
         nm = NAMES.get(st, st)
         return (f"state-{st.lower()}-2025",
-                f"In 2025, {d['denial_rate_pct']:.1f}% {{R}} of decisioned FHA applications in {nm} were denied "
-                f"({fmt_int(d['denials'])} of {fmt_int(d['decisioned_applications'])}; national rate 22.1%).",
+                # No prose sentence for states: there is no state passport for the sentence gate to check a sentence
+                # against, so the footnote gives a labelled datum (figure, place, year, population) and nothing to misread.
+                f"FHA denial rate, {nm}, 2025: {d['denial_rate_pct']:.1f}% {{R}} — "
+                f"{fmt_int(d['denials'])} denials of {fmt_int(d['decisioned_applications'])} decisioned FHA applications. National: 22.1%.",
                 "state", rule)
     return ("national-fha-denial-rate-2025",
             "In 2025, 22.1% {R} of decisioned FHA applications were denied (actions 1,2,3; loan_type 2).",
@@ -247,7 +251,7 @@ def main():
     rep_path = None
     if "--report" in sys.argv:
         rep_path = sys.argv[sys.argv.index("--report") + 1]
-    cache, stats, skipped, by_rule, written, samples, conflicts = {}, {}, {}, {}, 0, {}, []
+    cache, stats, skipped, by_rule, written, samples, conflicts, indexable = {}, {}, {}, {}, 0, {}, [], 0
     for rel in sorted(pages()):
         p = os.path.join(ROOT, rel)
         src = open(p, encoding="utf-8", errors="strict").read()
@@ -302,17 +306,22 @@ def main():
         i = rest.rfind("</body>")
         new = rest[:i].rstrip("\n") + b + rest[i:]
         stats[kind] = stats.get(kind, 0) + 1
+        if not re.search(r"<meta[^>]+name=[\"']robots[\"'][^>]*noindex", rest, re.I):
+            indexable += 1
         by_rule[rule] = by_rule.get(rule, 0) + 1
         samples.setdefault(kind + ":" + rule, (rel, title[:90], cid))
         if new != src:
             written += 1
             if not dry:
                 open(p, "w", encoding="utf-8").write(new)
-    out = {"generated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"), "placed": stats, "placement_rule": by_rule,
+    audited = sum(stats.values()) + skipped.get("page_value_conflict", 0) + skipped.get("value_not_in_sentence", 0)
+    out = {"generated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
+           "how_to_report": "Say: N pages audited by the footnote builder, K value conflicts found. Do not say N pages carry evidence for readers: most footnoted pages are noindex.",
+           "pages_audited": audited, "footnoted": sum(stats.values()), "footnoted_indexable": indexable, "placed": stats, "placement_rule": by_rule,
            "skipped": skipped, "page_value_conflicts": conflicts, "files_changed": written, "dry_run": dry,
            "examples": {k: {"page": v[0], "title": v[1], "claim": v[2]} for k, v in sorted(samples.items())},
            "receipts": {k: f"⟦FRC:{k}:{v[0]}:{v[1]}:f…⟧" for k, v in sorted(cache.items())}}
-    print(json.dumps({k: out[k] for k in ("placed", "placement_rule", "skipped", "page_value_conflicts", "files_changed", "dry_run")}, indent=1))
+    print(json.dumps({k: out[k] for k in ("pages_audited", "footnoted", "footnoted_indexable", "placed", "placement_rule", "skipped", "page_value_conflicts", "files_changed", "dry_run")}, indent=1))
     if rep_path:
         json.dump(out, open(os.path.join(ROOT, rep_path), "w", encoding="utf-8"), indent=1, ensure_ascii=False)
 

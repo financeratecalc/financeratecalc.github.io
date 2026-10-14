@@ -130,7 +130,7 @@ def main():
         cur, r = receipt(f"state-{st}-2025", "s")
         if cur not in html:
             rec(("value-mismatch", f"state-{st}: page lacks {cur}")); continue
-        rec(patch(f, f"state-{st}-2025", r"<h1>FHA denial rates in [^<]*<em>[^<]*</em>[^<]*</h1>", False, f"statewide rate {cur}, claim receipt", code="s"))
+        rec(patch(f, f"state-{st}-2025", r"<h1>FHA denial rates? in [^<]*<em>[^<]*</em>[^<]*</h1>", False, f"statewide rate {cur}, claim receipt", code="s"))
     # small-loan stat page (Idaho)
     rec(patch(os.path.join(ROOT, "stat", "is-the-smallloan-penalty-worse-in-expensive-states.html"), "small-loan-penalty-id-2025",
               r'<div class="big">4\.45x</div>'))
