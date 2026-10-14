@@ -55,3 +55,15 @@
     }
   }catch(e){}
 })();
+
+// Evidence footnote: which of its links get used (Verify, Cite card, JSON, Method, setup). No personal data.
+(function(){
+  try{
+    document.addEventListener('click', function(e){
+      var a = e.target && e.target.closest ? e.target.closest('.frc-footnote a') : null;
+      if(!a || typeof gtag==='undefined') return;
+      var box = a.closest('.frc-footnote');
+      gtag('event','evidence_footnote_click', {link: (a.textContent||'').trim().slice(0,20), claim: box ? box.getAttribute('data-frc-footnote') : '', landing_page: location.pathname});
+    }, true);
+  }catch(e){}
+})();
