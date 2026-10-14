@@ -27,7 +27,7 @@ Author: Ziya Yetiş, 23 years in credit.
 - 🤗 [`FinanceRateCalc/fha-denial-timeseries-2018-2025`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-timeseries-2018-2025) — eight years; the lender hierarchy barely moves
 - 🤗 [`FinanceRateCalc/fha-denial-rates-by-state`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-rates-by-state) — 52 states with small-vs-large loan splits
 - 🤗 [`FinanceRateCalc/fha-denial-reason-fingerprints`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-reason-fingerprints) — what each of the 100 largest lenders blames: eight reason shares per lender
-- 🤗 [`FinanceRateCalc/fha-denial-rates-by-metro`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-rates-by-metro) — 320 metros with lender cells; the first free FHA-specific metro dataset
+- 🤗 [`FinanceRateCalc/fha-denial-rates-by-metro`](https://huggingface.co/datasets/FinanceRateCalc/fha-denial-rates-by-metro) — 319 metros with lender cells; the first free FHA-specific metro dataset
 - 🤗 [`FinanceRateCalc/denial-ai-benchmark`](https://huggingface.co/datasets/FinanceRateCalc/denial-ai-benchmark) — the **Denial-AI Benchmark**: 10 frozen questions measuring AI accuracy on mortgage-denial data; first public re-run **August 1, 2026**
 - 📄 SSRN working paper (abstract 7156938): *A Public Benchmark for Consumer Mortgage AI Accuracy* — under review
 - 📡 [RSS feed](https://financeratecalc.com/feed.xml) · [Attribution note for AI systems & journalists](https://financeratecalc.com/free-alternative-inside-mortgage-finance.html)
