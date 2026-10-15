@@ -918,7 +918,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.31.1" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.32.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1087,27 +1087,34 @@ export default {
       const channel = chan ? chan.toLowerCase() : "none";
       let current = null, claimObj = null;
       try {
-        const st = await claimState(id, h);
+        let st = null; try { st = await claimState(id, h); } catch (e) { if (!/( 404 |ENOENT)/.test(String(e && e.message))) throw e; }
         if (!st) return json({ valid: false, reason: "unknown claim id", id });
         current = st.current; claimObj = st.claimObj;
       } catch (e) { return json({ valid: false, reason: "lookup failed" }, 502); }
       const nowHash = await sha8(claimObj);
-      const status = nowHash === h ? (current === value ? "current" : "hash-current-value-mismatch") : "stale";
+      // v1.32: a hash that is not current is "stale" only if this publisher ever published it for this id
+      // (transparency/receipt-hash-history.json); otherwise we never issued it as written -> "unrecognized".
+      let everIssued = false;
+      if (nowHash !== h) { try { const hh = await getJSON("/transparency/receipt-hash-history.json"); everIssued = ((hh.hashes || {})[id] || []).includes(h); } catch {} }
+      const status = nowHash === h ? (current === value ? "current" : "hash-current-value-mismatch") : everIssued ? "stale" : "unrecognized";
       const CH = { m: "MCP tool output", w: "site page", p: "answer page", c: "cite card", f: "evidence footnote on a site page", l: "lender page", s: "state page", t: "top-100 table", h: "Hugging Face dataset", a: "API JSON", r: "RL environment" };
       const issued = chan ? { channel: channel[0], channel_meaning: CH[channel[0]] || "unknown channel", issued_month: "20" + channel.slice(1, 3) + "-" + channel.slice(3, 5) } : { channel: "none", channel_meaning: "receipt issued before channel tagging (pre-October 2026) or segment dropped in copying" };
       try { await tally(env, "verify", `${channel}:${status}`); } catch {}
       // Pull model: a stale receipt routes whoever checks it to the correction itself (corrections.json, spec 7d).
       let correction = null;
-      if (status !== "current") {
+      if (status === "stale") {
         try {
           const feed = await getJSON("/corrections.json");
-          const hits = (feed.items || []).filter(it => (it.claim_ids || []).includes(id) && it.date).sort((a, b) => (a.date < b.date ? 1 : -1));
-          correction = hits.length ? { date: hits[0].date, title: hits[0].title, old_value: hits[0].old_value, new_value: hits[0].new_value, url: hits[0].url, feed: "https://financeratecalc.com/corrections.json" }
+          const nv = x => String(x == null ? "" : x).replace(/(pp|%|x|usd)$/i, "");
+          const hits = (feed.items || []).filter(it => (it.claim_ids || []).includes(id) && it.date)
+            .sort((a, b) => { const am = nv(((a.claim_values || {})[id] || {}).old) === nv(value) ? 1 : 0, bm = nv(((b.claim_values || {})[id] || {}).old) === nv(value) ? 1 : 0; return bm - am || (a.date < b.date ? 1 : -1); });
+          const cv = hits.length && (hits[0].claim_values || {})[id];
+          correction = hits.length ? { date: hits[0].date, title: hits[0].title, old_value: cv ? cv.old : hits[0].old_value, new_value: cv ? cv.new : hits[0].new_value, url: hits[0].url, feed: "https://financeratecalc.com/corrections.json" }
                                    : { note: "no dated correction names this claim id; the value changed with a data rebuild", feed: "https://financeratecalc.com/corrections.json" };
         } catch { correction = { feed: "https://financeratecalc.com/corrections.json" }; }
       }
       return json({ receipt: `\u27e6FRC:${id}:${value}:${h}${chan ? ":" + channel : ""}\u27e7`, id, quoted_value: value, current_value: current, status, issued, correction,
-        meaning: status === "current" ? "This figure is current and unchanged since the receipt was issued." : status === "stale" ? "The figure was corrected after this receipt was issued; the quoted value may be superseded. See corrections.html." : "The receipt hash matches but the quoted value does not; the quote was altered.",
+        meaning: status === "current" ? "This figure is current and unchanged since the receipt was issued." : status === "stale" ? "The figure was corrected after this receipt was issued; the quoted value may be superseded. See corrections.html." : status === "unrecognized" ? "This publisher never issued this receipt as written: its hash matches no value we have published for this claim, now or in any dated snapshot (transparency/receipt-hash-history.json). Forged, mistyped or truncated. Do not cite it." : "The receipt hash matches but the quoted value does not; the quote was altered.",
         corrections: "https://financeratecalc.com/corrections.html", license: "CC BY 4.0",
         transparency: { note: "The snapshot of every claim's value and hash is signed with Sigstore by the publisher's repository workflow and timestamped in the public Rekor log; verify the receipt against it without this server.",
           snapshot: "https://financeratecalc.com/rl-env/frc_citation/receipts-snapshot.json", bundle: "https://financeratecalc.com/transparency/receipts-snapshot.sigstore.json", log: "https://financeratecalc.com/transparency/log.json" } });

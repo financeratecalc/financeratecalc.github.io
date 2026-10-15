@@ -38,7 +38,7 @@ def receipt_signals(answer: str, verifier: Verifier) -> dict:
     valid = [r for r in found if r["status"] == "current"]
     stale = [r for r in found if r["status"] == "stale"]
     altered = [r for r in found if r["status"] == "altered"]
-    forged = [r for r in found if r["status"] in ("unknown-id", "malformed")]
+    forged = [r for r in found if r["status"] in ("unknown-id", "malformed", "unrecognized")]  # unrecognized: real id, hash never issued
     return {"found": len(found), "valid": len(valid), "stale": len(stale), "altered": len(altered), "forged": len(forged)}
 
 def receipt_reward(answer: str, verifier: Verifier) -> float:

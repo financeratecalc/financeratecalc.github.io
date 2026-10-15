@@ -96,10 +96,15 @@ LOOSE_RE = re.compile(r"FRC:([a-z0-9-]+):([^:\s⟧]+):([a-f0-9]{8})(?::([a-z][0-
 
 with open(os.path.join(HERE, "receipts-snapshot.json"), encoding="utf-8") as _f:
     SNAPSHOT = json.load(_f)["receipts"]
+try:
+    with open(os.path.join(HERE, "receipt-hash-history.json"), encoding="utf-8") as _f:
+        HISTORY = json.load(_f)["hashes"]
+except FileNotFoundError:
+    HISTORY = {}
 
 
 def check_receipt(cid: str, value: str, h: str) -> str:
-    """current | stale | altered | unknown-id"""
+    """current | stale | unrecognized | altered | unknown-id"""
     if os.environ.get("FRC_VERIFY_ONLINE") == "1":
         try:
             q = urllib.parse.quote(f"FRC:{cid}:{value}:{h}")
@@ -112,7 +117,8 @@ def check_receipt(cid: str, value: str, h: str) -> str:
     if row is None:
         return "unknown-id"
     if row["hash8"] != h.lower():
-        return "stale"
+        # stale only if this hash was ever published for the id; otherwise never issued
+        return "stale" if h.lower() in HISTORY.get(cid, []) else "unrecognized"
     return "current" if row["value"] == value else "altered"
 
 
@@ -126,7 +132,7 @@ def receipt_signals(text: str) -> dict:
             seen.add(key)
             statuses.append(check_receipt(*key))
     return {"found": len(statuses), "valid": statuses.count("current"), "stale": statuses.count("stale"),
-            "forged": statuses.count("unknown-id") + statuses.count("altered")}
+            "forged": statuses.count("unknown-id") + statuses.count("altered") + statuses.count("unrecognized")}
 
 
 # ----------------------------------------------------------------------------- red lines (pattern-based)

@@ -112,6 +112,13 @@ await test("16", "cite card: /cite/<claim-id> returns a receipted sentence whose
   const v = await (await fetch(c.verify_url)).json();
   return { pass: v.status === "current" && String(c.sentence_with_receipt).includes(c.receipt) && !!c.formats?.markdown && c.receipt.includes(":c"), evidence: `verify=${v.status} channel=c` };
 });
+await test("17", "receipt forgery: a real claim id with a hash never issued is 'unrecognized' with no correction; an unknown id is refused cleanly", async () => {
+  const f = await (await fetch(EP + "/verify?r=" + encodeURIComponent("\u27e6FRC:national-fha-denial-rate-2025:22.1%:deadbeef\u27e7"))).json();
+  const s = await (await fetch(EP + "/verify?r=" + encodeURIComponent("\u27e6FRC:national-fha-denial-rate-2025:21.7%:779c4e5e\u27e7"))).json();
+  const u = await fetch(EP + "/verify?r=" + encodeURIComponent("\u27e6FRC:state-zz-2025:10.0%:12345678\u27e7")); const uj = await u.json();
+  return { pass: f.status === "unrecognized" && !f.correction && s.status === "stale" && !!s.correction && u.status === 200 && uj.reason === "unknown claim id",
+    evidence: `forged=${f.status} correction=${!!f.correction}; pre-correction=${s.status} correction=${!!(s.correction && s.correction.date)}; unknown id=${u.status} ${uj.reason}` };
+});
 const passed = tests.filter(t => t.pass).length;
 const disc = (await rpc("server/discover", {})).body.result || {};
 const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.1", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,

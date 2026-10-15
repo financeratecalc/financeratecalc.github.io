@@ -8,7 +8,7 @@ canonical serialisation: keys sorted, no whitespace, SHA-256, first 8 hex chars)
     from verify_offline import Verifier
     v = Verifier(site_root=".")            # repository root
     v.check("⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b⟧")
-    -> {"id": ..., "status": "current" | "stale" | "altered" | "unknown-id" | "malformed"}
+    -> {"id": ..., "status": "current" | "stale" | "unrecognized" | "altered" | "unknown-id" | "malformed"}
 
 Statuses: current  = hash matches today's claim object and the quoted value is today's value
           stale    = hash does not match: the figure was corrected after the receipt was issued
@@ -85,6 +85,15 @@ class Verifier:
             return f"{top}-{br[top]['median_share_pct']}%", {"metric": "denial_reason_median_shares", "top_reason": top, "top_median": br[top]["median_share_pct"], "incomplete_median": inc["median_share_pct"], "incomplete_max": inc["max_share_pct"], "n_lenders": d["n_lenders"], "period": "2025"}
         return None
 
+    def _history(self) -> dict:
+        if not hasattr(self, "_hist"):
+            try:
+                with open(os.path.join(self.root, "transparency", "receipt-hash-history.json"), encoding="utf-8") as f:
+                    self._hist = json.load(f)["hashes"]
+            except (FileNotFoundError, KeyError, ValueError):
+                self._hist = {}
+        return self._hist
+
     def check(self, receipt: str) -> dict:
         m = RECEIPT_RE.search(receipt) or LOOSE_RE.search(receipt)
         if not m:
@@ -100,7 +109,9 @@ class Verifier:
             return {"id": cid, "status": "unknown-id", "quoted_value": value, "issued": issued}
         current, obj = got
         now = sha8(obj)
-        status = "current" if (now == h and current == value) else ("altered" if now == h else "stale")
+        # A non-current hash is "stale" only if the publisher ever published it for this id
+        # (transparency/receipt-hash-history.json); otherwise it was never issued: "unrecognized".
+        status = "current" if (now == h and current == value) else ("altered" if now == h else ("stale" if h in self._history().get(cid, []) else "unrecognized"))
         return {"id": cid, "status": status, "quoted_value": value, "current_value": current, "hash_now": now, "hash_quoted": h, "issued": issued}
 
     def find_all(self, text: str) -> list[dict]:

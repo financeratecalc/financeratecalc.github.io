@@ -56,10 +56,13 @@ def item_id(kind: str, date: str, title: str) -> str:
 # so values and ids are only emitted where a human has read the entry. Keyed by a
 # substring of the entry title; entries not listed get claim_ids [] and null values.
 CURATED = {
-    "Reverse mortgages (HECM)": {"claim_ids": ["national-fha-denial-rate-2025"], "old": "21.7%", "new": "22.1%"},
-    "Widest intra-metro spread": {"claim_ids": ["cleveland-metro-lender-spread-2025"]},
+    "Reverse mortgages (HECM)": {"claim_ids": ["national-fha-denial-rate-2025", "metro-gap-cleveland-oh-2025"], "old": "21.7%", "new": "22.1%",
+                                 "claim_values": {"national-fha-denial-rate-2025": {"old": "21.7%", "new": "22.1%"}, "metro-gap-cleveland-oh-2025": {"old": "73.8pp", "new": "73.7pp"}}},
+    "Widest intra-metro spread": {"claim_ids": ["cleveland-metro-lender-spread-2025", "metro-gap-cleveland-oh-2025"]},
+    "we accused an AI assistant": {"claim_ids": ["cleveland-metro-lender-spread-2025", "metro-gap-cleveland-oh-2025"]},
+    "three state pages and the metro hub": {"claim_ids": ["state-dc-2025", "state-vt-2025", "state-hi-2025"]},
     "national FHA denial rate is 21.7%": {"claim_ids": ["national-fha-denial-rate-2025"], "old": "21.7%", "new": "22.1%"},
-    "Cleveland's intra-metro gap is 73.8": {"claim_ids": ["cleveland-metro-lender-spread-2025"], "old": "73.8", "new": "73.7"},
+    "Cleveland's intra-metro gap is 73.8": {"claim_ids": ["cleveland-metro-lender-spread-2025", "metro-gap-cleveland-oh-2025"], "old": "73.8", "new": "73.7"},
     "corrected or withdrew Cleveland": {"claim_ids": ["cleveland-metro-lender-spread-2025"]},
     "13.6% of FHA denial variation": {"claim_ids": ["door-effect-38pct-2026"], "old": "13.6%", "new": "37.97%"},
     "59% of FHA denial variation": {"claim_ids": ["door-effect-38pct-2026"], "old": "59%", "new": "37.97%"},
@@ -105,6 +108,7 @@ def main() -> None:
             "old_value": c.get("old"),
             "new_value": c.get("new"),
             "claim_ids": c.get("claim_ids", []),
+            **({"claim_values": c["claim_values"]} if c.get("claim_values") else {}),
             "url": f"{SITE}/corrections.html",
         })
 
@@ -123,6 +127,7 @@ def main() -> None:
             "old_value": c.get("old"),
             "new_value": c.get("new"),
             "claim_ids": c.get("claim_ids", []),
+            **({"claim_values": c["claim_values"]} if c.get("claim_values") else {}),
             "url": f"{SITE}/corrections.html",
         })
 
@@ -141,6 +146,7 @@ def main() -> None:
             "old_value": c.get("old"),
             "new_value": c.get("new"),
             "claim_ids": c.get("claim_ids", []),
+            **({"claim_values": c["claim_values"]} if c.get("claim_values") else {}),
             "url": f"{SITE}/corrections.html#correction-atoms",
         })
 
