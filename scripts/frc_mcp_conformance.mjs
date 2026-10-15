@@ -7,6 +7,8 @@
 import fs from "node:fs";
 import crypto from "node:crypto";
 
+// frc-conformance-ua: identify our own suites to /verify so they are counted as ours
+{ const _f = globalThis.fetch; globalThis.fetch = (u, o = {}) => _f(u, { ...o, headers: { "User-Agent": "frc-conformance", ...(o.headers || {}) } }); }
 const EP = process.argv[2] || "https://frc-mcp.ziyetis.workers.dev";
 const OUT = process.argv[3] || "eval/frc-mcp-conformance.json";
 const META26 = { "io.modelcontextprotocol/protocolVersion": "2026-07-28", "io.modelcontextprotocol/clientInfo": { name: "frc-conformance", version: "1" },

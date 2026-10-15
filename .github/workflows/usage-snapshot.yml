@@ -31,6 +31,19 @@ jobs:
                  "days": by_day, "external_calls_total": sum(d["external_calls"] for d in by_day.values()),
                  "external_clients": by_client.most_common(30), "external_tools": by_tool.most_common(30),
                  "verify_by_channel_status": dict(verify), "raw_note": u.get("note")}
+          # Exact per-request verify log (worker 1.33+): who is checking receipts, excluding our own suites.
+          vl = u.get("verify_log") or {}
+          ext = collections.Counter(); ours = 0; ext_by_day = {}
+          for day, groups in sorted(vl.items()):
+              for g, n in groups.items():
+                  ch, st, cls, via, cc = (g.split("|") + ["?"] * 5)[:5]
+                  if cls == "ours":
+                      ours += n; continue
+                  ext[f"{ch[:1]}|{st}|{cls}|{via}|{cc}"] += n
+                  ext_by_day[day] = ext_by_day.get(day, 0) + n
+          out["verify_log_external"] = {"since": min(vl) if vl else None, "total": sum(ext.values()), "ours_excluded": ours,
+                                        "by_day": ext_by_day, "groups": ext.most_common(40),
+                                        "key": "channel letter|status|requester class|via|country; class 'script' can still be us (manual curl) and 'browser' can be Ziya"}
           json.dump(out, open("eval/usage-snapshot.json", "w"), indent=1)
           print(json.dumps(out, indent=1)[:4000])
           PY

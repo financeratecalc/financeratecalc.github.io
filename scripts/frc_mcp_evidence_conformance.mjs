@@ -5,6 +5,8 @@
 import fs from "node:fs";
 import crypto from "node:crypto";
 
+// frc-conformance-ua: identify our own suites to /verify so they are counted as ours
+{ const _f = globalThis.fetch; globalThis.fetch = (u, o = {}) => _f(u, { ...o, headers: { "User-Agent": "frc-evidence-conformance", ...(o.headers || {}) } }); }
 const EP = process.argv[2] || "https://frc-mcp.ziyetis.workers.dev";
 const OUT = process.argv[3] || "eval/frc-mcp-evidence-conformance.json";
 const FX = JSON.parse(fs.readFileSync("fixtures/mortgage-evidence/fixtures.json", "utf8"));

@@ -590,6 +590,33 @@ function labelFromRequest(request) {
   const ua = (request.headers.get("User-Agent") || "").split(/[\s/]/)[0].toLowerCase().replace(/[^a-z0-9._-]/g, "-").slice(0, 40);
   return ua ? `ua-${ua}` : "unknown";
 }
+// Verify event log (v1.33): one KV key per /verify request, so concurrent checks are never lost
+// (the tally above is read-modify-write and drops updates under bursts). Recorded per request:
+// channel, status, requester class (browser / named bot / script / ours / none, from the
+// User-Agent), whether the request came from a financeratecalc.com page, and the Cloudflare
+// country code. No IP, no full User-Agent, no receipt text.
+const BOT_RX = [["googlebot", /googlebot|google-inspectiontool|googleother/i], ["bingbot", /bingbot|bingpreview/i], ["gptbot", /gptbot|oai-searchbot|chatgpt-user/i],
+  ["claudebot", /claudebot|claude-user|claude-searchbot|anthropic/i], ["perplexitybot", /perplexity/i], ["bytespider", /bytespider|bytedance|doubao/i],
+  ["applebot", /applebot/i], ["yandex", /yandex/i], ["baidu", /baiduspider/i], ["duckduckbot", /duckduck/i], ["ccbot", /ccbot/i], ["meta", /facebookexternalhit|meta-externalagent/i],
+  ["other-bot", /bot|crawler|spider|fetcher|scraper|headless/i]];
+function requesterClass(request) {
+  const ua = request.headers.get("User-Agent") || "";
+  if (!ua) return "none";
+  if (/^frc-|frc-conformance|frc-evidence-conformance|frc-usage-snapshot/i.test(ua)) return "ours";
+  for (const [name, rx] of BOT_RX) if (rx.test(ua)) return "bot:" + name;
+  if (/curl|python|node|undici|axios|go-http|wget|java\/|okhttp|postman|insomnia|httpie|deno|bun\//i.test(ua)) return "script";
+  if (/mozilla\//i.test(ua)) return "browser";
+  return "other";
+}
+async function logVerify(env, request, channel, status) {
+  if (!env || !env.CREDITS) return;
+  const day = new Date().toISOString().slice(0, 10);
+  const ref = request.headers.get("Referer") || "";
+  const meta = { ch: channel, st: status, cls: requesterClass(request), via: /^https:\/\/(www\.)?financeratecalc\.com\//.test(ref) ? "site-page" : (ref ? "other-site" : "direct"),
+    cc: (request.cf && request.cf.country) || "XX" };
+  const key = `vlog:${day}:${Date.now().toString(36)}:${Math.random().toString(36).slice(2, 8)}`;
+  try { await env.CREDITS.put(key, "", { expirationTtl: 60 * 60 * 24 * 400, metadata: meta }); } catch {}
+}
 async function tally(env, client, event) {
   // Deliberately cheap: only real tool calls are counted, and the running count is
   // stored in KV metadata so reading the whole tally needs one list instead of one
@@ -918,7 +945,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.32.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.33.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1100,6 +1127,7 @@ export default {
       const CH = { m: "MCP tool output", w: "site page", p: "answer page", c: "cite card", f: "evidence footnote on a site page", l: "lender page", s: "state page", t: "top-100 table", h: "Hugging Face dataset", a: "API JSON", r: "RL environment" };
       const issued = chan ? { channel: channel[0], channel_meaning: CH[channel[0]] || "unknown channel", issued_month: "20" + channel.slice(1, 3) + "-" + channel.slice(3, 5) } : { channel: "none", channel_meaning: "receipt issued before channel tagging (pre-October 2026) or segment dropped in copying" };
       try { await tally(env, "verify", `${channel}:${status}`); } catch {}
+      try { await logVerify(env, request, channel, status); } catch {}
       // Pull model: a stale receipt routes whoever checks it to the correction itself (corrections.json, spec 7d).
       let correction = null;
       if (status === "stale") {
@@ -1144,7 +1172,16 @@ export default {
         rows[day][client] = rows[day][client] || {};
         rows[day][client][event] = v;
       }
-      return json({ generated: new Date().toISOString(),
+      const vkeys = []; let vc;
+      do { const page = await env.CREDITS.list({ prefix: "vlog:", limit: 1000, cursor: vc }); vkeys.push(...page.keys); vc = page.list_complete ? undefined : page.cursor; } while (vc);
+      const verify_log = {};
+      for (const k of vkeys) {
+        const day = k.name.split(":")[1]; const m = k.metadata || {};
+        const g = `${m.ch || "?"}|${m.st || "?"}|${m.cls || "?"}|${m.via || "?"}|${m.cc || "XX"}`;
+        verify_log[day] = verify_log[day] || {}; verify_log[day][g] = (verify_log[day][g] || 0) + 1;
+      }
+      return json({ generated: new Date().toISOString(), verify_log,
+        verify_log_note: "Exact count of /verify requests since 2026-10-16, one KV key each, grouped as channel|status|requester class|via|country. Requester class comes from the User-Agent (browser, bot:<name>, script, ours = our own suites and checks, none). via: site-page = sent from a financeratecalc.com page (e.g. a reader pressing verify), direct = no referrer. No IP, no full User-Agent, no receipt text.",
         note: "Counts of MCP tool calls by day, by the client name reported at initialize, and by tool. Handshakes are not counted. No IP, no user, no submitted data — only counts. Published openly because we ask others to be measurable and should be measurable ourselves.",
         self_test_clients: "clients matching frc-selftest, curl, node, python, postman or insomnia are our own probes",
         days: rows });
