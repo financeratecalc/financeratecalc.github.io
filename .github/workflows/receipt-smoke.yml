@@ -1,0 +1,60 @@
+name: Receipt smoke test (manual)
+# A handful of receipts of every kind against the live /verify: current ones must verify current,
+# an edited value must be caught, a forged hash must be rejected as stale/unknown, and a
+# pre-correction receipt must come back stale with a pointer to the correction.
+# Manual only; each request appears in the worker's verify tally (subtract these runs).
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run cases
+        run: |
+          python3 - <<'PY'
+          import json, urllib.parse, urllib.request, datetime
+          EP = "https://frc-mcp.ziyetis.workers.dev/verify?r="
+          cases = [
+            ("national, footnote",        "⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:f2610⟧", "current"),
+            ("national, answer page",     "⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:p2610⟧", "current"),
+            ("state CA, state page",      "⟦FRC:state-ca-2025:21.7%:a4885178:s2610⟧", "current"),
+            ("state VT, fixed yesterday", "⟦FRC:state-vt-2025:27.4%:fcc8bb0d:s2610⟧", "current"),
+            ("lender Flat Branch, top-100","⟦FRC:lender-flat-branch-mortgage-2025:1.8%:24646f10:t2610⟧", "current"),
+            ("metro Cleveland, cite card","⟦FRC:metro-gap-cleveland-oh-2025:73.7pp:369427ab:c2610⟧", "current"),
+            ("small-loan Idaho",          "⟦FRC:small-loan-penalty-id-2025:4.45x:20b241fb:w2610⟧", "current"),
+            ("rule FHFA 2026, live gate", "⟦FRC:rule-fhfa-conforming-loan-limits-2026:832750usd:ef8fd8a2:m2610⟧", "current"),
+            ("EDITED value (22.1 -> 19.9)","⟦FRC:national-fha-denial-rate-2025:19.9%:ebf6b00b:f2610⟧", "hash-current-value-mismatch"),
+            ("FORGED hash",               "⟦FRC:national-fha-denial-rate-2025:22.1%:deadbeef:f2610⟧", "stale"),
+            ("pre-correction national 21.7","⟦FRC:national-fha-denial-rate-2025:21.7%:779c4e5e⟧", "stale"),
+            ("pre-correction Cleveland 73.8","⟦FRC:metro-gap-cleveland-oh-2025:73.8pp:86eccdad⟧", "stale"),
+            ("unknown claim id",          "⟦FRC:state-zz-2025:10.0%:12345678:f2610⟧", "unknown"),
+          ]
+          out = {"run_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), "note": "Our own test: these requests appear in the verify tally; subtract them.", "cases": []}
+          ok = 0
+          for name, r, want in cases:
+              try:
+                  req = urllib.request.Request(EP + urllib.parse.quote(r), headers={"User-Agent": "frc-receipt-smoke"})
+                  try: j = json.load(urllib.request.urlopen(req, timeout=30))
+                  except urllib.error.HTTPError as e: j = json.loads(e.read() or b"{}")
+              except Exception as e:
+                  j = {"error": type(e).__name__}
+              got = j.get("status") or ("unknown" if j.get("reason") == "unknown claim id" else j.get("reason") or j.get("error"))
+              corr = j.get("correction")
+              row = {"case": name, "expected": want, "got": got, "pass": got == want, "current_value": j.get("current_value"),
+                     "channel": (j.get("issued") or {}).get("channel_meaning"), "correction": corr}
+              ok += row["pass"]; out["cases"].append(row)
+              print(("PASS " if row["pass"] else "FAIL ") + f"{name}: want {want}, got {got}" + (f" | correction: {json.dumps(corr)[:160]}" if corr else ""))
+          out["passed"] = ok; out["total"] = len(cases)
+          json.dump(out, open("eval/receipt-smoke.json", "w"), indent=1, ensure_ascii=False)
+          print(ok, "/", len(cases))
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add eval/receipt-smoke.json
+          git commit -m "receipt smoke test [skip ci]" || exit 0
+          git pull --rebase && git push
