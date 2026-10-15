@@ -5,7 +5,7 @@
  "server": {
   "name": "financeratecalc",
   "title": "FinanceRateCalc mortgage evidence",
-  "version": "1.31.1"
+  "version": "1.32.0"
  },
  "protocol_versions": [
   "2026-07-28",
@@ -13,9 +13,9 @@
   "2025-06-18",
   "2025-03-26"
  ],
- "generated_at": "2026-10-14T16:08:43.082Z",
- "tests": 16,
- "passed": 16,
+ "generated_at": "2026-10-15T09:46:12.770Z",
+ "tests": 17,
+ "passed": 17,
  "conformance": "PASS",
  "method": "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
  "results": [
@@ -114,7 +114,13 @@
    "name": "cite card: /cite/<claim-id> returns a receipted sentence whose receipt verifies as current",
    "pass": true,
    "evidence": "verify=current channel=c"
+  },
+  {
+   "id": "17",
+   "name": "receipt forgery: a real claim id with a hash never issued is 'unrecognized' with no correction; an unknown id is refused cleanly",
+   "pass": true,
+   "evidence": "forged=unrecognized correction=false; pre-correction=stale correction=true; unknown id=200 unknown claim id"
   }
  ],
- "sha256": "bb30be0d677c7026f7565ff56cdd74d06bfddd4144c96603e7c1cbb9c796a204"
+ "sha256": "b17751739cecc3d10fb8617fb68de8c20e5842b2792020c5c7a9e61ac00ed7fc"
 }
