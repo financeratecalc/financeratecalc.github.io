@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT');</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html><html lang="en"><head><!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT',{send_page_view:false});</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Page not found | FinanceRateCalc</title><meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@400;600&family=DM+Mono&display=swap" rel="stylesheet">
 <style>body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.6}
@@ -29,7 +29,23 @@ a{color:#C8A84B;text-decoration:none}.k{font-family:'DM Mono',monospace;font-siz
     var el=document.getElementById('dym'); if(el){ el.innerHTML='Taking you to the nearest published page: <a href="'+u+'">'+u+'</a>'; }
     setTimeout(function(){ location.replace(u); }, 150); };
   var nearest=function(arr,n){ var best=null,bd=1e18; for(var i=0;i<arr.length;i++){ var d=Math.abs(arr[i]-n); if(d<bd){bd=d;best=arr[i];} } return best; };
-  var slugNear=function(arr,s){ s=s.toLowerCase(); if(arr.indexOf(s)>=0) return s; var head=s.split('-')[0]; var c=arr.filter(function(x){return x.indexOf(head)===0;}); return c.length?c[0]:null; };
+  // slug match (2026-10-16): exact, else the candidate sharing the most words (prefixes count: "fran" ~ "francisco"),
+  // which must keep the same two-letter state ending if the request has one; no confident match -> null (generic resolver).
+  var ST={alabama:'al',alaska:'ak',arizona:'az',arkansas:'ar',california:'ca',colorado:'co',connecticut:'ct',delaware:'de',florida:'fl',georgia:'ga',hawaii:'hi',idaho:'id',illinois:'il',indiana:'in',iowa:'ia',kansas:'ks',kentucky:'ky',louisiana:'la',maine:'me',maryland:'md',massachusetts:'ma',michigan:'mi',minnesota:'mn',mississippi:'ms',missouri:'mo',montana:'mt',nebraska:'ne',nevada:'nv',ohio:'oh',oklahoma:'ok',oregon:'or',pennsylvania:'pa',tennessee:'tn',texas:'tx',utah:'ut',vermont:'vt',virginia:'va',washington:'wa',wisconsin:'wi',wyoming:'wy'};
+  var tok=function(x){ return x.split('-').filter(Boolean).map(function(t){ return /^\d+$/.test(t)?String(+t):(ST[t]||t); }); };
+  // slug match (2026-10-16): exact, else the candidate sharing the most words (a prefix of 4+ letters counts: "fran" ~
+  // "francisco"); a two-letter state at the end must match; no confident match -> null, and the generic resolver decides.
+  var slugNear=function(arr,s){ s=s.toLowerCase().replace(/\.html?$/,''); if(arr.indexOf(s)>=0) return s;
+    var q=tok(s), st=q.length>1&&q[q.length-1].length===2?q.pop():null, best=null, bs=0;
+    var ties=[];
+    for(var i=0;i<arr.length;i++){ var c=tok(arr[i]), cst=c.length>1&&c[c.length-1].length===2?c[c.length-1]:null; if(st && cst && cst!==st) continue; var sc=0;
+      for(var j=0;j<q.length;j++){ for(var k=0;k<c.length;k++){ var a=q[j],b=c[k]; if(a===b||(a.length>=4&&b.indexOf(a)===0)){ sc++; break; } } }
+      if(sc>bs){bs=sc;best=arr[i];ties=[arr[i]];} else if(sc===bs&&sc>0){ ties.push(arr[i]); } }
+    var need=Math.max(1,Math.ceil(q.length*0.6)); if(bs<need) return null;
+    // ties: the shortest slug wins (dallas-tx over dallas-plano-irving-tx), but never across different states (portland-or vs portland-me)
+    var sts={}; ties.forEach(function(x){ var c=tok(x); sts[c.length>1&&c[c.length-1].length===2?c[c.length-1]:'']=1; });
+    if(!st && Object.keys(sts).length>1) return null;
+    ties.sort(function(a,b){return a.length-b.length;}); return ties[0]; };
   fetch('/assets/404-manifest.json').then(function(r){return r.json();}).then(function(M){
     var m;
     if((m=path.match(/^\/how-much-house-can-a-(\d+)-year-old-afford/))){ var n=nearest(M.age,+m[1]); if(n!==null) return go('/how-much-house-can-a-'+n+'-year-old-afford.html','age'); }
@@ -42,8 +58,32 @@ a{color:#C8A84B;text-decoration:none}.k{font-family:'DM Mono',monospace;font-siz
     if((m=path.match(/^\/metro\/([a-z0-9-]+)/))){ var c=slugNear(M.metro,m[1]); if(c) return go('/metro/'+c+'.html','metro'); }
     if((m=path.match(/^\/mortgage-([a-z-]+)/))){ var c=slugNear(M.mortgage_city,m[1]); if(c) return go('/mortgage-'+c+'.html','mortgage_city'); var c2=slugNear(M.metro,m[1]); if(c2) return go('/metro/'+c2+'.html','metro_from_mortgage'); }
     if((m=path.match(/^\/denial-code-([a-z0-9-]+)/))){ var c=slugNear(M.denial_code,m[1]); return go(c?'/denial-code-'+c+'.html':'/denial-code-lookup.html','denial_code'); }
-    if(/\.html$/.test(path)===false && path!=='/' ){ var guess=path.replace(/\/$/,'')+'.html'; return fetch(guess,{method:'HEAD'}).then(function(r){ if(r.ok) go(guess,'add_html'); }); }
-  }).catch(function(){});
+    return generic();
+  }).catch(function(){ generic(); });
+  // Generic resolver (2026-10-16): any other miss is matched against every published path (assets/404-paths.json).
+  // 1) same URL with the numbers replaced: nearest numbers win; 2) otherwise the page in the same folder whose slug
+  // shares the most words (at least 60%). If nothing qualifies, the page view is recorded as a real 404.
+  function generic(){
+    fetch('/assets/404-paths.json').then(function(r){return r.json();}).then(function(P){
+      var p=path.toLowerCase().replace(/\.(html?|php|aspx?)$/,'').replace(/\/+$/,'').replace(/_/g,'-');
+      if(!p){ return miss(); }
+      if(P.indexOf(p)>=0) return go(p+'.html','case_or_extension');
+      var skel=function(x){return x.replace(/\d+(\.\d+)?/g,'#');}, nums=function(x){return (x.match(/\d+(\.\d+)?/g)||[]).map(Number);};
+      var sk=skel(p), n0=nums(p), best=null, bd=1e18;
+      for(var i=0;i<P.length;i++){ if(skel(P[i])!==sk) continue; var n1=nums(P[i]), d=0; for(var j=0;j<n0.length;j++){ d+=Math.abs(n0[j]-n1[j])/Math.max(n0[j],n1[j],1); } if(d<bd){bd=d;best=P[i];} }
+      if(best) return go(best+'.html','same_template');
+      var dir=p.slice(0,p.lastIndexOf('/')+1), words=function(x){ return x.slice(x.lastIndexOf('/')+1).split('-').filter(function(w){return w.length>1 && !/^\d+$/.test(w);}); };
+      // a different place is never "similar": the words that differ must not name a state, a state code or a city
+      var PLACE={}; ['alabama','alaska','arizona','arkansas','california','colorado','connecticut','delaware','florida','georgia','hawaii','idaho','illinois','indiana','iowa','kansas','kentucky','louisiana','maine','maryland','massachusetts','michigan','minnesota','mississippi','missouri','montana','nebraska','nevada','hampshire','jersey','mexico','york','carolina','dakota','ohio','oklahoma','oregon','pennsylvania','rhode','tennessee','texas','utah','vermont','virginia','washington','west','wisconsin','wyoming','columbia','al','ak','az','ar','ca','co','ct','de','dc','fl','ga','hi','id','il','in','ia','ks','ky','la','me','md','ma','mi','mn','ms','mo','mt','ne','nv','nh','nj','nm','ny','nc','nd','oh','ok','or','pa','ri','sc','sd','tn','tx','ut','vt','va','wa','wv','wi','wy','pr'].forEach(function(x){PLACE[x]=1;});
+      P.forEach(function(x){ var m2=x.match(/-in-([a-z-]+)$/); if(m2) m2[1].split('-').forEach(function(t){ if(t.length>1) PLACE[t]=1; }); });
+      var placeDiff=function(a,b){ for(var i=0;i<a.length;i++){ if(b.indexOf(a[i])<0 && PLACE[a[i]]) return true; } return false; };
+      var w0=words(p), bj=0; best=null;
+      for(var k=0;k<P.length;k++){ if(P[k].slice(0,P[k].lastIndexOf('/')+1)!==dir) continue; var w1=words(P[k]), inter=0; for(var t=0;t<w0.length;t++){ if(w1.indexOf(w0[t])>=0) inter++; } var uni=w0.length+w1.length-inter; var jac=uni?inter/uni:0; if(jac>bj && !placeDiff(w0,w1) && !placeDiff(w1,w0)){bj=jac;best=P[k];} }
+      if(best && bj>=0.6) return go(best+'.html','similar_slug');
+      miss();
+    }).catch(miss);
+  }
+  function miss(){ try{ if(typeof gtag!=='undefined') gtag('event','page_view',{page_title:'Page not found | FinanceRateCalc'}); }catch(e){} }
 })();
 </script>
 </body></html>
