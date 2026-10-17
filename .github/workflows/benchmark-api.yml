@@ -8,6 +8,9 @@ on:
       questions:
         description: "comma-separated ids, empty = all twelve"
         default: ""
+      systems:
+        description: "comma-separated subset (openai,google,xai,anthropic); empty = all; a subset merges into the existing file"
+        default: ""
 permissions:
   contents: write
 jobs:
@@ -21,7 +24,7 @@ jobs:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python3 scripts/benchmark_api_run.py --questions "${{ inputs.questions }}" --out eval/benchmark-2026-10-api.json
+        run: python3 scripts/benchmark_api_run.py --questions "${{ inputs.questions }}" --out eval/benchmark-2026-10-api.json --systems "${{ inputs.systems }}"
       - name: Commit raw answers
         run: |
           git config user.name "github-actions[bot]"
