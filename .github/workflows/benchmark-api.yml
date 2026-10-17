@@ -1,0 +1,31 @@
+name: Benchmark — API condition (manual, costs API credit)
+# Provider APIs with web search, one fresh call per question. A separate series from the
+# clean-session consumer administrations. Manual only. Estimated cost for 12 questions x 4
+# systems with small models: well under 1 USD.
+on:
+  workflow_dispatch:
+    inputs:
+      questions:
+        description: "comma-separated ids, empty = all twelve"
+        default: ""
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ask
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python3 scripts/benchmark_api_run.py --questions "${{ inputs.questions }}" --out eval/benchmark-2026-10-api.json
+      - name: Commit raw answers
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add eval/benchmark-2026-10-api.json
+          git commit -m "benchmark API condition, raw answers [skip ci]" || exit 0
+          git pull --rebase && git push
