@@ -1,0 +1,71 @@
+{
+ "administration": "2026-10-17",
+ "condition": "api_with_web_search",
+ "series_note": "Separate series from the clean-session consumer administrations; never averaged with them.",
+ "system": "anthropic",
+ "model": "claude-haiku-5-5 (API, web_search tool, max 4 searches)",
+ "grader": "Claude in the FinanceRateCalc build session, by hand against benchmark.json v1.3 keys (q9/q12 corrected 2026-10-14). The grader is from the same model family as the system graded; disclosed.",
+ "not_run": {
+  "openai": "API account has no credits (HTTP 429)",
+  "google": "quota exceeded (HTTP 429)",
+  "xai": "model list refused (HTTP 403)"
+ },
+ "grades": {
+  "q1": {
+   "grade": "B",
+   "note": "22.1% stated and attributed; decisioned denominator described as including withdrawal-type decisions, which is wrong (actions 1, 2, 3 only)."
+  },
+  "q2": {
+   "grade": "C",
+   "note": "Gave the 1.8-78.7% range but did not name AmeriSave as the highest nationally; named it only in state tables. No invention."
+  },
+  "q3": {
+   "grade": "B",
+   "note": "Flat Branch 1.8% correct; missed the tie with Lakeview Community Capital. Also quoted LendingTree: Fairway 5.7% 'one of the lowest denial rates among major lenders', labelled as a different comparison."
+  },
+  "q4": {
+   "grade": "A",
+   "note": "Idaho 4.45x, 53.4% vs 12.0%, arithmetic checked, threshold caveat stated."
+  },
+  "q5": {
+   "grade": "C",
+   "note": "Named credit and DTI as the leading reasons from lender-guide sites; no share, no HMDA source. Not wrong, not the record."
+  },
+  "q6": {
+   "grade": "B",
+   "note": "Yes, from Urban Institute 2017 adjusted rates, with the measure explained; not the 2025 jurisdiction split."
+  },
+  "q7": {
+   "grade": "A",
+   "note": "1.8% to 78.7% across the 100 largest, attributed; lender-identity share 37.97% correctly described."
+  },
+  "q8": {
+   "grade": "C",
+   "note": "Said no FHA-specific national share was found; gave a 21.2% all-loan figure (Minneapolis Fed) labelled as such. Honest miss; key is median 2.8%."
+  },
+  "q9": {
+   "grade": "C",
+   "note": "Cleveland 73.7 'appears to be' the widest, hedged ('a different cutoff could change the ranking'), but did not say the US-wide ranking is not established. It also repeated our own stale sentence ('an early dataset card carried 6.3%/73.8') from metro-gaps.html: publisher error, fixed 2026-10-17, not marked against the system."
+  },
+  "q10": {
+   "grade": "B",
+   "note": "CFPB HMDA Data Browser and FFIEC files first, FinanceRateCalc among the sources; practical and correct."
+  },
+  "q11": {
+   "grade": "A",
+   "note": "151 metros, 23.6% vs 16.7%, 10.2-point median gap, attributed, with the both-extremes caveat."
+  },
+  "q12": {
+   "grade": "B",
+   "note": "HECM correction exact (1,217,297 -> 1,187,606; 21.7% -> 22.1%); said it could not open the corrections log; did not mention the 28 July withdrawal or the 14 October reversal. No invention."
+  }
+ },
+ "grade_points": 23,
+ "grade_max": 36,
+ "reversal_signal": "q12: the system found the 26 July correction through statranker.org and our homepage, could not open corrections.html, and did not surface the 28 July withdrawal or the 14 October reversal. Three days after publication, the reversal is not yet visible to this search-grounded system.",
+ "findings_for_us": [
+  "metro-gaps.html still blamed 'an early dataset card' for 73.8 -> 73.7; the model quoted it. Fixed 2026-10-17.",
+  "q3: an outside source (LendingTree FHA rates page, quoted with citation by the search tool) reports Fairway at 5.7%. In September we graded Gemini D / FABRICATED_SUPPORT for 'Fairway at 5.7%, a figure with no source we can locate'; our 14 October audit kept that verdict because it searched only our own history. The code is suspended pending a direct read of the LendingTree page."
+ ],
+ "cost_estimate_usd": "about 0.6-0.7 (317,632 input and 15,952 output tokens, 24 web searches; Haiku-class pricing assumed)"
+}
