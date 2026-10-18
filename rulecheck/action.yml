@@ -1,0 +1,29 @@
+name: "FRC Rule Watch"
+description: "Fails CI when code or content uses a US mortgage rule constant (FHA/conforming loan limits, FHA MIP, VA funding fee) after it stopped being valid."
+author: "FinanceRateCalc"
+branding:
+  icon: "calendar"
+  color: "yellow"
+inputs:
+  path:
+    description: "Directory to scan"
+    default: "."
+  fail-on:
+    description: "stale (default) | expiring (also fail when a current value expires within warn-days) | never"
+    default: "stale"
+  warn-days:
+    description: "Warn this many days before a current value expires"
+    default: "75"
+  exclude:
+    description: "Comma-separated glob patterns to skip, relative to path"
+    default: ""
+  constants:
+    description: "Constants table (file path or URL). Default: the table shipped with this version."
+    default: ""
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        C="${{ inputs.constants }}"; [ -z "$C" ] && C="${{ github.action_path }}/constants.json"
+        python3 "${{ github.action_path }}/rulecheck.py" --path "${{ inputs.path }}" --fail-on "${{ inputs.fail-on }}" --warn-days "${{ inputs.warn-days }}" --exclude "${{ inputs.exclude }}" --constants "$C"

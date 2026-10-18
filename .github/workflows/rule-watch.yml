@@ -1,0 +1,17 @@
+name: Rule Watch (dogfood on this site)
+on:
+  push:
+    branches: [main]
+    paths: ["**/*.html", "rulecheck/**"]
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+jobs:
+  rule-watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./rulecheck
+        with:
+          fail-on: stale
+          exclude: "eval/*,rulecheck/*,rl-env/*,scripts/*,fixtures/*,examples/*,.github/*,corrections.*,case-files/*"
