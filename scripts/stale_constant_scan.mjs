@@ -15,6 +15,15 @@ const QUERIES = [
   { q: '"0.85" "annual MIP" FHA', stale: "0.85% annual MIP", num: 0.85, year: 2022, meaning: "pre-2023-03-20 rate", current: "0.55% for the >15y, <=$726,200, >95% LTV cell since ML 2023-05", current_num: 0.55, source: "https://www.hud.gov/sites/dfiles/OCHCO/documents/2023-05hsgml.pdf", rule: "frc:rule:hud-ml-2023-05-annual-mip", repair_case: "RP01" },
   { q: '"2.30" "funding fee" VA', stale: "2.30% VA funding fee", num: 2.3, year: 2022, meaning: "2020-2023 first-use rate", current: "2.15% since 2023-04-07", current_num: 2.15, source: "https://www.va.gov/housing-assistance/home-loans/funding-fee-and-closing-costs/", rule: "frc:rule:va-funding-fee-2023-04-07", repair_case: "RP01" },
 ];
+// STALE_SET=2026 (the pre-registered 2027-01-02 re-scan): the 2026 values are the stale set; the 2027 values are read from rules/index.json if present.
+if (process.env.STALE_SET === "2026") {
+  QUERIES.length = 0;
+  QUERIES.push(
+    { q: '"832,750" conforming', stale: "$832,750", num: 832750, year: 2026, meaning: "2026 conforming baseline", current: "the 2027 value (rules/fhfa-conforming-loan-limits-2027.json)", current_num: 0, source: "https://www.fhfa.gov/", rule: "frc:rule:fhfa-conforming-loan-limits-2027", repair_case: "RP05" },
+    { q: '"541,287" FHA', stale: "$541,287", num: 541287, year: 2026, meaning: "2026 FHA one-unit floor", current: "the 2027 value (rules/fha-forward-loan-limits-2027.json)", current_num: 0, source: "https://www.hud.gov/", rule: "frc:rule:fha-forward-loan-limits-2027", repair_case: "RP05" },
+    { q: '"1,249,125" FHA', stale: "$1,249,125", num: 1249125, year: 2026, meaning: "2026 FHA/conforming ceiling", current: "the 2027 value", current_num: 0, source: "https://www.hud.gov/", rule: "frc:rule:fha-forward-loan-limits-2027", repair_case: "RP03" });
+}
+const OUT = process.env.SCAN_OUT || "eval/stale-constants-scan";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const hits = [];
 for (const Q of QUERIES) {
@@ -38,8 +47,8 @@ function classify(line, ctx, Q, path) {
   const yearsNear = [...ctx.matchAll(/\b(20\d{2})\b/g)].map(m => Number(m[1]));
   const ownYearLine = yearsLine.includes(Q.year) || (Q.role_check && yearsLine.includes(2023));
   const ownYear = ownYearLine || yearsNear.includes(Q.year);
-  const currentLine = /\b(current|currently|today|now|this year|as of 2026|for 2026|in 2026|2026)\b/.test(l);
-  const laterYear = yearsNear.some(y => y >= 2026), currentWord = currentLine || /\b(current|currently|today|now|this year)\b/.test(win);
+  const NY = Q.year + 1; const currentLine = new RegExp("\\b(current|currently|today|now|this year|as of " + NY + "|for " + NY + "|in " + NY + "|" + NY + ")\\b").test(l);
+  const laterYear = yearsNear.some(y => y > Q.year), currentWord = currentLine || /\b(current|currently|today|now|this year)\b/.test(win);
   const hasCurrentValue = ctx.replace(/,/g, "").includes(String(Q.current_num).replace(/,/g, ""));
   if (hasCurrentValue) return { cls: "changelog", why: "the current value appears beside the old one" };
   // a figure labelled with its own year on the same line is historical and correct, unless that same line calls it current
@@ -77,10 +86,10 @@ const repos = Object.values(byRepo).sort((a, b) => ORDER[a.top_class] - ORDER[b.
 const counts = {}; for (const r of repos) for (const f of r.files) counts[f.class] = (counts[f.class] || 0) + 1;
 const out = { scan: "stale-mortgage-constants", generated: new Date().toISOString(), method: "GitHub code search for superseded FHA/FHFA/MIP/VA constants, then each file is fetched and the carrying line classified deterministically (dated_correct / presented_as_current / test_or_mock / changelog / role_misuse_candidate / unresolved) against the official value and source. No model. Nothing is posted; drafts exist only for presented_as_current and role_misuse_candidate, and a human reads the file before any draft leaves this repository.", classes: counts, queries: QUERIES.map(q => q.q), total_hits: hits.filter(h => h.repo).length, repos_with_hits: repos.length, errors: hits.filter(h => h.error), repos };
 fs.mkdirSync("eval", { recursive: true });
-fs.writeFileSync("eval/stale-constants-scan.json", JSON.stringify(out, null, 1) + "\n");
+fs.writeFileSync(OUT + ".json", JSON.stringify(out, null, 1) + "\n");
 const md = [`# Stale mortgage constants in public code — scan ${out.generated.slice(0, 10)}`, ``, `${out.total_hits} hits in ${repos.length} repositories. Each line classified from the file itself; nothing posted. Classes: ${Object.entries(counts).map(([k, v]) => k + " " + v).join(" · ")}.`, ``,
   `- **presented_as_current**: an old figure called current / 2026, or an unlabelled constant in code. A draft note exists in the JSON; a human reads the file before it goes anywhere.`, `- **role_misuse_candidate**: $726,200 named as a loan limit.`, `- **test_or_mock**: in a test, fixture, mock or benchmark path: an external-claim mismatch, not necessarily a project bug.`, `- **dated_correct**: labelled with its own year; historical and correct; no action.`, `- **changelog**: the current value sits beside the old one.`, `- **unresolved**: no signal either way.`, ``,
   `| class | repo | file:line | excerpt | stale → official |`, `|---|---|---|---|---|`];
 for (const r of repos) for (const f of r.files) md.push(`| ${f.class} | [${r.repo}](${r.repo_url}) | [${f.path.split("/").pop()}${f.line ? ":" + f.line : ""}](${f.url}) | ${(f.excerpt || f.why).replace(/\|/g, "\\|").slice(0, 120)} | ${f.stale} → ${f.current} |`);
-fs.writeFileSync("eval/stale-constants-scan.md", md.join("\n") + "\n");
+fs.writeFileSync(OUT + ".md", md.join("\n") + "\n");
 console.log(`${out.total_hits} hits, ${repos.length} repos -> eval/stale-constants-scan.{json,md}`);
