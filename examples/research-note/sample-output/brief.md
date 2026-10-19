@@ -16,4 +16,4 @@ Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical
 
 **Provenance.** Data: CFPB/FFIEC HMDA public record, 2025. Passport: https://financeratecalc.com/claims/national-fha-denial-rate-2025.json · Use contract: https://financeratecalc.com/claims/national-fha-denial-rate-2025.contract.json · Verify the receipt at any later date: https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC%3Anational-fha-denial-rate-2025%3A22.1%25%3Aebf6b00b%3Ac2610%E2%9F%A7
 
-Status at 2026-10-12T18:37:51.129Z: **verified** (verify: current; server 1.31.0). License CC BY 4.0.
+Status at 2026-10-19T13:52:25.433Z: **verified** (verify: current; server 1.33.0). License CC BY 4.0.
