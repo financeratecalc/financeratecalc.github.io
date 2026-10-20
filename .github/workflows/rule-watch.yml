@@ -15,3 +15,10 @@ jobs:
         with:
           fail-on: stale
           exclude: "eval/*,rulecheck/*,rl-env/*,scripts/*,fixtures/*,examples/*,.github/*,corrections.*,case-files/*"
+      - name: One page, one value (state and lender pages agree with their receipts)
+        run: python3 scripts/check_page_values.py
+      - name: No retired product offered anywhere (Zai, Verdict, partner programme)
+        run: |
+          python3 scripts/retire_zai_remnants.py | tee /tmp/zai.txt
+          grep -q "pages rewritten: 0" /tmp/zai.txt
+          git diff --quiet || { echo "::error::retired product text reappeared; run scripts/retire_zai_remnants.py"; git diff --stat; exit 1; }

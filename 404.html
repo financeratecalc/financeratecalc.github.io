@@ -24,6 +24,8 @@ a{color:#C8A84B;text-decoration:none}.k{font-family:'DM Mono',monospace;font-siz
    existing page and the visitor is sent there; every miss is reported to GA with the path so the pattern can be read. */
 (function(){
   var path=location.pathname, q=location.search;
+  // trailing punctuation pasted from prose ("/about.html)", "/corrections.html."): strip it and go straight to the page (2026-10-20; replaces 36 stub files)
+  var punct=path.match(/^(.*?\.html?)[).,;:'"\]]+$/i); if(punct){ location.replace(punct[1]+q); return; }
   try{ if(typeof gtag!=='undefined') gtag('event','not_found',{missing_path:path.slice(0,200), referrer:(document.referrer||'').slice(0,120)}); }catch(e){}
   var go=function(u,why){ try{ if(typeof gtag!=='undefined') gtag('event','not_found_redirect',{missing_path:path.slice(0,200), target:u, rule:why}); }catch(e){}
     var el=document.getElementById('dym'); if(el){ el.innerHTML='Taking you to the nearest published page: <a href="'+u+'">'+u+'</a>'; }
