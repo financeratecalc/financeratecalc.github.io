@@ -33,3 +33,7 @@ Ignore a line with `rulecheck:ignore`; ignore a file with `rulecheck:ignore-file
 Limits: deterministic patterns, no model; it reads the five lines around a match, so a value far from any keyword is not judged. It covers national values, not county tables. It is not legal or underwriting advice.
 
 Licence: MIT (code), CC BY 4.0 (table).
+
+## Discovery layer (candidates, not rules)
+
+`scripts/discover_rule_candidates.py` runs weekly (`.github/workflows/rule-discovery.yml`): it fetches six agency pages (FHFA, HUD, CFPB, VA), stores a text snapshot, and sends only the changed paragraphs that mention a tracked constant to a small model with one job — quote the sentence that states a dated numeric value. Proposals land in `rules/candidates.json` as `pending`, with the verbatim quote, source URL, fetch date and page hash. A human reads the quote against the primary document and moves an approved value into `rules/` and `constants.json` by hand; the script never writes to either. No model consensus, no reward signal, no autonomy: the model reads, a person decides, and `review_seconds` records how long that took.
