@@ -2,86 +2,99 @@
  "suite": "receipt-1.0-conformance",
  "suite_version": "1.0",
  "manifest": "https://financeratecalc.com/.well-known/receipt.json",
- "publisher": null,
- "prefix": null,
- "generated_at": "2026-10-21T03:02:53.510Z",
- "sample": [],
+ "publisher": "FinanceRateCalc",
+ "prefix": "FRC",
+ "generated_at": "2026-10-21T03:04:35.856Z",
+ "sample": [
+  "denial-reason-shares-top100-2025",
+  "lender-geneva-financial-2025",
+  "lender-phh-mortgage-2025",
+  "metro-gap-arlington-alexandria-reston-va-wv-2025",
+  "metro-gap-denver-aurora-lakewood-co-2025",
+  "metro-gap-killeen-temple-tx-2025",
+  "metro-gap-nassau-county-suffolk-county-ny-2025",
+  "metro-gap-salt-lake-city-ut-2025",
+  "metro-gap-worcester-ma-ct-2025",
+  "small-loan-penalty-nv-2025",
+  "state-ks-2025",
+  "state-wy-2025"
+ ],
  "tests": 12,
- "passed": 0,
- "conformance": "FAIL",
+ "passed": 12,
+ "conformance": "PASS",
  "results": [
   {
    "id": "01",
    "name": "manifest: reachable, required fields, exactly one current hash rule",
-   "pass": false,
-   "evidence": "status=404 missing=[receipt,prefix,claims_index,claim_url_template,verify,corrections,hash_rules] prefix=undefined current_rule=undefined"
+   "pass": true,
+   "evidence": "status=200 missing=[] prefix=FRC current_rule=jcs-sha256-8"
   },
   {
    "id": "02",
    "name": "claims index lists claims; a sample of claim documents resolves",
-   "pass": false,
-   "error": "Cannot read properties of null (reading 'claims_index')"
+   "pass": true,
+   "evidence": "386 claims; 12/12 sampled documents resolved"
   },
   {
    "id": "03",
    "name": "claim documents: required fields; hash8 equals jcs-sha256-8 of the claim block",
-   "pass": false,
-   "evidence": "0 documents hash-consistent"
+   "pass": true,
+   "evidence": "12 documents hash-consistent"
   },
   {
    "id": "04",
    "name": "each sampled document's receipt verifies current",
-   "pass": false,
-   "evidence": "0/0 current"
+   "pass": true,
+   "evidence": "12/12 current"
   },
   {
    "id": "05",
    "name": "altered value segment -> hash-current-value-mismatch",
-   "pass": false,
-   "error": "Cannot read properties of undefined (reading 'doc')"
+   "pass": true,
+   "evidence": "status=hash-current-value-mismatch"
   },
   {
    "id": "06",
    "name": "never-issued hash -> unrecognized, no correction",
-   "pass": false,
-   "error": "Cannot read properties of undefined (reading 'doc')"
+   "pass": true,
+   "evidence": "status=unrecognized correction=false"
   },
   {
    "id": "07",
    "name": "unknown claim id -> HTTP 200, valid:false",
-   "pass": false,
-   "error": "Cannot read properties of null (reading 'prefix')"
+   "pass": true,
+   "evidence": "status=200 valid=false reason=unknown claim id"
   },
   {
    "id": "08",
    "name": "malformed receipt -> HTTP 400",
-   "pass": false,
-   "error": "Cannot read properties of null (reading 'verify')"
+   "pass": true,
+   "evidence": "status=400"
   },
   {
    "id": "09",
    "name": "bare (bracketless) form verifies the same as the bracketed form",
-   "pass": false,
-   "error": "Cannot read properties of undefined (reading 'doc')"
+   "pass": true,
+   "evidence": "bracketed=current bare=current"
   },
   {
    "id": "10",
    "name": "corrections feed parses; items carry id, date, claim_ids",
-   "pass": false,
-   "error": "Cannot read properties of null (reading 'corrections')"
+   "pass": true,
+   "evidence": "27 items, 0 malformed"
   },
   {
    "id": "11",
    "name": "hash history (if declared): current hashes listed; a superseded hash verifies stale with a correction",
-   "pass": false,
-   "error": "Cannot read properties of null (reading 'hash_history')"
+   "pass": true,
+   "evidence": "unlisted=[] stale_case={\"id\":\"denial-reason-shares-top100-2025\",\"old\":\"9c6dc5cb\",\"correction\":true,\"has_date\":false}"
   },
   {
    "id": "12",
    "name": "verify sets no cookie",
-   "pass": false,
-   "error": "Cannot read properties of undefined (reading 'doc')"
+   "pass": true,
+   "evidence": "set-cookie=none"
   }
  ],
- "sha256": "2f682d6f66eeb8561d65d9b5a08944c488e772153091c03df853e8e4b4d8a323"
+ "sha256": "dd25567eee142e9e7da7b8a18dba6252a702a5a42af6d7662b1bac5a3cf7cbf4"
 }
