@@ -1,0 +1,87 @@
+{
+ "suite": "receipt-1.0-conformance",
+ "suite_version": "1.0",
+ "manifest": "https://financeratecalc.com/.well-known/receipt.json",
+ "publisher": null,
+ "prefix": null,
+ "generated_at": "2026-10-21T03:02:53.510Z",
+ "sample": [],
+ "tests": 12,
+ "passed": 0,
+ "conformance": "FAIL",
+ "results": [
+  {
+   "id": "01",
+   "name": "manifest: reachable, required fields, exactly one current hash rule",
+   "pass": false,
+   "evidence": "status=404 missing=[receipt,prefix,claims_index,claim_url_template,verify,corrections,hash_rules] prefix=undefined current_rule=undefined"
+  },
+  {
+   "id": "02",
+   "name": "claims index lists claims; a sample of claim documents resolves",
+   "pass": false,
+   "error": "Cannot read properties of null (reading 'claims_index')"
+  },
+  {
+   "id": "03",
+   "name": "claim documents: required fields; hash8 equals jcs-sha256-8 of the claim block",
+   "pass": false,
+   "evidence": "0 documents hash-consistent"
+  },
+  {
+   "id": "04",
+   "name": "each sampled document's receipt verifies current",
+   "pass": false,
+   "evidence": "0/0 current"
+  },
+  {
+   "id": "05",
+   "name": "altered value segment -> hash-current-value-mismatch",
+   "pass": false,
+   "error": "Cannot read properties of undefined (reading 'doc')"
+  },
+  {
+   "id": "06",
+   "name": "never-issued hash -> unrecognized, no correction",
+   "pass": false,
+   "error": "Cannot read properties of undefined (reading 'doc')"
+  },
+  {
+   "id": "07",
+   "name": "unknown claim id -> HTTP 200, valid:false",
+   "pass": false,
+   "error": "Cannot read properties of null (reading 'prefix')"
+  },
+  {
+   "id": "08",
+   "name": "malformed receipt -> HTTP 400",
+   "pass": false,
+   "error": "Cannot read properties of null (reading 'verify')"
+  },
+  {
+   "id": "09",
+   "name": "bare (bracketless) form verifies the same as the bracketed form",
+   "pass": false,
+   "error": "Cannot read properties of undefined (reading 'doc')"
+  },
+  {
+   "id": "10",
+   "name": "corrections feed parses; items carry id, date, claim_ids",
+   "pass": false,
+   "error": "Cannot read properties of null (reading 'corrections')"
+  },
+  {
+   "id": "11",
+   "name": "hash history (if declared): current hashes listed; a superseded hash verifies stale with a correction",
+   "pass": false,
+   "error": "Cannot read properties of null (reading 'hash_history')"
+  },
+  {
+   "id": "12",
+   "name": "verify sets no cookie",
+   "pass": false,
+   "error": "Cannot read properties of undefined (reading 'doc')"
+  }
+ ],
+ "sha256": "2f682d6f66eeb8561d65d9b5a08944c488e772153091c03df853e8e4b4d8a323"
+}
