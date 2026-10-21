@@ -945,7 +945,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.33.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.34.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -980,18 +980,29 @@ const QUOTE_TAIL = " Source: FinanceRateCalc analysis of the public CFPB HMDA 20
 // Claim receipt: a serial number for a statistic. ⟦FRC:<claim-id>:<value>:<hash8>⟧ where hash8 is the first
 // 8 hex of sha256 over the canonical claim object (keys sorted, no whitespace). A corrected value changes
 // the hash, so a receipt carrying an old hash identifies itself as stale. Verify at GET /verify?r=<receipt>.
-async function sha8(obj) {
-  const keys = Object.keys(obj).sort(); const canon = JSON.stringify(obj, keys);
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(canon));
-  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("").slice(0, 8);
-}
+// Hash rule jcs-sha256-8 (Receipt 1.0, from 2026-10-21): RFC 8785 canonical JSON of the claim block - keys sorted at
+// every depth, no whitespace, ES6 numbers, UTF-8 - then SHA-256, first 8 hex characters. Any verifier can recompute it
+// from /claims/<id>.json without this server. Spec: https://financeratecalc.com/spec/receipt-1.0.md
+function jcs(x) { if (Array.isArray(x)) return x.map(jcs); if (x && typeof x === "object") { const o = {}; for (const k of Object.keys(x).sort()) o[k] = jcs(x[k]); return o; } return x; }
+async function sha8hex(text) { const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)); return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("").slice(0, 8); }
+async function sha8(obj) { return sha8hex(JSON.stringify(jcs(obj))); }
+// Hash rule frc-0.1 (receipts issued before 2026-10-21): JSON.stringify(obj, sortedTopLevelKeys), which sorted only the
+// top level and dropped nested keys absent from it. Kept so every receipt already in the wild still verifies as current
+// while its claim object is unchanged; /verify reports which rule matched.
+async function sha8Legacy(obj) { const keys = Object.keys(obj).sort(); return sha8hex(JSON.stringify(obj, keys)); }
 // Issue channel (v1.15.0, 2026-10-01): a fifth segment names the door the receipt left by and the month,
 // e.g. m2610 = MCP tool output, October 2026; w = site page, p = answer page, l = lender page, s = state page,
 // t = top-100 table, h = Hugging Face, a = API JSON. The hash is unchanged (integrity is segments 2-4); the
 // channel is provenance metadata, so a receipt found in the wild says which door it came through and how old
 // the copy is. /verify accepts receipts with or without the segment and records only (channel, status) counts.
 function channelCode(ch) { const d = new Date(); return `${ch}${String(d.getUTCFullYear()).slice(2)}${String(d.getUTCMonth() + 1).padStart(2, "0")}`; }
-async function receipt(id, value, claimObj, ch = "m") { return `\u27e6FRC:${id}:${value}:${await sha8(claimObj)}:${channelCode(ch)}\u27e7`; }
+// Receipt 1.0: the hashed object is the claim block of /claims/<id>.json, so a receipt issued by a tool is the one a
+// verifier recomputes from the document. The object passed by the tool is used only when no document exists (rule ids).
+async function receipt(id, value, claimObj, ch = "m") {
+  let obj = claimObj;
+  if (!id.startsWith("rule-")) { try { const P = await getJSON(`/claims/${id}.json`); if (P && P.claim) obj = P.claim; } catch {} }
+  return `\u27e6FRC:${id}:${value}:${await sha8(obj)}:${channelCode(ch)}\u27e7`;
+}
 // Proof object 0.1 (v1.19.0): every figure-bearing tool result carries the same machine-readable block so a
 // platform or grader can check it without reading prose. Spec: https://financeratecalc.com/spec/proof-object-0.1.md
 function proofObject(o) {
@@ -1026,17 +1037,11 @@ function fmtClaimValue(c) {
   return String(c.value);
 }
 async function claimState(id, h) {
+  // Receipt 1.0: every receipted id resolves to /claims/<id>.json; the hashed object is its claim block and the
+  // displayed value is display_value (scripts/build_claim_documents.py keeps both equal to the data files).
   let current = null, claimObj = null;
-  if (id === "national-fha-denial-rate-2025") { const idx = await getJSON("/api/index.json"); current = `${idx.national.rate_pct.toFixed(1)}%`; claimObj = (await getJSON("/claims/national-fha-denial-rate-2025.json")).claim; }
-  else if (id.startsWith("lender-")) { const L = await getJSON(`/api/lender/${id.slice(7, -5)}.json`); current = `${Number(L.denial_rate_pct).toFixed(1)}%`; claimObj = { lender: L.lender, metric: "fha_denial_rate", value: L.denial_rate_pct, n: L.decisioned_applications, period: "2025" }; }
-  else if (id.startsWith("state-")) { const S = await getJSON(`/api/state/${id.slice(6, -5)}.json`); current = `${Number(S.denial_rate_pct).toFixed(1)}%`; claimObj = { state: S.state, metric: "fha_denial_rate", value: S.denial_rate_pct, n: S.decisioned_applications, period: "2025" }; }
-  else if (id === "door-effect-38pct-2026") { const d = await getJSON("/data/door-effect-2025.json"); current = `${Math.round(d.door_effect_share_of_explained * 100)}%`; claimObj = { metric: "door_effect_share", value: d.door_effect_share_of_explained, n: d.records_used, period: "2025" }; }
-  else if (id.startsWith("metro-gap-")) { const P = await getJSON(`/claims/${id}.json`); current = `${Number(P.claim.value != null ? P.claim.value : P.claim.gap_pp).toFixed(1)}pp`; claimObj = P.claim; }
-  else if (id.startsWith("small-loan-penalty-") && id !== "small-loan-penalty-range-2025") { const d = await getJSON("/api/small-loan-penalty.json"); const st = id.slice(19, -5).toUpperCase(); const row = d.ranked.find(r => r.state === st); current = `${row.penalty_ratio}x`; claimObj = { state: st, metric: "small_loan_penalty_ratio", value: row.penalty_ratio, small: row.small_loan_denial_pct, big: row.big_loan_denial_pct, period: "2025" }; }
-  else if (id === "small-loan-penalty-range-2025") { const d = await getJSON("/api/small-loan-penalty.json"); current = `${d.min_penalty}x-${d.max_penalty}x`; claimObj = { metric: "small_loan_penalty_range", min: d.min_penalty, max: d.max_penalty, states: d.states, period: "2025" }; }
-  else if (id === "denial-reason-shares-top100-2025") { const d = await getJSON("/api/denial-reasons-top100.json"); const top = Object.keys(d.by_reason).sort((a, b) => d.by_reason[b].median_share_pct - d.by_reason[a].median_share_pct)[0]; const inc = d.by_reason.incomplete; current = `${top}-${d.by_reason[top].median_share_pct}%`; claimObj = { metric: "denial_reason_median_shares", top_reason: top, top_median: d.by_reason[top].median_share_pct, incomplete_median: inc.median_share_pct, incomplete_max: inc.max_share_pct, n_lenders: d.n_lenders, period: "2025" }; }
-  else if (id.startsWith("rule-")) { const rr = (await allRules()).find(r => ruleSlug(r.rule.rule_id) === id.slice(5)); if (!rr) return null; const rule = rr.rule; let found = null; for (const c of rule.cells) { if (await sha8({ rule_id: rule.rule_id, ...c }) === h) { found = c; break; } } current = found ? cellValue(found) : null; claimObj = found ? { rule_id: rule.rule_id, ...found } : { rule_id: rule.rule_id, changed: true }; }
-  else { let P = null; try { P = await getJSON(`/claims/${id}.json`); } catch { return null; } if (!P || !P.claim) return null; current = fmtClaimValue(P.claim); claimObj = P.claim; }
+  if (id.startsWith("rule-")) { const rr = (await allRules()).find(r => ruleSlug(r.rule.rule_id) === id.slice(5)); if (!rr) return null; const rule = rr.rule; let found = null; for (const c of rule.cells) { const o = { rule_id: rule.rule_id, ...c }; if (await sha8(o) === h || await sha8Legacy(o) === h) { found = c; break; } } current = found ? cellValue(found) : null; claimObj = found ? { rule_id: rule.rule_id, ...found } : { rule_id: rule.rule_id, changed: true }; }
+  else { let P = null; try { P = await getJSON(`/claims/${id}.json`); } catch { return null; } if (!P || !P.claim) return null; current = P.display_value != null ? String(P.display_value) : fmtClaimValue(P.claim); claimObj = P.claim; }
   return { current, claimObj };
 }
 const rpcErr = (id, code, message) => ({ jsonrpc: "2.0", id, error: { code, message } });
@@ -1119,11 +1124,14 @@ export default {
         current = st.current; claimObj = st.claimObj;
       } catch (e) { return json({ valid: false, reason: "lookup failed" }, 502); }
       const nowHash = await sha8(claimObj);
-      // v1.32: a hash that is not current is "stale" only if this publisher ever published it for this id
-      // (transparency/receipt-hash-history.json); otherwise we never issued it as written -> "unrecognized".
+      // v1.34 (Receipt 1.0): the hash matches under the current rule or, for receipts issued before 2026-10-21, under
+      // frc-0.1; either way the claim object is unchanged and the receipt is current. v1.32: a hash that matches neither
+      // is "stale" only if this publisher ever published it for this id (transparency/receipt-hash-history.json);
+      // otherwise we never issued it as written -> "unrecognized".
+      const hashRule = nowHash === h ? "jcs-sha256-8" : (await sha8Legacy(claimObj)) === h ? "frc-0.1" : null;
       let everIssued = false;
-      if (nowHash !== h) { try { const hh = await getJSON("/transparency/receipt-hash-history.json"); everIssued = ((hh.hashes || {})[id] || []).includes(h); } catch {} }
-      const status = nowHash === h ? (current === value ? "current" : "hash-current-value-mismatch") : everIssued ? "stale" : "unrecognized";
+      if (!hashRule) { try { const hh = await getJSON("/transparency/receipt-hash-history.json"); everIssued = ((hh.hashes || {})[id] || []).includes(h); } catch {} }
+      const status = hashRule ? (current === value ? "current" : "hash-current-value-mismatch") : everIssued ? "stale" : "unrecognized";
       const CH = { m: "MCP tool output", w: "site page", p: "answer page", c: "cite card", f: "evidence footnote on a site page", l: "lender page", s: "state page", t: "top-100 table", h: "Hugging Face dataset", a: "API JSON", r: "RL environment" };
       const issued = chan ? { channel: channel[0], channel_meaning: CH[channel[0]] || "unknown channel", issued_month: "20" + channel.slice(1, 3) + "-" + channel.slice(3, 5) } : { channel: "none", channel_meaning: "receipt issued before channel tagging (pre-October 2026) or segment dropped in copying" };
       try { await tally(env, "verify", `${channel}:${status}`); } catch {}
@@ -1141,7 +1149,7 @@ export default {
                                    : { note: "no dated correction names this claim id; the value changed with a data rebuild", feed: "https://financeratecalc.com/corrections.json" };
         } catch { correction = { feed: "https://financeratecalc.com/corrections.json" }; }
       }
-      return json({ receipt: `\u27e6FRC:${id}:${value}:${h}${chan ? ":" + channel : ""}\u27e7`, id, quoted_value: value, current_value: current, status, issued, correction,
+      return json({ receipt: `\u27e6FRC:${id}:${value}:${h}${chan ? ":" + channel : ""}\u27e7`, id, quoted_value: value, current_value: current, status, hash_rule: hashRule, claim_url: id.startsWith("rule-") ? null : `https://financeratecalc.com/claims/${id}.json`, spec: "https://financeratecalc.com/spec/receipt-1.0.md", issued, correction,
         meaning: status === "current" ? "This figure is current and unchanged since the receipt was issued." : status === "stale" ? "The figure was corrected after this receipt was issued; the quoted value may be superseded. See corrections.html." : status === "unrecognized" ? "This publisher never issued this receipt as written: its hash matches no value we have published for this claim, now or in any dated snapshot (transparency/receipt-hash-history.json). Forged, mistyped or truncated. Do not cite it." : "The receipt hash matches but the quoted value does not; the quote was altered.",
         corrections: "https://financeratecalc.com/corrections.html", license: "CC BY 4.0",
         transparency: { note: "The snapshot of every claim's value and hash is signed with Sigstore by the publisher's repository workflow and timestamped in the public Rekor log; verify the receipt against it without this server.",

@@ -22,3 +22,5 @@ jobs:
           python3 scripts/retire_zai_remnants.py | tee /tmp/zai.txt
           grep -q "pages rewritten: 0" /tmp/zai.txt
           git diff --quiet || { echo "::error::retired product text reappeared; run scripts/retire_zai_remnants.py"; git diff --stat; exit 1; }
+      - name: Claim documents agree with the data files (Receipt 1.0)
+        run: python3 scripts/build_claim_documents.py --check

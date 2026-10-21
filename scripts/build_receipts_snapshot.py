@@ -7,7 +7,7 @@ worker's /verify does. This file is what gets signed into the Sigstore transpare
 import sys, os, json, glob, datetime, hashlib
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "rl-env"))
-from frc_citation.verify_offline import Verifier, sha8
+from frc_citation.verify_offline import Verifier, sha8, sha8_legacy
 
 v = Verifier(ROOT)
 ids = ["national-fha-denial-rate-2025", "door-effect-38pct-2026", "small-loan-penalty-range-2025", "denial-reason-shares-top100-2025"]
@@ -19,7 +19,7 @@ ids += [f"small-loan-penalty-{r['state'].lower()}-2025" for r in d["ranked"]]
 snap, bad = {}, []
 for cid in ids:
     try:
-        cur, obj = v.claim_object(cid); snap[cid] = {"value": cur, "hash8": sha8(obj)}
+        cur, obj = v.claim_object(cid); snap[cid] = {"value": cur, "hash8": sha8(obj), "hash8_legacy": sha8_legacy(obj)}
     except Exception as e:
         bad.append([cid, str(e)[:80]])
 out_path = os.path.join(ROOT, "rl-env/frc_citation/receipts-snapshot.json")
@@ -30,7 +30,7 @@ if os.path.exists(out_path):
 changed = sorted(k for k in snap if k in prev and prev[k] != snap[k])
 added = sorted(k for k in snap if k not in prev); removed = sorted(k for k in prev if k not in snap)
 out = {"generated": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
-       "source": "financeratecalc.github.io main; claim objects as in worker/index.js /verify; hash8 = first 8 hex of SHA-256 of the canonical claim object",
+       "source": "financeratecalc.github.io main; claim objects = the claim block of /claims/<id>.json; hash8 = first 8 hex of SHA-256 of the RFC 8785 canonical claim block (Receipt 1.0, hash rule jcs-sha256-8)", "hash_rule": "jcs-sha256-8",
        "count": len(snap), "unresolved": bad, "receipts": snap}
 body = json.dumps(out, indent=0, ensure_ascii=False, sort_keys=False)
 open(out_path, "w", encoding="utf-8").write(body)

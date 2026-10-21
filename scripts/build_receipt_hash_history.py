@@ -8,7 +8,7 @@ mistyped or truncated). Rerun after every data rebuild, before the current hash 
 import datetime, json, os, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "rl-env"))
-from frc_citation.verify_offline import Verifier, sha8  # noqa: E402
+from frc_citation.verify_offline import Verifier, sha8, sha8_legacy  # noqa: E402
 
 snap = json.load(open(os.path.join(ROOT, "rl-env/frc_citation/fixtures/epoch-snapshot.json"), encoding="utf-8"))
 out_path = os.path.join(ROOT, "transparency/receipt-hash-history.json")
@@ -23,13 +23,14 @@ V = Verifier(ROOT)
 for cid in list(hist):
     try:
         cur, obj = V.claim_object(cid)
-        h = sha8(obj)
-        if h not in hist[cid]:
-            hist[cid].append(h)
+        for h in (sha8_legacy(obj), sha8(obj)):
+            if h not in hist[cid]:
+                hist[cid].append(h)
     except Exception:
         pass
 json.dump({"generated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-           "rule": "A hash8 listed here was published for that claim id at some date (epochs E0-E2 and the current value). A receipt whose hash is not listed was never issued by this publisher as written.",
+           "rule": "A hash8 listed here was published for that claim id at some date (epochs E0-E2 under hash rule frc-0.1, and the current value under both frc-0.1 and jcs-sha256-8 since 2026-10-21). A receipt whose hash is not listed was never issued by this publisher as written.",
+           "hash_rules": {"frc-0.1": "until 2026-10-21: JSON.stringify(claim, sortedTopLevelKeys), sha256, first 8 hex", "jcs-sha256-8": "from 2026-10-21: RFC 8785 canonical JSON of the claim block, sha256, first 8 hex (Receipt 1.0)"},
            "epochs": {k: v["date"] for k, v in snap["snapshot"].items()}, "hashes": hist},
           open(out_path, "w", encoding="utf-8"), indent=0, ensure_ascii=False)
 print(len(hist), "claim ids,", sum(len(v) for v in hist.values()), "hashes")

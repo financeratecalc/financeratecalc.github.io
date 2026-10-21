@@ -140,7 +140,9 @@ def main() -> None:
         items.append({
             "id": item_id("atom", "atom", wrong),
             "type": "atom",
-            "date": None,
+            # Receipt 1.0 feeds require a date on every item; atoms carry the date the atom section was first
+            # published (git: 2026-09-02) unless the curated map names the correction they derive from.
+            "date": c.get("date", "2026-09-02"),
             "title": wrong,
             "summary": body[:700],
             "old_value": c.get("old"),

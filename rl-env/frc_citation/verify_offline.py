@@ -3,7 +3,8 @@
 Recomputes a FinanceRateCalc claim receipt  ⟦FRC:<id>:<value>:<hash8>⟧  from the
 repository's own data files, with no network call, so a reward function can run at
 RL scale. Mirrors worker/index.js `/verify` exactly (same claim objects, same
-canonical serialisation: keys sorted, no whitespace, SHA-256, first 8 hex chars).
+canonical serialisation: RFC 8785 JCS, SHA-256, first 8 hex chars; receipts issued before
+2026-10-21 under the earlier rule frc-0.1 are still recognised).
 
     from verify_offline import Verifier
     v = Verifier(site_root=".")            # repository root
@@ -41,9 +42,29 @@ def _filter(x, allowed):
     return _js_num(x)
 
 
-def sha8(obj: dict) -> str:
+def sha8_legacy(obj: dict) -> str:
+    """Hash rule frc-0.1 (receipts issued before 2026-10-21): JSON.stringify(obj, sortedTopLevelKeys)."""
     canon = json.dumps(_filter(obj, set(obj.keys())), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
     return hashlib.sha256(canon.encode("utf-8")).hexdigest()[:8]
+
+
+def _jcs(x):
+    if isinstance(x, dict):
+        return {k: _jcs(x[k]) for k in sorted(x)}
+    if isinstance(x, list):
+        return [_jcs(v) for v in x]
+    return _js_num(x)
+
+
+def sha8_jcs(obj: dict) -> str:
+    """Hash rule jcs-sha256-8 (Receipt 1.0): RFC 8785 canonical JSON (keys sorted at every depth, no
+    whitespace, ES6 number form, UTF-8), SHA-256, first 8 hex characters."""
+    canon = json.dumps(_jcs(obj), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(canon.encode("utf-8")).hexdigest()[:8]
+
+
+sha8 = sha8_jcs
+HASH_RULES = {"jcs-sha256-8": sha8_jcs, "frc-0.1": sha8_legacy}
 
 
 class Verifier:
@@ -109,10 +130,16 @@ class Verifier:
             return {"id": cid, "status": "unknown-id", "quoted_value": value, "issued": issued}
         current, obj = got
         now = sha8(obj)
-        # A non-current hash is "stale" only if the publisher ever published it for this id
-        # (transparency/receipt-hash-history.json); otherwise it was never issued: "unrecognized".
-        status = "current" if (now == h and current == value) else ("altered" if now == h else ("stale" if h in self._history().get(cid, []) else "unrecognized"))
-        return {"id": cid, "status": status, "quoted_value": value, "current_value": current, "hash_now": now, "hash_quoted": h, "issued": issued}
+        # Receipts issued under the earlier hash rule (frc-0.1, before 2026-10-21) stay current as long as
+        # the claim object is unchanged; the rule that matched is reported.
+        rule = "jcs-sha256-8" if now == h else ("frc-0.1" if sha8_legacy(obj) == h else None)
+        if rule:
+            status = "current" if current == value else "altered"
+        else:
+            # A non-current hash is "stale" only if the publisher ever published it for this id
+            # (transparency/receipt-hash-history.json); otherwise it was never issued: "unrecognized".
+            status = "stale" if h in self._history().get(cid, []) else "unrecognized"
+        return {"id": cid, "status": status, "quoted_value": value, "current_value": current, "hash_now": now, "hash_quoted": h, "hash_rule": rule, "issued": issued}
 
     def find_all(self, text: str) -> list[dict]:
         """Every receipt-shaped string in a text, checked. Loose (bracketless) forms are

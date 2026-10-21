@@ -116,7 +116,9 @@ def check_receipt(cid: str, value: str, h: str) -> str:
     row = SNAPSHOT.get(cid)
     if row is None:
         return "unknown-id"
-    if row["hash8"] != h.lower():
+    # Receipt 1.0 (2026-10-21): the snapshot hash is jcs-sha256-8; a receipt issued earlier under frc-0.1
+    # is still current while the claim block is unchanged, so the snapshot may carry hash8_legacy too.
+    if h.lower() not in {row["hash8"], row.get("hash8_legacy")}:
         # stale only if this hash was ever published for the id; otherwise never issued
         return "stale" if h.lower() in HISTORY.get(cid, []) else "unrecognized"
     return "current" if row["value"] == value else "altered"
