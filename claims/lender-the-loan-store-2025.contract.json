@@ -1,0 +1,51 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:lender-the-loan-store-2025",
+ "current_value": "10.9%",
+ "canonical_claim": {
+  "template": "In 2025, The Loan Store, Inc denied {value} of its 3,619 decisioned FHA applications.",
+  "required_fields": [
+   "period",
+   "population",
+   "nature"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "2025",
+  "population": "The Loan Store, Inc decisioned FHA applications (actions 1,2,3; loan_type 2; reverse mortgages excluded)",
+  "program_scope": "FHA",
+  "nature": "historical institutional aggregate, unadjusted for applicant mix"
+ },
+ "does_not_establish": [
+  "The Loan Store, Inc will deny any specific future application with 10.9% probability",
+  "The Loan Store, Inc is stricter or more lenient than another lender for a given applicant",
+  "The Loan Store, Inc discriminates or violates law",
+  "10.9% applies to The Loan Store, Inc's non-FHA lending"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "causal_assertion": false,
+    "individual_prediction": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "proposed_sentence": "This lender will likely reject YOUR application"
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  }
+ ],
+ "generated_by": "scripts/build_claim_contracts.py (2026-10-21) from the claim block"
+}

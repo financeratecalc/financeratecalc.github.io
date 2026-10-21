@@ -1,0 +1,47 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:denial-reason-shares-top100-2025",
+ "current_value": "dti-40.8%",
+ "canonical_claim": {
+  "template": "Across the 100 largest FHA lenders reporting denial reasons in 2025, the reason with the highest median share was {value}.",
+  "required_fields": [
+   "period",
+   "population"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "2025",
+  "population": "denials by the 100 largest FHA lenders that report reasons",
+  "program_scope": "FHA"
+ },
+ "does_not_establish": [
+  "why any specific application was denied",
+  "that a reason is more common at a specific lender without its own figure"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "causal_assertion": false,
+    "individual_prediction": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "proposed_sentence": "This lender will likely reject YOUR application"
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  }
+ ],
+ "generated_by": "scripts/build_claim_contracts.py (2026-10-21) from the claim block"
+}

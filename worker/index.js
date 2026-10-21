@@ -107,7 +107,7 @@ async function staleValues() {
   try {
     const c = await getJSON("/corrections.json");
     const seen = new Set();
-    _stale = (c.items || []).filter(i => i.old_value && i.new_value).map(i => ({ old: String(i.old_value).replace(/%/g, ""), now: String(i.new_value), title: i.title })).filter(x => !seen.has(x.old) && seen.add(x.old));
+    _stale = (c.items || []).filter(i => i.old_value && i.new_value).map(i => ({ old: String(i.old_value).replace(/%/g, ""), now: String(i.new_value), title: i.title, claim_ids: i.claim_ids || [] })).filter(x => !seen.has(x.old) && seen.add(x.old));
   } catch { _stale = []; }
   return _stale;
 }
@@ -124,7 +124,11 @@ async function sentenceFindings(sentence, contract) {
   if (q.program_scope && /fha/i.test(q.program_scope) && !/\bfha\b/i.test(t)) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no FHA)", why: "program scope missing: FHA" });
   if (/\b(all|of) (us |u\.s\. |american )?(mortgage|home loan|loan) (applications|applicants|loans)\b/i.test(t) && !/\bfha\b/i.test(t)) f.push({ flag: "scope_beyond_universe", code: "SCOPE_TOO_BROAD", matched: t.match(/\b(all|of) (us |u\.s\. |american )?(mortgage|home loan|loan) (applications|applicants|loans)\b/i)[0], why: "population wider than the claim's universe" });
   if (q.population && /decision/i.test(q.population) && !/decision/i.test(t) && /\b(applications|applicants|loans)\b/i.test(t)) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no 'decisioned')", why: "population qualifier missing: decisioned (withdrawn and incomplete files excluded)" });
+  const myId = String(contract.passport_id || "").replace(/^frc:claim:/, "");
   for (const sv of await staleValues()) {
+    // v1.35: a corrected value belongs to the claim the correction names; 21.7% is stale for the national rate, not for a
+    // state whose current rate happens to be 21.7%. Corrections that name no claim id apply everywhere.
+    if (sv.claim_ids && sv.claim_ids.length && myId && !sv.claim_ids.includes(myId)) continue;
     const re = new RegExp("(^|[^0-9.])" + sv.old.replace(".", "\\.") + "(\\s?%|\\b)");
     if (re.test(low)) f.push({ flag: "stale_value", code: "STALE_VALUE", matched: sv.old, why: "value corrected by the publisher; current: " + sv.now });
   }
@@ -287,7 +291,7 @@ async function checkRuleSentence(ruleRef, sentence) {
     if (amt && ltv && term) {
       resolved = await resolveFhaAnnualMip({ base_loan_amount: Number(amt[1].replace(/,/g, "")), ltv_pct: Number(ltv[1]), term_years: Number(term[1]), case_number_date: dates.length ? dates.sort()[0] : new Date().toISOString().slice(0, 10) });
       if (resolved.verdict === "pass") {
-        const pcts = [...t.matchAll(/(\d(?:\.\d+)?)\s?%/g)].map(m => Number(m[1])).filter(v => v < 2 && v !== Number(ltv[1]));
+        const pcts = [...t.matchAll(/(?<![\d.])(\d(?:\.\d+)?)\s?%/g)].map(m => Number(m[1])).filter(v => v < 2 && v !== Number(ltv[1])); // lookbehind: "80%" must not yield "0%"
         const bps = [...t.matchAll(/(\d{1,3})\s?(?:bps|basis points)/gi)].map(m => Number(m[1]));
         // every rate figure in the sentence is a claim about this cell; one right figure does not excuse a second wrong one
         const statedAll = [...new Set([...bps, ...pcts.map(v => Math.round(v * 100))])];
@@ -438,6 +442,17 @@ async function checkClaimContract(a) {
     for (const fnd of findings) if (fnd.flag !== "stale_value") a[fnd.flag] = true;
     for (const fnd of findings) if (fnd.flag === "stale_value") V("STALE_VALUE", "value", fnd.why + " (matched " + fnd.matched + ")");
     for (const d of namedDocuments(a.proposed_sentence)) V("DOCUMENT_ID_MISMATCH", "source", "sentence attributes the figure to " + d + "; this claim rests on the CFPB HMDA 2025 record, not on that document");
+    // v1.35: a sentence about this claim that carries a figure of the claim's own unit, none of which is the current
+    // value, quotes some other figure for this subject (another lender's rate, a neighbouring metro's gap).
+    if (contract.current_value) {
+      const cv = String(contract.current_value); const unit = /pp$/.test(cv) ? "pp" : /%$/.test(cv) ? "%" : /x$/.test(cv) ? "x" : null;
+      if (unit) {
+        const rx = unit === "pp" ? /(\d+(?:\.\d+)?)\s?(pp|percentage points?|points?)\b/gi : unit === "%" ? /(\d+(?:\.\d+)?)\s?%/g : /(\d+(?:\.\d+)?)x\b/gi;
+        const nums = [...a.proposed_sentence.matchAll(rx)].map(m => m[1]); const cur = cv.replace(/(pp|%|x)$/, "");
+        if (nums.length && !nums.some(n => Math.abs(Number(n) - Number(cur)) < 0.051) && !findings.some(f => f.flag === "stale_value"))
+          V("VALUE_MISMATCH", "value", "sentence states " + nums.join(", ") + unit + "; the current figure for this claim is " + cv);
+      }
+    }
   }
   if (a.individual_prediction) V("INDIVIDUAL_PREDICTION_PROHIBITED","individual_prediction","Historical aggregates only; individual prediction prohibited.");
   if (a.personalized_recommendation) V("INDIVIDUAL_PREDICTION_PROHIBITED","personalized_recommendation","Personalized lender recommendation is forbidden.");
@@ -445,7 +460,7 @@ async function checkClaimContract(a) {
   if (a.causal_assertion) V("CAUSALITY_NOT_ESTABLISHED","causal_assertion","Associational language only.");
   if (a.scope_beyond_universe) V("SCOPE_TOO_BROAD","scope","Defined universe/period only.");
   if (a.qualifier_dropped) V("QUALIFIER_DELETED","qualifiers","Required qualifier missing.");
-  const blockCodes = ["INDIVIDUAL_PREDICTION_PROHIBITED","LEGAL_CONCLUSION_NOT_SUPPORTED","STALE_VALUE","DOCUMENT_ID_MISMATCH"];
+  const blockCodes = ["INDIVIDUAL_PREDICTION_PROHIBITED","LEGAL_CONCLUSION_NOT_SUPPORTED","STALE_VALUE","DOCUMENT_ID_MISMATCH","VALUE_MISMATCH"];
   const verdict = violations.some(v=>blockCodes.includes(v.code)) ? "block" : (violations.length ? "needs_qualifier" : "pass");
   const out = { verdict, violations, safe_wording: contract.canonical_claim && contract.canonical_claim.template,
     required_qualifiers: contract.required_qualifiers, does_not_establish: contract.does_not_establish,
@@ -945,7 +960,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.34.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.35.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });

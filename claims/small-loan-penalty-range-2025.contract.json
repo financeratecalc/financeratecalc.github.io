@@ -1,0 +1,49 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:small-loan-penalty-range-2025",
+ "current_value": "1.19x-4.45x",
+ "canonical_claim": {
+  "template": "In 2025, across the US jurisdictions with a published loan-size split, the FHA small-loan penalty (under $150,000 vs over $250,000) ranged over {value}.",
+  "required_fields": [
+   "period",
+   "population",
+   "loan_size_bands"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "2025",
+  "population": "decisioned FHA applications by state",
+  "program_scope": "FHA",
+  "loan_size_bands": "under $150,000 vs over $250,000"
+ },
+ "does_not_establish": [
+  "causation",
+  "any individual's chance of denial"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "causal_assertion": false,
+    "individual_prediction": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "proposed_sentence": "This lender will likely reject YOUR application"
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  }
+ ],
+ "generated_by": "scripts/build_claim_contracts.py (2026-10-21) from the claim block"
+}

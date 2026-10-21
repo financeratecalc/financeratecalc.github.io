@@ -1,0 +1,51 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:state-tn-2025",
+ "current_value": "20.5%",
+ "canonical_claim": {
+  "template": "In 2025, {value} of decisioned FHA applications in Tennessee were denied (35,803 applications reaching a decision).",
+  "required_fields": [
+   "period",
+   "population",
+   "nature"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "2025",
+  "population": "decisioned FHA applications in Tennessee (actions 1,2,3; loan_type 2)",
+  "program_scope": "FHA",
+  "nature": "historical aggregate"
+ },
+ "does_not_establish": [
+  "an applicant in Tennessee has a 20.5% chance of denial",
+  "Tennessee's lenders are stricter than another state's for a given applicant",
+  "any conclusion about non-FHA lending",
+  "any legal conclusion"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "causal_assertion": false,
+    "individual_prediction": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "proposed_sentence": "This lender will likely reject YOUR application"
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  }
+ ],
+ "generated_by": "scripts/build_claim_contracts.py (2026-10-21) from the claim block"
+}

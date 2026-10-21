@@ -1,0 +1,51 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:lender-united-wholesale-mortgage-2025",
+ "current_value": "21.4%",
+ "canonical_claim": {
+  "template": "In 2025, United Wholesale Mortgage denied {value} of its 112,470 decisioned FHA applications.",
+  "required_fields": [
+   "period",
+   "population",
+   "nature"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "2025",
+  "population": "United Wholesale Mortgage decisioned FHA applications (actions 1,2,3; loan_type 2; reverse mortgages excluded)",
+  "program_scope": "FHA",
+  "nature": "historical institutional aggregate, unadjusted for applicant mix"
+ },
+ "does_not_establish": [
+  "United Wholesale Mortgage will deny any specific future application with 21.4% probability",
+  "United Wholesale Mortgage is stricter or more lenient than another lender for a given applicant",
+  "United Wholesale Mortgage discriminates or violates law",
+  "21.4% applies to United Wholesale Mortgage's non-FHA lending"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "causal_assertion": false,
+    "individual_prediction": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "proposed_sentence": "This lender will likely reject YOUR application"
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  }
+ ],
+ "generated_by": "scripts/build_claim_contracts.py (2026-10-21) from the claim block"
+}
