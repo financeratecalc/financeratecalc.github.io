@@ -617,7 +617,7 @@ const BOT_RX = [["googlebot", /googlebot|google-inspectiontool|googleother/i], [
 function requesterClass(request) {
   const ua = request.headers.get("User-Agent") || "";
   if (!ua) return "none";
-  if (/^frc-|frc-conformance|frc-evidence-conformance|frc-usage-snapshot/i.test(ua)) return "ours";
+  if (/^frc-|frc-conformance|frc-evidence-conformance|frc-usage-snapshot|^receipt-conformance\//i.test(ua)) return "ours"; // receipt-conformance: the Receipt 1.0 suite (v1.35.1)
   for (const [name, rx] of BOT_RX) if (rx.test(ua)) return "bot:" + name;
   if (/curl|python|node|undici|axios|go-http|wget|java\/|okhttp|postman|insomnia|httpie|deno|bun\//i.test(ua)) return "script";
   if (/mozilla\//i.test(ua)) return "browser";
@@ -960,7 +960,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.35.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.35.1" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
