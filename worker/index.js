@@ -623,12 +623,14 @@ function requesterClass(request) {
   if (/mozilla\//i.test(ua)) return "browser";
   return "other";
 }
-async function logVerify(env, request, channel, status) {
+async function logVerify(env, request, channel, status, id) {
   if (!env || !env.CREDITS) return;
   const day = new Date().toISOString().slice(0, 10);
   const ref = request.headers.get("Referer") || "";
+  // v1.36 (reverse receipts): the claim id is recorded so that a crawler's verification can be published per figure
+  // ("last verified by Applebot, 2026-10-21"). Still no IP, no full User-Agent, no receipt text, no time of day in the output.
   const meta = { ch: channel, st: status, cls: requesterClass(request), via: /^https:\/\/(www\.)?financeratecalc\.com\//.test(ref) ? "site-page" : (ref ? "other-site" : "direct"),
-    cc: (request.cf && request.cf.country) || "XX" };
+    cc: (request.cf && request.cf.country) || "XX", id: String(id || "").slice(0, 80) };
   const key = `vlog:${day}:${Date.now().toString(36)}:${Math.random().toString(36).slice(2, 8)}`;
   try { await env.CREDITS.put(key, "", { expirationTtl: 60 * 60 * 24 * 400, metadata: meta }); } catch {}
 }
@@ -960,7 +962,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.35.1" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.36.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1150,7 +1152,7 @@ export default {
       const CH = { m: "MCP tool output", w: "site page", p: "answer page", c: "cite card", f: "evidence footnote on a site page", l: "lender page", s: "state page", t: "top-100 table", h: "Hugging Face dataset", a: "API JSON", r: "RL environment" };
       const issued = chan ? { channel: channel[0], channel_meaning: CH[channel[0]] || "unknown channel", issued_month: "20" + channel.slice(1, 3) + "-" + channel.slice(3, 5) } : { channel: "none", channel_meaning: "receipt issued before channel tagging (pre-October 2026) or segment dropped in copying" };
       try { await tally(env, "verify", `${channel}:${status}`); } catch {}
-      try { await logVerify(env, request, channel, status); } catch {}
+      try { await logVerify(env, request, channel, status, id); } catch {}
       // Pull model: a stale receipt routes whoever checks it to the correction itself (corrections.json, spec 7d).
       let correction = null;
       if (status === "stale") {
@@ -1197,13 +1199,20 @@ export default {
       }
       const vkeys = []; let vc;
       do { const page = await env.CREDITS.list({ prefix: "vlog:", limit: 1000, cursor: vc }); vkeys.push(...page.keys); vc = page.list_complete ? undefined : page.cursor; } while (vc);
-      const verify_log = {};
+      const verify_log = {}; const crawl_ledger = {};
       for (const k of vkeys) {
         const day = k.name.split(":")[1]; const m = k.metadata || {};
         const g = `${m.ch || "?"}|${m.st || "?"}|${m.cls || "?"}|${m.via || "?"}|${m.cc || "XX"}`;
         verify_log[day] = verify_log[day] || {}; verify_log[day][g] = (verify_log[day][g] || 0) + 1;
+        // Reverse receipts (v1.36): per claim id, which crawler verified it, on which day, with what result. Bots only
+        // (identified by User-Agent); browsers and scripts are never attributed. Published daily as transparency/crawl-ledger.json.
+        if (m.id && /^bot:/.test(m.cls || "")) {
+          const bot = m.cls.slice(4); const e = (crawl_ledger[m.id] = crawl_ledger[m.id] || {}); const b = (e[bot] = e[bot] || { n: 0, first: day, last: day, status: {} });
+          b.n += 1; if (day < b.first) b.first = day; if (day > b.last) b.last = day; b.status[m.st || "?"] = (b.status[m.st || "?"] || 0) + 1;
+        }
       }
-      return json({ generated: new Date().toISOString(), verify_log,
+      return json({ generated: new Date().toISOString(), verify_log, crawl_ledger,
+        crawl_ledger_note: "Per claim id: which crawler (by User-Agent) verified its receipt, first and last day, count, status. Bots only; no IP, no time of day, no receipt text. Recorded since worker 1.36.0 (2026-10-22).",
         verify_log_note: "Exact count of /verify requests since 2026-10-16, one KV key each, grouped as channel|status|requester class|via|country. Requester class comes from the User-Agent (browser, bot:<name>, script, ours = our own suites and checks, none). via: site-page = sent from a financeratecalc.com page (e.g. a reader pressing verify), direct = no referrer. No IP, no full User-Agent, no receipt text.",
         note: "Counts of MCP tool calls by day, by the client name reported at initialize, and by tool. Handshakes are not counted. No IP, no user, no submitted data — only counts. Published openly because we ask others to be measurable and should be measurable ourselves.",
         self_test_clients: "clients matching frc-selftest, curl, node, python, postman or insomnia are our own probes",

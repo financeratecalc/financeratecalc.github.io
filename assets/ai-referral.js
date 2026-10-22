@@ -67,3 +67,28 @@
     }, true);
   }catch(e){}
 })();
+
+// Reverse receipts (2026-10-22): if a crawler has verified this page's receipt, say so next to it. Data: /transparency/crawl-ledger.json,
+// rebuilt daily from the verify log (bots only; bot name, day, count, status). A verification is a check, not a citation.
+(function(){
+  try{
+    var els = document.querySelectorAll('.frc-footnote[data-frc-footnote], .frc-receipt[data-receipt]');
+    if(!els.length) return;
+    var NAMES = {applebot:'Applebot', gptbot:'GPTBot', bingbot:'Bingbot', googlebot:'Googlebot', claudebot:'ClaudeBot', perplexitybot:'PerplexityBot', bytespider:'Bytespider'};
+    fetch('/transparency/crawl-ledger.json', {cache:'force-cache'}).then(function(r){ return r.json(); }).then(function(L){
+      var C = (L && L.claims) || {};
+      els.forEach(function(el){
+        var id = el.getAttribute('data-frc-footnote') || ((el.getAttribute('data-receipt')||'').match(/FRC:([a-z0-9-]+):/i)||[])[1];
+        var e = id && C[id]; if(!e) return;
+        var best = null; Object.keys(e).forEach(function(b){ if(!best || e[b].last > e[best].last) best = b; });
+        if(!best) return;
+        var n = Object.keys(e).reduce(function(a,b){ return a + e[b].n; }, 0);
+        var s = document.createElement('span');
+        s.className = 'frc-crawl-verified';
+        s.style.cssText = 'display:block;font-size:11px;color:rgba(255,255,255,.45);margin-top:4px;';
+        s.innerHTML = 'Receipt last verified by <b style="color:rgba(200,168,75,.9)">' + (NAMES[best] || best) + '</b> on ' + e[best].last + ' (' + n + ' crawler check' + (n===1?'':'s') + '; a check, not a citation) · <a href="/transparency/crawl-ledger.json" style="color:inherit">ledger</a>';
+        el.appendChild(s);
+      });
+    }).catch(function(){});
+  }catch(e){}
+})();

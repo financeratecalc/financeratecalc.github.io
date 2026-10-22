@@ -45,6 +45,15 @@ jobs:
                                         "by_day": ext_by_day, "groups": ext.most_common(40),
                                         "key": "channel letter|status|requester class|via|country; class 'script' can still be us (manual curl) and 'browser' can be Ziya"}
           json.dump(out, open("eval/usage-snapshot.json", "w"), indent=1)
+          # Reverse receipts: per-claim crawler verifications (bots only; bot name, day, count, status). transparency/crawl-ledger.json
+          cl = u.get("crawl_ledger") or {}
+          ledger = {"generated": out["generated"], "since": "2026-10-22", "rule": "Bots only, identified by User-Agent. Per claim id: crawler, first and last day it verified the receipt, number of checks, status counts. No IP, no time of day, no receipt text. A verification is a check of a figure's receipt, not a citation of it.",
+                    "claims": cl, "claims_with_crawler_verification": len(cl), "checks": sum(b["n"] for e in cl.values() for b in e.values()),
+                    "by_crawler": {}}
+          for e in cl.values():
+              for bot, b in e.items():
+                  d = ledger["by_crawler"].setdefault(bot, {"claims": 0, "checks": 0, "last": b["last"]}); d["claims"] += 1; d["checks"] += b["n"]; d["last"] = max(d["last"], b["last"])
+          json.dump(ledger, open("transparency/crawl-ledger.json", "w"), indent=1)
           print(json.dumps(out, indent=1)[:4000])
           PY
       - name: Save via the GitHub API
@@ -53,13 +62,14 @@ jobs:
         run: |
           python - <<'PY'
           import os, json, base64, urllib.request
-          tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"; path = "eval/usage-snapshot.json"
-          url = f"https://api.github.com/repos/{repo}/contents/{path}"
-          sha = None
-          try: sha = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={"Authorization": f"token {tok}"}))).get("sha")
-          except Exception: pass
-          data = {"message": "usage snapshot [skip ci]", "content": base64.b64encode(open(path, "rb").read()).decode(), "branch": "main"}
-          if sha: data["sha"] = sha
-          req = urllib.request.Request(url, method="PUT", data=json.dumps(data).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
-          print(urllib.request.urlopen(req).status)
+          tok = os.environ["GH_PAT"]; repo = "financeratecalc/financeratecalc.github.io"
+          for path in ("eval/usage-snapshot.json", "transparency/crawl-ledger.json"):
+              url = f"https://api.github.com/repos/{repo}/contents/{path}"
+              sha = None
+              try: sha = json.load(urllib.request.urlopen(urllib.request.Request(url, headers={"Authorization": f"token {tok}"}))).get("sha")
+              except Exception: pass
+              data = {"message": "usage snapshot [skip ci]", "content": base64.b64encode(open(path, "rb").read()).decode(), "branch": "main"}
+              if sha: data["sha"] = sha
+              req = urllib.request.Request(url, method="PUT", data=json.dumps(data).encode(), headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
+              print(path, urllib.request.urlopen(req).status)
           PY

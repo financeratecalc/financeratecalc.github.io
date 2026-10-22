@@ -165,6 +165,10 @@ latest item naming the id.
 issued for each id, under every rule. It is what makes `unrecognized` possible: a hash absent from it
 was never issued. Publishers SHOULD regenerate it before every change to a claim block.
 
+## 8a. Read receipts (optional)
+
+A publisher MAY publish, per claim id, which crawlers verified its receipt and when (`crawl_ledger` in the manifest, pointing to JSON `{"claims": {"<id>": {"<bot>": {"first", "last", "n", "status": {...}}}}}`). Bots are identified by User-Agent only; browsers and scripts are never attributed; no IP, no time of day. A verification is a check of the figure, not a citation of it, and the file must say so. The reference implementation publishes `https://financeratecalc.com/transparency/crawl-ledger.json`, rebuilt daily.
+
 ## 9. What this specification does not do
 
 It does not prove the publisher is right: a receipt says *which* figure, from *whom*, and whether
