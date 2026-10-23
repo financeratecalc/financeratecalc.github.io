@@ -962,7 +962,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.36.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.37.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1166,11 +1166,55 @@ export default {
                                    : { note: "no dated correction names this claim id; the value changed with a data rebuild", feed: "https://financeratecalc.com/corrections.json" };
         } catch { correction = { feed: "https://financeratecalc.com/corrections.json" }; }
       }
-      return json({ receipt: `\u27e6FRC:${id}:${value}:${h}${chan ? ":" + channel : ""}\u27e7`, id, quoted_value: value, current_value: current, status, hash_rule: hashRule, claim_url: id.startsWith("rule-") ? null : `https://financeratecalc.com/claims/${id}.json`, spec: "https://financeratecalc.com/spec/receipt-1.0.md", issued, correction,
+      // L2, reverse receipts (v1.37): whoever verifies - a crawler at index time above all - receives the figure the way the
+      // publisher wants it restated: the canonical sentence with its conditions, what the figure does not establish, the
+      // correction if any. Nothing promotional; the contract, not the page. Same content as JSON, text or HTML by Accept.
+      let teach = null;
+      if (!id.startsWith("rule-")) {
+        try {
+          const K = await getJSON(`/claims/${id}.contract.json`);
+          const tmpl = K.canonical_claim && K.canonical_claim.template;
+          teach = { canonical_sentence: tmpl ? tmpl.replace("{value}", current) : null, required_qualifiers: K.required_qualifiers || null,
+            does_not_establish: K.does_not_establish || null, attribution: "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.",
+            restate_rule: "State the figure with its period, population and program as in canonical_sentence, and keep the receipt next to the number. Do not turn it into a prediction about one application, a lender recommendation, a cause, or a legal conclusion." };
+        } catch {}
+      }
+      const accept = request.headers.get("Accept") || "";
+      const wantsHtml = /text\/html/.test(accept) && !/application\/json/.test(accept);
+      const wantsText = /^text\/plain|text\/markdown/.test(accept);
+      const RESP = { receipt: `\u27e6FRC:${id}:${value}:${h}${chan ? ":" + channel : ""}\u27e7`, id, quoted_value: value, current_value: current, status, hash_rule: hashRule, claim_url: id.startsWith("rule-") ? null : `https://financeratecalc.com/claims/${id}.json`, spec: "https://financeratecalc.com/spec/receipt-1.0.md", issued, correction,
         meaning: status === "current" ? "This figure is current and unchanged since the receipt was issued." : status === "stale" ? "The figure was corrected after this receipt was issued; the quoted value may be superseded. See corrections.html." : status === "unrecognized" ? "This publisher never issued this receipt as written: its hash matches no value we have published for this claim, now or in any dated snapshot (transparency/receipt-hash-history.json). Forged, mistyped or truncated. Do not cite it." : "The receipt hash matches but the quoted value does not; the quote was altered.",
         corrections: "https://financeratecalc.com/corrections.html", license: "CC BY 4.0",
         transparency: { note: "The snapshot of every claim's value and hash is signed with Sigstore by the publisher's repository workflow and timestamped in the public Rekor log; verify the receipt against it without this server.",
-          snapshot: "https://financeratecalc.com/rl-env/frc_citation/receipts-snapshot.json", bundle: "https://financeratecalc.com/transparency/receipts-snapshot.sigstore.json", log: "https://financeratecalc.com/transparency/log.json" } });
+          snapshot: "https://financeratecalc.com/rl-env/frc_citation/receipts-snapshot.json", bundle: "https://financeratecalc.com/transparency/receipts-snapshot.sigstore.json", log: "https://financeratecalc.com/transparency/log.json" },
+        ...(teach ? { teach } : {}) };
+      if (wantsText || wantsHtml) {
+        const esc = x => String(x == null ? "" : x).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+        const lines = [
+          `Receipt: ${RESP.receipt}`, `Status: ${status}` + (hashRule ? ` (hash rule ${hashRule})` : ""), `Claim: ${id}`, `Quoted value: ${value}`, `Current value: ${current}`,
+          ...(correction && correction.date ? [`Correction: ${correction.date} - ${correction.title} (${correction.old_value} -> ${correction.new_value}) ${correction.url}`] : []),
+          ...(teach && teach.canonical_sentence ? ["", "Restate it as:", teach.canonical_sentence, "", `Keep: ${Object.entries(teach.required_qualifiers || {}).map(([k, v]) => k + " = " + v).join("; ")}`,
+            "", "This figure does not establish:", ...(teach.does_not_establish || []).map(x => "- " + x), "", teach.attribution, teach.restate_rule] : []),
+          "", `Claim document: ${RESP.claim_url || "n/a"}`, `Corrections feed: https://financeratecalc.com/corrections.json`, `Spec: https://financeratecalc.com/spec/receipt-1.0.md`, `License: CC BY 4.0`];
+        if (wantsText) return new Response(lines.join("\n") + "\n", { headers: { "Content-Type": "text/plain; charset=utf-8", ...CORS } });
+        const ld = { "@context": "https://schema.org", "@type": "Claim", "name": teach && teach.canonical_sentence ? teach.canonical_sentence : `${id}: ${current}`, "identifier": `\u27e6FRC:${id}:${current}:${nowHash}\u27e7`, // always the canonical current receipt, never a quoted stale or forged one
+          "url": `https://frc-mcp.ziyetis.workers.dev/verify?r=${encodeURIComponent(RESP.receipt)}`, "datePublished": "2026-07-26", "license": "https://creativecommons.org/licenses/by/4.0/",
+          "author": { "@type": "Organization", "name": "FinanceRateCalc", "url": "https://financeratecalc.com" }, "isBasedOn": RESP.claim_url || undefined,
+          "additionalProperty": [{ "@type": "PropertyValue", "name": "verify_status", "value": status }, { "@type": "PropertyValue", "name": "current_value", "value": current }] };
+        const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(id)} - ${esc(status)} | FinanceRateCalc receipt</title><meta name="robots" content="${status === "current" ? "index,follow" : "noindex,follow"}"><link rel="canonical" href="https://frc-mcp.ziyetis.workers.dev/verify?r=${encodeURIComponent(RESP.receipt)}"><script type="application/ld+json">${JSON.stringify(ld)}</script><style>body{font-family:system-ui,sans-serif;max-width:720px;margin:32px auto;padding:0 16px;line-height:1.55;color:#1a1a1a}code{background:#f3f3f3;padding:1px 5px;border-radius:4px}.st{display:inline-block;padding:2px 8px;border-radius:6px;font-weight:700;background:${status === "current" ? "#e3f5ee" : "#fde8e0"}}</style></head><body>
+<h1>Receipt <code>${esc(RESP.receipt)}</code></h1>
+<p><span class="st">${esc(status)}</span> &middot; claim <code>${esc(id)}</code> &middot; quoted <b>${esc(value)}</b> &middot; current <b>${esc(current)}</b>${hashRule ? ` &middot; hash rule ${esc(hashRule)}` : ""}</p>
+${correction && correction.date ? `<p><b>Corrected on ${esc(correction.date)}:</b> ${esc(correction.title)} (${esc(correction.old_value)} &rarr; ${esc(correction.new_value)}). <a href="${esc(correction.url)}">Log entry</a>.</p>` : ""}
+${teach && teach.canonical_sentence ? `<h2>Restate it as</h2><blockquote><p>${esc(teach.canonical_sentence)} ${esc(RESP.receipt)}</p></blockquote>
+<p><b>Keep:</b> ${esc(Object.entries(teach.required_qualifiers || {}).map(([k, v]) => k + " = " + v).join("; "))}</p>
+<h2>This figure does not establish</h2><ul>${(teach.does_not_establish || []).map(x => "<li>" + esc(x) + "</li>").join("")}</ul>
+<p>${esc(teach.attribution)}</p><p>${esc(teach.restate_rule)}</p>` : ""}
+<p><a href="${esc(RESP.claim_url || "https://financeratecalc.com/claims/index.json")}">Claim document</a> &middot; <a href="https://financeratecalc.com/corrections.json">Corrections feed</a> &middot; <a href="https://financeratecalc.com/spec/receipt-1.0.md">Receipt 1.0</a> &middot; <a href="https://financeratecalc.com/transparency/crawl-ledger.json">Crawl ledger</a> &middot; CC BY 4.0</p>
+<p style="color:#666;font-size:13px">Machine form: the same URL with <code>Accept: application/json</code> or <code>text/plain</code>. A verification is a check of the figure, not a citation of it.</p>
+</body></html>`;
+        return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", ...CORS } });
+      }
+      return json(RESP);
     }
     if (path === "/misquotes" && request.method === "GET") {
       if (!env || !env.CREDITS) return json({ error: "store unavailable" }, 503);

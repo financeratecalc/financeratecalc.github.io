@@ -147,6 +147,8 @@ the current claim block under any listed rule is **current**; the verify answer 
 | `stale` | hash matches none, but is listed in the publisher's hash history for this id | the figure was corrected; `correction` carries `date`, `title`, `old_value`, `new_value`, `url` |
 | `unrecognized` | hash matches none and was never issued for this id | this publisher never issued the receipt as written; treat as unverified |
 
+A publisher MAY add a `teach` object to the answer: `canonical_sentence` (the figure stated with its conditions, current value), `required_qualifiers`, `does_not_establish`, `attribution`. The point is the moment: a crawler verifying at index time receives the figure as the publisher wants it restated, not as the page happened to phrase it. A publisher MAY serve the same answer as `text/plain` or `text/html` by `Accept`; the HTML form SHOULD carry schema.org `Claim` structured data whose `identifier` is always the canonical current receipt, never the quoted one, and SHOULD be `noindex` unless the status is `current`. JSON remains the default.
+
 Other answers: a malformed receipt → HTTP 400 `{"valid": false, "reason": "not a receipt"}`; an id
 with no claim document → HTTP 200 `{"valid": false, "reason": "unknown claim id"}`. A verifier MUST
 NOT infer anything from an unknown id beyond "not this publisher's".
