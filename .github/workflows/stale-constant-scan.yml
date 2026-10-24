@@ -19,4 +19,4 @@ jobs:
           git config user.name "frc-scan" && git config user.email "press@financeratecalc.com"
           git add eval/stale-constants-scan.json eval/stale-constants-scan.md
           git diff --cached --quiet || git commit -m "stale constant scan [skip ci]"
-          git pull --rebase -q origin main && git push -q origin main
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done

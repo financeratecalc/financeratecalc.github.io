@@ -31,4 +31,4 @@ jobs:
           git config user.name "frc-stress-lab" && git config user.email "press@financeratecalc.com"
           git add eval/frc-agent-stress-report.json eval/frc-agent-stress-report-control.json eval/frc-agent-stress-report-paired.json 2>/dev/null || true
           git diff --cached --quiet || git commit -m "agent stress lab pilot reports [skip ci]"
-          git pull --rebase -q origin main && git push -q origin main
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done

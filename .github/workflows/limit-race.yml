@@ -23,4 +23,4 @@ jobs:
           git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
           git add eval/race-2027 race-2027.html 2>/dev/null || true
           git commit -m "limit race $(date -u +%F) [skip ci]" || exit 0
-          git pull --rebase && git push
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done

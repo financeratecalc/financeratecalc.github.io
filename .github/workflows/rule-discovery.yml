@@ -24,5 +24,4 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add rules/candidates.json eval/rule-sources
           git diff --cached --quiet || git commit -m "rule discovery: weekly fetch [skip ci]"
-          git pull --rebase
-          git push
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done

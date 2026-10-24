@@ -22,4 +22,4 @@ jobs:
           git config user.name "frc-example" && git config user.email "press@financeratecalc.com"
           git add examples/repair-pack/sample-outputs
           git diff --cached --quiet || git commit -m "repair-pack example: sample reports refreshed [skip ci]"
-          git pull --rebase -q origin main && git push -q origin main
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
