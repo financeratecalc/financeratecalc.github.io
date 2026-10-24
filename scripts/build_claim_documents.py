@@ -65,7 +65,10 @@ def main():
         if new == doc:
             unchanged += 1; continue
         if check:
-            drift += 1; print("drift", cid, "claim" if doc.get("claim") != obj else "", "display" if doc.get("display_value") != cur else "")
+            drift += 1
+            diff = [k for k in set(new) | set(doc) if new.get(k) != doc.get(k)]
+            msg = f"drift {cid}: fields {sorted(diff)}; " + "; ".join(f"{k}: doc={str(doc.get(k))[:80]!r} data={str(new.get(k))[:80]!r}" for k in sorted(diff)[:3])
+            print(("::error::" if os.environ.get("GITHUB_ACTIONS") == "true" else "") + msg)
             continue
         json.dump(new, open(path, "w", encoding="utf-8"), indent=1, ensure_ascii=False); written += 1
     if check:
