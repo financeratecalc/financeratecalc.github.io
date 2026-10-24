@@ -69,6 +69,24 @@ def lender_pages():
     return out
 
 
+def side_copies():
+    """Unreceipted copies of lender figures in index.html structured data and llms.txt must equal the data files."""
+    out = []
+    api = {os.path.basename(f)[:-5]: json.load(open(f))["denial_rate_pct"] for f in glob.glob(os.path.join(ROOT, "api", "lender", "*.json"))}
+    names = {"crosscountry": "crosscountry-mortgage", "newrez": "newrez", "rocket": "rocket-mortgage", "guild": "guild-mortgage", "amerisave": "amerisave-mortgage", "freedom": "freedom-mortgage"}
+    for rel in ("index.html", "llms.txt"):
+        t = open(os.path.join(ROOT, rel), encoding="utf-8").read()
+        for word, slug in names.items():
+            for m in re.finditer(r"\b" + word + r"\b[^.%\n]{0,40}?(\d+\.\d)%", t, re.I):
+                v = float(m.group(1)); ctx = t[max(0, m.start() - 120): m.end() + 60].lower()
+                # only copies that present the figure as the lender's overall FHA denial rate; reason shares and cells are other metrics
+                if not re.search(r"denial rate|lender gap|denied \d|vs newrez|to newrez", ctx) or re.search(r"reason|cell|dti|cltv|share|black hole", ctx):
+                    continue
+                if slug in api and abs(v - api[slug]) > 0.051:
+                    out.append((rel, word, v, api[slug], m.group(0)[:80]))
+    return out
+
+
 def main():
     fix = "--fix" in sys.argv
     log = {"generated": datetime.date.today().isoformat(), "state_pages": [], "lender_pages": []}
@@ -94,6 +112,8 @@ def main():
             if ch:
                 open(f, "w", encoding="utf-8").write(h2)
                 log["lender_pages"].append({"page": rel, "changes": ch})
+    for rel, word, v, want, ctx in side_copies():
+        bad += 1; print(f"{rel}: {word} {v}% but data says {want}% :: {ctx}")
     if fix:
         p = os.path.join(ROOT, "eval", f"page-value-fix-{log['generated']}.json")
         json.dump(log, open(p, "w"), indent=1, ensure_ascii=False)

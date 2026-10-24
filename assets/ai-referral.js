@@ -92,3 +92,28 @@
     }).catch(function(){});
   }catch(e){}
 })();
+
+// Accessibility (2026-10-24, from a screen-reader reading): receipts are read as a label first and the hash is hidden from
+// assistive tech; "verify" links say what they verify; colour-only tiers in tables get text; footnote links get context.
+(function(){
+  try{
+    var sr='position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;';
+    document.querySelectorAll('.frc-receipt').forEach(function(el){
+      var rc=el.getAttribute('data-receipt')||''; var m=/FRC:([a-z0-9-]+):([^:]+):/i.exec(rc);
+      var lab=document.createElement('span'); lab.style.cssText=sr; lab.textContent='Claim receipt, a serial number for this figure'+(m?(' ('+m[1].replace(/-/g,' ')+', '+m[2]+')'):'')+'. ';
+      el.insertBefore(lab, el.firstChild);
+      el.childNodes.forEach(function(n){ if(n.nodeType===3 && /FRC:/.test(n.textContent)){ var w=document.createElement('span'); w.setAttribute('aria-hidden','true'); w.textContent=n.textContent; el.replaceChild(w,n); } });
+      el.querySelectorAll('a').forEach(function(a){ if(/^verify$/i.test((a.textContent||'').trim())) a.setAttribute('aria-label','Verify this receipt'+(m?' for '+m[1].replace(/-/g,' '):'')); });
+    });
+    document.querySelectorAll('.frc-footnote').forEach(function(el){
+      var id=el.getAttribute('data-frc-footnote')||'';
+      el.querySelectorAll('a').forEach(function(a){ var t=(a.textContent||'').trim(); if(/^(verify|cite card|passport|data|method)$/i.test(t)) a.setAttribute('aria-label', t+' for '+id.replace(/-/g,' ')); });
+      el.querySelectorAll('[data-receipt], code').forEach(function(c){ if(/FRC:/.test(c.textContent||'')) c.setAttribute('aria-hidden','true'); });
+    });
+    document.querySelectorAll('td').forEach(function(td){
+      var c=(td.getAttribute('style')||'').replace(/\s/g,'').toLowerCase(); var tier=null;
+      if(/color:#22c55e/.test(c)) tier='lowest tier'; else if(/color:#e94560|color:#ef4444|color:#c0392b/.test(c)) tier='highest tier';
+      if(tier){ var t=document.createElement('span'); t.style.cssText=sr; t.textContent=' ('+tier+')'; td.appendChild(t); }
+    });
+  }catch(e){}
+})();
