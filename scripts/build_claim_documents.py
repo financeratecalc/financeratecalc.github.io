@@ -79,4 +79,10 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except Exception:
+        import traceback
+        tb = traceback.format_exc().strip().splitlines()
+        print(("::error::" if os.environ.get("GITHUB_ACTIONS") == "true" else "") + "crash: " + " | ".join(tb[-3:])[:600])
+        sys.exit(2)
