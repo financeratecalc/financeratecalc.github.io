@@ -24,3 +24,7 @@ jobs:
           git diff --quiet || { echo "::error::retired product text reappeared; run scripts/retire_zai_remnants.py"; git diff --stat; exit 1; }
       - name: Claim documents agree with the data files (Receipt 1.0)
         run: python3 scripts/build_claim_documents.py --check
+      - name: Every page links home
+        run: |
+          python3 scripts/inject_site_nav.py | tee /tmp/nav.txt
+          grep -q "nav added to 0 pages" /tmp/nav.txt || { echo "::error::pages without a link home appeared; run scripts/inject_site_nav.py"; exit 1; }
