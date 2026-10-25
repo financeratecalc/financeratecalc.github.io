@@ -1,0 +1,36 @@
+name: Endpoint probe (manual; CORS and status of the worker routes the site's pages call)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe /cite and /verify for a sample of claim ids, as a browser on financeratecalc.com would
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, urllib.error, datetime
+          EP = "https://frc-mcp.ziyetis.workers.dev"
+          ids = [c["id"] for c in json.load(open("claims/index.json"))["claims"]]
+          sample = ids[:6] + ids[len(ids)//2:len(ids)//2+4] + ids[-4:]
+          out = []
+          for i in sample:
+              for path in (f"/cite/{i}",):
+                  req = urllib.request.Request(EP + path, headers={"Origin": "https://financeratecalc.com", "User-Agent": "frc-endpoint-probe"})
+                  try:
+                      r = urllib.request.urlopen(req, timeout=30); body = r.read()[:200].decode(errors="ignore"); st = r.status; acao = r.headers.get("access-control-allow-origin")
+                  except urllib.error.HTTPError as e:
+                      body = e.read()[:200].decode(errors="ignore"); st = e.code; acao = e.headers.get("access-control-allow-origin")
+                  except Exception as e:
+                      body = str(e)[:200]; st = None; acao = None
+                  out.append({"path": path, "status": st, "acao": acao, "body": body})
+                  print(st, acao, path, body[:90])
+          json.dump({"generated": datetime.datetime.utcnow().isoformat() + "Z", "results": out}, open("eval/endpoint-probe.json", "w"), indent=1)
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add eval/endpoint-probe.json; git diff --cached --quiet || git commit -m "endpoint probe [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
