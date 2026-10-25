@@ -37,13 +37,26 @@ button{margin-top:12px;background:#C8A84B;color:#08090c;border:0;border-radius:8
 <script>
 const API="https://frc-mcp.ziyetis.workers.dev/verify?r=";
 const out=document.getElementById("out"), inp=document.getElementById("r");
+// Offline verification (2026-10-25): if the verify service is unreachable from the reader's network, the same answer is
+// computed here from the public claim document, the hash history and the corrections feed (Receipt 1.0, both hash rules).
+const jcs=x=>Array.isArray(x)?x.map(jcs):(x&&typeof x==="object")?Object.fromEntries(Object.keys(x).sort().map(k=>[k,jcs(x[k])])):x;
+async function h8(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("").slice(0,8);}
+async function offline(r){const m=/FRC:([a-z0-9-]+):([^:\s\u27e7]+):([a-f0-9]{8})(?::([a-z][0-9]{4}))?/i.exec(r); if(!m) return {valid:false,reason:"not a receipt"};
+ const [,id,value,h]=m; let P; try{P=await (await fetch("/claims/"+id+".json")).json();}catch(e){return {valid:false,reason:"unknown claim id",id};}
+ if(!P.claim) return {valid:false,reason:"unknown claim id",id};
+ const now=await h8(JSON.stringify(jcs(P.claim))), legacy=await h8(JSON.stringify(P.claim,Object.keys(P.claim).sort()));
+ const cur=String(P.display_value||""); let status;
+ if(h===now||h===legacy) status=cur===value?"current":"hash-current-value-mismatch";
+ else{let hist={};try{hist=(await (await fetch("/transparency/receipt-hash-history.json")).json()).hashes||{};}catch(e){} status=(hist[id]||[]).includes(h)?"stale":"unrecognized";}
+ let meaning={current:"This figure is current and unchanged since the receipt was issued.",stale:"The figure was corrected after this receipt was issued; see the corrections log.",unrecognized:"This publisher never issued this receipt as written. Do not cite it.","hash-current-value-mismatch":"The receipt is real but the value beside it was changed."}[status];
+ return {id,quoted_value:value,current_value:cur,status,meaning:meaning+" (Checked in your browser from the public claim document; the verify service was not reachable from your network.)"};}
 async function go(){const r=inp.value.trim(); if(!r) return; out.style.display="block"; out.className="res"; out.textContent="Checking…";
- try{const d=await (await fetch(API+encodeURIComponent(r))).json();
+ try{let d; try{d=await (await fetch(API+encodeURIComponent(r))).json();}catch(netErr){d=await offline(r);}
   if(d.valid===false){out.className="res invalid";out.innerHTML=`<div class="big">Not a receipt we issued</div><div>${d.reason||""}${d.id?` — unknown claim id <span class="mono">${d.id}</span>`:""}</div>`;return;}
   const st=d.status==="hash-current-value-mismatch"?"altered":d.status; out.className="res "+st;
   const iss=d.issued&&d.issued.channel&&d.issued.channel!=="none"?`<div class="small" style="margin-top:6px">Issued through: <b>${d.issued.channel_meaning}</b> (${d.issued.channel}), ${d.issued.issued_month}. The channel letter says which of our doors this copy came through and how old it is.</div>`:`<div class="small" style="margin-top:6px">No issue channel on this receipt (issued before October 2026, or the segment was dropped when the figure was copied).</div>`;
-  out.innerHTML=`<div class="big">${st==="current"?"Current":st==="stale"?"Stale — corrected since issued":"Altered"}</div><div>Claim <span class="mono">${d.id}</span> · quoted <b>${d.quoted_value}</b> · current <b>${d.current_value}</b></div><div class="small" style="margin-top:6px">${d.meaning||""}</div>${iss}`;
- }catch(e){out.className="res invalid";out.textContent="Could not reach the verifier. Try again in a moment.";}}
+  out.innerHTML=`<div class="big">${st==="current"?"Current":st==="stale"?"Stale — corrected since issued":st==="unrecognized"?"Never issued by this publisher":"Altered"}</div><div>Claim <span class="mono">${d.id}</span> · quoted <b>${d.quoted_value}</b> · current <b>${d.current_value}</b></div><div class="small" style="margin-top:6px">${d.meaning||""}</div>${iss}`;
+ }catch(e){out.className="res invalid";out.textContent="Could not check this receipt: "+(e&&e.message||e);}}
 document.getElementById("go").onclick=go; inp.addEventListener("keydown",e=>{if(e.key==="Enter")go();});
 const q=new URLSearchParams(location.search).get("r"); if(q){inp.value=q; go();}
 </script></body></html>

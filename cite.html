@@ -64,10 +64,20 @@ fetch('/claims/index.json').then(r=>r.json()).then(j=>{const arr=Array.isArray(j
  const pri=['national-fha-denial-rate-2025','door-effect-38pct-2026','amerisave-fha-denial-rate-2025','major-lender-span-2025','collateral-denials-by-loan-size-2025'];all.sort((a,b)=>(pri.indexOf(b.id)>=0?1:0)-(pri.indexOf(a.id)>=0?1:0)||a.id.localeCompare(b.id));fill(all);const id=q.get('id');if(id){pick.value=id;load(id);}}).catch(()=>{pick.innerHTML='<option value="national-fha-denial-rate-2025">national-fha-denial-rate-2025</option>';});
 filt.addEventListener('input',()=>{const v=filt.value.toLowerCase();fill(all.filter(c=>(c.id+' '+c.metric).toLowerCase().includes(v)));});
 pick.addEventListener('change',()=>{if(pick.value){history.replaceState(null,'','?id='+pick.value);load(pick.value);}});
-async function load(id){document.getElementById('err').style.display='none';try{const r=await fetch(EP+'/cite/'+encodeURIComponent(id));const j=await r.json();if(!j.cited)throw new Error(j.reason||'not found');cur=j;
+async function staticCard(id){ // 2026-10-25: some readers' networks cannot reach workers.dev; the claim documents on this site carry everything needed
+ const P=await (await fetch('/claims/'+id+'.json')).json(); let C=null; try{C=await (await fetch('/claims/'+id+'.contract.json')).json();}catch(e){}
+ const v=P.display_value||null, rc=P.receipt||null, tm=C&&C.canonical_claim&&C.canonical_claim.template;
+ const sent=tm?(v?tm.replace('{value}',v):tm):(v?id+': '+v:(P.claim&&P.claim.definition)||id);
+ const withR=rc&&v&&sent.indexOf(v)>=0?sent.replace(v,v+' '+rc):(rc?sent+' '+rc:sent);
+ const at=(P.attribution&&P.attribution.required_text)||'Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.';
+ const vu=rc?EP+'/verify?r='+encodeURIComponent(rc):'/verify.html', pu='/claims/'+id+'.json';
+ return {cited:true,offline:true,sentence_with_receipt:withR,attribution:at,receipt:rc||'(no single-figure receipt: table claim)',verify_url:vu,passport_url:pu,contract_url:C?'/claims/'+id+'.contract.json':null,required_qualifiers:C&&C.required_qualifiers,
+  formats:{plain:withR+' '+at,markdown:withR+' '+at+' [Verify]('+vu+') · [Passport](https://financeratecalc.com'+pu+')',html:'<p>'+withR+' <small>'+at+' <a href="'+vu+'">Verify</a></small></p>',bibtex:'@misc{frc-'+id+',\n  title = {'+sent+'},\n  author = {FinanceRateCalc},\n  year = {2026},\n  url = {https://financeratecalc.com'+pu+'}\n}'}};}
+async function load(id){document.getElementById('err').style.display='none';try{let j;try{const r=await fetch(EP+'/cite/'+encodeURIComponent(id));j=await r.json();}catch(netErr){j=await staticCard(id);}if(!j.cited)throw new Error(j.reason||'not found');cur=j;
  document.getElementById('sent').textContent=j.sentence_with_receipt;document.getElementById('attr').textContent=j.attribution;document.getElementById('rcpt').textContent=j.receipt;
  document.getElementById('links').innerHTML='<a href="'+j.verify_url+'">Verify this receipt</a> · <a href="'+j.passport_url+'">Passport JSON</a>'+(j.contract_url?' · <a href="'+j.contract_url+'">Use contract</a>':'')+' · <a href="'+EP+'/cite/'+encodeURIComponent(id)+'">This card as JSON</a>';
  document.getElementById('quals').textContent=j.required_qualifiers?'Keep when you paraphrase: '+Object.entries(j.required_qualifiers).map(([k,v])=>k+' = '+v).join(' · '):'';
+ if(j.offline){document.getElementById('quals').textContent+=(document.getElementById('quals').textContent?' · ':'')+'Built from the claim document on this site (the live service was not reachable from your network); the receipt is the same.';}
  document.getElementById('card').style.display='';}catch(e){document.getElementById('card').style.display='none';const el=document.getElementById('err');el.textContent='Could not load this claim: '+e.message;el.style.display='';}}
 document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{if(!cur)return;const t=cur.formats[b.dataset.f];try{await navigator.clipboard.writeText(t);const o=b.textContent;b.textContent='Copied';b.classList.add('ok');setTimeout(()=>{b.textContent=o;b.classList.remove('ok')},1600);}catch(e){window.prompt('Copy:',t);}}));
 </script>

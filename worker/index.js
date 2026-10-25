@@ -962,7 +962,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.37.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.37.1" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1115,6 +1115,15 @@ export default {
       try { P = await getJSON(`/claims/${id}.json`); } catch { return json({ cited: false, id, reason: "no passport for this id", claims_index: BASE + "/claims/index.json" }, 404); }
       try { C = await getJSON(`/claims/${id}.contract.json`); } catch { C = null; }
       const st = await claimState(id); if (!st) return json({ cited: false, id, reason: "no current value" }, 404);
+      // v1.37.1: a table-valued claim (e.g. collateral shares by loan band) has no single figure; cite its sentence, no receipt
+      if (st.current == null || st.current === "undefined") {
+        const t0 = (C && C.canonical_claim && C.canonical_claim.template) || (P.claim && P.claim.definition) || id; const at0 = (P.attribution && P.attribution.required_text) || "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.";
+        return json({ cited: true, kind: "claim_table", id: "frc:claim:" + id, value: null, claim: P.claim, sentence: t0, sentence_with_receipt: t0, receipt: null, attribution: at0, verify_url: null,
+          passport_url: BASE + "/claims/" + id + ".json", contract_url: C ? BASE + "/claims/" + id + ".contract.json" : null, required_qualifiers: C && C.required_qualifiers || null, does_not_establish: C && C.does_not_establish || null,
+          note: "This claim is a table of values; cite the row you use from the passport. No single-figure receipt is issued.",
+          formats: { plain: t0 + " " + at0, markdown: t0 + " " + at0 + " [Passport](" + BASE + "/claims/" + id + ".json)", html: "<p>" + t0 + " <small>" + at0 + "</small></p>", bibtex: "@misc{frc-" + id + ",\n  title = {" + t0 + "},\n  author = {FinanceRateCalc},\n  year = {2026},\n  url = {" + BASE + "/claims/" + id + ".json}\n}" },
+          license: "CC BY 4.0", cite_page: BASE + "/cite.html?id=" + id });
+      }
       const r = await receipt(id, st.current, st.claimObj, "c");
       const tmpl = C && C.canonical_claim && C.canonical_claim.template; const sentence = tmpl ? tmpl.replace("{value}", st.current) : null;
       const num = st.current.replace(/[a-z%x-]+$/i, "");
