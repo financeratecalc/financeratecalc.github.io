@@ -2,7 +2,7 @@ name: Publish negative-knowledge dataset to Hugging Face
 on:
   workflow_dispatch:
   push:
-    paths: [corrections.json, eval/misquotes-graded.json, eval/correction-latency.json, eval/rubric-vectors.json, scripts/build_hf_negative_knowledge.py]
+    paths: [corrections.json, eval/misquotes-graded.json, eval/correction-latency.json, eval/rubric-vectors.json, scripts/build_hf_negative_knowledge.py, scripts/build_correction_pairs.py, eval/stale-page-fix-2026-10-01.json]
 permissions:
   contents: write
   issues: write
@@ -15,7 +15,7 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install -q huggingface_hub
       - name: Build package from the site's JSON
-        run: python scripts/build_hf_negative_knowledge.py --out hf-nk && ls hf-nk
+        run: python scripts/build_hf_negative_knowledge.py --out hf-nk && python scripts/build_correction_pairs.py --out hf-nk && ls hf-nk
       - name: Upload
         env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}" }
         run: |
