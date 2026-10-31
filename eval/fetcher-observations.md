@@ -33,3 +33,14 @@
 ## 2026-10-31 — Exa index check (search API used by agent builders)
 
 - Exa playground, query "FHA denial rate by lender 2025", Auto latency, Full Web: the first four results are all financeratecalc.com (FHA Denial Rates by Lender (2025); Mortgage Denial Questions, Answered…; Open Data Catalog — 7 Free Datasets; FHA Lender Comparison). No other domain on the first screen. The first snippet opens with the method sentence ("Method is published, not proprietary. Denial rate = denied ÷ (originated + approved-not-accepted + denied)"). Screenshot by Ziya, 17:55 Istanbul. One query, one day; not a ranking study.
+
+## 2026-10-31 — What goes with a crawler verifying a receipt (386 claims, ledger to 31 Oct)
+
+Features per claim: how many site pages carry its receipt text, how many of those are indexable, where the first receipt sits in the page (0 = top). Rows in `eval/ledger-features-2026-10-31.json`. Descriptive, one month of ledger; no causal claim.
+
+- Pages carrying the receipt: none → 0/79 verified; one page → 6.5% (13/199); 2–5 pages → 6.5% (4/62); six or more → 39% (18/46).
+- No indexable page carrying the receipt → 0/114; at least one → 12.9% (35/272).
+- Receipt position: verified claims' first receipt sits at a median 31% of the page; unverified at 76% (the footnote).
+- By kind: states (median 6 pages, 3 indexable) 21/52 verified; lenders (1 page) 13/98; metro gaps (1 page, receipt in the footnote) 1/184; small-loan penalties (no page carries the receipt text) 0/49.
+
+Implication for the 17–30 Nov pre-registration: matching treatment and control on kind + GA traffic is not enough; pages-carrying-receipt and receipt position differ sharply between verified and unverified claims and must be stratification variables. Proposed amendment (before the run, hashed like the original): add both to the matching, and register a second arm — receipt placement: on a random half of metro pages the receipt block moves above the table; outcome = ledger verifications over four weeks. Zero cost. Not changed yet; amendment first.
