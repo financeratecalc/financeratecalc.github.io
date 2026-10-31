@@ -55,6 +55,30 @@ def load_corrections():
     return by_id
 
 
+def load_ledger():
+    path = os.path.join(ROOT, "transparency", "crawl-ledger.json")
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8") as fh:
+        return json.load(fh).get("claims", {})
+
+
+BOT_NAMES = {"applebot": "Applebot", "gptbot": "GPTBot", "claudebot": "ClaudeBot", "googlebot": "Googlebot", "bingbot": "Bingbot",
+             "perplexitybot": "PerplexityBot", "meta": "a Meta crawler", "bytespider": "Bytespider", "ccbot": "CCBot", "other-bot": "an unnamed crawler"}
+
+
+def verified_line(entry):
+    """Reverse receipt: which crawler last checked this claim's receipt (bots only, from the public crawl ledger)."""
+    if not entry:
+        return None
+    parts = sorted(entry.items(), key=lambda kv: kv[1]["last"], reverse=True)
+    bot, b = parts[0]
+    others = [BOT_NAMES.get(k, k) for k, _ in parts[1:]]
+    tail = f"; also {', '.join(others)}" if others else ""
+    checks = sum(v["n"] for _, v in parts)
+    return f"Receipt last verified by {BOT_NAMES.get(bot, bot)} on {b['last']} ({checks} crawler check{'s' if checks != 1 else ''}{tail}; a check, not a citation)."
+
+
 def section_of(cid):
     for prefix, title in SECTIONS:
         if cid.startswith(prefix):
@@ -62,7 +86,7 @@ def section_of(cid):
     return "OTHER"
 
 
-def block(d, contract, corrections):
+def block(d, contract, corrections, ledger):
     cid, value = d["id"], d["display_value"]
     tmpl = (contract.get("canonical_claim") or {}).get("template")
     shown = value
@@ -84,6 +108,9 @@ def block(d, contract, corrections):
         pick = max(exact or valued or hits, key=lambda h: h["date"])
         chg = f" {pick['old_value']} -> {pick['new_value']}" if pick in valued else ""
         lines.append(f"Corrected {pick['date']}:{chg} — {pick['title']} ({pick.get('url', 'https://financeratecalc.com/corrections.html')}). Only the receipt above is current.")
+    vl = verified_line(ledger.get(cid))
+    if vl:
+        lines.append(vl)
     lines.append(f"Verify: {d['verify_url']}")
     lines.append(f"Claim document: {d['canonical_url']}")
     return "\n".join(lines)
@@ -92,6 +119,7 @@ def block(d, contract, corrections):
 def build():
     docs = load_claims()
     corrections = load_corrections()
+    ledger = load_ledger()
     today = dt.date.today().isoformat()
     header = f"""# FinanceRateCalc — every receipted figure in one file
 # Generated {today} from claims/*.json (the hashed claim documents) and claims/*.contract.json. {len(docs)} claims.
@@ -108,6 +136,9 @@ the receipt ⟦FRC:id:value:hash8⟧ next to the number. Any party can check a r
 URL (statuses current / stale / hash-current-value-mismatch / unrecognized), or hash the claim document per
 https://financeratecalc.com/spec/receipt-1.0.md. Corrections feed: https://financeratecalc.com/corrections.json —
 a block marked "Corrected" carries the current value; the older value is superseded.
+"Receipt last verified by" lines come from the public crawl ledger (https://financeratecalc.com/transparency/crawl-ledger.json):
+which crawler checked that receipt, and when. A check is not a citation. The same file, with fetches counted, is at
+https://frc-mcp.ziyetis.workers.dev/llms-full.txt (GitHub Pages keeps no access log; that mirror does, bots by name only).
 Method: https://financeratecalc.com/methodology.html — Contact: https://financeratecalc.com/contact.html
 """
     out = [header]
@@ -117,7 +148,7 @@ Method: https://financeratecalc.com/methodology.html — Contact: https://financ
         if sec != current:
             out.append(f"\n# {sec}\n")
             current = sec
-        out.append(block(d, contract, corrections) + "\n")
+        out.append(block(d, contract, corrections, ledger) + "\n")
     return "\n".join(out).rstrip() + "\n"
 
 

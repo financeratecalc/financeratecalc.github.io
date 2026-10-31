@@ -46,6 +46,11 @@ jobs:
           out["verify_log_external"] = {"since": min(vl) if vl else None, "total": sum(ext.values()), "ours_excluded": ours,
                                         "by_day": ext_by_day, "groups": ext.most_common(40),
                                         "key": "channel letter|status|requester class|via|country; class 'script' can still be us (manual curl) and 'browser' can be Ziya"}
+          # Bundle fetches (worker 1.38+): who pulls the one-file claim bundle through the counted mirror.
+          bf = u.get("bundle_fetches") or {}
+          out["bundle_fetches"] = {"by_day": {d: sum(g.values()) for d, g in sorted(bf.items())},
+                                   "groups": collections.Counter({g: n for d in bf for g, n in bf[d].items()}).most_common(30) if bf else [],
+                                   "key": "requester class|via|country; mirror https://frc-mcp.ziyetis.workers.dev/llms-full.txt; Pages itself keeps no log"}
           json.dump(out, open("eval/usage-snapshot.json", "w"), indent=1)
           # Reverse receipts: per-claim crawler verifications (bots only; bot name, day, count, status). transparency/crawl-ledger.json
           cl = u.get("crawl_ledger") or {}
@@ -58,10 +63,12 @@ jobs:
           json.dump(ledger, open("transparency/crawl-ledger.json", "w"), indent=1)
           print(json.dumps(out, indent=1)[:4000])
           PY
+      - name: Rebuild the claim bundle with the new ledger (reverse-receipt lines)
+        run: python3 scripts/build_llms_full.py
       - name: Commit snapshot and crawl ledger
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add eval/usage-snapshot.json transparency/crawl-ledger.json
+          git add eval/usage-snapshot.json transparency/crawl-ledger.json llms-full.txt
           git diff --cached --quiet || git commit -m "usage snapshot [skip ci]"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done

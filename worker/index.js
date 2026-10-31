@@ -962,7 +962,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.37.1" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.38.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1225,6 +1225,20 @@ ${teach && teach.canonical_sentence ? `<h2>Restate it as</h2><blockquote><p>${es
       }
       return json(RESP);
     }
+    // v1.38: the claim bundle (llms-full.txt), served from the site unchanged but counted. GitHub Pages keeps no access
+    // log, so this is the only way to learn whether agents fetch the one-file form. Recorded per fetch: day, requester
+    // class (from the User-Agent, as for /verify), via, country. No IP, no full User-Agent.
+    if (path === "/llms-full.txt" && request.method === "GET") {
+      const up = await fetch(BASE + "/llms-full.txt", { headers: { "User-Agent": "frc-bundle-mirror/1.38" }, cf: { cacheTtl: 900 } });
+      if (!up.ok) return new Response("bundle unavailable", { status: 502 });
+      if (env && env.CREDITS) {
+        const day = new Date().toISOString().slice(0, 10); const ref = request.headers.get("Referer") || "";
+        const meta = { cls: requesterClass(request), via: /^https:\/\/(www\.)?financeratecalc\.com\//.test(ref) ? "site-page" : (ref ? "other-site" : "direct"), cc: (request.cf && request.cf.country) || "XX" };
+        const key = `blog:${day}:${Date.now().toString(36)}:${Math.random().toString(36).slice(2, 8)}`;
+        try { await env.CREDITS.put(key, "", { expirationTtl: 60 * 60 * 24 * 400, metadata: meta }); } catch {}
+      }
+      return new Response(await up.text(), { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=900", "Access-Control-Allow-Origin": "*", "X-Canonical": BASE + "/llms-full.txt" } });
+    }
     if (path === "/misquotes" && request.method === "GET") {
       if (!env || !env.CREDITS) return json({ error: "store unavailable" }, 503);
       const out = []; let cursor;
@@ -1264,7 +1278,12 @@ ${teach && teach.canonical_sentence ? `<h2>Restate it as</h2><blockquote><p>${es
           b.n += 1; if (day < b.first) b.first = day; if (day > b.last) b.last = day; b.status[m.st || "?"] = (b.status[m.st || "?"] || 0) + 1;
         }
       }
-      return json({ generated: new Date().toISOString(), verify_log, crawl_ledger,
+      const bkeys = []; let bc;
+      do { const page = await env.CREDITS.list({ prefix: "blog:", limit: 1000, cursor: bc }); bkeys.push(...page.keys); bc = page.list_complete ? undefined : page.cursor; } while (bc);
+      const bundle_fetches = {};
+      for (const k of bkeys) { const day = k.name.split(":")[1]; const m = k.metadata || {}; const g = `${m.cls || "?"}|${m.via || "?"}|${m.cc || "XX"}`; bundle_fetches[day] = bundle_fetches[day] || {}; bundle_fetches[day][g] = (bundle_fetches[day][g] || 0) + 1; }
+      return json({ generated: new Date().toISOString(), verify_log, crawl_ledger, bundle_fetches,
+        bundle_fetches_note: "Fetches of the one-file claim bundle through this host (/llms-full.txt, mirror of financeratecalc.com/llms-full.txt), grouped as requester class|via|country per day. Since worker 1.38.0 (2026-10-31).",
         crawl_ledger_note: "Per claim id: which crawler (by User-Agent) verified its receipt, first and last day, count, status. Bots only; no IP, no time of day, no receipt text. Recorded since worker 1.36.0 (2026-10-22).",
         verify_log_note: "Exact count of /verify requests since 2026-10-16, one KV key each, grouped as channel|status|requester class|via|country. Requester class comes from the User-Agent (browser, bot:<name>, script, ours = our own suites and checks, none). via: site-page = sent from a financeratecalc.com page (e.g. a reader pressing verify), direct = no referrer. No IP, no full User-Agent, no receipt text.",
         note: "Counts of MCP tool calls by day, by the client name reported at initialize, and by tool. Handshakes are not counted. No IP, no user, no submitted data — only counts. Published openly because we ask others to be measurable and should be measurable ourselves.",
