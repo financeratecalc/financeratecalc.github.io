@@ -1,0 +1,38 @@
+name: Train contract-drift classifier (manual; CPU; eval committed; HF publish opt-in)
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: base encoder
+        default: distilroberta-base
+      epochs:
+        description: epochs
+        default: "3"
+      push:
+        description: publish the model to Hugging Face (FinanceRateCalc/frc-contract-drift) — type yes to publish
+        default: "no"
+permissions:
+  contents: write
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q torch --index-url https://download.pytorch.org/whl/cpu && pip install -q transformers numpy huggingface_hub
+      - run: python scripts/build_drift_training_set.py | tail -3
+      - name: Train and evaluate on held-out claim ids
+        env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}" }
+        run: |
+          PUSH=""; if [ "${{ inputs.push }}" = "yes" ]; then PUSH="--push FinanceRateCalc/frc-contract-drift"; fi
+          python scripts/train_drift_classifier.py --base "${{ inputs.base }}" --epochs "${{ inputs.epochs }}" --out models/frc-contract-drift $PUSH
+      - name: Publish the evaluation and the data set summary
+        run: |
+          cp models/frc-contract-drift/eval.json eval/drift-model-eval.json
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add eval/drift-model-eval.json eval/drift-training-set.json eval/drift-training-set.jsonl
+          git diff --cached --quiet || git commit -m "drift classifier: eval + data set [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
