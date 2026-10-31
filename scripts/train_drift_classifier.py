@@ -55,7 +55,7 @@ def main():
     model = AutoModelForSequenceClassification.from_pretrained(a.base, num_labels=len(labels), problem_type="multi_label_classification",
                                                                id2label={i: l for i, l in enumerate(labels)}, label2id={l: i for i, l in enumerate(labels)})
     args = TrainingArguments(output_dir=os.path.join(a.out, "_trainer"), num_train_epochs=a.epochs, per_device_train_batch_size=32, per_device_eval_batch_size=64,
-                             learning_rate=3e-5, weight_decay=0.01, logging_steps=50, save_strategy="no", report_to=[], seed=20261031, use_cpu=not torch.cuda.is_available())
+                             learning_rate=3e-5, weight_decay=0.01, logging_steps=50, save_strategy="no", report_to=[], seed=20261031, use_cpu=not torch.cuda.is_available(), dataloader_pin_memory=False)
     t0 = time.time()
     trainer = Trainer(model=model, args=args, train_dataset=Rows(train, tok, labels))
     trainer.train()
