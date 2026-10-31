@@ -26,6 +26,8 @@ jobs:
         run: python3 scripts/build_claim_documents.py --check
       - name: llms-full.txt carries every claim document
         run: python3 scripts/build_llms_full.py --check
+      - name: receipt-verify package verifies offline against the repo's own documents
+        run: node packages/receipt-verify/test.mjs
       - name: Every page links home
         run: |
           python3 scripts/inject_site_nav.py | tee /tmp/nav.txt

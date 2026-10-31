@@ -205,3 +205,7 @@ The suite is deterministic and needs only `fetch`. Run it against your own host;
 - Every receipted id now has a claim document; before 2026-10-21 half were built on the fly.
 - `display_value`, `hash_rule`, `hash8`, `receipt`, `receipt_document` added at the top level of
   existing passport documents (passport 0.1 fields retained).
+
+## Reference verifier
+
+`packages/receipt-verify` (npm: `receipt-verify`, MIT, zero dependencies, Node 18+ or browser): `verify(receipt, { manifest })` returns the four statuses above by reading the publisher's manifest, claim document and hash history — never the publisher's verify endpoint — and works fully offline when the documents are passed in. Its tests run against this repository's own documents in CI.
