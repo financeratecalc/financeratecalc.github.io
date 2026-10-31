@@ -24,6 +24,8 @@ jobs:
           git diff --quiet || { echo "::error::retired product text reappeared; run scripts/retire_zai_remnants.py"; git diff --stat; exit 1; }
       - name: Claim documents agree with the data files (Receipt 1.0)
         run: python3 scripts/build_claim_documents.py --check
+      - name: llms-full.txt carries every claim document
+        run: python3 scripts/build_llms_full.py --check
       - name: Every page links home
         run: |
           python3 scripts/inject_site_nav.py | tee /tmp/nav.txt
