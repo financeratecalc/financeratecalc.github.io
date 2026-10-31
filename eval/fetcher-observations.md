@@ -29,3 +29,7 @@
 - It flags "unsupported" spans in 100% of fidelity-1.0 answers, 95% of 0.5, 98% of 0. Flagged-character share: 25% (good), 26% (half), 45% (wrong). It does not separate correct from incorrect answers; it measures how much of the answer is not verbatim in the context, which is a different question from whether the record supports it.
 - Useful only as a locator: where the judge said a number differed (40.8 vs 40.3; 1.2x vs 1.3x; "77-percentage-point"), the flagged span is that number. The gate already finds the number; the locator adds the position, not the finding.
 - Decision: not added to the grading pipeline. Workflow `lettuce-probe.yml` stays manual.
+
+## 2026-10-31 — Exa index check (search API used by agent builders)
+
+- Exa playground, query "FHA denial rate by lender 2025", Auto latency, Full Web: the first four results are all financeratecalc.com (FHA Denial Rates by Lender (2025); Mortgage Denial Questions, Answered…; Open Data Catalog — 7 Free Datasets; FHA Lender Comparison). No other domain on the first screen. The first snippet opens with the method sentence ("Method is published, not proprietary. Denial rate = denied ÷ (originated + approved-not-accepted + denied)"). Screenshot by Ziya, 17:55 Istanbul. One query, one day; not a ranking study.
