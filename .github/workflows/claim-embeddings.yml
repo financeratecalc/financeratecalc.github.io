@@ -1,0 +1,23 @@
+name: Claim embeddings for check-answer (on claim-document change; manual)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["claims/*.contract.json", "scripts/build_claim_embeddings.py"]
+permissions:
+  contents: write
+jobs:
+  embed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q torch --index-url https://download.pytorch.org/whl/cpu && pip install -q sentence-transformers numpy
+      - run: python scripts/build_claim_embeddings.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/claim-embeddings.json
+          git diff --cached --quiet || git commit -m "claim embeddings rebuilt [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done

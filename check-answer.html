@@ -28,7 +28,7 @@ button{background:var(--gold);color:#08090c;border:0;border-radius:8px;padding:1
 <h1>Check an answer: what does the number carry, and what was added?</h1>
 <p class="lead">Paste an AI answer, a paragraph from an article, or your own draft about FHA denial rates or US mortgage rules. Every figure is matched against this publisher's receipted claims, the values we have corrected, and the dated rule constants. Every sentence is checked for the things a historical aggregate cannot say: your odds, which lender to choose, what caused what. Fixed patterns and public data only; nothing you paste is sent anywhere unless you press "record".</p>
 <textarea id="t" placeholder="Example: About a quarter of mortgage applicants get rejected, so you will probably be denied too. CrossCountry only denied 6.2% of FHA applications, so go with them. The 2026 conforming limit is $806,500."></textarea><!-- rulecheck:ignore: deliberately stale example for the checker to catch -->
-<div class="row"><button id="go">Check</button><button class="sec" id="ex">Try the example</button><span class="meta" id="st"></span></div>
+<div class="row"><button id="go">Check</button><button class="sec" id="deep" title="Loads a 23 MB sentence model into your browser once; nothing is sent anywhere">Deep check (meaning match, in your browser)</button><button class="sec" id="ex">Try the example</button><span class="meta" id="st"></span></div>
 <div id="out"></div>
 <div class="limits"><b>What this check cannot tell you.</b> It knows only the figures this publisher issues (FHA denial rates by lender, state and metro from the 2025 HMDA record; five dated US mortgage rule tables) and the values we have corrected. A number it does not recognise is not wrong; it is unverifiable here. It does not score tone, rhetoric or intent, and it never asks a model whether you are being persuaded, because that would hand the question to the thing being checked. What it can say is narrow and reproducible: whether a sentence's number is ours, whether it is current, and whether the sentence makes the number carry more than it can.</div>
 <h2>How it decides</h2>
@@ -118,5 +118,26 @@ async function run(){ if(!IX){st.textContent='loading the lookup table…';try{I
 document.getElementById('go').onclick=run; document.getElementById('ex').onclick=function(){ta.value=EXAMPLE;run();};
 ta.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='Enter')run();});
 })();
+
+// Deep check (2026-10-31): sentences with no receipted figure are embedded in the browser (transformers.js, all-MiniLM-L6-v2,
+// quantised, ~23 MB, cached by the browser) and compared with the canonical sentence of every claim. A near neighbour means
+// "this sentence is about a figure we publish"; the published value is then shown next to whatever the sentence said.
+// No model decides anything: the match is a pointer to the claim document and its receipt. Nothing leaves the page.
+var EMB=null, PIPE=null;
+function b64f32(b){var bin=atob(b),n=bin.length/4,buf=new ArrayBuffer(bin.length),u=new Uint8Array(buf);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new Float32Array(buf);}
+async function loadDeep(){ if(!EMB){st.textContent='loading claim embeddings…';var j=await (await fetch('/assets/claim-embeddings.json')).json();j.M=b64f32(j.matrix_b64);EMB=j;}
+ if(!PIPE){st.textContent='loading the sentence model into your browser (once, ~23 MB)…';var T=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.3.3');T.env.allowLocalModels=false;PIPE=await T.pipeline('feature-extraction',EMB.browser_model,{dtype:'q8'});}}
+async function embed(text){var o=await PIPE(text,{pooling:'mean',normalize:true});return Array.from(o.data);}
+function nearest(v){var best=-1,bi=-1,d=EMB.dim;for(var i=0;i<EMB.n;i++){var s=0,off=i*d;for(var k=0;k<d;k++)s+=v[k]*EMB.M[off+k];if(s>best){best=s;bi=i;}}return {i:bi,sim:best};}
+document.getElementById('deep').onclick=async function(){ var text=ta.value.trim(); if(!text){st.textContent='paste something first';return;}
+ try{await loadDeep();}catch(e){st.textContent='deep check unavailable: '+(e&&e.message||e);return;}
+ var S=sentences(text), html='', n=0;
+ for(var i=0;i<S.length;i++){var s=S[i]; if(RX.receipt.test(s)){RX.receipt.lastIndex=0;continue;} RX.receipt.lastIndex=0;
+  var v=await embed(s), nb=nearest(v); if(nb.sim<0.55)continue; n++;
+  var id=EMB.ids[nb.i], val=EMB.values[nb.i], has=s.indexOf(val.replace(/pp$/,''))>=0||s.indexOf(val)>=0;
+  html+='<div class="s '+(has?'ok':'warn')+'"><p>'+esc(s)+'</p><div class="f">'+tag(has?'ok':'warn','about a published figure (similarity '+nb.sim.toFixed(2)+')')+' Closest published sentence: <i>'+esc(EMB.sentences[nb.i])+'</i> — <a href="'+esc(EMB.claim[nb.i])+'">claim document</a>'+(EMB.verify[nb.i]?' · <a href="'+esc(EMB.verify[nb.i])+'">verify</a>':'')+(has?'':'. <b>The published value '+esc(val)+' does not appear in this sentence</b>; whatever number or claim it carries is not this figure, or has been changed.')+'</div></div>';}
+ var head='<div class="box"><b>Deep check</b> <span class="meta">'+n+' of '+S.length+' sentence'+(S.length===1?'':'s')+' resemble a figure this publisher issues (cosine ≥ 0.55 against the canonical sentence of '+EMB.n+' claims; model '+esc(EMB.browser_model)+', run in your browser, nothing sent). A match is a pointer, not a verdict: open the claim document and compare.</span></div>';
+ out.innerHTML=head+(html||'<div class="s"><div class="f meta">No sentence resembles a published figure closely enough.</div></div>')+out.innerHTML; st.textContent='deep check done';
+ try{if(typeof gtag!=='undefined')gtag('event','check_answer_deep',{sentences:S.length,matched:n});}catch(e){}};
 </script>
 </body></html>
