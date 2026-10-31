@@ -207,11 +207,15 @@ def examples_for(doc, contract):
         fill.update({"lo": title(sub["lo"].get("name", "the lowest lender")), "hi": title(sub["hi"].get("name", "the highest lender")), "lo_pct": pct(sub["lo"].get("denial_rate_pct")), "hi_pct": pct(sub["hi"].get("denial_rate_pct"))})
     if sub["kind"] == "penalty":
         fill.update({"small_pct": pct(sub.get("small")), "big_pct": pct(sub.get("big"))})
+    if any(v is None for k, v in fill.items() if k != "n"):
+        return rows  # a claim document without the fields the templates need (e.g. a table-valued penalty) gets no distortions
     for code, temps in table.items():
         for t in random.sample(temps, min(len(temps), 2)):
             try:
                 text = t.format(**fill)
             except KeyError:
+                continue
+            if "None" in text:
                 continue
             codes = [code]
             if code in ("INDIVIDUAL_PREDICTION_PROHIBITED", "LENDER_RECOMMENDATION", "SAME_APPLICANT_FRAMING") and "2025" not in text:
@@ -236,9 +240,9 @@ def main():
     MAP = {"genuine": [], "genuine_needs_qualifier": ["QUALIFIER_DELETED"]}
     for item in fx["items"]:
         for c in item["candidates"]:
-            codes = (c.get("gate") or {}).get("codes") or MAP.get(c["class"])
-            if codes is None:
-                continue
+            if c["class"] not in MAP:
+                continue  # wrong cell / role / period, superseded, forged, unverifiable: value errors, the gate's arithmetic, not framing
+            codes = MAP[c["class"]]
             codes = [x for x in codes if x in {"QUALIFIER_DELETED", "PROGRAM_MISMATCH", "INDIVIDUAL_PREDICTION_PROHIBITED", "CAUSALITY_NOT_ESTABLISHED", "LEGAL_CONCLUSION_NOT_SUPPORTED", "SCOPE_TOO_BROAD", "PERIOD_MISMATCH"}]
             rows.append({"text": c["text"], "codes": sorted(set(codes)), "claim_id": c.get("id") or "", "kind": "fixture", "source": "fixture:" + c["class"]})
     random.shuffle(rows)
