@@ -24,10 +24,32 @@ jobs:
       - run: pip install -q torch --index-url https://download.pytorch.org/whl/cpu && pip install -q "transformers>=4.44" "accelerate>=0.30" numpy huggingface_hub
       - run: python scripts/build_drift_training_set.py | tail -3
       - name: Train and evaluate on held-out claim ids
+        run: python scripts/train_drift_classifier.py --base "${{ inputs.base }}" --epochs "${{ inputs.epochs }}" --out models/frc-contract-drift
+      - name: Keep the trained model as a run artifact (so a publish failure does not cost the training)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frc-contract-drift
+          path: |
+            models/frc-contract-drift
+            !models/frc-contract-drift/_trainer
+          retention-days: 14
+      - name: Publish the model to Hugging Face (only when push=yes)
+        if: inputs.push == 'yes'
         env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}" }
         run: |
-          PUSH=""; if [ "${{ inputs.push }}" = "yes" ]; then PUSH="--push FinanceRateCalc/frc-contract-drift"; fi
-          python scripts/train_drift_classifier.py --base "${{ inputs.base }}" --epochs "${{ inputs.epochs }}" --out models/frc-contract-drift $PUSH
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+          tok = os.environ.get("HF_TOKEN")
+          if not tok: raise SystemExit("HF_TOKEN secret is empty")
+          api = HfApi(token=tok)
+          who = api.whoami(); print("token belongs to:", who.get("name"), "| orgs:", [o.get("name") for o in who.get("orgs", [])])
+          api.create_repo("FinanceRateCalc/frc-contract-drift", repo_type="model", exist_ok=True)
+          api.upload_folder(folder_path="models/frc-contract-drift", repo_id="FinanceRateCalc/frc-contract-drift", repo_type="model",
+                            ignore_patterns=["_trainer/*"], commit_message="train from rule-generated set")
+          print("pushed FinanceRateCalc/frc-contract-drift")
+          PY
       - name: Publish the evaluation and the data set summary
         run: |
           cp models/frc-contract-drift/eval.json eval/drift-model-eval.json
