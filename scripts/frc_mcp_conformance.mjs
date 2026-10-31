@@ -143,9 +143,23 @@ await test("19", "prompts: list carries the three teach prompts; restate_with_re
   return { pass: ["restate_with_receipt", "check_answer", "cite_claim"].every(n => names.includes(n)) && !!m && v.status === "current" && /decisioned/.test(txt) && !!bad.error,
     evidence: `prompts=${names.join(",")} receipt_verify=${v.status || "none"} missing_arg=${bad.error ? "refused" : "served"}` };
 });
+await test("20", "A2A: agent card at /.well-known/agent-card.json (1.0 shape) on the endpoint and the site agree; SendMessage with a receipt verifies, with a state returns the claim and receipt, with an approval question is rejected", async () => {
+  const card = await (await fetch(EP + "/.well-known/agent-card.json")).json();
+  const site = await (await fetch("https://financeratecalc.com/.well-known/agent-card.json")).json();
+  const okCard = card.name && Array.isArray(card.supportedInterfaces) && card.supportedInterfaces[0].protocolBinding === "JSONRPC" && Array.isArray(card.skills) && card.skills.length >= 2 && JSON.stringify(card) === JSON.stringify(site);
+  const send = async text => (await (await fetch(EP + "/a2a", { method: "POST", headers: { "content-type": "application/json", "A2A-Version": "1.0" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "SendMessage", params: { message: { messageId: "t1", role: "ROLE_USER", parts: [{ text }] } } }) })).json()).result?.task;
+  const v = await send("Verify \u27e6FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b\u27e7");
+  const st = await send("What was the FHA denial rate in Ohio in 2025?");
+  const rj = await send("Will I be approved for an FHA loan with a 600 score?");
+  const stText = st?.artifacts?.[0]?.parts?.[0]?.text || "";
+  const rec = /\u27e6FRC:state-oh-2025:[^\u27e7]+\u27e7/.exec(stText);
+  const vv = rec ? await (await fetch(EP + "/verify?r=" + encodeURIComponent(rec[0]))).json() : {};
+  return { pass: !!okCard && v?.status?.state === "TASK_STATE_COMPLETED" && /Current\./.test(v.artifacts[0].parts[0].text) && st?.status?.state === "TASK_STATE_COMPLETED" && vv.status === "current" && rj?.status?.state === "TASK_STATE_REJECTED",
+    evidence: `card=${okCard ? "ok" : "bad"} verify=${v?.status?.state} state=${st?.status?.state}/${vv.status || "none"} reject=${rj?.status?.state}` };
+});
 const passed = tests.filter(t => t.pass).length;
 const disc = (await rpc("server/discover", {})).body.result || {};
-const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.2", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,
+const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.3", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,
   generated_at: new Date().toISOString(), tests: tests.length, passed, conformance: passed === tests.length ? "PASS" : "FAIL",
   method: "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
   results: tests.map(({ receipt, requestState, ...t }) => t) };

@@ -1,0 +1,78 @@
+{
+ "name": "FinanceRateCalc",
+ "description": "Observed FHA mortgage denial statistics from the complete 2025 US federal HMDA record, each figure with a verifiable claim receipt and a use contract. Historical aggregates only: no individual approval prediction, no lender recommendation.",
+ "supportedInterfaces": [
+  {
+   "url": "https://frc-mcp.ziyetis.workers.dev/a2a",
+   "protocolBinding": "JSONRPC",
+   "protocolVersion": "1.0"
+  }
+ ],
+ "provider": {
+  "organization": "FinanceRateCalc",
+  "url": "https://financeratecalc.com"
+ },
+ "version": "1.40.0",
+ "documentationUrl": "https://financeratecalc.com/mcp-server.html",
+ "iconUrl": "https://financeratecalc.com/favicon.ico",
+ "capabilities": {
+  "streaming": false,
+  "pushNotifications": false,
+  "extendedAgentCard": false
+ },
+ "defaultInputModes": [
+  "text/plain"
+ ],
+ "defaultOutputModes": [
+  "text/plain",
+  "application/json"
+ ],
+ "skills": [
+  {
+   "id": "verify-receipt",
+   "name": "Verify a claim receipt",
+   "description": "Send a receipt (⟦FRC:id:value:hash8⟧). Returns current / stale / hash-current-value-mismatch / unrecognized, the current value and the correction if any.",
+   "tags": [
+    "receipt",
+    "verification",
+    "provenance"
+   ],
+   "examples": [
+    "Verify ⟦FRC:state-oh-2025:23.0%:34beae06⟧"
+   ],
+   "inputModes": [
+    "text/plain"
+   ],
+   "outputModes": [
+    "text/plain",
+    "application/json"
+   ]
+  },
+  {
+   "id": "lookup-claim",
+   "name": "Look up a published figure",
+   "description": "Send a claim id, a US state, or a lender name. Returns the claim document: canonical sentence, receipt, what the figure does not establish, verify URL.",
+   "tags": [
+    "mortgage",
+    "fha",
+    "hmda",
+    "statistics",
+    "citation"
+   ],
+   "examples": [
+    "FHA denial rate in Ohio 2025",
+    "lender-rocket-mortgage-2025",
+    "What is the national FHA denial rate?"
+   ],
+   "inputModes": [
+    "text/plain"
+   ],
+   "outputModes": [
+    "text/plain",
+    "application/json"
+   ]
+  }
+ ],
+ "securitySchemes": {},
+ "securityRequirements": []
+}

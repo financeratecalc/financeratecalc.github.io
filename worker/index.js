@@ -962,7 +962,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.39.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.40.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1122,6 +1122,58 @@ async function getPrompt(name, args) {
       `Audit the paragraph below against FinanceRateCalc's published record. For every number: find the matching claim (resources: https://financeratecalc.com/llms-full.txt, or the check_claim_contract tool), say whether the figure is current or corrected, and whether its period, population and program survived. Flag any sentence that states or implies an individual approval chance, a lender recommendation, a cause, or a legal conclusion: the record supports none of these. End with the receipts that should sit next to each number.\n\nParagraph:\n${text}` } }] };
   }
   throw new Error("Unknown prompt");
+}
+// ===== A2A (v1.40) =====
+// Agent-to-Agent discovery and a deterministic SendMessage. A2A clients find the card at /.well-known/agent-card.json
+// (A2A 1.0: supportedInterfaces, SendMessage over JSON-RPC, TASK_STATE_* states). The agent reads a text message and
+// returns the publisher's own document: a receipt in the text is verified; a claim id, a state or a lender name returns
+// the claim document with its canonical sentence and receipt. No model. Anything that asks about one application is
+// rejected with the reason. Stateless: tasks are not stored, GetTask answers TaskNotFoundError.
+const US_STATES = { al: "Alabama", ak: "Alaska", az: "Arizona", ar: "Arkansas", ca: "California", co: "Colorado", ct: "Connecticut", de: "Delaware", dc: "District of Columbia", fl: "Florida", ga: "Georgia", hi: "Hawaii", id: "Idaho", il: "Illinois", in: "Indiana", ia: "Iowa", ks: "Kansas", ky: "Kentucky", la: "Louisiana", me: "Maine", md: "Maryland", ma: "Massachusetts", mi: "Michigan", mn: "Minnesota", ms: "Mississippi", mo: "Missouri", mt: "Montana", ne: "Nebraska", nv: "Nevada", nh: "New Hampshire", nj: "New Jersey", nm: "New Mexico", ny: "New York", nc: "North Carolina", nd: "North Dakota", oh: "Ohio", ok: "Oklahoma", or: "Oregon", pa: "Pennsylvania", pr: "Puerto Rico", ri: "Rhode Island", sc: "South Carolina", sd: "South Dakota", tn: "Tennessee", tx: "Texas", ut: "Utah", vt: "Vermont", va: "Virginia", wa: "Washington", wv: "West Virginia", wi: "Wisconsin", wy: "Wyoming" };
+const AGENT_CARD = {
+  name: "FinanceRateCalc",
+  description: "Observed FHA mortgage denial statistics from the complete 2025 US federal HMDA record, each figure with a verifiable claim receipt and a use contract. Historical aggregates only: no individual approval prediction, no lender recommendation.",
+  supportedInterfaces: [{ url: "https://frc-mcp.ziyetis.workers.dev/a2a", protocolBinding: "JSONRPC", protocolVersion: "1.0" }],
+  provider: { organization: "FinanceRateCalc", url: "https://financeratecalc.com" },
+  version: "1.40.0",
+  documentationUrl: "https://financeratecalc.com/mcp-server.html",
+  iconUrl: "https://financeratecalc.com/favicon.ico",
+  capabilities: { streaming: false, pushNotifications: false, extendedAgentCard: false },
+  defaultInputModes: ["text/plain"], defaultOutputModes: ["text/plain", "application/json"],
+  skills: [
+    { id: "verify-receipt", name: "Verify a claim receipt", description: "Send a receipt (⟦FRC:id:value:hash8⟧). Returns current / stale / hash-current-value-mismatch / unrecognized, the current value and the correction if any.", tags: ["receipt", "verification", "provenance"], examples: ["Verify ⟦FRC:state-oh-2025:23.0%:34beae06⟧"], inputModes: ["text/plain"], outputModes: ["text/plain", "application/json"] },
+    { id: "lookup-claim", name: "Look up a published figure", description: "Send a claim id, a US state, or a lender name. Returns the claim document: canonical sentence, receipt, what the figure does not establish, verify URL.", tags: ["mortgage", "fha", "hmda", "statistics", "citation"], examples: ["FHA denial rate in Ohio 2025", "lender-rocket-mortgage-2025", "What is the national FHA denial rate?"], inputModes: ["text/plain"], outputModes: ["text/plain", "application/json"] },
+  ],
+  securitySchemes: {}, securityRequirements: [],
+};
+const A2A_REJECT_RX = /\b(will|would|can|could) (i|we|he|she|they|my|our) (be )?(get )?(approved|denied|qualify)|\b(my|our) (odds|chance|chances|application|credit score|income)\b|\bshould i (apply|go) (to|with)\b|\bwhich lender should\b/i;
+async function a2aAnswer(text, origin) {
+  const t = String(text || "").trim();
+  if (!t) return { state: "TASK_STATE_INPUT_REQUIRED", text: "Send a receipt (⟦FRC:id:value:hash8⟧), a claim id (e.g. state-oh-2025), a US state, or a lender name." };
+  if (A2A_REJECT_RX.test(t)) return { state: "TASK_STATE_REJECTED", text: "This agent publishes historical aggregates from the federal record. It does not say whether any one application will be approved or which lender to use; that is outside what the data establishes. Ask for a state, a lender or a claim id to receive the published figure with its receipt." };
+  const rm = /⟦?FRC:([a-z0-9-]+):([^:\s⟧]+):([a-f0-9]{8})(?::([a-z][0-9]{4}))?⟧?/i.exec(t);
+  if (rm) {
+    const v = await (await fetch(`${origin}/verify?r=${encodeURIComponent(rm[0])}`, { headers: { "User-Agent": "frc-a2a-internal" } })).json();
+    const line = v.status === "current" ? `Current. ${v.id} = ${v.current_value}, unchanged since the receipt was issued.` : v.status === "stale" ? `Stale. ${v.id} was ${v.quoted_value} when this receipt was issued; the current value is ${v.current_value}.` : v.status === "unrecognized" ? `Unrecognized. This publisher never issued this receipt as written.` : v.status === "hash-current-value-mismatch" ? `Altered. The hash is the publisher's but the quoted value ${v.quoted_value} is not; the current value is ${v.current_value}.` : `Not verifiable: ${v.reason || v.status}`;
+    return { state: "TASK_STATE_COMPLETED", text: line + (v.teach && v.teach.canonical_sentence ? ` Restate as: ${v.teach.canonical_sentence}` : ""), data: v, name: "verify" };
+  }
+  const idx = await getJSON("/claims/index.json");
+  const ids = (idx.claims || []).filter(c => c.receipted !== false).map(c => c.id);
+  const norm = t.toLowerCase();
+  let id = null;
+  const im = /\b([a-z0-9]+(?:-[a-z0-9]+)+-20\d\d)\b/.exec(norm); if (im && ids.includes(im[1])) id = im[1];
+  if (!id && /\b(national|united states|us|u\.s\.|nationwide|overall)\b/.test(norm) && /denial|denied/.test(norm)) id = "national-fha-denial-rate-2025";
+  if (!id) { for (const [code, name] of Object.entries(US_STATES)) if (new RegExp(`\\b${name.toLowerCase()}\\b`).test(norm) || new RegExp(`\\b${code}\\b`).test(norm.replace(/\./g, ""))) { if (ids.includes(`state-${code}-2025`)) { id = `state-${code}-2025`; break; } } }
+  if (!id) { const words = norm.replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(w => w.length > 3 && !/^(what|rate|rates|denial|denied|lender|mortgage|loan|loans|2025|about|does|have|with|from|this|that|which|were|their)$/.test(w));
+    let best = null, bestN = 0;
+    for (const cid of ids) { if (!cid.startsWith("lender-")) continue; const slug = cid.slice(7, -5).split("-"); const n = words.filter(w => slug.includes(w)).length; if (n > bestN && n >= Math.min(2, slug.length)) { best = cid; bestN = n; } }
+    id = best; }
+  if (!id) return { state: "TASK_STATE_INPUT_REQUIRED", text: "I could not match that to a published figure. Send a claim id (list: https://financeratecalc.com/claims/index.json), a US state, a lender name, or a receipt to verify." };
+  const [doc, K] = await Promise.all([getJSON(`/claims/${id}.json`), getJSON(`/claims/${id}.contract.json`).catch(() => ({}))]);
+  const tmpl = K.canonical_claim && K.canonical_claim.template; const sentence = tmpl ? tmpl.replace("{value}", doc.display_value) : `${id}: ${doc.display_value}`;
+  const dne = (K.does_not_establish || []).join("; ");
+  return { state: "TASK_STATE_COMPLETED", name: id, text: `${sentence} ${doc.receipt} Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only. CC BY 4.0.${dne ? " Does not establish: " + dne + "." : ""} Verify: ${doc.verify_url}`,
+    data: { id, display_value: doc.display_value, receipt: doc.receipt, canonical_sentence: sentence, required_qualifiers: K.required_qualifiers || null, does_not_establish: K.does_not_establish || null, claim_url: doc.canonical_url, verify_url: doc.verify_url, hash_rule: doc.hash_rule } };
 }
 const rpcErr = (id, code, message) => ({ jsonrpc: "2.0", id, error: { code, message } });
 
@@ -1300,6 +1352,28 @@ ${teach && teach.canonical_sentence ? `<h2>Restate it as</h2><blockquote><p>${es
         try { await env.CREDITS.put(key, "", { expirationTtl: 60 * 60 * 24 * 400, metadata: meta }); } catch {}
       }
       return new Response(await up.text(), { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=900", "Access-Control-Allow-Origin": "*", "X-Canonical": BASE + "/llms-full.txt" } });
+    }
+    if (path === "/.well-known/agent-card.json" && request.method === "GET") return json(AGENT_CARD);
+    if (path === "/a2a" && request.method === "POST") {
+      let body; try { body = await request.json(); } catch { return json({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } }, 400); }
+      const origin = new URL(request.url).origin;
+      const ver = request.headers.get("A2A-Version") || "0.3";
+      if (!/^(0\.3|1\.0)/.test(ver)) return json({ jsonrpc: "2.0", id: body.id ?? null, error: { code: -32006, message: "VersionNotSupportedError: this agent speaks A2A 1.0 (and accepts 0.3 clients)" } });
+      const method = body.method;
+      if (method === "GetTask" || method === "tasks/get") return json({ jsonrpc: "2.0", id: body.id ?? null, error: { code: -32001, message: "TaskNotFoundError: this agent is stateless; every SendMessage completes in the response" } });
+      if (method === "GetExtendedAgentCard") return json({ jsonrpc: "2.0", id: body.id ?? null, result: AGENT_CARD });
+      if (method !== "SendMessage" && method !== "message/send") return json({ jsonrpc: "2.0", id: body.id ?? null, error: { code: -32601, message: "Method not found. Supported: SendMessage, GetExtendedAgentCard" } });
+      const msg = (body.params && body.params.message) || {};
+      const text = (msg.parts || []).map(p => p.text || (p.data && typeof p.data === "string" ? p.data : "")).filter(Boolean).join("\n");
+      await tally(env, labelFromRequest(request), "a2a:SendMessage");
+      let a; try { a = await a2aAnswer(text, origin); } catch (e) { a = { state: "TASK_STATE_FAILED", text: "lookup failed: " + e.message }; }
+      const now = new Date().toISOString(); const taskId = `frc-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+      const reply = { messageId: `m-${taskId}`, role: "ROLE_AGENT", taskId, contextId: msg.contextId || taskId, parts: [{ text: a.text }] };
+      const task = { id: taskId, contextId: msg.contextId || taskId, status: { state: a.state, timestamp: now, message: reply },
+        artifacts: a.state === "TASK_STATE_COMPLETED" ? [{ artifactId: `a-${taskId}`, name: a.name || "answer", parts: [{ text: a.text }, { data: a.data, mediaType: "application/json" }] }] : [],
+        history: [{ ...msg, messageId: msg.messageId || `u-${taskId}`, role: "ROLE_USER" }, reply],
+        metadata: { publisher: "FinanceRateCalc", license: "CC BY 4.0", receipt_spec: "https://financeratecalc.com/spec/receipt-1.0.md", no_model: true } };
+      return json({ jsonrpc: "2.0", id: body.id ?? null, result: { task } });
     }
     if (path === "/misquotes" && request.method === "GET") {
       if (!env || !env.CREDITS) return json({ error: "store unavailable" }, 503);
