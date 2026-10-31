@@ -22,3 +22,10 @@
 - External verifies by day: 28 Oct 81, 29 Oct 46, 30 Oct 18, 31 Oct 7 (to 09:57 UTC). Largest group remains the Singapore fetcher pressing Verify from site pages (79 since 15 Oct); Applebot from site pages 19, Applebot from other sites 26 (l+s channels), GPTBot 5, ClaudeBot 1.
 - Tool calls: 22 / 19 / 12 external per day (29–31 Oct); `check_claim_contract` remains the most-called tool overall (839).
 - Receipt 1.0 conformance: last run 26 Oct 12/12 PASS; worker unchanged since 1.37.1; next scheduled run Sunday.
+
+## 2026-10-31 — LettuceDetect probe (span-level grounding vs our fidelity grades)
+
+- Ran `KRLabsOrg/lettucedect-base-modernbert-en-v1` (local, no API) over all 204 graded answers of the September fidelity runs; context = ground truth + the canonical sentences from llms-full.txt. Result in `eval/lettuce-probe-2026-10-31.json`.
+- It flags "unsupported" spans in 100% of fidelity-1.0 answers, 95% of 0.5, 98% of 0. Flagged-character share: 25% (good), 26% (half), 45% (wrong). It does not separate correct from incorrect answers; it measures how much of the answer is not verbatim in the context, which is a different question from whether the record supports it.
+- Useful only as a locator: where the judge said a number differed (40.8 vs 40.3; 1.2x vs 1.3x; "77-percentage-point"), the flagged span is that number. The gate already finds the number; the locator adds the position, not the finding.
+- Decision: not added to the grading pipeline. Workflow `lettuce-probe.yml` stays manual.
