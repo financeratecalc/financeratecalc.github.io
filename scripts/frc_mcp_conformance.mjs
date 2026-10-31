@@ -121,9 +121,31 @@ await test("17", "receipt forgery: a real claim id with a hash never issued is '
   return { pass: f.status === "unrecognized" && !f.correction && s.status === "stale" && !!s.correction && u.status === 200 && uj.reason === "unknown claim id",
     evidence: `forged=${f.status} correction=${!!f.correction}; pre-correction=${s.status} correction=${!!(s.correction && s.correction.date)}; unknown id=${u.status} ${uj.reason}` };
 });
+await test("18", "resources: list is non-empty, every listed uri reads back with matching mimeType, a uri outside the publisher is refused", async () => {
+  const l = (await rpc("resources/list", {})).body.result || {};
+  if (!Array.isArray(l.resources) || l.resources.length < 5) return { pass: false, evidence: "no resources listed" };
+  const bundle = l.resources.find(r => r.uri.endsWith("/llms-full.txt"));
+  const rd = (await rpc("resources/read", { uri: bundle.uri })).body;
+  const c = rd.result && rd.result.contents && rd.result.contents[0];
+  const bad = (await rpc("resources/read", { uri: "https://example.com/x.json" })).body;
+  const tmpl = (await rpc("resources/templates/list", {})).body.result || {};
+  return { pass: !!c && c.mimeType === "text/plain" && /^## [a-z0-9-]+$/m.test(c.text) && !!bad.error && Array.isArray(tmpl.resourceTemplates) && tmpl.resourceTemplates.length > 0,
+    evidence: `resources=${l.resources.length} templates=${(tmpl.resourceTemplates || []).length} bundle_bytes=${c ? c.text.length : 0} outside=${bad.error ? "refused" : "served"}` };
+});
+await test("19", "prompts: list carries the three teach prompts; restate_with_receipt returns the canonical sentence and the current receipt; a prompt without its argument is refused", async () => {
+  const l = (await rpc("prompts/list", {})).body.result || {};
+  const names = (l.prompts || []).map(p => p.name);
+  const g = (await rpc("prompts/get", { name: "restate_with_receipt", arguments: { claim_id: "national-fha-denial-rate-2025" } })).body;
+  const txt = g.result && g.result.messages && g.result.messages[0].content.text || "";
+  const m = txt.match(/\u27e6FRC:national-fha-denial-rate-2025:[^\u27e7]+\u27e7/);
+  const v = m ? await (await fetch(EP + "/verify?r=" + encodeURIComponent(m[0]))).json() : {};
+  const bad = (await rpc("prompts/get", { name: "cite_claim", arguments: {} })).body;
+  return { pass: ["restate_with_receipt", "check_answer", "cite_claim"].every(n => names.includes(n)) && !!m && v.status === "current" && /decisioned/.test(txt) && !!bad.error,
+    evidence: `prompts=${names.join(",")} receipt_verify=${v.status || "none"} missing_arg=${bad.error ? "refused" : "served"}` };
+});
 const passed = tests.filter(t => t.pass).length;
 const disc = (await rpc("server/discover", {})).body.result || {};
-const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.1", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,
+const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.2", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,
   generated_at: new Date().toISOString(), tests: tests.length, passed, conformance: passed === tests.length ? "PASS" : "FAIL",
   method: "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
   results: tests.map(({ receipt, requestState, ...t }) => t) };

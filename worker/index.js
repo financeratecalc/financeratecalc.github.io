@@ -962,14 +962,14 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.38.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.39.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
 // Discovery block served by server/discover, /server-card and /.well-known/mcp/server-card.json: what this server can and
 // cannot answer, in machine-readable form, so an agent configurator can decide before connecting.
 const DISCOVER = {
-  serverInfo: SERVER_INFO, protocolVersions: PROTOCOLS, capabilities: { tools: { listChanged: false }, extensions: {} },
+  serverInfo: SERVER_INFO, protocolVersions: PROTOCOLS, capabilities: { tools: { listChanged: false }, resources: { listChanged: false }, prompts: { listChanged: false }, extensions: {} },
   instructions: INSTRUCTIONS,
   domain: "us-mortgage-evidence",
   can_answer: ["historical FHA denial rates: national, state, metro, lender (2025 HMDA record)", "denial-reason shares, small-loan penalty, door effect, conditional cells", "which dated regulatory cell applies: FHA MIP, FHA/FHFA loan limits, HOEPA/QM thresholds, VA funding fee", "whether a proposed sentence preserves a figure's contract (period, population, program, attribution, forbidden inferences)", "whether a claim or rule receipt is current"],
@@ -1060,6 +1060,68 @@ async function claimState(id, h) {
   if (id.startsWith("rule-")) { const rr = (await allRules()).find(r => ruleSlug(r.rule.rule_id) === id.slice(5)); if (!rr) return null; const rule = rr.rule; let found = null; for (const c of rule.cells) { const o = { rule_id: rule.rule_id, ...c }; if (await sha8(o) === h || await sha8Legacy(o) === h) { found = c; break; } } current = found ? cellValue(found) : null; claimObj = found ? { rule_id: rule.rule_id, ...found } : { rule_id: rule.rule_id, changed: true }; }
   else { let P = null; try { P = await getJSON(`/claims/${id}.json`); } catch { return null; } if (!P || !P.claim) return null; current = P.display_value != null ? String(P.display_value) : fmtClaimValue(P.claim); claimObj = P.claim; }
   return { current, claimObj };
+}
+// ===== Resources and prompts (v1.39) =====
+// The other two legs of MCP. Resources: the publisher's read-only files, served as they are on the site, so a client can
+// load the whole record without a tool call. Prompts: the teach block as templates a client runs on its own model;
+// nothing runs here. Both are static lists; no model, no state, no cost.
+const RESOURCES = [
+  { uri: "https://financeratecalc.com/llms-full.txt", name: "Every receipted claim (one file)", mimeType: "text/plain",
+    description: "386 claims: receipt, canonical sentence, what the figure does not establish, dated correction, which crawler last verified it, verify URL. Rebuilt daily." },
+  { uri: "https://financeratecalc.com/llms.txt", name: "Site index for agents", mimeType: "text/plain", description: "Short index of pages, feeds and endpoints." },
+  { uri: "https://financeratecalc.com/claims/index.json", name: "Claim ids", mimeType: "application/json", description: "Every claim id with its document URL; each document carries its receipt and hash rule." },
+  { uri: "https://financeratecalc.com/corrections.json", name: "Corrections feed", mimeType: "application/json", description: "Every dated correction and error family, with the claim ids each one touches. Poll daily." },
+  { uri: "https://financeratecalc.com/.well-known/receipt.json", name: "Receipt 1.0 manifest", mimeType: "application/json", description: "How to verify any receipt from this publisher without this server: hash rules, hash history, claim URL template." },
+  { uri: "https://financeratecalc.com/transparency/crawl-ledger.json", name: "Crawl ledger (reverse receipts)", mimeType: "application/json", description: "Which crawler verified which receipt, by day. Bots only. A check, not a citation." },
+  { uri: "https://financeratecalc.com/rules/index.json", name: "Rules as contracts", mimeType: "application/json", description: "Dated regulatory tables with effective dates and qualifiers: FHA MIP, FHA/FHFA limits, HOEPA/QM thresholds, VA funding fee." },
+  { uri: "https://financeratecalc.com/api/index.json", name: "Static JSON API index", mimeType: "application/json", description: "Every lender, metro and state slug with its data file." },
+  { uri: "https://financeratecalc.com/spec/receipt-1.0.md", name: "Receipt 1.0 specification", mimeType: "text/markdown", description: "The publisher-independent receipt grammar, verify statuses and conformance suite." },
+];
+const RESOURCE_TEMPLATES = [
+  { uriTemplate: "https://financeratecalc.com/claims/{id}.json", name: "Claim document", mimeType: "application/json", description: "The hashed claim document for one claim id (the receipt is computed from it)." },
+  { uriTemplate: "https://financeratecalc.com/claims/{id}.contract.json", name: "Claim contract", mimeType: "application/json", description: "Canonical sentence template, required qualifiers, what the figure does not establish, forbidden transformations." },
+  { uriTemplate: "https://financeratecalc.com/api/state/{xx}.json", name: "State record", mimeType: "application/json", description: "FHA denial record for one state (two-letter code, lower case)." },
+  { uriTemplate: "https://financeratecalc.com/api/lender/{slug}.json", name: "Lender record", mimeType: "application/json", description: "FHA denial record for one lender slug (see api/index.json)." },
+  { uriTemplate: "https://financeratecalc.com/api/metro/{slug}.json", name: "Metro record", mimeType: "application/json", description: "FHA denial record for one metropolitan area slug (see api/index.json)." },
+];
+const RESOURCE_RX = /^https:\/\/financeratecalc\.com\/(llms(-full)?\.txt|claims\/[a-z0-9-]+(\.contract)?\.json|claims\/index\.json|corrections\.json|\.well-known\/receipt\.json|transparency\/crawl-ledger\.json|rules\/[a-z0-9-]+\.json|api\/(index|state\/[a-z]{2}|lender\/[a-z0-9-]+|metro\/[a-z0-9-]+)\.json|spec\/receipt-1\.0\.md)$/;
+async function readResource(uri) {
+  if (!RESOURCE_RX.test(String(uri || ""))) throw new Error("Unknown resource. List resources or resource templates for what this publisher serves.");
+  const r = await fetch(uri, { headers: { "User-Agent": "frc-mcp-remote/1.39 resources" }, cf: { cacheTtl: 900 } });
+  if (!r.ok) throw new Error(`Resource ${r.status}`);
+  const mimeType = uri.endsWith(".json") ? "application/json" : uri.endsWith(".md") ? "text/markdown" : "text/plain";
+  return { contents: [{ uri, mimeType, text: await r.text() }] };
+}
+const ATTRIBUTION = "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.";
+const PROMPTS = [
+  { name: "restate_with_receipt", description: "Restate one published figure in its canonical form, with period, population, program and the receipt next to the number. Fetches the claim document and contract; the model does the restating.",
+    arguments: [{ name: "claim_id", description: "Claim id, e.g. state-oh-2025, lender-rocket-mortgage-2025, metro-gap-cleveland-oh-2025", required: true }, { name: "audience", description: "Who will read it (journalist, borrower, analyst). Optional.", required: false }] },
+  { name: "check_answer", description: "Audit a paragraph that quotes this publisher's figures: each number matched to a receipted claim, qualifiers kept or dropped, sentence patterns the record cannot support (prediction, recommendation, cause, legal conclusion).",
+    arguments: [{ name: "text", description: "The paragraph to audit", required: true }] },
+  { name: "cite_claim", description: "Produce the citation block for one claim: canonical sentence, receipt, verify URL, attribution line, licence.",
+    arguments: [{ name: "claim_id", description: "Claim id", required: true }] },
+];
+async function getPrompt(name, args) {
+  const a = args || {};
+  const id = String(a.claim_id || "").trim();
+  if (name === "restate_with_receipt" || name === "cite_claim") {
+    if (!/^[a-z0-9-]+$/.test(id)) throw new Error("claim_id required (lower-case id from claims/index.json)");
+    const [doc, K] = await Promise.all([getJSON(`/claims/${id}.json`), getJSON(`/claims/${id}.contract.json`).catch(() => ({}))]);
+    const tmpl = K.canonical_claim && K.canonical_claim.template; const current = doc.display_value;
+    const sentence = tmpl ? tmpl.replace("{value}", current) : `${id}: ${current}`;
+    const dne = (K.does_not_establish || []).map(x => "- " + x).join("\n");
+    if (name === "cite_claim") return { description: `Citation block for ${id}`, messages: [{ role: "user", content: { type: "text", text:
+      `Produce a citation block for this figure, exactly in this order and nothing else:\n1. ${sentence}\n2. Receipt: ${doc.receipt}\n3. Verify: ${doc.verify_url}\n4. ${ATTRIBUTION} Licence CC BY 4.0.\nDo not change the number, the period or the population.` } }] };
+    return { description: `Restate ${id} with its receipt`, messages: [{ role: "user", content: { type: "text", text:
+      `Restate the following published figure${a.audience ? " for " + String(a.audience).slice(0, 60) : ""}. Keep the period, population and program exactly as in the canonical sentence; keep the receipt next to the number; keep the attribution.\n\nCanonical sentence: ${sentence}\nReceipt: ${doc.receipt}\nRequired qualifiers: ${JSON.stringify(K.required_qualifiers || {})}\n\nThis figure does not establish:\n${dne || "- (see contract)"}\n\nDo not turn it into a prediction about one application, a lender recommendation, a cause, or a legal conclusion. Attribution: ${ATTRIBUTION}` } }] };
+  }
+  if (name === "check_answer") {
+    const text = String(a.text || "").slice(0, 8000);
+    if (!text) throw new Error("text required");
+    return { description: "Audit a paragraph against the publisher's contracts", messages: [{ role: "user", content: { type: "text", text:
+      `Audit the paragraph below against FinanceRateCalc's published record. For every number: find the matching claim (resources: https://financeratecalc.com/llms-full.txt, or the check_claim_contract tool), say whether the figure is current or corrected, and whether its period, population and program survived. Flag any sentence that states or implies an individual approval chance, a lender recommendation, a cause, or a legal conclusion: the record supports none of these. End with the receipts that should sit next to each number.\n\nParagraph:\n${text}` } }] };
+  }
+  throw new Error("Unknown prompt");
 }
 const rpcErr = (id, code, message) => ({ jsonrpc: "2.0", id, error: { code, message } });
 
@@ -1313,15 +1375,23 @@ ${teach && teach.canonical_sentence ? `<h2>Restate it as</h2><blockquote><p>${es
         clientName = clientLabel(m.params?.clientInfo);
         newSession = makeSession(clientName);
         out.push(rpc(m.id, { protocolVersion: m.params?.protocolVersion || "2025-06-18",
-          capabilities: { tools: {} }, serverInfo: SERVER_INFO, instructions: INSTRUCTIONS }));
+          capabilities: { tools: {}, resources: { listChanged: false }, prompts: { listChanged: false } }, serverInfo: SERVER_INFO, instructions: INSTRUCTIONS }));
       }
       else if (m.method === "notifications/initialized" || (m.method && m.method.startsWith("notifications/"))) { /* ack silently */ }
       else if (m.method === "ping") out.push(rpc(m.id, {}));
       else if (m.method === "server/discover") out.push(rpc(m.id, DISCOVER));
       else if (m.method === "tools/list") out.push(rpc(m.id, { tools: TOOLS, ttlMs: 3600000, cacheScope: "public" }));
-      else if (m.method === "resources/list") out.push(rpc(m.id, { resources: [], ttlMs: 3600000, cacheScope: "public" }));
-      else if (m.method === "prompts/list") out.push(rpc(m.id, { prompts: [], ttlMs: 3600000, cacheScope: "public" }));
-      else if (m.method === "resources/templates/list") out.push(rpc(m.id, { resourceTemplates: [], ttlMs: 3600000, cacheScope: "public" }));
+      else if (m.method === "resources/list") out.push(rpc(m.id, { resources: RESOURCES, ttlMs: 3600000, cacheScope: "public" }));
+      else if (m.method === "resources/templates/list") out.push(rpc(m.id, { resourceTemplates: RESOURCE_TEMPLATES, ttlMs: 3600000, cacheScope: "public" }));
+      else if (m.method === "resources/read") {
+        try { await tally(env, clientName, "resource:" + String(m.params?.uri || "").replace(/^https:\/\/financeratecalc\.com\//, "").slice(0, 40)); out.push(rpc(m.id, await readResource(m.params?.uri))); }
+        catch (e) { out.push(rpcErr(m.id, -32602, e.message)); }
+      }
+      else if (m.method === "prompts/list") out.push(rpc(m.id, { prompts: PROMPTS, ttlMs: 3600000, cacheScope: "public" }));
+      else if (m.method === "prompts/get") {
+        try { await tally(env, clientName, "prompt:" + String(m.params?.name || "unknown").slice(0, 40)); out.push(rpc(m.id, await getPrompt(m.params?.name, m.params?.arguments))); }
+        catch (e) { out.push(rpcErr(m.id, -32602, e.message)); }
+      }
       else if (m.method === "tools/call") {
         try {
           // 2026-07-28 stateless clients identify themselves per request in _meta; use it for the tally label when present.
