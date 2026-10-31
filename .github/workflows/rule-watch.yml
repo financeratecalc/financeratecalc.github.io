@@ -22,6 +22,12 @@ jobs:
           python3 scripts/retire_zai_remnants.py | tee /tmp/zai.txt
           grep -q "pages rewritten: 0" /tmp/zai.txt
           git diff --quiet || { echo "::error::retired product text reappeared; run scripts/retire_zai_remnants.py"; git diff --stat; exit 1; }
+      - name: No individual-verdict tool offered anywhere (31 Oct retirements)
+        run: |
+          python3 scripts/retire_prediction_tools.py | tee /tmp/pred.txt
+          grep -q "pages rewritten: 0" /tmp/pred.txt || { echo "::error::prediction-tool links or wording reappeared; run scripts/retire_prediction_tools.py"; exit 1; }
+      - name: No phrasing the record cannot support (same application at two lenders, your odds, will deny you)
+        run: python3 scripts/check_page_phrasing.py
       - name: Claim documents agree with the data files (Receipt 1.0)
         run: python3 scripts/build_claim_documents.py --check
       - name: llms-full.txt carries every claim document
