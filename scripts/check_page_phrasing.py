@@ -18,13 +18,15 @@ PATTERNS = [
     re.compile(r"\b(will|would) (be )?(deny|denied|approve|approved) you\b", re.I),
 ]
 SKIP = re.compile(r"^(eval|rulecheck|rl-env|scripts|fixtures|examples|readers|case-files|node_modules|packages)/")
+# corrections.html quotes our own errors verbatim; that is its job (same exclusion as rulecheck)
+SKIP_FILES = {"corrections.html"}
 
 
 def main():
     hits = []
     for path in sorted(glob.glob(os.path.join(ROOT, "**", "*.html"), recursive=True)):
         rel = os.path.relpath(path, ROOT)
-        if SKIP.match(rel):
+        if SKIP.match(rel) or rel in SKIP_FILES:
             continue
         text = open(path, encoding="utf-8", errors="replace").read()
         for rx in PATTERNS:
