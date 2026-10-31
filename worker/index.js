@@ -1147,13 +1147,13 @@ const AGENT_CARD = {
   securitySchemes: {}, securityRequirements: [],
 };
 const A2A_REJECT_RX = /\b(will|would|can|could) (i|we|he|she|they|my|our) (be )?(get )?(approved|denied|qualify)|\b(my|our) (odds|chance|chances|application|credit score|income)\b|\bshould i (apply|go) (to|with)\b|\bwhich lender should\b/i;
-async function a2aAnswer(text, origin) {
+async function a2aAnswer(text, origin, a2aEnv) {
   const t = String(text || "").trim();
   if (!t) return { state: "TASK_STATE_INPUT_REQUIRED", text: "Send a receipt (⟦FRC:id:value:hash8⟧), a claim id (e.g. state-oh-2025), a US state, or a lender name." };
   if (A2A_REJECT_RX.test(t)) return { state: "TASK_STATE_REJECTED", text: "This agent publishes historical aggregates from the federal record. It does not say whether any one application will be approved or which lender to use; that is outside what the data establishes. Ask for a state, a lender or a claim id to receive the published figure with its receipt." };
   const rm = /⟦?FRC:([a-z0-9-]+):([^:\s⟧]+):([a-f0-9]{8})(?::([a-z][0-9]{4}))?⟧?/i.exec(t);
   if (rm) {
-    const v = await (await fetch(`${origin}/verify?r=${encodeURIComponent(rm[0])}`, { headers: { "User-Agent": "frc-a2a-internal" } })).json();
+    const v = await (await WORKER.fetch(new Request(`${origin}/verify?r=${encodeURIComponent(rm[0])}`, { headers: { "User-Agent": "frc-a2a-internal", "Accept": "application/json" } }), a2aEnv)).json();
     const line = v.status === "current" ? `Current. ${v.id} = ${v.current_value}, unchanged since the receipt was issued.` : v.status === "stale" ? `Stale. ${v.id} was ${v.quoted_value} when this receipt was issued; the current value is ${v.current_value}.` : v.status === "unrecognized" ? `Unrecognized. This publisher never issued this receipt as written.` : v.status === "hash-current-value-mismatch" ? `Altered. The hash is the publisher's but the quoted value ${v.quoted_value} is not; the current value is ${v.current_value}.` : `Not verifiable: ${v.reason || v.status}`;
     return { state: "TASK_STATE_COMPLETED", text: line + (v.teach && v.teach.canonical_sentence ? ` Restate as: ${v.teach.canonical_sentence}` : ""), data: v, name: "verify" };
   }
@@ -1163,7 +1163,9 @@ async function a2aAnswer(text, origin) {
   let id = null;
   const im = /\b([a-z0-9]+(?:-[a-z0-9]+)+-20\d\d)\b/.exec(norm); if (im && ids.includes(im[1])) id = im[1];
   if (!id && /\b(national|united states|us|u\.s\.|nationwide|overall)\b/.test(norm) && /denial|denied/.test(norm)) id = "national-fha-denial-rate-2025";
-  if (!id) { for (const [code, name] of Object.entries(US_STATES)) if (new RegExp(`\\b${name.toLowerCase()}\\b`).test(norm) || new RegExp(`\\b${code}\\b`).test(norm.replace(/\./g, ""))) { if (ids.includes(`state-${code}-2025`)) { id = `state-${code}-2025`; break; } } }
+  // state names case-insensitively; two-letter codes only as upper-case tokens in the original text ("in", "or", "me" are words)
+  if (!id) { for (const [code, name] of Object.entries(US_STATES)) if (new RegExp(`\\b${name.toLowerCase()}\\b`).test(norm)) { if (ids.includes(`state-${code}-2025`)) { id = `state-${code}-2025`; break; } } }
+  if (!id) { for (const code of Object.keys(US_STATES)) if (new RegExp(`(^|[\\s,(])${code.toUpperCase()}([\\s,.?)]|$)`).test(t)) { if (ids.includes(`state-${code}-2025`)) { id = `state-${code}-2025`; break; } } }
   if (!id) { const words = norm.replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(w => w.length > 3 && !/^(what|rate|rates|denial|denied|lender|mortgage|loan|loans|2025|about|does|have|with|from|this|that|which|were|their)$/.test(w));
     let best = null, bestN = 0;
     for (const cid of ids) { if (!cid.startsWith("lender-")) continue; const slug = cid.slice(7, -5).split("-"); const n = words.filter(w => slug.includes(w)).length; if (n > bestN && n >= Math.min(2, slug.length)) { best = cid; bestN = n; } }
@@ -1177,7 +1179,7 @@ async function a2aAnswer(text, origin) {
 }
 const rpcErr = (id, code, message) => ({ jsonrpc: "2.0", id, error: { code, message } });
 
-export default {
+const WORKER = {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
@@ -1366,7 +1368,7 @@ ${teach && teach.canonical_sentence ? `<h2>Restate it as</h2><blockquote><p>${es
       const msg = (body.params && body.params.message) || {};
       const text = (msg.parts || []).map(p => p.text || (p.data && typeof p.data === "string" ? p.data : "")).filter(Boolean).join("\n");
       await tally(env, labelFromRequest(request), "a2a:SendMessage");
-      let a; try { a = await a2aAnswer(text, origin); } catch (e) { a = { state: "TASK_STATE_FAILED", text: "lookup failed: " + e.message }; }
+      let a; try { a = await a2aAnswer(text, origin, env); } catch (e) { a = { state: "TASK_STATE_FAILED", text: "lookup failed: " + e.message }; }
       const now = new Date().toISOString(); const taskId = `frc-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
       const reply = { messageId: `m-${taskId}`, role: "ROLE_AGENT", taskId, contextId: msg.contextId || taskId, parts: [{ text: a.text }] };
       const task = { id: taskId, contextId: msg.contextId || taskId, status: { state: a.state, timestamp: now, message: reply },
@@ -1509,3 +1511,4 @@ ${teach && teach.canonical_sentence ? `<h2>Restate it as</h2><blockquote><p>${es
     return res;
   }
 };
+export default WORKER;
