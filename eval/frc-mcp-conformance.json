@@ -1,11 +1,11 @@
 {
  "suite": "frc-mcp-conformance-2026",
- "suite_version": "1.1",
+ "suite_version": "1.2",
  "endpoint": "https://frc-mcp.ziyetis.workers.dev",
  "server": {
   "name": "financeratecalc",
   "title": "FinanceRateCalc mortgage evidence",
-  "version": "1.38.0"
+  "version": "1.39.0"
  },
  "protocol_versions": [
   "2026-07-28",
@@ -13,9 +13,9 @@
   "2025-06-18",
   "2025-03-26"
  ],
- "generated_at": "2026-10-31T10:08:14.471Z",
- "tests": 17,
- "passed": 17,
+ "generated_at": "2026-10-31T13:34:45.928Z",
+ "tests": 19,
+ "passed": 19,
  "conformance": "PASS",
  "method": "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
  "results": [
@@ -120,7 +120,19 @@
    "name": "receipt forgery: a real claim id with a hash never issued is 'unrecognized' with no correction; an unknown id is refused cleanly",
    "pass": true,
    "evidence": "forged=unrecognized correction=false; pre-correction=stale correction=true; unknown id=200 unknown claim id"
+  },
+  {
+   "id": "18",
+   "name": "resources: list is non-empty, every listed uri reads back with matching mimeType, a uri outside the publisher is refused",
+   "pass": true,
+   "evidence": "resources=9 templates=5 bundle_bytes=267015 outside=refused"
+  },
+  {
+   "id": "19",
+   "name": "prompts: list carries the three teach prompts; restate_with_receipt returns the canonical sentence and the current receipt; a prompt without its argument is refused",
+   "pass": true,
+   "evidence": "prompts=restate_with_receipt,check_answer,cite_claim receipt_verify=current missing_arg=refused"
   }
  ],
- "sha256": "b17751739cecc3d10fb8617fb68de8c20e5842b2792020c5c7a9e61ac00ed7fc"
+ "sha256": "7e2214aa28e1a9b6888caab3ad877db061fecda84e418241829d3a5374dd1eb3"
 }
