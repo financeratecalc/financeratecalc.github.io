@@ -28,6 +28,8 @@ jobs:
           grep -q "pages rewritten: 0" /tmp/pred.txt || { echo "::error::prediction-tool links or wording reappeared; run scripts/retire_prediction_tools.py"; exit 1; }
       - name: No phrasing the record cannot support (same application at two lenders, your odds, will deny you)
         run: python3 scripts/check_page_phrasing.py
+      - name: Index pages are current (every page has an incoming link)
+        run: python3 scripts/build_site_index.py --check || { echo "::error::index pages stale; run scripts/build_site_index.py"; exit 1; }
       - name: Claim documents agree with the data files (Receipt 1.0)
         run: python3 scripts/build_claim_documents.py --check
       - name: llms-full.txt carries every claim document
