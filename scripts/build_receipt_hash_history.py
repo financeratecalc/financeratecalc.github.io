@@ -20,6 +20,12 @@ for ep, e in sorted(snap["snapshot"].items()):
         if row["hash8"] not in hist[cid]:
             hist[cid].append(row["hash8"])
 V = Verifier(ROOT)
+# every id in the claims index is a receipted id; new families enter the history here with their current hash
+try:
+    for c in json.load(open(os.path.join(ROOT, "claims/index.json"), encoding="utf-8"))["claims"]:
+        hist.setdefault(c["id"], [])
+except Exception:
+    pass
 for cid in list(hist):
     try:
         cur, obj = V.claim_object(cid)
@@ -28,6 +34,7 @@ for cid in list(hist):
                 hist[cid].append(h)
     except Exception:
         pass
+hist = {k: v for k, v in hist.items() if v}   # an id with no constructor and no epoch has no hash to list
 json.dump({"generated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
            "rule": "A hash8 listed here was published for that claim id at some date (epochs E0-E2 under hash rule frc-0.1, and the current value under both frc-0.1 and jcs-sha256-8 since 2026-10-21). A receipt whose hash is not listed was never issued by this publisher as written.",
            "hash_rules": {"frc-0.1": "until 2026-10-21: JSON.stringify(claim, sortedTopLevelKeys), sha256, first 8 hex", "jcs-sha256-8": "from 2026-10-21: RFC 8785 canonical JSON of the claim block, sha256, first 8 hex (Receipt 1.0)"},

@@ -157,7 +157,6 @@ await test("20", "A2A: agent card at /.well-known/agent-card.json (1.0 shape) on
   return { pass: !!okCard && v?.status?.state === "TASK_STATE_COMPLETED" && /Current\./.test(v.artifacts[0].parts[0].text) && st?.status?.state === "TASK_STATE_COMPLETED" && vv.status === "current" && rj?.status?.state === "TASK_STATE_REJECTED",
     evidence: `card=${okCard ? "ok" : "bad"} verify=${v?.status?.state} state=${st?.status?.state}/${vv.status || "none"} reject=${rj?.status?.state}` };
 });
-const passed = tests.filter(t => t.pass).length;
 const disc = (await rpc("server/discover", {})).body.result || {};
 await test("21", "application outcomes: five shares sum to ~100, the denied share is on the acted-on base and lower than the decisioned denial rate, every receipt verifies as current, a lender row carries its receipt and no ranking", async () => {
   const r = await rpc("tools/call", { name: "get_application_outcomes", arguments: {} }); const t = toolText(r);
@@ -170,6 +169,7 @@ await test("21", "application outcomes: five shares sum to ~100, the denied shar
   return { pass: Math.abs(sum - 100) < 0.3 && denied < rate && current === 5 && lv.status === "current" && !("rank" in (L || {})),
     evidence: `sum=${sum.toFixed(1)} denied=${denied} rate=${rate} current=${current}/5 lender=${lv.status}` };
 });
+const passed = tests.filter(t => t.pass).length;
 const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.4", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,
   generated_at: new Date().toISOString(), tests: tests.length, passed, conformance: passed === tests.length ? "PASS" : "FAIL",
   method: "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
