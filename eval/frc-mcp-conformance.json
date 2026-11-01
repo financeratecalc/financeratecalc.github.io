@@ -1,11 +1,11 @@
 {
  "suite": "frc-mcp-conformance-2026",
- "suite_version": "1.3",
+ "suite_version": "1.4",
  "endpoint": "https://frc-mcp.ziyetis.workers.dev",
  "server": {
   "name": "financeratecalc",
   "title": "FinanceRateCalc mortgage evidence",
-  "version": "1.41.0"
+  "version": "1.42.0"
  },
  "protocol_versions": [
   "2026-07-28",
@@ -13,10 +13,10 @@
   "2025-06-18",
   "2025-03-26"
  ],
- "generated_at": "2026-11-01T06:29:41.334Z",
- "tests": 20,
+ "generated_at": "2026-11-01T19:34:18.258Z",
+ "tests": 21,
  "passed": 20,
- "conformance": "PASS",
+ "conformance": "FAIL",
  "method": "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
  "results": [
   {
@@ -29,7 +29,7 @@
    "id": "02",
    "name": "tools/list is deterministic across two calls",
    "pass": true,
-   "evidence": "16 tools, same order"
+   "evidence": "17 tools, same order"
   },
   {
    "id": "03",
@@ -125,7 +125,7 @@
    "id": "18",
    "name": "resources: list is non-empty, every listed uri reads back with matching mimeType, a uri outside the publisher is refused",
    "pass": true,
-   "evidence": "resources=9 templates=5 bundle_bytes=267015 outside=refused"
+   "evidence": "resources=9 templates=5 bundle_bytes=354203 outside=refused"
   },
   {
    "id": "19",
@@ -138,7 +138,13 @@
    "name": "A2A: agent card at /.well-known/agent-card.json (1.0 shape) on the endpoint and the site agree; SendMessage with a receipt verifies, with a state returns the claim and receipt, with an approval question is rejected",
    "pass": true,
    "evidence": "card=ok verify=TASK_STATE_COMPLETED state=TASK_STATE_COMPLETED/current reject=TASK_STATE_REJECTED"
+  },
+  {
+   "id": "21",
+   "name": "application outcomes: five shares sum to ~100, the denied share is on the acted-on base and lower than the decisioned denial rate, every receipt verifies as current, a lender row carries its receipt and no ranking",
+   "pass": true,
+   "evidence": "sum=100.1 denied=16.8 rate=22.1 current=5/5 lender=current"
   }
  ],
- "sha256": "3776bb0f5c3f596afbeaecf1ba889e603ba00f6d307e9af2c580cc2d3fd5e9da"
+ "sha256": "3af3885b3206f12ff6ef77048cb22006316c926f98e7407e4fe8f893183a8575"
 }
