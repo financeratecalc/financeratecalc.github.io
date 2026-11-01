@@ -87,6 +87,47 @@ def side_copies():
     return out
 
 
+def lender_hub():
+    """fha-denial-rates-by-lender.html: every row's 2025 value equals the receipt value of the lender page the row links to
+    (and the receipt printed in the row, when present); caption, meta description and FAQ JSON-LD name the same highest and
+    lowest values as the table. Found 2026-11-01 when Perplexity quoted NewRez at 53.3% from this page while the receipt said 52.8%."""
+    f = os.path.join(ROOT, "fha-denial-rates-by-lender.html")
+    if not os.path.exists(f):
+        return []
+    h = open(f, encoding="utf-8").read()
+    out, vals = [], []
+    for row in re.findall(r'<tr><td style="color:rgba\(255,255,255,\.4\)">\d+</td>.*?</tr>', h, flags=re.S):
+        slug = re.search(r'href="/([a-z0-9-]+)-fha-denial-rate\.html"', row)
+        shown = re.search(r'font-size:16px">([\d.]+)%', row)
+        if not slug or not shown:
+            continue
+        lp = os.path.join(ROOT, slug.group(1) + "-fha-denial-rate.html")
+        want = None
+        if os.path.exists(lp):
+            r = re.search(r'⟦FRC:(lender-[a-z0-9-]+-2025):([\d.]+)%:[a-f0-9]{8}', open(lp, encoding="utf-8").read())
+            if r:
+                cf = os.path.join(ROOT, "claims", r.group(1) + ".json")
+                want = re.search(r":([\d.]+)%:", json.load(open(cf)).get("receipt", "")).group(1) if os.path.exists(cf) else r.group(2)
+        spots = {"table": shown.group(1)}
+        rr = re.search(r'⟦FRC:lender-[a-z0-9-]+-2025:([\d.]+)%:', row)
+        if rr:
+            spots["row_receipt"] = rr.group(1)
+        if want:
+            spots["claim"] = want
+        if len(set(spots.values())) > 1:
+            out.append(("fha-denial-rates-by-lender.html", slug.group(1), spots))
+        vals.append(float(want or shown.group(1)))
+    if vals:
+        lo, hi = f"{min(vals):.1f}", f"{max(vals):.1f}"
+        for spot in re.findall(r'(?:lowest|from CrossCountry)[^%]{0,60}?([\d.]+)%', h):
+            if spot != lo:
+                out.append(("fha-denial-rates-by-lender.html", "lowest", {"text": spot, "data": lo}))
+        for spot in re.findall(r'(?:highest|to NewRez)[^%]{0,60}?([\d.]+)%', h):
+            if spot != hi:
+                out.append(("fha-denial-rates-by-lender.html", "highest", {"text": spot, "data": hi}))
+    return out
+
+
 def main():
     fix = "--fix" in sys.argv
     log = {"generated": datetime.date.today().isoformat(), "state_pages": [], "lender_pages": []}
@@ -112,6 +153,8 @@ def main():
             if ch:
                 open(f, "w", encoding="utf-8").write(h2)
                 log["lender_pages"].append({"page": rel, "changes": ch})
+    for rel, cid, spots in lender_hub():
+        bad += 1; print(f"{rel}: {cid} {spots}")
     for rel, word, v, want, ctx in side_copies():
         bad += 1; print(f"{rel}: {word} {v}% but data says {want}% :: {ctx}")
     if fix:
