@@ -16,7 +16,7 @@ publishes, for the nation and for every lender with >= MIN_LENDER applications a
     outcome shares      each of the five ends as a share of applications acted on (1-5)
     denial_rate_pct     denied / decisioned (1,2,3) — the site's published definition, unchanged
     ana_share_pct       approved-but-not-accepted / (originated + approved-but-not-accepted): approvals that walked away
-    reason_other_pct    denials whose first stated reason is "other" (code 10) — a reporting-comparability indicator
+    reason_other_pct    denials whose first stated reason is "other" (code 9; 10 is "not applicable") — a reporting-comparability indicator
     rate_spread_na_pct  originated loans with no rate spread reported — same purpose
 
 No ranking field is written; lenders are in LEI order. Nothing here is a prediction, a cause, or a judgement of
@@ -99,7 +99,7 @@ with open(PATH, "r", encoding="utf-8", errors="ignore", newline="") as f:
             lei = r[IX["lei"]].strip()
             cnt[lei][a] += 1
             cnt["_national"][a] += 1
-            if a == "3" and IX["reason1"] is not None and r[IX["reason1"]].strip() == "10":
+            if a == "3" and IX["reason1"] is not None and r[IX["reason1"]].strip() == "9":
                 other[lei] += 1; other["_national"] += 1
             if a == "1" and IX["spread"] is not None and r[IX["spread"]].strip().upper() in ("", "NA", "EXEMPT"):
                 spread_na[lei] += 1; spread_na["_national"] += 1
@@ -139,7 +139,7 @@ out = {
         "share_of_acted_pct": "outcome / applications acted on (actions 1-5)",
         "denial_rate_pct": "denied / decisioned (actions 1,2,3) — the site's published definition",
         "ana_share_pct": "approved but not accepted / (originated + approved but not accepted)",
-        "reason_other_pct": "denials whose first stated reason is code 10 'other' / denials; a reporting-comparability indicator, not a judgement",
+        "reason_other_pct": "denials whose first stated reason is code 9 (other) / denials; a reporting-comparability indicator, not a judgement",
         "rate_spread_na_pct": "originated loans with rate_spread NA, blank or Exempt / originated; same purpose",
     },
     "does_not_establish": [
