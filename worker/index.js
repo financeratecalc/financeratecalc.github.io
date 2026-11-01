@@ -647,7 +647,28 @@ async function tally(env, client, event) {
     const cur = await env.CREDITS.getWithMetadata(key, { type: "text" });
     const n = Number((cur && cur.metadata && cur.metadata.n) || (cur && cur.value) || 0) + 1;
     await env.CREDITS.put(key, String(n), { expirationTtl: 60 * 60 * 24 * 400, metadata: { n } });
-  } catch {}
+    return n;
+  } catch { return 0; }
+}
+
+// ===== Pricing probe (v1.41.0) — measuring, not charging =====
+// Everything is free. A client over the daily free quota still gets the answer; the response only carries a
+// pricing note, and the event is tallied (x402:over-quota). Requests that arrive with a payment header
+// (an x402-capable agent) are tallied too (x402:header-seen). No wallet, no 402, no key: the question is how
+// many agents would meet a price, before anything is built to collect one.
+const FREE_QUOTA_PER_DAY = 200;   // tool calls per client label per UTC day before the note appears
+const PRICING = {
+  status: "measuring",
+  free_quota_per_day: FREE_QUOTA_PER_DAY,
+  over_quota_today: "answered anyway; no payment is collected",
+  planned: "per-call x402 (HTTP 402, USDC on Base) for calls above the free quota only; content is never paywalled",
+  never: ["payment for content below the quota", "accounts, keys or sign-in to read figures", "money from lenders, servicers or their vendors — a paying wallet is not screened, so the quota rule, not the buyer, is what keeps the record independent"],
+  counts: "published daily in eval/usage-snapshot.json under x402:* events",
+  updated: "2026-11-01",
+};
+function paymentHeaderSeen(request) {
+  const h = request.headers;
+  return !!(h.get("x-payment") || h.get("payment-signature") || h.get("x-payment-signature") || h.get("payment") || /x402/i.test(h.get("accept") || ""));
 }
 
 // ===== Prepaid credit bucket (v1.4.0) =====
@@ -962,7 +983,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.40.1" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.41.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1388,6 +1409,10 @@ ${teach && teach.canonical_sentence ? `<h2>Restate it as</h2><blockquote><p>${es
       out.sort((a, b) => (a.submitted < b.submitted ? 1 : -1));
       return json({ count: out.length, entries: out, note: "Public misquote ledger: AI answers quoting a FinanceRateCalc figure, submitted by readers, graded against the claim contract. Screening signals about AI systems, never about the submitter, who is not recorded.", license: "CC BY 4.0" });
     }
+    if (path === "/pricing") {
+      if (env && env.CREDITS && paymentHeaderSeen(request)) await tally(env, labelFromRequest(request), "x402:header-seen");
+      return json({ ...PRICING, endpoint: "https://frc-mcp.ziyetis.workers.dev/", docs: "https://financeratecalc.com/mcp-server.html#pricing" });
+    }
     if (path === "/usage") {
       if (!env || !env.CREDITS) return json({ error: "tally unavailable" }, 503);
       // paginate: the tally passed 1,000 keys in September (directory probes create keys), which cut /usage off at 2026-09-26
@@ -1474,6 +1499,10 @@ ${teach && teach.canonical_sentence ? `<h2>Restate it as</h2><blockquote><p>${es
           const meta = m.params?._meta || {};
           const ci = meta["io.modelcontextprotocol/clientInfo"]; if (ci && !m.params?.clientInfo) clientName = clientLabel(ci);
           await tally(env, clientName, "call:" + String(m.params?.name || "unknown").slice(0, 40));
+          const callsToday = await tally(env, clientName, "meta:calls-today");
+          let pricingNote = null;
+          if (callsToday > FREE_QUOTA_PER_DAY) { await tally(env, clientName, "x402:over-quota"); pricingNote = { over_free_quota: true, calls_today: callsToday, ...PRICING }; }
+          if (paymentHeaderSeen(request)) await tally(env, clientName, "x402:header-seen");
           let args = { ...(m.params?.arguments || {}) };
           // MRTR retry: a client that answered an elicitation sends inputResponses on the retried request; merge accepted content.
           const responses = m.params?.inputResponses || meta.inputResponses;
@@ -1491,7 +1520,7 @@ ${teach && teach.canonical_sentence ? `<h2>Restate it as</h2><blockquote><p>${es
               _meta: { "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
             continue;
           }
-          out.push(rpc(m.id, { content: [{ type: "text", text: JSON.stringify({ ...result, note: GUARDRAIL }, null, 1) }] }));
+          out.push(rpc(m.id, { content: [{ type: "text", text: JSON.stringify({ ...result, note: GUARDRAIL, ...(pricingNote ? { pricing: pricingNote } : {}) }, null, 1) }] }));
         } catch (e) {
           out.push(rpc(m.id, { content: [{ type: "text", text: String(e.message || e) }], isError: true }));
         }
