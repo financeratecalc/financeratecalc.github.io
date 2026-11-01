@@ -72,7 +72,7 @@ for fn in glob.glob(os.path.join(ROOT, "api", "lender", "*.json")):
         names[L["lei"]] = {"name": L.get("lender"), "slug": L.get("slug") or os.path.basename(fn)[:-5]}
 try:
     for lei, nm in (json.load(open(os.path.join(ROOT, "data", "lei-names.json"), encoding="utf-8")).get("names") or {}).items():
-        names.setdefault(lei, {"name": nm, "slug": None})
+        names.setdefault(lei, {"name": nm.get("legal_name") if isinstance(nm, dict) else nm, "slug": None})
 except FileNotFoundError:
     pass
 

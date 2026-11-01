@@ -40,6 +40,21 @@ def contract_for(cid, d):
         return {"canonical_claim": {"template": "In a decomposition of 2025 FHA credit decisions, lender identity was associated with about {value} of the explainable variation in denial outcomes.", "required_fields": ["period", "population", "nature"]},
                 "required_qualifiers": {"period": "2025", "population": "decisioned FHA applications (actions 1,2,3; loan_type 2)", "program_scope": "FHA", "nature": "share of explained variation; association, not cause"},
                 "does_not_establish": ["that lender choice causes denial", "that any lender is at fault", "any individual's chance of denial"]}
+    if cid.startswith("outcome-"):
+        base = "applications acted on (actions 1-5: originated, approved but not accepted, denied, withdrawn, closed for incompleteness; purchased loans and preapproval requests excluded; loan_type 2; reverse mortgages excluded)"
+        if c.get("metric") == "fha_application_outcome_share":
+            word = {"originated": "were originated", "approved_not_accepted": "were approved but not accepted by the applicant", "denied": "were denied", "withdrawn": "were withdrawn by the applicant", "closed_incomplete": "were closed for incompleteness"}[c["outcome"]]
+            return {"canonical_claim": {"template": f"In 2025, {{value}} of the {c.get('n', 0):,} FHA applications that lenders acted on {word}.", "required_fields": ["period", "population", "denominator"]},
+                    "required_qualifiers": {"period": "2025", "population": "US FHA " + base, "denominator": "applications acted on (actions 1-5), not decisioned applications (actions 1-3): the denied share of acted-on applications is lower than the published denial rate because withdrawn and incomplete files are in this denominator", "program_scope": "FHA"},
+                    "does_not_establish": ["why any application ended where it did", "that applicants withdraw because of lender conduct, or that files are closed because of applicant conduct", "any individual applicant's outcome", "a comparison with the denial rate (22.1% of decisioned applications) without restating both denominators"]}
+        if c.get("metric") == "fha_approved_not_accepted_share":
+            return {"canonical_claim": {"template": f"In 2025, {{value}} of the {c.get('n', 0):,} FHA applications that lenders approved were not accepted by the applicant.", "required_fields": ["period", "population"]},
+                    "required_qualifiers": {"period": "2025", "population": "US FHA applications approved by the lender (originated + approved but not accepted; loan_type 2; reverse mortgages excluded)", "program_scope": "FHA"},
+                    "does_not_establish": ["why an approved applicant did not proceed (pricing, a competing offer, a withdrawn purchase and reporting practice are not separable here)", "any individual applicant's choice"]}
+        name = str(c.get("lender", "")).title()
+        return {"canonical_claim": {"template": f"In 2025, {{value}} of the {c.get('n', 0):,} FHA applications {name} acted on ended without a credit decision: {c.get('withdrawn_pct')}% withdrawn by the applicant and {c.get('closed_incomplete_pct')}% closed for incompleteness.", "required_fields": ["period", "population", "nature"]},
+                "required_qualifiers": {"period": "2025", "population": f"{name} FHA " + base, "program_scope": "FHA", "nature": "historical institutional aggregate; process, market, applicant pool and reporting practice are not separable in the record"},
+                "does_not_establish": [f"that {name}'s process causes applicants to withdraw, or that its applicants cause files to close", f"that {name} is better or worse than another lender for a given applicant", f"{name} discriminates or violates law", "any individual applicant's outcome"]}
     if cid == "denial-reason-shares-top100-2025":
         return {"canonical_claim": {"template": "Across the 100 largest FHA lenders reporting denial reasons in 2025, the reason with the highest median share was {value}.", "required_fields": ["period", "population"]},
                 "required_qualifiers": {"period": "2025", "population": "denials by the 100 largest FHA lenders that report reasons", "program_scope": "FHA"},

@@ -16,6 +16,10 @@ ids += [f"state-{os.path.basename(f)[:-5]}-2025" for f in sorted(glob.glob(os.pa
 ids += [os.path.basename(f)[:-5] for f in sorted(glob.glob(os.path.join(ROOT, "claims/metro-gap-*.json"))) if not f.endswith(".contract.json")]
 d = json.load(open(os.path.join(ROOT, "api/small-loan-penalty.json")))
 ids += [f"small-loan-penalty-{r['state'].lower()}-2025" for r in d["ranked"]]
+op = os.path.join(ROOT, "data/application-outcomes-2025.json")
+if os.path.exists(op):
+    ids += [f"outcome-{k}-2025" for k in ("originated", "approved-not-accepted", "denied", "withdrawn", "closed-incomplete", "ana-share")]
+    ids += [f"outcome-{l['slug']}-2025" for l in json.load(open(op))["lenders"] if l.get("slug")]
 snap, bad = {}, []
 for cid in ids:
     try:

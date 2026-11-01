@@ -100,6 +100,21 @@ class Verifier:
         if cid == "small-loan-penalty-range-2025":
             d = self._json("/api/small-loan-penalty.json")
             return f"{d['min_penalty']}x-{d['max_penalty']}x", {"metric": "small_loan_penalty_range", "min": d["min_penalty"], "max": d["max_penalty"], "states": d["states"], "period": "2025"}
+        if cid.startswith("outcome-"):
+            d = self._json("/data/application-outcomes-2025.json")
+            key = cid[8:-5]
+            NAT = {"originated": "originated", "approved-not-accepted": "approved_not_accepted", "denied": "denied", "withdrawn": "withdrawn", "closed-incomplete": "closed_incomplete"}
+            if key in NAT:
+                o = d["national"]["outcomes"][NAT[key]]
+                return f"{o['share_of_acted_pct']:.1f}%", {"metric": "fha_application_outcome_share", "outcome": NAT[key], "value": round(o["share_of_acted_pct"] / 100, 3), "unit": "share_of_applications_acted_on", "n": d["national"]["applications_acted_on"], "subject": "United States, all reporting lenders", "period": "2025"}
+            if key == "ana-share":
+                return f"{d['national']['ana_share_pct']:.1f}%", {"metric": "fha_approved_not_accepted_share", "value": round(d["national"]["ana_share_pct"] / 100, 3), "unit": "share_of_approvals", "n": d["national"]["outcomes"]["originated"]["n"] + d["national"]["outcomes"]["approved_not_accepted"]["n"], "subject": "United States, all reporting lenders", "period": "2025"}
+            L = next((l for l in d["lenders"] if l.get("slug") == key), None)
+            if L:
+                o = L["outcomes"]; ended = o["withdrawn"]["share_of_acted_pct"] + o["closed_incomplete"]["share_of_acted_pct"]
+                return f"{ended:.1f}%", {"lender": L["name"], "metric": "fha_ended_without_decision_share", "value": round(ended / 100, 3), "unit": "share_of_applications_acted_on",
+                                          "withdrawn_pct": o["withdrawn"]["share_of_acted_pct"], "closed_incomplete_pct": o["closed_incomplete"]["share_of_acted_pct"], "ana_share_pct": L["ana_share_pct"], "n": L["applications_acted_on"], "period": "2025"}
+            return None
         if cid == "denial-reason-shares-top100-2025":
             d = self._json("/api/denial-reasons-top100.json"); br = d["by_reason"]
             top = max(br, key=lambda k: br[k]["median_share_pct"]); inc = br["incomplete"]

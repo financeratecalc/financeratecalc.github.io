@@ -159,7 +159,18 @@ await test("20", "A2A: agent card at /.well-known/agent-card.json (1.0 shape) on
 });
 const passed = tests.filter(t => t.pass).length;
 const disc = (await rpc("server/discover", {})).body.result || {};
-const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.3", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,
+await test("21", "application outcomes: five shares sum to ~100, the denied share is on the acted-on base and lower than the decisioned denial rate, every receipt verifies as current, a lender row carries its receipt and no ranking", async () => {
+  const r = await rpc("tools/call", { name: "get_application_outcomes", arguments: {} }); const t = toolText(r);
+  if (!t || !t.outcomes) return { pass: false, evidence: "no outcomes: " + JSON.stringify(r.body).slice(0, 160) };
+  const shares = Object.values(t.outcomes).map(o => parseFloat(o.share_of_acted_on)); const sum = shares.reduce((a, b) => a + b, 0);
+  const denied = parseFloat(t.outcomes.denied.share_of_acted_on), rate = parseFloat(t.denial_rate_decisioned);
+  let current = 0; for (const o of Object.values(t.outcomes)) { const v = await (await fetch(EP + "/verify?r=" + encodeURIComponent(o.claim_receipt))).json(); if (v.status === "current") current++; }
+  const L = toolText(await rpc("tools/call", { name: "get_application_outcomes", arguments: { lender: "NewRez" } }));
+  const lv = L && L.claim_receipt ? await (await fetch(EP + "/verify?r=" + encodeURIComponent(L.claim_receipt))).json() : { status: "none" };
+  return { pass: Math.abs(sum - 100) < 0.3 && denied < rate && current === 5 && lv.status === "current" && !("rank" in (L || {})),
+    evidence: `sum=${sum.toFixed(1)} denied=${denied} rate=${rate} current=${current}/5 lender=${lv.status}` };
+});
+const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.4", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,
   generated_at: new Date().toISOString(), tests: tests.length, passed, conformance: passed === tests.length ? "PASS" : "FAIL",
   method: "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
   results: tests.map(({ receipt, requestState, ...t }) => t) };

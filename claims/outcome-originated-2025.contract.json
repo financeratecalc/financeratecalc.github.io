@@ -1,0 +1,51 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:outcome-originated-2025",
+ "current_value": "56.4%",
+ "canonical_claim": {
+  "template": "In 2025, {value} of the 1,563,370 FHA applications that lenders acted on were originated.",
+  "required_fields": [
+   "period",
+   "population",
+   "denominator"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "2025",
+  "population": "US FHA applications acted on (actions 1-5: originated, approved but not accepted, denied, withdrawn, closed for incompleteness; purchased loans and preapproval requests excluded; loan_type 2; reverse mortgages excluded)",
+  "denominator": "applications acted on (actions 1-5), not decisioned applications (actions 1-3): the denied share of acted-on applications is lower than the published denial rate because withdrawn and incomplete files are in this denominator",
+  "program_scope": "FHA"
+ },
+ "does_not_establish": [
+  "why any application ended where it did",
+  "that applicants withdraw because of lender conduct, or that files are closed because of applicant conduct",
+  "any individual applicant's outcome",
+  "a comparison with the denial rate (22.1% of decisioned applications) without restating both denominators"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "causal_assertion": false,
+    "individual_prediction": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "proposed_sentence": "This lender will likely reject YOUR application"
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  }
+ ],
+ "generated_by": "scripts/build_claim_contracts.py (2026-10-21) from the claim block"
+}

@@ -12,6 +12,8 @@ const TOOLS = [
     inputSchema: { type: "object", properties: {}, additionalProperties: false } },
   { name: "get_lender_denial_stats", title: "Lender FHA denial rate 2025", annotations: { title: "Lender FHA denial rate 2025", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"what is <lender>'s FHA denial rate\", \"does <lender> reject a lot of FHA applications\", \"how strict is <lender>\", \"how does <lender> compare\". PARAM: lender name, slug or LEI. Returns that lender's 2025 decisioned volume, denial rate, rank among the 100 largest FHA lenders, and the applicant-mix caveat any comparison must carry. COVERS ONLY the 100 largest FHA lenders by 2025 volume. NOT FOR: whether a person will be approved, or lenders outside that set. " + GUARDRAIL,
     inputSchema: { type: "object", properties: { lender: { type: "string", description: "Lender name, slug, or 20-char LEI" } }, required: ["lender"] } },
+  { name: "get_application_outcomes", title: "Where FHA applications end (five outcomes), 2025", annotations: { title: "Where FHA applications end (five outcomes), 2025", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"how many FHA applications are withdrawn\", \"what share of FHA applications never reach a decision\", \"how many approved FHA loans are not taken\", \"why is the denied share 16.8% here and the denial rate 22.1% there\", \"where do <lender>'s FHA applications end\". Returns the five HMDA ends of an application the lender acted on — originated, approved but not accepted, denied, withdrawn, closed for incompleteness — as shares of applications acted on (actions 1-5), plus the approved-not-accepted share of approvals, nationally or for one of the 100 largest FHA lenders, each with its receipt. The denied share here is on a larger base than the published denial rate (22.1% of decisioned applications); both are returned so they can be reconciled. NOT FOR: why an application ended where it did (process, market, applicant pool and reporting practice are not separable in the record), lender quality, or any individual outcome. " + GUARDRAIL,
+    inputSchema: { type: "object", properties: { lender: { type: "string", description: "Optional: lender name, slug or LEI (top-100 set). Omit for the national figures." } } } },
   { name: "list_lenders", title: "Top-100 FHA lenders by denial rate", annotations: { title: "Top-100 FHA lenders by denial rate", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"which FHA lender denies the most or the fewest\", \"rank FHA lenders by denial rate\", \"which lenders are covered\", \"how wide is the spread\". Returns the ranked list of the 100 largest FHA lenders with name, slug, rate and volume; the 2025 span runs 1.8 to 78.7 percent inside the same federal program. NOT FOR: lenders outside the top 100, or any recommendation about where to apply. " + GUARDRAIL,
     inputSchema: { type: "object", properties: { sort: { type: "string", enum: ["highest_denial","lowest_denial","largest_volume"] }, limit: { type: "integer", minimum: 1, maximum: 100 } } } },
   { name: "get_small_loan_penalty", title: "Small-loan denial penalty by state", annotations: { title: "Small-loan denial penalty by state", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"are small mortgages denied more often\", \"is it harder to get a small FHA loan\", \"which state punishes small loans most\", \"does loan size affect denial\". PARAM: optional two-letter state; omit for the ranked list. Returns denial rates under $150K and over $250K, the ratio, the ranking and any open discrepancy note. In 2025 the penalty exceeded 1x in every jurisdiction with a published split, from 1.19x to 4.45x (Idaho, 53.4 vs 12.0). NOT FOR: loan sizes between the bands, which are not published. " + GUARDRAIL,
@@ -916,6 +918,37 @@ async function callTool(name, args, env) {
     return quotable(`In 2025, ${L.lender} denied ${Number(L.denial_rate_pct).toFixed(1)}% of its ${Number(L.decisioned_applications).toLocaleString("en-US")} decisioned FHA applications, against a national rate of 22.1% for all decisioned FHA applications; observed rates reflect applicant mix as well as lender practice.`,
       { ...L, universe_id: "U-TOP100-VOLUME-2025" }, `lender-${hit.slug}-2025`, `${Number(L.denial_rate_pct).toFixed(1)}%`, { lender: L.lender, metric: "fha_denial_rate", value: L.denial_rate_pct, n: L.decisioned_applications, period: "2025" });
   }
+  if (name === "get_application_outcomes") {
+    const d = await getJSON("/data/application-outcomes-2025.json");
+    const pct = x => (x == null ? null : Number(x).toFixed(1) + "%");
+    const ends = ["originated", "approved_not_accepted", "denied", "withdrawn", "closed_incomplete"];
+    if (!args.lender) {
+      const n = d.national; const o = n.outcomes;
+      const out = { subject: "United States, all reporting lenders", period: "2025", applications_acted_on: n.applications_acted_on, decisioned_applications: n.decisioned_applications,
+        outcomes: {}, approved_not_accepted_share_of_approvals: pct(n.ana_share_pct), denial_rate_decisioned: pct(n.denial_rate_pct),
+        reconciliation: `${pct(o.denied.share_of_acted_pct)} of applications acted on were denied; the same ${o.denied.n.toLocaleString("en-US")} denials are ${pct(n.denial_rate_pct)} of the ${n.decisioned_applications.toLocaleString("en-US")} applications that reached a decision. Both are right; state the denominator.`,
+        universe: d.universe, does_not_establish: d.does_not_establish, source_url: BASE + "/data/application-outcomes-2025.json", page: BASE + "/where-fha-applications-end.html" };
+      for (const k of ends) { const id = `outcome-${k.replace(/_/g, "-")}-2025`; const r = await receipt(id, pct(o[k].share_of_acted_pct), null);
+        out.outcomes[k] = { n: o[k].n, share_of_acted_on: pct(o[k].share_of_acted_pct), claim_receipt: r, proof: proofObject({ kind: "claim", id: "frc:claim:" + id, value: pct(o[k].share_of_acted_pct), receipt: r, source_url: BASE + "/claims/" + id + ".json", contract_url: BASE + "/claims/" + id + ".contract.json" }) }; }
+      const ar = await receipt("outcome-ana-share-2025", pct(n.ana_share_pct), null);
+      out.approved_not_accepted_receipt = ar;
+      out.quotable_sentence = `In 2025, of the ${n.applications_acted_on.toLocaleString("en-US")} FHA applications that lenders acted on, ${pct(o.originated.share_of_acted_pct)} were originated, ${pct(o.withdrawn.share_of_acted_pct)} ${out.outcomes.withdrawn.claim_receipt} were withdrawn by the applicant, ${pct(o.denied.share_of_acted_pct)} ${out.outcomes.denied.claim_receipt} were denied, ${pct(o.closed_incomplete.share_of_acted_pct)} were closed for incompleteness and ${pct(o.approved_not_accepted.share_of_acted_pct)} were approved but not accepted; the published denial rate, 22.1%, is the same denials over the ${n.decisioned_applications.toLocaleString("en-US")} applications that reached a decision.` + QUOTE_TAIL;
+      return out;
+    }
+    const q = norm(args.lender || "");
+    const nm = l => norm(l.name || "");
+    let hit = d.lenders.find(l => l.slug && (nm(l) === q || l.lei === args.lender || norm(l.slug) === q.replace(/ /g, "-")));
+    if (!hit && q) hit = d.lenders.find(l => l.slug && nm(l) && (nm(l).includes(q) || q.includes(nm(l))));
+    if (!hit) throw new Error(`Lender not found in the top-100 set: "${args.lender}". Use list_lenders.`);
+    const o = hit.outcomes; const ended = (o.withdrawn.share_of_acted_pct + o.closed_incomplete.share_of_acted_pct).toFixed(1) + "%";
+    const id = `outcome-${hit.slug}-2025`;
+    const base = await quotable(`In 2025, ${ended} of the ${hit.applications_acted_on.toLocaleString("en-US")} FHA applications ${hit.name} acted on ended without a credit decision: ${pct(o.withdrawn.share_of_acted_pct)} withdrawn by the applicant and ${pct(o.closed_incomplete.share_of_acted_pct)} closed for incompleteness; ${pct(o.denied.share_of_acted_pct)} were denied, ${pct(o.originated.share_of_acted_pct)} originated and ${pct(o.approved_not_accepted.share_of_acted_pct)} approved but not accepted (${pct(hit.ana_share_pct)} of its approvals). Its denial rate on decisioned applications is ${pct(hit.denial_rate_pct)}. The record does not say why applications ended where they did.`,
+      {}, id, ended, null);
+    return { lender: hit.name, lei: hit.lei, period: "2025", applications_acted_on: hit.applications_acted_on, decisioned_applications: hit.decisioned_applications,
+      outcomes: Object.fromEntries(ends.map(k => [k, { n: o[k].n, share_of_acted_on: pct(o[k].share_of_acted_pct) }])), ended_without_decision: ended,
+      approved_not_accepted_share_of_approvals: pct(hit.ana_share_pct), denial_rate_decisioned: pct(hit.denial_rate_pct), reason_other_share_of_denials: pct(hit.reason_other_pct),
+      ...base, universe: d.universe, does_not_establish: d.does_not_establish, source_url: BASE + "/data/application-outcomes-2025.json", page: BASE + "/where-fha-applications-end.html" };
+  }
   if (name === "list_lenders") {
     const idx = await getJSON("/api/index.json");
     let list = [...(idx.lenders || [])];
@@ -983,7 +1016,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.41.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.42.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });

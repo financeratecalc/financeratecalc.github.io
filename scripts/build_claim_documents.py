@@ -22,7 +22,7 @@ from frc_citation.verify_offline import Verifier, sha8  # noqa: E402
 
 BASE = "https://financeratecalc.com"
 VERIFY = "https://frc-mcp.ziyetis.workers.dev/verify?r="
-SOURCE = {"lender": "CFPB/FFIEC HMDA public record 2025; api/lender/<slug>.json", "state": "CFPB/FFIEC HMDA public record 2025; api/state/<st>.json",
+SOURCE = {"outcome": "CFPB/FFIEC HMDA public record 2025; data/application-outcomes-2025.json (applications acted on = actions 1-5)", "lender": "CFPB/FFIEC HMDA public record 2025; api/lender/<slug>.json", "state": "CFPB/FFIEC HMDA public record 2025; api/state/<st>.json",
           "small-loan": "CFPB/FFIEC HMDA public record 2025; api/small-loan-penalty.json", "door": "data/door-effect-2025.json", "denial": "api/denial-reasons-top100.json"}
 
 
@@ -33,6 +33,10 @@ def receipt_ids():
     ids += [os.path.basename(f)[:-5] for f in sorted(glob.glob(os.path.join(ROOT, "claims/metro-gap-*.json"))) if not f.endswith(".contract.json")]
     d = json.load(open(os.path.join(ROOT, "api/small-loan-penalty.json")))
     ids += [f"small-loan-penalty-{r['state'].lower()}-2025" for r in d["ranked"]]
+    op = os.path.join(ROOT, "data/application-outcomes-2025.json")
+    if os.path.exists(op):
+        ids += [f"outcome-{k}-2025" for k in ("originated", "approved-not-accepted", "denied", "withdrawn", "closed-incomplete", "ana-share")]
+        ids += [f"outcome-{l['slug']}-2025" for l in json.load(open(op))["lenders"] if l.get("slug")]
     return ids
 
 
