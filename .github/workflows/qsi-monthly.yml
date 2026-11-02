@@ -1,0 +1,32 @@
+name: Qualifier Survival Index (monthly; API engines; under $1 a run; manual or 1st of month)
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 9 1 * *"
+permissions:
+  contents: write
+jobs:
+  qsi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Ask the three questions (engines without a key are skipped; cost well under $1)
+        env:
+          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python3 scripts/qsi_collect.py
+      - name: Grade every archived answer and rebuild the page
+        run: |
+          python3 scripts/qualifier_survival.py
+          python3 scripts/build_qsi_page.py
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add eval/answer-engine-log eval/qsi/qsi.json qualifier-survival.html
+          git diff --cached --quiet || git commit -m "QSI: monthly answers archived and graded [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
