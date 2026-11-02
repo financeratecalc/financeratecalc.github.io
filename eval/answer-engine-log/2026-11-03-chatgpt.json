@@ -1,0 +1,46 @@
+{
+ "engine": "ChatGPT (web search on, user session, Türkiye)",
+ "date": "2026-11-03",
+ "asked_by": "site owner, one message with three questions; pasted verbatim; the assistant did not run the query",
+ "questions": [
+  {
+   "q": "What was the FHA denial rate in the US in 2025, and what is the denominator?",
+   "figures_quoted": {
+    "national": "22.1% = 262,250 / 1,187,606 decisioned (actions 1,2,3 in a table; 4 and 5 excluded); HECM excluded; loan_type 2",
+    "lenders": "1,504 reporting lenders"
+   },
+   "sources": [
+    "https://financeratecalc.com/how-often-are-fha-loans-denied.html",
+    "https://financeratecalc.com/methodology.html",
+    "https://www.consumerfinance.gov/data-research/hmda/"
+   ],
+   "verdict": "exact; the denominator table is the clearest restatement of the universe any engine has produced; the 1,504 figure is from fha-denial-rates-top-100.html"
+  },
+  {
+   "q": "Which lenders had the highest FHA denial rates in 2025?",
+   "figures_quoted": {
+    "top10": "AmeriSave 78.7/22,944; American Financing 71.0/11,062; Carrington 58.4/16,051; Lakeview 57.0/22,734; NewRez 52.8/22,790; Better 49.4/2,354; Wells Fargo 48.6/2,525; JPMorgan Chase 42.2/3,035; Mutual of Omaha 42.1/8,133; Envoy 42.0/2,264"
+   },
+   "sources": [
+    "https://financeratecalc.com/fha-denial-rates-top-100.html",
+    "https://huggingface.co/datasets/FinanceRateCalc/fha-denial-rates-top-100",
+    "https://www.consumerfinance.gov/data-research/hmda/"
+   ],
+   "verdict": "all ten values and all ten denominators match api/lender/*.json; the NewRez value is the corrected 52.8% (the stale hub page was fixed two days earlier); 'not proof that a lender treats otherwise identical borrowers differently' is our caveat"
+  },
+  {
+   "q": "What is AmeriSave Mortgage's FHA denial rate in 2025?",
+   "figures_quoted": {
+    "AmeriSave": "78.7% = 18,056 / 22,944; 4,888 approved"
+   },
+   "sources": [
+    "https://financeratecalc.com/fha-denial-rates-top-100.html",
+    "https://huggingface.co/datasets/FinanceRateCalc/fha-denial-rates-top-100",
+    "https://financeratecalc.com/methodology.html"
+   ],
+   "verdict": "exact, with numerator, denominator and the top-100-universe qualifier; no derivation drift (contrast Perplexity 1 Nov)"
+  }
+ ],
+ "summary": "3/3 exact, every denominator stated, all nine sources ours or CFPB; 'independent third-party replication remains an open verification item' repeated from our own independent_reproduction_status field",
+ "note": "No receipt token in the answer; URL-level citations with utm_source=chatgpt.com. The engine added advice ('publish these three answers together with the denominator definitions') — that page exists (why-fha-denial-rates-differ.html) and was not among its sources."
+}
