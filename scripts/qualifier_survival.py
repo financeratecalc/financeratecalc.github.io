@@ -48,7 +48,7 @@ SUPERSEDED = {"21.7%": "national value before the 2026-07-26 HECM correction", "
               "53.3%": "NewRez value before the 2026-07-26 correction (hub page, fixed 2026-11-01)", "52.3%": "NewRez pre-correction table value"}
 CAUSAL = re.compile(r"\b(caus(?:e|es|ed|ing)|because (?:of )?(?:the )?lender|leads? to|results? in|thresholds? that caused|drives?)\b", re.I)
 SECOND_PERSON = re.compile(r"\b(you will|you'll|your (?:odds|chances|application)|will (?:be )?(?:approve|den(?:y|ied)) you)\b", re.I)
-ADVICE = re.compile(r"\b(avoid|choose|best lender|apply (?:with|to)|recommend)\b", re.I)
+ADVICE = re.compile(r"\b(avoid (?:applying|this lender|these lenders|them)|should avoid|choose (?:a|the) lender|best lender|apply (?:with|to) (?:a|the|this)|recommend)\b", re.I)
 LEGAL = re.compile(r"\b(discriminat|violat|unlawful|illegal|redlin)\w*", re.I)
 PERIOD = re.compile(r"\b2025\b")
 POPULATION = re.compile(r"(decision(?:ed)?|action[_ ]taken|actions? 1,? ?2,? ?(?:or |and )?3|applications? (?:acted on|that reached)|purchase[- ]only|purchase-mortgage applications|denominator)", re.I)
