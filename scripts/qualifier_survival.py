@@ -95,8 +95,8 @@ def main():
     rows = []
     for f in sorted(glob.glob(os.path.join(LOG, "*.json"))):
         d = json.load(open(f, encoding="utf-8"))
-        if not d.get("answer_text"):
-            continue
+        if not d.get("answer_text") or str(d.get("kind", "")).startswith("discovery probe"):
+            continue   # discovery probes ask other questions; they are archived but not part of the instrument
         g = grade(d["answer_text"], cur, " ".join(u for q in d.get("questions", []) for u in q.get("sources", [])))
         if g is None:
             continue
