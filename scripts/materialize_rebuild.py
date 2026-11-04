@@ -74,6 +74,13 @@ def main():
         if vals:
             peer_med[r] = round(statistics.median(vals), 1)
     peer_med["denial_rate_pct"] = peer_rate
+    if a.panel == "frozen":
+        # the published 2025 peer medians were fixed in July on the pre-correction fingerprint set; a frozen panel keeps them
+        try:
+            peer_med = json.load(open(os.path.join(ROOT, "api", "index.json")))["national"]["peer_medians"]
+            peer_rate = peer_med["denial_rate_pct"]
+        except (FileNotFoundError, KeyError):
+            pass
     index_lenders = []
     for x in top100:
         lei = x["lei"]
@@ -82,9 +89,9 @@ def main():
         slug = r.get("slug") or slugify(name)
         L = {"lender": name, "lei": lei, "slug": slug, "decisioned_applications": x["apps"], "denials": x["denials"], "denial_rate_pct": x["rate"],
              "approval_rate_pct": round(100 - x["rate"], 1), "peer_median_denial_rate_pct": peer_rate, "in_top_100_by_volume": True}
-        if lei in adj:
-            A = adj[lei]
-            L.update({"peer_adjusted_ratio": A["adjusted_ratio"], "expected_denial_rate_pct": A["expected_rate_pct"], "profile_coverage_pct": A["profile_coverage_pct"]})
+        A = adj.get(lei)
+        L.update({"peer_adjusted_ratio": A["adjusted_ratio"] if A else None, "expected_denial_rate_pct": A["expected_rate_pct"] if A else None,
+                  "profile_coverage_pct": A["profile_coverage_pct"] if A else None})
         if lei in fps:
             sh = fps[lei]["reason_shares_pct"]
             L["denial_reason_shares_pct"] = sh
@@ -112,7 +119,7 @@ def main():
         name = r.get("metro") or f"MSA {code}"
         slug = r.get("slug") or slugify(name)
         cells = []
-        for c in sorted(m.get("top_lenders", []), key=lambda c: -c["apps"]):
+        for c in sorted(m.get("top_lenders", []), key=lambda c: (c["denial_rate_pct"], -c["apps"])):
             if c["lei"] not in panel:
                 continue   # the metro table names only lenders that have a page (the panel)
             lr = reg["lenders"].get(c["lei"]) or {}
