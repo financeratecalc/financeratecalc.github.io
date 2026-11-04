@@ -1,4 +1,4 @@
-name: Release-day machine (CFPB file -> every figure, receipt and page; dry run by default)
+name: Release-day machine (CFPB file to every figure, receipt and page, dry run by default)
 on:
   workflow_dispatch:
     inputs:
@@ -47,7 +47,7 @@ jobs:
           print("verdict:", r["verdict"], "| numeric match", r["numeric_match_rate"])
           PY
       - name: 6. APPLY - write the rebuilt data into the site and rebuild everything that derives from it
-        if: inputs.apply == 'APPLY'
+        if: github.event.inputs.apply == 'APPLY'
         run: |
           set -e
           cp -r /tmp/materialized/api/. api/
