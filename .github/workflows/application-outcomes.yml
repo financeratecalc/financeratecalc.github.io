@@ -30,7 +30,9 @@ jobs:
       - name: 2. Reference implementation (one pass over the file)
         run: python3 scripts/reference_implementation.py /tmp/hmda.csv 2>&1 | tail -12
       - name: 3. Materialize api/ files from the rebuild
-        run: python3 scripts/materialize_rebuild.py /tmp/frc_rebuild.json --year "${{ github.event.inputs.year }}" --out /tmp/materialized
+        run: |
+          PANEL=fresh; if [ "${{ github.event.inputs.year }}" = "2025" ]; then PANEL=frozen; fi
+          python3 scripts/materialize_rebuild.py /tmp/frc_rebuild.json --year "${{ github.event.inputs.year }}" --out /tmp/materialized --panel $PANEL
       - name: 4. Application outcomes and door-report cells from the same file
         run: |
           python3 scripts/application_outcomes.py /tmp/hmda.csv /tmp/materialized/data/application-outcomes-${{ github.event.inputs.year }}.json | tail -1

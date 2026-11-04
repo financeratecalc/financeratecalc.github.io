@@ -42,6 +42,8 @@ def main():
     ap.add_argument("rebuild")
     ap.add_argument("--year", default="2025")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--panel", choices=["fresh", "frozen"], default="fresh",
+                    help="fresh: the 100 largest by decisioned volume in this file (release day). frozen: the lenders in the registry (the published 2025 panel, whose membership was fixed on the pre-correction file; 5 lenders at the margin differ from a fresh cut).")
     a = ap.parse_args()
     rb = json.load(open(a.rebuild, encoding="utf-8"))
     reg = json.load(open(os.path.join(ROOT, "data", "release-day-registry.json"), encoding="utf-8"))
@@ -60,13 +62,15 @@ def main():
 
     # ---- lenders: the 100 largest by decisioned volume carry a page; reason shares and peer-adjusted figures join by LEI
     lenders = sorted(rb["lenders"], key=lambda x: -x["apps"])
-    top100 = lenders[:100]
+    top100 = [x for x in lenders if x["lei"] in reg["lenders"]] if a.panel == "frozen" else lenders[:100]
+    panel = {x["lei"] for x in top100}
     fps = {f["lei"]: f for f in rb.get("fingerprints", [])}
     adj = {x["lei"]: x for x in rb.get("adjusted", [])}
     peer_rate = round(statistics.median(x["rate"] for x in top100), 1)
     peer_med = {}
-    for r in REASONS.values():
-        vals = [f["reason_shares_pct"][r] for f in fps.values() if r in f["reason_shares_pct"]]
+    fps = {k: v for k, v in fps.items() if k in panel}
+    for r in ("dti", "credit_history", "collateral", "insufficient_cash", "incomplete", "unverifiable_info", "employment", "other"):
+        vals = [f["reason_shares_pct"].get(r, 0.0) for f in fps.values()]
         if vals:
             peer_med[r] = round(statistics.median(vals), 1)
     peer_med["denial_rate_pct"] = peer_rate
@@ -84,7 +88,7 @@ def main():
         if lei in fps:
             sh = fps[lei]["reason_shares_pct"]
             L["denial_reason_shares_pct"] = sh
-            L["deviation_from_peer_median_pts"] = {k: round(sh[k] - peer_med[k], 1) for k in sh if k in peer_med}
+            L["deviation_from_peer_median_pts"] = {k: round(sh.get(k, 0.0) - peer_med[k], 1) for k in peer_med if k != "denial_rate_pct"}
         L["page"] = r.get("page") or f"{BASE}/{slug}-fha-denial-rate.html"
         L["meta"] = M
         json.dump(L, open(os.path.join(out, "api", "lender", slug + ".json"), "w", encoding="utf-8"), indent=1, ensure_ascii=False)
@@ -108,7 +112,9 @@ def main():
         name = r.get("metro") or f"MSA {code}"
         slug = r.get("slug") or slugify(name)
         cells = []
-        for c in m.get("top_lenders", []):
+        for c in sorted(m.get("top_lenders", []), key=lambda c: -c["apps"]):
+            if c["lei"] not in panel:
+                continue   # the metro table names only lenders that have a page (the panel)
             lr = reg["lenders"].get(c["lei"]) or {}
             cells.append({"lender": lr.get("lender") or gleif.get(c["lei"]) or c["lei"], "decisioned_applications_here": c["apps"], "denial_rate_pct": c["denial_rate_pct"]})
         sm, bg = m.get("small_denial_pct"), m.get("big_denial_pct")
