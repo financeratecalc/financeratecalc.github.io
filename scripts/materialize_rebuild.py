@@ -96,6 +96,9 @@ def main():
             sh = fps[lei]["reason_shares_pct"]
             L["denial_reason_shares_pct"] = sh
             L["deviation_from_peer_median_pts"] = {k: round(sh.get(k, 0.0) - peer_med[k], 1) for k in peer_med if k != "denial_rate_pct"}
+        else:
+            L["denial_reason_shares_pct"] = None   # fewer than 50 stated reasons: no fingerprint published
+            L["deviation_from_peer_median_pts"] = None
         L["page"] = r.get("page") or f"{BASE}/{slug}-fha-denial-rate.html"
         L["meta"] = M
         json.dump(L, open(os.path.join(out, "api", "lender", slug + ".json"), "w", encoding="utf-8"), indent=1, ensure_ascii=False)

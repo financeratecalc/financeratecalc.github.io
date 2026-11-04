@@ -34,7 +34,10 @@ def main():
     for base in (os.path.join(ROOT, "api"), os.path.join(new, "api")):
         for f in glob.glob(os.path.join(base, "**", "*.json"), recursive=True):
             rels.add(os.path.relpath(f, base))
+    DERIVED = {"denial-reasons-top100.json", "small-loan-penalty.json"}   # built from api/state and api/lender by build_api_summaries.py in APPLY
     for rel in sorted(rels):
+        if rel in DERIVED:
+            continue
         a, b = os.path.join(ROOT, "api", rel), os.path.join(new, "api", rel)
         if not os.path.exists(a):
             rep["files_only_rebuilt"].append(rel); continue
