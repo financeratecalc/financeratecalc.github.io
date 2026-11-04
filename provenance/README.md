@@ -22,3 +22,8 @@ gh attestation verify provenance/rebuild-report.json --repo financeratecalc/fina
 What this proves: that this code, run on that file, yields these numbers. What it does not prove:
 that the code is the right reading of the method, or that the CFPB file is correct. Independent
 replication (level L4 of the specification) still requires an implementation written by someone else.
+
+
+## Release-day machine (2026-11-04)
+
+`release-day-dryrun.json`: the latest run of the full pipeline (CFPB file → reference implementation → materialized api/ files) compared number by number with the published files. The 2025 dry run of 2026-11-04 is IDENTICAL on 8,122 numeric fields. `release-day-preregistration.md` / `.json`: what we commit to publish within six hours of the 2026 file, hashed at registration.
