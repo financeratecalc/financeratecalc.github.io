@@ -67,16 +67,22 @@ BOT_NAMES = {"applebot": "Applebot", "gptbot": "GPTBot", "claudebot": "ClaudeBot
              "perplexitybot": "PerplexityBot", "meta": "a Meta crawler", "bytespider": "Bytespider", "ccbot": "CCBot", "other-bot": "an unnamed crawler"}
 
 
+def bot_name(k):
+    if k.startswith("other-bot:"):
+        return f"an unnamed crawler ({k[10:]})"
+    return BOT_NAMES.get(k, k)
+
+
 def verified_line(entry):
     """Reverse receipt: which crawler last checked this claim's receipt (bots only, from the public crawl ledger)."""
     if not entry:
         return None
     parts = sorted(entry.items(), key=lambda kv: kv[1]["last"], reverse=True)
     bot, b = parts[0]
-    others = [BOT_NAMES.get(k, k) for k, _ in parts[1:]]
+    others = [bot_name(k) for k, _ in parts[1:]]
     tail = f"; also {', '.join(others)}" if others else ""
     checks = sum(v["n"] for _, v in parts)
-    return f"Receipt last verified by {BOT_NAMES.get(bot, bot)} on {b['last']} ({checks} crawler check{'s' if checks != 1 else ''}{tail}; a check, not a citation)."
+    return f"Receipt last verified by {bot_name(bot)} on {b['last']} ({checks} crawler check{'s' if checks != 1 else ''}{tail}; a check, not a citation)."
 
 
 def section_of(cid):
