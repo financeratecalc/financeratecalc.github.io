@@ -1,0 +1,73 @@
+name: Release-day machine (CFPB file -> every figure, receipt and page; dry run by default)
+on:
+  workflow_dispatch:
+    inputs:
+      source_url:
+        description: "CFPB file URL (FHA extract for the year)"
+        default: "https://ffiec.cfpb.gov/v2/data-browser-api/view/nationwide/csv?years=2025&loan_types=2"
+      year:
+        description: "HMDA activity year in the file"
+        default: "2025"
+      apply:
+        description: "Type APPLY to write the rebuilt data into the site and rebuild claims, contracts, bundle and pages. Anything else = dry run (compare only)."
+        default: "dry-run"
+permissions:
+  contents: write
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: 1. Download the CFPB file and record its hash
+        run: |
+          curl -L --compressed --retry 3 --max-time 3600 -o /tmp/hmda.csv -w "http %{http_code} bytes %{size_download}\n" "${{ github.event.inputs.source_url }}"
+          sha256sum /tmp/hmda.csv | cut -c1-64 | tee /tmp/input.sha256
+      - name: 2. Reference implementation (one pass over the file)
+        run: python3 scripts/reference_implementation.py /tmp/hmda.csv 2>&1 | tail -12
+      - name: 3. Materialize api/ files from the rebuild
+        run: python3 scripts/materialize_rebuild.py /tmp/frc_rebuild.json --year "${{ github.event.inputs.year }}" --out /tmp/materialized
+      - name: 4. Application outcomes and door-report cells from the same file
+        run: |
+          python3 scripts/application_outcomes.py /tmp/hmda.csv /tmp/materialized/data/application-outcomes-${{ github.event.inputs.year }}.json | tail -1
+          python3 scripts/door_report_cells.py /tmp/hmda.csv /tmp/materialized/data/door-report-cells-${{ github.event.inputs.year }}.json 2>&1 | tail -1
+      - name: 5. Dry run - compare with the published files, number by number
+        run: |
+          python3 scripts/compare_tree.py /tmp/materialized provenance/release-day-dryrun.json
+          python3 - <<'PY'
+          import json, os
+          r = json.load(open("provenance/release-day-dryrun.json"))
+          r["input"] = {"url": "${{ github.event.inputs.source_url }}", "sha256": open("/tmp/input.sha256").read().strip(), "year": "${{ github.event.inputs.year }}"}
+          r["code_commit"] = os.environ["GITHUB_SHA"]; r["mode"] = "${{ github.event.inputs.apply }}"
+          json.dump(r, open("provenance/release-day-dryrun.json", "w"), indent=1, ensure_ascii=False)
+          print("verdict:", r["verdict"], "| numeric match", r["numeric_match_rate"])
+          PY
+      - name: 6. APPLY - write the rebuilt data into the site and rebuild everything that derives from it
+        if: inputs.apply == 'APPLY'
+        run: |
+          set -e
+          cp -r /tmp/materialized/api/. api/
+          cp /tmp/materialized/data/*.json data/
+          python3 scripts/build_api_summaries.py
+          python3 scripts/build_claim_documents.py
+          python3 scripts/build_claim_contracts.py
+          python3 scripts/build_receipt_hash_history.py
+          python3 scripts/build_receipts_snapshot.py | tail -1
+          python3 scripts/build_outcomes_page.py
+          python3 scripts/build_claim_jsonld.py | tail -1
+          python3 scripts/build_llms_full.py | tail -1
+          python3 scripts/build_site_index.py | tail -1
+          python3 scripts/check_page_values.py --fix | tail -1
+          python3 scripts/check_page_phrasing.py | tail -1
+      - name: 7. Commit (dry-run report always; the site only on APPLY)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add provenance/release-day-dryrun.json
+          if [ "${{ github.event.inputs.apply }}" = "APPLY" ]; then git add -A api data claims transparency llms-full.txt where-fha-applications-end.html site-index.html metro stat city eval/page-value-fix-*.json rl-env/frc_citation/receipts-snapshot.json *.html; fi
+          git diff --cached --quiet || git commit -m "release-day machine: ${{ github.event.inputs.apply }} on ${{ github.event.inputs.year }} file [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
