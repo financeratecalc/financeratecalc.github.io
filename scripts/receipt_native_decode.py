@@ -96,16 +96,17 @@ def candidates(question, claims, k=8):
 class ReceiptOnly(LogitsProcessor):
     """Mask every digit-bearing token outside a receipt; inside a receipt, allow only the trie's next tokens."""
 
-    def __init__(self, tok, receipts, prompt_len):
+    def __init__(self, tok, receipts, prompt_len, prefill_ids):
         self.tok = tok
         self.prompt_len = prompt_len
-        # a receipt may be tokenized differently after a space or a newline than standalone; keep every variant
+        # Every receipt is "⟦FRC:" + rest. Generation continues from the prefilled "⟦FRC:" tokens, so each sequence is
+        # the prefill's ids followed by the rest tokenized on its own — the tokenization the model will actually produce.
         self.seqs = []
         for r in receipts:
-            for v in (r, " " + r, "\n" + r):
-                ids = tok.encode(v, add_special_tokens=False)
-                if ids and ids not in self.seqs:
-                    self.seqs.append(ids)
+            rest = r[len("\u27e6FRC:"):]
+            ids = list(prefill_ids) + tok.encode(rest, add_special_tokens=False)
+            if ids not in self.seqs:
+                self.seqs.append(ids)
         self.first = {s[0] for s in self.seqs}
         vocab = tok.get_vocab()
         digit = []
@@ -133,6 +134,9 @@ class ReceiptOnly(LogitsProcessor):
 
     def __call__(self, input_ids, scores):
         gen = input_ids[0, self.prompt_len:].tolist()
+        if any(gen[-len(q):] == q for q in self.seqs if len(gen) >= len(q)):
+            mask = torch.full_like(scores, float("-inf")); mask[0, self.tok.eos_token_id] = 0.0
+            return mask   # one receipt is the whole answer
         allowed = self._inside(gen)
         if allowed is not None:
             mask = torch.full_like(scores, float("-inf"))
@@ -171,8 +175,9 @@ def main():
         if not isinstance(ids, torch.Tensor):   # newer transformers return a BatchEncoding
             ids = ids["input_ids"]
         offered = [claims[c]["receipt"] for c in cands] + [ABSTAIN_RECEIPT]
-        proc = ReceiptOnly(tok, offered, ids.shape[1])
-        prefill = torch.tensor([tok.encode("\u27e6FRC:", add_special_tokens=False)], dtype=ids.dtype)
+        prefill_ids = tok.encode("\u27e6FRC:", add_special_tokens=False)
+        proc = ReceiptOnly(tok, offered, ids.shape[1], prefill_ids)
+        prefill = torch.tensor([prefill_ids], dtype=ids.dtype)
         ids_in = torch.cat([ids, prefill], dim=1)   # the answer begins as a receipt; the trie decides what may follow
         with torch.no_grad():
             out = model.generate(ids_in, max_new_tokens=a.max_new, do_sample=False, logits_processor=LogitsProcessorList([proc]), pad_token_id=tok.eos_token_id)
