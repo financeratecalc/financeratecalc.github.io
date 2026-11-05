@@ -1,21 +1,37 @@
-name: LettuceDetect probe (span-level grounding vs fidelity grades; manual)
+name: Model probes (manual; CPU) - LettuceDetect span grounding, receipt-native decoding
 on:
   workflow_dispatch:
+    inputs:
+      probe:
+        description: "which probe: receipt-native (a model that cannot write a number, only a receipt) or lettuce (span-level grounding)"
+        default: "receipt-native"
+      model:
+        description: "open instruction model for receipt-native (Hugging Face id)"
+        default: "Qwen/Qwen2.5-0.5B-Instruct"
 permissions:
   contents: write
 jobs:
   probe:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: pip install -q lettucedetect
-      - run: python scripts/lettuce_probe.py eval/lettuce-probe-$(date -u +%F).json | tail -12
+      - name: LettuceDetect
+        if: github.event.inputs.probe == 'lettuce'
+        run: |
+          pip install -q lettucedetect
+          python scripts/lettuce_probe.py eval/lettuce-probe-$(date -u +%F).json | tail -12
+      - name: Receipt-native decoding (digits banned; receipts only along a trie; values resolved after generation)
+        if: github.event.inputs.probe == 'receipt-native'
+        run: |
+          pip install -q torch --index-url https://download.pytorch.org/whl/cpu && pip install -q "transformers>=4.44" accelerate
+          python scripts/receipt_native_decode.py --model "${{ github.event.inputs.model }}" --out eval/receipt-native/$(date -u +%F).json
       - name: Commit result
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add eval/lettuce-probe-*.json
-          git diff --cached --quiet || git commit -m "lettuce probe result [skip ci]"
+          git add eval/lettuce-probe-*.json eval/receipt-native 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "model probe result (${{ github.event.inputs.probe }}) [skip ci]"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
