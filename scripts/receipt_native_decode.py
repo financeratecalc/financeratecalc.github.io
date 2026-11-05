@@ -178,6 +178,8 @@ def main():
             out = model.generate(ids_in, max_new_tokens=a.max_new, do_sample=False, logits_processor=LogitsProcessorList([proc]), pad_token_id=tok.eos_token_id)
         text = tok.decode(out[0, ids.shape[1]:], skip_special_tokens=True)
         found = re.findall(r"⟦FRC:[a-z0-9-]+:[^:⟧]+:[a-f0-9]{8}⟧", text)
+        abstained = ABSTAIN_RECEIPT in found or ABSTAIN in text
+        found = [f for f in found if f != ABSTAIN_RECEIPT]
         resolved = [{"receipt": r, "id": by_receipt.get(r), "value": claims[by_receipt[r]]["value"] if r in by_receipt else None} for r in found]
         rendered = text
         for r in resolved:
@@ -186,7 +188,7 @@ def main():
         exp = EXPECT.get(q["id"])
         chosen = [r["id"] for r in resolved]
         rows.append({"id": q["id"], "question": q["question"], "candidates": cands, "raw": text, "rendered": rendered, "receipts": resolved,
-                     "digits_in_raw": bool(re.search(r"\d", text.replace(ABSTAIN_RECEIPT, "").replace("FRC:", "").split("\u27e6")[0])), "abstained": abstained, "expected_id": exp,
+                     "digits_in_raw": bool(re.search(r"\d", re.sub(r"⟦[^⟧]*⟧", "", text))), "abstained": abstained, "expected_id": exp,
                      "verdict": ("correct" if exp and exp in chosen else "abstain-expected" if not exp and not chosen else "wrong-or-missing")})
         print(q["id"], rows[-1]["verdict"], "|", rendered[:140].replace("\n", " "), flush=True)
     rep = {"generated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "model": a.model, "method": "greedy decoding; digit-bearing tokens banned outside receipts; receipts emitted only along a token trie of the question's candidate receipts; values resolved from claim documents after generation",
