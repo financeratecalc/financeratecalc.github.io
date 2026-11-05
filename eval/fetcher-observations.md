@@ -44,3 +44,13 @@ Features per claim: how many site pages carry its receipt text, how many of thos
 - By kind: states (median 6 pages, 3 indexable) 21/52 verified; lenders (1 page) 13/98; metro gaps (1 page, receipt in the footnote) 1/184; small-loan penalties (no page carries the receipt text) 0/49.
 
 Implication for the 17–30 Nov pre-registration: matching treatment and control on kind + GA traffic is not enough; pages-carrying-receipt and receipt position differ sharply between verified and unverified claims and must be stratification variables. Proposed amendment (before the run, hashed like the original): add both to the matching, and register a second arm — receipt placement: on a random half of metro pages the receipt block moves above the table; outcome = ledger verifications over four weeks. Zero cost. Not changed yet; amendment first.
+
+## 2026-11-05 — receipt-native decoding, first four runs (eval/receipt-native/)
+
+A decoder that bans every digit-bearing token and lets a receipt be emitted only along a token trie of the question's candidate receipts, with the value resolved from the claim document afterwards. No training; the constraint lives in the decoder. Twelve-question battery, CPU, Qwen2.5-Instruct 0.5B then 1.5B.
+
+- Run 1 (0.5B, free text): 0 digits in 12 answers, 0 unresolvable receipts, 0 receipts chosen — the model abstained or named lenders; one answer tried Unicode fractions (⅔, ⅗) to get round the digit ban. Numeric glyphs are now banned too.
+- Run 3 (0.5B, answer prefilled as "⟦FRC:"): the trie leaked for one step (prefill tokens vs whole-receipt tokenization) and the model immediately forged hashes made only of the letters a–f ("ebfcefcd"), the one alphabet the ban left it. The constraint has to be total or it is nothing.
+- Run 4 (1.5B, trie fixed, EOS forced after a complete receipt): 12/12 answers are genuine receipts, 0 digits, 0 forgeries; the right receipt chosen for 3/12 (national rate; the reason-share figure twice); never abstained where it should (q10–q12). The remaining failures are selection, not fabrication: lexical retrieval offers eight candidates and a 1.5B model picks the familiar one (the national figure five times).
+
+What this establishes: fabrication of a figure can be made impossible at decode time with no model change; what is left is choosing the right pointer, which is the trained half (RLVR on the gate) and a better retriever. The forged-letter-hash episode is the clearest argument for the design.
