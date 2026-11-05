@@ -27,6 +27,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, LogitsProcessor, L
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ABSTAIN = "I do not have a receipt for that."
+ABSTAIN_RECEIPT = "\u27e6FRC:no-receipt:none:00000000\u27e7"   # the one pointer that resolves to nothing: the model's way to say "not in the record offered"
 # the receipt each benchmark question's ground truth carries (scripts/build_hf_benchmark.py); questions without one expect abstention or prose
 EXPECT = {"q1": "national-fha-denial-rate-2025", "q2": "lender-amerisave-mortgage-2025", "q3": "lender-flat-branch-mortgage-2025",
           "q4": "small-loan-penalty-id-2025", "q5": "denial-reason-shares-top100-2025", "q6": "small-loan-penalty-range-2025",
@@ -113,7 +114,7 @@ class ReceiptOnly(LogitsProcessor):
                 txt = tok.convert_tokens_to_string([t])
             except Exception:
                 txt = t
-            if any(ch.isdigit() for ch in txt):
+            if any(ch.isdigit() or ch.isnumeric() for ch in txt):   # ⅔ and friends are numeric, not digits
                 digit.append(i)
         self.digit_ids = torch.tensor(sorted(digit), dtype=torch.long)
 
@@ -163,15 +164,18 @@ def main():
         cands = candidates(q["question"], claims)
         menu = "\n".join(f"- {claims[c]['sentence']} {claims[c]['receipt']}" for c in cands)
         system = ("You answer questions about US FHA mortgage denials in 2025 using only the receipted statements below. "
-                  "You cannot write digits. To state a figure, copy its receipt exactly; the receipt stands for the number. "
-                  f"If none of the statements answers the question, reply exactly: {ABSTAIN}\n\nStatements:\n{menu}")
+                  "Your answer is one receipt, copied exactly from the statement that answers the question; the receipt stands for the number. "
+                  f"If none of the statements answers the question, answer with {ABSTAIN_RECEIPT}\n\nStatements:\n{menu}")
         msgs = [{"role": "system", "content": system}, {"role": "user", "content": q["question"]}]
         ids = tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt")
         if not isinstance(ids, torch.Tensor):   # newer transformers return a BatchEncoding
             ids = ids["input_ids"]
-        proc = ReceiptOnly(tok, [claims[c]["receipt"] for c in cands], ids.shape[1])
+        offered = [claims[c]["receipt"] for c in cands] + [ABSTAIN_RECEIPT]
+        proc = ReceiptOnly(tok, offered, ids.shape[1])
+        prefill = torch.tensor([tok.encode("\u27e6FRC:", add_special_tokens=False)], dtype=ids.dtype)
+        ids_in = torch.cat([ids, prefill], dim=1)   # the answer begins as a receipt; the trie decides what may follow
         with torch.no_grad():
-            out = model.generate(ids, max_new_tokens=a.max_new, do_sample=False, logits_processor=LogitsProcessorList([proc]), pad_token_id=tok.eos_token_id)
+            out = model.generate(ids_in, max_new_tokens=a.max_new, do_sample=False, logits_processor=LogitsProcessorList([proc]), pad_token_id=tok.eos_token_id)
         text = tok.decode(out[0, ids.shape[1]:], skip_special_tokens=True)
         found = re.findall(r"⟦FRC:[a-z0-9-]+:[^:⟧]+:[a-f0-9]{8}⟧", text)
         resolved = [{"receipt": r, "id": by_receipt.get(r), "value": claims[by_receipt[r]]["value"] if r in by_receipt else None} for r in found]
@@ -182,7 +186,7 @@ def main():
         exp = EXPECT.get(q["id"])
         chosen = [r["id"] for r in resolved]
         rows.append({"id": q["id"], "question": q["question"], "candidates": cands, "raw": text, "rendered": rendered, "receipts": resolved,
-                     "digits_in_raw": bool(re.search(r"\d", text)), "abstained": ABSTAIN in text, "expected_id": exp,
+                     "digits_in_raw": bool(re.search(r"\d", text.replace(ABSTAIN_RECEIPT, "").replace("FRC:", "").split("\u27e6")[0])), "abstained": abstained, "expected_id": exp,
                      "verdict": ("correct" if exp and exp in chosen else "abstain-expected" if not exp and not chosen else "wrong-or-missing")})
         print(q["id"], rows[-1]["verdict"], "|", rendered[:140].replace("\n", " "), flush=True)
     rep = {"generated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "model": a.model, "method": "greedy decoding; digit-bearing tokens banned outside receipts; receipts emitted only along a token trie of the question's candidate receipts; values resolved from claim documents after generation",
