@@ -98,10 +98,24 @@ class ReceiptOnly(LogitsProcessor):
     def __init__(self, tok, receipts, prompt_len):
         self.tok = tok
         self.prompt_len = prompt_len
-        self.seqs = [tok.encode(r, add_special_tokens=False) for r in receipts]
+        # a receipt may be tokenized differently after a space or a newline than standalone; keep every variant
+        self.seqs = []
+        for r in receipts:
+            for v in (r, " " + r, "\n" + r):
+                ids = tok.encode(v, add_special_tokens=False)
+                if ids and ids not in self.seqs:
+                    self.seqs.append(ids)
         self.first = {s[0] for s in self.seqs}
         vocab = tok.get_vocab()
-        self.digit_ids = torch.tensor(sorted(i for t, i in vocab.items() if any(ch.isdigit() for ch in tok.convert_tokens_to_string([t]))), dtype=torch.long)
+        digit = []
+        for t, i in vocab.items():
+            try:
+                txt = tok.convert_tokens_to_string([t])
+            except Exception:
+                txt = t
+            if any(ch.isdigit() for ch in txt):
+                digit.append(i)
+        self.digit_ids = torch.tensor(sorted(digit), dtype=torch.long)
 
     def _inside(self, gen):
         """Longest suffix of the generated ids that is a proper prefix of some receipt sequence -> allowed next ids."""
@@ -124,7 +138,11 @@ class ReceiptOnly(LogitsProcessor):
             idx = torch.tensor(sorted(allowed), dtype=torch.long)
             mask[0, idx] = scores[0, idx]
             return mask
-        scores[0, self.digit_ids] = float("-inf")
+        if self.digit_ids.numel():
+            # a digit token that begins one of the receipt sequences would be caught by the trie branch; outside a receipt all digits are banned
+            scores[0, self.digit_ids] = float("-inf")
+        for f in self.first:
+            scores[0, f] = max(scores[0, f].item(), scores[0, f].item()) if scores[0, f] != float("-inf") else scores[0, f]
         return scores
 
 
@@ -138,7 +156,7 @@ def main():
     by_receipt = {c["receipt"]: cid for cid, c in claims.items()}
     bench = json.load(open(os.path.join(ROOT, "benchmark.json"), encoding="utf-8"))
     tok = AutoTokenizer.from_pretrained(a.model)
-    model = AutoModelForCausalLM.from_pretrained(a.model, torch_dtype=torch.float32)
+    model = AutoModelForCausalLM.from_pretrained(a.model, dtype=torch.float32) if "dtype" in AutoModelForCausalLM.from_pretrained.__code__.co_varnames else AutoModelForCausalLM.from_pretrained(a.model, torch_dtype=torch.float32)
     model.eval()
     rows = []
     for q in bench["questions"]:
@@ -149,6 +167,8 @@ def main():
                   f"If none of the statements answers the question, reply exactly: {ABSTAIN}\n\nStatements:\n{menu}")
         msgs = [{"role": "system", "content": system}, {"role": "user", "content": q["question"]}]
         ids = tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt")
+        if not isinstance(ids, torch.Tensor):   # newer transformers return a BatchEncoding
+            ids = ids["input_ids"]
         proc = ReceiptOnly(tok, [claims[c]["receipt"] for c in cands], ids.shape[1])
         with torch.no_grad():
             out = model.generate(ids, max_new_tokens=a.max_new, do_sample=False, logits_processor=LogitsProcessorList([proc]), pad_token_id=tok.eos_token_id)

@@ -27,8 +27,11 @@ jobs:
         if: github.event.inputs.probe == 'receipt-native'
         run: |
           pip install -q torch --index-url https://download.pytorch.org/whl/cpu && pip install -q "transformers>=4.44" accelerate
-          python scripts/receipt_native_decode.py --model "${{ github.event.inputs.model }}" --out eval/receipt-native/$(date -u +%F).json
-      - name: Commit result
+          mkdir -p eval/receipt-native
+          python scripts/receipt_native_decode.py --model "${{ github.event.inputs.model }}" --out eval/receipt-native/$(date -u +%F).json 2>&1 | tee eval/receipt-native/last-run.log | tail -30
+          test ${PIPESTATUS[0]} -eq 0
+      - name: Commit result (log kept even on failure)
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
