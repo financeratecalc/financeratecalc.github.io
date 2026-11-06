@@ -46,5 +46,11 @@
  "receipt": "⟦FRC:outcome-guild-mortgage-2025:18.0%:62f71caf⟧",
  "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:outcome-guild-mortgage-2025:18.0%:62f71caf%E2%9F%A7",
  "corrections_url": "https://financeratecalc.com/corrections.json",
- "spec": "https://financeratecalc.com/spec/receipt-1.0.md"
+ "spec": "https://financeratecalc.com/spec/receipt-1.0.md",
+ "reproduce": {
+  "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+  "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+  "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+  "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=549300AQ3T62GXDU7D76&loan_types=2"
+ }
 }

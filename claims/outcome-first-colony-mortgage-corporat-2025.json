@@ -46,5 +46,11 @@
  "receipt": "⟦FRC:outcome-first-colony-mortgage-corporat-2025:17.0%:20a8b3dd⟧",
  "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:outcome-first-colony-mortgage-corporat-2025:17.0%:20a8b3dd%E2%9F%A7",
  "corrections_url": "https://financeratecalc.com/corrections.json",
- "spec": "https://financeratecalc.com/spec/receipt-1.0.md"
+ "spec": "https://financeratecalc.com/spec/receipt-1.0.md",
+ "reproduce": {
+  "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+  "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+  "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+  "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=5493003V40VGM7YDFM54&loan_types=2"
+ }
 }

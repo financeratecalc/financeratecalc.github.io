@@ -166,8 +166,9 @@ await test("21", "application outcomes: five shares sum to ~100, the denied shar
   let current = 0; for (const o of Object.values(t.outcomes)) { const v = await (await fetch(EP + "/verify?r=" + encodeURIComponent(o.claim_receipt))).json(); if (v.status === "current") current++; }
   const L = toolText(await rpc("tools/call", { name: "get_application_outcomes", arguments: { lender: "NewRez" } }));
   const lv = L && L.claim_receipt ? await (await fetch(EP + "/verify?r=" + encodeURIComponent(L.claim_receipt))).json() : { status: "none" };
-  return { pass: Math.abs(sum - 100) < 0.3 && denied < rate && current === 5 && lv.status === "current" && !("rank" in (L || {})),
-    evidence: `sum=${sum.toFixed(1)} denied=${denied} rate=${rate} current=${current}/5 lender=${lv.status}` };
+  const cit = L && L.citation && L.citation.receipt === L.claim_receipt && String(L.citation.formatted).includes(L.claim_receipt);
+  return { pass: Math.abs(sum - 100) < 0.3 && denied < rate && current === 5 && lv.status === "current" && !("rank" in (L || {})) && !!cit,
+    evidence: `sum=${sum.toFixed(1)} denied=${denied} rate=${rate} current=${current}/5 lender=${lv.status} citation=${!!cit}` };
 });
 const passed = tests.filter(t => t.pass).length;
 const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.4", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,

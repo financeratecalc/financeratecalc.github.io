@@ -14,7 +14,7 @@ Fields added at top level (never inside `claim`, which is the hashed block):
 
 --check: exit 1 if any document's claim block or display value differs from the data files.
 """
-import datetime, glob, json, os, sys
+import datetime, glob, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "rl-env"))
@@ -38,6 +38,37 @@ def receipt_ids():
         ids += [f"outcome-{k}-2025" for k in ("originated", "approved-not-accepted", "denied", "withdrawn", "closed-incomplete", "ana-share")]
         ids += [f"outcome-{l['slug']}-2025" for l in json.load(open(op))["lenders"] if l.get("slug")]
     return ids
+
+
+DB = "https://ffiec.cfpb.gov/v2/data-browser-api/view"
+FILTERS = "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself."
+
+
+def reproduce_block(cid, obj, v):
+    """A keyless CFPB Data Browser query that returns the rows behind the figure (2026-11-06). The URL is the
+    publisher-independent route to the number: run it, apply FILTERS, compare. Not hashed (top-level field)."""
+    base = {"api": "CFPB/FFIEC HMDA Data Browser API, no key", "filters": FILTERS, "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/"}
+    NATIONAL_OUTCOMES = {"originated", "approved-not-accepted", "denied", "withdrawn", "closed-incomplete", "ana-share"}
+    if cid == "national-fha-denial-rate-2025" or (cid.startswith("outcome-") and cid[8:-5] in NATIONAL_OUTCOMES):
+        return {**base, "query_url": f"{DB}/nationwide/csv?years=2025&loan_types=2", "note": "outcome shares use action_taken 1-5 as the base; the denial rate uses 1-3"}
+    if cid.startswith("state-"):
+        return {**base, "query_url": f"{DB}/csv?years=2025&states={cid[6:8].upper()}&loan_types=2"}
+    if cid.startswith("small-loan-penalty-") and cid != "small-loan-penalty-range-2025":
+        return {**base, "query_url": f"{DB}/csv?years=2025&states={cid[19:21].upper()}&loan_types=2", "note": "small = loan_amount < 150000; big = loan_amount > 250000; penalty = small-loan denial rate / big-loan denial rate"}
+    if cid.startswith("lender-") or cid.startswith("outcome-"):
+        slug = cid[7:-5] if cid.startswith("lender-") else cid[8:-5]
+        try:
+            lei = v._json(f"/api/lender/{slug}.json")["lei"]
+            return {**base, "query_url": f"{DB}/csv?years=2025&leis={lei}&loan_types=2"}
+        except Exception:
+            return base
+    if cid.startswith("metro-gap-"):
+        subj = str(obj.get("subject", ""))
+        m = re.search(r"MSA (\d{5})", subj)
+        if m:
+            return {**base, "query_url": f"{DB}/csv?years=2025&msamds={m.group(1)}&loan_types=2", "note": "lenders with >= 100 decisioned applications in the metro; gap = highest minus lowest observed denial rate"}
+        return base
+    return base
 
 
 def main():
@@ -66,6 +97,7 @@ def main():
         new.update({"receipt_document": "1.0", "id": cid, "display_value": cur, "hash_rule": "jcs-sha256-8", "hash8": h,
                     "receipt": f"⟦FRC:{cid}:{cur}:{h}⟧", "verify_url": VERIFY + f"%E2%9F%A6FRC:{cid}:{cur}:{h}%E2%9F%A7",
                     "corrections_url": f"{BASE}/corrections.json", "spec": f"{BASE}/spec/receipt-1.0.md"})
+        new["reproduce"] = {**(doc.get("reproduce") or {}), **reproduce_block(cid, obj, v)}
         if new == doc:
             unchanged += 1; continue
         if check:

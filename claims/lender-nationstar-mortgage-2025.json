@@ -44,5 +44,11 @@
  "corrections_url": "https://financeratecalc.com/corrections.json",
  "spec": "https://financeratecalc.com/spec/receipt-1.0.md",
  "value_unit": "percent",
- "value_note": "display_value is the figure as published; claim.value is the hashed numeric (a share in [0,1] for the national rate, a percentage for lender and state rates)."
+ "value_note": "display_value is the figure as published; claim.value is the hashed numeric (a share in [0,1] for the national rate, a percentage for lender and state rates).",
+ "reproduce": {
+  "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+  "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+  "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+  "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=549300LBCBNR1OT00651&loan_types=2"
+ }
 }
