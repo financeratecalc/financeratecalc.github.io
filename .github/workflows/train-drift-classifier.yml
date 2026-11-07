@@ -34,6 +34,14 @@ jobs:
             models/frc-contract-drift
             !models/frc-contract-drift/_trainer
           retention-days: 14
+      - name: Publish the evaluation and the data set summary
+        run: |
+          cp models/frc-contract-drift/eval.json eval/drift-model-eval.json
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add eval/drift-model-eval.json eval/drift-training-set.json eval/drift-training-set.jsonl
+          git diff --cached --quiet || git commit -m "drift classifier: eval + data set [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
       - name: Publish the model to Hugging Face (only when push=yes)
         if: inputs.push == 'yes'
         env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}" }
@@ -45,16 +53,11 @@ jobs:
           if not tok: raise SystemExit("HF_TOKEN secret is empty")
           api = HfApi(token=tok)
           who = api.whoami(); print("token belongs to:", who.get("name"), "| orgs:", [o.get("name") for o in who.get("orgs", [])])
-          api.create_repo("FinanceRateCalc/frc-contract-drift", repo_type="model", exist_ok=True)
+          try:
+              api.create_repo("FinanceRateCalc/frc-contract-drift", repo_type="model", exist_ok=True)
+          except Exception as e:
+              print("create_repo failed (create the empty model repo FinanceRateCalc/frc-contract-drift in the HF UI once, then re-run):", type(e).__name__, str(e)[:300])
           api.upload_folder(folder_path="models/frc-contract-drift", repo_id="FinanceRateCalc/frc-contract-drift", repo_type="model",
                             ignore_patterns=["_trainer/*"], commit_message="train from rule-generated set")
           print("pushed FinanceRateCalc/frc-contract-drift")
           PY
-      - name: Publish the evaluation and the data set summary
-        run: |
-          cp models/frc-contract-drift/eval.json eval/drift-model-eval.json
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add eval/drift-model-eval.json eval/drift-training-set.json eval/drift-training-set.jsonl
-          git diff --cached --quiet || git commit -m "drift classifier: eval + data set [skip ci]"
-          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
