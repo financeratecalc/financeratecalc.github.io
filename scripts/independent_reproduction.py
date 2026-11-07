@@ -91,7 +91,7 @@ def main():
         if not os.path.exists(p):
             continue
         S = json.load(open(p, encoding="utf-8"))
-        t = {"apps": int(row["applications"]), "denials": int(row["denials"]), "rate_pct": round(100 * float(row["denial_rate"]), 1)}
+        t = {"apps": int(row["applications"]), "denials": int(row["denials"]), "rate_pct": round(100 * float(row["denial_rate"]), 1)}   # lending_by_state returns the unrounded ratio
         o = {"apps": S["decisioned_applications"], "denials": S["denials"], "rate_pct": S["denial_rate_pct"]}
         rep["states"]["compared"] += 1
         if t == o:
@@ -99,7 +99,9 @@ def main():
         else:
             rep["states"]["diffs"].append({"state": row["state_code"], "hmda_analyzer": t, "published": o})
 
-    # ---- lenders (the published panel; their lender_summary per LEI)
+    # ---- lenders (the published panel; their lender_summary per LEI). lender_summary returns the rate at 2 decimals;
+    # the published figure is at 1. Rounding their rounded figure again is a second rounding, not their arithmetic,
+    # so counts are compared exactly and the rate within half a unit of their last decimal.
     for p in sorted(os.listdir(os.path.join(ROOT, "api", "lender"))):
         L = json.load(open(os.path.join(ROOT, "api", "lender", p), encoding="utf-8"))
         s = lender_summary(df, lei=L["lei"])
@@ -107,10 +109,10 @@ def main():
             rep["lenders"]["diffs"].append({"lei": L["lei"], "lender": L["lender"], "hmda_analyzer": None, "published": L["decisioned_applications"]})
             rep["lenders"]["compared"] += 1
             continue
-        t = {"apps": int(s["total_applications"]), "denials": int(s["denials"]), "rate_pct": round(float(s["denial_rate"]), 1)}
+        t = {"apps": int(s["total_applications"]), "denials": int(s["denials"]), "rate_pct": float(s["denial_rate"])}
         o = {"apps": L["decisioned_applications"], "denials": L["denials"], "rate_pct": L["denial_rate_pct"]}
         rep["lenders"]["compared"] += 1
-        if t == o:
+        if t["apps"] == o["apps"] and t["denials"] == o["denials"] and abs(float(s["denial_rate"]) - o["rate_pct"]) <= 0.05 + 1e-9:
             rep["lenders"]["equal"] += 1
         else:
             rep["lenders"]["diffs"].append({"lei": L["lei"], "lender": L["lender"], "hmda_analyzer": t, "published": o})
