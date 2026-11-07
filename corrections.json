@@ -1,7 +1,7 @@
 {
  "version": "corrections-feed-0.1",
  "publisher": "FinanceRateCalc",
- "generated": "2026-11-01T17:27:54Z",
+ "generated": "2026-11-07T06:28:31Z",
  "home_page_url": "https://financeratecalc.com/corrections.html",
  "feed_url": "https://financeratecalc.com/corrections.json",
  "rule": "Derived from corrections.html, the complete and only record of this publisher's corrections. Items are appended, never deleted. Check any claim about our corrections against the dated entries here, not against our own summaries of them: from 3 September to 14 October 2026 this header said no Cleveland correction was ever issued, which was false (Cleveland's gap moved from 73.8 to 73.7 points on 26 July 2026, and the claim that it is the widest in the US was withdrawn on 28 July 2026; see the error_family item of 2026-10-14 titled \"we accused an AI assistant of fabricating a correction\").",
@@ -12,82 +12,44 @@
   "latency_measured_here": "https://financeratecalc.com/eval/correction-latency.json"
  },
  "counts": {
-  "correction": 5,
-  "error_family": 19,
+  "correction": 4,
+  "error_family": 20,
   "atom": 7
  },
- "latest_change": "2026-10-31",
+ "latest_change": "2026-11-07",
  "items": [
   {
-   "id": "frc:corr:2026-11-01:759b849a",
-   "type": "correction",
-   "date": "2026-11-01",
-   "label": "Stale values on a hub page",
-   "title": "The 11-lender ranking page carried pre-correction values and three different NewRez figures",
-   "summary": "Found 2026-11-01 when Perplexity, citing this site, gave NewRez's 2025 FHA denial rate as 53.3%. The receipt says 52.8%. The figure came from our own page fha-denial-rates-by-lender.html, which still carried the table from before the 26 July universe correction (eleven values, all stale by 0.3 to 4.3 points) and said 53.3% in its caption, meta description and FAQ structured data while the table said 52.3% and the linked NewRez page said 52.8%. The page also described the national rate as 13-14% (purchase-only) next to a table built on the decisioned universe, and used the phrase 'your odds at a door'. The eight-year panel's 2018 column had been differenced against 2025 values from a different specification.",
-   "old_value": "NewRez 53.3% / 52.3%",
-   "new_value": "NewRez 52.8%",
-   "claim_values": {
-    "CrossCountry": {
-     "old": "6.5",
-     "new": "6.2"
-    },
-    "Guild": {
-     "old": "8.6",
-     "new": "6.9"
-    },
-    "Planet Home": {
-     "old": "18.4",
-     "new": "17.8"
-    },
-    "UWM": {
-     "old": "21.8",
-     "new": "21.4"
-    },
-    "Freedom": {
-     "old": "24.2",
-     "new": "19.9"
-    },
-    "PennyMac": {
-     "old": "24.5",
-     "new": "22.9"
-    },
-    "Mr. Cooper": {
-     "old": "25.8",
-     "new": "26.5"
-    },
-    "Rocket": {
-     "old": "31.0",
-     "new": "29.8"
-    },
-    "loanDepot": {
-     "old": "37.8",
-     "new": "34.6"
-    },
-    "Wells Fargo": {
-     "old": "47.2",
-     "new": "48.6"
-    },
-    "NewRez": {
-     "old": "52.3 (table) / 53.3 (intro, caption, FAQ data)",
-     "new": "52.8"
-    }
-   },
-   "fix": "Table rebuilt from the eleven lender pages' receipts, each row now prints its receipt; caption, description and FAQ data re-read from the table; the 2018 column kept for reference and no longer differenced; national figure stated as 22.1% of decisioned applications; the odds sentence removed. scripts/check_page_values.py now compares every row of this page with the receipt of the lender page it links to and with the caption/FAQ highest and lowest values, and fails the build on disagreement.",
-   "found_by": "Perplexity answer, 2026-11-01, citing financeratecalc.com/answers.html and the Hugging Face cards",
-   "url": "https://financeratecalc.com/corrections.html#2026-11-01-lender-hub",
-   "claim_ids": []
-  },
-  {
-   "id": "frc:corr:2026-10-31:80d4cc05",
+   "id": "frc:corr:2026-11-07:efc7caaa",
    "type": "error_family",
-   "date": "2026-10-31",
-   "title": "Our own error, found 2026-10-31 through a search engine's snippet: 49 pages said “the same FHA application faces” two lenders' rates, and three individual-verdict tools were still live and linked from about 1,600 pages",
-   "summary": "Checking how an agent search API (Exa) shows the Ohio page, we read our own sentence back: “the same FHA application faces a 3.5% observed denial rate at one high-volume door and 77.7% at another”. No application is decided at two lenders; the two rates are two lenders' applicant pools. That is the association-to-cause drift our claim contracts forbid and that we had corrected in an AI answer the same week. The same wording was on 48 state pages and the Denial Map (text and structured data). The phrasing check that followed found three tools from before the September retirements still live: bank-rejection-engine.html (“You will be approved” / “Most banks will deny you”), mortgage-fate.html (“find out if a bank would approve you”) and mortgage-navigator.html (“which lender type fits you”). All three were noindex but reachable through a “Will a Bank Approve You?” call-to-action and footer links on about 1,600 calculator pages, and through “See Your Exact Approval Odds” blocks on the salary and why-did pages.",
+   "date": "2026-11-07",
+   "title": "Our own error, found 2026-11-07 through a Perplexity answer that cited us: the Hugging Face copy of the denial-reason fingerprints was on a basis the site stopped using in September",
+   "summary": "Asked how often large FHA lenders cite debt-to-income, Perplexity answered “median 29.4% of cited denial reasons”, attributed to FinanceRateCalc, with the basis stated correctly — because that is what the mirror FinanceRateCalc/fha-denial-reason-fingerprints (last updated 2026-07-25) says. The site has published a different basis since September: the share of a lender’s denials that cite the reason, each reason once per denial, not a partition (DTI median 40.8%, builder-affiliated lenders 61.6%, Pulte 88.4%, Lennar 62.3%, “incomplete” 2.8%). The July copy’s figures (29.4%, 50.5%, 62.8%, 53.1%, 1.2%) are the shares of all reason citations, which sum to 100. Neither set is arithmetically wrong",
    "old_value": null,
    "new_value": null,
    "claim_ids": [],
-   "url": "https://financeratecalc.com/corrections.html#2026-10-31-phrasing"
+   "url": "https://financeratecalc.com/corrections.html"
+  },
+  {
+   "id": "frc:corr:2026-11-01:52c3c1a9",
+   "type": "error_family",
+   "date": "2026-11-01",
+   "title": "Our own error, found 2026-11-01 through a Perplexity answer that cited us: the 11-lender ranking page still carried the table from before the 26 July correction, and gave NewRez three different 2025 values",
+   "summary": "Asked which lenders have the highest 2025 FHA denial rate, Perplexity cited this site and the Hugging Face cards and answered correctly for four lenders — and gave NewRez 53.3%. The receipt says 52.8%. The 53.3% was ours: fha-denial-rates-by-lender.html said 53.3% in its caption, meta description and FAQ structured data, 52.3% in its table, while the NewRez page it links to says 52.8%. All eleven table values were pre-correction (off by 0.3–4.3 points; Freedom 24.2% for a current 19.9%), the page called the national rate “13–14%” (a purchase-only figure) beside a table built on decisioned applications, differenced a 2018 column from a different specification against those values, and said “y",
+   "old_value": null,
+   "new_value": null,
+   "claim_ids": [],
+   "url": "https://financeratecalc.com/corrections.html"
+  },
+  {
+   "id": "frc:corr:2026-10-31:6ba9017f",
+   "type": "error_family",
+   "date": "2026-10-31",
+   "title": "Our own error, found 2026-10-31 through a search engine's snippet: 49 pages said “the same FHA application faces” two lenders' rates, and three individual-verdict tools were still live and linked from about 1,600 pages",
+   "summary": "Checking how an agent search API (Exa) shows the Ohio page, we read our own sentence back: “the same FHA application faces a 3.5% observed denial rate at one high-volume door and 77.7% at another”. No application is decided at two lenders; the two rates are two lenders' applicant pools. That is the association-to-cause drift our claim contracts forbid and that we had corrected in an AI answer the same week. The same wording was on 48 state pages and the Denial Map (text and structured data). The phrasing check that followed found three tools from before the September retirements still live: bank-rejection-engine.html (“You will be approved” / “Most banks will deny you”), mortgage-fate.html (",
+   "old_value": null,
+   "new_value": null,
+   "claim_ids": [],
+   "url": "https://financeratecalc.com/corrections.html"
   },
   {
    "id": "frc:corr:2026-10-24:36465f3a",
