@@ -11,6 +11,9 @@ on:
       apply:
         description: "Type APPLY to write the rebuilt data into the site and rebuild claims, contracts, bundle and pages. Anything else = dry run (compare only)."
         default: "dry-run"
+      independent:
+        description: "yes = also recompute national/state/lender figures with hmda-analyzer (third-party code) and write provenance/independent-reproduction.json"
+        default: "no"
 permissions:
   contents: write
 jobs:
@@ -48,6 +51,18 @@ jobs:
           json.dump(r, open("provenance/release-day-dryrun.json", "w"), indent=1, ensure_ascii=False)
           print("verdict:", r["verdict"], "| numeric match", r["numeric_match_rate"])
           PY
+      - name: 5b. Independent implementation - recompute national, state and lender figures with hmda-analyzer (third-party code) and compare
+        if: github.event.inputs.independent == 'yes'
+        run: |
+          pip install -q "hmda-analyzer==0.6.1" "pandas>=2.2"
+          python3 scripts/independent_reproduction.py /tmp/hmda.csv provenance/independent-reproduction.json 2>&1 | tail -3
+          python3 - <<'PY'
+          import json, os
+          r = json.load(open("provenance/independent-reproduction.json"))
+          r["input"]["url"] = "${{ github.event.inputs.source_url }}"; r["input"]["year"] = "${{ github.event.inputs.year }}"
+          r["code_commit"] = os.environ["GITHUB_SHA"]; r["run_id"] = os.environ["GITHUB_RUN_ID"]
+          json.dump(r, open("provenance/independent-reproduction.json", "w"), indent=1, ensure_ascii=False)
+          PY
       - name: 6. APPLY - write the rebuilt data into the site and rebuild everything that derives from it
         if: github.event.inputs.apply == 'APPLY'
         run: |
@@ -70,6 +85,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add provenance/release-day-dryrun.json
+          [ -f provenance/independent-reproduction.json ] && git add provenance/independent-reproduction.json
           if [ "${{ github.event.inputs.apply }}" = "APPLY" ]; then git add -A api data claims transparency llms-full.txt where-fha-applications-end.html site-index.html metro stat city eval/page-value-fix-*.json rl-env/frc_citation/receipts-snapshot.json *.html; fi
           git diff --cached --quiet || git commit -m "release-day machine: ${{ github.event.inputs.apply }} on ${{ github.event.inputs.year }} file [skip ci]"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done

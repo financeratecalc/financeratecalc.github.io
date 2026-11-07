@@ -27,3 +27,7 @@ replication (level L4 of the specification) still requires an implementation wri
 ## Release-day machine (2026-11-04)
 
 `release-day-dryrun.json`: the latest run of the full pipeline (CFPB file → reference implementation → materialized api/ files) compared number by number with the published files. The 2025 dry run of 2026-11-04 is IDENTICAL on 8,122 numeric fields. `release-day-preregistration.md` / `.json`: what we commit to publish within six hours of the 2026 file, hashed at registration.
+
+## independent-reproduction.json
+
+Written by `scripts/independent_reproduction.py` (release-day workflow, input `independent=yes`). The national, state and lender figures are recomputed by **hmda-analyzer** (PyPI, Jay Patel), an unaffiliated HMDA package not written against our specification, whose own denominator happens to be action_taken 1–3 with denial = action 3. Our only contribution to the computation is the universe pre-filter (loan_type 2, reverse mortgages out), stated in the file. Status wording matters: this is a reproduction by an *unaffiliated implementation*, run by the publisher. It is not a reproduction performed by an unaffiliated person, so the site's "not independently reproduced" line stays until one is.
