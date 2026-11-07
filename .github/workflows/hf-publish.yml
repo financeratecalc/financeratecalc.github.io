@@ -1,6 +1,10 @@
 name: Publish benchmark to Hugging Face
 on:
   workflow_dispatch:
+    inputs:
+      mirror:
+        description: "Optional: a folder name under data/hf-mirrors/ to upload to the dataset FinanceRateCalc/<name> instead of the benchmark (e.g. fha-denial-reason-fingerprints)"
+        default: ""
   push:
     paths: [benchmark.json, benchmark-2026-09.json, scripts/build_hf_benchmark.py]
 permissions:
@@ -14,11 +18,29 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: pip install -q huggingface_hub
+      - name: Mirror upload (only when the mirror input is set; replaces the files of that dataset)
+        if: github.event.inputs.mirror != ''
+        env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}", MIRROR: "${{ github.event.inputs.mirror }}" }
+        run: |
+          python - <<'PY'
+          import os, glob, sys
+          from huggingface_hub import HfApi
+          m = os.environ["MIRROR"]; folder = os.path.join("data", "hf-mirrors", m)
+          if not os.path.isdir(folder): sys.exit(f"no folder {folder}")
+          api = HfApi(token=os.environ["HF_TOKEN"]); repo = f"FinanceRateCalc/{m}"
+          print("whoami:", api.whoami().get("name"), "| files:", sorted(os.listdir(folder)))
+          api.upload_folder(folder_path=folder, repo_id=repo, repo_type="dataset",
+                            commit_message=f"mirror refresh from data/hf-mirrors/{m} at {os.environ.get('GITHUB_SHA','')[:10]}")
+          print("uploaded", repo)
+          PY
       - name: Key must pass its own check before anything is published
+        if: github.event.inputs.mirror == ''
         run: python scripts/check_benchmark_key.py
       - name: Build package from the site's JSON
+        if: github.event.inputs.mirror == ''
         run: python scripts/build_hf_benchmark.py --out hf-pkg && ls hf-pkg
       - name: Upload (replaces older instrument CSVs)
+        if: github.event.inputs.mirror == ''
         env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}" }
         run: |
           python - <<'PY'
