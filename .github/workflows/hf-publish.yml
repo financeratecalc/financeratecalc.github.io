@@ -23,15 +23,20 @@ jobs:
         env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}", MIRROR: "${{ github.event.inputs.mirror }}" }
         run: |
           python - <<'PY'
-          import os, glob, sys
-          from huggingface_hub import HfApi
-          m = os.environ["MIRROR"]; folder = os.path.join("data", "hf-mirrors", m)
-          if not os.path.isdir(folder): sys.exit(f"no folder {folder}")
-          api = HfApi(token=os.environ["HF_TOKEN"]); repo = f"FinanceRateCalc/{m}"
-          print("whoami:", api.whoami().get("name"), "| files:", sorted(os.listdir(folder)))
-          api.upload_folder(folder_path=folder, repo_id=repo, repo_type="dataset",
-                            commit_message=f"mirror refresh from data/hf-mirrors/{m} at {os.environ.get('GITHUB_SHA','')[:10]}")
-          print("uploaded", repo)
+          import os, sys, traceback
+          try:
+            from huggingface_hub import HfApi
+            m = os.environ["MIRROR"]; folder = os.path.join("data", "hf-mirrors", m)
+            if not os.path.isdir(folder): raise SystemExit(f"no folder {folder}")
+            tok = os.environ.get("HF_TOKEN") or ""
+            api = HfApi(token=tok); who = api.whoami()
+            info = "whoami: %s | token role: %s | fine-grained: %s | files: %s" % (who.get("name"), (who.get("auth") or {}).get("accessToken", {}).get("role"), (who.get("auth") or {}).get("accessToken", {}).get("fineGrained", {}).get("scoped") is not None, sorted(os.listdir(folder)))
+            print(info); repo = f"FinanceRateCalc/{m}"
+            api.upload_folder(folder_path=folder, repo_id=repo, repo_type="dataset",
+                              commit_message=f"mirror refresh from data/hf-mirrors/{m} at {os.environ.get('GITHUB_SHA','')[:10]}")
+            open("hf-publish-result.txt", "w").write("OK mirror uploaded to %s\n%s\n" % (repo, info))
+          except BaseException:
+            open("hf-publish-result.txt", "w").write(traceback.format_exc()[-3000:]); sys.exit(1)
           PY
       - name: Key must pass its own check before anything is published
         if: github.event.inputs.mirror == ''
