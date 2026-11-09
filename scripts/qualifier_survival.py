@@ -46,7 +46,10 @@ def current_values():
     return v
 
 SUPERSEDED = {"21.7%": "national value before the 2026-07-26 HECM correction", "1,217,297": "universe before the 2026-07-26 HECM correction",
-              "53.3%": "NewRez value before the 2026-07-26 correction (hub page, fixed 2026-11-01)", "52.3%": "NewRez pre-correction table value"}
+              "53.3%": "NewRez value before the 2026-07-26 correction (hub page, fixed 2026-11-01)", "52.3%": "NewRez pre-correction table value",
+              "CrossCountry is lowest at 6.4%": "CrossCountry pre-correction value in the FRC-004 answer atom (fixed 2026-11-09; receipt 6.2%)",
+              "29.4%": "DTI reason-share median on the superseded share-of-citations basis (HF mirror, fixed 2026-11-07; current basis 40.8%)",
+              "63.4%": "lender-identity variance share corrected to 37.97% on 2026-09-02", "71% of FHA denial": "derived from the corrected 63.4% (page withdrawn 2026-11-09)"}
 CAUSAL = re.compile(r"\b(caus(?:e|es|ed|ing)|because (?:of )?(?:the )?lender|leads? to|results? in|thresholds? that caused|drives?)\b", re.I)
 SECOND_PERSON = re.compile(r"\b(you will|you'll|your (?:odds|chances|application)|will (?:be )?(?:approve|den(?:y|ied)) you)\b", re.I)
 ADVICE = re.compile(r"\b(avoid (?:applying|this lender|these lenders|them)|should avoid|choose (?:a|the) lender|best lender|apply (?:with|to) (?:a|the|this)|recommend)\b", re.I)
