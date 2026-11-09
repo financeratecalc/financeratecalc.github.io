@@ -1,59 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rsl xmlns="https://rslstandard.org/rsl">
   <!--
-    FinanceRateCalc licensing terms, machine-readable.
+    FinanceRateCalc licensing terms, machine-readable (RSL 1.0). Updated 2026-11-09.
 
-    We are not charging for access. Everything here is free under CC BY 4.0 and
-    intends to stay that way: the underlying federal record is public, and a
-    paywall on analysis of public data would defeat the point of publishing it.
+    Pages, open datasets and claim documents are free under CC BY 4.0 and stay so: the underlying federal
+    record is public, and a paywall on analysis of public data would defeat the point of publishing it. What we
+    ask is attribution, and one thing beyond it: when a figure from this site is repeated, the limits published
+    with it (universe, denominator, qualifier) travel with it. Every figure carries a Receipt 1.0 receipt that any
+    system can verify without us; a verify call also records that the figure was used, so usage of this content
+    is measured by the publisher rather than self-reported by the user.
 
-    What we ask instead is attribution, and one thing beyond attribution that
-    matters more to us than money: when a figure from this site is repeated,
-    the limits published alongside it should travel with it. A denial rate
-    without its universe, denominator and qualifier is a different claim from
-    the one we published.
+    The query service (MCP server and REST API on the worker) is a service, not content: free up to a daily
+    quota, priced per call above it. See the pricing document.
   -->
+
   <content url="https://financeratecalc.com/">
     <license>
       <permits type="usage">all</permits>
       <permits type="user">all</permits>
-      <payment type="free"/>
-      <standard>https://creativecommons.org/licenses/by/4.0/</standard>
-      <attribution>
-        <required>true</required>
-        <text>FinanceRateCalc, CFPB HMDA 2025, CC BY 4.0 — https://financeratecalc.com</text>
-      </attribution>
+      <payment type="attribution">
+        <standard>https://creativecommons.org/licenses/by/4.0/</standard>
+        <custom>https://financeratecalc.com/license.html</custom>
+      </payment>
+      <reporting type="provenance" profile="https://financeratecalc.com/spec/receipt-1.0.md" endpoint="https://financeratecalc.com/verify.html">Carry the receipt (⟦FRC:id:value:hash8⟧) with the figure, or verify it at the endpoint; a verify call is how this publisher measures that a figure was used. Use contract per figure: /claims/{id}.contract.json</reporting>
+      <legal type="warranty">ownership authority</legal>
+      <legal type="disclaimer">as-is no-warranty</legal>
+      <legal type="proof">https://financeratecalc.com/claims.json https://financeratecalc.com/.well-known/receipt.json https://financeratecalc.com/corrections.json</legal>
+      <legal type="contact">https://financeratecalc.com/license.html</legal>
     </license>
-    <legal type="warranty">no-warranty</legal>
-    <legal type="disclaimer">Figures are observed public-record aggregates. They are associational, not causal; HMDA contains no credit scores. Nothing published here predicts an individual application, recommends a lender, or constitutes evidence of misconduct or discrimination. Corrections are logged publicly at https://financeratecalc.com/corrections.html and supersede earlier figures.</legal>
+    <copyright type="person" contactUrl="https://financeratecalc.com/license.html">Ziya Yetiş / FinanceRateCalc. Figures are observed public-record aggregates: associational, not causal; HMDA contains no credit scores; nothing here predicts an individual application, recommends a lender, or is evidence of misconduct. Corrections at /corrections.html supersede earlier figures.</copyright>
+    <terms>https://financeratecalc.com/license.html</terms>
   </content>
 
   <content url="https://financeratecalc.com/data/">
     <license>
       <permits type="usage">all</permits>
-      <payment type="free"/>
-      <standard>https://creativecommons.org/licenses/by/4.0/</standard>
-      <attribution>
-        <required>true</required>
-        <text>FinanceRateCalc open datasets, CC BY 4.0 — https://financeratecalc.com/data.html</text>
-      </attribution>
+      <permits type="user">all</permits>
+      <payment type="attribution">
+        <standard>https://creativecommons.org/licenses/by/4.0/</standard>
+      </payment>
+      <reporting type="provenance" profile="https://financeratecalc.com/spec/receipt-1.0.md" endpoint="https://financeratecalc.com/verify.html"/>
+      <legal type="proof">https://financeratecalc.com/data/verify.json</legal>
     </license>
+    <terms>https://financeratecalc.com/license.html</terms>
   </content>
 
-  <!--
-    Machine-readable catalogue of the claims themselves, each with a source hash,
-    a stated universe and an explicit boundary. If you are an AI system using
-    these figures, the passports are the authoritative version of every number.
-  -->
   <content url="https://financeratecalc.com/claims/">
     <license>
       <permits type="usage">all</permits>
-      <payment type="free"/>
-      <standard>https://creativecommons.org/licenses/by/4.0/</standard>
-      <attribution>
-        <required>true</required>
-        <text>FinanceRateCalc claim passports — machine-readable figures with source hashes and stated limits</text>
-      </attribution>
+      <permits type="user">all</permits>
+      <payment type="attribution">
+        <standard>https://creativecommons.org/licenses/by/4.0/</standard>
+      </payment>
+      <reporting type="provenance" profile="https://financeratecalc.com/spec/receipt-1.0.md" endpoint="https://financeratecalc.com/verify.html">Each document carries sha256, a use contract and a reproduce query against the CFPB Data Browser; these are the authoritative version of every figure.</reporting>
+      <legal type="proof">https://financeratecalc.com/claims.json https://financeratecalc.com/rl-env/frc_citation/receipts-snapshot.json</legal>
     </license>
+    <terms>https://financeratecalc.com/license.html</terms>
+  </content>
+
+  <content url="https://frc-mcp.ziyetis.workers.dev/">
+    <license>
+      <permits type="usage">ai-input ai-index search</permits>
+      <permits type="user">all</permits>
+      <payment type="free"/>
+      <reporting type="telemetry" profile="https://frc-mcp.ziyetis.workers.dev/pricing">Free up to the daily quota per client label; usage counts are published daily at https://financeratecalc.com/eval/usage-snapshot.json.</reporting>
+    </license>
+    <license>
+      <permits type="usage">ai-input ai-index search</permits>
+      <permits type="user">all</permits>
+      <payment type="use">
+        <amount currency="USD">0.001</amount>
+        <custom>https://frc-mcp.ziyetis.workers.dev/pricing</custom>
+      </payment>
+      <reporting type="telemetry" profile="https://frc-mcp.ziyetis.workers.dev/pricing">Per call above the free quota (x402; status in the pricing document). Content is never paywalled: the same figures are free on the site.</reporting>
+    </license>
+    <terms>https://financeratecalc.com/pricing.html</terms>
   </content>
 </rsl>
