@@ -24,16 +24,24 @@ WHAT THIS IS NOT
 
 INPUT   CFPB HMDA 2025 national loan-level file (download from consumerfinance.gov,
         not from financeratecalc.com)
-USAGE   python reference_implementation.py <path_to_hmda_csv>
+USAGE   python reference_implementation.py <path_to_hmda_csv> [--loan-type 2|1|3|4] [--closed-end] [--out file]
+        Default is the published FHA universe (loan_type 2). --closed-end also drops open-end lines of credit
+        (open_end_line_of_credit = 1); it is part of the declared conventional universe (U-CONV-2025-DECISIONED,
+        provenance/universe-expansion-2025.md) and not of the FHA one. The count of rows the filter would have
+        dropped is reported for every run either way (open_end_rows).
 LICENSE CC BY 4.0
 """
 import csv, json, sys, os, statistics
 from collections import defaultdict
 
 if len(sys.argv) < 2:
-    print("Kullanim: python rebuild_all.py <hmda_csv_yolu>"); sys.exit(1)
+    print("Kullanim: python reference_implementation.py <hmda_csv_yolu> [--loan-type K] [--closed-end] [--out dosya]"); sys.exit(1)
 PATH = sys.argv[1]
-OUT = os.path.join(os.path.dirname(os.path.abspath(PATH)), "frc_rebuild.json")
+_args = sys.argv[2:]
+LOAN_TYPE = _args[_args.index("--loan-type") + 1] if "--loan-type" in _args else "2"
+CLOSED_END = "--closed-end" in _args
+OUT = _args[_args.index("--out") + 1] if "--out" in _args else os.path.join(os.path.dirname(os.path.abspath(PATH)), "frc_rebuild.json")
+PROGRAM = {"1": "conventional", "2": "FHA", "3": "VA", "4": "USDA"}.get(LOAN_TYPE, f"loan_type {LOAN_TYPE}")
 
 MIN_LENDER   = 1500   # lender tablosu icin minimum karar gormus basvuru
 MIN_METRO    = 500    # metro yayini icin minimum
@@ -54,7 +62,7 @@ def find(*names):
             if n in c: return i
     return None
 IX={"action":find("action_taken"),"ltype":find("loan_type"),"lei":find("lei","legal_entity_identifier"),
-    "rev":find("reverse_mortgage"),"amount":find("loan_amount"),"income":find("income"),
+    "rev":find("reverse_mortgage"),"openend":find("open_end_line_of_credit"),"amount":find("loan_amount"),"income":find("income"),
     "state":find("state_code","state"),"dti":find("debt_to_income_ratio"),
     "cltv":find("combined_loan_to_value_ratio","loan_to_value_ratio"),
     "msa":find("derived_msa-md","derived_msa_md","msa_md","msa"),
@@ -138,7 +146,7 @@ mcell_t=defaultdict(int); mcell_d=defaultdict(int)
 cell_t=defaultdict(int); cell_d=defaultdict(int)
 adj_t=defaultdict(int); adj_d=defaultdict(int)
 rows_cell=[]
-national_t=0; national_d=0; hecm_skipped=0
+national_t=0; national_d=0; hecm_skipped=0; openend_rows=0
 n=0
 
 with open(PATH,"r",encoding="utf-8",errors="ignore") as f:
@@ -147,12 +155,16 @@ with open(PATH,"r",encoding="utf-8",errors="ignore") as f:
         n+=1
         if n%400000==0: print(f"  {n:,} satir...")
         try:
-            if IX["ltype"] is not None and r[IX["ltype"]].strip()!="2": continue
+            if IX["ltype"] is not None and r[IX["ltype"]].strip()!=LOAN_TYPE: continue
             a=r[IX["action"]].strip()
             if a not in ("1","2","3"): continue
             # *** DUZELTME: HECM disla ***
             if IX["rev"] is not None and r[IX["rev"]].strip()=="1":
                 hecm_skipped+=1; continue
+            # open-end lines of credit: counted for every program, excluded only with --closed-end (conventional universe)
+            if IX["openend"] is not None and r[IX["openend"]].strip()=="1":
+                openend_rows+=1
+                if CLOSED_END: continue
             lei=r[IX["lei"]].strip()
             if not lei: continue
             den = 1 if a=="3" else 0
@@ -272,7 +284,10 @@ if adjusted:
     print(f"  medyan profil kapsami: {statistics.median([x['profile_coverage_pct'] for x in adjusted])}%")
 
 json.dump({
- "method":("CFPB HMDA 2025; FHA loan_type=2; decisioned = action_taken 1,2,3; denial = action 3. "
+ "program":PROGRAM,"loan_type":LOAN_TYPE,"closed_end_only":CLOSED_END,
+ "open_end_rows":openend_rows,
+ "method":(f"CFPB HMDA 2025; {PROGRAM} loan_type={LOAN_TYPE}; decisioned = action_taken 1,2,3; denial = action 3. "
+           + ("Open-end lines of credit excluded (closed-end universe). " if CLOSED_END else f"Open-end lines of credit not excluded ({openend_rows} decisioned rows carry the flag). ") +
            "REVERSE MORTGAGE (HECM) RECORDS EXCLUDED following independent methodology review. "
            "Purchased loans (action 6), withdrawals (4), incomplete closures (5) and preapproval track (7,8) excluded. "
            f"Standardization cells: state x amount x income x DTI x CLTV; cells with n<{MIN_CELL_STD} fall back to national rate."),
@@ -280,4 +295,4 @@ json.dump({
              "hecm_excluded":hecm_skipped},
  "lenders":lenders,"fingerprints":fps,"states":states,"metros":metros,"adjusted":adjusted
 }, open(OUT,"w"))
-print(f"\nBITTI -> {OUT}  ({os.path.getsize(OUT)/1024/1024:.1f} MB)  ZIP'le ve yukle")
+print(f"\nBITTI [{PROGRAM}, loan_type {LOAN_TYPE}{', closed-end' if CLOSED_END else ''}; open-end rows seen {openend_rows:,}] -> {OUT}  ({os.path.getsize(OUT)/1024/1024:.1f} MB)")

@@ -36,8 +36,13 @@ from collections import defaultdict
 if len(sys.argv) < 2:
     sys.exit("usage: application_outcomes.py <hmda_2025_fha.csv> [out.json]")
 PATH = sys.argv[1]
+_a = sys.argv[2:]
+LOAN_TYPE = _a[_a.index("--loan-type") + 1] if "--loan-type" in _a else "2"
+CLOSED_END = "--closed-end" in _a
+PROGRAM = {"1": "conventional", "2": "FHA", "3": "VA", "4": "USDA"}.get(LOAN_TYPE, f"loan_type {LOAN_TYPE}")
+_pos = [x for x in _a if not x.startswith("--") and x not in (LOAN_TYPE,)]
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, "data", "application-outcomes-2025.json")
+OUT = _pos[0] if _pos else os.path.join(ROOT, "data", "application-outcomes-2025.json")
 MIN_LENDER = 500
 
 with open(PATH, "r", encoding="utf-8", errors="ignore") as f:
@@ -56,8 +61,8 @@ def find(*names):
 
 
 IX = {"action": find("action_taken"), "ltype": find("loan_type"), "lei": find("lei", "legal_entity_identifier"),
-      "rev": find("reverse_mortgage"), "reason1": find("denial_reason-1", "denial_reason_1"), "spread": find("rate_spread")}
-missing = [k for k, v in IX.items() if v is None and k not in ("reason1", "spread")]
+      "rev": find("reverse_mortgage"), "openend": find("open_end_line_of_credit"), "reason1": find("denial_reason-1", "denial_reason_1"), "spread": find("rate_spread")}
+missing = [k for k, v in IX.items() if v is None and k not in ("reason1", "spread", "openend")]
 if missing:
     sys.exit(f"columns not found: {missing}; header: {cols[:20]}")
 print("columns:", IX, flush=True)
@@ -87,10 +92,12 @@ with open(PATH, "r", encoding="utf-8", errors="ignore", newline="") as f:
     for r in rd:
         rows += 1
         try:
-            if r[IX["ltype"]].strip() != "2":
+            if r[IX["ltype"]].strip() != LOAN_TYPE:
                 continue
             if IX["rev"] is not None and r[IX["rev"]].strip() == "1":
                 hecm += 1
+                continue
+            if CLOSED_END and IX["openend"] is not None and r[IX["openend"]].strip() == "1":
                 continue
             a = r[IX["action"]].strip()
             if a not in ACTIONS:
@@ -133,7 +140,8 @@ for lei in sorted(k for k in cnt if k != "_national"):
 
 out = {
     "generated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-    "universe": "FHA forward loans (loan_type 2), 2025, reverse mortgages excluded; applications acted on = action_taken 1-5 "
+    "program": PROGRAM, "loan_type": LOAN_TYPE, "closed_end_only": CLOSED_END,
+    "universe": f"{PROGRAM} forward loans (loan_type {LOAN_TYPE}), 2025, reverse mortgages excluded{'; open-end lines of credit excluded' if CLOSED_END else ''}; applications acted on = action_taken 1-5 "
                 "(purchased loans 6 and preapproval requests 7-8 excluded); decisioned = 1,2,3; denial = 3",
     "definitions": {
         "share_of_acted_pct": "outcome / applications acted on (actions 1-5)",
