@@ -1,4 +1,4 @@
-# Stale mortgage constants in public code — scan 2026-11-02
+# Stale mortgage constants in public code — scan 2026-11-09
 
 0 hits in 0 repositories. Each line classified from the file itself; nothing posted. Classes: .
 
