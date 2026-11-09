@@ -24,6 +24,7 @@ answers themselves are archived verbatim, so a disputed score can be re-read.
 """
 import datetime as dt
 import glob
+import html
 import json
 import os
 import re
@@ -127,11 +128,16 @@ def main():
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     json.dump(out, open(OUT, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     # directory index for GitHub Pages (a bare directory URL is a 404 there)
-    items = "".join(f'<li><a href="/{r["log"]}">{r["log"].split("/")[-1]}</a> — {r["engine"][:60]} — QSI {r["qsi"]}</li>' for r in rows)
+    graded = {r["log"]: r for r in rows}
+    items = ""
+    for f in sorted(glob.glob(os.path.join(LOG, "*.json"))):
+        rel = os.path.relpath(f, ROOT); d = json.load(open(f, encoding="utf-8"))
+        tail = f'QSI {graded[rel]["qsi"]}' if rel in graded else f'not graded ({html.escape(str(d.get("summary") or d.get("kind") or "")[:160])})'
+        items += f'<li><a href="/{rel}">{rel.split("/")[-1]}</a> — {html.escape(str(d.get("engine", ""))[:60])} — {tail}</li>'
     open(os.path.join(LOG, "index.html"), "w", encoding="utf-8").write(
         '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Answer-engine log | FinanceRateCalc</title>'
         '<style>body{background:#08090c;color:#e8e4da;font-family:system-ui,sans-serif;max-width:900px;margin:36px auto;padding:0 18px;line-height:1.6}a{color:#C8A84B}</style></head><body>'
-        '<h1>Answer-engine log</h1><p>Every answer graded for the <a href="/qualifier-survival.html">Qualifier Survival Index</a>, archived verbatim with its sources and verdicts.</p><ul>' + items + '</ul></body></html>\n')
+        '<h1>Answer-engine log</h1><p>Every answer archived verbatim: those quoting a FinanceRateCalc figure are graded for the <a href="/qualifier-survival.html">Qualifier Survival Index</a>, with its sources and verdicts; discovery probes (our pages not found, or no figure quoted) are listed as not graded.</p><ul>' + items + '</ul></body></html>\n')
     print(f"QSI mean {out['qsi_mean']} over {len(rows)} answers; by engine {out['by_engine']}; survival {out['qualifier_survival_rates']}")
 
 

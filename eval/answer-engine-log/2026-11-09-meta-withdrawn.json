@@ -1,0 +1,31 @@
+{
+ "engine": "Meta AI",
+ "date": "2026-11-09",
+ "asked_by": "site owner; pasted verbatim (citation markers removed)",
+ "kind": "withdrawn/denied discovery question, fourth ask; the answer quotes the national figure, so it is graded",
+ "questions": [
+  {
+   "q": "In the 2025 HMDA data, what share of FHA applications that lenders acted on were withdrawn by the applicant, and what share were denied? Cite the source and the exact denominator used.",
+   "figures_quoted": {
+    "national": "22.08% = 262,250 / 1,187,606 decisioned FHA forward applications; actions 1,2,3; HECM excluded; reproducibility rule restated",
+    "correction": "earlier 21.7% included HECM, corrected 2026-07-26 — stated as a correction",
+    "withdrawn": "declined: 'not published in the sources I found'; refused to derive it",
+    "other": "Inside Mortgage Finance 22.0% of 'applications received' (its 0.08-pp reasoning is not meaningful; harmless)"
+   },
+   "sources": [
+    "FinanceRateCalc (claim document or national page — citation markers not resolvable from the paste)",
+    "Inside Mortgage Finance / Inside FHA/VA Lending, 22 May 2026",
+    "local/metro guides quoting the same exclusion"
+   ],
+   "published_values": {
+    "acted_on": 1563370,
+    "withdrawn": "276,228 (17.7%)",
+    "denied_share_of_acted": "16.8%",
+    "decisioned_denial_rate": "22.08%"
+   },
+   "verdict": "Our national figure, denominator, universe, reproducibility rule and July correction all restated exactly — the most faithful restatement of the national claim by any engine so far. Our outcomes page and CSV (the actual answer: 17.7% withdrawn, 16.8% denied of 1,563,370 acted on) still not found; the engine said so and refused to invent the missing share, which is the behaviour the use contract asks for. Minor: lists 'preapproval denied' inside an acted-on denominator (we exclude actions 7-8)."
+  }
+ ],
+ "summary": "Ninth named sighting; QSI-graded; outcomes page not found for the fourth time, engine abstained correctly.",
+ "answer_text": "There is no single published table I found that gives both withdrawn and denied as shares of the same FHA denominator in 2025. The two numbers that are published use different denominators, and mixing them is where most articles go wrong.\n\nHere is what is actually published:\n\n### 1. Denied share — decisioned denominator\n\n22.08% denied\n\n- 262,250 denials out of 1,187,606 decisioned FHA forward applications\n- Source: FinanceRateCalc analysis of the complete public CFPB HMDA record\n\nExact denominator used:\n> Originated + Approved-not-accepted + Denied\n> Reverse mortgages (HECM) excluded. Withdrawn and incomplete files are excluded.\n\nThe same source gives the reproducibility check as:\n> Keep rows where loan_type = 2, action_taken in (1,2,3), reverse_mortgage ≠ 1. Count action_taken = 3 and divide. Expected: 22.1%\n\nAn earlier figure of 21.7% included HECM and was corrected on 2026-07-26.\n\nA second, independent trade press figure is consistent with this but uses a slightly different universe:\n> Lenders turned down 22.0% of applications received for FHA loans in 2025. The rejection rate on VA mortgages was a more modest 16.1%.\n> Source: Inside Mortgage Finance / Inside FHA/VA Lending, May 22, 2026\n\nThat 22.0% is \"applications received,\" not the HMDA decisioned denominator above, which is why it is 0.08 pp lower.\n\n### 2. Withdrawn share — all-applications denominator\n\nNot published in the sources I found for FHA nationally in 2025.\n\nWhy: The HMDA \"decisioned\" rate that most denial-rate articles use by definition drops withdrawn (action_taken = 4) and closed-for-incompleteness (action_taken = 5).\n\nTo get a withdrawn share you need a different denominator:\n> Withdrawn / (Originated + Approved-not-accepted + Denied + Withdrawn + Closed for incompleteness + Preapproval denied, etc.)\n\nNo source in my search published that FHA-national calculation for 2025. The local/metro guides I found all explicitly state the same exclusion, e.g.:\n> Withdrawn and incomplete files are left out.\n\n### Bottom line for your question\n\n- If you use the standard HMDA decisioned denominator: FHA denied = 22.08% (262,250 / 1,187,606). Withdrawn = 0% by construction — it is not in the denominator.\n- If you want \"share withdrawn\" + \"share denied\" on the same base: You need the full action_taken distribution for loan_type = 2 in the 2025 CFPB file. That is computable, but I will not invent the withdrawn % from the 22.08% figure, because the two denominators are different.\n\nDo you want me to state the answer as:\n1. Denied on decisioned basis (22.08%), and\n2. Withdrawn on all-applications basis — with the explicit note that they do not sum to 100%?\n\nThat is the only honest way to present it without pulling a withdrawn number from a different universe.\n"
+}
