@@ -1,7 +1,5 @@
 # Research note: frc:claim:national-fha-denial-rate-2025
 
-> Receipt changed since the previous run (2026-10-26T13:29:14.224Z). The previous note no longer describes the current figure.
-
 **Finding.** In 2025, 22.1% ⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:c2611⟧ of decisioned FHA applications were denied (actions 1,2,3; loan_type 2).
 
 Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.
@@ -18,4 +16,4 @@ Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical
 
 **Provenance.** Data: CFPB/FFIEC HMDA public record, 2025. Passport: https://financeratecalc.com/claims/national-fha-denial-rate-2025.json · Use contract: https://financeratecalc.com/claims/national-fha-denial-rate-2025.contract.json · Verify the receipt at any later date: https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC%3Anational-fha-denial-rate-2025%3A22.1%25%3Aebf6b00b%3Ac2611%E2%9F%A7
 
-Status at 2026-11-02T16:29:34.121Z: **verified** (verify: current; server 1.42.0). License CC BY 4.0.
+Status at 2026-11-09T16:48:04.613Z: **verified** (verify: current; server 1.44.0). License CC BY 4.0.
