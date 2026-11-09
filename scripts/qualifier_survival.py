@@ -62,7 +62,7 @@ TOP100 = re.compile(r"(100 largest|top[- ]100|largest FHA lenders)", re.I)
 ATTRIB = re.compile(r"financeratecalc", re.I)
 
 
-CORRECTED = re.compile(r"(correct|earlier|previous|superseded|before the|removed|revised|old)", re.I)
+CORRECTED = re.compile(r"\b(correct\w*|earlier|previous(?:ly)?|superseded|before the|removed|revised|old (?:value|figure|number)|was (?:the )?old)\b", re.I)
 
 
 def grade(text, cur, sources=""):
