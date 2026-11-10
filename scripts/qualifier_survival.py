@@ -81,8 +81,10 @@ def grade(text, cur, sources=""):
             win = t[max(0, m.start() - 140): m.end() + 140]
             if not CORRECTED.search(win):
                 stale.append(sv); break
+    # a national denominator quoted without the current national rate is a wrong value with a right count
+    nat_count_only = ("national" in found) and (cur["national"]["n"] in t) and not any(v in t for v in ("22.1%", "22.08%", "22.1 %"))
     s = {
-        "value": not stale,
+        "value": not stale and not nat_count_only,
         "period": bool(PERIOD.search(t)),
         "population": bool(POPULATION.search(t)),
         "program": bool(PROGRAM.search(t)),
