@@ -14,6 +14,8 @@ const TOOLS = [
     inputSchema: { type: "object", properties: { lender: { type: "string", description: "Lender name, slug, or 20-char LEI" } }, required: ["lender"] } },
   { name: "get_application_outcomes", title: "Where FHA applications end (five outcomes), 2025", annotations: { title: "Where FHA applications end (five outcomes), 2025", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"how many FHA applications are withdrawn\", \"what share of FHA applications never reach a decision\", \"how many approved FHA loans are not taken\", \"why is the denied share 16.8% here and the denial rate 22.1% there\", \"where do <lender>'s FHA applications end\". Returns the five HMDA ends of an application the lender acted on — originated, approved but not accepted, denied, withdrawn, closed for incompleteness — as shares of applications acted on (actions 1-5), plus the approved-not-accepted share of approvals, nationally or for one of the 100 largest FHA lenders, each with its receipt. The denied share here is on a larger base than the published denial rate (22.1% of decisioned applications); both are returned so they can be reconciled. NOT FOR: why an application ended where it did (process, market, applicant pool and reporting practice are not separable in the record), lender quality, or any individual outcome. " + GUARDRAIL,
     inputSchema: { type: "object", properties: { lender: { type: "string", description: "Optional: lender name, slug or LEI (top-100 set). Omit for the national figures." } } } },
+  { name: "get_official_figure", title: "Official figure, restated as printed, with receipt (Level 2)", annotations: { title: "Official figure, restated as printed, with receipt (Level 2)", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"how many FHA loans did HUD endorse in <month>\", \"what share of FHA endorsements were purchase loans\", \"what is the FHA first-time homebuyer share\", \"what was the FHA Streamline share of refinances\", \"how many FHA loans are in force\". Returns a figure from an official publication (today: HUD's monthly FHA Single Family Production Report) exactly as printed, with the document's SHA-256, table and row, period, the publisher's exclusion note (HECM excluded), revision status against the next edition, and a receipt. Nothing is computed by FinanceRateCalc; the receipt attests that this figure with this definition appears in that document. PARAMS: source (default hud-fhaprod), period (YYYY-MM; omitted = latest restated), figure (omitted = all figures of the edition). NOT FOR: HMDA application or origination counts (an endorsement is a loan insured after closing), denial rates, lender-level figures. " + GUARDRAIL,
+    inputSchema: { type: "object", properties: { source: { type: "string", description: "Source id; today only hud-fhaprod" }, period: { type: "string", description: "Edition period YYYY-MM (e.g. 2026-08); omitted = latest" }, figure: { type: "string", description: "Figure id, e.g. endorsements-count, purchase-share-pct, first-time-homebuyer-pct; omitted = all" } } } },
   { name: "list_lenders", title: "Top-100 FHA lenders by denial rate", annotations: { title: "Top-100 FHA lenders by denial rate", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"which FHA lender denies the most or the fewest\", \"rank FHA lenders by denial rate\", \"which lenders are covered\", \"how wide is the spread\". Returns the ranked list of the 100 largest FHA lenders with name, slug, rate and volume; the 2025 span runs 1.8 to 78.7 percent inside the same federal program. NOT FOR: lenders outside the top 100, or any recommendation about where to apply. " + GUARDRAIL,
     inputSchema: { type: "object", properties: { sort: { type: "string", enum: ["highest_denial","lowest_denial","largest_volume"] }, limit: { type: "integer", minimum: 1, maximum: 100 } } } },
   { name: "get_small_loan_penalty", title: "Small-loan denial penalty by state", annotations: { title: "Small-loan denial penalty by state", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"are small mortgages denied more often\", \"is it harder to get a small FHA loan\", \"which state punishes small loans most\", \"does loan size affect denial\". PARAM: optional two-letter state; omit for the ranked list. Returns denial rates under $150K and over $250K, the ratio, the ranking and any open discrepancy note. In 2025 the penalty exceeded 1x in every jurisdiction with a published split, from 1.19x to 4.45x (Idaho, 53.4 vs 12.0). NOT FOR: loan sizes between the bands, which are not published. " + GUARDRAIL,
@@ -955,6 +957,31 @@ async function callTool(name, args, env) {
       approved_not_accepted_share_of_approvals: pct(hit.ana_share_pct), denial_rate_decisioned: pct(hit.denial_rate_pct), reason_other_share_of_denials: pct(hit.reason_other_pct),
       ...base, universe: d.universe, does_not_establish: d.does_not_establish, source_url: BASE + "/data/application-outcomes-2025.json", page: BASE + "/where-fha-applications-end.html" };
   }
+  if (name === "get_official_figure") {
+    const src = (args.source || "hud-fhaprod").toLowerCase();
+    let period = args.period;
+    if (!period) {
+      const page = await getJSON("/data/official/index.json").catch(() => null);
+      period = page && page.latest && page.latest[src];
+      if (!period) throw new Error("No restated edition found for " + src + "; see " + BASE + "/official-figures.html");
+    }
+    const d = await getJSON(`/data/official/${src}-${period}.json`);
+    const one = async (fid) => {
+      const f = d.figures[fid]; if (!f) throw new Error(`Unknown figure "${fid}" for ${src} ${period}; available: ${Object.keys(d.figures).join(", ")}`);
+      const id = `official-${src}-${period}-${fid}`;
+      const value = fid.endsWith("-pct") ? Number(f.value).toFixed(1) + "%" : f.display;
+      const sentence = `${d.document.title} (${d.document.edition}) reports ${f.description}: ${value}${fid.endsWith("-pct") ? "" : " " + f.unit}, ${f.period} (${d.document.exclusions.replace(" (table note)", "")}).`;
+      const base = await quotable(sentence, {}, id, value, null);
+      base.citation && (base.citation.title = `${d.document.title}, ${d.document.edition} — restated with receipt by FinanceRateCalc`, base.citation.license = "US federal publication (public domain); receipt CC BY 4.0");
+      base.proof && (base.proof.verification_status = "official figure copied as printed; not computed by FinanceRateCalc", base.proof.source_vintage = d.document.edition, base.proof.method_version = "official_restate v1");
+      return { figure: fid, value, unit: f.unit, period: f.period, period_kind: f.period_kind, where: `${f.table} · ${f.row_label}`, revision_status: f.revision || null, revised_to: f.revised_to || null, ...base };
+    };
+    const common = { source: src, period, level: "2 — attested restatement of an official publication; nothing computed", document: { title: d.document.title, edition: d.document.edition, publisher: d.document.publisher, url: d.document.url, sha256: d.document.sha256, exclusions: d.document.exclusions },
+      not_comparable_with: d.not_comparable_with, prior_edition_check: d.prior_edition_check || null, page: BASE + "/official-figures.html", data_url: BASE + `/data/official/${src}-${period}.json` };
+    if (args.figure) return { ...common, ...(await one(args.figure)) };
+    const figures = {}; for (const fid of Object.keys(d.figures)) figures[fid] = await one(fid);
+    return { ...common, figures };
+  }
   if (name === "list_lenders") {
     const idx = await getJSON("/api/index.json");
     let list = [...(idx.lenders || [])];
@@ -1022,7 +1049,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.44.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.45.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });

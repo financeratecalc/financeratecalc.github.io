@@ -160,6 +160,14 @@ def main():
         if changed:
             json.dump(prev, open(prev_path, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
             print(f"prior edition {prev_period}: {sum(1 for r in revisions if r['revised'])} revised, {sum(1 for r in revisions if not r['revised'])} unchanged -> revision fields written")
+    ip = os.path.join(ROOT, "data", "official", "index.json")
+    idx = json.load(open(ip, encoding="utf-8")) if os.path.exists(ip) else {"purpose": "index of restated official editions; latest per source", "editions": {}, "latest": {}}
+    idx["editions"].setdefault(source, [])
+    if period not in idx["editions"][source]:
+        idx["editions"][source].append(period); idx["editions"][source].sort()
+    idx["latest"][source] = idx["editions"][source][-1]
+    idx["generated"] = out["generated"]
+    json.dump(idx, open(ip, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     print(f"{source} {period}: {len(figures)} figures restated from {url or pdf} (sha256 {sha[:12]}…) -> {os.path.relpath(p, ROOT)}")
     for k, f in figures.items():
         print(f"  {k}: {f['display']} {f['unit']} [{f['period']}]")
