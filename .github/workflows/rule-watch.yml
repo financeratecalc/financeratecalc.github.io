@@ -30,6 +30,8 @@ jobs:
         run: python3 scripts/check_page_phrasing.py
       - name: Application-outcomes page is current with its data and claims
         run: python3 scripts/build_outcomes_page.py --check || { echo "::error::outcomes page stale; run scripts/build_outcomes_page.py"; exit 1; }
+      - name: Official-figures page must match data/official and the claims
+        run: python3 scripts/build_official_page.py --check || { echo "::error::official-figures page stale; run scripts/build_official_page.py"; exit 1; }
       - name: Lender pages' reason sections must match the lender receipts
         run: python3 scripts/build_lender_reason_sections.py --check || { echo "::error::lender reason sections stale; run scripts/build_lender_reason_sections.py"; exit 1; }
       - name: Reason-fingerprints page must match the lender receipts

@@ -115,6 +115,10 @@ def main():
     month_label = f"{MON[m - 1].title()} {y}"
     fy = y if m < 10 else y + 1   # federal fiscal year starts 1 October
     figures = {}
+    prev_period = f"{y if m > 1 else y - 1}-{(m - 1) if m > 1 else 12:02d}"
+    prev_path = os.path.join(ROOT, "data", "official", f"{source}-{prev_period}.json")
+    prev = json.load(open(prev_path, encoding="utf-8")) if os.path.exists(prev_path) else None
+    revisions = []
     for fid, (table, rx, col, unit, kind, desc) in src["cells"].items():
         hits = [mt for ln in lines for mt in [re.match(rx, ln)] if mt]
         if len(hits) != 1:
@@ -123,17 +127,39 @@ def main():
         period_label = {"month": month_label, "month-end": f"end of {month_label}", "fiscal-year-to-date": f"FY {fy} to date (1 Oct {fy - 1} – {month_label})"}[kind]
         figures[fid] = {"value": val, "display": hits[0].group(col + 1).strip(), "unit": unit, "period_kind": kind, "period": period_label,
                         "table": table, "row_label": hits[0].group(0).split(hits[0].group(1))[0].strip(), "column": ["first", "second", "third"][col] + " numeric column",
-                        "line_as_printed": hits[0].group(0), "description": desc}
+                        "line_as_printed": hits[0].group(0), "description": desc, "revision": "as first printed; no later edition checked yet"}
+        # Table 4 prints the prior month beside the current one: the second numeric column restates last month's figure.
+        # Compared with last month's own edition, it shows whether HUD revised it - read, not computed.
+        if table == "Table 4" and kind == "month" and col == 0 and hits[0].lastindex and hits[0].lastindex >= 2:
+            restated = num(hits[0].group(2))
+            figures[fid]["prior_month_as_restated_here"] = restated
+            if prev and fid in prev["figures"]:
+                orig = prev["figures"][fid]["value"]
+                rev = {"figure": fid, "period": prev["figures"][fid]["period"], "first_printed": orig, "restated_in": f"{month_label} report", "restated_value": restated,
+                       "revised": abs(float(orig) - float(restated)) > 1e-9}
+                revisions.append(rev)
     out = {"generated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "source_id": source, "period": period,
            "document": {"title": src["title"], "publisher": src["publisher"], "edition": f"{month_label} report", "url": url, "sha256": sha,
                         "pages": None, "exclusions": src["exclusions"], "retrieved_at": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")},
            "level": "2 — attested restatement of an official publication; not computed by FinanceRateCalc",
            "not_comparable_with": ["HMDA originations or applications (an endorsement is a loan insured by FHA after closing; counts and timing differ from HMDA action_taken 1)",
                                    "any denial figure on this site"],
-           "figures": figures}
+           "figures": figures, "prior_edition_check": {"edition_compared": prev["document"]["edition"] if prev else None, "revisions": revisions,
+                                                      "note": "Table 4 restates the prior month; a difference from the prior edition's own figure is a source revision, recorded here and, for the affected receipt, written into that edition's file as revised_in/revised_to."}}
     os.makedirs(os.path.join(ROOT, "data", "official"), exist_ok=True)
     p = os.path.join(ROOT, "data", "official", f"{source}-{period}.json")
     json.dump(out, open(p, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    if prev:
+        changed = False
+        for rev in revisions:
+            pf = prev["figures"][rev["figure"]]
+            pf["revision"] = (f"revised in the {month_label} report to {rev['restated_value']}" if rev["revised"] else f"unchanged in the {month_label} report")
+            if rev["revised"]:
+                pf["revised_in"] = f"{month_label} report"; pf["revised_to"] = rev["restated_value"]
+            changed = True
+        if changed:
+            json.dump(prev, open(prev_path, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+            print(f"prior edition {prev_period}: {sum(1 for r in revisions if r['revised'])} revised, {sum(1 for r in revisions if not r['revised'])} unchanged -> revision fields written")
     print(f"{source} {period}: {len(figures)} figures restated from {url or pdf} (sha256 {sha[:12]}…) -> {os.path.relpath(p, ROOT)}")
     for k, f in figures.items():
         print(f"  {k}: {f['display']} {f['unit']} [{f['period']}]")

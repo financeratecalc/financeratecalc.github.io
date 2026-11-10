@@ -108,6 +108,11 @@ def main():
                     "receipt": f"⟦FRC:{cid}:{cur}:{h}⟧", "verify_url": VERIFY + f"%E2%9F%A6FRC:{cid}:{cur}:{h}%E2%9F%A7",
                     "corrections_url": f"{BASE}/corrections.json", "spec": f"{BASE}/spec/receipt-1.0.md"})
         new["reproduce"] = {**(doc.get("reproduce") or {}), **reproduce_block(cid, obj, v)}
+        if cid.startswith("official-"):
+            # revision status lives outside the hashed claim: the receipt attests the figure as printed in its edition
+            m = re.match(r"official-([a-z0-9]+(?:-[a-z0-9]+)*?)-(\d{4}-\d{2})-([a-z0-9-]+)$", cid)
+            f = json.load(open(os.path.join(ROOT, "data", "official", f"{m.group(1)}-{m.group(2)}.json"), encoding="utf-8"))["figures"][m.group(3)]
+            new["revision_status"] = {k: f[k] for k in ("revision", "revised_in", "revised_to") if k in f}
         if new == doc:
             unchanged += 1; continue
         if check:
