@@ -17,6 +17,12 @@ FORBID = ["causal_attribution", "individual_prediction", "personalized_lender_re
 
 def contract_for(cid, d):
     c, v = d["claim"], d["display_value"]
+    if cid.startswith("official-"):
+        doc = c.get("source_document", "the source document"); ed = c.get("edition", ""); per = c.get("period", ""); unit = c.get("unit", "")
+        what = str(c.get("row", "")).rstrip("ab").strip()
+        return {"canonical_claim": {"template": f"{doc} ({ed}) reports {what}: {{value}} {unit}, {per}.", "required_fields": ["period", "source", "exclusions"]},
+                "required_qualifiers": {"period": per, "source": f"{doc}, {ed}, {c.get('table', '')}", "exclusions": c.get("exclusions", ""), "nature": "official figure restated as printed; not computed or adjusted by FinanceRateCalc"},
+                "does_not_establish": ["an HMDA origination or application count (an endorsement is a loan insured after closing; counts and timing differ)", "any denial or approval rate", "any lender-level figure", "that the figure has not been revised in a later edition (check the latest report)"]}
     if cid.startswith("lender-"):
         name = str(c.get("lender", "")).title()
         return {"canonical_claim": {"template": f"In 2025, {name} denied {{value}} of its {c.get('n', 0):,} decisioned FHA applications.", "required_fields": ["period", "population", "nature"]},

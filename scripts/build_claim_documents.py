@@ -22,7 +22,8 @@ from frc_citation.verify_offline import Verifier, sha8  # noqa: E402
 
 BASE = "https://financeratecalc.com"
 VERIFY = "https://frc-mcp.ziyetis.workers.dev/verify?r="
-SOURCE = {"outcome": "CFPB/FFIEC HMDA public record 2025; data/application-outcomes-2025.json (applications acted on = actions 1-5)", "lender": "CFPB/FFIEC HMDA public record 2025; api/lender/<slug>.json", "state": "CFPB/FFIEC HMDA public record 2025; api/state/<st>.json",
+SOURCE = {"official": "an official publication, restated as printed (Level 2); see claim.source_document and source_sha256",
+          "outcome": "CFPB/FFIEC HMDA public record 2025; data/application-outcomes-2025.json (applications acted on = actions 1-5)", "lender": "CFPB/FFIEC HMDA public record 2025; api/lender/<slug>.json", "state": "CFPB/FFIEC HMDA public record 2025; api/state/<st>.json",
           "small-loan": "CFPB/FFIEC HMDA public record 2025; api/small-loan-penalty.json", "door": "data/door-effect-2025.json", "denial": "api/denial-reasons-top100.json"}
 
 
@@ -37,6 +38,9 @@ def receipt_ids():
     if os.path.exists(op):
         ids += [f"outcome-{k}-2025" for k in ("originated", "approved-not-accepted", "denied", "withdrawn", "closed-incomplete", "ana-share")]
         ids += [f"outcome-{l['slug']}-2025" for l in json.load(open(op))["lenders"] if l.get("slug")]
+    for f in sorted(glob.glob(os.path.join(ROOT, "data/official/*.json"))):
+        d = json.load(open(f, encoding="utf-8"))
+        ids += [f"official-{d['source_id']}-{d['period']}-{fid}" for fid in d["figures"]]
     return ids
 
 
@@ -55,6 +59,8 @@ def reproduce_block(cid, obj, v):
         return {**base, "query_url": f"{DB}/csv?years=2025&states={cid[6:8].upper()}&loan_types=2"}
     if cid.startswith("small-loan-penalty-") and cid != "small-loan-penalty-range-2025":
         return {**base, "query_url": f"{DB}/csv?years=2025&states={cid[19:21].upper()}&loan_types=2", "note": "small = loan_amount < 150000; big = loan_amount > 250000; penalty = small-loan denial rate / big-loan denial rate"}
+    if cid.startswith("official-"):
+        return {"how": "open the source document (url in data/official/<source>-<period>.json; sha256 in claim.source_sha256), find the table and row named in the claim, read the column for the period", "note": "nothing to compute: the receipt attests that this figure appears in that document"}
     if cid.startswith("lender-") or cid.startswith("outcome-"):
         slug = cid[7:-5] if cid.startswith("lender-") else cid[8:-5]
         try:
@@ -91,6 +97,10 @@ def main():
                              "prohibited": ["individual approval prediction", "borrower profiling", "personalized lender recommendation"], "minimum_cell_size": 100},
             "attribution": {"required_text": "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.", "license": "CC BY 4.0"},
             "passport_id": "frc:claim:" + cid, "canonical_url": f"{BASE}/claims/{cid}.json"}
+        if cid.startswith("official-") and "claim" not in doc:
+            doc["provenance"] = {"primary_source": obj["source_document"] + " — " + obj["edition"], "dataset": "official publication; figure copied as printed, not computed; " + obj["exclusions"],
+                                 "source_sha256": obj["source_sha256"], "code_history": "https://github.com/financeratecalc/financeratecalc.github.io"}
+            doc["attribution"] = {"required_text": f"Source: {obj['source_document']}, {obj['edition']} (restated with receipt by FinanceRateCalc).", "license": "public domain (US federal publication); receipt CC BY 4.0"}
         h = sha8(obj)
         new = dict(doc)
         new["claim"] = obj

@@ -14,6 +14,9 @@ on:
       loan_type:
         description: "HMDA loan_type: 2 = FHA (the published pipeline; default). 3 = VA, 4 = USDA, 1 = conventional (closed-end): first-release run per provenance/universe-expansion-2025.md — writes data/programs/<program>-2025.json and the universe count only; never touches the FHA files. source_url is derived from this when it is not 2."
         default: "2"
+      official:
+        description: "Level-2 restatement run instead of the HMDA pipeline: <source>:<yyyy-mm>, e.g. hud-fhaprod:2026-08. Downloads the official document, hashes it, copies the labelled cells, builds claim documents, contracts, hash history and snapshot, commits. Leave empty for HMDA runs."
+        default: ""
       independent:
         description: "yes = also recompute national/state/lender figures with hmda-analyzer (third-party code) and write provenance/independent-reproduction.json"
         default: "no"
@@ -29,7 +32,25 @@ jobs:
         with: { python-version: "3.12" }
       - uses: actions/setup-node@v4
         with: { node-version: "20" }
+      - name: 0. Official-publication restatement (Level 2) - when the official input is set, this is the whole run
+        if: github.event.inputs.official != ''
+        run: |
+          set -e
+          sudo apt-get install -y -qq poppler-utils >/dev/null 2>&1 || pip install -q pypdf
+          SRC="${{ github.event.inputs.official }}"; S="${SRC%%:*}"; P="${SRC##*:}"
+          python3 scripts/official_restate.py "$S" "$P"
+          python3 scripts/build_claim_documents.py | tail -1
+          python3 scripts/build_claim_contracts.py | tail -1
+          python3 scripts/build_receipt_hash_history.py | tail -1
+          python3 scripts/build_receipts_snapshot.py | tail -1
+          python3 scripts/build_llms_full.py | tail -1
+          git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/official claims transparency llms-full.txt rl-env/frc_citation/receipts-snapshot.json
+          git reset -q data/official/cache 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "official restatement: $S $P [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
       - name: 1. Download the CFPB file and record its hash
+        if: github.event.inputs.official == ''
         run: |
           URL="${{ github.event.inputs.source_url }}"
           if [ "${{ github.event.inputs.loan_type }}" != "2" ]; then URL="https://ffiec.cfpb.gov/v2/data-browser-api/view/nationwide/csv?years=${{ github.event.inputs.year }}&loan_types=${{ github.event.inputs.loan_type }}"; fi
@@ -38,9 +59,9 @@ jobs:
           sha256sum /tmp/hmda.csv | cut -c1-64 | tee /tmp/input.sha256
       - name: 2. Reference implementation (one pass over the file)
         run: python3 scripts/reference_implementation.py /tmp/hmda.csv 2>&1 | tail -12
-        if: github.event.inputs.loan_type == '2'
+        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
       - name: 2p. Program first release (VA / USDA / conventional) - reference implementation, outcomes, summary; FHA files untouched
-        if: github.event.inputs.loan_type != '2'
+        if: github.event.inputs.loan_type != '2' && github.event.inputs.official == ''
         run: |
           set -e
           LT="${{ github.event.inputs.loan_type }}"; CE=""; if [ "$LT" = "1" ]; then CE="--closed-end"; fi
@@ -53,17 +74,17 @@ jobs:
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
           echo "PROGRAM_RUN=1" >> $GITHUB_ENV
       - name: 3. Materialize api/ files from the rebuild
-        if: github.event.inputs.loan_type == '2'
+        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
         run: |
           PANEL=fresh; if [ "${{ github.event.inputs.year }}" = "2025" ]; then PANEL=frozen; fi
           python3 scripts/materialize_rebuild.py /tmp/frc_rebuild.json --year "${{ github.event.inputs.year }}" --out /tmp/materialized --panel $PANEL
       - name: 4. Application outcomes and door-report cells from the same file
-        if: github.event.inputs.loan_type == '2'
+        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
         run: |
           python3 scripts/application_outcomes.py /tmp/hmda.csv /tmp/materialized/data/application-outcomes-${{ github.event.inputs.year }}.json | tail -1
           python3 scripts/door_report_cells.py /tmp/hmda.csv /tmp/materialized/data/door-report-cells-${{ github.event.inputs.year }}.json 2>&1 | tail -1
       - name: 5. Dry run - compare with the published files, number by number
-        if: github.event.inputs.loan_type == '2'
+        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
         run: |
           python3 scripts/compare_tree.py /tmp/materialized provenance/release-day-dryrun.json
           python3 - <<'PY'
@@ -75,7 +96,7 @@ jobs:
           print("verdict:", r["verdict"], "| numeric match", r["numeric_match_rate"])
           PY
       - name: 5b. Independent implementation - recompute national, state and lender figures with hmda-analyzer (third-party code) and compare
-        if: github.event.inputs.independent == 'yes' && github.event.inputs.loan_type == '2'
+        if: github.event.inputs.independent == 'yes' && github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
         run: |
           pip install -q "hmda-analyzer==0.6.1" "pandas>=2.2"
           python3 scripts/independent_reproduction.py /tmp/hmda.csv provenance/independent-reproduction.json 2>&1 | tail -3
@@ -87,7 +108,7 @@ jobs:
           json.dump(r, open("provenance/independent-reproduction.json", "w"), indent=1, ensure_ascii=False)
           PY
       - name: 6. APPLY - write the rebuilt data into the site and rebuild everything that derives from it
-        if: github.event.inputs.apply == 'APPLY' && github.event.inputs.loan_type == '2'
+        if: github.event.inputs.apply == 'APPLY' && github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
         run: |
           set -e
           cp -r /tmp/materialized/api/. api/
@@ -107,7 +128,7 @@ jobs:
           python3 scripts/check_page_values.py --fix | tail -1
           python3 scripts/check_page_phrasing.py | tail -1
       - name: 7. Commit (dry-run report always; the site only on APPLY)
-        if: github.event.inputs.loan_type == '2'
+        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

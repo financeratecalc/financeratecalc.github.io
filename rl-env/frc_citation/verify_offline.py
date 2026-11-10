@@ -77,6 +77,18 @@ class Verifier:
 
     def claim_object(self, cid: str):
         """(current_value_string, claim_object) for a claim id, or None."""
+        if cid.startswith("official-"):
+            # official-<source>-<yyyy>-<mm>-<figure>: attested restatement of an official publication (Level 2)
+            m = re.match(r"official-([a-z0-9]+(?:-[a-z0-9]+)*?)-(\d{4}-\d{2})-([a-z0-9-]+)$", cid)
+            if not m:
+                return None
+            src, period, fid = m.groups()
+            d = self._json(f"/data/official/{src}-{period}.json")
+            f = d["figures"][fid]
+            disp = f["display"] if "pct" not in fid else f"{f['value']:.1f}%"
+            return disp, {"metric": f"official_{src.replace('-', '_')}_{fid.replace('-', '_')}", "value": f["value"], "unit": f["unit"], "period": f["period"],
+                          "source_document": d["document"]["title"], "edition": d["document"]["edition"], "source_sha256": d["document"]["sha256"],
+                          "table": f["table"], "row": f["row_label"], "exclusions": d["document"]["exclusions"], "level": "attested restatement"}
         if cid == "national-fha-denial-rate-2025":
             idx = self._json("/api/index.json")
             return f"{idx['national']['rate_pct']:.1f}%", self._json("/claims/national-fha-denial-rate-2025.json")["claim"]
