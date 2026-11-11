@@ -22,6 +22,7 @@ on:
         default: "no"
 permissions:
   contents: write
+  issues: write
 jobs:
   rebuild:
     runs-on: ubuntu-latest
@@ -38,7 +39,7 @@ jobs:
           set -e
           sudo apt-get install -y -qq poppler-utils >/dev/null 2>&1 || pip install -q pypdf
           SRC="${{ github.event.inputs.official }}"; S="${SRC%%:*}"; P="${SRC##*:}"
-          python3 scripts/official_restate.py "$S" "$P"
+          python3 scripts/official_restate.py "$S" "$P" 2>&1 | tee /tmp/official.log || { echo "RESTATE_FAILED=1" >> $GITHUB_ENV; exit 1; }
           python3 scripts/build_claim_documents.py | tail -1
           python3 scripts/build_claim_contracts.py | tail -1
           python3 scripts/build_receipt_hash_history.py | tail -1
@@ -50,6 +51,12 @@ jobs:
           git reset -q data/official/cache 2>/dev/null || true
           git diff --cached --quiet || git commit -m "official restatement: $S $P [skip ci]"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
+      - name: 0r. Report the official-restatement log as an issue when it fails (logs are not readable from the API)
+        if: failure() && github.event.inputs.official != ''
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: |
+          body=$(tail -c 3000 /tmp/official.log 2>/dev/null || echo "no log written")
+          gh issue create --title "official restatement ${{ github.event.inputs.official }} $(date -u +%Y-%m-%dT%H:%MZ): failure" --body "$body" || true
       - name: 1. Download the CFPB file and record its hash
         if: github.event.inputs.official == ''
         run: |

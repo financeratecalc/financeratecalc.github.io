@@ -53,6 +53,7 @@ SOURCES = {
 }
 MON = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 MON_FULL = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
+FULL = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 
 def sha256(path):
@@ -66,18 +67,20 @@ def sha256(path):
 def fetch(src, y, m, dest):
     tried = []
     for pat in src["url_patterns"]:
-        for mon in {MON[m - 1].title(), MON_FULL[m - 1], MON[m - 1].title()[:3]}:
+        for mon in dict.fromkeys([MON[m - 1].title(), MON_FULL[m - 1], MON_FULL[m - 1].upper(), FULL[m - 1], FULL[m - 1].upper(), MON[m - 1]]):
             url = pat.format(MON=MON[m - 1], Mon=mon, Y=y)
             if url in tried:
                 continue
             tried.append(url)
             try:
-                with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "FinanceRateCalc official-restate/1.0"}), timeout=120) as r:
+                with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; FinanceRateCalc official-restate/1.0; +https://financeratecalc.com)"}), timeout=120) as r:
                     data = r.read()
                 if data[:4] == b"%PDF":
                     open(dest, "wb").write(data)
                     return url
-            except Exception:
+                print("not a PDF:", url, data[:60])
+            except Exception as e:
+                print("fetch failed:", url, str(e)[:80])
                 continue
     sys.exit("no PDF found; tried: " + ", ".join(tried))
 
