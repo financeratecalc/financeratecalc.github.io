@@ -1,0 +1,51 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:official-hud-fhaprod-2026-08-fha-streamline-pct",
+ "current_value": "24.6%",
+ "canonical_claim": {
+  "template": "Federal Housing Administration Single Family Production Report (Aug 2026 report) reports FHA Streamline (%): {value} percent of refinance endorsements, Aug 2026.",
+  "required_fields": [
+   "period",
+   "source",
+   "exclusions"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "Aug 2026",
+  "source": "Federal Housing Administration Single Family Production Report, Aug 2026 report, Table 4",
+  "exclusions": "Does not include Home Equity Conversion Mortgages (HECM) (table note)",
+  "nature": "official figure restated as printed; not computed or adjusted by FinanceRateCalc"
+ },
+ "does_not_establish": [
+  "an HMDA origination or application count (an endorsement is a loan insured after closing; counts and timing differ)",
+  "any denial or approval rate",
+  "any lender-level figure",
+  "that the figure has not been revised in a later edition (check the latest report)"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "causal_assertion": false,
+    "individual_prediction": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "proposed_sentence": "This lender will likely reject YOUR application"
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  }
+ ],
+ "generated_by": "scripts/build_claim_contracts.py (2026-10-21) from the claim block"
+}
