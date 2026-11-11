@@ -41,6 +41,7 @@ SOURCES = {
             "endorsements-count":        ("Table 1", r"^Endorsements\s+([\d,()]+)\s+([\d,()]+)", 0, "loans", "month", "FHA single-family loans endorsed for insurance in the month"),
             "endorsements-balance-musd": ("Table 1", r"^Endorsements\s+([\d,()]+)\s+([\d,()]+)", 1, "USD millions", "month", "unpaid principal balance of loans endorsed in the month"),
             "insurance-in-force-end":    ("Table 1", r"^Insurance in Force \(Ending\)\S*\s+([\d,()]+)\s+([\d,()]+)", 0, "loans", "month-end", "single-family loans in force at month end"),
+            "total-endorsement-count":   ("Table 4", r"^Total Endorsement Count\s+([\d,]+)\s+([\d,]+)\s+([\d,]+)", 0, "loans", "month", "FHA single-family endorsements in the month, as totalled in Table 4 (this row also restates the prior month, so revisions of the headline count are tracked here)"),
             "endorsements-fytd":         ("Table 4", r"^Total Endorsement Count\s+([\d,]+)\s+([\d,]+)\s+([\d,]+)", 2, "loans", "fiscal-year-to-date", "FHA single-family endorsements, fiscal year to date"),
             "purchase-share-pct":        ("Table 4", r"^Purchase \(%\)\s+([\d.]+)\s+([\d.]+)", 0, "percent of endorsements", "month", "share of the month's endorsements that were purchase loans"),
             "refinance-share-pct":       ("Table 4", r"^Refinance \(%\)\s+([\d.]+)\s+([\d.]+)", 0, "percent of endorsements", "month", "share of the month's endorsements that were refinances"),

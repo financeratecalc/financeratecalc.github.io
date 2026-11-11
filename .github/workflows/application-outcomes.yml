@@ -44,6 +44,7 @@ jobs:
           test -f "data/official/$S-$P.json" || { echo "no data file written" | tee -a /tmp/official.log; exit 1; }
           python3 scripts/build_claim_documents.py | tail -1
           python3 scripts/build_claim_contracts.py | tail -1
+          python3 scripts/build_claims_index.py
           python3 scripts/build_receipt_hash_history.py | tail -1
           python3 scripts/build_receipts_snapshot.py | tail -1
           python3 scripts/build_official_page.py
