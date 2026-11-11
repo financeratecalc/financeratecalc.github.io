@@ -29,7 +29,7 @@ SOURCES = {
     "hud-fhaprod": {
         "title": "Federal Housing Administration Single Family Production Report",
         "publisher": "U.S. Department of Housing and Urban Development, Office of Housing, Office of Risk Management, Reporting and Analysis Division",
-        "landing": "https://www.hud.gov/program_offices/housing/rmra/oe/rpts/fhamktsh/fhamktsh",   # monthly reports index
+        "landing": "https://www.hud.gov/hud-partners/fha-production-report",   # lists the current edition and the archive
         "url_patterns": ["https://www.hud.gov/sites/default/files/Housing/documents/FHAProd_{MON}{Y}.pdf",
                          "https://www.hud.gov/sites/default/files/Housing/documents/FHAProd_{Mon}{Y}.pdf",
                          "https://www.hud.gov/sites/default/files/Housing/documents/FHAProd-{Mon}{Y}.pdf",
@@ -64,8 +64,38 @@ def sha256(path):
     return h.hexdigest()
 
 
+def _get(url):
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; FinanceRateCalc official-restate/1.0; +https://financeratecalc.com)"})
+    with urllib.request.urlopen(req, timeout=120) as r:
+        return r.read()
+
+
+def discover(src, y, m):
+    """Read the publisher's index page and return PDF links whose name carries the month and year, most specific first."""
+    try:
+        html_ = _get(src["landing"]).decode("utf-8", "ignore")
+    except Exception as e:
+        print("landing page not readable:", str(e)[:80]); return []
+    links = re.findall(r'href="([^"]*FHAProd[^"]*\.pdf)"', html_, re.I)
+    toks = {MON[m - 1].lower(), MON_FULL[m - 1].lower(), FULL[m - 1].lower()}
+    out = []
+    for h in links:
+        name = h.rsplit("/", 1)[-1].lower()
+        if str(y) in name and any(t in name for t in toks):
+            out.append(h if h.startswith("http") else "https://www.hud.gov" + h)
+    return list(dict.fromkeys(out))
+
+
 def fetch(src, y, m, dest):
     tried = []
+    for url in discover(src, y, m):
+        tried.append(url)
+        try:
+            data = _get(url)
+            if data[:4] == b"%PDF":
+                open(dest, "wb").write(data); print("found via index page:", url); return url
+        except Exception as e:
+            print("fetch failed:", url, str(e)[:80])
     for pat in src["url_patterns"]:
         for mon in dict.fromkeys([MON[m - 1].title(), MON_FULL[m - 1], MON_FULL[m - 1].upper(), FULL[m - 1], FULL[m - 1].upper(), MON[m - 1]]):
             url = pat.format(MON=MON[m - 1], Mon=mon, Y=y)
