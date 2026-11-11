@@ -36,10 +36,12 @@ jobs:
       - name: 0. Official-publication restatement (Level 2) - when the official input is set, this is the whole run
         if: github.event.inputs.official != ''
         run: |
-          set -e
-          sudo apt-get install -y -qq poppler-utils >/dev/null 2>&1 || pip install -q pypdf
+          set -eo pipefail
+          sudo apt-get install -y -qq poppler-utils >/dev/null 2>&1 || true
+          pip install -q pypdf
           SRC="${{ github.event.inputs.official }}"; S="${SRC%%:*}"; P="${SRC##*:}"
-          python3 scripts/official_restate.py "$S" "$P" 2>&1 | tee /tmp/official.log || { echo "RESTATE_FAILED=1" >> $GITHUB_ENV; exit 1; }
+          python3 scripts/official_restate.py "$S" "$P" 2>&1 | tee /tmp/official.log
+          test -f "data/official/$S-$P.json" || { echo "no data file written" | tee -a /tmp/official.log; exit 1; }
           python3 scripts/build_claim_documents.py | tail -1
           python3 scripts/build_claim_contracts.py | tail -1
           python3 scripts/build_receipt_hash_history.py | tail -1

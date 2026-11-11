@@ -81,6 +81,14 @@ def fetch(src, y, m, dest):
                 print("not a PDF:", url, data[:60])
             except Exception as e:
                 print("fetch failed:", url, str(e)[:80])
+                # second attempt with curl (some .gov hosts refuse Python's urllib but accept a browser-like client)
+                try:
+                    subprocess.run(["curl", "-sL", "--max-time", "120", "-A", "Mozilla/5.0 (X11; Linux x86_64) FinanceRateCalc/1.0", "-o", dest, url], check=True)
+                    if open(dest, "rb").read(4) == b"%PDF":
+                        return url
+                    print("curl got non-PDF:", url, open(dest, "rb").read(60))
+                except Exception as e2:
+                    print("curl failed:", url, str(e2)[:80])
                 continue
     sys.exit("no PDF found; tried: " + ", ".join(tried))
 
