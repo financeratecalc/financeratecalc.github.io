@@ -20,6 +20,15 @@ op = os.path.join(ROOT, "data/application-outcomes-2025.json")
 if os.path.exists(op):
     ids += [f"outcome-{k}-2025" for k in ("originated", "approved-not-accepted", "denied", "withdrawn", "closed-incomplete", "ana-share")]
     ids += [f"outcome-{l['slug']}-2025" for l in json.load(open(op))["lenders"] if l.get("slug")]
+for f in sorted(glob.glob(os.path.join(ROOT, "data/programs/*-2025.json"))):
+    d = json.load(open(f, encoding="utf-8")); prog = os.path.basename(f)[:-10]
+    ids += [f"{prog}-national-denial-rate-2025"] + [f"{prog}-state-{s['state'].lower()}-denial-rate-2025" for s in d["states"]]
+    ids += [f"outcome-{prog}-{k}-2025" for k in ("originated", "approved-not-accepted", "denied", "withdrawn", "closed-incomplete")]
+for f in sorted(glob.glob(os.path.join(ROOT, "data/official/*.json"))):
+    if os.path.basename(f) == "index.json":
+        continue
+    d = json.load(open(f, encoding="utf-8"))
+    ids += [f"official-{d['source_id']}-{d['period']}-{fid}" for fid in d["figures"]]
 snap, bad = {}, []
 for cid in ids:
     try:

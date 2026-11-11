@@ -8,7 +8,7 @@ the claim block, with the same shape as the hand-written ones, plus `current_val
 tell a sentence that quotes a different figure for the same subject. Idempotent; never overwrites a
 contract that exists.
 """
-import glob, json, os, sys
+import glob, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATES = {"AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California", "CO": "Colorado", "CT": "Connecticut", "DE": "Delaware", "DC": "the District of Columbia", "FL": "Florida", "GA": "Georgia", "HI": "Hawaii", "ID": "Idaho", "IL": "Illinois", "IN": "Indiana", "IA": "Iowa", "KS": "Kansas", "KY": "Kentucky", "LA": "Louisiana", "ME": "Maine", "MD": "Maryland", "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota", "MS": "Mississippi", "MO": "Missouri", "MT": "Montana", "NE": "Nebraska", "NV": "Nevada", "NH": "New Hampshire", "NJ": "New Jersey", "NM": "New Mexico", "NY": "New York", "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio", "OK": "Oklahoma", "OR": "Oregon", "PA": "Pennsylvania", "PR": "Puerto Rico", "RI": "Rhode Island", "SC": "South Carolina", "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "UT": "Utah", "VT": "Vermont", "VA": "Virginia", "WA": "Washington", "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming"}
@@ -17,6 +17,26 @@ FORBID = ["causal_attribution", "individual_prediction", "personalized_lender_re
 
 def contract_for(cid, d):
     c, v = d["claim"], d["display_value"]
+    pm = re.match(r"(va|usda|conv)-(national|state-([a-z]{2}))-denial-rate-2025$", cid)
+    if pm:
+        P = c.get("program", pm.group(1).upper()); prog = pm.group(1)
+        pop = f"decisioned {P} applications (actions 1,2,3; reverse mortgages excluded" + ("; open-end lines of credit excluded)" if prog == "conv" else ")")
+        others = "FHA, VA, USDA and conventional" 
+        if pm.group(2) == "national":
+            return {"canonical_claim": {"template": f"In 2025, {{value}} of decisioned {P} applications in the US were denied ({c.get('denials', 0):,} denials out of {c.get('n', 0):,} applications reaching a credit decision).", "required_fields": ["period", "population", "program", "nature"]},
+                    "required_qualifiers": {"period": "2025", "population": pop, "program_scope": P, "nature": "historical aggregate; association, not cause"},
+                    "does_not_establish": [f"that {P} loans are easier or harder to get than FHA, USDA or conventional loans (applicant populations differ by eligibility and composition; cross-program rates are not comparable as a judgement of programs or lenders)", "any individual's chance of denial", "any lender-level figure", "any legal conclusion"]}
+        st = pm.group(3).upper(); name = STATES.get(st, st)
+        return {"canonical_claim": {"template": f"In 2025, {{value}} of decisioned {P} applications in {name} were denied ({c.get('n', 0):,} applications reaching a decision).", "required_fields": ["period", "population", "program", "nature"]},
+                "required_qualifiers": {"period": "2025", "population": f"decisioned {P} applications in {name} (" + pop.split("(", 1)[1], "program_scope": P, "nature": "historical aggregate"},
+                "does_not_establish": [f"an applicant in {name} has a {v} chance of denial", f"{name}'s lenders are stricter than another state's for a given applicant", f"a comparison with FHA or conventional rates as a judgement of programs", "any legal conclusion"]}
+    pm = re.match(r"outcome-(va|usda|conv)-([a-z-]+)-2025$", cid)
+    if pm:
+        P = c.get("program", pm.group(1).upper()); key = pm.group(2).replace("-", "_")
+        word = {"originated": "were originated", "approved_not_accepted": "were approved but not accepted by the applicant", "denied": "were denied", "withdrawn": "were withdrawn by the applicant", "closed_incomplete": "were closed for incompleteness"}[key]
+        return {"canonical_claim": {"template": f"In 2025, {{value}} of the {c.get('n', 0):,} {P} applications that lenders acted on {word}.", "required_fields": ["period", "population", "program", "denominator"]},
+                "required_qualifiers": {"period": "2025", "population": f"{P} applications acted on (actions 1-5; purchased loans and preapproval requests excluded; reverse mortgages excluded)", "program_scope": P, "denominator": "applications acted on, not decisioned applications"},
+                "does_not_establish": ["why any application ended where it did", "any individual applicant's outcome", f"a comparison with the {P} denial rate on decisioned applications without restating both denominators", "a comparison across programs as a judgement of programs or lenders"]}
     if cid.startswith("official-"):
         doc = c.get("source_document", "the source document"); ed = c.get("edition", ""); per = c.get("period", ""); unit = c.get("unit", "")
         what = str(c.get("row", "")).rstrip("ab").strip()

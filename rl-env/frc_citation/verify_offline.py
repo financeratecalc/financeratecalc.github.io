@@ -77,6 +77,19 @@ class Verifier:
 
     def claim_object(self, cid: str):
         """(current_value_string, claim_object) for a claim id, or None."""
+        m = re.match(r"(va|usda|conv)-(national|state-([a-z]{2}))-denial-rate-2025$", cid)
+        if m:
+            prog = m.group(1); d = self._json(f"/data/programs/{prog}-2025.json"); P = d["program"]
+            if m.group(2) == "national":
+                n = d["national"]
+                return f"{n['denial_rate_pct']:.1f}%", {"metric": f"{prog}_denial_rate", "program": P, "value": round(n["denial_rate_pct"] / 100, 4), "n": n["decisioned_applications"], "denials": n["denials"], "period": "2025", "universe_id": d["universe_id"]}
+            st = m.group(3).upper(); S = next(x for x in d["states"] if x["state"] == st)
+            return f"{float(S['denial_rate_pct']):.1f}%", {"state": st, "metric": f"{prog}_denial_rate", "program": P, "value": S["denial_rate_pct"], "n": S["decisioned_applications"], "denials": S["denials"], "period": "2025", "universe_id": d["universe_id"]}
+        m = re.match(r"outcome-(va|usda|conv)-(originated|approved-not-accepted|denied|withdrawn|closed-incomplete)-2025$", cid)
+        if m:
+            prog = m.group(1); d = self._json(f"/data/programs/{prog}-2025.json"); key = m.group(2).replace("-", "_")
+            o = d["outcomes_national"]["outcomes"][key]
+            return f"{o['share_of_acted_pct']:.1f}%", {"metric": f"{prog}_application_outcome_share", "program": d["program"], "outcome": key, "value": round(o["share_of_acted_pct"] / 100, 3), "unit": "share_of_applications_acted_on", "n": d["outcomes_national"]["applications_acted_on"], "subject": "United States, all reporting lenders", "period": "2025", "universe_id": d["universe_id"]}
         if cid.startswith("official-"):
             # official-<source>-<yyyy>-<mm>-<figure>: attested restatement of an official publication (Level 2)
             m = re.match(r"official-([a-z0-9]+(?:-[a-z0-9]+)*?)-(\d{4}-\d{2})-([a-z0-9-]+)$", cid)

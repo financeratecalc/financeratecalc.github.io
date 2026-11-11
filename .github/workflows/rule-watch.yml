@@ -30,6 +30,10 @@ jobs:
         run: python3 scripts/check_page_phrasing.py
       - name: Application-outcomes page is current with its data and claims
         run: python3 scripts/build_outcomes_page.py --check || { echo "::error::outcomes page stale; run scripts/build_outcomes_page.py"; exit 1; }
+      - name: Program pages and the claims index must match their data
+        run: |
+          python3 scripts/build_claims_index.py --check || { echo "::error::claims index stale; run scripts/build_claims_index.py"; exit 1; }
+          for p in va usda conv; do [ -f data/programs/$p-2025.json ] && { python3 scripts/build_program_page.py $p --check || { echo "::error::$p page stale"; exit 1; }; }; done; true
       - name: Official-figures page must match data/official and the claims
         run: python3 scripts/build_official_page.py --check || { echo "::error::official-figures page stale; run scripts/build_official_page.py"; exit 1; }
       - name: Lender pages' reason sections must match the lender receipts

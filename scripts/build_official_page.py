@@ -21,7 +21,7 @@ def shell():
 
 def main():
     style, nav = shell()
-    files = sorted(glob.glob(os.path.join(ROOT, "data", "official", "*.json")), reverse=True)
+    files = sorted((f for f in glob.glob(os.path.join(ROOT, "data", "official", "*.json")) if os.path.basename(f) != "index.json"), reverse=True)
     editions = [json.load(open(f, encoding="utf-8")) for f in files]
     blocks = []
     n_receipts = 0

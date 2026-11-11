@@ -1,0 +1,56 @@
+{
+ "passport_version": "0.1",
+ "issuer": "FinanceRateCalc",
+ "issued_at": "2026-11-11T00:00:00Z",
+ "provenance": {
+  "primary_source": "CFPB/FFIEC HMDA public record 2025; data/programs/va-2025.json (VA, loan_type 3)",
+  "dataset": "loan_type=3 (VA); action_taken in {1,2,3} = decisioned; reverse mortgages excluded; universe U-VA-2025-DECISIONED (provenance/universe-expansion-2025.md)",
+  "code_history": "https://github.com/financeratecalc/financeratecalc.github.io"
+ },
+ "use_boundary": {
+  "allowed": [
+   "historical aggregate comparison",
+   "journalism",
+   "market analysis",
+   "research"
+  ],
+  "prohibited": [
+   "individual approval prediction",
+   "borrower profiling",
+   "personalized lender recommendation"
+  ],
+  "minimum_cell_size": 100
+ },
+ "attribution": {
+  "required_text": "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record (VA loans); historical aggregate only.",
+  "license": "CC BY 4.0"
+ },
+ "passport_id": "frc:claim:va-state-ok-denial-rate-2025",
+ "canonical_url": "https://financeratecalc.com/claims/va-state-ok-denial-rate-2025.json",
+ "claim": {
+  "state": "OK",
+  "metric": "va_denial_rate",
+  "program": "VA",
+  "value": 18.1,
+  "n": 12822,
+  "denials": 2326,
+  "period": "2025",
+  "universe_id": "U-VA-2025-DECISIONED"
+ },
+ "receipt_document": "1.0",
+ "id": "va-state-ok-denial-rate-2025",
+ "display_value": "18.1%",
+ "hash_rule": "jcs-sha256-8",
+ "hash8": "6024497e",
+ "receipt": "⟦FRC:va-state-ok-denial-rate-2025:18.1%:6024497e⟧",
+ "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:va-state-ok-denial-rate-2025:18.1%:6024497e%E2%9F%A7",
+ "corrections_url": "https://financeratecalc.com/corrections.json",
+ "spec": "https://financeratecalc.com/spec/receipt-1.0.md",
+ "reproduce": {
+  "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+  "filters": "Keep loan_type=3 (VA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+  "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+  "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&loan_types=3&states=OK",
+  "note": null
+ }
+}

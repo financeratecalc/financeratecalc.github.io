@@ -78,8 +78,16 @@ jobs:
           python3 scripts/reference_implementation.py /tmp/hmda.csv --loan-type $LT $CE --out /tmp/frc_rebuild_program.json 2>&1 | tail -6
           python3 scripts/application_outcomes.py /tmp/hmda.csv /tmp/outcomes_program.json --loan-type $LT $CE | tail -1
           python3 scripts/program_summary.py /tmp/frc_rebuild_program.json /tmp/outcomes_program.json --sha256 "$(cat /tmp/input.sha256)" --url "$(cat /tmp/input.url)"
+          PROG=$(python3 -c "print({'3':'va','4':'usda','1':'conv'}['$LT'])")
+          python3 scripts/build_claim_documents.py | tail -1
+          python3 scripts/build_claim_contracts.py | tail -1
+          python3 scripts/build_claims_index.py
+          python3 scripts/build_receipt_hash_history.py | tail -1
+          python3 scripts/build_receipts_snapshot.py 2>/dev/null | tail -1 | cut -c1-120
+          python3 scripts/build_program_page.py "$PROG"
+          python3 scripts/build_llms_full.py | tail -1
           git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/programs universes.json
+          git add data/programs universes.json claims transparency llms-full.txt rl-env/frc_citation/receipts-snapshot.json "$PROG"-loan-denial-rates-2025.html conventional-loan-denial-rates-2025.html 2>/dev/null || git add data/programs universes.json claims transparency llms-full.txt rl-env/frc_citation/receipts-snapshot.json
           git diff --cached --quiet || git commit -m "program first release: loan_type $LT, ${{ github.event.inputs.year }} file [skip ci]"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
           echo "PROGRAM_RUN=1" >> $GITHUB_ENV

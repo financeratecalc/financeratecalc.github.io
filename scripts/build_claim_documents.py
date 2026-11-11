@@ -22,7 +22,9 @@ from frc_citation.verify_offline import Verifier, sha8  # noqa: E402
 
 BASE = "https://financeratecalc.com"
 VERIFY = "https://frc-mcp.ziyetis.workers.dev/verify?r="
-SOURCE = {"official": "an official publication, restated as printed (Level 2); see claim.source_document and source_sha256",
+SOURCE = {"va": "CFPB/FFIEC HMDA public record 2025; data/programs/va-2025.json (VA, loan_type 3)", "usda": "CFPB/FFIEC HMDA public record 2025; data/programs/usda-2025.json (USDA, loan_type 4)", "conv": "CFPB/FFIEC HMDA public record 2025; data/programs/conv-2025.json (conventional closed-end, loan_type 1)",
+          "outcome-va": "CFPB/FFIEC HMDA public record 2025; data/programs/va-2025.json (applications acted on = actions 1-5)", "outcome-usda": "CFPB/FFIEC HMDA public record 2025; data/programs/usda-2025.json", "outcome-conv": "CFPB/FFIEC HMDA public record 2025; data/programs/conv-2025.json",
+          "official": "an official publication, restated as printed (Level 2); see claim.source_document and source_sha256",
           "outcome": "CFPB/FFIEC HMDA public record 2025; data/application-outcomes-2025.json (applications acted on = actions 1-5)", "lender": "CFPB/FFIEC HMDA public record 2025; api/lender/<slug>.json", "state": "CFPB/FFIEC HMDA public record 2025; api/state/<st>.json",
           "small-loan": "CFPB/FFIEC HMDA public record 2025; api/small-loan-penalty.json", "door": "data/door-effect-2025.json", "denial": "api/denial-reasons-top100.json"}
 
@@ -38,7 +40,13 @@ def receipt_ids():
     if os.path.exists(op):
         ids += [f"outcome-{k}-2025" for k in ("originated", "approved-not-accepted", "denied", "withdrawn", "closed-incomplete", "ana-share")]
         ids += [f"outcome-{l['slug']}-2025" for l in json.load(open(op))["lenders"] if l.get("slug")]
+    for f in sorted(glob.glob(os.path.join(ROOT, "data/programs/*-2025.json"))):
+        d = json.load(open(f, encoding="utf-8")); prog = os.path.basename(f)[:-10]
+        ids += [f"{prog}-national-denial-rate-2025"] + [f"{prog}-state-{s['state'].lower()}-denial-rate-2025" for s in d["states"]]
+        ids += [f"outcome-{prog}-{k}-2025" for k in ("originated", "approved-not-accepted", "denied", "withdrawn", "closed-incomplete")]
     for f in sorted(glob.glob(os.path.join(ROOT, "data/official/*.json"))):
+        if os.path.basename(f) == "index.json":
+            continue
         d = json.load(open(f, encoding="utf-8"))
         ids += [f"official-{d['source_id']}-{d['period']}-{fid}" for fid in d["figures"]]
     return ids
@@ -59,6 +67,12 @@ def reproduce_block(cid, obj, v):
         return {**base, "query_url": f"{DB}/csv?years=2025&states={cid[6:8].upper()}&loan_types=2"}
     if cid.startswith("small-loan-penalty-") and cid != "small-loan-penalty-range-2025":
         return {**base, "query_url": f"{DB}/csv?years=2025&states={cid[19:21].upper()}&loan_types=2", "note": "small = loan_amount < 150000; big = loan_amount > 250000; penalty = small-loan denial rate / big-loan denial rate"}
+    pm = re.match(r"(?:outcome-)?(va|usda|conv)-(national|state-([a-z]{2}))?", cid)
+    if pm and pm.group(1):
+        LT = {"va": "3", "usda": "4", "conv": "1"}[pm.group(1)]
+        q = f"{DB}/nationwide/csv?years=2025&loan_types={LT}" if not pm.group(3) else f"{DB}/csv?years=2025&loan_types={LT}&states={pm.group(3).upper()}"
+        return {**base, "filters": FILTERS.replace("loan_type=2 (FHA)", f"loan_type={LT} ({obj.get('program')})") + (" Also drop open_end_line_of_credit=1 (closed-end universe)." if pm.group(1) == "conv" else ""), "query_url": q,
+                "note": "outcome shares use action_taken 1-5 as the base; the denial rate uses 1-3" if cid.startswith("outcome-") else None}
     if cid.startswith("official-"):
         return {"how": "open the source document (url in data/official/<source>-<period>.json; sha256 in claim.source_sha256), find the table and row named in the claim, read the column for the period", "note": "nothing to compute: the receipt attests that this figure appears in that document"}
     if cid.startswith("lender-") or cid.startswith("outcome-"):
@@ -97,6 +111,11 @@ def main():
                              "prohibited": ["individual approval prediction", "borrower profiling", "personalized lender recommendation"], "minimum_cell_size": 100},
             "attribution": {"required_text": "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.", "license": "CC BY 4.0"},
             "passport_id": "frc:claim:" + cid, "canonical_url": f"{BASE}/claims/{cid}.json"}
+        pm = re.match(r"(?:outcome-)?(va|usda|conv)-", cid)
+        if pm and "claim" not in doc:
+            prog = pm.group(1); LT = {"va": "3", "usda": "4", "conv": "1"}[prog]
+            doc["provenance"]["dataset"] = f"loan_type={LT} ({obj.get('program')}); action_taken in {{1,2,3}} = decisioned; reverse mortgages excluded" + ("; open-end lines of credit excluded" if prog == "conv" else "") + f"; universe {obj.get('universe_id')} (provenance/universe-expansion-2025.md)"
+            doc["attribution"]["required_text"] = f"Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record ({obj.get('program')} loans); historical aggregate only."
         if cid.startswith("official-") and "claim" not in doc:
             doc["provenance"] = {"primary_source": obj["source_document"] + " — " + obj["edition"], "dataset": "official publication; figure copied as printed, not computed; " + obj["exclusions"],
                                  "source_sha256": obj["source_sha256"], "code_history": "https://github.com/financeratecalc/financeratecalc.github.io"}
