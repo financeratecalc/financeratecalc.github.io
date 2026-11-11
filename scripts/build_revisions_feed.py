@@ -27,6 +27,13 @@ def main():
                           "restated_as": x["revised_to"], "restated_in": x.get("revised_in"), "difference": round(x["revised_to"] - x["value"], 6),
                           "marked_as_revised_by_publisher": False, "receipt_of_first_printing": c["receipt"], "claim_url": f"{BASE}/claims/{cid}.json",
                           "where": f"{x['table']} · {x['row_label']}"})
+        for r in d.get("prior_edition_check", {}).get("revisions", []):   # months restated on the page that carry no receipt of ours
+            if r.get("revised") and r.get("has_receipt") is False:
+                items.append({"source": d["document"]["title"], "publisher": d["document"]["publisher"], "figure": r["figure"], "description": d["figures"][r["figure"]]["description"],
+                              "period": r["period"], "first_printed": r["first_printed"], "first_printed_in": r["printed_in"], "first_document_sha256": None,
+                              "restated_as": r["restated_value"], "restated_in": r["restated_in"], "difference": round(r["restated_value"] - r["first_printed"], 6),
+                              "marked_as_revised_by_publisher": False, "receipt_of_first_printing": None, "claim_url": None,
+                              "where": f"{d['figures'][r['figure']]['table']} · {r['period']} row"})
     items.sort(key=lambda i: (i["period"], i["figure"]), reverse=True)
     eds = sorted(os.path.basename(f)[:-5] for f in glob.glob(os.path.join(ROOT, "data", "official", "*.json")) if os.path.basename(f) != "index.json")
     out = {"title": "Revision watch: figures an official publisher changed in a later edition",

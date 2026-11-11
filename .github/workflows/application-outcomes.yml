@@ -15,7 +15,7 @@ on:
         description: "HMDA loan_type: 2 = FHA (the published pipeline; default). 3 = VA, 4 = USDA, 1 = conventional (closed-end): first-release run per provenance/universe-expansion-2025.md — writes data/programs/<program>-2025.json and the universe count only; never touches the FHA files. source_url is derived from this when it is not 2."
         default: "2"
       official:
-        description: "Level-2 restatement run instead of the HMDA pipeline: <source>:<yyyy-mm>, e.g. hud-fhaprod:2026-08. Downloads the official document, hashes it, copies the labelled cells, builds claim documents, contracts, hash history and snapshot, commits. Leave empty for HMDA runs."
+        description: "Level-2 restatement run instead of the HMDA pipeline: <source>:<yyyy-mm>, e.g. hud-fhaprod:2026-08 or ginnie-iss:2026-09. Downloads the official document, hashes it, copies the labelled cells, builds claim documents, contracts, hash history and snapshot, commits. Leave empty for HMDA runs."
         default: ""
       independent:
         description: "yes = also recompute national/state/lender figures with hmda-analyzer (third-party code) and write provenance/independent-reproduction.json"
@@ -49,10 +49,11 @@ jobs:
           python3 scripts/build_receipts_snapshot.py | tail -1
           python3 scripts/build_official_page.py
           python3 scripts/build_revisions_feed.py
+          python3 scripts/build_revision_ledger.py
           python3 scripts/build_home.py && python3 scripts/build_claim_jsonld.py | tail -1
           python3 scripts/build_llms_full.py | tail -1
           git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/official data/revisions.json claims transparency llms-full.txt rl-env/frc_citation/receipts-snapshot.json official-figures.html index.html
+          git add data/official data/revisions.json claims transparency llms-full.txt rl-env/frc_citation/receipts-snapshot.json official-figures.html revision-ledger.html index.html
           git reset -q data/official/cache 2>/dev/null || true
           git diff --cached --quiet || git commit -m "official restatement: $S $P [skip ci]"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done

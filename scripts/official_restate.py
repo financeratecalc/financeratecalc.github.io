@@ -51,6 +51,26 @@ SOURCES = {
             "fha-streamline-pct":        ("Table 4", r"^FHA Streamline \(%\)\s+([\d.]+)\s+([\d.]+)", 0, "percent of refinance endorsements", "month", "share of the month's refinance endorsements that were FHA Streamline refinances"),
         },
     },
+    "ginnie-iss": {
+        "kind": "month_table",
+        "title": "Ginnie Mae Monthly Issuance Report (Issuance Summary)",
+        "publisher": "Government National Mortgage Association (Ginnie Mae), U.S. Department of Housing and Urban Development",
+        "url_patterns": ["https://www.ginniemae.gov/data_and_reports/reporting/MonthlyIssuanceReports/{Mon}{YY}_ISS.pdf"],
+        "exclusions": "Mortgage-backed securities issued under Ginnie Mae I and Ginnie Mae II programs, in USD millions; a securities-issuance figure, not a count of loans",
+        "table": "Table 1: Monthly Issuance Summary (In Millions)",
+        "ncols": 18,
+        # id -> (0-based index among the 18 numbers on a month's row, column as described, description)
+        "cells": {
+            "total-issuance-musd":     (17, "last numeric column (Total Ginnie Mae I and II)", "Ginnie Mae mortgage-backed securities issued in the month, Ginnie Mae I and II together"),
+            "ginnie-ii-issuance-musd": (16, "seventeenth numeric column (Ginnie Mae II total)", "Ginnie Mae II mortgage-backed securities issued in the month"),
+            "ginnie-i-issuance-musd":  (8, "ninth numeric column (Ginnie Mae I single-family and multifamily total)", "Ginnie Mae I mortgage-backed securities issued in the month"),
+        },
+        "not_comparable_with": ["FHA endorsements (HUD's production report counts loans insured; this is the dollar amount of securities issued, and the pools also hold VA, USDA and PIH loans)",
+                                "HMDA originations or applications", "any denial figure on this site"],
+        "does_not_establish": ["a number of loans, originations or applications (it is a dollar amount of securities issued)", "FHA-only activity (Ginnie Mae pools also hold VA, USDA and PIH loans)",
+                               "any denial or approval rate", "any lender-level or issuer-level figure", "that the figure has not been revised in a later edition (check the latest report)"],
+        "quoting_rule": "Keep the publisher, the edition, the month and the unit (USD millions of securities issued) with the figure. It is a securities-issuance amount: do not present it as a loan count, an FHA-only figure, an origination total or a denial figure. If revision_status says a later edition revised it, say so.",
+    },
 }
 MON = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 MON_FULL = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
@@ -73,6 +93,8 @@ def _get(url):
 
 def discover(src, y, m):
     """Read the publisher's index page and return PDF links whose name carries the month and year, most specific first."""
+    if not src.get("landing"):
+        return []
     try:
         html_ = _get(src["landing"]).decode("utf-8", "ignore")
     except Exception as e:
@@ -99,7 +121,7 @@ def fetch(src, y, m, dest):
             print("fetch failed:", url, str(e)[:80])
     for pat in src["url_patterns"]:
         for mon in dict.fromkeys([MON[m - 1].title(), MON_FULL[m - 1], MON_FULL[m - 1].upper(), FULL[m - 1], FULL[m - 1].upper(), MON[m - 1]]):
-            url = pat.format(MON=MON[m - 1], Mon=mon, Y=y)
+            url = pat.format(MON=MON[m - 1], Mon=mon, Y=y, YY=str(y)[2:])
             if url in tried:
                 continue
             tried.append(url)
@@ -125,6 +147,8 @@ def fetch(src, y, m, dest):
 
 
 def text_of(pdf):
+    if pdf.endswith(".txt"):   # a saved text layer (tests)
+        return open(pdf, encoding="utf-8").read()
     try:
         return subprocess.run(["pdftotext", "-layout", pdf, "-"], capture_output=True, text=True, check=True).stdout
     except Exception:
@@ -156,6 +180,94 @@ def num(s):
     return -v if neg else v
 
 
+MONTH_RE = r"(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sept?(?:ember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?"
+
+
+def month_rows(lines, ncols):
+    """{'YYYY-MM': [numbers as printed]} for every line that is a month, a year and exactly ncols numbers."""
+    rows = {}
+    for ln in lines:
+        m = re.match(r"^" + MONTH_RE + r" (\d{4}) ((?:\$? ?[\d,]+ ?)+)$", ln)
+        if not m:
+            continue
+        cells = re.findall(r"[\d,]+", m.group(3))
+        if len(cells) != ncols:
+            continue
+        key = f"{m.group(2)}-{[x[:3] for x in FULL].index(m.group(1)[:3]) + 1:02d}"
+        if key in rows and rows[key]["cells"] != cells:
+            sys.exit(f"month {key} printed twice with different numbers; not restating")
+        rows[key] = {"cells": cells, "line": ln}
+    return rows
+
+
+def main_month_table(source, src, period, pdf, url):
+    """A report whose table has one row per month and restates many prior months (Ginnie Mae: 25). The current month's
+    labelled columns become receipts; every prior month on the page is kept as printed and compared with the most recent
+    earlier edition on file, so a figure the publisher changed between editions is recorded. Read, not computed; the
+    column positions are confirmed by the table's own printed totals (I + II = grand total) or the run stops."""
+    y, m = int(period[:4]), int(period[5:7])
+    sha = sha256(pdf)
+    lines = [re.sub(r"\s+", " ", ln).strip() for ln in text_of(pdf).splitlines()]
+    rows = month_rows(lines, src["ncols"])
+    if period not in rows:
+        sys.exit(f"no row for {period} with {src['ncols']} numbers in the document (months found: {sorted(rows)[-3:]}); not restating")
+    for k, r in rows.items():   # the printed totals must agree with the column positions assumed here
+        c = [num(x) for x in r["cells"]]
+        if c[8] + c[16] != c[17] or sum(c[9:16]) != c[16]:
+            sys.exit(f"row {k}: printed totals do not match the assumed column layout ({r['line']}); not restating")
+    month_label = f"{MON[m - 1].title()} {y}"
+    figures = {}
+    for fid, (col, coldesc, desc) in src["cells"].items():
+        cell = rows[period]["cells"][col]
+        figures[fid] = {"value": num(cell), "display": cell, "unit": "USD millions", "period_kind": "month", "period": month_label, "table": src["table"],
+                        "row_label": coldesc.split("(")[1].rstrip(")") + ", month of " + FULL[m - 1] + " " + str(y), "column": coldesc, "line_as_printed": rows[period]["line"], "description": desc,
+                        "revision": "as first printed; no later edition checked yet"}
+    history = {k: {fid: num(rows[k]["cells"][col]) for fid, (col, _, _) in src["cells"].items()} for k in sorted(rows)}
+    earlier = sorted(f for f in os.listdir(os.path.join(ROOT, "data", "official")) if re.fullmatch(re.escape(source) + r"-\d{4}-\d{2}\.json", f) and f[len(source) + 1:-5] < period) if os.path.isdir(os.path.join(ROOT, "data", "official")) else []
+    prev_path = os.path.join(ROOT, "data", "official", earlier[-1]) if earlier else None
+    prev = json.load(open(prev_path, encoding="utf-8")) if prev_path else None
+    revisions = []
+    if prev:
+        for k in sorted(set(history) & set(prev.get("months_as_printed", {}))):
+            for fid in src["cells"]:
+                a, b = prev["months_as_printed"][k][fid], history[k][fid]
+                yy, mm = int(k[:4]), int(k[5:7])
+                revisions.append({"figure": fid, "month": k, "period": f"{MON[mm - 1].title()} {yy}", "first_printed": a, "printed_in": prev["document"]["edition"],
+                                  "restated_in": f"{month_label} report", "restated_value": b, "revised": a != b, "has_receipt": k == prev["period"]})
+    now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    out = {"generated": now, "source_id": source, "period": period,
+           "document": {"title": src["title"], "publisher": src["publisher"], "edition": f"{month_label} report", "url": url, "sha256": sha, "pages": None,
+                        "exclusions": src["exclusions"], "retrieved_at": now},
+           "level": "2 — attested restatement of an official publication; not computed by FinanceRateCalc",
+           "not_comparable_with": src["not_comparable_with"], "does_not_establish": src["does_not_establish"], "quoting_rule": src["quoting_rule"],
+           "figures": figures, "months_as_printed": history,
+           "prior_edition_check": {"edition_compared": prev["document"]["edition"] if prev else None, "revisions": revisions,
+                                   "note": "The table restates every month it lists; each is compared with the same month as printed in the most recent earlier edition on file. A difference is a source revision, recorded here and, where the month has a receipt, written into that edition's file as revised_in/revised_to."}}
+    os.makedirs(os.path.join(ROOT, "data", "official"), exist_ok=True)
+    p = os.path.join(ROOT, "data", "official", f"{source}-{period}.json")
+    json.dump(out, open(p, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    if prev:
+        for rev in revisions:
+            if not rev["has_receipt"]:
+                continue
+            pf = prev["figures"][rev["figure"]]
+            pf["revision"] = f"revised in the {month_label} report to {rev['restated_value']}" if rev["revised"] else f"unchanged in the {month_label} report"
+            if rev["revised"]:
+                pf["revised_in"] = f"{month_label} report"; pf["revised_to"] = rev["restated_value"]
+        json.dump(prev, open(prev_path, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+        print(f"compared with {prev['document']['edition']}: {len(revisions)} month-figures, {sum(1 for r in revisions if r['revised'])} revised")
+    ip = os.path.join(ROOT, "data", "official", "index.json")
+    idx = json.load(open(ip, encoding="utf-8")) if os.path.exists(ip) else {"purpose": "index of restated official editions; latest per source", "editions": {}, "latest": {}}
+    idx["editions"].setdefault(source, [])
+    if period not in idx["editions"][source]:
+        idx["editions"][source].append(period); idx["editions"][source].sort()
+    idx["latest"][source] = idx["editions"][source][-1]; idx["generated"] = now
+    json.dump(idx, open(ip, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    print(f"{source} {period}: {len(figures)} figures restated, {len(history)} months kept as printed (sha256 {sha[:12]}…) -> {os.path.relpath(p, ROOT)}")
+    for k, f in figures.items():
+        print(f"  {k}: {f['display']} {f['unit']} [{f['period']}]")
+
+
 def main():
     source, period = sys.argv[1], sys.argv[2]
     src = SOURCES[source]
@@ -167,6 +279,8 @@ def main():
         os.makedirs(os.path.join(ROOT, "data", "official", "cache"), exist_ok=True)
         pdf = os.path.join(ROOT, "data", "official", "cache", f"{source}-{period}.pdf")
         url = fetch(src, y, m, pdf)
+    if src.get("kind") == "month_table":
+        return main_month_table(source, src, period, pdf, url)
     sha = sha256(pdf)
     text = text_of(pdf)
     lines = [re.sub(r"\s+", " ", ln).strip() for ln in text.splitlines()]

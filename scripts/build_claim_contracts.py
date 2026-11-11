@@ -15,6 +15,13 @@ STATES = {"AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "C
 FORBID = ["causal_attribution", "individual_prediction", "personalized_lender_recommendation", "legal_conclusion"]
 
 
+
+def official_limits(cid):
+    """Source-specific 'does not establish' list, when the edition file carries one (sources after the first)."""
+    m = re.match(r"official-([a-z0-9]+(?:-[a-z0-9]+)*?)-(\d{4}-\d{2})-", cid)
+    p = os.path.join(ROOT, "data", "official", f"{m.group(1)}-{m.group(2)}.json") if m else None
+    return json.load(open(p, encoding="utf-8")).get("does_not_establish") if p and os.path.exists(p) else None
+
 def contract_for(cid, d):
     c, v = d["claim"], d["display_value"]
     pm = re.match(r"(va|usda|conv)-(national|state-([a-z]{2}))-denial-rate-2025$", cid)
@@ -42,7 +49,7 @@ def contract_for(cid, d):
         what = str(c.get("row", "")).rstrip("ab").strip()
         return {"canonical_claim": {"template": f"{doc} ({ed}) reports {what}: {{value}} {unit}, {per}.", "required_fields": ["period", "source", "exclusions"]},
                 "required_qualifiers": {"period": per, "source": f"{doc}, {ed}, {c.get('table', '')}", "exclusions": c.get("exclusions", ""), "nature": "official figure restated as printed; not computed or adjusted by FinanceRateCalc"},
-                "does_not_establish": ["an HMDA origination or application count (an endorsement is a loan insured after closing; counts and timing differ)", "any denial or approval rate", "any lender-level figure", "that the figure has not been revised in a later edition (check the latest report)"]}
+                "does_not_establish": official_limits(cid) or ["an HMDA origination or application count (an endorsement is a loan insured after closing; counts and timing differ)", "any denial or approval rate", "any lender-level figure", "that the figure has not been revised in a later edition (check the latest report)"]}
     if cid.startswith("lender-"):
         name = str(c.get("lender", "")).title()
         return {"canonical_claim": {"template": f"In 2025, {name} denied {{value}} of its {c.get('n', 0):,} decisioned FHA applications.", "required_fields": ["period", "population", "nature"]},

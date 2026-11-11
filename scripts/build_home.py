@@ -146,6 +146,7 @@ def main():
     va = claim("va-national-denial-rate-2025") if va_d else None
     eds = sorted(f for f in glob.glob(os.path.join(ROOT, "data", "official", "*.json")) if os.path.basename(f) != "index.json")
     off = [json.load(open(f, encoding="utf-8")) for f in eds]
+    off = [d for d in off if d["source_id"] == "hud-fhaprod"]   # the hero and the watch table speak about HUD; other sources live on the ledger page
     revised = None
     for d in off:                                       # the most recent figure a later edition revised
         for fid, f in d["figures"].items():
