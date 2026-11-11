@@ -132,16 +132,19 @@ def text_of(pdf):
 
 
 def table_lines(lines, table):
-    """Lines between the heading of `table` (e.g. 'Table 4') and the next table heading. The text layer sometimes
-    breaks words ('Tabl e 4. Si ngle'), so headings are matched with spaces removed. Falls back to all lines."""
+    """Candidate line ranges for `table` (e.g. 'Table 4'): from each occurrence of its heading to the next table heading.
+    The text layer sometimes breaks words ('Tabl e 4. Si ngle'), so headings are matched with spaces removed.
+    Falls back to all lines when no heading is found."""
     n = int(table.split()[-1])
     heads = [(i, int(m.group(1))) for i, ln in enumerate(lines) for m in [re.match(r"^Table(\d+)\.", ln.replace(" ", ""))] if m]
     starts = [i for i, k in heads if k == n]
     if not starts:
-        return lines
-    a = starts[0]
-    later = [i for i, k in heads if i > a and k != n]
-    return lines[a:(later[0] if later else len(lines))]
+        return [lines]
+    segs = []
+    for a in starts:   # a table of contents lists every heading on consecutive lines; the real table is the occurrence with a body
+        later = [i for i, k in heads if i > a and k != n]
+        segs.append(lines[a:(later[0] if later else len(lines))])
+    return segs
 
 
 def num(s):
@@ -174,11 +177,12 @@ def main():
     prev = json.load(open(prev_path, encoding="utf-8")) if os.path.exists(prev_path) else None
     revisions = []
     for fid, (table, rx, col, unit, kind, desc) in src["cells"].items():
-        seg = table_lines(lines, table)
-        hits = [mt for ln in seg for mt in [re.match(rx, ln)] if mt]
-        if len(hits) != 1:
-            ctx = " | ".join(h.group(0)[:60] for h in hits[:4])
-            sys.exit(f"cell {fid}: expected exactly one matching line in {table} ({len(seg)} lines), found {len(hits)} ({rx}) :: {ctx}")
+        cands = [[mt for ln in seg for mt in [re.match(rx, ln)] if mt] for seg in table_lines(lines, table)]
+        good = [h for h in cands if len(h) == 1]
+        if len(good) != 1 and not (len(good) > 1 and len({h[0].group(0) for h in good}) == 1):
+            ctx = " | ".join(h.group(0)[:60] for hs in cands for h in hs[:3])
+            sys.exit(f"cell {fid}: expected exactly one matching line in exactly one {table} section; sections {len(cands)}, hits per section {[len(h) for h in cands]} ({rx}) :: {ctx}")
+        hits = good[0]
         val = num(hits[0].group(col + 1))
         period_label = {"month": month_label, "month-end": f"end of {month_label}", "fiscal-year-to-date": f"FY {fy} to date (1 Oct {fy - 1} – {month_label})"}[kind]
         figures[fid] = {"value": val, "display": hits[0].group(col + 1).strip(), "unit": unit, "period_kind": kind, "period": period_label,
