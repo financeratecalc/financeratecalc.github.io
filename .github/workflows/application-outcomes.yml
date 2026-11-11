@@ -48,9 +48,11 @@ jobs:
           python3 scripts/build_receipt_hash_history.py | tail -1
           python3 scripts/build_receipts_snapshot.py | tail -1
           python3 scripts/build_official_page.py
+          python3 scripts/build_revisions_feed.py
+          python3 scripts/build_home.py && python3 scripts/build_claim_jsonld.py | tail -1
           python3 scripts/build_llms_full.py | tail -1
           git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/official claims transparency llms-full.txt rl-env/frc_citation/receipts-snapshot.json official-figures.html
+          git add data/official data/revisions.json claims transparency llms-full.txt rl-env/frc_citation/receipts-snapshot.json official-figures.html index.html
           git reset -q data/official/cache 2>/dev/null || true
           git diff --cached --quiet || git commit -m "official restatement: $S $P [skip ci]"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done

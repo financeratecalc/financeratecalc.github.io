@@ -17,6 +17,113 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "index.html")
+CSS = r"""
+:root{--bg:#08090c;--panel:#0e1016;--ink:#ece8dc;--soft:#a39f93;--dim:#6f6c63;--rule:rgba(255,255,255,.11);--gold:#c8a84b;--ok:#6fcf97;--amber:#e0a23c;--void:#e06c6c}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:17px;line-height:1.62}
+a{color:var(--gold);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:#f0d98a}
+a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;background:var(--panel);padding:8px 12px;z-index:99}
+.bar{position:relative;z-index:5;display:flex;justify-content:space-between;align-items:baseline;gap:18px;flex-wrap:wrap;max-width:1120px;margin:0 auto;padding:20px 24px 0}
+.mark{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:20px;text-decoration:none;color:var(--ink);letter-spacing:-.3px}.mark i{color:var(--gold)}
+.bar nav{display:flex;gap:20px;flex-wrap:wrap;font-size:14.5px}
+.bar nav a{text-decoration:none;color:var(--soft)}.bar nav a:hover{color:var(--ink)}
+/* hero: a dark field of figures; the pointer carries the light */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--rule);--x:50%;--y:38%}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(640px circle at var(--x) var(--y),rgba(200,168,75,.24),rgba(200,168,75,.07) 40%,transparent 68%);pointer-events:none;transition:background .08s linear}
+.field{position:absolute;inset:0}
+.fig{position:absolute;left:var(--dx);top:var(--dy);transform:translate(-50%,-50%);background:none;border:0;cursor:pointer;font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:clamp(20px,3.1vw,44px);letter-spacing:-.5px;color:var(--ink);opacity:calc(.07 + var(--lit,0)*.93);filter:blur(calc((1 - var(--lit,0))*2.2px));transition:opacity .18s linear,filter .18s linear;padding:6px 10px;white-space:nowrap}
+.fig.revised{color:var(--amber)}
+.fig.near::after{content:"";position:absolute;left:10px;right:10px;bottom:2px;height:2px;background:var(--gold)}
+.fig.revised.near::after{background:var(--amber)}
+.hero-in{position:relative;z-index:3;max-width:1120px;margin:0 auto;padding:clamp(70px,13vw,150px) 24px clamp(40px,6vw,70px);pointer-events:none}
+.hero-in>*{pointer-events:auto}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:clamp(36px,5.6vw,70px);line-height:1.03;letter-spacing:-2px;max-width:11.5ch}
+.lede{margin-top:22px;font-size:clamp(17px,1.8vw,19.5px);line-height:1.6;max-width:42ch;color:var(--soft)}
+.lede b{color:var(--ink);font-weight:600}
+.reading{position:relative;z-index:4;max-width:1120px;margin:0 auto;padding:0 24px 30px}
+.reading-box{min-height:92px;border:1px solid var(--rule);background:rgba(14,16,22,.86);backdrop-filter:blur(6px);padding:14px 18px;display:grid;gap:4px}
+.reading-box .hint{color:var(--dim);font-size:15px}
+.reading-box code{font-family:'DM Mono',ui-monospace,monospace;font-size:clamp(12.5px,1.5vw,16px);color:var(--gold);word-break:break-all}
+.reading-box .what{font-size:15.5px;color:var(--ink)}
+.tag{display:inline-block;font-size:12.5px;font-weight:700;padding:1px 8px 2px;border:1.5px solid currentColor;border-radius:3px;margin-right:8px;transform:rotate(-1deg)}
+.tag.current,.tag.computed{color:var(--ok)}.tag.restated{color:var(--ink)}.tag.revised{color:var(--amber)}
+main{max-width:1120px;margin:0 auto;padding:0 24px 80px}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:clamp(25px,3.2vw,36px);line-height:1.12;letter-spacing:-.8px;margin:86px 0 14px;max-width:24ch}
+p{max-width:66ch;color:var(--soft)}p b,td b{color:var(--ink)}p+p{margin-top:12px}
+.check{margin:34px 0 0;background:var(--panel);border:1px solid rgba(200,168,75,.35);padding:22px;max-width:780px}
+.check label{display:block;font-weight:600;margin-bottom:8px;color:var(--ink)}
+.check .row{display:flex;gap:10px;flex-wrap:wrap}
+.check input{flex:1 1 320px;font:500 15px 'DM Mono',ui-monospace,monospace;padding:12px;border:1px solid rgba(255,255,255,.22);background:#06070a;color:var(--ink);min-width:0}
+.check input::placeholder{color:var(--dim)}
+.check button{font:700 16px 'DM Sans',sans-serif;padding:12px 22px;background:var(--gold);color:#08090c;border:0;cursor:pointer}
+.check button:hover{background:#e3c66a}
+.check small{display:block;margin-top:10px;color:var(--soft);font-size:14px}
+.roll{list-style:none;margin:26px 0 0;border-top:1px solid var(--gold)}
+.rc{padding:16px 0 14px;border-bottom:1px dashed var(--rule)}
+.rc-line code{font-family:'DM Mono',ui-monospace,monospace;font-size:clamp(12.5px,1.6vw,17px);color:var(--ink);word-break:break-all}
+.rc-meta{display:flex;gap:12px;flex-wrap:wrap;align-items:baseline;margin-top:8px;font-size:15px;color:var(--soft)}
+.rc-meta a{white-space:nowrap}
+.stamp{font-weight:700;font-size:12.5px;padding:1px 8px 2px;border:1.5px solid currentColor;border-radius:3px;transform:rotate(-1.2deg);display:inline-block}
+.computed .stamp{color:var(--ok)}.restated .stamp{color:var(--ink)}.revised .stamp{color:var(--amber)}
+.two{display:grid;grid-template-columns:1fr 1fr;margin-top:26px;border-top:1px solid var(--gold)}
+.two>div{padding:22px 30px 6px 0}.two>div+div{padding-left:30px;border-left:1px solid var(--rule)}
+.two h3{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:22px;margin-bottom:8px;color:var(--ink)}
+.two ul{margin:10px 0 0 18px;color:var(--soft);font-size:16px}
+table{border-collapse:collapse;width:100%;margin-top:22px;font-size:16px}
+th{text-align:left;font-weight:600;font-size:13.5px;color:var(--dim);padding:8px 14px 8px 0;border-bottom:1px solid var(--gold)}
+td{padding:12px 14px 12px 0;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--soft)}
+td:first-child{color:var(--ink)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
+.watch td:nth-child(4){color:var(--amber);font-weight:700}
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,4fr);gap:60px;align-items:start}
+.log{list-style:none;margin-top:18px}.log li{padding:11px 0;border-bottom:1px solid var(--rule);font-size:16px;color:var(--soft)}
+.log time{font-family:'DM Mono',monospace;font-size:13px;color:var(--amber);margin-right:8px}
+.doors{list-style:none;margin-top:22px;border-top:1px solid var(--gold)}
+.doors li{display:grid;grid-template-columns:minmax(0,16rem) 1fr;gap:24px;padding:16px 0;border-bottom:1px solid var(--rule);color:var(--soft)}
+.doors b{font-weight:600;color:var(--ink)}
+.fine{margin-top:90px;padding-top:22px;border-top:1px solid var(--rule);font-size:14.5px;color:var(--dim)}
+.fine .links{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:16px}
+.fine .links a{color:var(--soft)}
+.fine p{max-width:88ch;color:var(--dim)}
+@media(max-width:900px){.hero{display:flex;flex-direction:column}.hero .bar{order:0}.hero-in{order:1;padding-bottom:18px}.field{order:2;position:relative;inset:auto;height:330px;margin:0 8px}.reading{order:3;width:100%}.fig{left:var(--mx);top:calc(var(--my)*.86);font-size:clamp(18px,5.6vw,30px)}h1,.lede{max-width:none}}
+@media(max-width:760px){.two,.split{grid-template-columns:1fr}.two>div+div{padding-left:0;border-left:0;border-top:1px solid var(--rule)}.doors li{grid-template-columns:1fr;gap:4px}td,th{padding-right:10px}.hide-s{display:none}h1{letter-spacing:-1.2px}}
+@media(prefers-reduced-motion:reduce){.fig{--lit:.55 !important;filter:none;transition:none}.hero::before{transition:none}}
+"""
+JS = r"""
+(function(){
+  var hero=document.querySelector('.hero'); if(!hero) return;
+  var figs=[].slice.call(hero.querySelectorAll('.fig')), box=document.getElementById('reading');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches, touched=false, pinned=null, raf=0, px=0, py=0;
+  function show(el){
+    if(!el) return;
+    var s=el.dataset.s, word={current:'Computed, current',restated:'Restated as printed',revised:'Revised by the publisher'}[s]||s;
+    box.innerHTML='<div class="what"><span class="tag '+s+'">'+word+'</span><b>'+el.textContent+'</b> '+el.dataset.l+'</div><code>'+el.dataset.r+'</code>'+
+      '<div><a href="/verify.html?r='+encodeURIComponent(el.dataset.r)+'">Check this receipt</a></div>';
+  }
+  function light(x,y){
+    var r=hero.getBoundingClientRect(); hero.style.setProperty('--x',x+'px'); hero.style.setProperty('--y',y+'px');
+    var best=null,bd=1e9;
+    figs.forEach(function(f){ var b=f.getBoundingClientRect(), cx=b.left+b.width/2-r.left, cy=b.top+b.height/2-r.top, d=Math.hypot(cx-x,cy-y);
+      f.style.setProperty('--lit',Math.max(0,1-d/300).toFixed(3)); f.classList.remove('near'); if(d<bd){bd=d;best=f;} });
+    if(best&&bd<170){ best.classList.add('near'); if(!pinned) show(best); }
+  }
+  if(reduce){ show(figs[0]); }
+  else{
+    hero.addEventListener('pointermove',function(e){ if(e.clientX===0&&e.clientY===0) return; touched=performance.now(); var r=hero.getBoundingClientRect(); px=e.clientX-r.left; py=e.clientY-r.top;
+      if(!raf) raf=requestAnimationFrame(function(){raf=0; light(px,py);}); });
+    // when no pointer is moving (and on phones), the light walks the field by itself so the page explains its own trick
+    var t0=performance.now();
+    (function drift(t){ requestAnimationFrame(drift); if(touched&&performance.now()-touched<3500) return; var r=hero.getBoundingClientRect(), k=(t-t0)/1000, x0=1e9,y0=1e9,x1=0,y1=0;
+      figs.forEach(function(f){ var b=f.getBoundingClientRect(); x0=Math.min(x0,b.left-r.left); y0=Math.min(y0,b.top-r.top); x1=Math.max(x1,b.right-r.left); y1=Math.max(y1,b.bottom-r.top); });
+      light(x0+(x1-x0)*(.5+.42*Math.sin(k*.45)), y0+(y1-y0)*(.5+.4*Math.sin(k*.33+1.3))); })(t0);
+  }
+  figs.forEach(function(f){ f.addEventListener('click',function(){ pinned=f; show(f); });
+    f.addEventListener('focus',function(){ f.style.setProperty('--lit','1'); show(f); }); });
+})();
+"""
 E = html.escape
 
 
@@ -68,6 +175,51 @@ def main():
     dry = J("provenance/release-day-dryrun.json")
     lenders = len(glob.glob(os.path.join(ROOT, "api", "lender", "*.json")))
     states = len(glob.glob(os.path.join(ROOT, "api", "state", "*.json")))
+
+    # the number field in the hero: real figures, each with its receipt; the pointer's light reveals them
+    field = []
+
+    def add(cid, value, label, status="current"):
+        try:
+            c = claim(cid)
+        except FileNotFoundError:
+            return
+        field.append({"v": value, "l": label, "r": c["receipt"], "s": status})
+
+    add("national-fha-denial-rate-2025", f'{nat["rate_pct"]:.1f}%', "of decisioned FHA applications denied, 2025")
+    if va:
+        add("va-national-denial-rate-2025", f'{va_d["national"]["denial_rate_pct"]:.1f}%', "of decisioned VA applications denied, 2025")
+    L = sorted((json.load(open(f, encoding="utf-8")) for f in glob.glob(os.path.join(ROOT, "api", "lender", "*.json"))), key=lambda x: x["denial_rate_pct"])
+    for x in (L[0], L[-1]):
+        add(f"lender-{x['slug']}-2025", f'{x["denial_rate_pct"]:.1f}%', f'{x["lender"].title()[:34]}, FHA denial rate, 2025')
+    for st in ("tx", "ca", "fl", "ny"):
+        try:
+            S = J(f"api/state/{st}.json")
+            add(f"state-{st}-2025", f'{S["denial_rate_pct"]:.1f}%', f'FHA denial rate in {S["state"]}, 2025')
+        except FileNotFoundError:
+            pass
+    oc = J("data/application-outcomes-2025.json")["national"]["outcomes"]
+    add("outcome-withdrawn-2025", f'{oc["withdrawn"]["share_of_acted_pct"]}%', "of FHA applications acted on were withdrawn, 2025")
+    add("outcome-originated-2025", f'{oc["originated"]["share_of_acted_pct"]}%', "of FHA applications acted on were originated, 2025")
+    for d in off:
+        for fid in ("endorsements-count", "purchase-count", "refinance-count", "first-time-homebuyer-pct", "insurance-in-force-end"):
+            f = d["figures"].get(fid)
+            if not f:
+                continue
+            rv = f.get("revised_to") is not None
+            add(f"official-{d['source_id']}-{d['period']}-{fid}", f["display"] + ("%" if fid.endswith("-pct") else ""),
+                f'HUD: {f["description"]}, {f["period"]}' + (f' — later restated as {f["revised_to"]:,}' if rv else ""), "revised" if rv else "restated")
+    field = field[:18]
+    # desktop: the figures live to the right of the headline; phone: in a band of their own under the lede
+    desk = [(60, 17), (77, 12), (92, 20), (66, 30), (84, 33), (58, 44), (74, 47), (91, 45), (64, 60), (81, 61), (94, 70), (57, 73), (72, 75), (87, 82), (48, 14), (50, 86), (67, 88), (40, 90)]
+    phone = [(16, 12), (50, 8), (84, 14), (30, 30), (68, 28), (14, 48), (48, 46), (84, 48), (28, 66), (66, 64), (12, 84), (46, 84), (82, 82), (60, 96), (20, 100), (90, 100), (40, 100), (70, 100)]
+    field_html = "".join(
+        f'<button type="button" class="fig {x["s"]}" style="--dx:{desk[i][0]}%;--dy:{desk[i][1]}%;--mx:{phone[i][0]}%;--my:{phone[i][1]}%" data-r="{E(x["r"])}" data-l="{E(x["l"])}" data-s="{x["s"]}">{E(x["v"])}</button>'
+        for i, x in enumerate(field[:14 if len(field) > 14 else len(field)]))
+    n_rev = sum(1 for d in off for f in d["figures"].values() if f.get("revised_to") is not None)
+    rev_rows = "".join(
+        f'<tr><td>{E(f["description"][0].upper() + f["description"][1:])}</td><td>{E(f["period"])}</td><td class="n">{E(f["display"])}</td><td class="n">{f["revised_to"]:,}</td><td class="hide-s">{E(f.get("revised_in", ""))}</td></tr>'
+        for d in off for f in d["figures"].values() if f.get("revised_to") is not None)
 
     def strip(rc, status, cls, sub):
         return (f'<li class="rc {cls}"><div class="rc-line"><code>{E(rc["receipt"])}</code></div>'
@@ -134,80 +286,39 @@ def main():
 <link rel="icon" href="/favicon.ico">
 <link rel="alternate" type="application/rss+xml" title="FinanceRateCalc Weekly Signal" href="/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Besley:wght@500;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,900&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 {head_extra.strip()}
-<style>
-:root{{--paper:#f2f5f3;--sheet:#fbfcfb;--ink:#14213d;--soft:#4a566e;--rule:#c8d1cc;--ok:#0b6e4f;--amber:#a4580c;--void:#9b1c1c;--wash:#e4ece8}}
-*{{box-sizing:border-box;margin:0;padding:0}}
-html{{-webkit-text-size-adjust:100%}}
-body{{background:var(--paper);color:var(--ink);font-family:'Public Sans',system-ui,sans-serif;font-size:17px;line-height:1.6}}
-a{{color:var(--ink);text-decoration-thickness:1px;text-underline-offset:3px}}
-a:hover{{color:var(--ok)}}
-a:focus-visible,input:focus-visible,button:focus-visible{{outline:3px solid var(--ok);outline-offset:2px}}
-.skip{{position:absolute;left:-999px}}.skip:focus{{left:12px;top:12px;background:var(--sheet);padding:8px 12px;z-index:9}}
-.bar{{display:flex;justify-content:space-between;align-items:baseline;gap:18px;flex-wrap:wrap;max-width:1080px;margin:0 auto;padding:22px 24px 0}}
-.mark{{font-family:'Besley',Georgia,serif;font-weight:700;font-size:20px;text-decoration:none;letter-spacing:-.2px}}
-.bar nav{{display:flex;gap:20px;flex-wrap:wrap;font-size:15px}}
-.bar nav a{{text-decoration:none;color:var(--soft)}}.bar nav a:hover{{color:var(--ink);text-decoration:underline}}
-main{{max-width:1080px;margin:0 auto;padding:0 24px 80px}}
-h1{{font-family:'Besley',Georgia,serif;font-weight:700;font-size:clamp(34px,5.6vw,60px);line-height:1.06;letter-spacing:-1.2px;max-width:17ch;margin:64px 0 22px}}
-.lede{{font-size:clamp(18px,2vw,21px);line-height:1.55;max-width:62ch;color:var(--soft)}}
-.lede b{{color:var(--ink);font-weight:600}}
-h2{{font-family:'Besley',Georgia,serif;font-weight:700;font-size:clamp(24px,3vw,32px);line-height:1.15;letter-spacing:-.5px;margin:84px 0 14px;max-width:26ch}}
-p{{max-width:68ch}}p+p{{margin-top:12px}}
-.roll{{list-style:none;margin:44px 0 0;border-top:2px solid var(--ink)}}
-.rc{{padding:18px 0 16px;border-bottom:1px dashed var(--rule)}}
-.rc-line code{{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:clamp(13px,1.75vw,19px);font-weight:500;word-break:break-all;letter-spacing:-.2px}}
-.rc-meta{{display:flex;gap:14px;flex-wrap:wrap;align-items:baseline;margin-top:8px;font-size:15px;color:var(--soft)}}
-.rc-meta a{{white-space:nowrap}}
-.stamp{{font-weight:600;font-size:13.5px;padding:1px 9px 2px;border:1.5px solid currentColor;border-radius:3px;transform:rotate(-1.2deg);display:inline-block}}
-.computed .stamp{{color:var(--ok)}}.restated .stamp{{color:var(--ink)}}.revised .stamp{{color:var(--amber)}}
-.check{{margin:34px 0 0;background:var(--sheet);border:1px solid var(--rule);padding:22px;max-width:760px}}
-.check label{{display:block;font-weight:600;margin-bottom:8px}}
-.check .row{{display:flex;gap:10px;flex-wrap:wrap}}
-.check input{{flex:1 1 320px;font:500 15px 'IBM Plex Mono',ui-monospace,monospace;padding:12px 12px;border:1.5px solid var(--ink);background:#fff;color:var(--ink);min-width:0}}
-.check button{{font:600 16px 'Public Sans',sans-serif;padding:12px 20px;background:var(--ink);color:#fff;border:0;cursor:pointer}}
-.check button:hover{{background:var(--ok)}}
-.check small{{display:block;margin-top:10px;color:var(--soft);font-size:14px}}
-.two{{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:26px;border-top:2px solid var(--ink)}}
-.two>div{{padding:22px 28px 6px 0}}.two>div+div{{padding-left:28px;border-left:1px solid var(--rule)}}
-.two h3{{font-family:'Besley',Georgia,serif;font-size:21px;margin-bottom:8px}}
-.two ul{{margin:10px 0 0 18px;color:var(--soft);font-size:16px}}
-table{{border-collapse:collapse;width:100%;margin-top:22px;font-size:16px}}
-th{{text-align:left;font-weight:600;font-size:14px;color:var(--soft);padding:8px 14px 8px 0;border-bottom:2px solid var(--ink)}}
-td{{padding:12px 14px 12px 0;border-bottom:1px solid var(--rule);vertical-align:top}}
-td.n,th.n{{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}}
-.split{{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,4fr);gap:56px;align-items:start}}
-.log{{list-style:none;margin-top:18px}}.log li{{padding:11px 0;border-bottom:1px solid var(--rule);font-size:16px}}
-.log time{{font-family:'IBM Plex Mono',monospace;font-size:13.5px;color:var(--amber);margin-right:8px}}
-.doors{{list-style:none;margin-top:22px;border-top:2px solid var(--ink)}}
-.doors li{{display:grid;grid-template-columns:minmax(0,16rem) 1fr;gap:24px;padding:16px 0;border-bottom:1px solid var(--rule)}}
-.doors b{{font-weight:600}}
-.fine{{margin-top:90px;padding-top:22px;border-top:2px solid var(--ink);font-size:15px;color:var(--soft)}}
-.fine .links{{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:16px}}
-.fine p{{max-width:86ch}}
-@media(max-width:760px){{.two,.split{{grid-template-columns:1fr}}.two>div+div{{padding-left:0;border-left:0;border-top:1px solid var(--rule)}}.doors li{{grid-template-columns:1fr;gap:4px}}h1{{margin-top:44px}}td,th{{padding-right:10px}}.hide-s{{display:none}}}}
-@media(prefers-reduced-motion:no-preference){{.rc{{animation:feed .5s ease-out both}}.rc:nth-child(2){{animation-delay:.12s}}.rc:nth-child(3){{animation-delay:.24s}}@keyframes feed{{from{{opacity:0;transform:translateY(-8px)}}to{{opacity:1;transform:none}}}}}}
-</style>
+<style>{CSS}</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="bar"><a class="mark" href="/">FinanceRateCalc</a>
+<div class="hero">
+<div class="bar"><a class="mark" href="/">Finance<i>Rate</i>Calc</a>
 <nav aria-label="Site"><a href="/verify.html">Check a receipt</a><a href="/official-figures.html">Official figures</a><a href="/fha-denial-rates-top-100.html">FHA data</a><a href="/corrections.html">Corrections</a><a href="/mcp-server.html">For AI agents</a><a href="/site-index.html">Index</a></nav></div>
+<div class="field" aria-hidden="false">{field_html}</div>
+<div class="hero-in">
+<h1>Numbers in the dark. Receipts bring the light.</h1>
+<p class="lede">AI systems quote statistics with the wrong month, the wrong denominator, or a value the publisher has since revised. Every figure here carries a <b>receipt</b>: a short code that fixes the number to its source file, its definition and its period. Move the light over a number to read its receipt.</p>
+</div>
+<div class="reading"><div class="reading-box" id="reading" aria-live="polite"><span class="hint">Point at any number in the field. Each one is a real figure from a public record, with the receipt that proves where it came from.</span></div></div>
+</div>
 <main id="main">
-<h1>A receipt for every number taken from the public record.</h1>
-<p class="lede">AI systems quote statistics with the wrong month, the wrong denominator, or a value the publisher has since revised. FinanceRateCalc publishes figures from public records with a <b>receipt</b> attached: a short code that fixes the number to its source file, its definition and its period, and that anyone can check without asking us.</p>
-
-<ul class="roll" aria-label="Three receipts issued by this site">
-{strips}
-</ul>
-
 <form class="check" action="/verify.html" method="get">
 <label for="r">Check a receipt</label>
 <div class="row"><input id="r" name="r" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="⟦FRC:…⟧ paste a receipt from an AI answer or an article" required>
 <button type="submit">Check receipt</button></div>
 <small>The answer is one of: current, superseded by a correction, or not ours. Got a sentence instead of a receipt? <a href="/check-answer.html">Check an AI answer</a>.</small>
 </form>
+
+<h2>Three receipts, as issued</h2>
+<ul class="roll" aria-label="Three receipts issued by this site">
+{strips}
+</ul>
+
+<h2>Revision watch: what the publisher changed without saying so</h2>
+<p>Official reports restate last month&rsquo;s figures beside this month&rsquo;s. When the restated number differs from the one first printed, that is a revision &mdash; and the report does not flag it. We compare every edition with the one before it and record each change on the original receipt. <b>{n_rev} silent revisions</b> found so far.</p>
+<table class="watch"><thead><tr><th>Figure (HUD FHA production report)</th><th>Period</th><th class="n">First printed</th><th class="n">Restated as</th><th class="hide-s">Where</th></tr></thead><tbody>{rev_rows}</tbody></table>
+<p style="margin-top:14px"><a href="/official-figures.html">Every official figure and its revision status</a> &middot; <a href="/data/revisions.json">revisions feed for machines</a></p>
 
 <h2>Two kinds of receipt, and what each one attests</h2>
 <div class="two">
@@ -246,6 +357,7 @@ td.n,th.n{{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap
 <li><b>An AI gave me a number</b><span>Paste the receipt above, or <a href="/check-answer.html">paste the whole answer</a>: we mark what the number carries and what was added.</span></li>
 <li><b>I was denied an FHA loan</b><span><a href="/denial-code-lookup.html">What the reason on your letter means</a> and what to ask the lender in writing. No prediction, no lender pick.</span></li>
 <li><b>I report or research</b><span>The record: <a href="/fha-denial-rates-top-100.html">100 largest FHA lenders</a>, <a href="/fha-denial-rates-by-state.html">every state</a>, <a href="/metro/index.html">metros</a>, <a href="/why-fha-denial-rates-differ.html">why published rates differ</a>, <a href="/methodology.html">method</a>, <a href="/reconciliation.html">how to check us</a>.</li>
+<li><b>I publish statistics</b><span>Put a live receipt next to your own numbers with <a href="/pricing.html">the free badge</a>, or have <a href="/pricing.html">receipts issued for your figures</a>. Want to know how AI systems restate your data? Ask for a <a href="/pricing.html">citation fidelity report</a>.</span></li>
 <li><b>I build agents</b><span><a href="/mcp-server.html">MCP server</a> with {18} tools, <a href="/data-catalog.html">open datasets</a>, <a href="/spec/receipt-1.0.md">the Receipt 1.0 format</a>, <a href="/pricing.html">pricing</a>. Reading is free; the licence is <a href="/license.html">CC BY 4.0</a>.</li>
 </ul>
 
@@ -254,6 +366,7 @@ td.n,th.n{{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap
 <p>Published by Ziya Yeti&#351;, 23 years in bank credit, working independently. No lender, servicer, vendor or AI company funds this site, and it carries no advertising. Figures are historical aggregates from public records: not predictions about any application, not ratings of any lender, not advice. Computed figures have been reproduced by an unaffiliated implementation and not yet by an unaffiliated person; <a href="/reconciliation.html">the specification for checking them is public</a>.</p>
 </div>
 </main>
+<script>{JS}</script>
 </body>
 </html>
 '''

@@ -1054,7 +1054,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.45.1" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.46.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1394,12 +1394,22 @@ const WORKER = {
       // publisher wants it restated: the canonical sentence with its conditions, what the figure does not establish, the
       // correction if any. Nothing promotional; the contract, not the page. Same content as JSON, text or HTML by Accept.
       let teach = null;
+      // v1.46: a figure can be current as first printed and still have been changed by its publisher in a later edition
+      // (official restatements). The claim document records that outside the hashed claim; whoever verifies is told.
+      let publisherRevision = null, docAttribution = null;
+      if (!id.startsWith("rule-")) {
+        try { const P = await getJSON(`/claims/${id}.json`);
+          docAttribution = P.attribution && P.attribution.required_text;
+          if (P.revision_status && P.revision_status.revised_to != null) publisherRevision = { revised_to: P.revision_status.revised_to, revised_in: P.revision_status.revised_in,
+            note: "The receipt is valid for the figure as first printed. The publisher restated this figure with a different value in a later edition without marking the change.", feed: BASE + "/data/revisions.json" };
+        } catch {}
+      }
       if (!id.startsWith("rule-")) {
         try {
           const K = await getJSON(`/claims/${id}.contract.json`);
           const tmpl = K.canonical_claim && K.canonical_claim.template;
           teach = { canonical_sentence: tmpl ? tmpl.replace("{value}", current) : null, required_qualifiers: K.required_qualifiers || null,
-            does_not_establish: K.does_not_establish || null, attribution: "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.",
+            does_not_establish: K.does_not_establish || null, attribution: docAttribution || "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only.",
             restate_rule: "State the figure with its period, population and program as in canonical_sentence, and keep the receipt next to the number. Do not turn it into a prediction about one application, a lender recommendation, a cause, or a legal conclusion." };
         } catch {}
       }
@@ -1411,11 +1421,13 @@ const WORKER = {
         corrections: "https://financeratecalc.com/corrections.html", license: "CC BY 4.0",
         transparency: { note: "The snapshot of every claim's value and hash is signed with Sigstore by the publisher's repository workflow and timestamped in the public Rekor log; verify the receipt against it without this server.",
           snapshot: "https://financeratecalc.com/rl-env/frc_citation/receipts-snapshot.json", bundle: "https://financeratecalc.com/transparency/receipts-snapshot.sigstore.json", log: "https://financeratecalc.com/transparency/log.json" },
+        ...(publisherRevision ? { publisher_revision: publisherRevision } : {}),
         ...(teach ? { teach } : {}) };
       if (wantsText || wantsHtml) {
         const esc = x => String(x == null ? "" : x).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
         const lines = [
           `Receipt: ${RESP.receipt}`, `Status: ${status}` + (hashRule ? ` (hash rule ${hashRule})` : ""), `Claim: ${id}`, `Quoted value: ${value}`, `Current value: ${current}`,
+          ...(publisherRevision ? [`Publisher revision: restated as ${publisherRevision.revised_to} in the ${publisherRevision.revised_in}; the report does not mark the change.`] : []),
           ...(correction && correction.date ? [`Correction: ${correction.date} - ${correction.title} (${correction.old_value} -> ${correction.new_value}) ${correction.url}`] : []),
           ...(teach && teach.canonical_sentence ? ["", "Restate it as:", teach.canonical_sentence, "", `Keep: ${Object.entries(teach.required_qualifiers || {}).map(([k, v]) => k + " = " + v).join("; ")}`,
             "", "This figure does not establish:", ...(teach.does_not_establish || []).map(x => "- " + x), "", teach.attribution, teach.restate_rule] : []),
