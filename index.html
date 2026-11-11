@@ -1,743 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>FinanceRateCalc — FHA Denial Data From the Federal Record</title>
-<meta name="description" content="FinanceRateCalc publishes FHA mortgage denial statistics computed from the complete 2025 US federal record — 1,187,606 decisioned applications, 100 lenders, 319 metro areas. Free, open data, published methodology, no ads and no lender funding.">
-<link rel="license" type="application/rsl+xml" href="https://financeratecalc.com/rsl.xml">
-<link rel="canonical" href="https://financeratecalc.com/">
-<link rel="icon" href="/favicon.ico">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT',{traffic_class:(function(){try{if(navigator.webdriver)return'automation';var r=document.referrer,q=location.search,t=Intl.DateTimeFormat().resolvedOptions().timeZone||'',u=navigator.userAgent||'',m=/Chrome\/(\d+)/.exec(u);if(!r&&!q&&/^Asia\/(Shanghai|Singapore|Hong_Kong)$/.test(t)&&m&&(+m[1]<120||!navigator.userAgentData))return'fetcher';return'reader'}catch(e){return'reader'}})()});</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://financeratecalc.com/#org", "name": "FinanceRateCalc", "alternateName": ["FRC", "FRC Research", "Finance Rate Calc"], "url": "https://financeratecalc.com/", "email": "press@financeratecalc.com", "description": "Independent publisher of mortgage denial statistics computed from the complete US federal HMDA record. Not a lender, no lender compensation, no advertising.", "foundingDate": "2026-03", "founder": {"@type": "Person", "name": "Ziya Yeti\u015f"}, "knowsAbout": ["FHA mortgage denial rates", "Home Mortgage Disclosure Act", "mortgage lending", "housing finance", "open data"], "sameAs": ["https://huggingface.co/FinanceRateCalc", "https://chromewebstore.google.com/detail/jbmifambbepjmamkjhpapckjobfchlod", "https://github.com/financeratecalc", "https://doi.org/10.5281/zenodo.21575105", "https://zenodo.org/communities/", "https://www.activerain.com/"], "publishingPrinciples": "https://financeratecalc.com/methodology.html", "correctionsPolicy": "https://financeratecalc.com/corrections.html", "ethicsPolicy": "https://financeratecalc.com/license.html"}, {"@type": "WebSite", "@id": "https://financeratecalc.com/#website", "url": "https://financeratecalc.com/", "name": "FinanceRateCalc", "alternateName": "FRC", "publisher": {"@id": "https://financeratecalc.com/#org"}, "inLanguage": "en-US", "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": "https://financeratecalc.com/fha-denial-rates-by-metro.html?q={search_term_string}"}, "query-input": "required name=search_term_string"}}]}</script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'DM Sans',sans-serif;background:#060d1f;background-image:radial-gradient(1300px 750px at 78% -6%, rgba(200,168,75,0.20), transparent 58%),radial-gradient(1000px 620px at -8% 52%, rgba(59,130,246,0.10), transparent 55%),linear-gradient(180deg, rgba(200,168,75,0.05), transparent 240px);background-attachment:fixed;color:#fff;-webkit-font-smoothing:antialiased;}
-
-/* LOGO — flowing gradient sweep */
-@keyframes logowave{
-  0%  {background-position:0% 50%}
-  50% {background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
-@keyframes charrise{
-  0%,100%{transform:translateY(0) scale(1);color:inherit;}
-  50%{transform:translateY(-5px) scale(1.1);}
-}
-.logo{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.3px;}.logo em{font-style:italic;color:#C8A84B;}
-.logo-char{
-  display:inline-block;
-  -webkit-text-fill-color:transparent;
-}
-.logo-char:hover{
-  animation:charrise 0.4s ease-out forwards;
-  -webkit-text-fill-color:transparent;
-}
-
-/* HEADER */
-header{background:rgba(8,9,12,0.97);padding:0 40px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(12px);}
-.logo{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.5px;}
-.logo .em{color:#c8a44a;}
-
-/* DROPDOWN NAV */
-.nav{display:flex;align-items:center;gap:4px;}
-.nav-item{position:relative;}
-.nav-btn{padding:7px 14px;border-radius:7px;font-size:13px;color:rgba(255,255,255,0.8);text-decoration:none;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
-.nav-btn:hover,.nav-btn:focus{background:rgba(255,255,255,0.08);color:#fff;}
-.nav-btn svg{opacity:0.5;transition:transform 0.2s;}
-.nav-item:hover .nav-btn svg{transform:rotate(180deg);opacity:1;}
-.dropdown{position:absolute;top:calc(100% + 8px);left:0;background:#111318;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:8px;min-width:220px;opacity:0;pointer-events:none;transform:translateY(-6px);transition:all 0.18s;z-index:200;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
-.nav-item:hover .dropdown{opacity:1;pointer-events:all;transform:translateY(0);}
-.dropdown a{display:block;padding:8px 12px;border-radius:7px;font-size:13px;color:rgba(255,255,255,0.75);text-decoration:none;transition:all 0.12s;}
-.dropdown a:hover{background:rgba(255,255,255,0.07);color:#fff;}
-.dropdown-sep{height:1px;background:rgba(255,255,255,0.07);margin:6px 0;}
-.dropdown-label{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.66);padding:6px 12px 2px;font-weight:700;}
-.nav-cta{padding:8px 18px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:8px;font-size:13px;font-weight:800;text-decoration:none;margin-left:6px;}
-
-/* HERO */
-.hero{padding:80px 40px 68px;text-align:center;max-width:780px;margin:0 auto;}
-.hero-eyebrow{font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:22px;}
-.hero h1{font-family:'Fraunces',serif;font-size:clamp(38px,7vw,70px);font-weight:900;letter-spacing:-3px;line-height:0.95;margin-bottom:14px;}
-.hero h1 em{color:#c8a44a;font-style:italic;}
-.hero-sub{font-size:18px;color:rgba(255,255,255,0.78);line-height:1.7;max-width:540px;margin:0 auto 36px;}
-.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-.btn-primary{padding:15px 30px;background:linear-gradient(135deg,#c8a44a,#f0d060);color:#08090c;border-radius:10px;font-weight:800;font-size:15px;text-decoration:none;}
-.btn-secondary{padding:15px 30px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);color:#fff;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;}
-
-/* STATS */
-.stats{display:flex;justify-content:center;gap:0;border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07);}
-.stat{padding:22px 40px;text-align:center;border-right:1px solid rgba(255,255,255,0.07);}
-.stat:last-child{border-right:none;}
-.stat-val{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:#fff;}
-.stat-lbl{font-size:13px;color:var(--ink-3);margin-top:3px;}
-
-/* OFI STRIP */
-.ofi-strip{background:rgba(200,164,74,0.06);border-bottom:1px solid rgba(200,164,74,0.12);padding:11px 40px;display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap;}
-.ofi-item{font-size:13px;display:flex;align-items:center;gap:7px;}
-.ofi-label{color:var(--ink-3);}
-.ofi-val{font-weight:800;}
-.live-dot{width:7px;height:7px;border-radius:50%;background:#6bffb8;display:inline-block;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-
-/* TOOLS */
-.section{padding:64px 40px;max-width:1060px;margin:0 auto;}
-.section-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-4);font-weight:700;margin-bottom:22px;text-align:center;}
-.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-.tool-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:28px;text-decoration:none;display:block;transition:all 0.2s;}
-.tool-card:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.18);transform:translateY(-2px);}
-.tool-card.featured{border-color:rgba(200,164,74,0.35);background:rgba(200,164,74,0.05);}
-.tool-tag{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;font-weight:700;margin-bottom:10px;}
-.tool-name{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:8px;line-height:1.15;}
-.tool-desc{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:16px;}
-.tool-arrow{font-size:13px;font-weight:700;}
-
-/* MORE */
-.more-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:14px;}
-.more-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;text-decoration:none;transition:all 0.15s;}
-.more-card:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.14);}
-.more-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;}
-.more-desc{font-size:13px;color:var(--ink-3);line-height:1.5;}
-
-/* RESEARCH */
-.research-bar{background:linear-gradient(135deg,#0a1020,#0d1530);border-top:1px solid rgba(107,107,255,0.15);border-bottom:1px solid rgba(107,107,255,0.15);padding:44px 40px;}
-.research-inner{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;}
-.research-left h2{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:8px;}
-.research-left p{font-size:15px;color:rgba(255,255,255,0.6);line-height:1.7;}
-.research-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
-.r-link{padding:8px 16px;border-radius:7px;font-size:13px;font-weight:700;text-decoration:none;border:1px solid;}
-
-/* TRUST */
-.trust{padding:48px 40px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
-.trust p{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px;}
-.trust-items{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;}
-.trust-item strong{color:#fff;display:block;font-size:15px;margin-bottom:3px;}
-.trust-item span{font-size:13px;color:var(--ink-3);}
-
-/* GUIDES */
-.guides{padding:40px;border-top:1px solid rgba(255,255,255,0.06);}
-.guides-inner{max-width:1060px;margin:0 auto;}
-.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
-.pill{padding:8px 18px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:20px;font-size:13px;color:rgba(255,255,255,0.78);text-decoration:none;transition:all 0.15s;}
-.pill:hover{background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.18);}
-.pill.green{background:rgba(107,255,184,0.07);border-color:rgba(107,255,184,0.2);color:rgba(107,255,184,0.85);}
-
-/* FOOTER */
-footer{background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0.07);padding:28px 40px;}
-.footer-inner{max-width:1060px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
-.footer-links{display:flex;gap:18px;flex-wrap:wrap;}
-.footer-links a{font-size:13px;color:var(--ink-3);text-decoration:none;}
-.footer-links a:hover{color:rgba(200,164,74,0.8);}
-.footer-copy{font-size:13px;color:var(--ink-4);}
-
-/* COUNTER ANIMATION */
-@keyframes countup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.stat-val{animation:countup 0.8s ease-out forwards;}
-
-@media(max-width:800px){
-  header{padding:0 16px;}
-  .nav .nav-item:not(:last-child){display:none;}
-  .hero{padding:52px 20px 48px;}
-  .stats{overflow-x:auto;justify-content:flex-start;}
-  .stat{min-width:120px;}
-  .ofi-strip{padding:10px 16px;gap:14px;}
-  .section{padding:44px 16px;}
-  .tools-grid{grid-template-columns:1fr;}
-  .research-bar{padding:32px 20px;}
-  .research-inner{grid-template-columns:1fr;}
-  .trust{padding:36px 20px;}
-  .guides{padding:32px 20px;}
-  footer{padding:22px 16px;}
-  .footer-inner{flex-direction:column;align-items:flex-start;}
-}
-
-/* ===== FRC DESIGN SYSTEM (added: type scale + color tokens) ===== */
-:root{
-  --fs-micro:11px; --fs-small:13px; --fs-body:15px; --fs-lead:18px;
-  --fs-h3:20px; --fs-h2:28px; --fs-h1:40px;
-  --ink:#fff; --ink-2:rgba(255,255,255,.72); --ink-3:rgba(255,255,255,.5); --ink-4:rgba(255,255,255,.34);
-  --gold:#C8A84B; --gold-soft:rgba(200,168,75,.62); --coral:#e8845a;
-  --line:rgba(255,255,255,.09); --panel:rgba(255,255,255,.025);
-  --sp-1:8px; --sp-2:16px; --sp-3:26px; --sp-4:42px; --sp-5:68px;
-}
-body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
-/* tek tip kart */
-.frc-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;text-decoration:none;display:block;transition:border-color .2s,transform .2s;}
-.frc-card:hover{border-color:rgba(200,168,75,.45);transform:translateY(-2px);}
-.frc-card .t{color:var(--ink);font-weight:800;font-size:var(--fs-small);margin:8px 0 4px;letter-spacing:.01em;}
-.frc-card .d{color:var(--ink-4);font-size:var(--fs-micro);line-height:1.65;}
-.frc-card.is-new{background:rgba(200,168,75,.055);border-color:rgba(200,168,75,.32);}
-.frc-eyebrow{font-size:var(--fs-micro);letter-spacing:.2em;text-transform:uppercase;color:var(--gold-soft);font-weight:700;}
-.frc-rule{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:var(--sp-4) 0;}
-</style>
-<meta property="og:title" content="An FHA Borrower Is Denied Every 2 Minutes">
-<meta property="og:description" content="Observed FHA denial rates differ widely across lenders on the same public record. 2025 HMDA, 1.19M decisions: lender, state and metro statistics with method, corrections log and verifiable receipts.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FinanceRateCalc — receipts for the numbers AI quotes from public records</title>
+<meta name="description" content="FinanceRateCalc issues receipts for numbers from public records: 568 figures, each with a verifiable receipt, a use contract and a corrections history. Computed from the federal HMDA file (FHA 22.1% of 1,187,606 decisions denied in 2025) or restated as printed from official reports. Free, CC BY 4.0, no lender funding.">
+<meta property="og:title" content="Receipts for numbers from public records">
+<meta property="og:description" content="FinanceRateCalc issues receipts for numbers from public records: 568 figures, each with a verifiable receipt, a use contract and a corrections history. Computed from the federal HMDA file (FHA 22.1% of 1,187,606 decisions denied in 2025) or restated as printed from official reports. Free, CC BY 4.0, no lender funding.">
 <meta property="og:url" content="https://financeratecalc.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="FinanceRateCalc">
 <meta property="og:image" content="https://financeratecalc.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@financeratecalc">
-<link rel="alternate" type="application/rss+xml" title="FinanceRateCalc Weekly Signal" href="/feed.xml">
-<meta name="keywords" content="FHA mortgage lender comparison, mortgage denial rate, HMDA 2025, FHA routing tool, mortgage broker intelligence, lender stress index, OFI mortgage">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-<script type="application/ld+json">{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "FRC Research",
-  "url": "https://financeratecalc.com",
-  "description": "FHA mortgage routing intelligence. 8-year CFPB HMDA data. CrossCountry 6.2% vs NewRez 52.8% denial rate (2025 HMDA).",
-  "potentialAction": {"@type":"SearchAction","target":"https://financeratecalc.com/tools.html","query-input":"required name=search_term_string"}
-}</script>
-<style>
-@media (max-width: 768px) {
-  a[style*="linear-gradient"] {
-    padding: 24px !important;
-  }
-  a[style*="linear-gradient"] > div:nth-child(2) {
-    font-size: 15px !important;
-  }
-  a[style*="linear-gradient"] > div:nth-child(3) {
-    font-size:13px !important;
-  }
-}
-</style>
-
-<style>/* FRC-SIGNATURE */
-#frcSpot{position:fixed;inset:0;z-index:-1;pointer-events:none;
-background:radial-gradient(560px 560px at var(--mx,72%) var(--my,18%), rgba(200,168,75,0.13), transparent 62%);}
-.frcTicker{overflow:hidden;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.015);}
-.frcTicker .tk{display:inline-flex;gap:0;white-space:nowrap;animation:frcScroll 46s linear infinite;padding:7px 0;}
-.frcTicker:hover .tk{animation-play-state:paused}
-.frcTicker span{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--ink-3);padding:0 18px;border-right:1px solid rgba(200,168,75,.25);}
-.frcTicker b{color:#C8A84B;font-weight:700}
-@keyframes frcScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.frcPulse{display:inline-flex;align-items:center;gap:9px;margin-top:22px;padding:9px 16px;border:1px solid rgba(233,69,96,.3);border-radius:999px;background:rgba(233,69,96,.06);font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.65);}
-.frcPulse i{width:8px;height:8px;border-radius:50%;background:#e94560;animation:frcBeat 2s ease-out infinite;}
-.frcPulse b{color:#fff;font-weight:700}
-@keyframes frcBeat{0%{box-shadow:0 0 0 0 rgba(233,69,96,.6)}70%{box-shadow:0 0 0 9px rgba(233,69,96,0)}100%{box-shadow:0 0 0 0 rgba(233,69,96,0)}}
-@media(max-width:760px){#frcTerrain{opacity:.28;width:130vw}}
-</style>
+<link rel="license" type="application/rsl+xml" href="https://financeratecalc.com/rsl.xml">
+<link rel="canonical" href="https://financeratecalc.com/">
+<link rel="icon" href="/favicon.ico">
+<link rel="alternate" type="application/rss+xml" title="FinanceRateCalc Weekly Signal" href="/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Besley:wght@500;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT',{traffic_class:(function(){try{if(navigator.webdriver)return'automation';var r=document.referrer,q=location.search,t=Intl.DateTimeFormat().resolvedOptions().timeZone||'',u=navigator.userAgent||'',m=/Chrome\/(\d+)/.exec(u);if(!r&&!q&&/^Asia\/(Shanghai|Singapore|Hong_Kong)$/.test(t)&&m&&(+m[1]<120||!navigator.userAgentData))return'fetcher';return'reader'}catch(e){return'reader'}})()});</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://financeratecalc.com/#org", "name": "FinanceRateCalc", "alternateName": ["FRC", "FRC Research", "Finance Rate Calc"], "url": "https://financeratecalc.com/", "email": "press@financeratecalc.com", "description": "Independent publisher of mortgage denial statistics computed from the complete US federal HMDA record. Not a lender, no lender compensation, no advertising.", "foundingDate": "2026-03", "founder": {"@type": "Person", "name": "Ziya Yeti\u015f"}, "knowsAbout": ["FHA mortgage denial rates", "Home Mortgage Disclosure Act", "mortgage lending", "housing finance", "open data"], "sameAs": ["https://huggingface.co/FinanceRateCalc", "https://chromewebstore.google.com/detail/jbmifambbepjmamkjhpapckjobfchlod", "https://github.com/financeratecalc", "https://doi.org/10.5281/zenodo.21575105", "https://zenodo.org/communities/", "https://www.activerain.com/"], "publishingPrinciples": "https://financeratecalc.com/methodology.html", "correctionsPolicy": "https://financeratecalc.com/corrections.html", "ethicsPolicy": "https://financeratecalc.com/license.html"}, {"@type": "WebSite", "@id": "https://financeratecalc.com/#website", "url": "https://financeratecalc.com/", "name": "FinanceRateCalc", "alternateName": "FRC", "publisher": {"@id": "https://financeratecalc.com/#org"}, "inLanguage": "en-US", "potentialAction": {"@type": "SearchAction", "target": {"@type": "EntryPoint", "urlTemplate": "https://financeratecalc.com/fha-denial-rates-by-metro.html?q={search_term_string}"}, "query-input": "required name=search_term_string"}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "FinanceRateCalc", "url": "https://financeratecalc.com", "description": "Receipts for statistics from public records: every figure carries a verifiable receipt, a use contract and a corrections history. Computed figures from the US federal HMDA record and official figures restated as printed.", "potentialAction": {"@type": "SearchAction", "target": "https://financeratecalc.com/tools.html", "query-input": "required name=search_term_string"}}</script>
 <script src="/assets/ai-referral.js?v=5" defer></script>
-<script type="application/ld+json" id="frc-claims-jsonld">{"@context":"https://schema.org","@graph":[{"@type":"Claim","@id":"https://financeratecalc.com/claims/national-fha-denial-rate-2025.json","name":"fha_denial_rate","text":"In 2025, 22.1% of decisioned FHA applications were denied (actions 1,2,3; loan_type 2).","url":"https://financeratecalc.com/claims/national-fha-denial-rate-2025.json","datePublished":"2026-08-12","author":{"@type":"Organization","name":"FinanceRateCalc","url":"https://financeratecalc.com"},"license":"https://creativecommons.org/licenses/by/4.0/","isBasedOn":"https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025","temporalCoverage":"2025","spatialCoverage":"United States","identifier":[{"@type":"PropertyValue","propertyID":"frc_passport_id","value":"frc:claim:national-fha-denial-rate-2025"},{"@type":"PropertyValue","propertyID":"sha256","value":"13b9b986cadd5354334783289c87dbed27cb0cd7f1532da687a3b4b89f844c90"}],"additionalProperty":[{"@type":"PropertyValue","name":"required_qualifier:period","value":"2025"},{"@type":"PropertyValue","name":"required_qualifier:population","value":"decisioned FHA applications"},{"@type":"PropertyValue","name":"required_qualifier:program_scope","value":"FHA only, not all mortgages"},{"@type":"PropertyValue","name":"does_not_establish","value":"22.1% of ALL US mortgage applications were denied"},{"@type":"PropertyValue","name":"does_not_establish","value":"22.1% applies to purchase-only or refinance-only segments"},{"@type":"PropertyValue","name":"does_not_establish","value":"any individual's denial probability"},{"@type":"PropertyValue","name":"definition","value":"denials (action 3) / decisioned applications (actions 1,2,3), FHA (loan_type 2)"},{"@type":"PropertyValue","name":"unit","value":"share_of_decisioned_applications"},{"@type":"PropertyValue","name":"receipt_verification","value":"https://financeratecalc.com/verify.html"},{"@type":"PropertyValue","name":"contract","value":"https://financeratecalc.com/claims/national-fha-denial-rate-2025.contract.json"}]},{"@type":"Claim","@id":"https://financeratecalc.com/claims/major-lender-span-2025.json","name":"fha_denial_rate_span_major_lenders","text":"Across the top-100 FHA lenders by volume in 2025, lender-level denial rates spanned 1.8%–78.7%.","url":"https://financeratecalc.com/claims/major-lender-span-2025.json","datePublished":"2026-08-12","author":{"@type":"Organization","name":"FinanceRateCalc","url":"https://financeratecalc.com"},"license":"https://creativecommons.org/licenses/by/4.0/","isBasedOn":"https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025","temporalCoverage":"2025","spatialCoverage":"United States","identifier":[{"@type":"PropertyValue","propertyID":"frc_passport_id","value":"frc:claim:major-lender-span-2025"},{"@type":"PropertyValue","propertyID":"sha256","value":"46e8c103bc455ecc0f5fc392b1143775b8b47578cfb2607dc831ea34b1f4f356"}],"additionalProperty":[{"@type":"PropertyValue","name":"required_qualifier:period","value":"2025"},{"@type":"PropertyValue","name":"required_qualifier:universe","value":"top-100 FHA lenders by volume"},{"@type":"PropertyValue","name":"required_qualifier:program_scope","value":"FHA only"},{"@type":"PropertyValue","name":"does_not_establish","value":"all US mortgage lenders fall within 1.8%–78.7%"},{"@type":"PropertyValue","name":"does_not_establish","value":"the span applies outside FHA"},{"@type":"PropertyValue","name":"definition","value":"minimum and maximum lender-level denial rates under the published denominator rule"},{"@type":"PropertyValue","name":"unit","value":"range"},{"@type":"PropertyValue","name":"receipt_verification","value":"https://financeratecalc.com/verify.html"},{"@type":"PropertyValue","name":"contract","value":"https://financeratecalc.com/claims/major-lender-span-2025.contract.json"}]},{"@type":"Claim","@id":"https://financeratecalc.com/claims/door-effect-38pct-2026.json","name":"door_effect_share_of_explained_variation","text":"In 2025 FHA decisions, lender identity was associated with 38.0% of the EXPLAINABLE variation in denial outcomes (McFadden R2 0.171→0.276), on observable federal-record characteristics.","url":"https://financeratecalc.com/claims/door-effect-38pct-2026.json","datePublished":"2026-08-12","author":{"@type":"Organization","name":"FinanceRateCalc","url":"https://financeratecalc.com"},"license":"https://creativecommons.org/licenses/by/4.0/","isBasedOn":"https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025","temporalCoverage":"2025","spatialCoverage":"United States","identifier":[{"@type":"PropertyValue","propertyID":"frc_passport_id","value":"frc:claim:door-effect-38pct-2026"},{"@type":"PropertyValue","propertyID":"sha256","value":"7ee3a792731f10a3efc177de797609617a7a3d27b7e79b7c2966dc4f1d3f2193"}],"additionalProperty":[{"@type":"PropertyValue","name":"required_qualifier:period","value":"2025"},{"@type":"PropertyValue","name":"required_qualifier:population","value":"decisioned FHA applications (859,090)"},{"@type":"PropertyValue","name":"required_qualifier:metric_scope","value":"share of explainable variation"},{"@type":"PropertyValue","name":"required_qualifier:association_not_causation","value":true},{"@type":"PropertyValue","name":"required_qualifier:observable_data_limit","value":"HMDA contains no credit scores"},{"@type":"PropertyValue","name":"does_not_establish","value":"lenders CAUSED 38% of denials"},{"@type":"PropertyValue","name":"does_not_establish","value":"38% of every individual denial is lender-driven"},{"@type":"PropertyValue","name":"does_not_establish","value":"a borrower would be approved by switching lenders"},{"@type":"PropertyValue","name":"does_not_establish","value":"unlawful conduct by any lender"},{"@type":"PropertyValue","name":"definition","value":"McFadden R2 increase from applicant-only model (0.171) to applicant+lender model (0.276); (0.276-0.171)/0.276"},{"@type":"PropertyValue","name":"unit","value":"share_of_explainable_variation"},{"@type":"PropertyValue","name":"receipt_verification","value":"https://financeratecalc.com/verify.html"},{"@type":"PropertyValue","name":"contract","value":"https://financeratecalc.com/claims/door-effect-38pct-2026.contract.json"}]}]}</script>
+<style>
+:root{--paper:#f2f5f3;--sheet:#fbfcfb;--ink:#14213d;--soft:#4a566e;--rule:#c8d1cc;--ok:#0b6e4f;--amber:#a4580c;--void:#9b1c1c;--wash:#e4ece8}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font-family:'Public Sans',system-ui,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--ink);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:var(--ok)}
+a:focus-visible,input:focus-visible,button:focus-visible{outline:3px solid var(--ok);outline-offset:2px}
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;background:var(--sheet);padding:8px 12px;z-index:9}
+.bar{display:flex;justify-content:space-between;align-items:baseline;gap:18px;flex-wrap:wrap;max-width:1080px;margin:0 auto;padding:22px 24px 0}
+.mark{font-family:'Besley',Georgia,serif;font-weight:700;font-size:20px;text-decoration:none;letter-spacing:-.2px}
+.bar nav{display:flex;gap:20px;flex-wrap:wrap;font-size:15px}
+.bar nav a{text-decoration:none;color:var(--soft)}.bar nav a:hover{color:var(--ink);text-decoration:underline}
+main{max-width:1080px;margin:0 auto;padding:0 24px 80px}
+h1{font-family:'Besley',Georgia,serif;font-weight:700;font-size:clamp(34px,5.6vw,60px);line-height:1.06;letter-spacing:-1.2px;max-width:17ch;margin:64px 0 22px}
+.lede{font-size:clamp(18px,2vw,21px);line-height:1.55;max-width:62ch;color:var(--soft)}
+.lede b{color:var(--ink);font-weight:600}
+h2{font-family:'Besley',Georgia,serif;font-weight:700;font-size:clamp(24px,3vw,32px);line-height:1.15;letter-spacing:-.5px;margin:84px 0 14px;max-width:26ch}
+p{max-width:68ch}p+p{margin-top:12px}
+.roll{list-style:none;margin:44px 0 0;border-top:2px solid var(--ink)}
+.rc{padding:18px 0 16px;border-bottom:1px dashed var(--rule)}
+.rc-line code{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:clamp(13px,1.75vw,19px);font-weight:500;word-break:break-all;letter-spacing:-.2px}
+.rc-meta{display:flex;gap:14px;flex-wrap:wrap;align-items:baseline;margin-top:8px;font-size:15px;color:var(--soft)}
+.rc-meta a{white-space:nowrap}
+.stamp{font-weight:600;font-size:13.5px;padding:1px 9px 2px;border:1.5px solid currentColor;border-radius:3px;transform:rotate(-1.2deg);display:inline-block}
+.computed .stamp{color:var(--ok)}.restated .stamp{color:var(--ink)}.revised .stamp{color:var(--amber)}
+.check{margin:34px 0 0;background:var(--sheet);border:1px solid var(--rule);padding:22px;max-width:760px}
+.check label{display:block;font-weight:600;margin-bottom:8px}
+.check .row{display:flex;gap:10px;flex-wrap:wrap}
+.check input{flex:1 1 320px;font:500 15px 'IBM Plex Mono',ui-monospace,monospace;padding:12px 12px;border:1.5px solid var(--ink);background:#fff;color:var(--ink);min-width:0}
+.check button{font:600 16px 'Public Sans',sans-serif;padding:12px 20px;background:var(--ink);color:#fff;border:0;cursor:pointer}
+.check button:hover{background:var(--ok)}
+.check small{display:block;margin-top:10px;color:var(--soft);font-size:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:26px;border-top:2px solid var(--ink)}
+.two>div{padding:22px 28px 6px 0}.two>div+div{padding-left:28px;border-left:1px solid var(--rule)}
+.two h3{font-family:'Besley',Georgia,serif;font-size:21px;margin-bottom:8px}
+.two ul{margin:10px 0 0 18px;color:var(--soft);font-size:16px}
+table{border-collapse:collapse;width:100%;margin-top:22px;font-size:16px}
+th{text-align:left;font-weight:600;font-size:14px;color:var(--soft);padding:8px 14px 8px 0;border-bottom:2px solid var(--ink)}
+td{padding:12px 14px 12px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,4fr);gap:56px;align-items:start}
+.log{list-style:none;margin-top:18px}.log li{padding:11px 0;border-bottom:1px solid var(--rule);font-size:16px}
+.log time{font-family:'IBM Plex Mono',monospace;font-size:13.5px;color:var(--amber);margin-right:8px}
+.doors{list-style:none;margin-top:22px;border-top:2px solid var(--ink)}
+.doors li{display:grid;grid-template-columns:minmax(0,16rem) 1fr;gap:24px;padding:16px 0;border-bottom:1px solid var(--rule)}
+.doors b{font-weight:600}
+.fine{margin-top:90px;padding-top:22px;border-top:2px solid var(--ink);font-size:15px;color:var(--soft)}
+.fine .links{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:16px}
+.fine p{max-width:86ch}
+@media(max-width:760px){.two,.split{grid-template-columns:1fr}.two>div+div{padding-left:0;border-left:0;border-top:1px solid var(--rule)}.doors li{grid-template-columns:1fr;gap:4px}h1{margin-top:44px}td,th{padding-right:10px}.hide-s{display:none}}
+@media(prefers-reduced-motion:no-preference){.rc{animation:feed .5s ease-out both}.rc:nth-child(2){animation-delay:.12s}.rc:nth-child(3){animation-delay:.24s}@keyframes feed{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}}
+</style>
+<script type="application/ld+json" id="frc-claims-jsonld">{"@context":"https://schema.org","@graph":[{"@type":"Claim","@id":"https://financeratecalc.com/claims/national-fha-denial-rate-2025.json","name":"fha_denial_rate","text":"In 2025, 22.1% of decisioned FHA applications were denied (actions 1,2,3; loan_type 2).","url":"https://financeratecalc.com/claims/national-fha-denial-rate-2025.json","datePublished":"2026-08-12","author":{"@type":"Organization","name":"FinanceRateCalc","url":"https://financeratecalc.com"},"license":"https://creativecommons.org/licenses/by/4.0/","isBasedOn":"https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025","temporalCoverage":"2025","spatialCoverage":"United States","identifier":[{"@type":"PropertyValue","propertyID":"frc_passport_id","value":"frc:claim:national-fha-denial-rate-2025"},{"@type":"PropertyValue","propertyID":"sha256","value":"13b9b986cadd5354334783289c87dbed27cb0cd7f1532da687a3b4b89f844c90"}],"additionalProperty":[{"@type":"PropertyValue","name":"required_qualifier:period","value":"2025"},{"@type":"PropertyValue","name":"required_qualifier:population","value":"decisioned FHA applications"},{"@type":"PropertyValue","name":"required_qualifier:program_scope","value":"FHA only, not all mortgages"},{"@type":"PropertyValue","name":"does_not_establish","value":"22.1% of ALL US mortgage applications were denied"},{"@type":"PropertyValue","name":"does_not_establish","value":"22.1% applies to purchase-only or refinance-only segments"},{"@type":"PropertyValue","name":"does_not_establish","value":"any individual's denial probability"},{"@type":"PropertyValue","name":"definition","value":"denials (action 3) / decisioned applications (actions 1,2,3), FHA (loan_type 2)"},{"@type":"PropertyValue","name":"unit","value":"share_of_decisioned_applications"},{"@type":"PropertyValue","name":"receipt_verification","value":"https://financeratecalc.com/verify.html"},{"@type":"PropertyValue","name":"contract","value":"https://financeratecalc.com/claims/national-fha-denial-rate-2025.contract.json"}]},{"@type":"Claim","@id":"https://financeratecalc.com/claims/major-lender-span-2025.json","name":"fha_denial_rate_span_major_lenders","text":"Across the top-100 FHA lenders by volume in 2025, lender-level denial rates spanned 1.8%–78.7%.","url":"https://financeratecalc.com/claims/major-lender-span-2025.json","datePublished":"2026-08-12","author":{"@type":"Organization","name":"FinanceRateCalc","url":"https://financeratecalc.com"},"license":"https://creativecommons.org/licenses/by/4.0/","isBasedOn":"https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025","temporalCoverage":"2025","spatialCoverage":"United States","identifier":[{"@type":"PropertyValue","propertyID":"frc_passport_id","value":"frc:claim:major-lender-span-2025"},{"@type":"PropertyValue","propertyID":"sha256","value":"46e8c103bc455ecc0f5fc392b1143775b8b47578cfb2607dc831ea34b1f4f356"}],"additionalProperty":[{"@type":"PropertyValue","name":"required_qualifier:period","value":"2025"},{"@type":"PropertyValue","name":"required_qualifier:universe","value":"top-100 FHA lenders by volume"},{"@type":"PropertyValue","name":"required_qualifier:program_scope","value":"FHA only"},{"@type":"PropertyValue","name":"does_not_establish","value":"all US mortgage lenders fall within 1.8%–78.7%"},{"@type":"PropertyValue","name":"does_not_establish","value":"the span applies outside FHA"},{"@type":"PropertyValue","name":"definition","value":"minimum and maximum lender-level denial rates under the published denominator rule"},{"@type":"PropertyValue","name":"unit","value":"range"},{"@type":"PropertyValue","name":"receipt_verification","value":"https://financeratecalc.com/verify.html"},{"@type":"PropertyValue","name":"contract","value":"https://financeratecalc.com/claims/major-lender-span-2025.contract.json"}]},{"@type":"Claim","@id":"https://financeratecalc.com/claims/door-effect-38pct-2026.json","name":"door_effect_share","text":"In 2025 FHA decisions, lender identity was associated with 38.0% of the EXPLAINABLE variation in denial outcomes (McFadden R2 0.171→0.276), on observable federal-record characteristics.","url":"https://financeratecalc.com/claims/door-effect-38pct-2026.json","datePublished":"2026-08-12","author":{"@type":"Organization","name":"FinanceRateCalc","url":"https://financeratecalc.com"},"license":"https://creativecommons.org/licenses/by/4.0/","isBasedOn":"https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025","temporalCoverage":"2025","spatialCoverage":"United States","identifier":[{"@type":"PropertyValue","propertyID":"frc_passport_id","value":"frc:claim:door-effect-38pct-2026"},{"@type":"PropertyValue","propertyID":"sha256","value":"7ee3a792731f10a3efc177de797609617a7a3d27b7e79b7c2966dc4f1d3f2193"}],"additionalProperty":[{"@type":"PropertyValue","name":"required_qualifier:period","value":"2025"},{"@type":"PropertyValue","name":"required_qualifier:population","value":"decisioned FHA applications (859,090)"},{"@type":"PropertyValue","name":"required_qualifier:metric_scope","value":"share of explainable variation"},{"@type":"PropertyValue","name":"required_qualifier:association_not_causation","value":true},{"@type":"PropertyValue","name":"required_qualifier:observable_data_limit","value":"HMDA contains no credit scores"},{"@type":"PropertyValue","name":"does_not_establish","value":"lenders CAUSED 38% of denials"},{"@type":"PropertyValue","name":"does_not_establish","value":"38% of every individual denial is lender-driven"},{"@type":"PropertyValue","name":"does_not_establish","value":"a borrower would be approved by switching lenders"},{"@type":"PropertyValue","name":"does_not_establish","value":"unlawful conduct by any lender"},{"@type":"PropertyValue","name":"definition","value":null},{"@type":"PropertyValue","name":"unit","value":null},{"@type":"PropertyValue","name":"receipt_verification","value":"https://financeratecalc.com/verify.html"},{"@type":"PropertyValue","name":"contract","value":"https://financeratecalc.com/claims/door-effect-38pct-2026.contract.json"}]}]}</script>
 </head>
 <body>
-<a href="#main" style="position:absolute;left:-9999px;top:0;background:#C8A84B;color:#000;padding:8px 12px;z-index:10000" onfocus="this.style.left='8px'" onblur="this.style.left='-9999px'">Skip to content</a>
+<a class="skip" href="#main">Skip to content</a>
+<div class="bar"><a class="mark" href="/">FinanceRateCalc</a>
+<nav aria-label="Site"><a href="/verify.html">Check a receipt</a><a href="/official-figures.html">Official figures</a><a href="/fha-denial-rates-top-100.html">FHA data</a><a href="/corrections.html">Corrections</a><a href="/mcp-server.html">For AI agents</a><a href="/site-index.html">Index</a></nav></div>
+<main id="main">
+<h1>A receipt for every number taken from the public record.</h1>
+<p class="lede">AI systems quote statistics with the wrong month, the wrong denominator, or a value the publisher has since revised. FinanceRateCalc publishes figures from public records with a <b>receipt</b> attached: a short code that fixes the number to its source file, its definition and its period, and that anyone can check without asking us.</p>
 
-<!-- EMAIL_STRIP -->
-<div id="emailStrip" style="background:rgba(200,168,75,0.08);border-bottom:1px solid rgba(200,168,75,0.2);padding:8px 20px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-size:13px;">
-  <span style="color:rgba(255,255,255,0.6);">FRC Data Alerts — free. When the data moves: which lenders shifted.</span>
-  <form onsubmit="submitEmail(event)" style="display:flex;gap:6px;">
-    <label for="emailInput" style="position:absolute;left:-9999px">Email address for the weekly denial dispatch</label><input type="email" id="emailInput" placeholder="your@email.com" required style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:6px 12px;color:#fff;font-size:13px;width:180px;outline:none;">
-    <button type="submit" style="padding:6px 14px;background:#C8A84B;color:#000;border:none;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;">Subscribe</button>
-    <a href="/privacy.html" style="font-size:11px;color:rgba(255,255,255,0.2);text-decoration:none;">Privacy</a> <button type="button" aria-label="Close this email bar" onclick="document.getElementById('emailStrip').style.display='none';localStorage.setItem('strip_closed','1')" style="background:none;border:none;color:rgba(255,255,255,0.66);cursor:pointer;font-size:15px;line-height:1;">×</button>
-  </form>
+<ul class="roll" aria-label="Three receipts issued by this site">
+<li class="rc computed"><div class="rc-line"><code>⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b⟧</code></div><div class="rc-meta"><span class="stamp">Computed</span><span>262,250 denials of 1,187,606 FHA applications that reached a decision, 2025 federal HMDA record.</span><a href="/verify.html?r=⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b⟧">Check this receipt</a></div></li><li class="rc computed"><div class="rc-line"><code>⟦FRC:va-national-denial-rate-2025:16.1%:32bdf09e⟧</code></div><div class="rc-meta"><span class="stamp">Computed</span><span>115,026 denials of 712,121 VA applications that reached a decision, 2025.</span><a href="/verify.html?r=⟦FRC:va-national-denial-rate-2025:16.1%:32bdf09e⟧">Check this receipt</a></div></li><li class="rc revised"><div class="rc-line"><code>⟦FRC:official-hud-fhaprod-2026-07-refinance-count:22,210:6f3e7c7b⟧</code></div><div class="rc-meta"><span class="stamp">Revised by the publisher</span><span>HUD printed 22,210 refinance loans endorsed in the month for Jul 2026, then restated it as 22,212 one edition later. The report does not mark the change.</span><a href="/verify.html?r=⟦FRC:official-hud-fhaprod-2026-07-refinance-count:22,210:6f3e7c7b⟧">Check this receipt</a></div></li>
+</ul>
+
+<form class="check" action="/verify.html" method="get">
+<label for="r">Check a receipt</label>
+<div class="row"><input id="r" name="r" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="⟦FRC:…⟧ paste a receipt from an AI answer or an article" required>
+<button type="submit">Check receipt</button></div>
+<small>The answer is one of: current, superseded by a correction, or not ours. Got a sentence instead of a receipt? <a href="/check-answer.html">Check an AI answer</a>.</small>
+</form>
+
+<h2>Two kinds of receipt, and what each one attests</h2>
+<div class="two">
+<div><h3>Computed</h3>
+<p>We count the figure ourselves from the complete public file, with published code. The receipt binds the number to the file&rsquo;s hash, the universe and the denominator.</p>
+<ul><li>1,187,606 FHA decisions in 2025; 22.1% denied</li><li>A full rebuild reproduces 8,122 of 8,122 published fields</li><li>An unaffiliated HMDA package arrives at the same counts</li></ul></div>
+<div><h3>Restated as printed</h3>
+<p>An agency published the figure; we compute nothing. The receipt binds the number to the official document&rsquo;s hash, its table and row, its period &mdash; and records when a later edition changes it.</p>
+<ul><li>HUD&rsquo;s monthly FHA production report, 2 editions</li><li>2 figures already revised by the publisher, unmarked in the report</li><li>An endorsement is not an application: the contract says so</li></ul></div>
 </div>
-<script>
-if(localStorage.getItem('strip_closed')||localStorage.getItem('email_subscribed')){
-  var s=document.getElementById('emailStrip');if(s)s.style.display='none';
-}
-function submitEmail(e){
-  e.preventDefault();
-  var em=document.getElementById('emailInput').value;
-  fetch('https://formspree.io/f/mkoewrgp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,source:'lsi_alert_strip',page:location.pathname})});
-  localStorage.setItem('email_subscribed','1');
-  document.getElementById('emailStrip').innerHTML='<span style="color:#C8A84B;font-weight:700;">✓ Subscribed. You&rsquo;ll hear when the data moves.</span>';
-  setTimeout(function(){var s=document.getElementById('emailStrip');if(s)s.style.display='none';},3000);
-}
-</script>
-<header style="height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;background:rgba(6,13,31,0.97);backdrop-filter:blur(8px);z-index:100;">
-  <a href="/index.html" style="font-family:'Fraunces',serif;font-size:15px;font-weight:900;color:#fff;text-decoration:none;">Finance<em style="font-style:italic;color:#C8A84B;">Rate</em>Calc</a>
-  <a href="/tools.html" style="font-size:13px;color:var(--ink-4);text-decoration:none;letter-spacing:.02em;">All tools</a>
-</header>
 
+<h2>What carries a receipt today</h2>
+<table>
+<thead><tr><th>Figures</th><th class="hide-s">How</th><th class="n">Receipts</th><th>Coverage</th></tr></thead>
+<tbody><tr><td><a href="/fha-denial-rates-top-100.html">FHA denial rates and application outcomes</a></td><td class="hide-s">Computed from the 2025 federal HMDA file</td><td class="n">490</td><td>National, 52 states and territories, 98 lenders, metro gaps, <a href="/where-fha-applications-end.html">five outcomes</a></td></tr><tr><td><a href="/va-loan-denial-rates-2025.html">VA denial rates and outcomes</a></td><td class="hide-s">Computed from the same file</td><td class="n">58</td><td>National, every state, five outcomes. USDA and conventional are declared and next.</td></tr><tr><td><a href="/official-figures.html">HUD monthly FHA production figures</a></td><td class="hide-s">Restated as printed from the official report</td><td class="n">20</td><td>2 editions, each bound to the PDF&rsquo;s SHA-256, with revision status against the next edition</td></tr>
+<tr><td><b>All receipts</b></td><td class="hide-s"></td><td class="n"><b>568</b></td><td>One file for machines: <a href="/llms-full.txt">llms-full.txt</a> &middot; signed snapshot in a <a href="/transparency/log.json">public log</a></td></tr></tbody>
+</table>
 
-<div style="max-width:680px;margin:18px auto 0;padding:0 24px;"><a href="/check-answer.html" style="display:flex;gap:14px;align-items:center;justify-content:space-between;border:1px solid rgba(200,168,75,.45);border-radius:12px;padding:14px 18px;text-decoration:none;background:rgba(200,168,75,.06);"><span style="text-align:left"><span style="display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,168,75,.8);font-weight:700;margin-bottom:4px;">Was that answer right?</span><span style="display:block;font-size:15px;color:#fff;font-weight:700;">Paste an AI answer about FHA denials or mortgage rules. We mark what the number carries and what was added.</span><span style="display:block;font-size:12px;color:rgba(255,255,255,.45);margin-top:3px;">No model. Receipts, corrections and dated rule tables only.</span></span><span style="font-size:22px;color:#C8A84B;flex-shrink:0;">&rarr;</span></a></div>
-
-<main id="main" style="max-width:680px;margin:0 auto;padding:88px 24px 96px;text-align:center;">
-
-  <div style="font-size:11px;color:var(--gold-soft);text-transform:uppercase;letter-spacing:.22em;margin-bottom:26px;font-weight:700;">FRC Research · CFPB HMDA 2025</div>
-
-  <h1 style="font-family:'Fraunces',serif;font-size:clamp(30px,5.4vw,46px);font-weight:900;line-height:1.14;letter-spacing:-.015em;margin-bottom:34px;">An FHA borrower was denied<br>every 2 minutes today.</h1>
-<p style="font-size:14px;color:rgba(255,255,255,.6);margin:-18px 0 30px;line-height:1.6">FHA loans are US home loans insured by the federal government, used mostly by first-time and lower-down-payment buyers. Every lender's FHA decisions are reported to the government under HMDA; this site reads that public record and shows how often each lender said no. Historical counts, not predictions.</p>
-<div id="start" style="text-align:left;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px 20px;margin:0 0 22px;background:rgba(255,255,255,.02)">
-<div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,168,75,.85);font-weight:700;margin-bottom:10px">Start here — three readers, three doors</div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
-<a href="/fha-loan-denied-now-what.html" style="display:block;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;text-decoration:none"><div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">I was denied an FHA loan</div><div style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.5">What the code on your letter means, what to ask the lender in writing, and how often lenders near you said no. No prediction, no lender pick.</div></a>
-<a href="/door-effect.html" style="display:block;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;text-decoration:none"><div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">I'm a journalist or researcher</div><div style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.5">The finding (1.8% to 78.7% across the 100 largest FHA lenders, same program), the <a href="/methodology.html" style="color:rgba(200,168,75,.9)">method</a>, the <a href="/corrections.html" style="color:rgba(200,168,75,.9)">corrections log</a>, and the author's <a href="/press.html" style="color:rgba(200,168,75,.9)">contact</a>.</div></a>
-<a href="/check-answer.html" style="display:block;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;text-decoration:none"><div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">An AI gave me a number</div><div style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.5">Paste the answer. We mark what the number carries, what was added, and whether it is still current.</div></a>
-</div></div>
-<div id="doors" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:0 0 20px;text-align:left">
-<a href="/claims/" style="display:block;border:1px solid rgba(200,168,75,.45);border-radius:12px;padding:14px 16px;text-decoration:none;background:rgba(200,168,75,.04)"><div style="font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase">Use the data</div><div style="color:#f5f2ea;font-weight:700;margin:4px 0 2px">189 claim passports, 5 rule tables, API</div><div style="font-size:13px;color:#cbc7bb;line-height:1.5">Every figure with its universe, period, sha256 and use contract. CC BY 4.0.</div></a>
-<a href="/cite.html" style="display:block;border:1px solid rgba(200,168,75,.45);border-radius:12px;padding:14px 16px;text-decoration:none;background:rgba(200,168,75,.04)"><div style="font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase">Cite or check a sentence</div><div style="color:#f5f2ea;font-weight:700;margin:4px 0 2px">The sentence, the receipt, the attribution</div><div style="font-size:13px;color:#cbc7bb;line-height:1.5">Copy a finding as text, Markdown or BibTeX; a reader verifies the receipt later.</div></a>
-<a href="/use-frc.html" style="display:block;border:1px solid rgba(200,168,75,.45);border-radius:12px;padding:14px 16px;text-decoration:none;background:rgba(200,168,75,.04)"><div style="font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase">Connect an agent</div><div style="color:#f5f2ea;font-weight:700;margin:4px 0 2px">Three lines for Claude Code, Cursor, Codex</div><div style="font-size:13px;color:#cbc7bb;line-height:1.5">MCP server, no auth; missing conditions are asked for, never guessed.</div></a>
+<div class="split">
+<div>
+<h2>We publish our own errors</h2>
+<p>A receipt is only worth something if the publisher admits when a number changes. The log has 26 dated entries; several were found because an AI system quoted a stale copy of ours exactly.</p>
+<ul class="log"><li><time>2026-11-10</time> 80 lender pages still described their denial reasons on the basis the site replaced in September</li><li><time>2026-11-09</time> One answer atom, the reason-fingerprint page and two June research pages still carried pre-correction values, the superseded 63% variance…</li><li><time>2026-11-07</time> The Hugging Face copy of the denial-reason fingerprints was on a basis the site stopped using in September</li></ul>
+<p style="margin-top:14px"><a href="/corrections.html">Read the corrections log</a> &middot; <a href="/corrections.json">feed for machines</a></p>
 </div>
-<div id="provenance" style="border:1px solid #C8A84B;border-radius:12px;padding:14px 18px;background:rgba(200,168,75,.06);margin:18px 0;font-size:14.5px;line-height:1.6">
-<div style="font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase;margin-bottom:8px">Where these numbers come from, and how to check them</div>
-<b style="color:#f5f2ea">Method is published, not proprietary.</b> Denial rate = denied &divide; (originated + approved-not-accepted + denied); FHA forward loans (HMDA <code style="font-family:'DM Mono',monospace;font-size:12px">loan_type = 2</code>), HECM excluded. Every figure carries a machine-readable claim passport with the source hash.
-<div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:8px 14px;font-size:13.5px">
-<a href="https://doi.org/10.2139/ssrn.7309319">Peer-visible method paper (DOI)</a>
-<a href="https://doi.org/10.2139/ssrn.7341481">Eight-year panel (DOI)</a>
-<a href="https://doi.org/10.2139/ssrn.7423798">Measurement boundaries (SSRN)</a>
-<a href="https://doi.org/10.2139/ssrn.7578778">Claim contract (SSRN)</a>
-<a href="/methodology.html">Full methodology</a>
-<a href="/claims/">Claim passports with hashes</a>
-<a href="/reconciliation.html">How our tables reconcile</a>
-<a href="/corrections.html">Public corrections log</a>
-<a href="/null-results.html">What we tested and found nothing</a>
-<a href="/why-fha-denial-rates-differ.html">Why are there several FHA denial rates?</a>
-<a href="/where-fha-applications-end.html">Where FHA applications end (five outcomes)</a>
-<a href="/qualifier-survival.html">Qualifier Survival Index (what AIs keep next to the number)</a>
-<a href="/verdict-2026-09.html">September 2026 verdict</a>
-<a href="/site-index.html">Site index (every page)</a>
+<div>
+<h2>How faithfully AI systems carry our figures</h2>
+<p>11 archived answers that quote us, graded on seven qualifiers: value, period, denominator, program, universe, no added claim, attribution. 1.00 means all seven survived.</p>
+<table><thead><tr><th>Answer engine</th><th class="n">Answers</th><th class="n">Score</th></tr></thead><tbody><tr><td>DeepSeek</td><td class="n">1</td><td class="n">1.00</td></tr><tr><td>ChatGPT</td><td class="n">2</td><td class="n">0.93</td></tr><tr><td>Meta AI</td><td class="n">2</td><td class="n">0.93</td></tr><tr><td>Perplexity</td><td class="n">1</td><td class="n">0.86</td></tr><tr><td>Engine not named</td><td class="n">5</td><td class="n">0.71</td></tr></tbody></table>
+<p style="margin-top:14px"><a href="/qualifier-survival.html">Method and every answer</a> &middot; <a href="/misquotes.html">5 graded misquotes</a></p>
 </div>
-<div style="margin-top:9px;color:#cbc7bb;font-size:13.5px"><b style="color:#f5f2ea">Independent status, stated plainly:</b> this is an independent re-aggregation of the public CFPB HMDA record, not an official CFPB or FFIEC output, and no figure here has yet been independently reproduced. The underlying data is free under CC BY 4.0 so that anyone can check it. No lender, vendor or AI company funds this work.</div></div>
-
-
-  <!-- LIVE COUNTER -->
-  <a href="/denial-clock.html" style="text-decoration:none;display:inline-block;margin-bottom:6px;">
-    <div id="heroCount" style="font-family:'DM Mono',monospace;font-size:clamp(40px,9vw,72px);font-weight:700;color:#e8845a;letter-spacing:0.03em;line-height:1;">—</div>
-  </a>
-  <div style="font-size:13px;color:var(--ink-4);margin-bottom:48px;letter-spacing:.02em;">denied since Jan 1, 2025 · <span style="color:rgba(232,132,90,0.5);">counting live</span> · Source: CFPB HMDA</div>
-
-  <p style="font-size:var(--fs-body);color:var(--ink-3);line-height:1.85;margin-bottom:14px;">Same federal guidelines. Same country.<br>One lender denies 6.37% — another 53.27%.</p>
-  <p style="font-family:'Fraunces',Georgia,serif;font-size:var(--fs-lead);font-weight:900;color:var(--ink);line-height:1.45;margin-bottom:44px;">Observed FHA denial rates differ widely across lenders,<br>on the same public record, in the same year.</p>
-
-  <a href="/evidence-navigator.html" style="display:inline-block;padding:17px 44px;background:var(--gold);color:#0a0a0a;border-radius:12px;font-weight:800;font-size:var(--fs-body);letter-spacing:.01em;box-shadow:0 6px 26px rgba(200,168,75,.18);text-decoration:none;" onclick="if(typeof gtag!=='undefined')gtag('event','home_zai_click')">Explore historical FHA outcomes by lender, state and metro →</a>
-  <div style="font-size:11px;color:var(--ink-4);margin-top:10px;">Free · 60 seconds · no SSN required</div>
-  <div style="margin-top:14px;"><a href="/denial-clock.html" style="font-size:13px;color:var(--ink-4);text-decoration:none;">or watch the full clock →</a></div>
-<div style="max-width:1040px;margin:34px auto 0;display:grid;gap:12px;">
-<div class="frcPulse" style="display:flex;justify-content:center;align-items:center;gap:10px;margin:0;padding:14px 22px;border:1px solid rgba(233,69,96,.3);border-radius:12px;background:rgba(233,69,96,.05);"><i></i>LIVE &middot; One FHA application is denied every 2 minutes &mdash; next in <b id="frcNx">2:00</b></div>
-<a href="/black-hole-report.html" style="display:block;padding:15px 22px;background:rgba(200,168,75,.07);border:1px solid rgba(200,168,75,.35);border-radius:12px;text-decoration:none;text-align:center;font-size:13px;"><span style="color:#fff;font-weight:800;">&#128213; NEW &mdash; The Black Hole Report 2025:</span><span style="color:rgba(255,255,255,.6);"> every lender&rsquo;s 97%+ denial zone, mapped &mdash; and the routes out.</span><span style="color:#C8A84B;font-weight:800;"> $49 &rarr;</span></a>
-<div style="padding:15px 22px;border:1px solid var(--line);border-radius:14px;background:var(--panel);text-align:center;line-height:2;font-size:13px;">
-<a href="/climate.html" style="color:#9ca3af;text-decoration:none;font-weight:800;">&#9679; CLIMATE 54</a><span style="color:rgba(255,255,255,.3);"> &middot;</span> <span style="color:var(--ink-3);font-weight:700;">&#9878; THE DENIAL SUITE:</span>
-<a href="/the-vintage.html" style="color:#C8A84B;text-decoration:none;font-weight:700;"> The Vintage</a><span style="color:rgba(255,255,255,.3);"> (was it the year?) &middot;</span>
-<a href="/fha-loan-denied-now-what.html" style="color:#C8A84B;text-decoration:none;font-weight:700;">The Denial Map →</a><span style="color:rgba(255,255,255,.3);"> (was it the door?) &middot;</span>
-<a href="/the-meter.html" style="color:#C8A84B;text-decoration:none;font-weight:700;"> The Meter</a><span style="color:rgba(255,255,255,.3);"> (what did the market do?) &middot;</span>
-<a href="/pricing.html">Research reports</a></div>
 </div>
-<!-- INTELLIGENCE SUITE -->
-  <section style="max-width:1040px;margin:68px auto 0;padding:0 4px;text-align:left;">
-<div style="font-size:11px;color:var(--gold-soft);letter-spacing:.22em;text-transform:uppercase;font-weight:700;margin-bottom:22px;text-align:center;">Questions nobody else can answer</div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;">
-<a href="https://chromewebstore.google.com/detail/jbmifambbepjmamkjhpapckjobfchlod" target="_blank" rel="noopener" class="frc-card is-new"><div style="font-size:var(--fs-h3);">🧩</div><div class="t">Chrome extension <span style="color:#C8A84B;font-size:11px;letter-spacing:.1em;">NEW</span></div><div class="d">See this metro's FHA denial record while you browse Zillow, Redfin or Realtor.com. Free, no tracking.</div></a><a href="/benchmark-scorecard.html" class="frc-card is-new"><div style="font-size:var(--fs-h3);">🎓</div><div class="t">We put AI systems through an exam: four in July, eight in September <span style="color:#C8A84B;font-size:11px;letter-spacing:.1em;">NEW</span></div><div class="d">Ten frozen questions with verifiable answers. Scores from 33% to 60%. Rubric published before the answers.</div></a><a href="/fha-lenders-approval-rates.html" class="frc-card is-new"><div style="font-size:var(--fs-h3);">✅</div><div class="t">Observed FHA denial rates by lender <span style="color:#C8A84B;font-size:11px;letter-spacing:.1em;">NEW</span></div><div class="d">Not a sponsored list — the 2025 federal record. 98.2% down to 21.3%.</div></a><a href="/fha-denial-rates-by-metro.html" class="frc-card is-new"><div style="font-size:var(--fs-h3);">🗺️</div><div class="t">Denial Rates by Metro <span style="color:#C8A84B;font-size:11px;letter-spacing:.1em;">NEW</span></div><div class="d">319 metros. In Cleveland the doors run 6.4% to 80.1% — inside one city.</div></a><a href="/the-incomplete-wall.html" class="frc-card is-new"><div style="font-size:var(--fs-h3);">🧱</div><div class="t">The Incomplete Wall <span style="color:#C8A84B;font-size:11px;letter-spacing:.1em;">NEW</span></div><div class="d">At two lenders, "incomplete" is 3 of 4 denials. Market median: 1.2%.</div></a><a href="/the-builders-door.html" class="frc-card is-new"><div style="font-size:var(--fs-h3);">🏗️</div><div class="t">The Builder's Door <span style="color:#C8A84B;font-size:11px;letter-spacing:.1em;">NEW</span></div><div class="d">When the builder owns the lender, the house is never the problem. You are.</div></a><a href="/same-lender-different-city.html" class="frc-card is-new"><div style="font-size:var(--fs-h3);">📍</div><div class="t">Same Lender, Different City <span style="color:#C8A84B;font-size:11px;letter-spacing:.1em;">NEW</span></div><div class="d">loanDepot: 13.6% in Boise, 58.4% in Detroit. Same brand, same year.</div></a><a href="/shock-beta.html" class="frc-card"><div style="font-size:var(--fs-h3);">⚡</div><div class="t">Shock Beta</div><div class="d">When rates moved, which desks slammed shut — and which barely blinked?</div></a><a href="/lender-similarity.html" class="frc-card"><div style="font-size:var(--fs-h3);">🔗</div><div class="t">Statistical Twins</div><div class="d">If your lender vanished tomorrow, who reads files exactly like them?</div></a><a href="/lender-response-surface.html" class="frc-card"><div style="font-size:var(--fs-h3);">📊</div><div class="t">3D Decision Surface</div><div class="d">Your DTI sits on a cliff. Rotate the terrain and find the edge.</div></a><a href="/mortgage-correlation-research.html" class="frc-card"><div style="font-size:var(--fs-h3);">📐</div><div class="t">The Findings</div><div class="d">Today's denials predict tomorrow's defaults — two years out (r=0.618).</div></a><a href="/mortgage-dictionary.html" class="frc-card"><div style="font-size:var(--fs-h3);">📖</div><div class="t">Mortgage Dictionary</div><div class="d">Cliffs, genes, black holes — 72 terms the industry never defined.</div></a>
-</div></section>
-<section style="max-width:680px;margin:56px auto 10px;padding:30px 30px 24px;border:1px solid rgba(200,168,75,.22);border-radius:16px;background:rgba(255,255,255,.012);">
-<div style="text-align:center;font-family:'Fraunces',Georgia,serif;font-size:var(--fs-h3);font-weight:900;color:#fff;letter-spacing:.01em;margin-bottom:4px;">The Data Room</div>
-<div style="text-align:center;font-size:11px;color:var(--ink-4);margin-bottom:8px;">the complete 2025 federal record, indexed</div>
-<div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-soft);font-weight:700;margin:22px 0 6px;">Lenders</div>
-<div style="display:flex;align-items:baseline;gap:12px;padding:6px 0;"><a href="/fha-denial-rates-top-100.html" style="color:var(--ink-2);text-decoration:none;white-space:nowrap;font-size:13px;">All 100 lenders, ranked</a><span style="flex:1;border-bottom:1px dotted rgba(200,168,75,.3);transform:translateY(-4px);"></span><span style="font-family:'DM Mono',monospace;color:#C8A84B;font-size:13px;white-space:nowrap;">44&times; spread</span></div>
-<div style="display:flex;align-items:baseline;gap:12px;padding:6px 0;"><a href="/fha-denial-reasons-by-lender.html" style="color:var(--ink-2);text-decoration:none;white-space:nowrap;font-size:13px;">Why each lender says no</a><span style="flex:1;border-bottom:1px dotted rgba(200,168,75,.3);transform:translateY(-4px);"></span><span style="font-family:'DM Mono',monospace;color:#C8A84B;font-size:13px;white-space:nowrap;">the DNA</span></div>
-<div style="display:flex;align-items:baseline;gap:12px;padding:6px 0;"><a href="/fha-rates-vs-denial.html" style="color:var(--ink-2);text-decoration:none;white-space:nowrap;font-size:13px;">Does the soft door cost more?</a><span style="flex:1;border-bottom:1px dotted rgba(200,168,75,.3);transform:translateY(-4px);"></span><span style="font-family:'DM Mono',monospace;color:#C8A84B;font-size:13px;white-space:nowrap;">r = &minus;0.25</span></div>
-<div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-soft);font-weight:700;margin:22px 0 6px;">Geography</div>
-<div style="display:flex;align-items:baseline;gap:12px;padding:6px 0;"><a href="/fha-denial-rates-by-state.html" style="color:var(--ink-2);text-decoration:none;white-space:nowrap;font-size:13px;">All 52 states, ranked</a><span style="flex:1;border-bottom:1px dotted rgba(200,168,75,.3);transform:translateY(-4px);"></span><span style="font-family:'DM Mono',monospace;color:#C8A84B;font-size:13px;white-space:nowrap;">2&times; spread</span></div>
-<div style="display:flex;align-items:baseline;gap:12px;padding:6px 0;"><a href="/fha-lenders-by-state.html" style="color:var(--ink-2);text-decoration:none;white-space:nowrap;font-size:13px;">The door map, 15 biggest markets</a><span style="flex:1;border-bottom:1px dotted rgba(200,168,75,.3);transform:translateY(-4px);"></span><span style="font-family:'DM Mono',monospace;color:#C8A84B;font-size:13px;white-space:nowrap;">state &times; lender</span></div>
-<div style="display:flex;align-items:baseline;gap:12px;padding:6px 0;"><a href="/fha-denial-rates-by-loan-amount.html" style="color:var(--ink-2);text-decoration:none;white-space:nowrap;font-size:13px;">The small-loan penalty</a><span style="flex:1;border-bottom:1px dotted rgba(200,168,75,.3);transform:translateY(-4px);"></span><span style="font-family:'DM Mono',monospace;color:#C8A84B;font-size:13px;white-space:nowrap;">46.9%</span></div>
-<div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-soft);font-weight:700;margin:22px 0 6px;">Proof</div>
-<div style="display:flex;align-items:baseline;gap:12px;padding:6px 0;"><a href="/mortgage-myths-vs-data.html" style="color:var(--ink-2);text-decoration:none;white-space:nowrap;font-size:13px;">Five myths vs. the record</a><span style="flex:1;border-bottom:1px dotted rgba(200,168,75,.3);transform:translateY(-4px);"></span><span style="font-family:'DM Mono',monospace;color:#C8A84B;font-size:13px;white-space:nowrap;">5/5 fail</span></div>
-<div style="display:flex;align-items:baseline;gap:12px;padding:6px 0;"><a href="/ai-vs-the-data.html" style="color:var(--ink-2);text-decoration:none;white-space:nowrap;font-size:13px;">AI vs. the data: the receipt</a><span style="flex:1;border-bottom:1px dotted rgba(200,168,75,.3);transform:translateY(-4px);"></span><span style="font-family:'DM Mono',monospace;color:#C8A84B;font-size:13px;white-space:nowrap;">archived</span></div>
-<div style="display:flex;align-items:baseline;gap:12px;padding:6px 0;"><a href="/answers.html" style="color:var(--ink-2);text-decoration:none;white-space:nowrap;font-size:13px;">Direct answers, citable</a><span style="flex:1;border-bottom:1px dotted rgba(200,168,75,.3);transform:translateY(-4px);"></span><span style="font-family:'DM Mono',monospace;color:#C8A84B;font-size:13px;white-space:nowrap;">23</span></div>
-<div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);font-size:13px;color:var(--ink-3);text-align:center;">Denied? <a href="/fha-loan-denied-now-what.html" style="color:#C8A84B;text-decoration:none;font-weight:700;">Start here: The Denial Map</a> &middot; <a href="/fha-loan-denied-now-what.html" style="color:#C8A84B;text-decoration:none;">The Denial Map →</a> &rarr; <a href="/the-vintage.html" style="color:#C8A84B;text-decoration:none;">your year</a> &rarr; <a href="/the-meter.html" style="color:#C8A84B;text-decoration:none;">today&rsquo;s climate</a><span style="color:var(--ink-4);font-style:italic;"> &mdash; a data point, not a verdict.</span></div>
-</section>
 
+<h2>Where to start</h2>
+<ul class="doors">
+<li><b>An AI gave me a number</b><span>Paste the receipt above, or <a href="/check-answer.html">paste the whole answer</a>: we mark what the number carries and what was added.</span></li>
+<li><b>I was denied an FHA loan</b><span><a href="/denial-code-lookup.html">What the reason on your letter means</a> and what to ask the lender in writing. No prediction, no lender pick.</span></li>
+<li><b>I report or research</b><span>The record: <a href="/fha-denial-rates-top-100.html">100 largest FHA lenders</a>, <a href="/fha-denial-rates-by-state.html">every state</a>, <a href="/metro/index.html">metros</a>, <a href="/why-fha-denial-rates-differ.html">why published rates differ</a>, <a href="/methodology.html">method</a>, <a href="/reconciliation.html">how to check us</a>.</li>
+<li><b>I build agents</b><span><a href="/mcp-server.html">MCP server</a> with 18 tools, <a href="/data-catalog.html">open datasets</a>, <a href="/spec/receipt-1.0.md">the Receipt 1.0 format</a>, <a href="/pricing.html">pricing</a>. Reading is free; the licence is <a href="/license.html">CC BY 4.0</a>.</li>
+</ul>
 
+<div class="fine">
+<div class="links"><a href="/site-index.html">Every page</a><a href="/metro/index.html">Metro pages</a><a href="/stat/index.html">Question pages</a><a href="/city/index.html">City pages</a><a href="/fha-denial-rates-by-lender.html">Lender table</a><a href="/fha-denial-reasons-by-lender.html">Denial reasons</a><a href="/door-effect.html">The door effect</a><a href="/benchmark-scorecard.html">AI benchmark</a><a href="/answers.html">Answers</a><a href="/tools.html">Tools</a><a href="/top-100-pack.html">Top-100 pack</a><a href="/glossary.html">Glossary</a><a href="/data.html">Data</a></div>
+<p>Published by Ziya Yeti&#351;, 23 years in bank credit, working independently. No lender, servicer, vendor or AI company funds this site, and it carries no advertising. Figures are historical aggregates from public records: not predictions about any application, not ratings of any lender, not advice. Computed figures have been reproduced by an unaffiliated implementation and not yet by an unaffiliated person; <a href="/reconciliation.html">the specification for checking them is public</a>.</p>
+</div>
 </main>
-
-<!-- TIMELINE -->
-
-
-<!-- ===== STATE TILE MAP ===== -->
-<section style="max-width:1040px;margin:56px auto 0;padding:0 24px;">
-  <div class="frc-eyebrow" style="text-align:center;margin-bottom:10px;">The map almost nobody publishes free</div>
-  <h2 style="font-family:'Fraunces',Georgia,serif;font-size:var(--fs-h2);font-weight:900;text-align:center;line-height:1.25;margin-bottom:8px;">FHA denial rates, state by state.</h2>
-  <p style="text-align:center;font-size:var(--fs-small);color:var(--ink-4);max-width:540px;margin:0 auto 22px;line-height:1.75;">Utah and Idaho refuse 15.0% of decisioned FHA applications. Hawaii refuses 31.4%. Same federal program &mdash; tap your state.</p>
-  <div id="smapWrap" style="overflow-x:auto;"><div id="smap" style="display:grid;grid-template-columns:repeat(12,minmax(46px,1fr));gap:5px;max-width:700px;margin:0 auto 14px;"></div></div>
-  <div style="display:flex;align-items:center;justify-content:center;gap:12px;font-size:var(--fs-micro);color:var(--ink-4);margin-bottom:10px;">
-    <span>15.0%</span><div style="width:170px;height:7px;border-radius:4px;background:linear-gradient(90deg,#1f9d55,#8fbf3f,#e3c14a,#e8845a,#c0392b);"></div><span>31.4%</span>
-  </div>
-  <div id="smapInfo" style="min-height:58px;text-align:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);">
-    <div style="font-size:var(--fs-small);color:var(--ink-4);">Tap a state for its record &mdash; click through for the full state page</div>
-  </div>
-  <p style="text-align:center;font-size:var(--fs-micro);color:var(--ink-4);margin-top:12px;">CFPB HMDA 2025 &middot; decisioned applications &middot; <a href="/salary-vs-denial-risk-by-state.html" style="color:var(--gold);text-decoration:none;">full table with loan-size splits &rarr;</a></p>
-</section>
-<script>
-(function(){
-var D={"HI": {"r": 31.4, "a": 1228, "s": null, "b": 28.9, "g": [6, 1], "p": "fha-denial-rates-hawaii.html"}, "DC": {"r": 29.6, "a": 722, "s": null, "b": 25.7, "g": [4, 9], "p": "fha-denial-rates-district-of-columbia.html"}, "IL": {"r": 27.5, "a": 33928, "s": 35.1, "b": 23.6, "g": [1, 6], "p": "fha-denial-rates-illinois.html"}, "MI": {"r": 27.4, "a": 32911, "s": 35.8, "b": 21.9, "g": [1, 8], "p": "fha-denial-rates-michigan.html"}, "VT": {"r": 27.4, "a": 1001, "s": 46.5, "b": 21.4, "g": [0, 9], "p": "fha-denial-rates-vermont.html"}, "WI": {"r": 26.5, "a": 12056, "s": 45.6, "b": 19.9, "g": [1, 7], "p": "fha-denial-rates-wisconsin.html"}, "CT": {"r": 26.7, "a": 9374, "s": 54.9, "b": 23.1, "g": [2, 10], "p": "fha-denial-rates-connecticut.html"}, "PA": {"r": 25.6, "a": 36278, "s": 38.9, "b": 19.7, "g": [2, 8], "p": "fha-denial-rates-pennsylvania.html"}, "IA": {"r": 24.9, "a": 8150, "s": 33.7, "b": 20.3, "g": [2, 5], "p": "fha-denial-rates-iowa.html"}, "NY": {"r": 25.3, "a": 21314, "s": 34.5, "b": 23.8, "g": [1, 9], "p": "fha-denial-rates-new-york.html"}, "MS": {"r": 24.8, "a": 13335, "s": 42.0, "b": 16.3, "g": [5, 6], "p": "fha-denial-rates-mississippi.html"}, "DE": {"r": 25.1, "a": 5270, "s": 51.6, "b": 22.3, "g": [3, 10], "p": "fha-denial-rates-delaware.html"}, "GA": {"r": 24.7, "a": 62244, "s": 45.1, "b": 20.8, "g": [5, 8], "p": "fha-denial-rates-georgia.html"}, "LA": {"r": 24.6, "a": 19260, "s": 39.1, "b": 17.5, "g": [5, 5], "p": "fha-denial-rates-louisiana.html"}, "NJ": {"r": 24.9, "a": 24688, "s": 49.3, "b": 22.7, "g": [2, 9], "p": "fha-denial-rates-new-jersey.html"}, "FL": {"r": 24.5, "a": 117742, "s": 48.7, "b": 22.2, "g": [6, 9], "p": "fha-denial-rates-florida.html"}, "MD": {"r": 24.2, "a": 25098, "s": 46.1, "b": 21.8, "g": [3, 9], "p": "fha-denial-rates-maryland.html"}, "ME": {"r": 24.0, "a": 4422, "s": 50.8, "b": 18.4, "g": [0, 10], "p": "fha-denial-rates-maine.html"}, "WV": {"r": 23.6, "a": 6840, "s": 34.0, "b": 15.7, "g": [3, 7], "p": "fha-denial-rates-west-virginia.html"}, "NH": {"r": 23.7, "a": 3399, "s": 63.3, "b": 19.6, "g": [1, 10], "p": "fha-denial-rates-new-hampshire.html"}, "OH": {"r": 23.0, "a": 46317, "s": 32.6, "b": 18.7, "g": [2, 7], "p": "fha-denial-rates-ohio.html"}, "AL": {"r": 22.9, "a": 27715, "s": 39.2, "b": 16.7, "g": [5, 7], "p": "fha-denial-rates-alabama.html"}, "KS": {"r": 22.7, "a": 9004, "s": 33.5, "b": 16.2, "g": [4, 4], "p": "fha-denial-rates-kansas.html"}, "IN": {"r": 22.5, "a": 34392, "s": 33.3, "b": 17.7, "g": [2, 6], "p": "fha-denial-rates-indiana.html"}, "MA": {"r": 22.9, "a": 12621, "s": 59.7, "b": 20.6, "g": [1, 11], "p": "fha-denial-rates-massachusetts.html"}, "NM": {"r": 22.3, "a": 9157, "s": 45.5, "b": 17.4, "g": [4, 3], "p": "fha-denial-rates-new-mexico.html"}, "MN": {"r": 22.1, "a": 13361, "s": 38.2, "b": 18.6, "g": [1, 5], "p": "fha-denial-rates-minnesota.html"}, "NC": {"r": 21.8, "a": 46286, "s": 41.6, "b": 17.6, "g": [4, 7], "p": "fha-denial-rates-north-carolina.html"}, "VA": {"r": 21.8, "a": 30894, "s": 41.2, "b": 18.9, "g": [3, 8], "p": "fha-denial-rates-virginia.html"}, "RI": {"r": 21.8, "a": 3736, "s": null, "b": 19.4, "g": [2, 11], "p": "fha-denial-rates-rhode-island.html"}, "KY": {"r": 21.4, "a": 19082, "s": 34.3, "b": 15.5, "g": [3, 6], "p": "fha-denial-rates-kentucky.html"}, "MT": {"r": 21.4, "a": 3031, "s": 47.7, "b": 16.7, "g": [1, 3], "p": "fha-denial-rates-montana.html"}, "SC": {"r": 21.2, "a": 32368, "s": 40.0, "b": 17.9, "g": [4, 8], "p": "fha-denial-rates-south-carolina.html"}, "AR": {"r": 21.1, "a": 13769, "s": 33.6, "b": 14.6, "g": [4, 5], "p": "fha-denial-rates-arkansas.html"}, "CA": {"r": 21.7, "a": 78246, "s": 53.7, "b": 20.4, "g": [3, 1], "p": "fha-denial-rates-california.html"}, "CO": {"r": 21.6, "a": 23710, "s": 46.3, "b": 20.0, "g": [3, 3], "p": "fha-denial-rates-colorado.html"}, "SD": {"r": 21.1, "a": 2807, "s": 43.4, "b": 15.0, "g": [2, 4], "p": "fha-denial-rates-south-dakota.html"}, "NE": {"r": 20.7, "a": 6024, "s": 38.5, "b": 14.9, "g": [3, 4], "p": "fha-denial-rates-nebraska.html"}, "TN": {"r": 20.5, "a": 35803, "s": 39.6, "b": 15.8, "g": [4, 6], "p": "fha-denial-rates-tennessee.html"}, "MO": {"r": 20.2, "a": 25098, "s": 33.0, "b": 14.4, "g": [3, 5], "p": "fha-denial-rates-missouri.html"}, "OK": {"r": 20.1, "a": 18365, "s": 35.0, "b": 14.9, "g": [5, 4], "p": "fha-denial-rates-oklahoma.html"}, "AZ": {"r": 18.7, "a": 39282, "s": 46.7, "b": 16.2, "g": [4, 2], "p": "fha-denial-rates-arizona.html"}, "AK": {"r": 18.2, "a": 1916, "s": null, "b": 15.3, "g": [0, 0], "p": "fha-denial-rates-alaska.html"}, "WA": {"r": 18.7, "a": 20313, "s": 56.7, "b": 16.5, "g": [1, 1], "p": "fha-denial-rates-washington.html"}, "ND": {"r": 17.8, "a": 2063, "s": 35.3, "b": 13.5, "g": [1, 4], "p": "fha-denial-rates-north-dakota.html"}, "OR": {"r": 18.2, "a": 12568, "s": 53.4, "b": 15.7, "g": [2, 1], "p": "fha-denial-rates-oregon.html"}, "WY": {"r": 17.6, "a": 2911, "s": 37.2, "b": 14.0, "g": [2, 3], "p": "fha-denial-rates-wyoming.html"}, "NV": {"r": 17.7, "a": 15198, "s": 46.8, "b": 15.6, "g": [2, 2], "p": "fha-denial-rates-nevada.html"}, "TX": {"r": 15.7, "a": 129285, "s": 27.0, "b": 14.9, "g": [6, 4], "p": "fha-denial-rates-texas.html"}, "UT": {"r": 15.2, "a": 14689, "s": 53.8, "b": 13.9, "g": [3, 2], "p": "fha-denial-rates-utah.html"}, "ID": {"r": 15.0, "a": 8221, "s": 53.4, "b": 12.0, "g": [1, 2], "p": "fha-denial-rates-idaho.html"}};
-var g=document.getElementById('smap'),info=document.getElementById('smapInfo');
-function col(r){var s=[[14.8,[31,157,85]],[19,[143,191,63]],[22,[227,193,74]],[25,[232,132,90]],[29,[192,57,43]]];
- for(var i=0;i<s.length-1;i++){if(r<=s[i+1][0]){var a=s[i],b=s[i+1],t=(r-a[0])/(b[0]-a[0]);
- return 'rgb('+Math.round(a[1][0]+(b[1][0]-a[1][0])*t)+','+Math.round(a[1][1]+(b[1][1]-a[1][1])*t)+','+Math.round(a[1][2]+(b[1][2]-a[1][2])*t)+')';}}return 'rgb(192,57,43)';}
-var keys=Object.keys(D);
-var maxR=0,maxC=0; keys.forEach(function(k){maxR=Math.max(maxR,D[k].g[0]);maxC=Math.max(maxC,D[k].g[1]);});
-for(var r=0;r<=maxR;r++)for(var c=0;c<=maxC;c++){
-  var st=keys.filter(function(k){return D[k].g[0]===r&&D[k].g[1]===c;})[0];
-  var hasPage=st&&D[st].p;
-  var cell=document.createElement(hasPage?'a':'div'); // 2026-10-24: real links, so the map exists for keyboards and screen readers
-  cell.style.cssText='aspect-ratio:1;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;';
-  if(st){var v=D[st];
-    cell.style.background=col(v.r); cell.style.cursor=v.p?'pointer':'default'; cell.style.transition='transform .15s';
-    if(v.p){ cell.href='/'+v.p; cell.setAttribute('aria-label',st+': FHA denial rate '+v.r+'% in 2025'); (function(code){ cell.onclick=function(){ if(typeof gtag!=='undefined')gtag('event','state_map_click',{state:code}); }; })(st); }
-    var dark=v.r>22.5;
-    cell.innerHTML='<span style="font-size:10px;font-weight:800;color:'+(dark?'rgba(255,255,255,.95)':'rgba(0,0,0,.7)')+'">'+st+'</span>'+
-      '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:'+(dark?'rgba(255,255,255,.9)':'rgba(0,0,0,.65)')+'">'+v.r.toFixed(1)+'</span>';
-    (function(st,v){
-      cell.onmouseenter=cell.ontouchstart=function(){
-        cell.style.transform='scale(1.25)';
-        var pen=(v.s&&v.b)?' Small applications (&lt;$150K) were denied at <b style="color:#fff;">'+v.s.toFixed(1)+'%</b> versus <b style="color:#fff;">'+v.b.toFixed(1)+'%</b> for large ones &mdash; a <b style="color:#fff;">'+(v.s/v.b).toFixed(2)+'&times;</b> penalty.':'';
-        info.innerHTML='<div style="font-weight:800;color:#fff;font-size:var(--fs-body);">'+st+(v.p?' <span style="font-size:var(--fs-micro);color:var(--gold);font-weight:700;">&mdash; click for the full state page</span>':'')+'</div><div style="font-size:var(--fs-small);color:var(--ink-3);margin-top:3px;line-height:1.7;"><b style="color:#fff;">'+v.r.toFixed(1)+'%</b> of '+v.a.toLocaleString()+' decisioned FHA applications were denied in 2025.'+pen+'</div>';
-        if(typeof gtag!=='undefined')gtag('event','state_map_tap',{state:st});
-      };
-      cell.onmouseleave=function(){cell.style.transform='';};
-    })(st,v);
-  }
-  g.appendChild(cell);
-}
-})();
-</script>
-
-<!-- ===== THE WALL OF 100 DOORS ===== -->
-<section style="max-width:1040px;margin:64px auto 0;padding:0 24px;">
-  <div class="frc-eyebrow" style="text-align:center;margin-bottom:10px;">The wall of 100 doors</div>
-  <h2 style="font-family:'Fraunces',Georgia,serif;font-size:var(--fs-h2);font-weight:900;text-align:center;line-height:1.25;margin-bottom:8px;">Every large FHA lender in America, colored by how often it says no.</h2>
-  <p style="text-align:center;font-size:var(--fs-small);color:var(--ink-4);max-width:520px;margin:0 auto 22px;line-height:1.75;">One federal program. One year. 1,187,606 decisions. Hover a door &mdash; or find yours.</p>
-
-  <div style="display:flex;gap:8px;max-width:580px;margin:0 auto 18px;flex-wrap:wrap;justify-content:center;">
-    <select id="wallMetro" style="flex:1 1 220px;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;color:#fff;font-family:inherit;font-size:var(--fs-small);outline:none;cursor:pointer;">
-      <option value="">🇺🇸 United States — 100 largest lenders</option><option value="0">Houston-The Woodlands-Sugar Land, TX</option><option value="1">Atlanta-Sandy Springs-Roswell, GA</option><option value="2">Phoenix-Mesa-Scottsdale, AZ</option><option value="3">Dallas-Plano-Irving, TX</option><option value="4">Riverside-San Bernardino-Ontario, CA</option><option value="5">Chicago-Naperville-Evanston, IL</option><option value="6">Tampa, FL</option><option value="7">Orlando-Kissimmee-Sanford, FL</option><option value="8">San Antonio-New Braunfels, TX</option><option value="9">Charlotte-Concord-Gastonia, NC-SC</option><option value="10">Los Angeles-Long Beach-Glendale, CA</option><option value="11">Denver-Aurora-Lakewood, CO</option><option value="12">Indianapolis-Carmel-Anderson, IN</option><option value="13">Fort Worth-Arlington, TX</option><option value="14">Las Vegas-Henderson-Paradise, NV</option><option value="15">Baltimore-Columbia-Towson, MD</option><option value="16">Nashville-Davidson--Murfreesboro--Franklin, TN</option><option value="17">St. Louis, MO-IL</option><option value="18">Lakeland-Winter Haven, FL</option><option value="19">Cincinnati, OH-KY-IN</option><option value="20">Jacksonville, FL</option><option value="21">Austin-Round Rock, TX</option><option value="22">Kansas City, MO-KS</option><option value="23">Columbus, OH</option><option value="24">Minneapolis-St. Paul-Bloomington, MN-WI</option><option value="25">Cleveland, OH</option><option value="26">Washington, DC-MD</option><option value="27">Warren-Troy-Farmington Hills, MI</option><option value="28">Marietta, GA</option><option value="29">New York-Jersey City-White Plains, NY-NJ</option><option value="30">Virginia Beach-Norfolk-Newport News, VA-NC</option><option value="31">Miami-Miami Beach-Kendall, FL</option><option value="32">Detroit-Dearborn-Livonia, MI</option><option value="33">Cape Coral-Fort Myers, FL</option><option value="34">Arlington-Alexandria-Reston, VA-WV</option><option value="35">Memphis, TN-MS-AR</option><option value="36">Fort Lauderdale-Pompano Beach-Deerfield Beach, FL</option><option value="37">Louisville/Jefferson County, KY-IN</option><option value="38">Pittsburgh, PA</option><option value="39">Sacramento--Roseville--Arden-Arcade, CA</option><option value="40">Richmond, VA</option><option value="41">Philadelphia, PA</option><option value="42">Birmingham-Hoover, AL</option><option value="43">Portland-Vancouver-Hillsboro, OR-WA</option><option value="44">Camden, NJ</option><option value="45">Lakewood-New Brunswick, NJ</option><option value="46">Providence-Warwick, RI-MA</option><option value="47">Newark, NJ-PA</option><option value="48">Greenville-Anderson-Mauldin, SC</option><option value="49">Tucson, AZ</option><option value="50">Raleigh, NC</option><option value="51">Columbia, SC</option><option value="52">Salt Lake City, UT</option><option value="53">Bakersfield, CA</option><option value="54">Deltona-Daytona Beach-Ormond Beach, FL</option><option value="55">North Port-Sarasota-Bradenton, FL</option><option value="56">Charleston-North Charleston, SC</option><option value="57">Knoxville, TN</option><option value="58">West Palm Beach-Boca Raton-Delray Beach, FL</option><option value="59">Albuquerque, NM</option><option value="60">Fresno, CA</option><option value="61">Port St. Lucie, FL</option><option value="62">Ocala, FL</option><option value="63">San Diego-Carlsbad, CA</option><option value="64">Lake County-Porter County-Jasper County, IN</option><option value="65">Spartanburg, SC</option><option value="66">Palm Bay-Melbourne-Titusville, FL</option><option value="67">Tacoma-Lakewood, WA</option><option value="68">Boise City, ID</option><option value="69">Provo-Orem, UT</option><option value="70">Montgomery County-Bucks County-Chester County, PA</option><option value="71">Winston-Salem, NC</option><option value="72">Greensboro-High Point, NC</option><option value="73">Dayton-Kettering, OH</option><option value="74">Allentown-Bethlehem-Easton, PA-NJ</option><option value="75">Huntsville, AL</option><option value="76">Augusta-Richmond County, GA-SC</option><option value="77">Omaha-Council Bluffs, NE-IA</option><option value="78">McAllen-Edinburg-Mission, TX</option><option value="79">New Orleans-Metairie, LA</option><option value="80">Milwaukee-Waukesha-West Allis, WI</option><option value="81">Oakland-Hayward-Berkeley, CA</option><option value="82">Ogden-Clearfield, UT</option><option value="83">Chattanooga, TN-GA</option><option value="84">Stockton-Lodi, CA</option><option value="85">Greeley, CO</option><option value="86">Boston, MA</option><option value="87">Cambridge-Newton-Framingham, MA</option><option value="88">Myrtle Beach-Conway-North Myrtle Beach, SC-NC</option><option value="89">Frederick-Gaithersburg-Rockville, MD</option><option value="90">Elgin, IL</option><option value="91">Pensacola-Ferry Pass-Brent, FL</option><option value="92">Wichita, KS</option><option value="93">Buffalo-Cheektowaga-Niagara Falls, NY</option><option value="94">Savannah, GA</option><option value="95">Worcester, MA-CT</option><option value="96">Reno, NV</option><option value="97">Des Moines-West Des Moines, IA</option><option value="98">Wilmington, NC</option><option value="99">Springfield, MO</option><option value="100">Seattle-Bellevue-Everett, WA</option><option value="101">Gulfport-Biloxi-Pascagoula, MS</option><option value="102">Hagerstown-Martinsburg, MD-WV</option><option value="103">Scranton--Wilkes-Barre--Hazleton, PA</option><option value="104">Montgomery, AL</option><option value="105">Hickory-Lenoir-Morganton, NC</option><option value="106">Toledo, OH</option><option value="107">Youngstown-Warren-Boardman, OH-PA</option><option value="108">Shreveport-Bossier City, LA</option><option value="109">Lexington-Fayette, KY</option><option value="110">Tallahassee, FL</option>
-    </select>
-    <input id="wallSearch" type="text" placeholder="Find your lender…" autocomplete="off" style="flex:1 1 220px;padding:12px 16px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;color:#fff;font-family:inherit;font-size:var(--fs-small);outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='rgba(200,168,75,.6)'" onblur="this.style.borderColor='rgba(255,255,255,.09)'">
-  </div>
-
-  <style>
-#wallMetro option{background:#0d1017;color:#fff;padding:6px;}
-#wallMetro{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%23C8A84B' stroke-width='2' fill='none'/></svg>");background-repeat:no-repeat;background-position:right 14px center;padding-right:34px!important;}
-#wallMetro:focus{border-color:rgba(200,168,75,.6)!important;}
-</style>
-<div id="wallGrid" style="display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-bottom:16px;max-width:520px;margin-left:auto;margin-right:auto;"></div>
-<style>@media(max-width:620px){#wallGrid{grid-template-columns:repeat(5,1fr)!important;gap:4px!important;}#wallGrid .rt{font-size:10px!important;}}
-@keyframes wallIn{from{opacity:0;transform:scale(.4)}to{opacity:.94;transform:scale(1)}}
-#wallGrid > *{animation:wallIn .45s ease-out backwards;}
-#wallGrid .rt{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;line-height:1;letter-spacing:-.02em;}</style>
-
-  <div style="display:flex;align-items:center;justify-content:center;gap:12px;font-size:var(--fs-micro);color:var(--ink-4);margin-bottom:10px;">
-    <span>1.8%</span>
-    <div style="width:180px;height:7px;border-radius:4px;background:linear-gradient(90deg,#1f9d55,#8fbf3f,#e3c14a,#e8845a,#c0392b);"></div>
-    <span>78.7%</span>
-    <span style="margin-left:6px;">denial rate</span>
-  </div>
-
-  <div id="wallInfo" style="min-height:62px;text-align:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);">
-    <div style="font-size:var(--fs-small);color:var(--ink-4);">Hover any door to see its record &middot; click to open its profile</div>
-  </div>
-
-  <p style="text-align:center;font-size:var(--fs-micro);color:var(--ink-4);margin-top:12px;line-height:1.7;">CFPB HMDA 2025 &middot; decisioned applications (actions 1,2,3) &middot; rates partly reflect applicant mix &middot; historical observation, not a prediction &mdash; <a href="/fha-denial-rates-top-100.html" style="color:var(--gold);text-decoration:none;">see the full table &rarr;</a></p>
-</section>
-
-<script>
-(function(){
-  var W=[["FLAT BRANCH MORTGAGE, INC.", 1.8, 4179, "flat-branch-mortgage-fha-denial-rate.html"], ["Lakeview Community Capital", 1.8, 2957, "lakeview-community-capital-fha-denial-rate.html"], ["VANDERBILT MORTGAGE AND FINANCE, INC", 2.7, 2569, "vanderbilt-mortgage-and-finance-fha-denial-rate.html"], ["Highlands Residential Mortgage, Ltd.", 3.0, 2179, "highlands-residential-mortgage-fha-denial-rate.html"], ["ATLANTIC BAY MORTGAGE GROUP", 3.6, 3145, "atlantic-bay-mortgage-group-fha-denial-rate.html"], ["GENEVA FINANCIAL LLC", 3.6, 1968, "geneva-financial-fha-denial-rate.html"], ["VELOCIO MORTGAGE, L.L.C.", 4.0, 3140, "velocio-mortgage-l-l-c-fha-denial-rate.html"], ["NFM, INC", 4.1, 4831, "nfm-fha-denial-rate.html"], ["CANOPY MORTGAGE, LLC", 4.3, 2720, "canopy-mortgage-fha-denial-rate.html"], ["ARK-LA-TEX FINANCIAL SERVICES LLC", 4.6, 4671, "ark-la-tex-financial-services-fha-denial-rate.html"], ["American Neighborhood Mortgage Acceptance Company", 4.6, 3543, "american-neighborhood-mortgage-acceptance-fha-denial-rate.html"], ["DAS ACQUISITION COMPANY, LLC", 4.7, 2592, "das-acquisition-fha-denial-rate.html"], ["V.I.P. MORTGAGE, INC.", 5.0, 1848, ""], ["M/I FINANCIAL. LLC", 5.2, 2603, "m-i-financial-fha-denial-rate.html"], ["Premier Mortgage Resources, LLC", 5.4, 2036, "premier-mortgage-resources-fha-denial-rate.html"], ["TOWNE MORTGAGE COMPANY", 5.5, 3455, "towne-mortgage-fha-denial-rate.html"], ["FIRST COLONY MORTGAGE CORPORAT", 5.6, 2261, "first-colony-mortgage-corporat-fha-denial-rate.html"], ["MOVEMENT MORTGAGE, LLC", 5.8, 14282, "movement-mortgage-fha-denial-rate.html"], ["PARAMOUNT RESIDENTIAL MORTGAGE", 5.8, 7977, "paramount-residential-mortgage-fha-denial-rate.html"], ["CROSSCOUNTRY MORTGAGE, LLC", 6.2, 29582, "crosscountry-fha-denial-rate.html"], ["CMG MORTGAGE INC", 6.2, 16233, "cmg-mortgage-fha-denial-rate.html"], ["Ixonia Bank", 6.7, 2472, "ixonia-bank-fha-denial-rate.html"], ["GUILD MORTGAGE COMPANY", 6.9, 23298, "guild-fha-denial-rate.html"], ["Gold Star Mortgage Financial Group, Corporation", 7.0, 2534, "gold-star-mortgage-financial-group-fha-denial-rate.html"], ["First Heritage Mortgage, LLC", 7.2, 1999, "first-heritage-mortgage-fha-denial-rate.html"], ["GATEWAY FIRST BANK", 7.7, 1973, "gateway-first-bank-fha-denial-rate.html"], ["Luminate Bank", 8.2, 1729, "luminate-bank-fha-denial-rate.html"], ["FAIRWAY INDEPENDENT MORT CORP", 8.3, 17120, "fairway-independent-mort-fha-denial-rate.html"], ["UNION HOME MORTGAGE CORP.", 8.3, 8891, "union-home-mortgage-fha-denial-rate.html"], ["Acrisure Mortgage, LLC", 8.8, 2441, "acrisure-mortgage-fha-denial-rate.html"], ["PRIMELENDING", 9.1, 5782, "primelending-fha-denial-rate.html"], ["Click n' Close, Inc.", 9.2, 5630, "click-n-close-fha-denial-rate.html"], ["T2 FINANCIAL LLC", 9.2, 3081, "t2-financial-fha-denial-rate.html"], ["Ruoff Mortgage Company", 9.4, 3041, "ruoff-mortgage-fha-denial-rate.html"], ["FIRST COMMUNITY MORTGAGE, INC.", 9.5, 3298, "first-community-mortgage-fha-denial-rate.html"], ["EVERETT FINANCIAL, INC.", 10.2, 5337, "everett-financial-fha-denial-rate.html"], ["Ameris Bank", 10.2, 2234, "ameris-bank-fha-denial-rate.html"], ["American Financial Resources LLC", 10.4, 5438, "american-financial-resources-fha-denial-rate.html"], ["OCMBC, INC.", 10.4, 4437, "ocmbc-fha-denial-rate.html"], ["Primary Residential Mortgage, INC.", 10.7, 3050, "primary-residential-mortgage-fha-denial-rate.html"], ["Synergy One Lending, Inc.", 10.8, 2372, "synergy-one-lending-fha-denial-rate.html"], ["The Loan Store, Inc", 10.9, 3619, ""], ["NATIONS LENDING CORPORATION", 11.1, 2424, "nations-lending-fha-denial-rate.html"], ["CARDINAL FINANCIAL COMPANY, LI", 12.0, 6686, "cardinal-financial-li-fha-denial-rate.html"], ["KBHS HOME LOANS, LLC", 12.2, 3918, "kbhs-home-loans-fha-denial-rate.html"], ["ZILLOW HOME LOANS, LLC", 12.4, 2946, "zillow-home-loans-fha-denial-rate.html"], ["American Pacific Mortgage Corporation", 12.8, 8197, "american-pacific-mortgage-fha-denial-rate.html"], ["HOMEAMERICAN MORTGAGE CORPORATION", 12.9, 2106, "homeamerican-mortgage-fha-denial-rate.html"], ["GUARANTEED RATE, INC.", 13.5, 12162, "guaranteed-rate-fha-denial-rate.html"], ["SECURITYNATIONAL MORTGAGE COMPANY", 14.0, 2761, "securitynational-mortgage-fha-denial-rate.html"], ["AmeriHome Mortgage Company, LLC", 14.3, 5371, "amerihome-mortgage-fha-denial-rate.html"], ["Plains Commerce Bank", 14.5, 3650, "plains-commerce-bank-fha-denial-rate.html"], ["Top Flite Financial, Inc.", 15.2, 2281, "top-flite-financial-fha-denial-rate.html"], ["AMERICAN FINANCIAL NETWORK, INC.", 15.3, 6096, "american-financial-network-fha-denial-rate.html"], ["Inspire Home Loans Inc.", 15.7, 3966, "inspire-home-loans-fha-denial-rate.html"], ["STOCKTON MORTGAGE CORPORATION", 16.3, 2992, "stockton-mortgage-fha-denial-rate.html"], ["PLANET HOME LENDING, LLC", 17.8, 7304, "planet-home-fha-denial-rate.html"], ["PROSPERITY HOME MORTGAGE, LLC", 18.1, 4070, "prosperity-home-mortgage-fha-denial-rate.html"], ["FREEDOM MORTGAGE CORPORATION", 19.9, 41095, "freedom-fha-denial-rate.html"], ["SUN WEST MORTGAGE COMPANY, INC", 20.2, 5859, "sun-west-mortgage-fha-denial-rate.html"], ["Equity Prime Mortgage LLC", 20.5, 8792, "equity-prime-mortgage-fha-denial-rate.html"], ["DHI Mortgage Company, LTD.", 20.6, 40378, "dhi-mortgage-fha-denial-rate.html"], ["United Wholesale Mortgage", 21.4, 112470, ""], ["LOWER, LLC", 22.3, 6150, "lower-fha-denial-rate.html"], ["PENNYMAC LOAN SERVICES LLC", 22.9, 32517, "pennymac-fha-denial-rate.html"], ["Lennar Mortgage, LLC", 22.9, 25525, "lennar-mortgage-fha-denial-rate.html"], ["US BANK, N.A.", 23.5, 2596, "us-bank-n-a-fha-denial-rate.html"], ["CALCON MUTUAL MORTGAGE LLC", 24.2, 2013, "calcon-mutual-mortgage-fha-denial-rate.html"], ["LOANUNITED.COM, LLC", 24.8, 2168, "loanunited-com-fha-denial-rate.html"], ["PHH Mortgage Corporation", 25.0, 1673, "phh-mortgage-fha-denial-rate.html"], ["Huntington National Bank", 26.3, 2766, "huntington-national-bank-fha-denial-rate.html"], ["Nationstar Mortgage", 26.5, 7650, ""], ["Pulte Mortgage LLC", 26.8, 4007, "pulte-mortgage-fha-denial-rate.html"], ["TAYLOR MORRISON HOME FUNDING, INC.", 26.8, 2245, "taylor-morrison-home-funding-fha-denial-rate.html"], ["NEW AMERICAN FUNDING, LLC.", 26.9, 25231, "new-american-funding-fha-denial-rate.html"], ["Kind Lending, LLC", 27.6, 10723, "kind-lending-fha-denial-rate.html"], ["ROCKET MORTGAGE", 29.8, 96051, "rocket-fha-denial-rate.html"], ["M&T BANK", 32.6, 2182, "m-t-bank-fha-denial-rate.html"], ["Village Capital & Investment", 33.3, 8725, "village-capital-investment-fha-denial-rate.html"], ["HomeBridge Financial Services, Inc", 33.4, 2096, "homebridge-financial-services-fha-denial-rate.html"], ["NVR MORTGAGE FINANCE, INC.", 34.0, 7354, "nvr-mortgage-finance-fha-denial-rate.html"], ["loanDepot.com LLC", 34.6, 35196, "loandepot-fha-denial-rate.html"], ["GOODLEAP, LLC", 35.5, 4118, "goodleap-fha-denial-rate.html"], ["PLAZA HOME MORTGAGE, INC", 35.8, 6155, "plaza-home-mortgage-fha-denial-rate.html"], ["Mortgage Research Center", 36.2, 4160, "mortgage-research-center-fha-denial-rate.html"], ["AdvantageFirst Lending Inc", 37.6, 3592, "advantagefirst-lending-fha-denial-rate.html"], ["REGIONS BANK", 40.0, 2477, "regions-bank-fha-denial-rate.html"], ["Flagstar Bank NA", 40.7, 2933, "flagstar-bank-fha-denial-rate.html"], ["ENVOY MORTGAGE, LTD", 42.0, 2264, "envoy-mortgage-fha-denial-rate.html"], ["Mutual of Omaha Mortgage", 42.1, 8133, "mutual-of-omaha-mortgage-fha-denial-rate.html"], ["JPMorgan Chase Bank, NA", 42.2, 3035, "jpmorgan-chase-bank-fha-denial-rate.html"], ["WELLS FARGO BANK NA", 48.6, 2525, "wells-fargo-fha-denial-rate.html"], ["Better Mortgage Corporation", 49.4, 2354, "better-mortgage-fha-denial-rate.html"], ["NEWREZ LLC", 52.8, 22790, "newrez-fha-denial-rate.html"], ["Lakeview Loan Servicing, LLC", 57.0, 22734, "lakeview-loan-servicing-fha-denial-rate.html"], ["Carrington Mortgage Services LLC", 58.4, 16051, "carrington-mortgage-services-fha-denial-rate.html"], ["AMERICAN FINANCING CORPORATION", 71.0, 11062, "american-financing-fha-denial-rate.html"], ["AMERISAVE MORTGAGE COMPANY", 78.7, 22944, "amerisave-mortgage-fha-denial-rate.html"]];
-  var METROS=[{"n": "Houston-The Woodlands-Sugar Land, TX", "r": 17.7, "a": 33798, "d": [["loanDepot.com LLC", 16.5, 926], ["United Wholesale Mortgage", 17.2, 3007], ["DHI Mortgage Company, LTD.", 20.1, 3244], ["Lennar Mortgage, LLC", 24.3, 3416], ["ROCKET MORTGAGE", 25.5, 1297]]}, {"n": "Atlanta-Sandy Springs-Roswell, GA", "r": 27.3, "a": 30568, "d": [["FREEDOM MORTGAGE CORPORATION", 21.5, 1331], ["United Wholesale Mortgage", 25.7, 2768], ["ROCKET MORTGAGE", 33.1, 2451], ["loanDepot.com LLC", 35.9, 1082], ["AMERICAN FINANCING CORPORATION", 76.7, 1150]]}, {"n": "Phoenix-Mesa-Scottsdale, AZ", "r": 18.2, "a": 27102, "d": [["Lennar Mortgage, LLC", 13.6, 1011], ["loanDepot.com LLC", 17.9, 1073], ["DHI Mortgage Company, LTD.", 18.0, 1471], ["United Wholesale Mortgage", 18.1, 3778], ["ROCKET MORTGAGE", 27.7, 1511]]}, {"n": "Dallas-Plano-Irving, TX", "r": 17.1, "a": 22533, "d": [["DHI Mortgage Company, LTD.", 16.6, 3503], ["United Wholesale Mortgage", 20.9, 1557], ["ROCKET MORTGAGE", 24.8, 644], ["Lennar Mortgage, LLC", 27.2, 2418], ["loanDepot.com LLC", 27.9, 802]]}, {"n": "Riverside-San Bernardino-Ontario, CA", "r": 21.3, "a": 20759, "d": [["OCMBC, INC.", 3.1, 1183], ["DHI Mortgage Company, LTD.", 16.4, 701], ["loanDepot.com LLC", 21.5, 724], ["United Wholesale Mortgage", 22.1, 3567], ["ROCKET MORTGAGE", 31.2, 1384]]}, {"n": "Chicago-Naperville-Evanston, IL", "r": 30.0, "a": 17591, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 9.0, 692], ["GUARANTEED RATE, INC.", 13.8, 954], ["loanDepot.com LLC", 25.0, 1191], ["United Wholesale Mortgage", 26.0, 1785], ["ROCKET MORTGAGE", 35.2, 1412]]}, {"n": "Tampa, FL", "r": 21.7, "a": 15624, "d": [["Click n' Close, Inc.", 6.1, 736], ["DHI Mortgage Company, LTD.", 13.6, 1154], ["United Wholesale Mortgage", 21.5, 2121], ["Lennar Mortgage, LLC", 24.9, 1163], ["ROCKET MORTGAGE", 28.5, 885]]}, {"n": "Orlando-Kissimmee-Sanford, FL", "r": 24.5, "a": 14863, "d": [["DHI Mortgage Company, LTD.", 16.5, 1098], ["United Wholesale Mortgage", 22.1, 2394], ["Lennar Mortgage, LLC", 30.3, 664], ["ROCKET MORTGAGE", 30.7, 791], ["Lakeview Loan Servicing, LLC", 69.6, 441]]}, {"n": "San Antonio-New Braunfels, TX", "r": 16.3, "a": 14615, "d": [["KBHS HOME LOANS, LLC", 11.9, 530], ["DHI Mortgage Company, LTD.", 15.6, 1474], ["United Wholesale Mortgage", 17.8, 639], ["Lennar Mortgage, LLC", 21.7, 3210]]}, {"n": "Charlotte-Concord-Gastonia, NC-SC", "r": 21.9, "a": 13573, "d": [["MOVEMENT MORTGAGE, LLC", 3.4, 732], ["FREEDOM MORTGAGE CORPORATION", 15.7, 547], ["United Wholesale Mortgage", 21.6, 1169], ["ROCKET MORTGAGE", 25.1, 1357], ["loanDepot.com LLC", 31.9, 881]]}, {"n": "Denver-Aurora-Lakewood, CO", "r": 23.1, "a": 12022, "d": [["GUILD MORTGAGE COMPANY", 5.6, 341], ["United Wholesale Mortgage", 17.9, 1766], ["ROCKET MORTGAGE", 27.1, 539], ["AMERICAN FINANCING CORPORATION", 66.9, 1381]]}, {"n": "Indianapolis-Carmel-Anderson, IN", "r": 23.6, "a": 11921, "d": [["VANDERBILT MORTGAGE AND FINANCE, INC", 4.0, 473], ["FREEDOM MORTGAGE CORPORATION", 16.9, 649], ["United Wholesale Mortgage", 21.9, 927], ["ROCKET MORTGAGE", 33.1, 924], ["Lennar Mortgage, LLC", 33.9, 469]]}, {"n": "Los Angeles-Long Beach-Glendale, CA", "r": 24.9, "a": 11919, "d": [["OCMBC, INC.", 3.3, 912], ["Village Capital & Investment", 16.2, 389], ["PENNYMAC LOAN SERVICES LLC", 21.9, 415], ["United Wholesale Mortgage", 25.7, 2050], ["ROCKET MORTGAGE", 31.6, 1149]]}, {"n": "Fort Worth-Arlington, TX", "r": 16.4, "a": 11396, "d": [["United Wholesale Mortgage", 19.9, 971], ["ROCKET MORTGAGE", 21.9, 429], ["Lennar Mortgage, LLC", 22.4, 595], ["DHI Mortgage Company, LTD.", 23.9, 1395]]}, {"n": "Las Vegas-Henderson-Paradise, NV", "r": 18.1, "a": 11094, "d": [["GUILD MORTGAGE COMPANY", 4.9, 754], ["DHI Mortgage Company, LTD.", 8.7, 576], ["United Wholesale Mortgage", 16.6, 1326], ["loanDepot.com LLC", 23.1, 451], ["ROCKET MORTGAGE", 26.0, 566]]}, {"n": "Baltimore-Columbia-Towson, MD", "r": 23.5, "a": 10842, "d": [["FREEDOM MORTGAGE CORPORATION", 19.2, 563], ["PENNYMAC LOAN SERVICES LLC", 24.3, 399], ["United Wholesale Mortgage", 25.7, 901], ["ROCKET MORTGAGE", 30.1, 830]]}, {"n": "Nashville-Davidson--Murfreesboro--Franklin, TN", "r": 19.3, "a": 10673, "d": [["CMG MORTGAGE INC", 3.1, 579], ["FREEDOM MORTGAGE CORPORATION", 14.3, 470], ["United Wholesale Mortgage", 16.1, 999], ["NVR MORTGAGE FINANCE, INC.", 19.6, 475], ["ROCKET MORTGAGE", 24.5, 775]]}, {"n": "St. Louis, MO-IL", "r": 20.9, "a": 10458, "d": [["GUILD MORTGAGE COMPANY", 7.3, 796], ["NEW AMERICAN FUNDING, LLC.", 16.7, 609], ["FREEDOM MORTGAGE CORPORATION", 16.7, 485], ["United Wholesale Mortgage", 19.0, 546], ["ROCKET MORTGAGE", 27.2, 816]]}, {"n": "Lakeland-Winter Haven, FL", "r": 25.8, "a": 9628, "d": [["United Wholesale Mortgage", 21.7, 1076], ["DHI Mortgage Company, LTD.", 25.3, 910], ["ROCKET MORTGAGE", 27.3, 407], ["Lennar Mortgage, LLC", 33.9, 761], ["loanDepot.com LLC", 35.3, 529]]}, {"n": "Cincinnati, OH-KY-IN", "r": 21.2, "a": 9463, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 6.5, 418], ["UNION HOME MORTGAGE CORP.", 7.2, 348], ["FREEDOM MORTGAGE CORPORATION", 15.4, 428], ["United Wholesale Mortgage", 20.5, 859], ["ROCKET MORTGAGE", 25.8, 859]]}, {"n": "Jacksonville, FL", "r": 22.2, "a": 9252, "d": [["Lennar Mortgage, LLC", 16.5, 515], ["United Wholesale Mortgage", 17.9, 1162], ["DHI Mortgage Company, LTD.", 19.6, 562], ["ROCKET MORTGAGE", 31.8, 563]]}, {"n": "Kansas City, MO-KS", "r": 19.5, "a": 8530, "d": [["FAIRWAY INDEPENDENT MORT CORP", 6.5, 399], ["United Wholesale Mortgage", 15.8, 562], ["FREEDOM MORTGAGE CORPORATION", 17.7, 413], ["PENNYMAC LOAN SERVICES LLC", 19.8, 384], ["ROCKET MORTGAGE", 27.3, 735]]}, {"n": "Austin-Round Rock, TX", "r": 15.5, "a": 8503, "d": [["CMG MORTGAGE INC", 3.4, 466], ["VELOCIO MORTGAGE, L.L.C.", 5.3, 487], ["DHI Mortgage Company, LTD.", 17.8, 1055], ["United Wholesale Mortgage", 18.3, 447], ["Lennar Mortgage, LLC", 26.4, 811]]}, {"n": "Columbus, OH", "r": 22.2, "a": 8390, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 3.4, 444], ["FREEDOM MORTGAGE CORPORATION", 16.6, 392], ["DHI Mortgage Company, LTD.", 21.0, 504], ["United Wholesale Mortgage", 26.7, 647], ["ROCKET MORTGAGE", 34.1, 709]]}, {"n": "Minneapolis-St. Paul-Bloomington, MN-WI", "r": 21.5, "a": 8198, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 4.1, 317], ["FREEDOM MORTGAGE CORPORATION", 19.2, 312], ["United Wholesale Mortgage", 21.9, 1006], ["PENNYMAC LOAN SERVICES LLC", 22.4, 321], ["ROCKET MORTGAGE", 24.2, 607]]}, {"n": "Cleveland, OH", "r": 25.0, "a": 8028, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 6.4, 1102], ["FREEDOM MORTGAGE CORPORATION", 25.4, 260], ["United Wholesale Mortgage", 27.5, 513], ["ROCKET MORTGAGE", 30.0, 1007], ["AMERISAVE MORTGAGE COMPANY", 80.1, 246]]}, {"n": "Washington, DC-MD", "r": 26.8, "a": 7961, "d": [["FREEDOM MORTGAGE CORPORATION", 15.3, 418], ["PENNYMAC LOAN SERVICES LLC", 25.0, 284], ["NVR MORTGAGE FINANCE, INC.", 28.0, 421], ["ROCKET MORTGAGE", 31.7, 574], ["United Wholesale Mortgage", 32.6, 736]]}, {"n": "Warren-Troy-Farmington Hills, MI", "r": 27.6, "a": 7497, "d": [["UNION HOME MORTGAGE CORP.", 5.4, 222], ["FREEDOM MORTGAGE CORPORATION", 22.9, 227], ["United Wholesale Mortgage", 23.8, 1562], ["ROCKET MORTGAGE", 28.0, 1324], ["Lakeview Loan Servicing, LLC", 54.3, 199]]}, {"n": "Marietta, GA", "r": 21.3, "a": 7370, "d": [["United Wholesale Mortgage", 18.0, 694], ["FREEDOM MORTGAGE CORPORATION", 19.9, 372], ["DHI Mortgage Company, LTD.", 20.5, 234], ["ROCKET MORTGAGE", 26.0, 604], ["loanDepot.com LLC", 27.7, 278]]}, {"n": "New York-Jersey City-White Plains, NY-NJ", "r": 29.1, "a": 7144, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 7.4, 350], ["United Wholesale Mortgage", 24.5, 913], ["PENNYMAC LOAN SERVICES LLC", 29.2, 370], ["ROCKET MORTGAGE", 33.9, 514], ["NEWREZ LLC", 70.8, 463]]}, {"n": "Virginia Beach-Norfolk-Newport News, VA-NC", "r": 21.4, "a": 7090, "d": [["ATLANTIC BAY MORTGAGE GROUP", 5.1, 396], ["MOVEMENT MORTGAGE, LLC", 5.8, 361], ["American Neighborhood Mortgage Acceptance Company", 6.5, 525], ["United Wholesale Mortgage", 22.9, 660], ["ROCKET MORTGAGE", 24.9, 526]]}, {"n": "Detroit-Dearborn-Livonia, MI", "r": 30.7, "a": 7052, "d": [["United Wholesale Mortgage", 24.6, 1397], ["ROCKET MORTGAGE", 31.5, 1322], ["Flagstar Bank NA", 36.5, 203], ["loanDepot.com LLC", 58.4, 202], ["AMERISAVE MORTGAGE COMPANY", 81.6, 256]]}, {"n": "Cape Coral-Fort Myers, FL", "r": 23.2, "a": 7021, "d": [["American Pacific Mortgage Corporation", 7.9, 302], ["United Wholesale Mortgage", 18.7, 1067], ["loanDepot.com LLC", 23.2, 453], ["ROCKET MORTGAGE", 26.2, 470], ["Lennar Mortgage, LLC", 45.4, 504]]}, {"n": "Miami-Miami Beach-Kendall, FL", "r": 29.4, "a": 6975, "d": [["DHI Mortgage Company, LTD.", 14.8, 305], ["United Wholesale Mortgage", 23.5, 1350], ["Lennar Mortgage, LLC", 27.6, 637], ["ROCKET MORTGAGE", 27.9, 517], ["Lakeview Loan Servicing, LLC", 70.6, 269]]}, {"n": "Arlington-Alexandria-Reston, VA-WV", "r": 23.6, "a": 6935, "d": [["FREEDOM MORTGAGE CORPORATION", 13.4, 337], ["United Wholesale Mortgage", 24.1, 551], ["ROCKET MORTGAGE", 26.8, 571], ["NVR MORTGAGE FINANCE, INC.", 36.8, 375]]}, {"n": "Memphis, TN-MS-AR", "r": 23.9, "a": 6760, "d": [["FREEDOM MORTGAGE CORPORATION", 18.7, 273], ["United Wholesale Mortgage", 25.7, 467], ["DHI Mortgage Company, LTD.", 25.8, 236], ["ROCKET MORTGAGE", 34.5, 527]]}, {"n": "Louisville/Jefferson County, KY-IN", "r": 21.6, "a": 6593, "d": [["FREEDOM MORTGAGE CORPORATION", 14.3, 435], ["United Wholesale Mortgage", 14.8, 786], ["PENNYMAC LOAN SERVICES LLC", 18.6, 194], ["ROCKET MORTGAGE", 26.8, 582]]}, {"n": "Fort Lauderdale-Pompano Beach-Deerfield Beach, FL", "r": 31.9, "a": 6523, "d": [["PARAMOUNT RESIDENTIAL MORTGAGE", 5.2, 251], ["FREEDOM MORTGAGE CORPORATION", 24.7, 275], ["United Wholesale Mortgage", 26.4, 1624], ["ROCKET MORTGAGE", 30.0, 526], ["Lakeview Loan Servicing, LLC", 74.6, 323]]}, {"n": "Pittsburgh, PA", "r": 26.2, "a": 6464, "d": [["MOVEMENT MORTGAGE, LLC", 4.6, 239], ["United Wholesale Mortgage", 21.7, 552], ["PENNYMAC LOAN SERVICES LLC", 22.0, 241], ["ROCKET MORTGAGE", 35.1, 940], ["AMERISAVE MORTGAGE COMPANY", 77.3, 233]]}, {"n": "Birmingham-Hoover, AL", "r": 22.9, "a": 6402, "d": [["United Wholesale Mortgage", 16.6, 595], ["DHI Mortgage Company, LTD.", 19.9, 352], ["FREEDOM MORTGAGE CORPORATION", 21.7, 277], ["ROCKET MORTGAGE", 36.0, 469], ["loanDepot.com LLC", 49.8, 213]]}, {"n": "Richmond, VA", "r": 22.4, "a": 6388, "d": [["FREEDOM MORTGAGE CORPORATION", 14.6, 302], ["United Wholesale Mortgage", 20.1, 468], ["PENNYMAC LOAN SERVICES LLC", 24.5, 220], ["ROCKET MORTGAGE", 24.9, 586], ["NVR MORTGAGE FINANCE, INC.", 37.0, 362]]}, {"n": "Philadelphia, PA", "r": 27.5, "a": 6360, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 6.5, 431], ["PROSPERITY HOME MORTGAGE, LLC", 17.1, 246], ["PENNYMAC LOAN SERVICES LLC", 30.4, 286], ["United Wholesale Mortgage", 31.2, 414], ["ROCKET MORTGAGE", 37.0, 535]]}, {"n": "Sacramento--Roseville--Arden-Arcade, CA", "r": 22.5, "a": 6277, "d": [["United Wholesale Mortgage", 20.2, 1339], ["Kind Lending, LLC", 22.2, 230], ["loanDepot.com LLC", 25.5, 212], ["ROCKET MORTGAGE", 29.0, 458], ["Lakeview Loan Servicing, LLC", 53.3, 242]]}, {"n": "Portland-Vancouver-Hillsboro, OR-WA", "r": 17.9, "a": 6050, "d": [["CMG MORTGAGE INC", 4.5, 247], ["GUILD MORTGAGE COMPANY", 4.7, 406], ["United Wholesale Mortgage", 15.6, 615], ["FREEDOM MORTGAGE CORPORATION", 20.3, 237], ["ROCKET MORTGAGE", 26.7, 348]]}, {"n": "Camden, NJ", "r": 22.4, "a": 6044, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 4.9, 329], ["FREEDOM MORTGAGE CORPORATION", 20.3, 311], ["ROCKET MORTGAGE", 25.7, 451], ["United Wholesale Mortgage", 27.0, 378], ["PENNYMAC LOAN SERVICES LLC", 28.6, 248]]}, {"n": "Providence-Warwick, RI-MA", "r": 21.4, "a": 5666, "d": [["MOVEMENT MORTGAGE, LLC", 2.8, 251], ["Primary Residential Mortgage, INC.", 13.7, 321], ["FREEDOM MORTGAGE CORPORATION", 18.0, 289], ["United Wholesale Mortgage", 19.5, 513], ["ROCKET MORTGAGE", 28.5, 316]]}, {"n": "Lakewood-New Brunswick, NJ", "r": 24.8, "a": 5649, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 7.5, 307], ["FREEDOM MORTGAGE CORPORATION", 20.7, 261], ["PENNYMAC LOAN SERVICES LLC", 21.2, 321], ["ROCKET MORTGAGE", 24.9, 426], ["United Wholesale Mortgage", 27.9, 506]]}, {"n": "Newark, NJ-PA", "r": 26.6, "a": 5538, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 8.8, 377], ["FREEDOM MORTGAGE CORPORATION", 23.5, 251], ["ROCKET MORTGAGE", 26.3, 357], ["United Wholesale Mortgage", 29.9, 648], ["PENNYMAC LOAN SERVICES LLC", 31.0, 213]]}, {"n": "Greenville-Anderson-Mauldin, SC", "r": 19.7, "a": 5514, "d": [["DHI Mortgage Company, LTD.", 19.8, 364], ["United Wholesale Mortgage", 20.8, 317], ["NVR MORTGAGE FINANCE, INC.", 25.8, 252], ["ROCKET MORTGAGE", 27.3, 377], ["loanDepot.com LLC", 30.0, 320]]}, {"n": "Raleigh, NC", "r": 21.1, "a": 5455, "d": [["FREEDOM MORTGAGE CORPORATION", 14.0, 286], ["DHI Mortgage Company, LTD.", 24.8, 258], ["United Wholesale Mortgage", 25.9, 351], ["ROCKET MORTGAGE", 28.7, 376], ["loanDepot.com LLC", 29.1, 234]]}, {"n": "Tucson, AZ", "r": 19.2, "a": 5410, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 4.7, 405], ["loanDepot.com LLC", 15.3, 365], ["United Wholesale Mortgage", 21.0, 463], ["ROCKET MORTGAGE", 38.1, 270]]}, {"n": "Columbia, SC", "r": 20.7, "a": 5325, "d": [["VANDERBILT MORTGAGE AND FINANCE, INC", 1.9, 209], ["GUILD MORTGAGE COMPANY", 9.5, 390], ["FREEDOM MORTGAGE CORPORATION", 16.0, 200], ["United Wholesale Mortgage", 25.2, 357], ["ROCKET MORTGAGE", 27.0, 404]]}, {"n": "Bakersfield, CA", "r": 20.1, "a": 5038, "d": [["Lennar Mortgage, LLC", 12.1, 224], ["DHI Mortgage Company, LTD.", 13.4, 209], ["Kind Lending, LLC", 15.7, 267], ["United Wholesale Mortgage", 17.4, 810], ["ROCKET MORTGAGE", 33.3, 369]]}, {"n": "Deltona-Daytona Beach-Ormond Beach, FL", "r": 22.7, "a": 4951, "d": [["DHI Mortgage Company, LTD.", 17.1, 414], ["United Wholesale Mortgage", 18.8, 733], ["PENNYMAC LOAN SERVICES LLC", 21.0, 157], ["ROCKET MORTGAGE", 27.3, 300], ["Lennar Mortgage, LLC", 30.1, 173]]}, {"n": "North Port-Sarasota-Bradenton, FL", "r": 23.4, "a": 4890, "d": [["DHI Mortgage Company, LTD.", 19.2, 546], ["United Wholesale Mortgage", 26.5, 506], ["Lennar Mortgage, LLC", 27.4, 445], ["ROCKET MORTGAGE", 35.8, 193], ["TAYLOR MORRISON HOME FUNDING, INC.", 41.4, 191]]}, {"n": "Charleston-North Charleston, SC", "r": 18.6, "a": 4883, "d": [["FREEDOM MORTGAGE CORPORATION", 17.3, 196], ["DHI Mortgage Company, LTD.", 18.7, 491], ["Lennar Mortgage, LLC", 19.0, 294], ["United Wholesale Mortgage", 19.9, 311], ["ROCKET MORTGAGE", 27.0, 282]]}, {"n": "Salt Lake City, UT", "r": 17.3, "a": 4841, "d": [["SECURITYNATIONAL MORTGAGE COMPANY", 8.5, 293], ["United Wholesale Mortgage", 17.8, 673], ["Kind Lending, LLC", 25.2, 246], ["ROCKET MORTGAGE", 34.0, 262]]}, {"n": "Knoxville, TN", "r": 17.8, "a": 4726, "d": [["DHI Mortgage Company, LTD.", 12.3, 162], ["United Wholesale Mortgage", 15.2, 454], ["FREEDOM MORTGAGE CORPORATION", 16.0, 213], ["ROCKET MORTGAGE", 23.6, 457]]}, {"n": "West Palm Beach-Boca Raton-Delray Beach, FL", "r": 28.7, "a": 4619, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 5.4, 239], ["United Wholesale Mortgage", 24.9, 956], ["FREEDOM MORTGAGE CORPORATION", 26.6, 203], ["ROCKET MORTGAGE", 34.3, 353], ["Lakeview Loan Servicing, LLC", 69.4, 170]]}, {"n": "Fresno, CA", "r": 20.3, "a": 4615, "d": [["Lennar Mortgage, LLC", 14.2, 268], ["United Wholesale Mortgage", 16.8, 821], ["Kind Lending, LLC", 20.0, 495], ["ROCKET MORTGAGE", 27.9, 280]]}, {"n": "Albuquerque, NM", "r": 20.9, "a": 4614, "d": [["GUILD MORTGAGE COMPANY", 6.0, 367], ["United Wholesale Mortgage", 23.5, 405], ["DHI Mortgage Company, LTD.", 24.3, 296], ["ROCKET MORTGAGE", 32.5, 314]]}, {"n": "Port St. Lucie, FL", "r": 27.1, "a": 4457, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 6.9, 188], ["United Wholesale Mortgage", 22.1, 728], ["Lennar Mortgage, LLC", 27.1, 210], ["ROCKET MORTGAGE", 28.0, 268], ["loanDepot.com LLC", 44.3, 309]]}, {"n": "Ocala, FL", "r": 23.8, "a": 4300, "d": [["UNION HOME MORTGAGE CORP.", 10.5, 114], ["United Wholesale Mortgage", 22.1, 544], ["DHI Mortgage Company, LTD.", 25.4, 382], ["ROCKET MORTGAGE", 33.5, 242], ["Lennar Mortgage, LLC", 37.4, 227]]}, {"n": "Lake County-Porter County-Jasper County, IN", "r": 21.7, "a": 4006, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 8.8, 170], ["GUARANTEED RATE, INC.", 11.5, 148], ["FREEDOM MORTGAGE CORPORATION", 19.5, 195], ["United Wholesale Mortgage", 22.1, 231], ["ROCKET MORTGAGE", 26.6, 394]]}, {"n": "Spartanburg, SC", "r": 20.7, "a": 3858, "d": [["United Wholesale Mortgage", 21.2, 212], ["DHI Mortgage Company, LTD.", 21.7, 397], ["loanDepot.com LLC", 27.9, 276], ["ROCKET MORTGAGE", 30.8, 224], ["NVR MORTGAGE FINANCE, INC.", 33.1, 272]]}, {"n": "Palm Bay-Melbourne-Titusville, FL", "r": 22.0, "a": 3744, "d": [["FREEDOM MORTGAGE CORPORATION", 20.4, 137], ["United Wholesale Mortgage", 20.6, 574], ["DHI Mortgage Company, LTD.", 25.1, 179], ["ROCKET MORTGAGE", 30.1, 249]]}, {"n": "San Diego-Carlsbad, CA", "r": 23.6, "a": 3679, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 0.8, 118], ["PENNYMAC LOAN SERVICES LLC", 20.4, 113], ["United Wholesale Mortgage", 22.9, 927], ["ROCKET MORTGAGE", 28.3, 322], ["Lakeview Loan Servicing, LLC", 56.9, 116]]}, {"n": "Tacoma-Lakewood, WA", "r": 18.3, "a": 3678, "d": [["MOVEMENT MORTGAGE, LLC", 3.4, 297], ["CROSSCOUNTRY MORTGAGE, LLC", 5.2, 211], ["GUILD MORTGAGE COMPANY", 6.2, 178], ["United Wholesale Mortgage", 22.3, 328], ["ROCKET MORTGAGE", 26.7, 195]]}, {"n": "Boise City, ID", "r": 11.8, "a": 3600, "d": [["Premier Mortgage Resources, LLC", 2.8, 359], ["GUILD MORTGAGE COMPANY", 3.7, 216], ["United Wholesale Mortgage", 13.5, 266], ["loanDepot.com LLC", 13.6, 176], ["ROCKET MORTGAGE", 16.2, 197]]}, {"n": "Winston-Salem, NC", "r": 20.6, "a": 3567, "d": [["ATLANTIC BAY MORTGAGE GROUP", 0.4, 258], ["MOVEMENT MORTGAGE, LLC", 3.0, 165], ["ROCKET MORTGAGE", 23.4, 368], ["DHI Mortgage Company, LTD.", 24.5, 229], ["United Wholesale Mortgage", 27.7, 191]]}, {"n": "Provo-Orem, UT", "r": 13.2, "a": 3565, "d": [["FIRST COLONY MORTGAGE CORPORAT", 2.6, 342], ["Lennar Mortgage, LLC", 10.8, 203], ["United Wholesale Mortgage", 13.8, 441], ["DHI Mortgage Company, LTD.", 17.0, 230]]}, {"n": "Montgomery County-Bucks County-Chester County, PA", "r": 23.6, "a": 3511, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 6.8, 192], ["PENNYMAC LOAN SERVICES LLC", 21.2, 189], ["United Wholesale Mortgage", 23.4, 248], ["FREEDOM MORTGAGE CORPORATION", 26.3, 156], ["ROCKET MORTGAGE", 27.1, 377]]}, {"n": "Greensboro-High Point, NC", "r": 22.2, "a": 3423, "d": [["ATLANTIC BAY MORTGAGE GROUP", 2.2, 186], ["FREEDOM MORTGAGE CORPORATION", 15.2, 184], ["United Wholesale Mortgage", 25.8, 209], ["DHI Mortgage Company, LTD.", 26.1, 249], ["ROCKET MORTGAGE", 29.0, 341]]}, {"n": "Dayton-Kettering, OH", "r": 21.7, "a": 3380, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 3.8, 130], ["FREEDOM MORTGAGE CORPORATION", 13.2, 121], ["loanDepot.com LLC", 21.2, 146], ["United Wholesale Mortgage", 23.6, 203], ["ROCKET MORTGAGE", 26.8, 366]]}, {"n": "Huntsville, AL", "r": 19.9, "a": 3296, "d": [["DHI Mortgage Company, LTD.", 11.1, 190], ["United Wholesale Mortgage", 18.5, 260], ["Lennar Mortgage, LLC", 23.0, 278], ["loanDepot.com LLC", 26.9, 156], ["ROCKET MORTGAGE", 31.1, 222]]}, {"n": "Augusta-Richmond County, GA-SC", "r": 22.0, "a": 3275, "d": [["GUILD MORTGAGE COMPANY", 9.0, 356], ["DHI Mortgage Company, LTD.", 22.8, 189], ["United Wholesale Mortgage", 23.7, 194], ["FREEDOM MORTGAGE CORPORATION", 26.2, 122], ["ROCKET MORTGAGE", 27.3, 293]]}, {"n": "Allentown-Bethlehem-Easton, PA-NJ", "r": 24.5, "a": 3270, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 5.9, 269], ["FREEDOM MORTGAGE CORPORATION", 19.3, 135], ["ROCKET MORTGAGE", 22.6, 328], ["PENNYMAC LOAN SERVICES LLC", 25.4, 169], ["United Wholesale Mortgage", 26.3, 285]]}, {"n": "McAllen-Edinburg-Mission, TX", "r": 11.3, "a": 3251, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 3.7, 272], ["CMG MORTGAGE INC", 4.1, 246], ["Synergy One Lending, Inc.", 7.6, 210], ["United Wholesale Mortgage", 14.6, 240]]}, {"n": "Omaha-Council Bluffs, NE-IA", "r": 19.3, "a": 3247, "d": [["CMG MORTGAGE INC", 9.1, 121], ["United Wholesale Mortgage", 20.4, 162], ["PENNYMAC LOAN SERVICES LLC", 21.8, 142], ["ROCKET MORTGAGE", 33.1, 311]]}, {"n": "New Orleans-Metairie, LA", "r": 29.2, "a": 3121, "d": [["MOVEMENT MORTGAGE, LLC", 3.7, 135], ["FREEDOM MORTGAGE CORPORATION", 22.0, 159], ["United Wholesale Mortgage", 25.4, 338], ["ROCKET MORTGAGE", 37.3, 295]]}, {"n": "Milwaukee-Waukesha-West Allis, WI", "r": 29.0, "a": 3112, "d": [["FAIRWAY INDEPENDENT MORT CORP", 10.9, 101], ["PENNYMAC LOAN SERVICES LLC", 19.7, 117], ["FREEDOM MORTGAGE CORPORATION", 25.0, 144], ["United Wholesale Mortgage", 25.5, 243], ["ROCKET MORTGAGE", 31.6, 358]]}, {"n": "Chattanooga, TN-GA", "r": 19.9, "a": 2896, "d": [["CMG MORTGAGE INC", 5.0, 121], ["UNION HOME MORTGAGE CORP.", 5.5, 182], ["FREEDOM MORTGAGE CORPORATION", 18.1, 144], ["United Wholesale Mortgage", 22.5, 173], ["ROCKET MORTGAGE", 30.2, 262]]}, {"n": "Ogden-Clearfield, UT", "r": 14.6, "a": 2871, "d": [["GUILD MORTGAGE COMPANY", 2.3, 216], ["United Wholesale Mortgage", 15.8, 342], ["Kind Lending, LLC", 24.6, 187], ["ROCKET MORTGAGE", 28.8, 156]]}, {"n": "Greeley, CO", "r": 19.3, "a": 2841, "d": [["DHI Mortgage Company, LTD.", 15.6, 205], ["loanDepot.com LLC", 15.6, 135], ["United Wholesale Mortgage", 17.5, 343], ["ROCKET MORTGAGE", 37.4, 115], ["AMERICAN FINANCING CORPORATION", 62.2, 299]]}, {"n": "Stockton-Lodi, CA", "r": 22.4, "a": 2833, "d": [["United Wholesale Mortgage", 20.2, 560], ["loanDepot.com LLC", 21.8, 170], ["ROCKET MORTGAGE", 24.9, 205], ["Lakeview Loan Servicing, LLC", 47.7, 111]]}, {"n": "Boston, MA", "r": 24.8, "a": 2753, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 8.5, 117], ["United Wholesale Mortgage", 20.1, 329], ["FREEDOM MORTGAGE CORPORATION", 22.0, 150], ["loanDepot.com LLC", 26.3, 171], ["ROCKET MORTGAGE", 30.0, 223]]}, {"n": "Myrtle Beach-Conway-North Myrtle Beach, SC-NC", "r": 24.7, "a": 2741, "d": [["loanDepot.com LLC", 22.4, 107], ["United Wholesale Mortgage", 22.7, 154], ["ROCKET MORTGAGE", 24.1, 170], ["Lennar Mortgage, LLC", 24.5, 159], ["DHI Mortgage Company, LTD.", 31.9, 489]]}, {"n": "Elgin, IL", "r": 23.7, "a": 2708, "d": [["GUILD MORTGAGE COMPANY", 10.9, 138], ["FREEDOM MORTGAGE CORPORATION", 15.6, 135], ["United Wholesale Mortgage", 23.1, 238], ["ROCKET MORTGAGE", 24.1, 174], ["DHI Mortgage Company, LTD.", 25.5, 137]]}, {"n": "Cambridge-Newton-Framingham, MA", "r": 23.5, "a": 2708, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 6.9, 175], ["GUARANTEED RATE, INC.", 12.9, 232], ["FREEDOM MORTGAGE CORPORATION", 15.6, 160], ["ROCKET MORTGAGE", 28.0, 175], ["United Wholesale Mortgage", 29.5, 278]]}, {"n": "Pensacola-Ferry Pass-Brent, FL", "r": 21.6, "a": 2683, "d": [["Lennar Mortgage, LLC", 11.8, 119], ["United Wholesale Mortgage", 23.2, 185], ["DHI Mortgage Company, LTD.", 28.1, 388], ["ROCKET MORTGAGE", 31.1, 212]]}, {"n": "Frederick-Gaithersburg-Rockville, MD", "r": 25.5, "a": 2681, "d": [["FREEDOM MORTGAGE CORPORATION", 18.6, 113], ["United Wholesale Mortgage", 26.1, 241], ["ROCKET MORTGAGE", 26.2, 225], ["NEWREZ LLC", 66.0, 100]]}, {"n": "Wichita, KS", "r": 21.3, "a": 2574, "d": [["GUILD MORTGAGE COMPANY", 4.9, 206], ["PENNYMAC LOAN SERVICES LLC", 17.6, 165], ["United Wholesale Mortgage", 18.2, 143], ["FREEDOM MORTGAGE CORPORATION", 19.7, 142], ["ROCKET MORTGAGE", 28.1, 242]]}, {"n": "Buffalo-Cheektowaga-Niagara Falls, NY", "r": 21.6, "a": 2524, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 3.2, 154], ["United Wholesale Mortgage", 12.0, 351], ["M&T BANK", 15.8, 241], ["ROCKET MORTGAGE", 30.2, 503]]}, {"n": "Savannah, GA", "r": 23.8, "a": 2509, "d": [["NEW AMERICAN FUNDING, LLC.", 15.9, 145], ["United Wholesale Mortgage", 16.2, 191], ["ROCKET MORTGAGE", 26.6, 199], ["DHI Mortgage Company, LTD.", 33.7, 312]]}, {"n": "Des Moines-West Des Moines, IA", "r": 22.3, "a": 2449, "d": [["NEW AMERICAN FUNDING, LLC.", 13.1, 145], ["DHI Mortgage Company, LTD.", 25.9, 216], ["ROCKET MORTGAGE", 28.0, 193], ["United Wholesale Mortgage", 29.7, 138]]}, {"n": "Worcester, MA-CT", "r": 21.0, "a": 2434, "d": [["GUILD MORTGAGE COMPANY", 8.1, 111], ["NEW AMERICAN FUNDING, LLC.", 18.1, 116], ["United Wholesale Mortgage", 20.0, 260], ["FREEDOM MORTGAGE CORPORATION", 23.0, 126], ["ROCKET MORTGAGE", 27.6, 232]]}, {"n": "Springfield, MO", "r": 18.5, "a": 2331, "d": [["FLAT BRANCH MORTGAGE, INC.", 0.5, 186], ["DAS ACQUISITION COMPANY, LLC", 3.3, 123], ["United Wholesale Mortgage", 12.0, 117], ["PENNYMAC LOAN SERVICES LLC", 18.8, 133], ["ROCKET MORTGAGE", 35.7, 207]]}, {"n": "Reno, NV", "r": 16.2, "a": 2331, "d": [["GUILD MORTGAGE COMPANY", 3.0, 331], ["CROSSCOUNTRY MORTGAGE, LLC", 3.4, 149], ["DHI Mortgage Company, LTD.", 15.7, 268], ["ROCKET MORTGAGE", 18.1, 127], ["United Wholesale Mortgage", 18.2, 214]]}, {"n": "Wilmington, NC", "r": 20.0, "a": 2327, "d": [["FREEDOM MORTGAGE CORPORATION", 11.6, 112], ["ROCKET MORTGAGE", 21.1, 161], ["DHI Mortgage Company, LTD.", 24.3, 321], ["United Wholesale Mortgage", 29.8, 131]]}, {"n": "Gulfport-Biloxi-Pascagoula, MS", "r": 23.4, "a": 2285, "d": [["CMG MORTGAGE INC", 7.4, 258], ["loanDepot.com LLC", 25.6, 121], ["DHI Mortgage Company, LTD.", 28.3, 106], ["ROCKET MORTGAGE", 28.7, 181]]}, {"n": "Hagerstown-Martinsburg, MD-WV", "r": 19.2, "a": 2215, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 7.1, 113], ["FREEDOM MORTGAGE CORPORATION", 16.0, 125], ["United Wholesale Mortgage", 22.1, 163], ["ROCKET MORTGAGE", 30.1, 153]]}, {"n": "Scranton--Wilkes-Barre--Hazleton, PA", "r": 24.8, "a": 2210, "d": [["GUILD MORTGAGE COMPANY", 5.0, 100], ["PENNYMAC LOAN SERVICES LLC", 18.0, 111], ["ROCKET MORTGAGE", 25.1, 323], ["United Wholesale Mortgage", 28.5, 144]]}, {"n": "Montgomery, AL", "r": 23.0, "a": 2099, "d": [["CROSSCOUNTRY MORTGAGE, LLC", 2.7, 113], ["GUILD MORTGAGE COMPANY", 3.3, 272], ["United Wholesale Mortgage", 22.4, 107], ["ROCKET MORTGAGE", 29.1, 151]]}, {"n": "Hickory-Lenoir-Morganton, NC", "r": 20.4, "a": 2017, "d": [["ATLANTIC BAY MORTGAGE GROUP", 1.3, 151], ["CROSSCOUNTRY MORTGAGE, LLC", 4.1, 172], ["DHI Mortgage Company, LTD.", 19.2, 120], ["United Wholesale Mortgage", 23.8, 143], ["ROCKET MORTGAGE", 24.3, 259]]}, {"n": "Toledo, OH", "r": 26.5, "a": 1941, "d": [["UNION HOME MORTGAGE CORP.", 5.8, 121], ["Huntington National Bank", 25.6, 117], ["ROCKET MORTGAGE", 29.7, 269], ["United Wholesale Mortgage", 30.7, 150]]}, {"n": "Youngstown-Warren-Boardman, OH-PA", "r": 24.3, "a": 1905, "d": [["Ixonia Bank", 1.7, 291], ["CROSSCOUNTRY MORTGAGE, LLC", 3.0, 169], ["Huntington National Bank", 21.8, 110], ["United Wholesale Mortgage", 22.5, 129], ["ROCKET MORTGAGE", 41.1, 246]]}, {"n": "Shreveport-Bossier City, LA", "r": 23.9, "a": 1847, "d": [["MOVEMENT MORTGAGE, LLC", 1.5, 130], ["PLANET HOME LENDING, LLC", 10.6, 161], ["United Wholesale Mortgage", 18.7, 139], ["ROCKET MORTGAGE", 37.3, 110]]}, {"n": "Lexington-Fayette, KY", "r": 18.6, "a": 1828, "d": [["ARK-LA-TEX FINANCIAL SERVICES LLC", 6.0, 168], ["STOCKTON MORTGAGE CORPORATION", 9.3, 108], ["United Wholesale Mortgage", 18.8, 112], ["ROCKET MORTGAGE", 23.7, 198]]}, {"n": "Tallahassee, FL", "r": 19.6, "a": 1608, "d": [["MOVEMENT MORTGAGE, LLC", 3.7, 108], ["loanDepot.com LLC", 16.5, 109], ["ROCKET MORTGAGE", 24.2, 128], ["DHI Mortgage Company, LTD.", 25.0, 112]]}];
-  var NATIONAL=W.slice();
-  var PAGE={}; W.forEach(function(x){ if(x[3]) PAGE[x[0].toLowerCase()]=x[3]; });
-  function pageFor(name){
-    var k=name.toLowerCase(); if(PAGE[k]) return PAGE[k];
-    var base=k.replace(/[.,']/g,'').replace(/\b(llc|inc|corp|corporation|company|na|fsb|ltd|lp)\b/g,'').trim();
-    for(var kk in PAGE){ var b2=kk.replace(/[.,']/g,'').replace(/\b(llc|inc|corp|corporation|company|na|fsb|ltd|lp)\b/g,'').trim();
-      if(b2===base || (base.length>8 && b2.indexOf(base.slice(0,10))===0) || (b2.length>8 && base.indexOf(b2.slice(0,10))===0)) return PAGE[kk]; }
-    return '';
-  }
-  var g=document.getElementById('wallGrid'), info=document.getElementById('wallInfo'), sb=document.getElementById('wallSearch'), ms=document.getElementById('wallMetro');
-  function col(r){
-    var stops=[[1.8,[31,157,85]],[12,[143,191,63]],[22,[227,193,74]],[40,[232,132,90]],[78.7,[192,57,43]]];
-    for(var i=0;i<stops.length-1;i++){
-      if(r<=stops[i+1][0]){
-        var a=stops[i],b=stops[i+1],t=(r-a[0])/(b[0]-a[0]);
-        return 'rgb('+Math.round(a[1][0]+(b[1][0]-a[1][0])*t)+','+Math.round(a[1][1]+(b[1][1]-a[1][1])*t)+','+Math.round(a[1][2]+(b[1][2]-a[1][2])*t)+')';
-      }
-    }
-    return 'rgb(192,57,43)';
-  }
-  var cells=[];
-  function draw(list,isMetro){
-  g.innerHTML=''; cells=[];
-  var cols=isMetro?Math.min(list.length,5):10;
-  g.style.gridTemplateColumns='repeat('+cols+',1fr)';
-  g.style.maxWidth=(isMetro?cols*92:520)+'px';
-  list.forEach(function(d,i){
-    var c=document.createElement(d[3]?'a':'div');
-    if(d[3]) c.href='/'+d[3];
-    var dark = d[1] > 34;
-    c.style.cssText='aspect-ratio:1;border-radius:6px;background:'+col(d[1])+';cursor:pointer;transition:transform .16s,box-shadow .16s,opacity .16s;display:flex;align-items:center;justify-content:center;opacity:.94;animation-delay:'+(i*10)+'ms;text-decoration:none;';
-    c.innerHTML='<span class="rt" style="color:'+(dark?'rgba(255,255,255,.95)':'rgba(0,0,0,.66)')+'">'+d[1].toFixed(1)+'</span>';
-    c.setAttribute('aria-label',d[0]+' '+d[1]+'%');
-    function show(){
-      c.style.transform='scale(1.45)';c.style.boxShadow='0 6px 20px rgba(0,0,0,.6)';c.style.zIndex='5';c.style.position='relative';
-      info.innerHTML='<div style="font-weight:800;color:#fff;font-size:var(--fs-body);">'+d[0]+'</div>'+
-        '<div style="font-family:\'DM Mono\',monospace;font-size:var(--fs-h3);color:'+col(d[1])+';margin:2px 0;">'+d[1].toFixed(1)+'%</div>'+
-        '<div style="font-size:var(--fs-micro);color:var(--ink-4);">'+d[2].toLocaleString()+' decisioned FHA applications in 2025'+(d[3]?' &middot; click for full profile':'')+'</div>';
-    }
-    function hide(){c.style.transform='';c.style.boxShadow='';c.style.zIndex='';}
-    c.onmouseenter=show;c.onmouseleave=hide;c.ontouchstart=show;
-    cells.push({el:c,name:d[0].toLowerCase(),show:show});
-    g.appendChild(c);
-  });
-  }
-  draw(NATIONAL,false);
-  var defaultInfo='<div style="font-size:var(--fs-small);color:var(--ink-4);">Hover any door to see its record &middot; click to open its profile</div>';
-  function metroPick(){
-    sb.value='';
-    if(ms.value===''){ draw(NATIONAL,false); info.innerHTML=defaultInfo; return; }
-    var m=METROS[+ms.value];
-    draw(m.d.map(function(x){return [x[0],x[1],x[2],pageFor(x[0])];}),true);
-    var lo=m.d[0][1], hi=m.d[m.d.length-1][1];
-    info.innerHTML='<div style="font-weight:800;color:#fff;font-size:var(--fs-body);">'+m.n+'</div>'+
-      '<div style="font-size:var(--fs-small);color:var(--ink-3);margin-top:4px;line-height:1.7;">Metro denial rate <b style="color:#fff;">'+m.r.toFixed(1)+'%</b> on '+m.a.toLocaleString()+' decisioned applications. Its highest-volume doors ran <b style="color:#22c55e;">'+lo.toFixed(1)+'%</b> to <b style="color:var(--coral);">'+hi.toFixed(1)+'%</b> &mdash; a <b style="color:#fff;">'+(hi-lo).toFixed(1)+'-point</b> spread inside one metro.</div>';
-    if(typeof gtag!=='undefined')gtag('event','wall_metro',{metro:m.n});
-  }
-  ms.addEventListener('change',metroPick);
-  ms.addEventListener('input',metroPick);
-  sb.oninput=function(){
-    var q=this.value.trim().toLowerCase();
-    var found=null;
-    cells.forEach(function(x){
-      var m=q&&x.name.indexOf(q)>-1;
-      x.el.style.opacity=q?(m?'1':'.13'):'.92';
-      x.el.style.outline=m?'2px solid #fff':'';
-      if(m&&!found)found=x;
-    });
-    if(found){found.show();if(typeof gtag!=='undefined')gtag('event','wall_search',{q:q});}
-  };
-})();
-</script>
-
-<section style="max-width:1040px;margin:0 auto;padding:0 24px 40px;">
-  <div class="frc-eyebrow" style="text-align:center;margin-bottom:10px;">How the system works</div>
-  <p style="text-align:center;font-size:var(--fs-body);color:var(--ink-3);max-width:560px;margin:0 auto 30px;line-height:1.8;">Three variables decide an FHA application before anyone reads your character. All three are measurable in the public federal record &mdash; and one of them dwarfs the others.</p>
-
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;">
-
-    <a href="/fha-state-map.html" class="frc-card" style="padding:22px;">
-      <div class="frc-eyebrow" style="color:var(--ink-4);">Variable 01 &middot; Where you apply</div>
-      <div style="font-family:'DM Mono',monospace;font-size:var(--fs-h2);font-weight:700;color:#fff;margin:10px 0 2px;letter-spacing:-.01em;">15.0% <span style="color:var(--ink-4);font-size:var(--fs-body);">&rarr;</span> 31.4%</div>
-      <div style="font-size:var(--fs-micro);color:var(--ink-4);margin-bottom:10px;">Utah &rarr; Hawaii &middot; 2&times; by state</div>
-      <div style="font-size:var(--fs-small);color:var(--ink-3);line-height:1.7;">Same loan, same profile, different state. Your zip code is underwriting you before anyone opens the file.</div>
-      <div style="font-size:var(--fs-small);color:var(--gold);margin-top:12px;font-weight:700;">State map &rarr;</div>
-    </a>
-
-    <a href="/fha-denial-rates-top-100.html" class="frc-card is-new" style="padding:22px;">
-      <div class="frc-eyebrow" style="color:var(--gold-soft);">Variable 02 &middot; Which door &mdash; the big one</div>
-      <div style="font-family:'DM Mono',monospace;font-size:var(--fs-h2);font-weight:700;color:var(--coral);margin:10px 0 2px;letter-spacing:-.01em;">1.8% <span style="color:var(--ink-4);font-size:var(--fs-body);">&rarr;</span> 78.7%</div>
-      <div style="font-size:var(--fs-micro);color:var(--ink-4);margin-bottom:10px;">Flat Branch &rarr; AmeriSave &middot; <b style="color:var(--coral);">44&times;</b> by lender</div>
-      <div style="font-size:var(--fs-small);color:var(--ink-3);line-height:1.7;">The 100 largest FHA lenders, one federal program, one year. Which door you knock on moves your odds more than any other variable measured here.</div>
-      <div style="font-size:var(--fs-small);color:var(--gold);margin-top:12px;font-weight:700;">All 100 lenders &rarr;</div>
-    </a>
-
-    <a href="/fha-lending-structure-research.html" class="frc-card" style="padding:22px;">
-      <div class="frc-eyebrow" style="color:var(--ink-4);">Variable 03 &middot; And it holds</div>
-      <div style="font-family:'DM Mono',monospace;font-size:var(--fs-h2);font-weight:700;color:#fff;margin:10px 0 2px;letter-spacing:-.01em;">8 years</div>
-      <div style="font-size:var(--fs-micro);color:var(--ink-4);margin-bottom:10px;">2018&ndash;2025 &middot; every federal filing</div>
-      <div style="font-size:var(--fs-small);color:var(--ink-3);line-height:1.7;">The hierarchy of doors barely moves year to year. This is structure, not noise &mdash; which is why last year's record is usable this year.</div>
-      <div style="font-size:var(--fs-small);color:var(--gold);margin-top:12px;font-weight:700;">The research &rarr;</div>
-    </a>
-
-  </div>
-</section>
-
-<section style="max-width:680px;margin:0 auto;padding:44px 24px 88px;">
-  <div class="frc-rule" style="margin:0 0 40px;"></div>
-  <div class="frc-eyebrow" style="text-align:center;margin-bottom:10px;">How to use it</div>
-  <h2 style="font-family:'Fraunces',Georgia,serif;font-size:var(--fs-h2);font-weight:900;text-align:center;line-height:1.25;margin-bottom:8px;">The Denial Map&trade;</h2>
-  <p style="text-align:center;font-size:var(--fs-small);color:var(--ink-4);margin-bottom:34px;">Four steps, in order, if you have been denied &mdash; or want to avoid it.</p>
-
-  <div style="position:relative;padding-left:38px;">
-    <div style="position:absolute;left:11px;top:10px;bottom:10px;width:1px;background:linear-gradient(180deg,rgba(200,168,75,.5),rgba(200,168,75,.08));"></div>
-<a href="/the-incomplete-wall.html" style="display:block;text-decoration:none;margin-bottom:22px;position:relative;">
-      <div style="position:absolute;left:-38px;top:2px;width:23px;height:23px;border-radius:50%;background:#08090c;border:1px solid rgba(200,168,75,.5);color:var(--gold);font-size:var(--fs-micro);font-weight:800;display:flex;align-items:center;justify-content:center;">01</div>
-      <div style="font-family:'Fraunces',Georgia,serif;font-size:var(--fs-lead);font-weight:900;color:#fff;margin-bottom:4px;">Decode</div>
-      <div style="font-size:var(--fs-small);color:var(--ink-3);line-height:1.75;">Get the stated reason in writing &mdash; it is your right under federal law &mdash; then read it against that lender's own reason distribution. &ldquo;Incomplete&rdquo; means something very different at a door where it is 1.8% of denials than at one where it is 75.2%.</div>
-      <div style="font-size:var(--fs-micro);color:var(--gold);margin-top:6px;font-weight:700;">Reason fingerprints &rarr;</div>
-    </a><a href="/climate.html" style="display:block;text-decoration:none;margin-bottom:22px;position:relative;">
-      <div style="position:absolute;left:-38px;top:2px;width:23px;height:23px;border-radius:50%;background:#08090c;border:1px solid rgba(200,168,75,.5);color:var(--gold);font-size:var(--fs-micro);font-weight:800;display:flex;align-items:center;justify-content:center;">02</div>
-      <div style="font-family:'Fraunces',Georgia,serif;font-size:var(--fs-lead);font-weight:900;color:#fff;margin-bottom:4px;">Year</div>
-      <div style="font-size:var(--fs-small);color:var(--ink-3);line-height:1.75;">Place the denial in its credit climate. A file refused in a tight year is not the same file in a loose one, and the record shows which year you were in.</div>
-      <div style="font-size:var(--fs-micro);color:var(--gold);margin-top:6px;font-weight:700;">The climate index &rarr;</div>
-    </a><a href="/fha-denial-rates-by-metro.html" style="display:block;text-decoration:none;margin-bottom:22px;position:relative;">
-      <div style="position:absolute;left:-38px;top:2px;width:23px;height:23px;border-radius:50%;background:#08090c;border:1px solid rgba(200,168,75,.5);color:var(--gold);font-size:var(--fs-micro);font-weight:800;display:flex;align-items:center;justify-content:center;">03</div>
-      <div style="font-family:'Fraunces',Georgia,serif;font-size:var(--fs-lead);font-weight:900;color:#fff;margin-bottom:4px;">Door</div>
-      <div style="font-size:var(--fs-small);color:var(--ink-3);line-height:1.75;">Compare lenders on observed outcomes, not advertising &mdash; nationally, in your metro, and by loan size. This is where the 44&times; lives.</div>
-      <div style="font-size:var(--fs-micro);color:var(--gold);margin-top:6px;font-weight:700;">Your metro's doors &rarr;</div>
-    </a><a href="/fha-loan-denied-now-what.html" style="display:block;text-decoration:none;margin-bottom:22px;position:relative;">
-      <div style="position:absolute;left:-38px;top:2px;width:23px;height:23px;border-radius:50%;background:#08090c;border:1px solid rgba(200,168,75,.5);color:var(--gold);font-size:var(--fs-micro);font-weight:800;display:flex;align-items:center;justify-content:center;">04</div>
-      <div style="font-family:'Fraunces',Georgia,serif;font-size:var(--fs-lead);font-weight:900;color:#fff;margin-bottom:4px;">Reapply</div>
-      <div style="font-size:var(--fs-small);color:var(--ink-3);line-height:1.75;">Take the same file to a door whose record fits it. Consider applying to a second lender in parallel: if another door approves substantially the same file, you have learned the denial was about the door.</div>
-      <div style="font-size:var(--fs-micro);color:var(--gold);margin-top:6px;font-weight:700;">The full framework &rarr;</div>
-    </a>
-  </div>
-
-  <div style="text-align:center;margin-top:34px;">
-    <a href="/fha-loan-denied-now-what.html" style="display:inline-block;padding:15px 34px;background:var(--gold);color:#0a0a0a;border-radius:12px;font-weight:800;font-size:var(--fs-body);text-decoration:none;box-shadow:0 6px 26px rgba(200,168,75,.18);">Open The Denial Map &rarr;</a>
-    <div style="font-size:var(--fs-micro);color:var(--ink-4);margin-top:10px;">Free &middot; no sign-up &middot; no approval predictions</div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section style="max-width:640px;margin:0 auto;padding:0 24px 80px;">
-  <div style="text-align:center;margin-bottom:24px;">
-    <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.66);font-weight:700;margin-bottom:8px;">Pricing</div>
-    <div style="font-size:20px;font-weight:800;color:#fff;">The data is free. The tools are optional.</div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:24px;">
-      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:700;margin-bottom:16px;">Free forever</div>
-      <div style="font-size:28px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px;">$0</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.66);margin-bottom:20px;">no sign-up</div>
-      <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:16px;">
-        <div style="font-size:13px;color:var(--ink-3);line-height:2;">
-          <div>&#10003; 100 largest lenders, 2025</div>
-          <div>&#10003; All 184 metro lender gaps</div>
-          <div>&#10003; 50-state tables</div>
-          <div>&#10003; 8-year lender panel</div>
-          <div>&#10003; Every dataset (CC BY 4.0)</div>
-          <div>&#10003; Papers, receipts, corrections log</div>
-          <div>&#10003; MCP server &amp; API for agents</div>
-        </div>
-      </div>
-    </div>
-    <div style="background:rgba(200,168,75,0.06);border:1.5px solid rgba(200,168,75,0.3);border-radius:16px;padding:24px;position:relative;">
-      <div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#C8A84B;color:#000;font-size:11px;font-weight:800;letter-spacing:0.1em;padding:3px 12px;border-radius:20px;white-space:nowrap;">FOUNDING EDITION</div>
-      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#C8A84B;font-weight:700;margin-bottom:16px;">Metro Lender Report Card</div>
-      <div style="font-size:28px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px;">$29</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.66);margin-bottom:20px;">one page, client-ready</div>
-      <div style="border-top:1px solid rgba(200,168,75,0.15);padding-top:16px;margin-bottom:20px;">
-        <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:2;">
-          <div>&#10003; The five high-volume FHA doors</div>
-          <div>&#10003; Observed rates + volumes</div>
-          <div>&#10003; Small-loan penalty</div>
-          <div>&#10003; 8-year pattern per lender</div>
-          <div>&#10003; Quarterly updates through 2027</div>
-        </div>
-      </div>
-      <a href="https://financeratecalc.lemonsqueezy.com/checkout/buy/ee849698-0494-4e21-8d31-2373cbc07187" onclick="if(window.gtag)gtag('event','checkout_started',{product:'metro_card',page:location.pathname});" style="display:block;padding:11px;background:#C8A84B;color:#000;border-radius:10px;font-weight:800;font-size:13px;text-decoration:none;text-align:center;">Get the Cleveland card &rarr;</a>
-      <div style="text-align:center;margin-top:10px;font-size:11px;color:rgba(255,255,255,0.66);">another metro? <a href="mailto:ziyetis@gmail.com?subject=Metro%20Report%20Card%20request" style="color:rgba(200,168,75,0.6);text-decoration:none;">request yours</a></div>
-    </div>
-  </div>
-  <div style="margin-top:14px;padding:12px 18px;border:1px solid rgba(255,255,255,.1);border-radius:12px;text-align:center;font-size:13px;color:var(--ink-3);">
-    <b style="color:#fff;">Research reports:</b>
-    <a href="/black-hole-report.html" style="color:#C8A84B;text-decoration:none;">Mortgage Black Hole $49</a> &middot;
-    <a href="/fannie-mae-condo-rule-2026.html" style="color:#C8A84B;text-decoration:none;">Condo Guide $9.99</a>
-    <div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.66);">No lender pays us &middot; no ads &middot; no affiliates &middot; no lead generation &middot; no approval predictions</div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer style="border-top:1px solid rgba(255,255,255,0.06);padding:32px 24px 40px;">
-  <div style="max-width:640px;margin:0 auto;text-align:center;">
-    <div style="display:flex;flex-wrap:wrap;gap:6px 20px;justify-content:center;margin-bottom:16px;">
-      <a href="/evidence-navigator.html" style="font-size:13px;color:var(--ink-4);text-decoration:none;">Evidence</a>
-      <a href="/denial-clock.html" style="font-size:13px;color:var(--ink-4);text-decoration:none;">Denial Clock</a>
-      <a href="/lender-stress-index.html" style="font-size:13px;color:var(--ink-4);text-decoration:none;">LSI</a>
-      <a href="/fha-state-map.html" style="font-size:13px;color:var(--ink-4);text-decoration:none;">State Map</a>
-      <a href="/fha-lending-structure-research.html" style="font-size:13px;color:var(--ink-4);text-decoration:none;">Research</a>
-      <a href="/tools.html" style="font-size:13px;color:var(--ink-4);text-decoration:none;">All Tools</a>
-      <a href="/blog.html" style="font-size:13px;color:var(--ink-4);text-decoration:none;">Blog</a>
-      <a href="/faq.html" style="font-size:13px;color:var(--ink-4);text-decoration:none;">FAQ</a>
-    </div>
-    <div style="display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.05);">
-      <a href="/terms.html" style="font-size:11px;color:rgba(255,255,255,0.2);text-decoration:none;">Terms</a>
-      <a href="/privacy.html" style="font-size:11px;color:rgba(255,255,255,0.2);text-decoration:none;">Privacy</a>
-      <a href="/refund.html" style="font-size:11px;color:rgba(255,255,255,0.2);text-decoration:none;">Refund</a>
-      <a href="/dmca.html" style="font-size:11px;color:rgba(255,255,255,0.2);text-decoration:none;">DMCA</a>
-      <a href="/affiliate-disclosure.html" style="font-size:11px;color:rgba(255,255,255,0.2);text-decoration:none;">Affiliate Disclosure</a>
-    </div>
-    <div style="font-size:11px;color:rgba(255,255,255,0.15);">© 2026 FinanceRateCalc · CFPB HMDA public data · Educational only · Not financial advice</div>
-  </div>
-</footer>
-
-<script>
-(function(){
-  var S = new Date('2025-01-01T00:00:00Z').getTime();
-  var R = 264006/(365*24*60*60*1000);
-  function fmt(n){return Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');}
-  var el = document.getElementById('heroCount');
-  function tick(){if(el) el.textContent = fmt((Date.now()-S)*R);}
-  tick(); setInterval(tick,800);
-})();
-</script>
-
-<canvas id="frcVoid" style="position:fixed;inset:0;z-index:-1;pointer-events:none;"></canvas>
-<a href="/black-hole-report.html" style="position:fixed;bottom:16px;left:16px;z-index:5;font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.30);text-decoration:none;letter-spacing:.05em;transition:color .2s" onmouseover="this.style.color='#C8A84B'" onmouseout="this.style.color='rgba(255,255,255,.30)'">&#9653; this sky is a year of FHA applications &middot; the red ones don't make it &rarr;</a>
-<div id="frcSpot"></div>
-<script>/* FRC-SIGNATURE */
-document.addEventListener('mousemove',function(e){document.getElementById('frcSpot').style.setProperty('--mx',e.clientX+'px');document.getElementById('frcSpot').style.setProperty('--my',e.clientY+'px');});
-(function(){var s=119-Math.floor(Date.now()/1000)%119;setInterval(function(){s--;if(s<0)s=118;var el=document.getElementById('frcNx');if(el)el.textContent=Math.floor(s/60)+':'+('0'+s%60).slice(-2);},1000);})();
-</script>
-<script>/* FRC-VOID */
-(function(){var cv=document.getElementById('frcVoid');if(!cv)return;
-var ctx=cv.getContext('2d'),W,H,V,P=[],rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight;V={x:W*0.78,y:H*0.16};}rs();addEventListener('resize',rs);
-var N=W<760?320:950;
-function sp(p,e){p.m=0;p.d=Math.random()<0.27;
-if(e){var s=Math.floor(Math.random()*4);if(s==0){p.x=-10;p.y=Math.random()*H}else if(s==1){p.x=W+10;p.y=Math.random()*H}else if(s==2){p.x=Math.random()*W;p.y=-10}else{p.x=Math.random()*W;p.y=H+10}}
-else{p.x=Math.random()*W;p.y=Math.random()*H}
-p.vx=-0.05-Math.random()*0.18;p.vy=(Math.random()-0.5)*0.14;
-p.r=0.6+Math.random()*1.2;p.a=0.18+Math.random()*0.4;
-p.c=p.d?'233,69,96':(Math.random()<0.72?'200,168,75':'96,140,246');return p}
-for(var i=0;i<N;i++)P.push(sp({},false));
-function st(){ctx.clearRect(0,0,W,H);
-var g=ctx.createRadialGradient(V.x,V.y,0,V.x,V.y,130);
-g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(0.5,'rgba(0,0,0,0.92)');g.addColorStop(0.78,'rgba(3,6,14,0.45)');g.addColorStop(1,'rgba(3,6,14,0)');
-ctx.fillStyle=g;ctx.beginPath();ctx.arc(V.x,V.y,130,0,7);ctx.fill();
-for(var i=0;i<P.length;i++){var p=P[i];
-if(p.m==1){
- p.or*=0.9868;p.ang+=8.5/p.or;
- var px=p.x,py=p.y;
- p.x=V.x+Math.cos(p.ang)*p.or;p.y=V.y+Math.sin(p.ang)*p.or;
- if(p.or<13){sp(p,true);continue}
- var t=(p.or-13)/(64-13);
- var cr2=Math.round(233+22*(1-t)),cg=Math.round(69+145*(1-t)),cb=Math.round(96+24*(1-t));
- var beam=1+0.7*Math.cos(p.ang-0.9);
- var al=Math.min(1,(0.3+(1-t)*0.55)*beam);
- ctx.save();ctx.globalCompositeOperation='lighter';
- ctx.strokeStyle='rgba('+cr2+','+cg+','+cb+','+al+')';ctx.lineWidth=p.r*1.6;
- ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.restore();
- continue}
-if(p.d){var dx=V.x-p.x,dy=V.y-p.y,d=Math.sqrt(dx*dx+dy*dy)||1;
- p.vx+=(dx/d)*(22/d)+(-dy/d)*(13/d);p.vy+=(dy/d)*(22/d)+(dx/d)*(13/d);
- p.vx*=0.984;p.vy*=0.984;
- if(d<64){p.m=1;p.or=d;p.ang=Math.atan2(p.y-V.y,p.x-V.x);continue}}
-p.x+=p.vx;p.y+=p.vy;
-if(p.x<-15||p.x>W+15||p.y<-15||p.y>H+15){sp(p,true)}
-ctx.fillStyle='rgba('+p.c+','+p.a+')';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill()}
-if(!rm)requestAnimationFrame(st)}st()})();</script>
-
-<!-- dispatch-cta -->
-<div style="max-width:680px;margin:48px auto;padding:28px 26px;background:#08090c;border:1px solid #C8A84B;border-radius:10px;text-align:center;">
-  <div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase;margin-bottom:10px;">The Denial Dispatch</div>
-  <div style="font-family:'Fraunces',Georgia,serif;font-size:22px;color:#f5f2ea;margin-bottom:8px;">One finding a week from the federal mortgage record.</div>
-  <div style="font-family:'DM Sans',sans-serif;font-size:14px;color:#cbc7bb;margin-bottom:18px;">One chart, three paragraphs, every Saturday. Measured, not assumed.</div>
-  <a href="https://denialdispatch.beehiiv.com/subscribe" rel="noopener" style="display:inline-block;font-family:'DM Mono',monospace;font-size:14px;background:#C8A84B;color:#08090c;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">Get the Dispatch &rarr;</a>
-</div>
-<!-- /dispatch-cta -->
-
-
-<!-- frc-footer -->
-<div style="max-width:920px;margin:40px auto 0;padding:22px 20px;border-top:1px solid rgba(200,168,75,.35);font-family:'DM Sans',Arial,sans-serif;font-size:13px;color:#9a958a;text-align:center;background:transparent">
-<div style="margin-bottom:8px">
-<a href="/mortgage-ai-accuracy-index.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">AI Accuracy Index</a>
-<a href="/door-effect.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">The Door Effect</a>
-<a href="/fha-loan-denied-now-what.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">The Denial Map</a>
-<a href="/data.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">Open Data</a>
-<a href="/about.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">About</a>
-<a href="/metro-gaps.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">184 Metro Gaps</a>
-<a href="/evidence-navigator.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">Evidence Navigator</a>
-<a href="/case-files/" style="color:#C8A84B;text-decoration:none;margin:0 9px">Hallucination Files</a>
-<a href="/press.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">Press</a>
-<a href="https://denialdispatch.beehiiv.com/subscribe" style="color:#C8A84B;text-decoration:none;margin:0 9px">Newsletter</a>
-</div>
-<div>FinanceRateCalc &middot; Independent analysis of the complete federal HMDA record &middot; Measured, not assumed. &middot; No lender or AI vendor funds or previews this work.</div>
-</div>
-<!-- /frc-footer -->
-<script src="/assets/citation-receipt.js" defer></script>
-<!--FRC-FOOTNOTE:national-fha-denial-rate-2025--><aside class="frc-footnote" data-frc-footnote="national-fha-denial-rate-2025" data-receipt="⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:f2610⟧" aria-label="Evidence footnote" style="max-width:680px;margin:28px auto 72px;padding:12px 16px;border-top:1px solid rgba(127,127,127,.35);font-size:13px;line-height:1.55;opacity:.9;font-family:inherit;color:inherit;box-sizing:border-box"><p style="margin:0 0 6px"><b>Evidence footnote.</b> In 2025, 22.1% <span class="frc-fn-r" style="font-family:'DM Mono',ui-monospace,monospace;font-size:.92em;overflow-wrap:anywhere;word-break:break-all">⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:f2610⟧</span> of decisioned FHA applications were denied (actions 1,2,3; loan_type 2). Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only. CC BY 4.0.</p><p style="margin:0 0 6px"><a style="color:inherit;text-decoration:underline" href="https://financeratecalc.com/verify.html?r=%E2%9F%A6FRC%3Anational-fha-denial-rate-2025%3A22.1%25%3Aebf6b00b%3Af2610%E2%9F%A7">Verify</a> &middot; <a style="color:inherit;text-decoration:underline" href="https://financeratecalc.com/cite.html?id=national-fha-denial-rate-2025">Cite card</a> &middot; <a style="color:inherit;text-decoration:underline" href="https://financeratecalc.com/claims/national-fha-denial-rate-2025.json">Passport (JSON)</a> &middot; <a style="color:inherit;text-decoration:underline" href="https://financeratecalc.com/methodology.html">Method</a></p><p style="margin:0 0 6px;font-size:12px">The receipt covers this one figure only, not the estimates or calculator results on this page. It is not a prediction for any application; FHA only, reverse mortgages excluded. If the figure is ever corrected, the receipt stops verifying as current.</p><p style="margin:0;font-size:12px">For AI agents: the same figure with its use contract and a sentence checker, over MCP at <code style="overflow-wrap:anywhere;word-break:break-all">https://frc-mcp.ziyetis.workers.dev</code> (no key) &middot; <a style="color:inherit;text-decoration:underline" href="https://financeratecalc.com/use-frc.html">setup</a></p></aside><!--/FRC-FOOTNOTE-->
 </body>
 </html>
