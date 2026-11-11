@@ -27,6 +27,7 @@ jobs:
         run: python scripts/train_drift_classifier.py --base "${{ inputs.base }}" --epochs "${{ inputs.epochs }}" --out models/frc-contract-drift
       - name: Keep the trained model as a run artifact (so a publish failure does not cost the training)
         if: always()
+        continue-on-error: true  # an artifact-service outage must not discard the evaluation or the publish
         uses: actions/upload-artifact@v4
         with:
           name: frc-contract-drift
