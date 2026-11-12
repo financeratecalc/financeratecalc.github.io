@@ -74,7 +74,10 @@ const TOOLS = [
 ];
 
 async function getJSON(path) {
-  const r = await fetch(BASE + path, { headers: { "User-Agent": "frc-mcp-remote/1.1" }, cf: { cacheTtl: 3600, cacheEverything: true } });
+  // v1.47.1: a copy of a data file fetched minutes before it changed was still being served 13 hours later (an edge cache in
+  // front of the site outlived cacheTtl). The ten-minute bucket in the query makes the cache key change, so no copy lasts longer.
+  const u = BASE + path + (path.includes("?") ? "&" : "?") + "t=" + Math.floor(Date.now() / 600000);
+  const r = await fetch(u, { headers: { "User-Agent": "frc-mcp-remote/1.1" }, cf: { cacheTtl: 600, cacheEverything: true } });
   if (!r.ok) throw new Error(`FRC API ${r.status} for ${path}`);
   return r.json();
 }
@@ -123,6 +126,7 @@ async function sentenceFindings(sentence, contract) {
   hit("causal_assertion", "CAUSALITY_NOT_ESTABLISHED", /\b(because of|caused by|causes?|leads? to|results? in|due to|the reason (is|was)|makes? (it|them) (more|less) likely)\b/i, "causal wording; the record supports association only");
   hit("personalized_recommendation", "INDIVIDUAL_PREDICTION_PROHIBITED", /\b(best|worst|top|safest) lenders?\b|\b(avoid|choose|pick|go with|apply (to|with|at)|recommend)\b[^.]{0,60}\blender\b|\byou should (apply|avoid|choose|use)\b/i, "lender advice or ranking by quality");
   hit("legal_conclusion", "LEGAL_CONCLUSION_NOT_SUPPORTED", /\b(discriminat\w*|illegal\w*|unlawful\w*|violat\w*|redlin\w*|fair lending violation|broke the law)\b/i, "legal conclusion the record cannot establish");
+  hit("program_comparison", "PROGRAM_COMPARISON_NOT_SUPPORTED", /\b(easier|harder|stricter|looser|tougher|more lenient|less strict|safer|better|worse)\b[^.]{0,60}\bthan\b[^.]{0,40}\b(fha|va|usda|conventional|other (loan )?programs?)\b|\b(fha|va|usda|conventional)\b[^.]{0,40}\b(is|are)\b[^.]{0,20}\b(easier|harder|stricter|tougher|more lenient)\b[^.]{0,30}\bto (get|qualify|obtain)\b/i, "judgement of one program against another; applicant populations differ by eligibility and composition");
   const q = contract.required_qualifiers || {};
   if (q.period && !t.includes(String(q.period))) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no " + q.period + ")", why: "period missing: " + q.period });
   if (q.program_scope && /fha/i.test(q.program_scope) && !/\bfha\b/i.test(t)) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no FHA)", why: "program scope missing: FHA" });
@@ -462,9 +466,10 @@ async function checkClaimContract(a) {
   if (a.personalized_recommendation) V("INDIVIDUAL_PREDICTION_PROHIBITED","personalized_recommendation","Personalized lender recommendation is forbidden.");
   if (a.legal_conclusion) V("LEGAL_CONCLUSION_NOT_SUPPORTED","legal_conclusion","The record cannot establish unlawful conduct.");
   if (a.causal_assertion) V("CAUSALITY_NOT_ESTABLISHED","causal_assertion","Associational language only.");
+  if (a.program_comparison) V("PROGRAM_COMPARISON_NOT_SUPPORTED","program_comparison","Rates of different loan programs describe different applicant populations; they do not show that one program is easier or harder to get.");
   if (a.scope_beyond_universe) V("SCOPE_TOO_BROAD","scope","Defined universe/period only.");
   if (a.qualifier_dropped) V("QUALIFIER_DELETED","qualifiers","Required qualifier missing.");
-  const blockCodes = ["INDIVIDUAL_PREDICTION_PROHIBITED","LEGAL_CONCLUSION_NOT_SUPPORTED","STALE_VALUE","DOCUMENT_ID_MISMATCH","VALUE_MISMATCH"];
+  const blockCodes = ["INDIVIDUAL_PREDICTION_PROHIBITED","LEGAL_CONCLUSION_NOT_SUPPORTED","STALE_VALUE","DOCUMENT_ID_MISMATCH","VALUE_MISMATCH","PROGRAM_COMPARISON_NOT_SUPPORTED"];
   const verdict = violations.some(v=>blockCodes.includes(v.code)) ? "block" : (violations.length ? "needs_qualifier" : "pass");
   const out = { verdict, violations, safe_wording: contract.canonical_claim && contract.canonical_claim.template,
     required_qualifiers: contract.required_qualifiers, does_not_establish: contract.does_not_establish,
@@ -1054,7 +1059,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.47.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.47.1" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1610,7 +1615,7 @@ ${teach && teach.canonical_sentence ? `<h2>Restate it as</h2><blockquote><p>${es
               _meta: { "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
             continue;
           }
-          out.push(rpc(m.id, { content: [{ type: "text", text: JSON.stringify({ ...result, note: GUARDRAIL, ...(pricingNote ? { pricing: pricingNote } : {}) }, null, 1) }] }));
+          out.push(rpc(m.id, { content: [{ type: "text", text: JSON.stringify({ ...result, note: (result && result.level && /^2\b/.test(String(result.level)) && (result.note || (result.figures && "Official figures copied as printed from the named document (SHA-256 in document.sha256). Not computed by FinanceRateCalc; not a prediction about any application."))) || GUARDRAIL, ...(pricingNote ? { pricing: pricingNote } : {}) }, null, 1) }] }));
         } catch (e) {
           out.push(rpc(m.id, { content: [{ type: "text", text: String(e.message || e) }], isError: true }));
         }
