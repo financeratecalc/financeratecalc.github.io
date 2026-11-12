@@ -1059,7 +1059,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.47.1" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.47.2" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1422,7 +1422,7 @@ const WORKER = {
       const wantsHtml = /text\/html/.test(accept) && !/application\/json/.test(accept);
       const wantsText = /^text\/plain|text\/markdown/.test(accept);
       const RESP = { receipt: `\u27e6FRC:${id}:${value}:${h}${chan ? ":" + channel : ""}\u27e7`, id, quoted_value: value, current_value: current, status, hash_rule: hashRule, claim_url: id.startsWith("rule-") ? null : `https://financeratecalc.com/claims/${id}.json`, spec: "https://financeratecalc.com/spec/receipt-1.0.md", issued, correction,
-        meaning: status === "current" ? "This figure is current and unchanged since the receipt was issued." : status === "stale" ? "The figure was corrected after this receipt was issued; the quoted value may be superseded. See corrections.html." : status === "unrecognized" ? "This publisher never issued this receipt as written: its hash matches no value we have published for this claim, now or in any dated snapshot (transparency/receipt-hash-history.json). Forged, mistyped or truncated. Do not cite it." : "The receipt hash matches but the quoted value does not; the quote was altered.",
+        meaning: status === "current" && publisherRevision ? "The receipt matches the figure as first printed in its edition. The publisher printed a different value for the same period in a later edition (see publisher_revision); name the edition when quoting either number." : status === "current" ? "This figure is current and unchanged since the receipt was issued." : status === "stale" ? "The figure was corrected after this receipt was issued; the quoted value may be superseded. See corrections.html." : status === "unrecognized" ? "This publisher never issued this receipt as written: its hash matches no value we have published for this claim, now or in any dated snapshot (transparency/receipt-hash-history.json). Forged, mistyped or truncated. Do not cite it." : "The receipt hash matches but the quoted value does not; the quote was altered.",
         corrections: "https://financeratecalc.com/corrections.html", license: "CC BY 4.0",
         transparency: { note: "The snapshot of every claim's value and hash is signed with Sigstore by the publisher's repository workflow and timestamped in the public Rekor log; verify the receipt against it without this server.",
           snapshot: "https://financeratecalc.com/rl-env/frc_citation/receipts-snapshot.json", bundle: "https://financeratecalc.com/transparency/receipts-snapshot.sigstore.json", log: "https://financeratecalc.com/transparency/log.json" },
