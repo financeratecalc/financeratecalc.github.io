@@ -40,6 +40,8 @@ jobs:
         run: python3 scripts/build_official_page.py --check || { echo "::error::official-figures page stale; run scripts/build_official_page.py"; exit 1; }
       - name: Revision ledger is generated from the restated editions
         run: python3 scripts/build_revisions_feed.py >/dev/null && python3 scripts/build_revision_ledger.py --check || { echo "::error::revision ledger stale; run scripts/build_revision_ledger.py"; exit 1; }
+      - name: Denominator map must match data/purpose and the claims (when it exists)
+        run: if ls data/purpose/*-2025.json >/dev/null 2>&1; then python3 scripts/build_denominator_map.py --check || { echo "::error::denominator map stale; run scripts/build_denominator_map.py"; exit 1; }; fi
       - name: Lender pages' reason sections must match the lender receipts
         run: python3 scripts/build_lender_reason_sections.py --check || { echo "::error::lender reason sections stale; run scripts/build_lender_reason_sections.py"; exit 1; }
       - name: Reason-fingerprints page must match the lender receipts

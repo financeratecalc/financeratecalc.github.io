@@ -85,6 +85,12 @@ class Verifier:
                 return f"{n['denial_rate_pct']:.1f}%", {"metric": f"{prog}_denial_rate", "program": P, "value": round(n["denial_rate_pct"] / 100, 4), "n": n["decisioned_applications"], "denials": n["denials"], "period": "2025", "universe_id": d["universe_id"]}
             st = m.group(3).upper(); S = next(x for x in d["states"] if x["state"] == st)
             return f"{float(S['denial_rate_pct']):.1f}%", {"state": st, "metric": f"{prog}_denial_rate", "program": P, "value": S["denial_rate_pct"], "n": S["decisioned_applications"], "denials": S["denials"], "period": "2025", "universe_id": d["universe_id"]}
+        m = re.match(r"purpose-(fha|va|usda|conv)-(purchase|refinance)-denial-rate-2025$", cid)
+        if m:
+            prog = m.group(1); d = self._json(f"/data/purpose/{prog}-2025.json"); key = "purchase" if m.group(2) == "purchase" else "refinance_all"
+            c = d["cells"][key + "|all"]; rate = c["rate_pct"]["decisioned"]
+            return f"{rate:.1f}%", {"metric": f"{prog}_{m.group(2)}_denial_rate", "program": d["program"], "loan_purpose": d["definitions"]["purposes"][key], "value": round(rate / 100, 4),
+                                    "n": c["decisioned"], "denials": c["denied"], "period": "2025", "universe_id": d["universe_ids"][key]}
         m = re.match(r"outcome-(va|usda|conv)-(originated|approved-not-accepted|denied|withdrawn|closed-incomplete)-2025$", cid)
         if m:
             prog = m.group(1); d = self._json(f"/data/programs/{prog}-2025.json"); key = m.group(2).replace("-", "_")

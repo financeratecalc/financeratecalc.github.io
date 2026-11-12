@@ -24,6 +24,13 @@ def official_limits(cid):
 
 def contract_for(cid, d):
     c, v = d["claim"], d["display_value"]
+    um = re.match(r"purpose-(fha|va|usda|conv)-(purchase|refinance)-denial-rate-2025$", cid)
+    if um:
+        P = c.get("program", um.group(1).upper()); word = "home-purchase" if um.group(2) == "purchase" else "refinance"
+        other = "refinance" if um.group(2) == "purchase" else "home-purchase"
+        return {"canonical_claim": {"template": f"In 2025, {{value}} of decisioned {P} {word} applications in the US were denied ({c.get('denials', 0):,} denials out of {c.get('n', 0):,} applications reaching a credit decision).", "required_fields": ["period", "population", "program", "loan_purpose", "denominator"]},
+                "required_qualifiers": {"period": "2025", "population": f"decisioned {P} {word} applications ({c.get('loan_purpose')}; actions 1,2,3; reverse mortgages excluded)", "program_scope": P, "loan_purpose": word, "denominator": "applications reaching a credit decision, not all applications acted on", "nature": "historical aggregate; association, not cause"},
+                "does_not_establish": [f"the {P} denial rate for all loan purposes or for {other} applications", f"that {word} loans are easier or harder to obtain than {other} loans for a given applicant (the applicant populations differ)", "a comparison across programs as a judgement of programs or lenders", "which denominator any other published figure used", "any individual's chance of denial", "any lender-level figure"]}
     pm = re.match(r"(va|usda|conv)-(national|state-([a-z]{2}))-denial-rate-2025$", cid)
     if pm:
         P = c.get("program", pm.group(1).upper()); prog = pm.group(1)

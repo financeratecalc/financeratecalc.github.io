@@ -44,6 +44,9 @@ def receipt_ids():
         d = json.load(open(f, encoding="utf-8")); prog = os.path.basename(f)[:-10]
         ids += [f"{prog}-national-denial-rate-2025"] + [f"{prog}-state-{s['state'].lower()}-denial-rate-2025" for s in d["states"]]
         ids += [f"outcome-{prog}-{k}-2025" for k in ("originated", "approved-not-accepted", "denied", "withdrawn", "closed-incomplete")]
+    for f in sorted(glob.glob(os.path.join(ROOT, "data/purpose/*-2025.json"))):
+        prog = os.path.basename(f)[:-10]
+        ids += [f"purpose-{prog}-purchase-denial-rate-2025", f"purpose-{prog}-refinance-denial-rate-2025"]
     for f in sorted(glob.glob(os.path.join(ROOT, "data/official/*.json"))):
         if os.path.basename(f) == "index.json":
             continue
@@ -67,6 +70,11 @@ def reproduce_block(cid, obj, v):
         return {**base, "query_url": f"{DB}/csv?years=2025&states={cid[6:8].upper()}&loan_types=2"}
     if cid.startswith("small-loan-penalty-") and cid != "small-loan-penalty-range-2025":
         return {**base, "query_url": f"{DB}/csv?years=2025&states={cid[19:21].upper()}&loan_types=2", "note": "small = loan_amount < 150000; big = loan_amount > 250000; penalty = small-loan denial rate / big-loan denial rate"}
+    um = re.match(r"purpose-(fha|va|usda|conv)-(purchase|refinance)-", cid)
+    if um:
+        LT = {"fha": "2", "va": "3", "usda": "4", "conv": "1"}[um.group(1)]; lp = "1" if um.group(2) == "purchase" else "31,32"
+        return {**base, "filters": FILTERS.replace("loan_type=2 (FHA)", f"loan_type={LT} ({obj.get('program')})") + f" Keep loan_purpose in ({lp})." + (" Also drop open_end_line_of_credit=1." if um.group(1) == "conv" else ""),
+                "query_url": f"{DB}/nationwide/csv?years=2025&loan_types={LT}&loan_purposes={lp}", "note": "the all-purpose total of the same run equals the program's published decisioned count; see data/purpose/"}
     pm = re.match(r"(?:outcome-)?(va|usda|conv)-(national|state-([a-z]{2}))?", cid)
     if pm and pm.group(1):
         LT = {"va": "3", "usda": "4", "conv": "1"}[pm.group(1)]
@@ -115,6 +123,12 @@ def main():
         if pm and "claim" not in doc:
             prog = pm.group(1); LT = {"va": "3", "usda": "4", "conv": "1"}[prog]
             doc["provenance"]["dataset"] = f"loan_type={LT} ({obj.get('program')}); action_taken in {{1,2,3}} = decisioned; reverse mortgages excluded" + ("; open-end lines of credit excluded" if prog == "conv" else "") + f"; universe {obj.get('universe_id')} (provenance/universe-expansion-2025.md)"
+            doc["attribution"]["required_text"] = f"Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record ({obj.get('program')} loans); historical aggregate only."
+        um = re.match(r"purpose-(fha|va|usda|conv)-(purchase|refinance)-", cid)
+        if um and "claim" not in doc:
+            LT = {"fha": "2", "va": "3", "usda": "4", "conv": "1"}[um.group(1)]
+            doc["provenance"]["primary_source"] = f"CFPB/FFIEC HMDA public record 2025; data/purpose/{um.group(1)}-2025.json"
+            doc["provenance"]["dataset"] = f"loan_type={LT} ({obj.get('program')}); {obj.get('loan_purpose')}; action_taken in {{1,2,3}} = decisioned; reverse mortgages excluded; universe {obj.get('universe_id')} (provenance/universe-purpose-split-2025.md)"
             doc["attribution"]["required_text"] = f"Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record ({obj.get('program')} loans); historical aggregate only."
         if cid.startswith("official-") and "claim" not in doc:
             doc["provenance"] = {"primary_source": obj["source_document"] + " — " + obj["edition"], "dataset": "official publication; figure copied as printed, not computed; " + obj["exclusions"],

@@ -17,6 +17,9 @@ on:
       official:
         description: "Level-2 restatement run instead of the HMDA pipeline: <source>:<yyyy-mm>, e.g. hud-fhaprod:2026-08 or ginnie-iss:2026-09. Downloads the official document, hashes it, copies the labelled cells, builds claim documents, contracts, hash history and snapshot, commits. Leave empty for HMDA runs."
         default: ""
+      purpose_split:
+        description: "yes = denominator-map run instead of the pipeline: counts the program's applications (loan_type above; 2 = FHA, 3 = VA) by loan purpose, scope and action, writes data/purpose/<program>-2025.json, the purchase and refinance receipts and denominator-map.html. Writes nothing unless the all-purpose count equals the published one. Never touches the published files."
+        default: "no"
       independent:
         description: "yes = also recompute national/state/lender figures with hmda-analyzer (third-party code) and write provenance/independent-reproduction.json"
         default: "no"
@@ -73,9 +76,9 @@ jobs:
           sha256sum /tmp/hmda.csv | cut -c1-64 | tee /tmp/input.sha256
       - name: 2. Reference implementation (one pass over the file)
         run: python3 scripts/reference_implementation.py /tmp/hmda.csv 2>&1 | tail -12
-        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
+        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == '' && github.event.inputs.purpose_split != 'yes'
       - name: 2p. Program first release (VA / USDA / conventional) - reference implementation, outcomes, summary; FHA files untouched
-        if: github.event.inputs.loan_type != '2' && github.event.inputs.official == ''
+        if: github.event.inputs.loan_type != '2' && github.event.inputs.official == '' && github.event.inputs.purpose_split != 'yes'
         run: |
           set -e
           LT="${{ github.event.inputs.loan_type }}"; CE=""; if [ "$LT" = "1" ]; then CE="--closed-end"; fi
@@ -95,18 +98,41 @@ jobs:
           git diff --cached --quiet || git commit -m "program first release: loan_type $LT, ${{ github.event.inputs.year }} file [skip ci]"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
           echo "PROGRAM_RUN=1" >> $GITHUB_ENV
+      - name: 2s. Denominator map (purpose split) - counts by loan purpose, scope and action; receipts for purchase and refinance; nothing written unless the total reconciles
+        if: github.event.inputs.purpose_split == 'yes' && github.event.inputs.official == ''
+        run: |
+          set -eo pipefail
+          LT="${{ github.event.inputs.loan_type }}"; CE=""; if [ "$LT" = "1" ]; then CE="--closed-end"; fi
+          python3 scripts/denominator_grid.py /tmp/hmda.csv --loan-type $LT $CE --sha256 "$(cat /tmp/input.sha256)" --url "$(cat /tmp/input.url)" 2>&1 | tee /tmp/purpose.log
+          python3 scripts/build_claim_documents.py | tail -1
+          python3 scripts/build_claim_contracts.py | tail -1
+          python3 scripts/build_claims_index.py
+          python3 scripts/build_receipt_hash_history.py | tail -1
+          python3 scripts/build_receipts_snapshot.py 2>/dev/null | tail -1 | cut -c1-120
+          python3 scripts/build_denominator_map.py
+          python3 scripts/build_llms_full.py | tail -1
+          git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/purpose universes.json claims transparency llms-full.txt rl-env/frc_citation/receipts-snapshot.json denominator-map.html
+          git diff --cached --quiet || git commit -m "denominator map: loan_type $LT, ${{ github.event.inputs.year }} file [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
+      - name: 2r. Report the denominator-map log as an issue (result or failure)
+        if: always() && github.event.inputs.purpose_split == 'yes' && github.event.inputs.official == ''
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: |
+          body=$(tail -c 3000 /tmp/purpose.log 2>/dev/null || echo "no log written (the download or an earlier step failed)")
+          gh issue create --title "denominator map loan_type ${{ github.event.inputs.loan_type }} $(date -u +%Y-%m-%dT%H:%MZ): ${{ job.status }}" --body "$body" || true
       - name: 3. Materialize api/ files from the rebuild
-        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
+        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == '' && github.event.inputs.purpose_split != 'yes'
         run: |
           PANEL=fresh; if [ "${{ github.event.inputs.year }}" = "2025" ]; then PANEL=frozen; fi
           python3 scripts/materialize_rebuild.py /tmp/frc_rebuild.json --year "${{ github.event.inputs.year }}" --out /tmp/materialized --panel $PANEL
       - name: 4. Application outcomes and door-report cells from the same file
-        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
+        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == '' && github.event.inputs.purpose_split != 'yes'
         run: |
           python3 scripts/application_outcomes.py /tmp/hmda.csv /tmp/materialized/data/application-outcomes-${{ github.event.inputs.year }}.json | tail -1
           python3 scripts/door_report_cells.py /tmp/hmda.csv /tmp/materialized/data/door-report-cells-${{ github.event.inputs.year }}.json 2>&1 | tail -1
       - name: 5. Dry run - compare with the published files, number by number
-        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
+        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == '' && github.event.inputs.purpose_split != 'yes'
         run: |
           python3 scripts/compare_tree.py /tmp/materialized provenance/release-day-dryrun.json
           python3 - <<'PY'
@@ -118,7 +144,7 @@ jobs:
           print("verdict:", r["verdict"], "| numeric match", r["numeric_match_rate"])
           PY
       - name: 5b. Independent implementation - recompute national, state and lender figures with hmda-analyzer (third-party code) and compare
-        if: github.event.inputs.independent == 'yes' && github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
+        if: github.event.inputs.independent == 'yes' && github.event.inputs.loan_type == '2' && github.event.inputs.official == '' && github.event.inputs.purpose_split != 'yes'
         run: |
           pip install -q "hmda-analyzer==0.6.1" "pandas>=2.2"
           python3 scripts/independent_reproduction.py /tmp/hmda.csv provenance/independent-reproduction.json 2>&1 | tail -3
@@ -130,7 +156,7 @@ jobs:
           json.dump(r, open("provenance/independent-reproduction.json", "w"), indent=1, ensure_ascii=False)
           PY
       - name: 6. APPLY - write the rebuilt data into the site and rebuild everything that derives from it
-        if: github.event.inputs.apply == 'APPLY' && github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
+        if: github.event.inputs.apply == 'APPLY' && github.event.inputs.loan_type == '2' && github.event.inputs.official == '' && github.event.inputs.purpose_split != 'yes'
         run: |
           set -e
           cp -r /tmp/materialized/api/. api/
@@ -150,7 +176,7 @@ jobs:
           python3 scripts/check_page_values.py --fix | tail -1
           python3 scripts/check_page_phrasing.py | tail -1
       - name: 7. Commit (dry-run report always; the site only on APPLY)
-        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == ''
+        if: github.event.inputs.loan_type == '2' && github.event.inputs.official == '' && github.event.inputs.purpose_split != 'yes'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

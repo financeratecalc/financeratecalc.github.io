@@ -24,6 +24,9 @@ for f in sorted(glob.glob(os.path.join(ROOT, "data/programs/*-2025.json"))):
     d = json.load(open(f, encoding="utf-8")); prog = os.path.basename(f)[:-10]
     ids += [f"{prog}-national-denial-rate-2025"] + [f"{prog}-state-{s['state'].lower()}-denial-rate-2025" for s in d["states"]]
     ids += [f"outcome-{prog}-{k}-2025" for k in ("originated", "approved-not-accepted", "denied", "withdrawn", "closed-incomplete")]
+for f in sorted(glob.glob(os.path.join(ROOT, "data/purpose/*-2025.json"))):
+    prog = os.path.basename(f)[:-10]
+    ids += [f"purpose-{prog}-purchase-denial-rate-2025", f"purpose-{prog}-refinance-denial-rate-2025"]
 for f in sorted(glob.glob(os.path.join(ROOT, "data/official/*.json"))):
     if os.path.basename(f) == "index.json":
         continue
