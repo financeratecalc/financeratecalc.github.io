@@ -157,11 +157,13 @@ def main():
 
     idx = J("claims/index.json")["claims"]
     rec = [c for c in idx if c.get("receipt")]
-    fam = {"fha": 0, "prog": 0, "official": 0}
+    fam = {"fha": 0, "prog": 0, "official": 0, "purpose": 0}
     for c in rec:
         i = c["id"]
         if i.startswith("official-"):
             fam["official"] += 1
+        elif i.startswith("purpose-"):
+            fam["purpose"] += 1
         elif re.match(r"(outcome-)?(va|usda|conv)-", i):
             fam["prog"] += 1
         else:
@@ -245,9 +247,13 @@ def main():
     if va:
         fam_rows += (f'<tr><td><a href="/va-loan-denial-rates-2025.html">VA denial rates and outcomes</a></td><td>Computed from the same file</td><td class="n">{fam["prog"]}</td>'
                      f'<td>National, every state, five outcomes. USDA and conventional are declared and next.</td></tr>')
+    if fam["purpose"]:
+        fam_rows += (f'<tr><td><a href="/denominator-map.html">Purchase and refinance denial rates</a></td><td>Computed from the same file</td><td class="n">{fam["purpose"]}</td>'
+                     f'<td>The <a href="/denominator-map.html">denominator map</a>: every loan purpose, denominator and scope, so a rate quoted without one can be placed</td></tr>')
     if off:
-        fam_rows += (f'<tr><td><a href="/official-figures.html">HUD monthly FHA production figures</a></td><td>Restated as printed from the official report</td><td class="n">{fam["official"]}</td>'
-                     f'<td>{len(off)} editions, each bound to the PDF&rsquo;s SHA-256, with revision status against the next edition</td></tr>')
+        led = J("data/revisions.json")
+        fam_rows += (f'<tr><td><a href="/official-figures.html">Official monthly figures</a> (HUD FHA production; Ginnie Mae issuance)</td><td>Restated as printed from the official report</td><td class="n">{fam["official"]}</td>'
+                     f'<td>{len(eds)} editions, each bound to the PDF&rsquo;s SHA-256. <a href="/revision-ledger.html">Revision ledger</a>: {led["figures_compared"]} figures compared across editions, {led["revisions_found"]} changed</td></tr>')
 
     agg = {}
     for r in qsi["rows"]:                                # one line per engine; answers whose engine the owner did not name are grouped
@@ -319,7 +325,7 @@ def main():
 <h2>Revision watch: what the publisher changed without saying so</h2>
 <p>Official reports restate last month&rsquo;s figures beside this month&rsquo;s. When the restated number differs from the one first printed, that is a revision &mdash; and the report does not flag it. We compare every edition with the one before it and record each change on the original receipt. <b>{n_rev} silent revisions</b> found so far.</p>
 <table class="watch"><thead><tr><th>Figure (HUD FHA production report)</th><th>Period</th><th class="n">First printed</th><th class="n">Restated as</th><th class="hide-s">Where</th></tr></thead><tbody>{rev_rows}</tbody></table>
-<p style="margin-top:14px"><a href="/official-figures.html">Every official figure and its revision status</a> &middot; <a href="/data/revisions.json">revisions feed for machines</a></p>
+<p style="margin-top:14px"><a href="/official-figures.html">Every official figure and its revision status</a> &middot; <a href="/revision-ledger.html">revision ledger</a> &middot; <a href="/data/revisions.json">revisions feed for machines</a></p>
 
 <h2>Two kinds of receipt, and what each one attests</h2>
 <div class="two">
