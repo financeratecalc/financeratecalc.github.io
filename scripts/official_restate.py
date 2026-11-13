@@ -56,7 +56,10 @@ SOURCES = {
         "title": "Ginnie Mae Monthly Issuance Report (Issuance Summary)",
         "publisher": "Government National Mortgage Association (Ginnie Mae), U.S. Department of Housing and Urban Development",
         # the publisher moved these files in 2026; the first two locations are where the 2026 editions were found, the last is the old one
-        "url_patterns": ["https://www.ginniemae.gov/s3/sites/default/files/assets/redirects/{Mon}{YY}_ISS.pdf",
+        "url_patterns": ["https://www.ginniemae.gov/s3/sites/default/files/{PUB1}/{Mon}{YY}_ISS.pdf",   # e.g. 2026-10/Sep26_ISS.pdf: filed under the month of publication
+                         "https://www.ginniemae.gov/s3/sites/default/files/{PUB2}/{Mon}{YY}_ISS.pdf",
+                         "https://www.ginniemae.gov/s3/sites/default/files/{PUB0}/{Mon}{YY}_ISS.pdf",
+                         "https://www.ginniemae.gov/s3/sites/default/files/assets/redirects/{Mon}{YY}_ISS.pdf",
                          "https://www.ginniemae.gov/s3/sites/default/files/assets/pdfs/{Mon}{YY}_ISS.pdf",
                          "https://www.ginniemae.gov/data_and_reports/reporting/MonthlyIssuanceReports/{Mon}{YY}_ISS.pdf"],
         "exclusions": "Mortgage-backed securities issued under Ginnie Mae I and Ginnie Mae II programs, in USD millions; a securities-issuance figure, not a count of loans",
@@ -124,7 +127,7 @@ def fetch(src, y, m, dest):
             print("fetch failed:", url, str(e)[:80])
     for pat in src["url_patterns"]:
         for mon in dict.fromkeys([MON[m - 1].title(), MON_FULL[m - 1], MON_FULL[m - 1].upper(), FULL[m - 1], FULL[m - 1].upper(), MON[m - 1]]):
-            url = pat.format(MON=MON[m - 1], Mon=mon, Y=y, YY=str(y)[2:])
+            url = pat.format(MON=MON[m - 1], Mon=mon, Y=y, YY=str(y)[2:], **{f"PUB{k}": f"{y + (m - 1 + k) // 12}-{(m - 1 + k) % 12 + 1:02d}" for k in (0, 1, 2)})
             if url in tried:
                 continue
             tried.append(url)
