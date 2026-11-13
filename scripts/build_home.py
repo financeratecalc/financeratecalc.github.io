@@ -257,7 +257,7 @@ def main():
                      f'<td>The <a href="/denominator-map.html">denominator map</a>: every loan purpose, denominator and scope, so a rate quoted without one can be placed</td></tr>')
     if off:
         led = J("data/revisions.json")
-        fam_rows += (f'<tr><td><a href="/official-figures.html">Official monthly figures</a> (HUD FHA production; Ginnie Mae issuance)</td><td>Restated as printed from the official report</td><td class="n">{fam["official"]}</td>'
+        fam_rows += (f'<tr><td><a href="/official-figures.html">Official monthly figures</a> (HUD FHA production; Ginnie Mae issuance; SBA 7(a) and 504 approvals)</td><td>Restated as printed from the official report</td><td class="n">{fam["official"]}</td>'
                      f'<td>{len(eds)} editions, each bound to the PDF&rsquo;s SHA-256. <a href="/revision-ledger.html">Revision ledger</a>: {led["figures_compared"]} figures compared across editions, {led["revisions_found"]} changed</td></tr>')
 
     agg = {}
