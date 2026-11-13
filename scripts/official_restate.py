@@ -55,7 +55,10 @@ SOURCES = {
         "kind": "month_table",
         "title": "Ginnie Mae Monthly Issuance Report (Issuance Summary)",
         "publisher": "Government National Mortgage Association (Ginnie Mae), U.S. Department of Housing and Urban Development",
-        "url_patterns": ["https://www.ginniemae.gov/data_and_reports/reporting/MonthlyIssuanceReports/{Mon}{YY}_ISS.pdf"],
+        # the publisher moved these files in 2026; the first two locations are where the 2026 editions were found, the last is the old one
+        "url_patterns": ["https://www.ginniemae.gov/s3/sites/default/files/assets/redirects/{Mon}{YY}_ISS.pdf",
+                         "https://www.ginniemae.gov/s3/sites/default/files/assets/pdfs/{Mon}{YY}_ISS.pdf",
+                         "https://www.ginniemae.gov/data_and_reports/reporting/MonthlyIssuanceReports/{Mon}{YY}_ISS.pdf"],
         "exclusions": "Mortgage-backed securities issued under Ginnie Mae I and Ginnie Mae II programs, in USD millions; a securities-issuance figure, not a count of loans",
         "table": "Table 1: Monthly Issuance Summary (In Millions)",
         "ncols": 18,
