@@ -192,9 +192,14 @@ def main():
     add("national-fha-denial-rate-2025", f'{nat["rate_pct"]:.1f}%', "of decisioned FHA applications denied, 2025")
     if va:
         add("va-national-denial-rate-2025", f'{va_d["national"]["denial_rate_pct"]:.1f}%', "of decisioned VA applications denied, 2025")
-    L = sorted((json.load(open(f, encoding="utf-8")) for f in glob.glob(os.path.join(ROOT, "api", "lender", "*.json"))), key=lambda x: x["denial_rate_pct"])
-    for x in (L[0], L[-1]):
-        add(f"lender-{x['slug']}-2025", f'{x["denial_rate_pct"]:.1f}%', f'{x["lender"].title()[:34]}, FHA denial rate, 2025')
+    # purchase and refinance rates (the denominator map) instead of the lowest and highest lender: no extremes of a lender
+    # table on the home page, and no tie between two lenders for the build to break differently on two machines
+    for prog, P in (("fha", "FHA"), ("va", "VA")):
+        pp = os.path.join(ROOT, "data", "purpose", f"{prog}-2025.json")
+        if os.path.exists(pp):
+            pc = json.load(open(pp, encoding="utf-8"))["cells"]
+            add(f"purpose-{prog}-purchase-denial-rate-2025", f'{pc["purchase|all"]["rate_pct"]["decisioned"]:.1f}%', f"of decisioned {P} home-purchase applications denied, 2025")
+            add(f"purpose-{prog}-refinance-denial-rate-2025", f'{pc["refinance_all|all"]["rate_pct"]["decisioned"]:.1f}%', f"of decisioned {P} refinance applications denied, 2025")
     for st in ("tx", "ca", "fl", "ny"):
         try:
             S = J(f"api/state/{st}.json")
