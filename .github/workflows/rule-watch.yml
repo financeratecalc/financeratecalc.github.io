@@ -44,6 +44,8 @@ jobs:
         run: cd integrations/nemo-guardrails/receipt-rail && python3 test_actions.py
       - name: Edition-aware question set is generated from the receipted figures and scores its own reference answers
         run: python3 scripts/build_edition_qa.py --check && python3 scripts/build_edition_qa.py --selftest
+      - name: Denominator-reasoning tasks reproduce from their seed and score their own reference answers
+        run: python3 scripts/build_denominator_tasks.py --check && python3 scripts/build_denominator_tasks.py --selftest
       - name: Denominator map must match data/purpose and the claims (when it exists)
         run: if ls data/purpose/*-2025.json >/dev/null 2>&1; then python3 scripts/build_denominator_map.py --check || { echo "::error::denominator map stale; run scripts/build_denominator_map.py"; exit 1; }; fi
       - name: Lender pages' reason sections must match the lender receipts

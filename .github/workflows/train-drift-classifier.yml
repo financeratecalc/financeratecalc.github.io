@@ -8,6 +8,9 @@ on:
       epochs:
         description: epochs
         default: "3"
+      ood_only:
+        description: "yes = do not train: load the published model and test it on hand-written sentences outside the generator's templates (eval/drift-ood-set.jsonl); a few minutes, no cost"
+        default: "no"
       push:
         description: publish the model to Hugging Face (FinanceRateCalc/frc-contract-drift) — type yes to publish
         default: "no"
@@ -23,10 +26,12 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install -q torch --index-url https://download.pytorch.org/whl/cpu && pip install -q "transformers>=4.44" "accelerate>=0.30" numpy huggingface_hub
       - run: python scripts/build_drift_training_set.py | tail -3
+        if: inputs.ood_only != 'yes'
       - name: Train and evaluate on held-out claim ids
+        if: inputs.ood_only != 'yes'
         run: python scripts/train_drift_classifier.py --base "${{ inputs.base }}" --epochs "${{ inputs.epochs }}" --out models/frc-contract-drift
       - name: Keep the trained model as a run artifact (so a publish failure does not cost the training)
-        if: always()
+        if: always() && inputs.ood_only != 'yes'
         continue-on-error: true  # an artifact-service outage must not discard the evaluation or the publish
         uses: actions/upload-artifact@v4
         with:
@@ -36,6 +41,7 @@ jobs:
             !models/frc-contract-drift/_trainer
           retention-days: 14
       - name: Publish the evaluation and the data set summary
+        if: inputs.ood_only != 'yes'
         run: |
           cp models/frc-contract-drift/eval.json eval/drift-model-eval.json
           git config user.name "github-actions[bot]"
@@ -44,7 +50,7 @@ jobs:
           git diff --cached --quiet || git commit -m "drift classifier: eval + data set [skip ci]"
           for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
       - name: Publish the model to Hugging Face (only when push=yes)
-        if: inputs.push == 'yes'
+        if: inputs.push == 'yes' && inputs.ood_only != 'yes'
         env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}" }
         run: |
           python - <<'PY'
@@ -62,3 +68,12 @@ jobs:
                             ignore_patterns=["_trainer/*"], commit_message="train from rule-generated set")
           print("pushed FinanceRateCalc/frc-contract-drift")
           PY
+      - name: Out-of-template test of the published model (hand-written sentences)
+        if: inputs.ood_only == 'yes' || inputs.push == 'yes'
+        run: |
+          python scripts/eval_drift_ood.py
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add eval/drift-model-ood.json
+          git diff --cached --quiet || git commit -m "drift classifier: out-of-template test [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
