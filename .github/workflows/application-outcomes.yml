@@ -15,7 +15,7 @@ on:
         description: "HMDA loan_type: 2 = FHA (the published pipeline; default). 3 = VA, 4 = USDA, 1 = conventional (closed-end): first-release run per provenance/universe-expansion-2025.md — writes data/programs/<program>-2025.json and the universe count only; never touches the FHA files. source_url is derived from this when it is not 2."
         default: "2"
       official:
-        description: "Level-2 restatement run instead of the HMDA pipeline: <source>:<yyyy-mm>, e.g. hud-fhaprod:2026-08 or ginnie-iss:2026-09. Downloads the official document, hashes it, copies the labelled cells, builds claim documents, contracts, hash history and snapshot, commits. Leave empty for HMDA runs."
+        description: "Level-2 restatement run instead of the HMDA pipeline: <source>:<yyyy-mm>, e.g. hud-fhaprod:2026-08 or ginnie-iss:2026-09. probe:<name> only reads a listed file and posts its layout as an issue (the run shows as failed by design; nothing is written). Downloads the official document, hashes it, copies the labelled cells, builds claim documents, contracts, hash history and snapshot, commits. Leave empty for HMDA runs."
         default: ""
       purpose_split:
         description: "yes = denominator-map run instead of the pipeline: counts the program's applications (loan_type above; 2 = FHA, 3 = VA) by loan purpose, scope and action, writes data/purpose/<program>-2025.json, the purchase and refinance receipts and denominator-map.html. Writes nothing unless the all-purpose count equals the published one. Never touches the published files."
@@ -41,7 +41,7 @@ jobs:
         run: |
           set -eo pipefail
           sudo apt-get install -y -qq poppler-utils >/dev/null 2>&1 || true
-          pip install -q pypdf
+          pip install -q pypdf openpyxl
           SRC="${{ github.event.inputs.official }}"; S="${SRC%%:*}"; P="${SRC##*:}"
           python3 scripts/official_restate.py "$S" "$P" 2>&1 | tee /tmp/official.log
           test -f "data/official/$S-$P.json" || { echo "no data file written" | tee -a /tmp/official.log; exit 1; }
@@ -64,7 +64,7 @@ jobs:
         if: failure() && github.event.inputs.official != ''
         env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
         run: |
-          body=$(tail -c 3000 /tmp/official.log 2>/dev/null || echo "no log written")
+          body=$(tail -c 12000 /tmp/official.log 2>/dev/null || echo "no log written")
           gh issue create --title "official restatement ${{ github.event.inputs.official }} $(date -u +%Y-%m-%dT%H:%MZ): failure" --body "$body" || true
       - name: 1. Download the CFPB file and record its hash
         if: github.event.inputs.official == ''

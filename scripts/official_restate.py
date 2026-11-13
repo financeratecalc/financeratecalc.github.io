@@ -274,8 +274,40 @@ def main_month_table(source, src, period, pdf, url):
         print(f"  {k}: {f['display']} {f['unit']} [{f['period']}]")
 
 
+# Files a new source is read from before any reader is written: fixed list, never a URL from the command line.
+PROBES = {
+    "sba-monthly-yearly": "https://sba-llms-prd-public.sbalenderportal.com/SBA-Monthly-MonthlyYearlyActivity7a504.xlsx",
+    "sba-activity": "https://sba-llms-prd-public.sbalenderportal.com/SBA-Monthly-ActivityDashboard7a504.xlsx",
+}
+
+
+def probe(key):
+    """Download one listed spreadsheet, print its hash, sheet names, sizes and first rows. Writes nothing to the site.
+    The workflow posts this log as an issue (the run ends without a data file by design)."""
+    import io
+    import openpyxl
+    data = _get(PROBES[key])
+    print(f"PROBE {key}: {PROBES[key]} | {len(data):,} bytes | sha256 {hashlib.sha256(data).hexdigest()}")
+    wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+    budget = 9000
+    for ws in wb.worksheets:
+        head = f"--- sheet '{ws.title}' {ws.max_row} rows x {ws.max_column} cols"
+        print(head); budget -= len(head)
+        for i, row in enumerate(ws.iter_rows(values_only=True)):
+            if i >= 14 or budget <= 0:
+                break
+            line = " | ".join("" if c is None else str(c)[:16] for c in row[:12]).rstrip(" |")
+            if line:
+                print(f"{i + 1}: {line}"); budget -= len(line) + 4
+    print("probe complete; nothing written")
+
+
 def main():
     source, period = sys.argv[1], sys.argv[2]
+    if source == "probe":
+        if period not in PROBES:
+            sys.exit(f"unknown probe '{period}'; known: {', '.join(PROBES)}")
+        probe(period); return
     src = SOURCES[source]
     y, m = int(period[:4]), int(period[5:7])
     a = sys.argv[3:]
