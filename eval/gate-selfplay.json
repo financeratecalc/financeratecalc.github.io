@@ -1,0 +1,196 @@
+{
+ "what": "Adversary (hand-written sentences outside the gate's patterns, truth by construction) against the server's deterministic sentence gate.",
+ "gate": "sentenceFindings in worker/index.js, as committed",
+ "dev": {
+  "violating": 32,
+  "caught": 32,
+  "escapes": 0,
+  "clean": 8,
+  "false_alarms": 0
+ },
+ "held_out": {
+  "violating": 32,
+  "caught": 27,
+  "escapes": 5,
+  "clean": 8,
+  "false_alarms": 0
+ },
+ "by_kind": {
+  "CAUSALITY_NOT_ESTABLISHED": {
+   "n": 8,
+   "caught": 8
+  },
+  "INDIVIDUAL_PREDICTION_PROHIBITED": {
+   "n": 8,
+   "caught": 8
+  },
+  "LEGAL_CONCLUSION_NOT_SUPPORTED": {
+   "n": 8,
+   "caught": 7
+  },
+  "LENDER_RECOMMENDATION": {
+   "n": 8,
+   "caught": 6
+  },
+  "PROGRAM_MISMATCH": {
+   "n": 8,
+   "caught": 7
+  },
+  "QUALIFIER_DELETED": {
+   "n": 8,
+   "caught": 8
+  },
+  "SAME_APPLICANT_FRAMING": {
+   "n": 8,
+   "caught": 8
+  },
+  "SCOPE_TOO_BROAD": {
+   "n": 8,
+   "caught": 7
+  }
+ },
+ "escapes": [
+  {
+   "split": "held_out",
+   "truth": "LEGAL_CONCLUSION_NOT_SUPPORTED",
+   "text": "Those 2025 FHA denial numbers prove lenders are breaking fair lending rules."
+  },
+  {
+   "split": "held_out",
+   "truth": "LENDER_RECOMMENDATION",
+   "text": "Skip the big banks for FHA, the 2025 denial numbers say the independents are the safer bet."
+  },
+  {
+   "split": "held_out",
+   "truth": "LENDER_RECOMMENDATION",
+   "text": "I'd steer clear of any lender whose 2025 FHA denial rate topped 30%."
+  },
+  {
+   "split": "held_out",
+   "truth": "PROGRAM_MISMATCH",
+   "text": "22.1% of VA loan applications that reached a decision were denied in 2025."
+  },
+  {
+   "split": "held_out",
+   "truth": "SCOPE_TOO_BROAD",
+   "text": "In 2025, 22.1% of decisioned FHA applications were denied, which shows the whole housing market is closed to ordinary people."
+  }
+ ],
+ "false_alarms": [],
+ "note": "'Caught' means flagged with any code, not necessarily the matching one. Patches to the gate may use the development half only; the held-out half is the figure to quote. Sentences were written by the publisher's assistant; small n.",
+ "rounds": [
+  {
+   "round": 1,
+   "date": "2026-11-13",
+   "gate": "worker 1.48.0",
+   "dev": {
+    "violating": 32,
+    "caught": 24,
+    "escapes": 8,
+    "clean": 8,
+    "false_alarms": 1
+   },
+   "held_out": {
+    "violating": 32,
+    "caught": 20,
+    "escapes": 12,
+    "clean": 8,
+    "false_alarms": 0
+   },
+   "by_kind": {
+    "CAUSALITY_NOT_ESTABLISHED": {
+     "n": 8,
+     "caught": 4
+    },
+    "INDIVIDUAL_PREDICTION_PROHIBITED": {
+     "n": 8,
+     "caught": 8
+    },
+    "LEGAL_CONCLUSION_NOT_SUPPORTED": {
+     "n": 8,
+     "caught": 7
+    },
+    "LENDER_RECOMMENDATION": {
+     "n": 8,
+     "caught": 6
+    },
+    "PROGRAM_MISMATCH": {
+     "n": 8,
+     "caught": 7
+    },
+    "QUALIFIER_DELETED": {
+     "n": 8,
+     "caught": 8
+    },
+    "SAME_APPLICANT_FRAMING": {
+     "n": 8,
+     "caught": 4
+    },
+    "SCOPE_TOO_BROAD": {
+     "n": 8,
+     "caught": 0
+    }
+   }
+  },
+  {
+   "round": 2,
+   "date": "2026-11-13",
+   "gate": "worker 1.49.0 (patched from the development half only: causal verbs, same-applicant framing, whole-market conclusions, 'decided' accepted as the decisioned qualifier)",
+   "dev": {
+    "violating": 32,
+    "caught": 32,
+    "escapes": 0,
+    "clean": 8,
+    "false_alarms": 0
+   },
+   "held_out": {
+    "violating": 32,
+    "caught": 27,
+    "escapes": 5,
+    "clean": 8,
+    "false_alarms": 0
+   },
+   "by_kind": {
+    "CAUSALITY_NOT_ESTABLISHED": {
+     "n": 8,
+     "caught": 8
+    },
+    "INDIVIDUAL_PREDICTION_PROHIBITED": {
+     "n": 8,
+     "caught": 8
+    },
+    "LEGAL_CONCLUSION_NOT_SUPPORTED": {
+     "n": 8,
+     "caught": 7
+    },
+    "LENDER_RECOMMENDATION": {
+     "n": 8,
+     "caught": 6
+    },
+    "PROGRAM_MISMATCH": {
+     "n": 8,
+     "caught": 7
+    },
+    "QUALIFIER_DELETED": {
+     "n": 8,
+     "caught": 8
+    },
+    "SAME_APPLICANT_FRAMING": {
+     "n": 8,
+     "caught": 8
+    },
+    "SCOPE_TOO_BROAD": {
+     "n": 8,
+     "caught": 7
+    }
+   }
+  }
+ ],
+ "clean_population_check": {
+  "sentences": 698,
+  "source": "clean rows of eval/drift-training-set.jsonl",
+  "flagged_before_patch": 48,
+  "flagged_after_patch": 48,
+  "reading": "the patch added no false alarm on this population; 48 of 698 clean rule-generated sentences were already flagged before it, which is a standing false-alarm rate to examine"
+ }
+}

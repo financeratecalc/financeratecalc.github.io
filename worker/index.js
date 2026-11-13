@@ -123,18 +123,21 @@ async function sentenceFindings(sentence, contract) {
   const t = String(sentence); const low = t.toLowerCase(); const f = [];
   const hit = (flag, code, pattern, why) => { const m = t.match(pattern); if (m) f.push({ flag, code, matched: m[0], why }); };
   hit("individual_prediction", "INDIVIDUAL_PREDICTION_PROHIBITED", /\b(you|your|yours)\b[^.]{0,80}\b(denied|approved|rejected|chance|odds|likely|probability)\b|\b(will|would|going to) (be )?(denied|approved|rejected)\b|\b(chance|odds|probability) of (being )?(denied|approved|rejected)\b/i, "second-person or individual outcome language on an aggregate");
-  hit("causal_assertion", "CAUSALITY_NOT_ESTABLISHED", /\b(because of|caused by|causes?|leads? to|results? in|due to|the reason (is|was)|makes? (it|them) (more|less) likely)\b/i, "causal wording; the record supports association only");
+  hit("causal_assertion", "CAUSALITY_NOT_ESTABLISHED", /\b(because|caused by|causes?|leads? to|results? in|due to|the reason (is|was)|makes? (it|them) (more|less) likely|pushed|drove|driven by|stems? from|stemming from|owing to|thanks to|on account of|as a result of|(is|'s) down to|explains?)\b/i, "causal wording; the record supports association only");
   hit("personalized_recommendation", "INDIVIDUAL_PREDICTION_PROHIBITED", /\b(best|worst|top|safest) lenders?\b|\b(avoid|choose|pick|go with|apply (to|with|at)|recommend)\b[^.]{0,60}\blender\b|\byou should (apply|avoid|choose|use)\b/i, "lender advice or ranking by quality");
   hit("legal_conclusion", "LEGAL_CONCLUSION_NOT_SUPPORTED", /\b(discriminat\w*|illegal\w*|unlawful\w*|violat\w*|redlin\w*|fair lending violation|broke the law)\b/i, "legal conclusion the record cannot establish");
   hit("program_comparison", "PROGRAM_COMPARISON_NOT_SUPPORTED", /\b(easier|harder|stricter|looser|tougher|more lenient|less strict|safer|better|worse)\b[^.]{0,60}\bthan\b[^.]{0,40}\b(fha|va|usda|conventional|other (loan )?programs?)\b|\b(fha|va|usda|conventional)\b[^.]{0,40}\b(is|are)\b[^.]{0,20}\b(easier|harder|stricter|tougher|more lenient)\b[^.]{0,30}\bto (get|qualify|obtain)\b/i, "judgement of one program against another; applicant populations differ by eligibility and composition");
+  // v1.49 (adversary run of 13 Nov 2026, development half): two families the gate had no pattern for
+  hit("same_applicant", "SAME_APPLICANT_FRAMING", /\b(the |an? |one and the |very |exact )*(same|identical)\b[^.]{0,40}\b(application|applicant|borrower|file|profile|paperwork|loan)\b|\bhold(ing)? the (borrower|applicant) constant\b|\bfor a given (applicant|borrower)\b|\b(a|one) borrower with the (exact )?same\b/i, "aggregates of different applicant pools presented as one applicant's outcomes");
+  hit("scope_beyond_universe", "SCOPE_TOO_BROAD", /\b(nobody|no one|everyone|everybody|everywhere)\b|\b(nearly |basically |virtually )?impossible\b|\bis dead\b|\bshut out\b|\bout of reach\b|\b(is|are) broken\b|\bas a whole\b|\b(can'?t|cannot) (buy|get|obtain)\b|\bany ?more\b/i, "a conclusion about a whole market or population drawn from one program's rate");
   const q = contract.required_qualifiers || {};
   if (q.period && !t.includes(String(q.period))) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no " + q.period + ")", why: "period missing: " + q.period });
   // v1.48: a purchase-only or refinance-only rate stated without its loan purpose reads as the program's rate for everything
   if (q.loan_purpose && !(/purchase/i.test(q.loan_purpose) ? /\b(purchase|home[- ]?buy\w*|buying a home)\b/i : /\brefinanc\w*|\brefi\b/i).test(t)) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no loan purpose)", why: "loan purpose missing: " + q.loan_purpose + " (this is not the rate for all loan purposes)" });
-  if (q.population && /decision/i.test(q.population) && q.loan_purpose && !/decision/i.test(t)) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no 'decisioned')", why: "denominator missing: applications reaching a credit decision" });
+  if (q.population && /decision/i.test(q.population) && q.loan_purpose && !/decision|decided/i.test(t)) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no 'decisioned')", why: "denominator missing: applications reaching a credit decision" });
   if (q.program_scope && /fha/i.test(q.program_scope) && !/\bfha\b/i.test(t)) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no FHA)", why: "program scope missing: FHA" });
   if (/\b(all|of) (us |u\.s\. |american )?(mortgage|home loan|loan) (applications|applicants|loans)\b/i.test(t) && !/\bfha\b/i.test(t)) f.push({ flag: "scope_beyond_universe", code: "SCOPE_TOO_BROAD", matched: t.match(/\b(all|of) (us |u\.s\. |american )?(mortgage|home loan|loan) (applications|applicants|loans)\b/i)[0], why: "population wider than the claim's universe" });
-  if (q.population && /decision/i.test(q.population) && !/decision/i.test(t) && /\b(applications|applicants|loans)\b/i.test(t)) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no 'decisioned')", why: "population qualifier missing: decisioned (withdrawn and incomplete files excluded)" });
+  if (q.population && /decision/i.test(q.population) && !/decision|decided/i.test(t) && /\b(applications|applicants|loans)\b/i.test(t)) f.push({ flag: "qualifier_dropped", code: "QUALIFIER_DELETED", matched: "(no 'decisioned')", why: "population qualifier missing: decisioned (withdrawn and incomplete files excluded)" });
   const myId = String(contract.passport_id || "").replace(/^frc:claim:/, "");
   for (const sv of await staleValues()) {
     // v1.35: a corrected value belongs to the claim the correction names; 21.7% is stale for the national rate, not for a
@@ -470,9 +473,10 @@ async function checkClaimContract(a) {
   if (a.legal_conclusion) V("LEGAL_CONCLUSION_NOT_SUPPORTED","legal_conclusion","The record cannot establish unlawful conduct.");
   if (a.causal_assertion) V("CAUSALITY_NOT_ESTABLISHED","causal_assertion","Associational language only.");
   if (a.program_comparison) V("PROGRAM_COMPARISON_NOT_SUPPORTED","program_comparison","Rates of different loan programs describe different applicant populations; they do not show that one program is easier or harder to get.");
+  if (a.same_applicant) V("SAME_APPLICANT_FRAMING","same_applicant","Rates of different applicant pools are not one applicant's outcomes at different places or lenders.");
   if (a.scope_beyond_universe) V("SCOPE_TOO_BROAD","scope","Defined universe/period only.");
   if (a.qualifier_dropped) V("QUALIFIER_DELETED","qualifiers","Required qualifier missing.");
-  const blockCodes = ["INDIVIDUAL_PREDICTION_PROHIBITED","LEGAL_CONCLUSION_NOT_SUPPORTED","STALE_VALUE","DOCUMENT_ID_MISMATCH","VALUE_MISMATCH","PROGRAM_COMPARISON_NOT_SUPPORTED"];
+  const blockCodes = ["INDIVIDUAL_PREDICTION_PROHIBITED","LEGAL_CONCLUSION_NOT_SUPPORTED","STALE_VALUE","DOCUMENT_ID_MISMATCH","VALUE_MISMATCH","PROGRAM_COMPARISON_NOT_SUPPORTED","SAME_APPLICANT_FRAMING"];
   const verdict = violations.some(v=>blockCodes.includes(v.code)) ? "block" : (violations.length ? "needs_qualifier" : "pass");
   const out = { verdict, violations, safe_wording: contract.canonical_claim && contract.canonical_claim.template,
     required_qualifiers: contract.required_qualifiers, does_not_establish: contract.does_not_establish,
@@ -1063,7 +1067,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.48.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.49.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
