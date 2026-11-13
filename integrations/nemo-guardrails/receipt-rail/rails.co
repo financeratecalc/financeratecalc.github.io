@@ -1,0 +1,8 @@
+define bot inform figure not verified
+  "I can't state that figure as written: its receipt did not verify against the publisher's record. Please ask again and I will quote it from the source with its current value."
+
+define subflow frc receipt check
+  $frc_result = execute frc_check_receipts
+  if $frc_result.is_blocked
+    bot inform figure not verified
+    stop
