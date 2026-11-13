@@ -16,7 +16,7 @@ def main():
         if os.path.basename(f) == "index.json":
             continue
         d = json.load(open(f, encoding="utf-8"))
-        checked += len(d.get("prior_edition_check", {}).get("revisions", []))
+        pec = d.get("prior_edition_check", {}); checked += pec.get("compared", len(pec.get("revisions", [])))
         for fid, x in d["figures"].items():
             if x.get("revised_to") is None:
                 continue

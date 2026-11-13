@@ -32,12 +32,20 @@ def main():
         d = json.load(open(f, encoding="utf-8"))
         s = per.setdefault(d["source_id"], {"title": d["document"]["title"], "publisher": d["document"]["publisher"].split(",")[0], "editions": [], "compared": 0, "revised": 0})
         s["editions"].append(d["document"]["edition"])
-        rv = d.get("prior_edition_check", {}).get("revisions", [])
-        s["compared"] += len(rv); s["revised"] += sum(1 for r in rv if r.get("revised"))
+        pec = d.get("prior_edition_check", {}); rv = pec.get("revisions", [])
+        s["compared"] += pec.get("compared", len(rv)); s["revised"] += pec.get("changed", sum(1 for r in rv if r.get("revised")))
     src_rows = "".join(f'<tr><td><b>{E(s["title"])}</b><br><span class="small">{E(s["publisher"])}</span></td><td class=n>{len(s["editions"])}</td>'
                        f'<td class=n>{s["compared"]}</td><td class=n><b>{s["revised"]}</b></td></tr>' for s in per.values())
     rows = ""
-    for i in feed["items"]:
+    shown, hidden = [], {}
+    for i in feed["items"]:   # every changed figure that carries a receipt; of the others, the first 20 per source (the feed has all)
+        n = sum(1 for x in shown if x["source"] == i["source"] and not x.get("claim_url"))
+        if i.get("claim_url") or n < 20:
+            shown.append(i)
+        else:
+            hidden[i["source"]] = hidden.get(i["source"], 0) + 1
+    more = "".join(f'<p class="small">{E(k)}: {v} more changed figures without a receipt are in <a href="/data/revisions.json">data/revisions.json</a>.</p>\n' for k, v in hidden.items())
+    for i in shown:
         rc = (f'<a href="{E(i["claim_url"].replace("https://financeratecalc.com", ""))}">{E(i["receipt_of_first_printing"])}</a>' if i.get("claim_url") else "no receipt issued for this month")
         rows += (f'<tr><td>{E(i["source"])}<br><span class="small">{E(i["description"])}</span></td><td>{E(i["period"])}</td>'
                  f'<td class=n>{fmt(i["first_printed"])}<br><span class="small">{E(i["first_printed_in"])}</span></td>'
@@ -60,7 +68,7 @@ def main():
         '<h2>Sources compared</h2>\n'
         f'<table><thead><tr><th>Report</th><th>Editions on file</th><th>Figures compared with an earlier edition</th><th>Changed</th></tr></thead><tbody>{src_rows}</tbody></table>\n'
         '<h2>Changed figures</h2>\n'
-        f'<table><thead><tr><th>Figure</th><th>Month</th><th>First printed</th><th>Later printed</th><th>Difference</th><th>Receipt of the first printing</th></tr></thead><tbody>{rows}</tbody></table>\n'
+        f'<table><thead><tr><th>Figure</th><th>Month</th><th>First printed</th><th>Later printed</th><th>Difference</th><th>Receipt of the first printing</th></tr></thead><tbody>{rows}</tbody></table>\n{more}'
         '<h2>How to use it</h2>\n'
         '<ul class="small"><li><b>Quoting a figure:</b> name the edition. &ldquo;65,328 (July 2026 report; restated as 65,327 in the August 2026 report)&rdquo; is complete; either number alone is not.</li>\n'
         '<li><b>Checking a receipt:</b> <a href="/verify.html">verify.html</a> returns the publisher&rsquo;s later value with any receipt whose figure was restated.</li>\n'

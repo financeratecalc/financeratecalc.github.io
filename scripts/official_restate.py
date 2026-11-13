@@ -77,6 +77,25 @@ SOURCES = {
                                "any denial or approval rate", "any lender-level or issuer-level figure", "that the figure has not been revised in a later edition (check the latest report)"],
         "quoting_rule": "Keep the publisher, the edition, the month and the unit (USD millions of securities issued) with the figure. It is a securities-issuance amount: do not present it as a loan count, an FHA-only figure, an origination total or a denial figure. If revision_status says a later edition revised it, say so.",
     },
+    "sba-7a504": {
+        "kind": "xlsx_months",
+        "title": "SBA 7(a) and 504 Monthly and Yearly Activity Report",
+        "publisher": "U.S. Small Business Administration, Office of Capital Access",
+        "url": "https://sba-llms-prd-public.sbalenderportal.com/SBA-Monthly-MonthlyYearlyActivity7a504.xlsx",
+        "landing": "https://data.sba.gov/dataset/7a-504-activity-reports-current-month",
+        "table": "sheet 'Monthly'",
+        # id -> (block, 0-based column in the sheet, unit, description); block columns: 7(a) = A-F, 504 = H-L
+        "cells": {
+            "7a-approved-loans":  ("7(a)", 3, "loans", "7(a) loans approved in the month"),
+            "7a-approved-usd":    ("7(a)", 4, "USD", "dollar amount of 7(a) loans approved in the month"),
+            "504-approved-loans": ("504", 10, "loans", "504 loans approved in the month"),
+            "504-approved-usd":   ("504", 11, "USD", "dollar amount of 504 loans approved in the month"),
+        },
+        "not_comparable_with": ["loans disbursed or outstanding (an approval is not a disbursement)", "HMDA mortgage applications or originations", "any figure for another SBA program (microloans, disaster loans)"],
+        "does_not_establish": ["the number or amount of loans actually disbursed (these are approvals)", "any lender-level figure", "any applicant's chance of approval",
+                               "that the figure has not changed since this edition (the publisher overwrites the file each month; check the latest edition and the revision ledger)"],
+        "quoting_rule": "Keep the program (7(a) or 504), the approval month, the word 'approved' and the edition's as-of date with the figure. It is an approval count or amount as recorded on that date: do not present it as loans disbursed, as a lender figure, or as anyone's chance of approval. The publisher replaces the file monthly and earlier months can change; if revision_status says a later edition printed a different value, say so.",
+    },
 }
 MON = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 MON_FULL = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"]
@@ -302,8 +321,166 @@ def probe(key):
     print("probe complete; nothing written")
 
 
+def _asof(wb):
+    """The edition's own date: the 'as of' statement on the About sheet, as (date or None, sentence as printed)."""
+    for ws in wb.worksheets:
+        if ws.title.lower() != "about":
+            continue
+        for row in ws.iter_rows(values_only=True):
+            for c in row:
+                t = str(c or "")
+                m = re.search(r"as of\s+([A-Za-z0-9,/ .-]+)", t)
+                if not m:
+                    continue
+                raw = m.group(1).strip().rstrip(".")
+                for rx, f in ((r"(\d{1,2})/(\d{1,2})/(\d{4})", lambda g: (int(g[2]), int(g[0]), int(g[1]))), (r"(\d{4})-(\d{2})-(\d{2})", lambda g: (int(g[0]), int(g[1]), int(g[2]))),
+                              (r"([A-Za-z]+)\.? (\d{1,2}),? (\d{4})", lambda g: (int(g[2]), [x[:3] for x in FULL].index(g[0][:3].title()) + 1, int(g[1])))):
+                    mm = re.search(rx, raw)
+                    if mm:
+                        try:
+                            return dt.date(*f(mm.groups())), t.strip()
+                        except Exception:
+                            pass
+                return None, t.strip()
+    return None, None
+
+
+def main_xlsx_months(source, src, period, path):
+    """A spreadsheet the publisher overwrites every month, with one row per approval month back to 1991 (SBA 7(a)/504).
+    The file is hashed and kept (data/official/archive/), the requested month's labelled cells become receipts, every month
+    in the sheet is kept as printed and compared with the previous edition on file. Read, not computed: the header labels
+    must be where they are expected and the monthly loan counts must add up to the publisher's own Yearly sheet, or the
+    run stops. 'latest' = the last month that was complete on the file's as-of date."""
+    import io
+    import calendar
+    import openpyxl
+    if path:
+        data = open(path, "rb").read(); url = None
+    else:
+        data = _get(src["url"]); url = src["url"]
+    sha = hashlib.sha256(data).hexdigest()
+    wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+    ws = wb["Monthly"]
+    rows = list(ws.iter_rows(values_only=True))
+    hi = next((i for i, r in enumerate(rows[:12]) if r and str(r[0] or "").strip() == "Fiscal Year"), None)
+    if hi is None:
+        sys.exit("Monthly sheet: header row 'Fiscal Year' not found; not restating")
+    H = [str(c or "").strip() for c in rows[hi]] + [""] * 12
+    want = {1: "Approval Month", 2: "Program", 3: "Approved Loans", 4: "Approved Dollars", 8: "Approval Month", 9: "Program", 10: "Approved Loans", 11: "Approved Dollars"}
+    bad = {k: (v, H[k]) for k, v in want.items() if H[k] != v}
+    if bad:
+        sys.exit(f"Monthly sheet: columns are not where expected {bad}; not restating")
+    blocks = {"7(a)": (0, 1, 2), "504": (7, 8, 9)}   # block -> (fiscal year col, month col, program col)
+    months, fy_loans = {}, {"7(a)": {}, "504": {}}
+    for r in rows[hi + 1:]:
+        r = list(r) + [None] * 12
+        for blk, (cf, cm, cp) in blocks.items():
+            if r[cm] is None or str(r[cp] or "").strip() != blk:
+                continue
+            key = str(r[cm]).strip()
+            if not re.fullmatch(r"\d{6}", key):
+                continue
+            k = key[:4] + "-" + key[4:]
+            for fid, (b, col, unit, _) in src["cells"].items():
+                if b != blk:
+                    continue
+                v = r[col]
+                if v is None:
+                    sys.exit(f"Monthly sheet: empty cell for {fid} in {k}; not restating")
+                months.setdefault(k, {})[fid] = int(v) if unit == "loans" else round(float(v), 2)
+            fy_loans[blk][int(r[cf])] = fy_loans[blk].get(int(r[cf]), 0) + int(r[3 if blk == "7(a)" else 10])
+    asof, asof_text = _asof(wb)
+    allm = sorted(k for k, v in months.items() if len(v) == len(src["cells"]))
+    if not allm:
+        sys.exit("Monthly sheet: no month with all four figures; not restating")
+    complete = [k for k in allm if asof and dt.date(int(k[:4]), int(k[5:7]), calendar.monthrange(int(k[:4]), int(k[5:7]))[1]) <= asof] if asof else allm[:-1]
+    if period == "latest":
+        period = complete[-1]
+    if period not in complete:
+        sys.exit(f"{period} is not a complete month in this file (as-of statement: {asof_text!r}; last complete month: {complete[-1]}); not restating")
+    # the publisher's own Yearly sheet must agree with the monthly rows for every fiscal year that is fully in the past
+    yr = list(wb["Yearly"].iter_rows(values_only=True))
+    yhi = next((i for i, r in enumerate(yr[:12]) if r and str(r[0] or "").strip() == "Fiscal Year"), None)
+    checked = 0
+    if yhi is not None:
+        last_fy = int(complete[-1][:4]) + (1 if int(complete[-1][5:7]) >= 10 else 0)
+        for r in yr[yhi + 1:]:
+            r = list(r) + [None] * 10
+            for blk, cf, cl in (("7(a)", 0, 2), ("504", 6, 8)):
+                if r[cf] is None or not str(r[cf]).strip().isdigit() or int(r[cf]) >= last_fy:
+                    continue
+                if fy_loans[blk].get(int(r[cf])) != int(r[cl]):
+                    sys.exit(f"Yearly sheet says {int(r[cl])} {blk} loans for FY{int(r[cf])}; the monthly rows add to {fy_loans[blk].get(int(r[cf]))}; column layout not confirmed, not restating")
+                checked += 1
+    if checked < 10:
+        sys.exit(f"only {checked} fiscal-year totals could be checked against the Yearly sheet; not restating")
+    y, m = int(period[:4]), int(period[5:7])
+    month_label = f"{MON[m - 1].title()} {y}"
+    edition = f"edition as of {asof.isoformat()}" if asof else f"edition retrieved {dt.date.today().isoformat()}"
+    figures = {}
+    for fid, (blk, col, unit, desc) in src["cells"].items():
+        v = months[period][fid]
+        figures[fid] = {"value": v, "display": f"{v:,}" if unit == "loans" else f"{v:,.0f}", "unit": unit, "period_kind": "month", "period": month_label, "table": src["table"],
+                        "row_label": f"{blk}, approval month {period.replace('-', '')}, {'Approved Loans' if unit == 'loans' else 'Approved Dollars'}", "column": "ABCDEFGHIJKL"[col],
+                        "line_as_printed": f"{blk} | {period.replace('-', '')} | {v}", "description": desc, "revision": "as first printed; no later edition checked yet"}
+    earlier = sorted(f for f in os.listdir(os.path.join(ROOT, "data", "official")) if re.fullmatch(re.escape(source) + r"-\d{4}-\d{2}\.json", f) and f[len(source) + 1:-5] < period) if os.path.isdir(os.path.join(ROOT, "data", "official")) else []
+    prev_path = os.path.join(ROOT, "data", "official", earlier[-1]) if earlier else None
+    prev = json.load(open(prev_path, encoding="utf-8")) if prev_path else None
+    revisions = []
+    if prev:
+        if prev["document"]["sha256"] == sha:
+            sys.exit(f"the file is byte-identical to the edition already restated ({prev['document']['edition']}); nothing new")
+        for k in sorted(set(months) & set(prev.get("months_as_printed", {}))):
+            for fid in src["cells"]:
+                a0, b0 = prev["months_as_printed"][k].get(fid), months[k].get(fid)
+                if a0 is None or b0 is None:
+                    continue
+                yy, mm_ = int(k[:4]), int(k[5:7])
+                revisions.append({"figure": fid, "month": k, "period": f"{MON[mm_ - 1].title()} {yy}", "first_printed": a0, "printed_in": prev["document"]["edition"], "restated_in": edition,
+                                  "restated_value": b0, "revised": abs(float(a0) - float(b0)) > 0.005, "has_receipt": k == prev["period"]})
+    now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    od = os.path.join(ROOT, "data", "official"); os.makedirs(os.path.join(od, "archive"), exist_ok=True)
+    arch = f"archive/{source}-{(asof.isoformat() if asof else dt.date.today().isoformat())}-{sha[:8]}.xlsx"
+    open(os.path.join(od, arch), "wb").write(data)
+    out = {"generated": now, "source_id": source, "period": period,
+           "document": {"title": src["title"], "publisher": src["publisher"], "edition": edition, "url": url, "landing": src["landing"], "sha256": sha, "pages": None,
+                        "exclusions": "Loan approvals as recorded on the edition's as-of date; the publisher replaces this file every month and earlier months can change",
+                        "as_of_statement": asof_text, "archived_copy": "data/official/" + arch, "retrieved_at": now},
+           "level": "2 — attested restatement of an official publication; not computed by FinanceRateCalc",
+           "not_comparable_with": src["not_comparable_with"], "does_not_establish": src["does_not_establish"], "quoting_rule": src["quoting_rule"],
+           "figures": figures, "months_as_printed": {k: months[k] for k in allm}, "fiscal_year_totals_checked_against_yearly_sheet": checked,
+           "prior_edition_check": {"edition_compared": prev["document"]["edition"] if prev else None, "revisions": [r for r in revisions if r["revised"] or r["has_receipt"]],
+                                   "compared": len(revisions), "changed": sum(1 for r in revisions if r["revised"]),
+                                   "note": "Every month in the sheet is compared with the same month in the previous edition on file. Only changed figures and the receipted month are listed; 'compared' and 'changed' count all of them. The publisher overwrites the file, so the previous edition survives only as the archived copy named in that edition's record."}}
+    json.dump(out, open(os.path.join(od, f"{source}-{period}.json"), "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    if prev:
+        for rev in revisions:
+            if not rev["has_receipt"]:
+                continue
+            pf = prev["figures"][rev["figure"]]
+            pf["revision"] = f"printed as {rev['restated_value']} in the {edition}" if rev["revised"] else f"unchanged in the {edition}"
+            if rev["revised"]:
+                pf["revised_in"] = edition; pf["revised_to"] = rev["restated_value"]
+        json.dump(prev, open(prev_path, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+        print(f"compared with {prev['document']['edition']}: {len(revisions)} month-figures, {sum(1 for r in revisions if r['revised'])} changed")
+    ip = os.path.join(od, "index.json")
+    idx = json.load(open(ip, encoding="utf-8")) if os.path.exists(ip) else {"purpose": "index of restated official editions; latest per source", "editions": {}, "latest": {}}
+    idx["editions"].setdefault(source, [])
+    if period not in idx["editions"][source]:
+        idx["editions"][source].append(period); idx["editions"][source].sort()
+    idx["latest"][source] = idx["editions"][source][-1]; idx["generated"] = now
+    json.dump(idx, open(ip, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    open("/tmp/official_period", "w").write(period)
+    print(f"{source} {period}: {len(figures)} figures restated, {len(allm)} months kept as printed, {checked} fiscal-year totals confirmed against the Yearly sheet, {edition} (sha256 {sha[:12]}…)")
+    for k, f in figures.items():
+        print(f"  {k}: {f['display']} {f['unit']} [{f['period']}]")
+
+
 def main():
     source, period = sys.argv[1], sys.argv[2]
+    if source in SOURCES and SOURCES[source].get("kind") == "xlsx_months":
+        a_ = sys.argv[3:]
+        return main_xlsx_months(source, SOURCES[source], period, a_[a_.index("--pdf") + 1] if "--pdf" in a_ else None)
     if source == "probe":
         if period not in PROBES:
             sys.exit(f"unknown probe '{period}'; known: {', '.join(PROBES)}")

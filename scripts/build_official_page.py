@@ -44,7 +44,7 @@ def main():
         if checks:
             detail = ": " + "; ".join(f'{r["figure"]} {r["first_printed"]} &rarr; {r["restated_value"]}' for r in revised) if revised else ""
             pec = (f'<p class="small">Prior edition compared: <b>{html.escape(str(d["prior_edition_check"].get("edition_compared")))}</b> &mdash; '
-                   f'{len(checks)} figures restated in this edition, {len(revised)} revised{detail}.</p>')
+                   f'{d["prior_edition_check"].get("compared", len(checks))} figures restated in this edition, {d["prior_edition_check"].get("changed", len(revised))} changed{detail if len(revised) <= 12 else ": see the revision ledger"}.</p>')
         url = doc.get("url") or ""
         blocks.append(
             f'<h2>{html.escape(doc["title"])} &mdash; {html.escape(doc["edition"])}</h2>\n'
