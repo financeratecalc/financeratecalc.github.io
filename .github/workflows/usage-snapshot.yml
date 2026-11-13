@@ -6,6 +6,7 @@ on:
     - cron: "17 11 * * *"
 permissions:
   contents: write
+  issues: write
 jobs:
   snap:
     runs-on: ubuntu-latest
@@ -17,7 +18,7 @@ jobs:
           import json, urllib.request, datetime, re, collections
           u = json.load(urllib.request.urlopen(urllib.request.Request("https://frc-mcp.ziyetis.workers.dev/usage", headers={"User-Agent": "frc-usage-snapshot"}), timeout=30))
           rows = u.get("days") or {}
-          selftest = re.compile(r"frc-selftest|curl|node|python|postman|insomnia", re.I)
+          selftest = re.compile(r"frc-selftest|(^|ua-)frc-|curl|node|python|postman|insomnia", re.I)   # frc-* and ua-frc-* are this site's own conformance and test suites
           by_day = {}; by_client = collections.Counter(); by_tool = collections.Counter(); verify = collections.Counter()
           for day, clients in sorted(rows.items()):
               tot = ext = 0
@@ -64,6 +65,25 @@ jobs:
           json.dump(ledger, open("transparency/crawl-ledger.json", "w"), indent=1)
           print(json.dumps(out, indent=1)[:4000])
           PY
+      - name: Look for the next edition of each official source (quiet when nothing new; restates, compares and reports when there is)
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: |
+          sudo apt-get install -y -qq poppler-utils >/dev/null 2>&1 || true
+          pip install -q pypdf
+          python3 scripts/official_autocheck.py || true
+          if [ -f /tmp/official_new.md ]; then
+            python3 scripts/build_claim_documents.py | tail -1
+            python3 scripts/build_claim_contracts.py | tail -1
+            python3 scripts/build_claims_index.py
+            python3 scripts/build_receipt_hash_history.py | tail -1
+            python3 scripts/build_receipts_snapshot.py | tail -1 | cut -c1-120
+            python3 scripts/build_official_page.py
+            python3 scripts/build_revisions_feed.py
+            python3 scripts/build_revision_ledger.py
+            git add data/official data/revisions.json claims transparency rl-env/frc_citation/receipts-snapshot.json official-figures.html revision-ledger.html
+            git reset -q data/official/cache 2>/dev/null || true
+            gh issue create --title "new official edition restated $(date -u +%Y-%m-%d)" --body-file /tmp/official_new.md || true
+          fi
       - name: Rebuild the claim bundle with the new ledger (reverse-receipt lines)
         run: python3 scripts/build_llms_full.py
       - name: Rebuild index pages (new pages get an incoming link)
