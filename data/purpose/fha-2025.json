@@ -1,0 +1,282 @@
+{
+ "generated": "2026-11-13T01:51:48Z",
+ "program": "FHA",
+ "program_id": "fha",
+ "loan_type": "2",
+ "closed_end_only": false,
+ "period": "2025",
+ "base_universe_id": "U-FHA-2025-DECISIONED",
+ "universe_ids": {
+  "purchase": "U-FHA-2025-DECISIONED-PURCHASE",
+  "refinance_all": "U-FHA-2025-DECISIONED-REFINANCE"
+ },
+ "declared_in": "provenance/universe-purpose-split-2025.md",
+ "input": {
+  "url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/nationwide/csv?years=2025&loan_types=2",
+  "sha256": "cc94236a94f960bbd8a5a5b0710500719252f18af550d0d38fe7c9d01a21e717"
+ },
+ "code_commit": "5a9c13d6209497e7372d384cf93c299b6e174e1a",
+ "rows_read": 2062934,
+ "reverse_mortgage_excluded": 44564,
+ "open_end_rows_seen": 0,
+ "unknown_purpose_rows": 0,
+ "scope_columns_present": true,
+ "definitions": {
+  "purposes": {
+   "purchase": "loan_purpose 1",
+   "refinance": "loan_purpose 31",
+   "cash_out_refinance": "loan_purpose 32",
+   "refinance_all": "loan_purpose 31 or 32",
+   "home_improvement": "loan_purpose 2",
+   "other": "loan_purpose 4",
+   "not_applicable": "loan_purpose 5",
+   "all": "every loan purpose"
+  },
+  "scopes": {
+   "all": "no further filter",
+   "standard": "lien_status 1, occupancy_type 1, construction_method 1, total_units 1-4"
+  },
+  "bases": {
+   "decisioned": "denied / (originated + approved not accepted + denied); the site's published definition",
+   "acted_on": "denied / applications acted on (actions 1-5)",
+   "denied_plus_originated": "denied / (originated + denied)"
+  }
+ },
+ "receipted_cells": [
+  "purchase|all",
+  "refinance_all|all"
+ ],
+ "receipted_base": "decisioned",
+ "does_not_establish": [
+  "which denominator any other publisher used (a matching number is a match, not an attribution)",
+  "that one loan purpose or program is easier or harder to obtain for a given applicant (applicant populations differ)",
+  "any individual's chance of denial",
+  "any lender-level figure"
+ ],
+ "cells": {
+  "all|all": {
+   "originated": 882114,
+   "approved_not_accepted": 43242,
+   "denied": 262250,
+   "withdrawn": 276228,
+   "closed_incomplete": 99536,
+   "decisioned": 1187606,
+   "acted_on": 1563370,
+   "rate_pct": {
+    "decisioned": 22.08,
+    "acted_on": 16.77,
+    "denied_plus_originated": 22.92
+   }
+  },
+  "all|standard": {
+   "originated": 837720,
+   "approved_not_accepted": 40597,
+   "denied": 247723,
+   "withdrawn": 259197,
+   "closed_incomplete": 93825,
+   "decisioned": 1126040,
+   "acted_on": 1479062,
+   "rate_pct": {
+    "decisioned": 22.0,
+    "acted_on": 16.75,
+    "denied_plus_originated": 22.82
+   }
+  },
+  "cash_out_refinance|all": {
+   "originated": 135686,
+   "approved_not_accepted": 8074,
+   "denied": 109038,
+   "withdrawn": 78724,
+   "closed_incomplete": 44844,
+   "decisioned": 252798,
+   "acted_on": 376366,
+   "rate_pct": {
+    "decisioned": 43.13,
+    "acted_on": 28.97,
+    "denied_plus_originated": 44.56
+   }
+  },
+  "cash_out_refinance|standard": {
+   "originated": 129251,
+   "approved_not_accepted": 7630,
+   "denied": 103319,
+   "withdrawn": 74886,
+   "closed_incomplete": 42819,
+   "decisioned": 240200,
+   "acted_on": 357905,
+   "rate_pct": {
+    "decisioned": 43.01,
+    "acted_on": 28.87,
+    "denied_plus_originated": 44.42
+   }
+  },
+  "home_improvement|all": {
+   "originated": 1859,
+   "approved_not_accepted": 52,
+   "denied": 1639,
+   "withdrawn": 1752,
+   "closed_incomplete": 1333,
+   "decisioned": 3550,
+   "acted_on": 6635,
+   "rate_pct": {
+    "decisioned": 46.17,
+    "acted_on": 24.7,
+    "denied_plus_originated": 46.86
+   }
+  },
+  "home_improvement|standard": {
+   "originated": 1439,
+   "approved_not_accepted": 42,
+   "denied": 1302,
+   "withdrawn": 1333,
+   "closed_incomplete": 1248,
+   "decisioned": 2783,
+   "acted_on": 5364,
+   "rate_pct": {
+    "decisioned": 46.78,
+    "acted_on": 24.27,
+    "denied_plus_originated": 47.5
+   }
+  },
+  "not_applicable|all": {
+   "originated": 353,
+   "approved_not_accepted": 62,
+   "denied": 451,
+   "withdrawn": 99,
+   "closed_incomplete": 39,
+   "decisioned": 866,
+   "acted_on": 1004,
+   "rate_pct": {
+    "decisioned": 52.08,
+    "acted_on": 44.92,
+    "denied_plus_originated": 56.09
+   }
+  },
+  "not_applicable|standard": {
+   "originated": 243,
+   "approved_not_accepted": 16,
+   "denied": 396,
+   "withdrawn": 82,
+   "closed_incomplete": 23,
+   "decisioned": 655,
+   "acted_on": 760,
+   "rate_pct": {
+    "decisioned": 60.46,
+    "acted_on": 52.11,
+    "denied_plus_originated": 61.97
+   }
+  },
+  "other|all": {
+   "originated": 5353,
+   "approved_not_accepted": 172,
+   "denied": 8128,
+   "withdrawn": 5927,
+   "closed_incomplete": 4297,
+   "decisioned": 13653,
+   "acted_on": 23877,
+   "rate_pct": {
+    "decisioned": 59.53,
+    "acted_on": 34.04,
+    "denied_plus_originated": 60.29
+   }
+  },
+  "other|standard": {
+   "originated": 4881,
+   "approved_not_accepted": 165,
+   "denied": 7458,
+   "withdrawn": 5253,
+   "closed_incomplete": 3714,
+   "decisioned": 12504,
+   "acted_on": 21471,
+   "rate_pct": {
+    "decisioned": 59.64,
+    "acted_on": 34.74,
+    "denied_plus_originated": 60.44
+   }
+  },
+  "purchase|all": {
+   "originated": 639159,
+   "approved_not_accepted": 17425,
+   "denied": 96186,
+   "withdrawn": 140982,
+   "closed_incomplete": 12381,
+   "decisioned": 752770,
+   "acted_on": 906133,
+   "rate_pct": {
+    "decisioned": 12.78,
+    "acted_on": 10.61,
+    "denied_plus_originated": 13.08
+   }
+  },
+  "purchase|standard": {
+   "originated": 606654,
+   "approved_not_accepted": 15850,
+   "denied": 90590,
+   "withdrawn": 131368,
+   "closed_incomplete": 11016,
+   "decisioned": 713094,
+   "acted_on": 855478,
+   "rate_pct": {
+    "decisioned": 12.7,
+    "acted_on": 10.59,
+    "denied_plus_originated": 12.99
+   }
+  },
+  "refinance_all|all": {
+   "originated": 235390,
+   "approved_not_accepted": 25531,
+   "denied": 155846,
+   "withdrawn": 127468,
+   "closed_incomplete": 81486,
+   "decisioned": 416767,
+   "acted_on": 625721,
+   "rate_pct": {
+    "decisioned": 37.39,
+    "acted_on": 24.91,
+    "denied_plus_originated": 39.83
+   }
+  },
+  "refinance_all|standard": {
+   "originated": 224503,
+   "approved_not_accepted": 24524,
+   "denied": 147977,
+   "withdrawn": 121161,
+   "closed_incomplete": 77824,
+   "decisioned": 397004,
+   "acted_on": 595989,
+   "rate_pct": {
+    "decisioned": 37.27,
+    "acted_on": 24.83,
+    "denied_plus_originated": 39.73
+   }
+  },
+  "refinance|all": {
+   "originated": 99704,
+   "approved_not_accepted": 17457,
+   "denied": 46808,
+   "withdrawn": 48744,
+   "closed_incomplete": 36642,
+   "decisioned": 163969,
+   "acted_on": 249355,
+   "rate_pct": {
+    "decisioned": 28.55,
+    "acted_on": 18.77,
+    "denied_plus_originated": 31.95
+   }
+  },
+  "refinance|standard": {
+   "originated": 95252,
+   "approved_not_accepted": 16894,
+   "denied": 44658,
+   "withdrawn": 46275,
+   "closed_incomplete": 35005,
+   "decisioned": 156804,
+   "acted_on": 238084,
+   "rate_pct": {
+    "decisioned": 28.48,
+    "acted_on": 18.76,
+    "denied_plus_originated": 31.92
+   }
+  }
+ }
+}

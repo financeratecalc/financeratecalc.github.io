@@ -1,0 +1,57 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:purpose-fha-purchase-denial-rate-2025",
+ "current_value": "12.8%",
+ "canonical_claim": {
+  "template": "In 2025, {value} of decisioned FHA home-purchase applications in the US were denied (96,186 denials out of 752,770 applications reaching a credit decision).",
+  "required_fields": [
+   "period",
+   "population",
+   "program",
+   "loan_purpose",
+   "denominator"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "2025",
+  "population": "decisioned FHA home-purchase applications (loan_purpose 1; actions 1,2,3; reverse mortgages excluded)",
+  "program_scope": "FHA",
+  "loan_purpose": "home-purchase",
+  "denominator": "applications reaching a credit decision, not all applications acted on",
+  "nature": "historical aggregate; association, not cause"
+ },
+ "does_not_establish": [
+  "the FHA denial rate for all loan purposes or for refinance applications",
+  "that home-purchase loans are easier or harder to obtain than refinance loans for a given applicant (the applicant populations differ)",
+  "a comparison across programs as a judgement of programs or lenders",
+  "which denominator any other published figure used",
+  "any individual's chance of denial",
+  "any lender-level figure"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "causal_assertion": false,
+    "individual_prediction": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "proposed_sentence": "This lender will likely reject YOUR application"
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  }
+ ],
+ "generated_by": "scripts/build_claim_contracts.py (2026-10-21) from the claim block"
+}

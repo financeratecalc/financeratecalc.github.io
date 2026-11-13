@@ -1,0 +1,56 @@
+{
+ "passport_version": "0.1",
+ "issuer": "FinanceRateCalc",
+ "issued_at": "2026-11-13T00:00:00Z",
+ "provenance": {
+  "primary_source": "CFPB/FFIEC HMDA public record 2025; data/purpose/fha-2025.json",
+  "dataset": "loan_type=2 (FHA); loan_purpose 31 or 32; action_taken in {1,2,3} = decisioned; reverse mortgages excluded; universe U-FHA-2025-DECISIONED-REFINANCE (provenance/universe-purpose-split-2025.md)",
+  "code_history": "https://github.com/financeratecalc/financeratecalc.github.io"
+ },
+ "use_boundary": {
+  "allowed": [
+   "historical aggregate comparison",
+   "journalism",
+   "market analysis",
+   "research"
+  ],
+  "prohibited": [
+   "individual approval prediction",
+   "borrower profiling",
+   "personalized lender recommendation"
+  ],
+  "minimum_cell_size": 100
+ },
+ "attribution": {
+  "required_text": "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record (FHA loans); historical aggregate only.",
+  "license": "CC BY 4.0"
+ },
+ "passport_id": "frc:claim:purpose-fha-refinance-denial-rate-2025",
+ "canonical_url": "https://financeratecalc.com/claims/purpose-fha-refinance-denial-rate-2025.json",
+ "claim": {
+  "metric": "fha_refinance_denial_rate",
+  "program": "FHA",
+  "loan_purpose": "loan_purpose 31 or 32",
+  "value": 0.3739,
+  "n": 416767,
+  "denials": 155846,
+  "period": "2025",
+  "universe_id": "U-FHA-2025-DECISIONED-REFINANCE"
+ },
+ "receipt_document": "1.0",
+ "id": "purpose-fha-refinance-denial-rate-2025",
+ "display_value": "37.4%",
+ "hash_rule": "jcs-sha256-8",
+ "hash8": "aa99d715",
+ "receipt": "⟦FRC:purpose-fha-refinance-denial-rate-2025:37.4%:aa99d715⟧",
+ "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:purpose-fha-refinance-denial-rate-2025:37.4%:aa99d715%E2%9F%A7",
+ "corrections_url": "https://financeratecalc.com/corrections.json",
+ "spec": "https://financeratecalc.com/spec/receipt-1.0.md",
+ "reproduce": {
+  "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+  "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself. Keep loan_purpose in (31,32).",
+  "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+  "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/nationwide/csv?years=2025&loan_types=2&loan_purposes=31,32",
+  "note": "the all-purpose total of the same run equals the program's published decisioned count; see data/purpose/"
+ }
+}
