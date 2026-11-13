@@ -266,8 +266,9 @@ def main_month_table(source, src, period, pdf, url):
            "level": "2 — attested restatement of an official publication; not computed by FinanceRateCalc",
            "not_comparable_with": src["not_comparable_with"], "does_not_establish": src["does_not_establish"], "quoting_rule": src["quoting_rule"],
            "figures": figures, "months_as_printed": history,
-           "prior_edition_check": {"edition_compared": prev["document"]["edition"] if prev else None, "revisions": revisions,
-                                   "note": "The table restates every month it lists; each is compared with the same month as printed in the most recent earlier edition on file. A difference is a source revision, recorded here and, where the month has a receipt, written into that edition's file as revised_in/revised_to."}}
+           "prior_edition_check": {"edition_compared": prev["document"]["edition"] if prev else None, "revisions": [r for r in revisions if r["revised"] or r["has_receipt"]],
+                                   "compared": len(revisions), "changed": sum(1 for r in revisions if r["revised"]),
+                                   "note": "Only changed figures and the receipted month are listed; 'compared' and 'changed' count all of them. The table restates every month it lists; each is compared with the same month as printed in the most recent earlier edition on file. A difference is a source revision, recorded here and, where the month has a receipt, written into that edition's file as revised_in/revised_to."}}
     os.makedirs(os.path.join(ROOT, "data", "official"), exist_ok=True)
     p = os.path.join(ROOT, "data", "official", f"{source}-{period}.json")
     json.dump(out, open(p, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
