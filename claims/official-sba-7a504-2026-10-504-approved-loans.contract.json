@@ -1,0 +1,51 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:official-sba-7a504-2026-10-504-approved-loans",
+ "current_value": "409",
+ "canonical_claim": {
+  "template": "SBA 7(a) and 504 Monthly and Yearly Activity Report (edition as of 2026-10-31) reports 504, approval month 202610, Approved Loans: {value} loans, Oct 2026.",
+  "required_fields": [
+   "period",
+   "source",
+   "exclusions"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "Oct 2026",
+  "source": "SBA 7(a) and 504 Monthly and Yearly Activity Report, edition as of 2026-10-31, sheet 'Monthly'",
+  "exclusions": "Loan approvals as recorded on the edition's as-of date; the publisher replaces this file every month and earlier months can change",
+  "nature": "official figure restated as printed; not computed or adjusted by FinanceRateCalc"
+ },
+ "does_not_establish": [
+  "the number or amount of loans actually disbursed (these are approvals)",
+  "any lender-level figure",
+  "any applicant's chance of approval",
+  "that the figure has not changed since this edition (the publisher overwrites the file each month; check the latest edition and the revision ledger)"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "causal_assertion": false,
+    "individual_prediction": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "proposed_sentence": "This lender will likely reject YOUR application"
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  }
+ ],
+ "generated_by": "scripts/build_claim_contracts.py (2026-10-21) from the claim block"
+}
