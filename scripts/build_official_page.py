@@ -19,6 +19,20 @@ def shell():
     return style, nav
 
 
+def _ds(editions, n_receipts, gen):
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from dataset_jsonld import dataset_script
+    titles = list(dict.fromkeys(d["document"]["title"] for d in editions))
+    return dataset_script(
+        "Official US housing and small-business finance figures, restated as printed with document hashes",
+        f"Figures copied exactly as printed from US federal publications ({'; '.join(titles)}), each with the SHA-256 of the source document, the table and row it sits in, its period, the publisher's exclusion note and whether a later edition printed a different value. {len(editions)} editions, {n_receipts} figures with verifiable receipts. Nothing is computed by the publisher of this dataset; a receipt attests only that the figure appears in that document.",
+        "https://financeratecalc.com/official-figures.html", ["https://financeratecalc.com/data/official/index.json"] + [f"https://financeratecalc.com/data/official/{d['source_id']}-{d['period']}.json" for d in editions], "2024/..",
+        based_on=sorted({d["document"].get("landing") or d["document"].get("url") or "" for d in editions} - {""}),
+        variables=sorted({f["description"] for d in editions for f in d["figures"].values()})[:20],
+        keywords=["FHA endorsements", "Ginnie Mae issuance", "SBA 7(a)", "SBA 504", "official statistics", "provenance", "SHA-256"], modified=gen,
+        license_url="https://creativecommons.org/publicdomain/mark/1.0/")
+
+
 def main():
     style, nav = shell()
     files = sorted((f for f in glob.glob(os.path.join(ROOT, "data", "official", "*.json")) if os.path.basename(f) != "index.json"), reverse=True)
@@ -60,6 +74,7 @@ def main():
         f'<meta name="description" content="Level-2 receipts: figures from official publications (first: HUD\'s monthly FHA Single Family Production Report) copied as printed, with the document\'s SHA-256, table and row, period, exclusions and revision status, so an AI system\'s restatement can be checked against the source. {n_receipts} receipted figures.">\n'
         '<link rel="canonical" href="https://financeratecalc.com/official-figures.html">\n'
         '<link rel="license" type="application/rsl+xml" href="https://financeratecalc.com/rsl.xml">\n'
+        + _ds(editions, n_receipts, gen) + '\n'
         f'{style}\n<body>\n{nav}\n<div class="wrap">\n'
         f'<div class="kicker">FinanceRateCalc &middot; official figures &middot; Level-2 receipts &middot; generated {gen}</div>\n'
         '<h1>Official figures, restated as printed &mdash; with a receipt</h1>\n'

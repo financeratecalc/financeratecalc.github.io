@@ -14,6 +14,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "revision-ledger.html")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_official_page import shell  # noqa: E402  (same look as the other generated pages)
+from dataset_jsonld import dataset_script  # noqa: E402
 
 E = html.escape
 
@@ -60,6 +61,14 @@ def main():
         f'<meta name="description" content="A public record of figures that an official report printed in one edition and printed differently in the next, without a revision mark. {total_c} figures compared across editions so far, {total_r} changed. Both numbers of every entry are the publisher\'s own; nothing is estimated.">\n'
         '<link rel="canonical" href="https://financeratecalc.com/revision-ledger.html">\n'
         '<link rel="license" type="application/rsl+xml" href="https://financeratecalc.com/rsl.xml">\n'
+        + dataset_script(
+            "Revision ledger: figures in US official reports that changed between editions",
+            f"A record of figures that a US federal report printed in one edition and printed differently in a later edition without a revision mark, found by comparing editions. Sources so far: {'; '.join(s['title'] for s in per.values())}. {total_c} figures compared across editions, {total_r} changed; figures compared and found unchanged are counted. Each entry gives the figure, its period, the value as first printed, the later value, both editions and the SHA-256 of the first document. Both numbers of every entry are the publisher's own; nothing is estimated and no reason for a change is asserted.",
+            "https://financeratecalc.com/revision-ledger.html", ["https://financeratecalc.com/data/revisions.json", "https://financeratecalc.com/data/official/index.json"], "2024/..",
+            based_on=["https://www.hud.gov/hud-partners/fha-production-report", "https://www.ginniemae.gov/disclosure/reports/monthly-issuance-reports", "https://data.sba.gov/dataset/7a-504-activity-reports-current-month"],
+            variables=["value as first printed", "value as later printed", "difference", "edition"], keywords=["data revisions", "official statistics", "HUD", "FHA", "Ginnie Mae", "SBA", "vintage data", "provenance"],
+            modified=max(json.load(open(f, encoding="utf-8"))["generated"][:10] for f in glob.glob(os.path.join(ROOT, "data", "official", "*.json")) if os.path.basename(f) != "index.json"),
+            license_url="https://creativecommons.org/licenses/by/4.0/") + '\n'
         f'{style}\n<body>\n{nav}\n<div class="wrap">\n'
         '<div class="kicker">FinanceRateCalc &middot; revision ledger &middot; generated from the restated editions</div>\n'
         '<h1>Revision ledger: official figures that changed between editions</h1>\n'

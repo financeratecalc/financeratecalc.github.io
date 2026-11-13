@@ -28,6 +28,18 @@ def claim(cid):
     return json.load(open(os.path.join(ROOT, "claims", cid + ".json"), encoding="utf-8"))
 
 
+def _ds(prog, short, d, out_name):
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from dataset_jsonld import dataset_script
+    n = d["national"]; o = d["outcomes_national"]
+    return dataset_script(
+        f"{short} mortgage denial rates and application outcomes, 2025: United States and every state",
+        f"{short} mortgage applications in the United States in 2025 from the public CFPB HMDA loan-level file: {n['denials']:,} denials out of {n['decisioned_applications']:,} applications that reached a credit decision ({n['denial_rate_pct']:.1f}%; originated, approved but not accepted, or denied; reverse mortgages excluded), the same figures for {len(d['states'])} states and territories, and the five outcomes of the {o['applications_acted_on']:,} applications acted on (originated, approved not accepted, denied, withdrawn, closed for incompleteness). Every figure carries a verifiable receipt. Not comparable with other programs' rates as a judgement of programs or lenders.",
+        f"https://financeratecalc.com/{out_name}", [f"https://financeratecalc.com/data/programs/{prog}-2025.json"], "2025",
+        based_on=["https://ffiec.cfpb.gov/data-publication/"], variables=["denial rate", "applications reaching a credit decision", "denied applications", "application outcome shares"],
+        keywords=["HMDA", f"{short} loan", "mortgage denial rate", "application outcomes", "state"], modified=d["generated"][:10])
+
+
 def main():
     prog = sys.argv[1]
     short, longname, out_name = NAMES[prog]
@@ -51,6 +63,7 @@ def main():
         f'<meta name="description" content="In 2025, {n["denial_rate_pct"]:.1f}% of decisioned {short} applications in the US were denied ({fmt(n["denials"])} of {fmt(n["decisioned_applications"])}; actions 1-3, reverse mortgages excluded). Of the {fmt(o["applications_acted_on"])} applications acted on, {o["outcomes"]["withdrawn"]["share_of_acted_pct"]}% were withdrawn and {o["outcomes"]["denied"]["share_of_acted_pct"]}% denied. All 52 jurisdictions, every figure with a receipt. Not comparable with FHA rates as a judgement of programs.">\n'
         f'<link rel="canonical" href="https://financeratecalc.com/{out_name}">\n'
         '<link rel="license" type="application/rsl+xml" href="https://financeratecalc.com/rsl.xml">\n'
+        + _ds(prog, short, d, out_name) + '\n'
         f'{style}\n<body>\n{nav}\n<div class="wrap">\n'
         f'<div class="kicker">FinanceRateCalc &middot; {html.escape(longname)} loans &middot; 2025 &middot; first release {d["generated"][:10]}</div>\n'
         f'<h1>{short} loan denial rates in 2025: the national figure, the five outcomes, every state</h1>\n'

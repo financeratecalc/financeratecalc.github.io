@@ -15,6 +15,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "denominator-map.html")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_official_page import shell  # noqa: E402
+from dataset_jsonld import dataset_script  # noqa: E402
 
 E = html.escape
 ROWS = [("all", "All loan purposes"), ("purchase", "Home purchase"), ("refinance_all", "Refinance, including cash-out"), ("refinance", "&nbsp;&nbsp;refinance (not cash-out)"),
@@ -69,6 +70,12 @@ def main():
         f'<meta name="description" content="One program, one year, one set of denials: the 2025 denial rate by loan purpose (purchase, refinance), by denominator (decisioned, acted on, denied plus originated) and by scope, for {", ".join(d["program"] for d in progs)}. Purchase and refinance rates carry receipts. Type a percentage to see which definition produces it.">\n'
         '<link rel="canonical" href="https://financeratecalc.com/denominator-map.html">\n'
         '<link rel="license" type="application/rsl+xml" href="https://financeratecalc.com/rsl.xml">\n'
+        + dataset_script(
+            "Mortgage denial rates by loan purpose, denominator and scope, 2025 (" + ", ".join(d["program"] for d in progs) + ")",
+            "Denial rates for " + " and ".join(d["program"] for d in progs) + " mortgage applications in the United States in 2025, from one pass over the public CFPB HMDA loan-level file: every loan purpose (home purchase, refinance, cash-out refinance, home improvement, other) crossed with three denominators (applications reaching a credit decision; all applications acted on; denied plus originated) and two scopes (all; first-lien owner-occupied site-built 1-4 unit). Each cell keeps the five action counts. The all-purpose totals equal the published program totals. Purchase and refinance rates on the decisioned base carry verifiable receipts. Use it to place a denial rate quoted without its denominator.",
+            "https://financeratecalc.com/denominator-map.html", [f"https://financeratecalc.com/data/purpose/{d['program_id']}-2025.json" for d in progs], "2025",
+            based_on=["https://ffiec.cfpb.gov/data-publication/"], variables=["denial rate", "applications reaching a credit decision", "applications acted on", "denied applications", "loan purpose"],
+            keywords=["HMDA", "mortgage denial rate", "FHA", "VA", "home purchase", "refinance", "denominator"], modified=progs[0]["generated"][:10]) + '\n'
         f'{style}\n<body>\n{nav}\n<div class="wrap">\n'
         f'<div class="kicker">FinanceRateCalc &middot; denominator map &middot; 2025 &middot; generated {progs[0]["generated"][:10]}</div>\n'
         '<h1>The denominator map: one year, many &ldquo;denial rates&rdquo;</h1>\n'
