@@ -38,6 +38,7 @@ jobs:
                 open("hf-publish-result.txt", "a").write(f"repo {repo} private={perms}\n")
             except Exception as e:
                 open("hf-publish-result.txt", "a").write(f"repo_info failed: {str(e)[:200]}\n")
+            api.create_repo(repo, repo_type="dataset", exist_ok=True)   # a new mirror folder gets its dataset on first upload
             api.upload_folder(folder_path=folder, repo_id=repo, repo_type="dataset",
                               commit_message=f"mirror refresh from data/hf-mirrors/{m} at {os.environ.get('GITHUB_SHA','')[:10]}")
             open("hf-publish-result.txt", "w").write("OK mirror uploaded to %s\n%s\n" % (repo, info))
