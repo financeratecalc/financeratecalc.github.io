@@ -1,0 +1,52 @@
+{
+ "contract_version": "0.1",
+ "passport_id": "frc:claim:official-ginnie-iss-2026-05-ginnie-i-issuance-musd",
+ "current_value": "1,647",
+ "canonical_claim": {
+  "template": "Ginnie Mae Monthly Issuance Report (Issuance Summary) (May 2026 report) reports Ginnie Mae I single-family and multifamily total, month of May 2026: {value} USD millions, May 2026.",
+  "required_fields": [
+   "period",
+   "source",
+   "exclusions"
+  ]
+ },
+ "required_qualifiers": {
+  "period": "May 2026",
+  "source": "Ginnie Mae Monthly Issuance Report (Issuance Summary), May 2026 report, Table 1: Monthly Issuance Summary (In Millions)",
+  "exclusions": "Mortgage-backed securities issued under Ginnie Mae I and Ginnie Mae II programs, in USD millions; a securities-issuance figure, not a count of loans",
+  "nature": "official figure restated as printed; not computed or adjusted by FinanceRateCalc"
+ },
+ "does_not_establish": [
+  "a number of loans, originations or applications (it is a dollar amount of securities issued)",
+  "FHA-only activity (Ginnie Mae pools also hold VA, USDA and PIH loans)",
+  "any denial or approval rate",
+  "any lender-level or issuer-level figure",
+  "that the figure has not been revised in a later edition (check the latest report)"
+ ],
+ "forbidden_transformations": [
+  "causal_attribution",
+  "individual_prediction",
+  "personalized_lender_recommendation",
+  "legal_conclusion"
+ ],
+ "rule": "Free text is the OUTPUT of evidence, not its input. Certify before you write.",
+ "test_vectors": [
+  {
+   "id": "pass-canonical",
+   "proposed_use": {
+    "causal_assertion": false,
+    "individual_prediction": false
+   },
+   "expected_verdict": "pass"
+  },
+  {
+   "id": "fail-personal",
+   "proposed_use": {
+    "proposed_sentence": "This lender will likely reject YOUR application"
+   },
+   "expected_verdict": "block",
+   "reason_code": "INDIVIDUAL_PREDICTION_PROHIBITED"
+  }
+ ],
+ "generated_by": "scripts/build_claim_contracts.py (2026-10-21) from the claim block"
+}
