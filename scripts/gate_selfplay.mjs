@@ -26,12 +26,16 @@ function claimFor(t) {
   if (/originated/i.test(t) && /acted on/i.test(t)) return "outcome-originated-2025";
   return va ? "va-national-denial-rate-2025" : "national-fha-denial-rate-2025";
 }
-const rows = fs.readFileSync(path.join(ROOT, "eval/drift-ood-set.jsonl"), "utf8").trim().split("\n").map(JSON.parse);
+// Round 3 on: set A (drift-ood-set.jsonl) has been looked at, so all of it is development material; set B
+// (drift-ood-set-b.jsonl, written before the round-3 patch) is the held-out set. Without set B the old parity split applies.
+const read = f => fs.readFileSync(path.join(ROOT, f), "utf8").trim().split("\n").map(JSON.parse);
+const hasB = fs.existsSync(path.join(ROOT, "eval/drift-ood-set-b.jsonl"));
+const rows = hasB ? [...read("eval/drift-ood-set.jsonl").map(r => ({ ...r, split: "dev" })), ...read("eval/drift-ood-set-b.jsonl").map(r => ({ ...r, split: "held_out" }))] : read("eval/drift-ood-set.jsonl");
 const res = [];
 for (const [i, r] of rows.entries()) {
   const id = claimFor(r.text); let f = [];
   try { f = await sentenceFindings(r.text, { ...contract(id), passport_id: "frc:claim:" + id }); } catch (e) { f = [{ code: "ERROR:" + e.message }]; }
-  res.push({ i, split: i % 2 ? "held_out" : "dev", text: r.text, truth: r.codes[0] || "CLEAN", claim: id, flagged: f.length > 0, codes: [...new Set(f.map(x => x.code))] });
+  res.push({ i, split: r.split || (i % 2 ? "held_out" : "dev"), text: r.text, truth: r.codes[0] || "CLEAN", claim: id, flagged: f.length > 0, codes: [...new Set(f.map(x => x.code))] });
 }
 const stat = rs => { const v = rs.filter(r => r.truth !== "CLEAN"), c = rs.filter(r => r.truth === "CLEAN");
   return { violating: v.length, caught: v.filter(r => r.flagged).length, escapes: v.filter(r => !r.flagged).length, clean: c.length, false_alarms: c.filter(r => r.flagged).length }; };

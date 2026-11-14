@@ -23,6 +23,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--model", default="FinanceRateCalc/frc-contract-drift"); a = ap.parse_args()
     rows = [json.loads(l) for l in open(os.path.join(ROOT, "eval", "drift-ood-set.jsonl"), encoding="utf-8")]
+    bp = os.path.join(ROOT, "eval", "drift-ood-set-b.jsonl"); n_a = len(rows)   # set B: the fresh held-out set (round 3 on)
+    if os.path.exists(bp):
+        rows += [json.loads(l) for l in open(bp, encoding="utf-8")]
     tok = AutoTokenizer.from_pretrained(a.model); model = AutoModelForSequenceClassification.from_pretrained(a.model); model.eval()
     labels = [model.config.id2label[i] for i in range(model.config.num_labels)]
     enc = tok([r["text"] for r in rows], truncation=True, max_length=96, padding=True, return_tensors="pt")
@@ -38,13 +41,13 @@ def main():
     gp = os.path.join(ROOT, "eval", "gate-selfplay.json"); head = None
     if os.path.exists(gp):
         g = json.load(open(gp, encoding="utf-8")); gate_missed = {e["text"] for e in g.get("escapes", [])}; gate_fa = {e["text"] for e in g.get("false_alarms", [])}
-        ho = [(r, p) for i, (r, p) in enumerate(zip(rows, pred)) if i % 2]
+        ho = [(r, p) for i, (r, p) in enumerate(zip(rows, pred)) if (i >= n_a if len(rows) > n_a else i % 2)]
         hv = [(r, p) for r, p in ho if r["codes"]]; hc = [(r, p) for r, p in ho if not r["codes"]]
-        head = {"sentences": "held-out half of eval/drift-ood-set.jsonl (odd positions)", "violating": len(hv), "clean": len(hc),
+        head = {"sentences": "eval/drift-ood-set-b.jsonl (fresh held-out set)" if len(rows) > n_a else "held-out half of eval/drift-ood-set.jsonl (odd positions)", "violating": len(hv), "clean": len(hc),
                 "gate_caught": sum(1 for r, _ in hv if r["text"] not in gate_missed), "model_caught": sum(1 for _, p in hv if p),
                 "either_caught": sum(1 for r, p in hv if p or r["text"] not in gate_missed), "both_missed": [r["text"] for r, p in hv if not p and r["text"] in gate_missed],
                 "gate_false_alarms": sum(1 for r, _ in hc if r["text"] in gate_fa), "model_false_alarms": sum(1 for _, p in hc if p),
-                "reading": "gate = rules written by hand (worker sentenceFindings, patched from the development half only); model = the published classifier, trained on rule-generated sentences and never on these. 'either' is what a pipeline using both would catch."}
+                "reading": "gate = rules written by hand (worker sentenceFindings, patched from development sentences only); model = the published classifier, trained on rule-generated sentences and never on these. 'either' is what a pipeline using both would catch."}
     it = json.load(open(os.path.join(ROOT, "eval", "drift-model-eval.json"), encoding="utf-8"))
     out = {"model": a.model, "set": "eval/drift-ood-set.jsonl", "n_violating": len(viol), "n_clean": len(clean),
            "detection_rate": round(sum(1 for _, p in viol if p) / len(viol), 3), "right_code_rate": round(sum(1 for r, p in viol if r["codes"][0] in p) / len(viol), 3),
