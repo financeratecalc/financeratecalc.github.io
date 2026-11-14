@@ -81,7 +81,8 @@ jobs:
             python3 scripts/build_revisions_feed.py
             python3 scripts/build_revision_ledger.py
             python3 scripts/build_edition_qa.py
-            git add data/official data/revisions.json claims transparency rl-env/frc_citation/receipts-snapshot.json official-figures.html revision-ledger.html data/hf-mirrors/edition-aware-qa
+            python3 scripts/reward_audit.py >/dev/null
+            git add data/official data/revisions.json claims transparency rl-env/frc_citation/receipts-snapshot.json official-figures.html revision-ledger.html data/hf-mirrors/edition-aware-qa eval/reward-audit.json
             git reset -q data/official/cache 2>/dev/null || true
             gh issue create --title "new official edition restated $(date -u +%Y-%m-%d)" --body-file /tmp/official_new.md || true
           fi
