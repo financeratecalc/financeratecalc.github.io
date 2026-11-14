@@ -1,0 +1,241 @@
+{
+ "model": "FinanceRateCalc/frc-contract-drift",
+ "set": "eval/drift-ood-set.jsonl",
+ "n_violating": 64,
+ "n_clean": 16,
+ "detection_rate": 0.75,
+ "right_code_rate": 0.672,
+ "false_flag_rate_on_clean": 0.125,
+ "per_code": {
+  "CAUSALITY_NOT_ESTABLISHED": {
+   "n": 8,
+   "right_code": 4,
+   "any_flag": 6
+  },
+  "INDIVIDUAL_PREDICTION_PROHIBITED": {
+   "n": 8,
+   "right_code": 7,
+   "any_flag": 7
+  },
+  "LEGAL_CONCLUSION_NOT_SUPPORTED": {
+   "n": 8,
+   "right_code": 7,
+   "any_flag": 7
+  },
+  "LENDER_RECOMMENDATION": {
+   "n": 8,
+   "right_code": 5,
+   "any_flag": 6
+  },
+  "PROGRAM_MISMATCH": {
+   "n": 8,
+   "right_code": 6,
+   "any_flag": 6
+  },
+  "QUALIFIER_DELETED": {
+   "n": 8,
+   "right_code": 8,
+   "any_flag": 8
+  },
+  "SAME_APPLICANT_FRAMING": {
+   "n": 8,
+   "right_code": 4,
+   "any_flag": 4
+  },
+  "SCOPE_TOO_BROAD": {
+   "n": 8,
+   "right_code": 2,
+   "any_flag": 4
+  }
+ },
+ "in_template_exact_match_for_comparison": 0.998,
+ "rules_vs_learned_on_held_out": {
+  "sentences": "held-out half of eval/drift-ood-set.jsonl (odd positions)",
+  "violating": 32,
+  "clean": 8,
+  "gate_caught": 27,
+  "model_caught": 26,
+  "either_caught": 30,
+  "both_missed": [
+   "I'd steer clear of any lender whose 2025 FHA denial rate topped 30%.",
+   "In 2025, 22.1% of decisioned FHA applications were denied, which shows the whole housing market is closed to ordinary people."
+  ],
+  "gate_false_alarms": 0,
+  "model_false_alarms": 1,
+  "reading": "gate = rules written by hand (worker sentenceFindings, patched from the development half only); model = the published classifier, trained on rule-generated sentences and never on these. 'either' is what a pipeline using both would catch."
+ },
+ "misses": [
+  {
+   "text": "Roughly 22% of FHA applicants got turned down in 2025 and that's down to how tight underwriting has become.",
+   "expected": [
+    "CAUSALITY_NOT_ESTABLISHED"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "The reason one in five FHA applications fails is simple: credit scores.",
+   "expected": [
+    "CAUSALITY_NOT_ESTABLISHED"
+   ],
+   "predicted": [
+    "QUALIFIER_DELETED"
+   ]
+  },
+  {
+   "text": "Higher rates pushed the 2025 FHA denial rate to 22.1%.",
+   "expected": [
+    "CAUSALITY_NOT_ESTABLISHED"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "VA purchase denials are only 8.2% since veterans are better borrowers.",
+   "expected": [
+    "CAUSALITY_NOT_ESTABLISHED"
+   ],
+   "predicted": [
+    "QUALIFIER_DELETED"
+   ]
+  },
+  {
+   "text": "She'll probably get approved; only 22.1% of FHA applications were denied in 2025.",
+   "expected": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "A 37.4% refusal rate on FHA refinances in 2025 is redlining, plain and simple.",
+   "expected": [
+    "LEGAL_CONCLUSION_NOT_SUPPORTED"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "Go with whichever lender has the lowest FHA denial rate in your metro; the 2025 table tells you who that is.",
+   "expected": [
+    "LENDER_RECOMMENDATION"
+   ],
+   "predicted": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ]
+  },
+  {
+   "text": "I'd steer clear of any lender whose 2025 FHA denial rate topped 30%.",
+   "expected": [
+    "LENDER_RECOMMENDATION"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "For the best shot at approval, use the lender at the bottom of the 2025 denial ranking.",
+   "expected": [
+    "LENDER_RECOMMENDATION"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "The 2025 denial rate for home loans stood at 22.1%.",
+   "expected": [
+    "PROGRAM_MISMATCH"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "Jumbo borrowers faced a 22.1% denial rate in 2025.",
+   "expected": [
+    "PROGRAM_MISMATCH"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "An identical FHA borrower would be denied 15.7% of the time in Texas but 25.3% in New York, 2025 data show.",
+   "expected": [
+    "SAME_APPLICANT_FRAMING"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "Take one applicant and send the file to two states: in 2025 the denial odds differ by ten points.",
+   "expected": [
+    "SAME_APPLICANT_FRAMING"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "For a given applicant, FHA purchase is denied 12.8% of the time and refinance 37.4%, per the 2025 record.",
+   "expected": [
+    "SAME_APPLICANT_FRAMING"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "Hold the borrower constant and the 2025 FHA denial rate still swings from 15.7% to 25.3% by state.",
+   "expected": [
+    "SAME_APPLICANT_FRAMING"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "With 22.1% of decisioned FHA applications denied in 2025, getting a mortgage in America has become nearly impossible.",
+   "expected": [
+    "SCOPE_TOO_BROAD"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "Because 37.4% of decisioned FHA refinance applications were denied in 2025, refinancing is dead in the United States.",
+   "expected": [
+    "SCOPE_TOO_BROAD"
+   ],
+   "predicted": [
+    "CAUSALITY_NOT_ESTABLISHED"
+   ]
+  },
+  {
+   "text": "In 2025, 22.1% of decisioned FHA applications were denied, which shows the whole housing market is closed to ordinary people.",
+   "expected": [
+    "SCOPE_TOO_BROAD"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "25.3% of decisioned FHA applications in New York were denied in 2025; nobody in New York can get credit.",
+   "expected": [
+    "SCOPE_TOO_BROAD"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "The 2025 FHA denial rate of 22.1% of decisioned applications means American lending as a whole is broken.",
+   "expected": [
+    "SCOPE_TOO_BROAD"
+   ],
+   "predicted": [
+    "CAUSALITY_NOT_ESTABLISHED"
+   ]
+  },
+  {
+   "text": "Since 22.1% of decisioned FHA applications were denied in 2025, homeownership is out of reach for the country.",
+   "expected": [
+    "SCOPE_TOO_BROAD"
+   ],
+   "predicted": []
+  }
+ ],
+ "false_flags": [
+  {
+   "text": "Among VA home-purchase applications decided in 2025, 8.2% were denied.",
+   "predicted": [
+    "PROGRAM_MISMATCH"
+   ]
+  },
+  {
+   "text": "56.4% of FHA applications acted on in 2025 were originated.",
+   "predicted": [
+    "PROGRAM_MISMATCH"
+   ]
+  }
+ ],
+ "note": "Hand-written sentences outside the rule generator's templates; written by the publisher's assistant, not by independent annotators; one primary code per sentence; small n. This is the number to quote for the model's use on real text, not the in-template figure."
+}
