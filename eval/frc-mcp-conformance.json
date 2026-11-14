@@ -5,7 +5,7 @@
  "server": {
   "name": "financeratecalc",
   "title": "FinanceRateCalc mortgage evidence",
-  "version": "1.49.0"
+  "version": "1.50.0"
  },
  "protocol_versions": [
   "2026-07-28",
@@ -13,10 +13,10 @@
   "2025-06-18",
   "2025-03-26"
  ],
- "generated_at": "2026-11-13T18:53:55.666Z",
+ "generated_at": "2026-11-14T09:42:33.220Z",
  "tests": 21,
- "passed": 21,
- "conformance": "PASS",
+ "passed": 20,
+ "conformance": "FAIL",
  "method": "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
  "results": [
   {
@@ -125,7 +125,7 @@
    "id": "18",
    "name": "resources: list is non-empty, every listed uri reads back with matching mimeType, a uri outside the publisher is refused",
    "pass": true,
-   "evidence": "resources=9 templates=5 bundle_bytes=470095 outside=refused"
+   "evidence": "resources=9 templates=5 bundle_bytes=470623 outside=refused"
   },
   {
    "id": "19",
@@ -142,9 +142,9 @@
   {
    "id": "21",
    "name": "application outcomes: five shares sum to ~100, the denied share is on the acted-on base and lower than the decisioned denial rate, every receipt verifies as current, a lender row carries its receipt and no ranking",
-   "pass": true,
-   "evidence": "sum=100.1 denied=16.8 rate=22.1 current=5/5 lender=current citation=true"
+   "pass": false,
+   "evidence": "sum=100.1 denied=16.8 rate=22.1 current=4/5 lender=current citation=true"
   }
  ],
- "sha256": "3b697b0c0ab364311af86a27afceb2305f33dec8c0b58a3d7ac6f1b5fa4a98f3"
+ "sha256": "c266c1681a7fa8cedad721916c7d4f8dae52ddeb0e0668c03eb39f5408f36191"
 }
