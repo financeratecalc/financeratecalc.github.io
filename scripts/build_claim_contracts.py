@@ -69,7 +69,7 @@ def contract_for(cid, d):
                 "does_not_establish": [f"an applicant in {name} has a {v} chance of denial", f"{name}'s lenders are stricter than another state's for a given applicant", "any conclusion about non-FHA lending", "any legal conclusion"]}
     if cid.startswith("small-loan-penalty-") and cid != "small-loan-penalty-range-2025":
         st = str(c.get("state", "")).upper(); name = STATES.get(st, st)
-        return {"canonical_claim": {"template": f"In 2025, FHA applications under $150,000 in {name} were denied {c.get('small')}% of the time against {c.get('big')}% for loans over $250,000, a small-loan penalty of {{value}}.", "required_fields": ["period", "population", "loan_size_bands"]},
+        return {"canonical_claim": {"template": f"In 2025, decisioned FHA applications under $150,000 in {name} were denied {c.get('small')}% of the time against {c.get('big')}% for loans over $250,000, a small-loan penalty of {{value}}.", "required_fields": ["period", "population", "loan_size_bands"]},
                 "required_qualifiers": {"period": "2025", "population": f"decisioned FHA applications in {name}", "program_scope": "FHA", "loan_size_bands": "under $150,000 vs over $250,000"},
                 "does_not_establish": ["that loan size causes denial (applicant and property mix differ by loan size)", "any individual's chance of denial", "any legal conclusion"]}
     if cid == "small-loan-penalty-range-2025":

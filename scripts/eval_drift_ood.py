@@ -55,6 +55,24 @@ def main():
            "false_flags": [{"text": r["text"], "predicted": p} for r, p in clean if p],
            "note": "Hand-written sentences outside the rule generator's templates; written by the publisher's assistant, not by independent annotators; one primary code per sentence; small n. This is the number to quote for the model's use on real text, not the in-template figure."}
     json.dump(out, open(os.path.join(ROOT, "eval", "drift-model-ood.json"), "w"), indent=1, ensure_ascii=False)
+    # The model card must carry this number next to the in-template one (it showed only 0.998 until 14 Nov 2026).
+    tok_ = os.environ.get("HF_TOKEN")
+    if tok_ and "/" in a.model:
+        try:
+            from huggingface_hub import HfApi, hf_hub_download
+            card = open(hf_hub_download(a.model, "README.md", token=tok_), encoding="utf-8").read()
+            A, B = "<!-- ood:start -->", "<!-- ood:end -->"
+            h = out.get("rules_vs_learned_on_held_out") or {}
+            sec = (f"{A}\n## Out-of-template test (the number to quote)\n\n"
+                   f"The in-template figure ({out['in_template_exact_match_for_comparison']}) is measured on sentences from the same rule generator that wrote the training set. On {out['n_violating']} violating and {out['n_clean']} clean sentences written by hand outside those templates:\n\n"
+                   f"| | |\n|---|---|\n| violating sentence flagged with any code | {out['detection_rate']:.0%} |\n| flagged with the right code | {out['right_code_rate']:.0%} |\n| clean sentence wrongly flagged | {out['false_flag_rate_on_clean']:.0%} |\n\n"
+                   + (f"On the held-out half ({h.get('violating')} violating sentences): this model caught {h.get('model_caught')}, the site's hand-written rule gate caught {h.get('gate_caught')}, the two together {h.get('either_caught')}.\n\n" if h else "")
+                   + "The test sentences were written by the publisher's assistant, not by independent annotators; small n. Weakest: same-applicant framing and whole-market conclusions. Data: https://financeratecalc.com/eval/drift-ood-set.jsonl, result: https://financeratecalc.com/eval/drift-model-ood.json\n" + B)
+            card = card[:card.index(A)] + sec + card[card.index(B) + len(B):] if A in card and B in card else card.rstrip() + "\n\n" + sec + "\n"
+            HfApi(token=tok_).upload_file(path_or_fileobj=card.encode("utf-8"), path_in_repo="README.md", repo_id=a.model, repo_type="model", commit_message="model card: out-of-template test")
+            print("model card updated")
+        except Exception as e:
+            print("model card not updated:", type(e).__name__, str(e)[:160])
     print(json.dumps({k: out[k] for k in ("detection_rate", "right_code_rate", "false_flag_rate_on_clean", "in_template_exact_match_for_comparison", "rules_vs_learned_on_held_out", "per_code")}, indent=1))
 
 

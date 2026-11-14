@@ -70,6 +70,7 @@ jobs:
           PY
       - name: Out-of-template test of the published model (hand-written sentences)
         if: inputs.ood_only == 'yes' || inputs.push == 'yes'
+        env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}" }
         run: |
           python scripts/eval_drift_ood.py
           git config user.name "github-actions[bot]"

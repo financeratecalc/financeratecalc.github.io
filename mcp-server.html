@@ -55,7 +55,7 @@ Without a source, two Claude models answered this question 0.55% and 0.45% (Stal
     "financeratecalc": { "command": "npx", "args": ["-y", "github:financeratecalc/frc-mcp"] }
   }
 }</pre>
-<p>Sixteen tools: claim certification, the sentence gate, rule tables and the MIP resolver, national, lender, state and metro statistics, the Door Effect and its conditional map, and a counterparty screen (see the table below). Source: <a href="https://github.com/financeratecalc/frc-mcp" style="color:#C8A84B">github.com/financeratecalc/frc-mcp</a> · <p style="margin-top:14px"><a href="https://allmcps.com/mcp/financeratecalc-frc-mcp"><img src="https://allmcps.com/api/badge/financeratecalc-frc-mcp?style=directory" alt="FinanceRateCalc on AllMCPs" style="border:0"/></a></p>
+<p>Eighteen tools: claim certification, the sentence gate, rule tables and the MIP resolver, national, lender, state and metro statistics, the Door Effect and its conditional map, and a counterparty screen (see the table below). Source: <a href="https://github.com/financeratecalc/frc-mcp" style="color:#C8A84B">github.com/financeratecalc/frc-mcp</a> · <p style="margin-top:14px"><a href="https://allmcps.com/mcp/financeratecalc-frc-mcp"><img src="https://allmcps.com/api/badge/financeratecalc-frc-mcp?style=directory" alt="FinanceRateCalc on AllMCPs" style="border:0"/></a></p>
 REST spec: <a href="/openapi.json" style="color:#C8A84B">openapi.json</a></p>
 <h2>Legacy local server (Python)</h2>
 <p style="font-size:13.5px;color:rgba(255,255,255,.55);">The original single-file Python server still works but exposes the older, smaller tool set; prefer the remote endpoint above. Not on PyPI &mdash; install from source. It is a single file plus a data file, with one dependency.</p>
@@ -73,7 +73,7 @@ python frc_mcp.py</pre>
   }
 }</pre>
 
-<h2>Tools (16, server v1.31.0)</h2>
+<h2>Tools (18, server v1.49.0)</h2>
 <p style="font-size:13.5px;color:rgba(255,255,255,.55);">Generated from the server source (<code>worker/index.js</code>). Every response carries the same guardrail: historical aggregates from the public 2025 HMDA record, never an individual prediction.</p>
 <table>
 <tr><th>Tool</th><th>What it does</th><th>Access</th></tr>
@@ -83,6 +83,10 @@ python frc_mcp.py</pre>
 <tr><td>get_national_fha_stats</td><td>National FHA denial statistics from the 2025 federal record.</td><td>Free</td></tr>
 <tr><td>get_lender_denial_stats</td><td>FHA denial statistics for one lender by name, slug, or LEI.</td><td>Free</td></tr>
 <tr><td>list_lenders</td><td>List covered FHA lenders sorted by denial rate or volume (2025 span: 1.8% to 78.7%).</td><td>Free</td></tr>
+<tr><td>get_application_outcomes</td><td>Where FHA applications end: the five outcomes (originated, approved not accepted, denied, withdrawn, closed incomplete) nationally or for one lender, as shares of applications acted on.</td><td>Free</td></tr>
+<tr><td>get_official_figure</td><td>A figure from an official publication exactly as printed (HUD FHA production report, Ginnie Mae issuance summary, SBA 7(a) and 504 activity file), with the document&rsquo;s SHA-256, its edition, and whether a later edition printed a different value.</td><td>Free</td></tr>
+<tr><td>get_small_loan_penalty</td><td>Small-loan against large-loan FHA denial rates by state, 2025, with the ratio between them.</td><td>Free</td></tr>
+<tr><td>get_denial_reason_shares</td><td>Shares of FHA denials citing each stated reason, for the lenders that report reasons, 2025 (share of denials citing the reason).</td><td>Free</td></tr>
 <tr><td>get_state_denial_stats</td><td>FHA denial statistics for a US state.</td><td>Free</td></tr>
 <tr><td>get_door_effect_summary</td><td>Door Effect: 38% of explainable variation in FHA denial outcomes is lender identity, not the applicant&#x27;s file (859,090 decisions; McFadden 0.1712 to 0.2760).</td><td>Free</td></tr>
 <tr><td>get_metro_lender_gap</td><td>Per-metro FHA denial-rate gap between high-volume lenders (&gt;=100 decisioned applications in that metro, 2025), returned as a machine-readable claim passport: lowest and highest door with counts, gap in percentage points, source-record sha256, interpretation boundaries, and a link to its Claim Contract.</td><td>Free</td></tr>
