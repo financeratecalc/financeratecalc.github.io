@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A scannable receipt for a printed mortgage statistic | FinanceRateCalc</title>
+<meta name="description" content="Pick a 2025 mortgage denial rate, get the sentence and a QR code to print next to it. Anyone who scans the code sees whether the figure is still current. Free; no account.">
+<link rel="canonical" href="https://financeratecalc.com/receipt-qr.html">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@300;400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding:40px 20px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:30px;color:#f5f2ea;line-height:1.18;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:20px;color:#f5f2ea;margin:34px 0 10px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B}
+.card{border:1px solid #23262e;border-radius:12px;padding:16px 18px;background:#0d0f14;margin:12px 0;font-size:15px}
+.mono{font-family:'DM Mono',monospace;font-size:12.5px}
+.pill{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;padding:2px 8px;border-radius:20px;margin-right:6px}
+.p-pass{background:rgba(95,180,162,.14);color:#5fb4a2}.p-q{background:rgba(200,168,75,.14);color:#C8A84B}.p-o{background:rgba(201,111,111,.14);color:#c96f6f}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{border:1px solid #23262e;padding:9px 10px;text-align:left}th{background:#0d0f14;font-family:'DM Mono',monospace;font-size:11px;color:#C8A84B}
+.limit{border:1px solid #c96f6f;border-radius:12px;padding:15px 18px;color:#cbc7bb;font-size:14px;margin:18px 0}
+input,textarea,select{width:100%;box-sizing:border-box;background:#0d0f14;border:1px solid #23262e;border-radius:8px;color:#e8e4da;padding:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin:6px 0 12px}
+button{background:#C8A84B;color:#000;border:0;border-radius:9px;padding:12px 18px;font-weight:800;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif}
+label{font-size:13px;color:#a5a094}
+.small{font-size:13px;color:#a5a094}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>div{flex:1;min-width:150px}
+#card{background:#fff;color:#111;border-radius:12px;padding:22px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin:16px 0}
+#card .txt{flex:1;min-width:220px}#card .fig{font-family:'Fraunces',Georgia,serif;font-size:46px;line-height:1;color:#111}
+#card .sen{font-size:15px;line-height:1.45;margin-top:10px;color:#222}#card .cap{font-size:11.5px;color:#555;margin-top:10px}
+#card canvas{width:150px;height:150px;image-rendering:pixelated}
+button.ghost{background:transparent;color:#C8A84B;border:1px solid #C8A84B}
+</style></head><body>
+<nav data-frc-nav="1" aria-label="Site" style="font-family:system-ui,sans-serif;font-size:12.5px;padding:8px 16px;background:#0b0d12;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:14px;flex-wrap:wrap;align-items:center"><a href="/" style="color:#C8A84B;font-weight:700;text-decoration:none">FinanceRateCalc</a><a href="/fha-denial-rates-top-100.html" style="color:rgba(255,255,255,.7);text-decoration:none">Lenders</a><a href="/fha-denial-rates-by-state.html" style="color:rgba(255,255,255,.7);text-decoration:none">States</a><a href="/metro-gaps.html" style="color:rgba(255,255,255,.7);text-decoration:none">Metros</a><a href="/check-answer.html" style="color:rgba(255,255,255,.7);text-decoration:none">Check an answer</a><a href="/corrections.html" style="color:rgba(255,255,255,.7);text-decoration:none">Corrections</a><a href="/about.html" style="color:rgba(255,255,255,.7);text-decoration:none">About</a></nav>
+<div class="wrap">
+<div class="kicker">Tool · for printed material · free, no account</div>
+<h1>Put a number on paper that your reader can check</h1>
+<p class="sub">A statistic in a flyer, a market report or a slide cannot update itself. Print this code next to it. Anyone who scans the code sees, at that moment, whether the figure still stands in the federal record, or has been corrected since you printed it.</p>
+<div class="row">
+<div><label for="prog">Loan program</label><select id="prog"><option value="fha">FHA</option><option value="va">VA</option><option value="usda">USDA</option><option value="conv">Conventional (all purposes)</option></select></div>
+<div><label for="scope">Figure</label><select id="scope"><option value="national">National denial rate, all loan purposes</option><option value="purchase">National, home purchase only</option><option value="refinance">National, refinance only</option><option value="state">One state</option></select></div>
+<div id="stwrap" style="display:none"><label for="state">State</label><select id="state"></select></div>
+</div>
+<div id="msg" class="small"></div>
+<div id="card" style="display:none"><div class="txt"><div class="fig" id="c-fig"></div><div class="sen" id="c-sen"></div><div class="cap">Scan to check this figure is still current &middot; financeratecalc.com</div></div><canvas id="qr" width="10" height="10" aria-label="QR code"></canvas></div>
+<div id="actions" style="display:none"><button id="dl" type="button">Download the code (PNG)</button> &nbsp; <button id="cp" type="button" class="ghost">Copy the sentence</button> &nbsp; <a id="try" class="small" target="_blank" rel="noopener">see what a scan shows</a></div>
+<h2>How to use it</h2>
+<p class="sub" style="font-size:14.5px">Use the sentence as written, with the figure beside the code. Print the code at 2&nbsp;cm (about 0.8&nbsp;in) or larger, with white space around it. If the figure is ever corrected, every copy already printed will say so when scanned, and show the new value. If someone changes the number next to the code, the scan says that too.</p>
+<div class="limit"><b>What these figures are.</b> Shares of applications that reached a credit decision in 2025, from the public federal HMDA file. They describe what happened to all applicants together. They do not predict what will happen to one application, and they do not compare lenders. Rates for different programs describe different groups of applicants and are not a ranking of programs. Lender-level figures are not offered here on purpose.</div>
+<p class="sub" style="font-size:14px">The code holds a link to <span class="mono">financeratecalc.com/q.html</span> with the figure&rsquo;s receipt. Nothing about the person scanning is collected. Check any receipt by hand: <a href="/verify.html">verify</a>. All figures: <a href="/denominator-map.html">denominator map</a>.</p>
+<div style="margin-top:40px;border-top:1px solid #23262e;padding-top:14px;font-size:13px;color:#a5a094">FinanceRateCalc &middot; Measured, not assumed. &middot; <a href="/corrections.html">Corrections</a> &middot; QR code is a registered trademark of DENSO WAVE INCORPORATED.</div>
+</div>
+<script src="/assets/qrcode-generator.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const US={AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",DE:"Delaware",DC:"District of Columbia",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",PR:"Puerto Rico",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming"};
+$("state").innerHTML=Object.entries(US).map(([k,v])=>'<option value="'+k.toLowerCase()+'">'+v+'</option>').join("");
+function claimId(){const p=$("prog").value,s=$("scope").value,st=$("state").value;
+  if(s==="national") return p==="fha"?"national-fha-denial-rate-2025":p+"-national-denial-rate-2025";
+  if(s==="state") return p==="fha"?"state-"+st+"-2025":p+"-state-"+st+"-denial-rate-2025";
+  return "purpose-"+p+"-"+s+"-denial-rate-2025";}
+let current=null;
+function draw(url){const q=qrcode(0,"M");q.addData(url);q.make();const n=q.getModuleCount(),m=12,z=4,c=$("qr");c.width=c.height=(n+2*z)*m;const x=c.getContext("2d");
+  x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.fillStyle="#000";for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(q.isDark(r,k))x.fillRect((k+z)*m,(r+z)*m,m,m);}
+async function update(){$("stwrap").style.display=$("scope").value==="state"?"":"none";
+  const id=claimId();$("card").style.display="none";$("actions").style.display="none";$("msg").textContent="Loading\u2026";current=null;
+  try{const P=await (await fetch("/claims/"+id+".json")).json();if(!P.receipt) throw 0;
+    let K=null;try{K=await (await fetch("/claims/"+id+".contract.json")).json();}catch(e){}
+    const m=/FRC:([a-z0-9-]+):([^:\s\u27e7]+):([a-f0-9]{8})/i.exec(P.receipt);if(!m) throw 0;
+    const url="https://financeratecalc.com/q.html?r="+encodeURIComponent("FRC:"+m[1]+":"+m[2]+":"+m[3]);
+    const t=K&&K.canonical_claim&&K.canonical_claim.template, sentence=t?t.replace("{value}",P.display_value).replace(" (actions 1,2,3; loan_type 2)",""):"";  // the record codes belong in the claim document, not on a flyer
+    $("c-fig").textContent=P.display_value;$("c-sen").textContent=sentence+($("prog").value==="conv"?" Every loan purpose and lien position, not home purchase only.":"")+" Source: FinanceRateCalc analysis of the public HMDA record.";draw(url);
+    $("try").href=url.replace("https://financeratecalc.com","");$("card").style.display="";$("actions").style.display="";$("msg").textContent="";current={id,url,sentence};
+  }catch(e){$("msg").textContent="This figure is not published (yet) for that combination. Purchase-only and refinance-only rates exist for FHA and VA; state figures exist where the state has enough applications.";}}
+["prog","scope","state"].forEach(i=>$(i).addEventListener("change",update));
+$("dl").addEventListener("click",()=>{if(!current)return;const a=document.createElement("a");a.download="receipt-"+current.id+".png";a.href=$("qr").toDataURL("image/png");a.click();});
+$("cp").addEventListener("click",async()=>{if(!current)return;try{await navigator.clipboard.writeText($("c-sen").textContent);$("cp").textContent="Copied";setTimeout(()=>$("cp").textContent="Copy the sentence",1500);}catch(e){}});
+update();
+</script></body></html>

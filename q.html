@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Is this printed figure still current? | FinanceRateCalc</title>
+<meta name="description" content="You scanned a code printed next to a mortgage statistic. This page checks, now, whether that figure still stands in the publisher's record.">
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@300;400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding:40px 20px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:30px;color:#f5f2ea;line-height:1.18;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:20px;color:#f5f2ea;margin:34px 0 10px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B}
+.card{border:1px solid #23262e;border-radius:12px;padding:16px 18px;background:#0d0f14;margin:12px 0;font-size:15px}
+.mono{font-family:'DM Mono',monospace;font-size:12.5px}
+.pill{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;padding:2px 8px;border-radius:20px;margin-right:6px}
+.p-pass{background:rgba(95,180,162,.14);color:#5fb4a2}.p-q{background:rgba(200,168,75,.14);color:#C8A84B}.p-o{background:rgba(201,111,111,.14);color:#c96f6f}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{border:1px solid #23262e;padding:9px 10px;text-align:left}th{background:#0d0f14;font-family:'DM Mono',monospace;font-size:11px;color:#C8A84B}
+.limit{border:1px solid #c96f6f;border-radius:12px;padding:15px 18px;color:#cbc7bb;font-size:14px;margin:18px 0}
+input,textarea,select{width:100%;box-sizing:border-box;background:#0d0f14;border:1px solid #23262e;border-radius:8px;color:#e8e4da;padding:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin:6px 0 12px}
+button{background:#C8A84B;color:#000;border:0;border-radius:9px;padding:12px 18px;font-weight:800;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif}
+label{font-size:13px;color:#a5a094}
+.small{font-size:13px;color:#a5a094}
+.status{border-radius:14px;padding:22px 20px;margin:18px 0;border:2px solid #23262e}
+.status .big{font-family:'Fraunces',Georgia,serif;font-size:30px;line-height:1.15;margin-bottom:6px}
+.s-current{border-color:#5fb4a2;background:rgba(95,180,162,.10)}.s-current .big{color:#5fb4a2}
+.s-stale{border-color:#C8A84B;background:rgba(200,168,75,.10)}.s-stale .big{color:#C8A84B}
+.s-bad{border-color:#c96f6f;background:rgba(201,111,111,.10)}.s-bad .big{color:#c96f6f}
+.fig{font-family:'Fraunces',Georgia,serif;font-size:44px;color:#f5f2ea;line-height:1}
+</style></head><body>
+<nav data-frc-nav="1" aria-label="Site" style="font-family:system-ui,sans-serif;font-size:12.5px;padding:8px 16px;background:#0b0d12;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:14px;flex-wrap:wrap;align-items:center"><a href="/" style="color:#C8A84B;font-weight:700;text-decoration:none">FinanceRateCalc</a><a href="/fha-denial-rates-top-100.html" style="color:rgba(255,255,255,.7);text-decoration:none">Lenders</a><a href="/fha-denial-rates-by-state.html" style="color:rgba(255,255,255,.7);text-decoration:none">States</a><a href="/metro-gaps.html" style="color:rgba(255,255,255,.7);text-decoration:none">Metros</a><a href="/check-answer.html" style="color:rgba(255,255,255,.7);text-decoration:none">Check an answer</a><a href="/corrections.html" style="color:rgba(255,255,255,.7);text-decoration:none">Corrections</a><a href="/about.html" style="color:rgba(255,255,255,.7);text-decoration:none">About</a></nav>
+<div class="wrap" style="padding-top:22px">
+<div class="kicker">Printed-figure check</div>
+<div id="st" class="status"><div class="big">Checking&hellip;</div><div id="st2">Comparing the printed figure with the publisher's record.</div></div>
+<div id="body"></div>
+<p class="small" id="when"></p>
+<p class="small">What this is: the code you scanned was printed next to a number taken from a public record. It carries the number and a fingerprint of the record at the time. This page compares both with the record as it stands now. Nothing about you is collected. <a href="/verify.html">Check any receipt by hand</a> &middot; <a href="/receipt-qr.html">Make a code for your own material</a></p>
+</div>
+<script>
+const API="https://frc-mcp.ziyetis.workers.dev/verify?r=";
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const jcs=x=>Array.isArray(x)?x.map(jcs):(x&&typeof x==="object")?Object.fromEntries(Object.keys(x).sort().map(k=>[k,jcs(x[k])])):x;
+async function h8(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("").slice(0,8);}
+async function offline(id,value,h,P){
+  const now=await h8(JSON.stringify(jcs(P.claim))), legacy=await h8(JSON.stringify(P.claim,Object.keys(P.claim).sort()));
+  const cur=String(P.display_value||""); let status;
+  if(h===now||h===legacy) status=cur===value?"current":"hash-current-value-mismatch";
+  else{let hist={};try{hist=(await (await fetch("/transparency/receipt-hash-history.json")).json()).hashes||{};}catch(e){} status=(hist[id]||[]).includes(h)?"stale":"unrecognized";}
+  const pr=P.revision_status&&P.revision_status.revised_to!=null?{revised_to:P.revision_status.revised_to,revised_in:P.revision_status.revised_in}:null;
+  return {id,quoted_value:value,current_value:cur,status,publisher_revision:pr};}
+async function run(){
+  const st=document.getElementById("st"), body=document.getElementById("body");
+  const raw=(new URLSearchParams(location.search).get("r")||"").replace(/[\u27e6\u27e7]/g,"");
+  const m=/^FRC:([a-z0-9-]+):([^:\s]+):([a-f0-9]{8})(?::([a-z][0-9]{4}))?$/i.exec(raw.trim());
+  const bad=(t,s)=>{st.className="status s-bad";st.innerHTML='<div class="big">'+t+'</div><div>'+s+'</div>';};
+  if(!m){bad("No code to check","This page opens from a code printed next to a figure. The link you followed carries none.");return;}
+  const [,id,value,h]=m; let P,K=null;
+  try{P=await (await fetch("/claims/"+id+".json")).json(); if(!P.claim) throw 0;}catch(e){bad("Not issued by this publisher","No figure with this identifier exists in the record. Do not rely on the printed number.");return;}
+  try{K=await (await fetch("/claims/"+id+".contract.json")).json();}catch(e){}
+  let d; try{d=await (await fetch(API+encodeURIComponent("\u27e6"+raw.trim()+"\u27e7"))).json(); if(!d||!d.status) throw 0;}catch(e){d=await offline(id,value,h,P);}
+  const cur=d.current_value||P.display_value, tmpl=K&&K.canonical_claim&&K.canonical_claim.template;
+  const sentence=tmpl?tmpl.replace("{value}",cur):"";
+  if(d.status==="current"){st.className="status s-current";st.innerHTML='<div class="big">Still current</div><div>The figure printed next to this code, <b>'+esc(value)+'</b>, is the figure in the record today.</div>';}
+  else if(d.status==="stale"){st.className="status s-stale";st.innerHTML='<div class="big">Corrected since it was printed</div><div>Printed: <b>'+esc(value)+'</b>. In the record today: <b>'+esc(cur)+'</b>. <a href="/corrections.html">Corrections log</a></div>';}
+  else if(d.status==="hash-current-value-mismatch"){bad("The printed number was changed","The code is genuine, but it was issued for <b>"+esc(cur)+"</b>, not for "+esc(value)+".");}
+  else{bad("Not issued by this publisher","This code does not match any receipt issued for this figure. Do not rely on the printed number.");}
+  let rev="";
+  if(d.publisher_revision&&d.publisher_revision.revised_to!=null) rev='<div class="card" style="border-color:#C8A84B"><b>Revised by its source.</b> The official report that printed this figure restated it as <b>'+esc(Number(d.publisher_revision.revised_to).toLocaleString("en-US"))+'</b> in the '+esc(d.publisher_revision.revised_in||"next edition")+'.</div>';
+  const dne=K&&K.does_not_establish?K.does_not_establish.slice(0,3):[];
+  const src=(P.provenance&&P.provenance.primary_source)||"";
+  body.innerHTML=rev+'<div class="card"><div class="fig">'+esc(cur)+'</div>'+(sentence?'<p style="margin:12px 0 6px">'+esc(sentence)+'</p>':'')+(src?'<div class="small">Source: '+esc(src)+'</div>':'')+
+    '<div class="small" style="margin-top:8px"><a href="/claims/'+esc(id)+'.json">Claim document</a>'+(K?' &middot; <a href="/claims/'+esc(id)+'.contract.json">what the figure may be used for</a>':'')+'</div></div>'+
+    (dne.length?'<div class="limit"><b>What this figure does not tell you:</b> '+dne.map(esc).join("; ")+'.</div>':'');
+  document.getElementById("when").textContent="Checked "+new Date().toLocaleString(undefined,{dateStyle:"long",timeStyle:"short"})+".";
+}
+run();
+</script></body></html>
