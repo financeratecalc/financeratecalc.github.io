@@ -26,6 +26,11 @@ def main():
     bp = os.path.join(ROOT, "eval", "drift-ood-set-b.jsonl"); n_a = len(rows)   # set B: the fresh held-out set (round 3 on)
     if os.path.exists(bp):
         rows += [json.loads(l) for l in open(bp, encoding="utf-8")]
+    # set C: frozen in its own commit before the training grammar was written; the builder refuses any grammar row that
+    # shares wording with it. From here on A and B are development material and C is the number to quote.
+    cp = os.path.join(ROOT, "eval", "drift-ood-set-c.jsonl"); has_c = os.path.exists(cp)
+    if has_c:
+        n_a = len(rows); rows += [json.loads(l) for l in open(cp, encoding="utf-8")]
     tok = AutoTokenizer.from_pretrained(a.model); model = AutoModelForSequenceClassification.from_pretrained(a.model); model.eval()
     labels = [model.config.id2label[i] for i in range(model.config.num_labels)]
     enc = tok([r["text"] for r in rows], truncation=True, max_length=96, padding=True, return_tensors="pt")
@@ -43,13 +48,24 @@ def main():
         g = json.load(open(gp, encoding="utf-8")); gate_missed = {e["text"] for e in g.get("escapes", [])}; gate_fa = {e["text"] for e in g.get("false_alarms", [])}
         ho = [(r, p) for i, (r, p) in enumerate(zip(rows, pred)) if (i >= n_a if len(rows) > n_a else i % 2)]
         hv = [(r, p) for r, p in ho if r["codes"]]; hc = [(r, p) for r, p in ho if not r["codes"]]
-        head = {"sentences": "eval/drift-ood-set-b.jsonl (fresh held-out set)" if len(rows) > n_a else "held-out half of eval/drift-ood-set.jsonl (odd positions)", "violating": len(hv), "clean": len(hc),
-                "gate_caught": sum(1 for r, _ in hv if r["text"] not in gate_missed), "model_caught": sum(1 for _, p in hv if p),
+        head = {"sentences": "eval/drift-ood-set-c.jsonl (held out; frozen before the training grammar)" if has_c else "eval/drift-ood-set-b.jsonl (fresh held-out set)" if len(rows) > n_a else "held-out half of eval/drift-ood-set.jsonl (odd positions)", "violating": len(hv), "clean": len(hc),
+                "gate_caught": sum(1 for r, _ in hv if r["text"] not in gate_missed), "model_caught": sum(1 for _, p in hv if p), "model_right_code": sum(1 for r, p in hv if r["codes"][0] in p),
                 "either_caught": sum(1 for r, p in hv if p or r["text"] not in gate_missed), "both_missed": [r["text"] for r, p in hv if not p and r["text"] in gate_missed],
                 "gate_false_alarms": sum(1 for r, _ in hc if r["text"] in gate_fa), "model_false_alarms": sum(1 for _, p in hc if p),
                 "reading": "gate = rules written by hand (worker sentenceFindings, patched from development sentences only); model = the published classifier, trained on rule-generated sentences and never on these. 'either' is what a pipeline using both would catch."}
     it = json.load(open(os.path.join(ROOT, "eval", "drift-model-eval.json"), encoding="utf-8"))
-    out = {"model": a.model, "set": "eval/drift-ood-set.jsonl", "n_violating": len(viol), "n_clean": len(clean),
+    prev = {}
+    try:
+        prev = json.load(open(os.path.join(ROOT, "eval", "drift-model-ood.json"), encoding="utf-8"))
+    except Exception:
+        pass
+    hist = prev.get("history", [])
+    ph = prev.get("rules_vs_learned_on_held_out") or {}
+    if ph and head and ph.get("sentences") != head["sentences"]:  # the held-out set changed: keep the last figures measured on the old one
+        hist.append({"held_out": ph.get("sentences"), "violating": ph.get("violating"), "gate_caught": ph.get("gate_caught"), "model_caught": ph.get("model_caught"),
+                     "either_caught": ph.get("either_caught"), "all_sets_detection_rate": prev.get("detection_rate"), "all_sets_right_code_rate": prev.get("right_code_rate"),
+                     "all_sets_false_flag_rate": prev.get("false_flag_rate_on_clean"), "note": "training set before the slot grammar (fixed templates only)"})
+    out = {"model": a.model, "history": hist, "set": "eval/drift-ood-set.jsonl", "n_violating": len(viol), "n_clean": len(clean),
            "detection_rate": round(sum(1 for _, p in viol if p) / len(viol), 3), "right_code_rate": round(sum(1 for r, p in viol if r["codes"][0] in p) / len(viol), 3),
            "false_flag_rate_on_clean": round(sum(1 for _, p in clean if p) / len(clean), 3), "per_code": per,
            "in_template_exact_match_for_comparison": it.get("exact_match"),

@@ -16,6 +16,10 @@ import json
 import os
 import random
 import re
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from drift_grammar import grammar_rows  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "eval", "drift-training-set.jsonl")
@@ -181,6 +185,17 @@ NATIONAL_DISTORTIONS = {
 }
 
 
+FRAME = set("in of the a an and to for on at by with that this is are was were be it its 2025 decisioned fha va usda conventional applications application denied denial rate rates lenders lender loan loans purchase refinance mortgage they decided # s".split())
+STATUTES = re.compile(r"equal credit opportunity act|fair housing act", re.I)  # a statute's name is vocabulary, not phrasing
+
+
+def content_runs(text, n=3):
+    """Runs of n content words: the figure's own frame (year, base, program, 'denied') is removed, so two sentences
+    that merely state the same receipted fact share nothing, and two that word the same *move* alike do."""
+    w = [t for t in re.sub(r"[^a-z# ]", " ", re.sub(r"\d[\d.,]*%?", "#", STATUTES.sub("statute", text.lower()))).split() if t not in FRAME]
+    return {" ".join(w[i:i + n]) for i in range(len(w) - n + 1)}
+
+
 def pct(x):
     return f"{x}%" if x is not None and not str(x).endswith("%") else str(x)
 
@@ -226,6 +241,7 @@ def examples_for(doc, contract):
 
 def main():
     rows = []
+    facts = []
     for path in sorted(glob.glob(os.path.join(ROOT, "claims", "*.json"))):
         if path.endswith(".contract.json") or path.endswith("index.json"):
             continue
@@ -235,6 +251,30 @@ def main():
         cpath = os.path.join(ROOT, "claims", f"{doc['id']}.contract.json")
         contract = json.load(open(cpath, encoding="utf-8")) if os.path.exists(cpath) else {}
         rows += examples_for(doc, contract)
+        sub, cid, v = subject(doc), doc["id"], doc["display_value"]
+        if cid.startswith("purpose-"):
+            _, prog, purp = cid.split("-")[:3]
+            facts.append({"P": f"{'conventional' if prog == 'conv' else prog.upper()} {purp}", "w": "", "v": v, "id": "g:" + cid})
+        elif cid.endswith("-national-denial-rate-2025") and cid.split("-")[0] in ("va", "usda", "conv"):
+            facts.append({"P": {"va": "VA", "usda": "USDA", "conv": "conventional"}[cid.split("-")[0]], "w": "", "v": v, "id": "g:" + cid})
+        elif cid == "national-fha-denial-rate-2025":
+            facts += [{"P": "FHA", "w": "", "v": v, "id": "g:" + cid}] * 6  # national figures are what engines quote most
+        elif sub and sub["kind"] == "state" and sub["name"]:
+            facts.append({"P": "FHA", "w": " in " + sub["name"], "v": v, "id": "g:" + cid})
+        elif sub and sub["kind"] == "lender" and sub["name"]:
+            facts.append({"P": "FHA", "w": " at " + sub["name"], "v": v, "id": "g:" + cid, "lender": sub["name"]})
+    # compositional grammar: the same codes in hundreds of surface shapes (scripts/drift_grammar.py)
+    grows = grammar_rows(facts)
+    # the held-out set must stay held out: no grammar row may share a three-content-word run with one of its violating sentences
+    held = [json.loads(line) for line in open(os.path.join(ROOT, "eval", "drift-ood-set-c.jsonl"), encoding="utf-8")]
+    held_runs = set().union(*(content_runs(h["text"]) for h in held if h["codes"]))
+    leaks = {}
+    for g in grows:
+        for run in content_runs(g["text"]) & held_runs:
+            leaks.setdefault(run, g["text"])
+    if leaks:
+        raise SystemExit("grammar shares wording with the held-out set: " + json.dumps(leaks, indent=1)[:3000])
+    rows += grows
     # fixture candidates and preference pairs add human-written surface forms with gate codes
     fx = json.load(open(os.path.join(ROOT, "fixtures", "citation-decision", "fixtures.json"), encoding="utf-8"))
     MAP = {"genuine": [], "genuine_needs_qualifier": ["QUALIFIER_DELETED"]}
@@ -259,7 +299,7 @@ def main():
         for c in r["codes"] or ["NONE"]:
             counts[c] = counts.get(c, 0) + 1
     summary = {"rows": len(rows), "train": sum(r["split"] == "train" for r in rows), "test": sum(r["split"] == "test" for r in rows), "label_counts": counts,
-               "method": "No model. Canonical sentences and rule-written paraphrases carry no code; rule-written distortions carry the gate's reason code(s); fixture candidates carry the codes the gate gave them. Split by claim id.",
+               "grammar_rows": sum(r["kind"] == "grammar" for r in rows), "method": "No model. A slot grammar (scripts/drift_grammar.py) assembles each code in many surface shapes, and writes clean sentences that use the trigger vocabulary to decline the move. Canonical sentences and rule-written paraphrases carry no code; rule-written distortions carry the gate's reason code(s); fixture candidates carry the codes the gate gave them. Split by claim id.",
                "labels": sorted(counts), "license": "CC BY 4.0"}
     json.dump(summary, open(SUMMARY, "w", encoding="utf-8"), indent=1)
     print(json.dumps(summary, indent=1))

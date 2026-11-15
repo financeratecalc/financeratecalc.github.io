@@ -29,8 +29,11 @@ function claimFor(t) {
 // Round 3 on: set A (drift-ood-set.jsonl) has been looked at, so all of it is development material; set B
 // (drift-ood-set-b.jsonl, written before the round-3 patch) is the held-out set. Without set B the old parity split applies.
 const read = f => fs.readFileSync(path.join(ROOT, f), "utf8").trim().split("\n").map(JSON.parse);
-const hasB = fs.existsSync(path.join(ROOT, "eval/drift-ood-set-b.jsonl"));
-const rows = hasB ? [...read("eval/drift-ood-set.jsonl").map(r => ({ ...r, split: "dev" })), ...read("eval/drift-ood-set-b.jsonl").map(r => ({ ...r, split: "held_out" }))] : read("eval/drift-ood-set.jsonl");
+const hasB = fs.existsSync(path.join(ROOT, "eval/drift-ood-set-b.jsonl")), hasC = fs.existsSync(path.join(ROOT, "eval/drift-ood-set-c.jsonl"));
+// Round 5 on: set B has been looked at too (its escapes were printed in the model comparison), so A and B are development
+// material and set C (drift-ood-set-c.jsonl, frozen in its own commit before the training grammar existed) is held out.
+const rows = hasC ? [...read("eval/drift-ood-set.jsonl"), ...read("eval/drift-ood-set-b.jsonl")].map(r => ({ ...r, split: "dev" })).concat(read("eval/drift-ood-set-c.jsonl").map(r => ({ ...r, split: "held_out" })))
+  : hasB ? [...read("eval/drift-ood-set.jsonl").map(r => ({ ...r, split: "dev" })), ...read("eval/drift-ood-set-b.jsonl").map(r => ({ ...r, split: "held_out" }))] : read("eval/drift-ood-set.jsonl");
 const res = [];
 for (const [i, r] of rows.entries()) {
   const id = claimFor(r.text); let f = [];
