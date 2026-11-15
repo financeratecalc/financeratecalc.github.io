@@ -20,6 +20,7 @@ import json
 import os
 import re
 import subprocess
+import tempfile
 import sys
 import urllib.request
 
@@ -298,6 +299,10 @@ def main_month_table(source, src, period, pdf, url):
 PROBES = {
     "sba-monthly-yearly": "https://sba-llms-prd-public.sbalenderportal.com/SBA-Monthly-MonthlyYearlyActivity7a504.xlsx",
     "sba-activity": "https://sba-llms-prd-public.sbalenderportal.com/SBA-Monthly-ActivityDashboard7a504.xlsx",
+    # HUD's monthly FHA Single Family Loan Performance Trends report. File names are not uniform from month to month
+    # (FHALPT-JULY2026, FHALPT_JUN2026, FHALPT_Apr2026, FHALPT-Jan2026), so the probe tries the spellings and reports
+    # which exist, with the text around Table 1 (delinquency rates by month) of each one found.
+    "hud-lpt": ["%sFHALPT%s%s2026.pdf" % ("https://www.hud.gov/sites/default/files/Housing/documents/", sep, mon) for mon in ("JULY", "AUG", "AUGUST", "Aug", "August", "SEP", "SEPT", "Sep", "Sept", "September", "SEPTEMBER") for sep in ("-", "_")],
 }
 
 
@@ -305,6 +310,22 @@ def probe(key):
     """Download one listed spreadsheet, print its hash, sheet names, sizes and first rows. Writes nothing to the site.
     The workflow posts this log as an issue (the run ends without a data file by design)."""
     import io
+    if isinstance(PROBES[key], list):   # PDF candidates: which exist, and what the table in question looks like
+        found = 0
+        for url in PROBES[key]:
+            try:
+                data = _get(url)
+            except Exception as e:
+                print(f"miss  {url.rsplit('/', 1)[-1]}: {type(e).__name__} {str(e)[:60]}"); continue
+            found += 1
+            tmp = os.path.join(tempfile.gettempdir(), "probe.pdf"); open(tmp, "wb").write(data)
+            lines = [ln.rstrip() for ln in text_of(tmp).splitlines() if ln.strip()]
+            print(f"FOUND {url} | {len(data):,} bytes | sha256 {hashlib.sha256(data).hexdigest()} | {len(lines)} text lines")
+            start = next((i for i, ln in enumerate(lines) if re.match(r"^Table1\.", ln.replace(" ", ""))), 0)
+            for ln in lines[start:start + 34]:
+                print("   " + ln[:150])
+        print(f"probe complete; {found} of {len(PROBES[key])} candidate files exist; nothing written")
+        return
     import openpyxl
     data = _get(PROBES[key])
     print(f"PROBE {key}: {PROBES[key]} | {len(data):,} bytes | sha256 {hashlib.sha256(data).hexdigest()}")
