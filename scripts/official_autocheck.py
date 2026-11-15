@@ -22,10 +22,10 @@ for source, latest in sorted(idx.get("latest", {}).items()):
         print(f"{source} {nxt}: not published yet (or not readable): {(r.stdout + r.stderr).strip().splitlines()[-1][:160] if (r.stdout + r.stderr).strip() else 'no output'}")
         continue
     d = json.load(open(p, encoding="utf-8"))
-    rv = d.get("prior_edition_check", {}).get("revisions", [])
-    changed = [x for x in rv if x.get("revised")]
+    pec = d.get("prior_edition_check", {}); rv = pec.get("revisions", [])
+    changed = [x for x in rv if x.get("revised")]; n_cmp = pec.get("compared", len(rv))
     lines.append(f"**{d['document']['title']} — {d['document']['edition']}** restated ({len(d['figures'])} receipts). "
-                 f"Compared with the {d['prior_edition_check'].get('edition_compared')}: {len(rv)} figures, {len(changed)} changed.")
+                 f"Compared with the {pec.get('edition_compared')}: {n_cmp} figures, {pec.get('changed', len(changed))} changed.")
     for x in changed:
         lines.append(f"- {x['figure']} for {x['period']}: {x['first_printed']} -> {x['restated_value']}")
     print(lines[-1 - len(changed)])
