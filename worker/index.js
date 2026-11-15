@@ -1114,7 +1114,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.54.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.54.1" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1670,7 +1670,7 @@ ${teach && teach.canonical_sentence ? `<h2>Restate it as</h2><blockquote><p>${es
               _meta: { "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
             continue;
           }
-          out.push(rpc(m.id, { content: [{ type: "text", text: JSON.stringify({ ...result, note: (result && result.level && /^2\b/.test(String(result.level)) && (result.note || (result.figures && "Official figures copied as printed from the named document (SHA-256 in document.sha256). Not computed by FinanceRateCalc; not a prediction about any application."))) || GUARDRAIL, ...(pricingNote ? { pricing: pricingNote } : {}) }, null, 1) }] }));
+          out.push(rpc(m.id, { content: [{ type: "text", text: JSON.stringify({ ...result, note: (result && result.level && /^2\b/.test(String(result.level)) && (result.note || (result.figures && "Official figures copied as printed from the named document (SHA-256 in document.sha256). Not computed by FinanceRateCalc; not a prediction about any application."))) || (result && result.rule_id && /^rule sentence check/.test(String(result.mode || "")) ? "Sentence checked against the rule file named in rule_id, transcribed from the issuer's document. Not legal or underwriting advice; not a prediction about any application." : GUARDRAIL), ...(pricingNote ? { pricing: pricingNote } : {}) }, null, 1) }] }));
         } catch (e) {
           out.push(rpc(m.id, { content: [{ type: "text", text: String(e.message || e) }], isError: true }));
         }
