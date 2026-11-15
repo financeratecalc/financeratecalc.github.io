@@ -106,7 +106,8 @@ jobs:
               python3 scripts/build_receipts_snapshot.py 2>/dev/null | tail -1 | cut -c1-120
               python3 scripts/build_program_page.py "$PROG"
               python3 scripts/build_llms_full.py | tail -1
-              git add llms-full.txt rl-env/frc_citation/receipts-snapshot.json "$PROG"-loan-denial-rates-2025.html
+              PAGE="$PROG"; [ "$PROG" = "conv" ] && PAGE="conventional"
+              git add llms-full.txt rl-env/frc_citation/receipts-snapshot.json "$PAGE"-loan-denial-rates-2025.html
               git diff --cached --quiet || git commit -q -m "program first release: derived files for loan_type $LT [skip ci]"
               if git push -q origin main; then ok=1; break; fi
             else
