@@ -54,7 +54,8 @@ def denominator_reasoning(llm) -> float:
     right = 0.0
     by_kind = {}
     for it in ITEMS:
-        reply = llm.prompt(it["question"] + "\\n\\nGive only the final answer on the last line.")
+        with kbench.chats.new(it["id"]):  # each item in its own conversation: no item sees an earlier one
+            reply = llm.prompt(it["question"] + "\\n\\nGive only the final answer on the last line.")
         last = [line for line in str(reply).strip().splitlines() if line.strip()][-1:] or [""]
         s = score(last[0], it)
         right += s
