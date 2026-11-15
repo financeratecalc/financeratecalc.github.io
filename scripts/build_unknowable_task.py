@@ -189,6 +189,7 @@ def main():
         print("fabrication meter: current;", len(its), "items", doc["counts"])
         return
     json.dump(doc, open(ip, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+    json.dump(doc, open(os.path.join(ROOT, "rl-env", "fabrication_meter", "items.json"), "w", encoding="utf-8"), indent=1, ensure_ascii=False)  # the training environment ships its own copy
     open(tp, "w", encoding="utf-8").write(task)
     print("wrote", len(its), "items", doc["counts"], "->", os.path.relpath(tp, ROOT))
 

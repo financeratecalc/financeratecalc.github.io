@@ -12,13 +12,13 @@ on:
         description: "Secret name holding the key (ANTHROPIC_API_KEY | OPENAI_API_KEY)"
         default: "ANTHROPIC_API_KEY"
       num_tasks:
-        description: "How many of the 12 questions"
+        description: "How many tasks (frc-citation has 12, fabrication-meter 39)"
         default: "12"
       num_rollouts:
         description: "Rollouts per task"
         default: "1"
       taskset:
-        description: "frc-citation | frc-citation-temporal | hmda-record-audit"
+        description: "frc-citation | frc-citation-temporal | hmda-record-audit | fabrication-meter"
         default: "frc-citation"
 permissions:
   contents: write
@@ -32,10 +32,12 @@ jobs:
         with: { python-version: "3.12" }
       - name: Install
         run: |
-          pip install -q "verifiers>=0.3.1" uv
+          pip install -q "verifiers>=0.4.1" uv
           pip install -q -e rl-env
       - name: Validate (model-free)
-        run: cd rl-env && validate ${{ inputs.taskset }} --runtime.type subprocess --no-rich -o /tmp/vfval 2>&1 | tail -20
+        run: |
+          python scripts/check_fabrication_env.py
+          cd rl-env && vf-validate ${{ inputs.taskset }} --runtime.type subprocess -o /tmp/vfval 2>&1 | tail -20
       - name: Rollout
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -43,12 +45,12 @@ jobs:
           FRC_SITE_ROOT: ${{ github.workspace }}
         run: |
           set -o pipefail
-          cd rl-env && python -c 'from verifiers.v1.cli.eval.main import main; main()' ${{ inputs.taskset }} \
+          cd rl-env && vf-run ${{ inputs.taskset }} \
             --model "${{ github.event.inputs.model }}" \
-            --client.base_url "${{ github.event.inputs.base_url }}" \
-            --client.api_key-var "${{ github.event.inputs.api_key_var }}" \
-            --num-tasks "${{ github.event.inputs.num_tasks }}" --num-rollouts "${{ github.event.inputs.num_rollouts }}" \
-            --no-push --no-rich --run.dir smoke \
+            --client.base-url "${{ github.event.inputs.base_url }}" \
+            --client.api-key-var "${{ github.event.inputs.api_key_var }}" \
+            -n "${{ github.event.inputs.num_tasks }}" -r "${{ github.event.inputs.num_rollouts }}" \
+            --run.dir smoke \
             --env.taskset.task.tools.runtime.type subprocess \
             --env.agent.harness.id null --env.agent.runtime.type subprocess \
             --output-dir /tmp/vfout 2>&1 | tee /tmp/eval.log | tail -60
@@ -71,7 +73,7 @@ jobs:
               return r
           per = {}
           def final_text(t):
-              msgs = t.get("messages") or t.get("trace") or []
+              msgs = t.get("messages") or t.get("trace") or [n.get("message") for n in (t.get("nodes") or []) if isinstance(n, dict)]
               for m in reversed(msgs):
                   if isinstance(m, dict) and m.get("role") == "assistant":
                       c = m.get("content")
@@ -94,6 +96,10 @@ jobs:
                   try: met.setdefault(k, []).append(float(x))
                   except Exception: pass
           out["metrics_sum"] = {k: sum(v) for k, v in met.items()}
+          if "fabricated" in met and met.get("unknowable"):  # fabrication meter: the headline number
+              u = sum(met["unknowable"])
+              out["fabrication_rate"] = round(sum(met["fabricated"]) / u, 3) if u else None
+              out["fabricated_items"] = sorted(k for k, v in per.items() if (v["metrics"] or {}).get("fabricated"))
           out["per_task"] = per
           out["errors"] = sum(1 for v in per.values() if v["errors"])
           out["files"] = sorted(glob.glob("/tmp/vfout/**/*", recursive=True))[:60]
@@ -131,6 +137,7 @@ jobs:
           PY
       - name: Legacy vf-eval (community-repo package)
         if: always() && inputs.taskset == 'frc-citation'
+        continue-on-error: true  # the legacy API is gone from verifiers 0.4; kept only until the community copy is retired
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
