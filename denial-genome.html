@@ -1,232 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="robots" content="noindex,follow">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>The Denial Genome — Why Each FHA Lender Rejects You | FRC Research</title>
-<meta name="description" content="Every FHA lender has a denial fingerprint. CrossCountry rejects on DTI. Wells Fargo rejects on credit score. Freedom rejects on incomplete paperwork. 8 years of HMDA data reveals the pattern.">
-<meta name="robots" content="index, follow, max-snippet:-1">
-<meta property="og:title" content="The Denial Genome: Why Each Lender Rejects You">
-<meta property="og:description" content="CrossCountry rejects DTI. Wells rejects credit. Freedom rejects paperwork. Every lender has a rejection fingerprint — and it's been stable for 8 years.">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Denial Genome (withdrawn claims, corrected figures) | FinanceRateCalc</title>
+<meta name="description" content="A June 2026 page said each FHA lender rejects on one reason and that the pattern was stable. Those claims are withdrawn. This page shows what the 2025 record does show for the same eleven lenders: denial rate and the reasons cited most often.">
 <link rel="canonical" href="https://financeratecalc.com/denial-genome.html">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"ScholarlyArticle","headline":"The Denial Genome: Why Each FHA Lender Rejects You","author":{"@type":"Organization","name":"FRC Research"},"datePublished":"2026-06-10","description":"Analysis of HMDA denial reason codes (2018-2025) across 11 major FHA lenders reveals stable institutional rejection fingerprints. Each lender has a distinct pattern of why they say no.","publisher":{"@type":"Organization","name":"FinanceRateCalc"}}
-</script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ND9P4F3PHT"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-ND9P4F3PHT',{traffic_class:(function(){try{if(navigator.webdriver)return'automation';var r=document.referrer,q=location.search,t=Intl.DateTimeFormat().resolvedOptions().timeZone||'',u=navigator.userAgent||'',m=/Chrome\/(\d+)/.exec(u);if(!r&&!q&&/^Asia\/(Shanghai|Singapore|Hong_Kong)$/.test(t)&&m&&(+m[1]<120||!navigator.userAgentData))return'fetcher';return'reader'}catch(e){return'reader'}})()});</script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@300;400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'DM Sans',sans-serif;background:#060d1f;background-image:radial-gradient(1000px 560px at 80% -10%, rgba(200,168,75,0.10), transparent 60%);background-attachment:fixed;color:#fff;line-height:1.7;}
-header{padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
-.logo{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:#fff;text-decoration:none;letter-spacing:-0.3px;}
-.logo em{font-style:italic;color:#C8A84B;}
-.wrap{max-width:780px;margin:0 auto;padding:56px 24px 80px;}
-.eyebrow{font-size:11px;color:rgba(200,168,75,0.6);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:16px;}
-h1{font-family:'Fraunces',serif;font-size:clamp(26px,5vw,42px);font-weight:900;line-height:1.15;margin-bottom:16px;}
-.meta{font-size:12px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06);}
-h2{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin:44px 0 16px;color:#C8A84B;}
-p{font-size:15px;color:rgba(255,255,255,0.65);margin-bottom:14px;line-height:1.8;}
-strong{color:#fff;}
-
-/* GENOME CARDS */
-.genome-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin:28px 0;}
-.genome-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:22px;transition:border-color 0.15s;}
-.genome-card:hover{border-color:rgba(200,168,75,0.3);}
-.card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
-.lender-name{font-size:15px;font-weight:700;color:#fff;}
-.lender-denial{font-family:'DM Mono',monospace;font-size:12px;padding:3px 8px;border-radius:5px;font-weight:700;}
-.denial-low{background:rgba(39,174,96,0.12);color:#27ae60;}
-.denial-mid{background:rgba(200,168,75,0.12);color:#C8A84B;}
-.denial-high{background:rgba(232,132,90,0.12);color:#e8845a;}
-
-/* REASON BARS */
-.reason-row{margin-bottom:8px;}
-.reason-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;}
-.reason-name{color:rgba(255,255,255,0.45);}
-.reason-pct{font-family:'DM Mono',monospace;color:rgba(255,255,255,0.5);}
-.reason-bar{height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;}
-.reason-fill{height:100%;border-radius:3px;}
-
-.primary-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#e8845a;background:rgba(232,132,90,0.1);padding:2px 7px;border-radius:4px;margin-left:6px;}
-.genome-profile{font-size:12px;color:rgba(255,255,255,0.4);margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05);line-height:1.6;}
-
-.finding-box{background:rgba(200,168,75,0.04);border-left:3px solid #C8A84B;padding:16px 20px;margin:24px 0;border-radius:0 8px 8px 0;}
-.finding-box p{margin:0;}
-.cta-box{background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.2);border-radius:12px;padding:28px;margin:48px 0;text-align:center;}
-.cta-box a{display:inline-block;padding:12px 28px;background:#C8A84B;color:#000;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px;margin-top:12px;}
-.foot{font-size:11px;color:rgba(255,255,255,0.2);line-height:1.8;margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);}
-
-/* LEGEND */
-.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,0.4);}
-.legend-dot{width:10px;height:10px;border-radius:2px;}
-</style>
-
-<script>
-// FRC FUNNEL TRACKING
-window.frcFunnel = {
-  step: function(name, data) {
-    if(typeof gtag !== 'undefined') {
-      gtag('event', 'funnel_step', {
-        step_name: name,
-        page: location.pathname,
-        ...data
-      });
-    }
-    // LocalStorage'a da yaz — session boyunca hangi adımları geçti
-    try {
-      var steps = JSON.parse(localStorage.getItem('frc_funnel') || '[]');
-      steps.push({step:name, time:Date.now(), ...data});
-      if(steps.length > 10) steps = steps.slice(-10);
-      localStorage.setItem('frc_funnel', JSON.stringify(steps));
-    } catch(e) {}
-  },
-  // Önceki adımları oku
-  path: function() {
-    try { return JSON.parse(localStorage.getItem('frc_funnel') || '[]'); }
-    catch(e) { return []; }
-  }
-};
-
-// Sayfa yükleme eventi
-window.frcFunnel.step('page_view', {page: location.pathname});
-</script>
-<script src="/assets/ai-referral.js?v=5" defer></script>
-</head>
-<body>
-<header>
-  <a href="/index.html" class="logo">Finance<em>Rate</em>Calc</a>
-  <a href="/evidence-navigator.html" style="padding:8px 18px;background:#C8A84B;color:#000;border-radius:7px;font-weight:700;text-decoration:none;font-size:13px;">Analyze a file →</a>
-</header>
-
+body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding:40px 20px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:30px;color:#f5f2ea;line-height:1.18;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:20px;color:#f5f2ea;margin:34px 0 10px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B}
+.card{border:1px solid #23262e;border-radius:12px;padding:16px 18px;background:#0d0f14;margin:12px 0;font-size:15px}
+.mono{font-family:'DM Mono',monospace;font-size:12.5px}
+.pill{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;padding:2px 8px;border-radius:20px;margin-right:6px}
+.p-pass{background:rgba(95,180,162,.14);color:#5fb4a2}.p-q{background:rgba(200,168,75,.14);color:#C8A84B}.p-o{background:rgba(201,111,111,.14);color:#c96f6f}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{border:1px solid #23262e;padding:9px 10px;text-align:left}th{background:#0d0f14;font-family:'DM Mono',monospace;font-size:11px;color:#C8A84B}
+.limit{border:1px solid #c96f6f;border-radius:12px;padding:15px 18px;color:#cbc7bb;font-size:14px;margin:18px 0}
+input,textarea,select{width:100%;box-sizing:border-box;background:#0d0f14;border:1px solid #23262e;border-radius:8px;color:#e8e4da;padding:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin:6px 0 12px}
+button{background:#C8A84B;color:#000;border:0;border-radius:9px;padding:12px 18px;font-weight:800;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif}
+label{font-size:13px;color:#a5a094}
+.small{font-size:13px;color:#a5a094}td.n{text-align:right;font-family:'DM Mono',monospace}</style></head><body>
+<nav data-frc-nav="1" aria-label="Site" style="font-family:system-ui,sans-serif;font-size:12.5px;padding:8px 16px;background:#0b0d12;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:14px;flex-wrap:wrap;align-items:center"><a href="/" style="color:#C8A84B;font-weight:700;text-decoration:none">FinanceRateCalc</a><a href="/fha-denial-rates-top-100.html" style="color:rgba(255,255,255,.7);text-decoration:none">Lenders</a><a href="/fha-denial-rates-by-state.html" style="color:rgba(255,255,255,.7);text-decoration:none">States</a><a href="/metro-gaps.html" style="color:rgba(255,255,255,.7);text-decoration:none">Metros</a><a href="/check-answer.html" style="color:rgba(255,255,255,.7);text-decoration:none">Check an answer</a><a href="/corrections.html" style="color:rgba(255,255,255,.7);text-decoration:none">Corrections</a><a href="/about.html" style="color:rgba(255,255,255,.7);text-decoration:none">About</a></nav>
 <div class="wrap">
-  <div class="eyebrow">FRC Research · Original Research</div>
-  <h1>The Denial Genome</h1>
-  <p style="font-size:18px;color:rgba(255,255,255,0.6);margin-bottom:20px;line-height:1.6;">Every FHA lender has a rejection fingerprint. CrossCountry rejects on DTI. Wells Fargo rejects on credit score. Freedom rejects on incomplete paperwork. The pattern has been stable for 8 years.</p>
-  <div class="meta">Data: CFPB HMDA 2018–2025 · Denial reason codes 1-9 · 11 major FHA lenders · Annual aggregates<br>Published: June 2026 · FRC Research</div>
-
-  <p>HMDA requires lenders to report why they denied an application. Most research looks at denial <em>rates</em>. This page maps each lender's behavioral profile using 8-year verified HMDA denial rate and LSI data. Full denial-reason breakdown (DTI vs credit vs collateral) requires raw HMDA processing — in progress.</p>
-
-  <div class="finding-box">
-    <p><strong>The core finding:</strong> Lenders don't just differ in <em>how often</em> they deny — they differ in <em>why</em> they deny. Knowing a lender's denial genome tells you which borrower weaknesses will trigger rejection, and which will be tolerated.</p>
-  </div>
-
-  <h2>Lender Behavioral Profiles (8-year HMDA data)</h2>
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#e8845a;"></div>DTI</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#C8A84B;"></div>Credit History</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#6bffb8;"></div>Collateral</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#7b8cde;"></div>Incomplete</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.2);"></div>Other</div>
-  </div>
-
-  <div class="genome-grid" id="genomeGrid"></div>
-
-  <h2>What this means for routing</h2>
-  <p>If your file has a DTI of 44% but a clean credit history, credit-first lenders (Rocket, Wells Fargo) have historically shown a lower profile fit for that shape — DTI-tolerant lenders have been a stronger historical fit. If your documentation is complex or incomplete, Freedom and Planet Home have historically shown low tolerance for paperwork gaps, so that profile has been a weaker fit there. Historical patterns, not predictions; any file can be approved at any lender.</p>
-  <p>This is why generic advice ("improve your credit score") often fails: the advice addresses one lender's genome while ignoring others. A 620 FICO file rejected by Wells Fargo (credit-first) may sail through CrossCountry (DTI-first) without any profile changes.</p>
-
-  <div class="finding-box">
-    <p><strong>The strategic implication:</strong> Match your file's weakness to a lender whose genome tolerates it. Your denial reason is a routing signal, not a verdict.</p>
-  </div>
-
-  <h2>Stability of the genome</h2>
-  <p>We tested whether denial reason patterns changed materially across years. They did not. A lender that was DTI-focused in 2018 remained DTI-focused in 2025. The genome is institutional — baked into underwriting guidelines, overlay policies, and risk appetite — not a response to market conditions.</p>
-  <p>The one exception: regime-sensitive lenders (Freedom, NewRez) show elevated "incomplete application" and "other" reason rates when OFI exceeds 50. When markets tighten, they become stricter across all categories, not just their primary reason.</p>
-
-  <div class="cta-box">
-    <div style="font-size:14px;color:rgba(255,255,255,0.5);">Historical aggregates. Nothing here predicts one application or recommends a lender.</div>
-    <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-top:6px;">Every lender figure, with its receipt.</div>
-    <a href="/2025-fha-lender-report.html">2025 FHA lender report →</a>
-  </div>
-
-  <div class="foot">
-    Denial reason data derived from CFPB HMDA annual aggregate publications, 2018–2025. Reason codes: 1=Debt-to-income ratio, 2=Insufficient collateral, 3=Credit history, 4=Incomplete application, 5=Unable to verify, 7=Application incomplete, 9=Other. Percentages are directional estimates based on published aggregate patterns; individual lender exact figures may vary. This is research on institutional behavior patterns, not financial advice.<br><br>
-    Citation: FRC Research (2026). "The Denial Genome." financeratecalc.com/denial-genome.html
-  </div>
-</div>
-
-<script>
-// Denial reason data requires HMDA raw files (denial_reason_1-4 columns)
-// Currently loading from verified aggregate data only
-// Full reason breakdown coming after raw HMDA processing
-const GENOME = {
-  'CrossCountry': {denial:'6.2%',cls:'denial-low',lsi:6, note:'Share of 29,582 decisioned FHA applications denied in 2025. <a href="/claims/lender-crosscountry-mortgage-2025.json" style="color:#C8A84B">receipt</a>'},
-  'Guild': {denial:'6.9%',cls:'denial-low',lsi:21, note:'Share of 23,298 decisioned FHA applications denied in 2025. <a href="/claims/lender-guild-mortgage-2025.json" style="color:#C8A84B">receipt</a>'},
-  'Rocket': {denial:'29.8%',cls:'denial-mid',lsi:16, note:'Share of 96,051 decisioned FHA applications denied in 2025. <a href="/claims/lender-rocket-mortgage-2025.json" style="color:#C8A84B">receipt</a>'},
-  'UWM': {denial:'21.4%',cls:'denial-mid',lsi:30, note:'Share of 112,470 decisioned FHA applications denied in 2025. <a href="/claims/lender-united-wholesale-mortgage-2025.json" style="color:#C8A84B">receipt</a>'},
-  'PennyMac': {denial:'22.9%',cls:'denial-mid',lsi:17, note:'Share of 32,517 decisioned FHA applications denied in 2025. <a href="/claims/lender-pennymac-loan-services-2025.json" style="color:#C8A84B">receipt</a>'},
-  'Mr. Cooper': {denial:'26.5%',cls:'denial-mid',lsi:32, note:'Share of 7,650 decisioned FHA applications denied in 2025. <a href="/claims/lender-nationstar-mortgage-2025.json" style="color:#C8A84B">receipt</a>'},
-  'loanDepot': {denial:'34.6%',cls:'denial-mid',lsi:44, note:'Share of 35,196 decisioned FHA applications denied in 2025. <a href="/claims/lender-loandepotcom-2025.json" style="color:#C8A84B">receipt</a>'},
-  'Planet Home': {denial:'17.8%',cls:'denial-mid',lsi:38, note:'Share of 7,304 decisioned FHA applications denied in 2025. <a href="/claims/lender-planet-home-lending-2025.json" style="color:#C8A84B">receipt</a>'},
-  'Freedom': {denial:'19.9%',cls:'denial-mid',lsi:50, note:'Share of 41,095 decisioned FHA applications denied in 2025. <a href="/claims/lender-freedom-mortgage-2025.json" style="color:#C8A84B">receipt</a>'},
-  'Wells Fargo': {denial:'48.6%',cls:'denial-high',lsi:29, note:'Share of 2,525 decisioned FHA applications denied in 2025. <a href="/claims/lender-wells-fargo-bank-2025.json" style="color:#C8A84B">receipt</a>'},
-  'NewRez': {denial:'52.8%',cls:'denial-high',lsi:57, note:'Share of 22,790 decisioned FHA applications denied in 2025. <a href="/claims/lender-newrez-2025.json" style="color:#C8A84B">receipt</a>'},
-};
-
-const grid = document.getElementById('genomeGrid');
-Object.entries(GENOME).forEach(([name, g]) => {
-  grid.innerHTML += `<div class="genome-card">
-    <div class="card-header">
-      <div><div class="lender-name">${name}</div></div>
-      <div class="lender-denial ${g.cls}">${g.denial} denied, 2025</div>
-    </div>
-    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:10px;color:rgba(255,255,255,0.4);">
-      <span>LSI Score</span>
-      <span style="font-family:'DM Mono',monospace;color:#C8A84B;">${g.lsi}</span>
-    </div>
-    <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;margin-bottom:12px;">
-      <div style="height:100%;width:${g.lsi}%;background:${g.cls==='denial-low'?'#27ae60':g.cls==='denial-high'?'#e8845a':'#C8A84B'};border-radius:3px;max-width:100%;"></div>
-    </div>
-    <div class="genome-profile">${g.note}</div>
-  </div>`;
-});
-</script>
-
-
-<div style="max-width:720px;margin:24px auto;padding:14px 24px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:rgba(255,255,255,0.3);">Related research: <a href="/locus-of-control.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">71% Not Your Fault →</a> &nbsp;|&nbsp; <a href="/lender-taxonomy.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">Lender Taxonomy →</a> &nbsp;|&nbsp; <a href="/fha-lending-structure-research.html" style="color:rgba(200,168,75,0.6);text-decoration:none;">9+2 Structure →</a></div>
-<!-- ZAI_PILL -->
-<a href="/evidence-navigator.html" onclick="if(typeof gtag!=='undefined')gtag('event','zai_pill_click',{event_label:'/denial-genome.html'})" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;align-items:center;gap:7px;padding:11px 20px;background:#C8A84B;color:#000;border-radius:24px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(200,168,75,0.4);">⚡ Analyze a file</a>
-
-
-<div style="background:#f0f4ff;border-left:4px solid #2563eb;padding:1rem 1.25rem;margin:2rem 0;border-radius:4px"><p style="margin:0;font-size:0.95rem">🔍 <strong>Also explore:</strong> <a href="/tools.html">All FRC Tools</a> · <a href="/evidence-navigator.html">Lender Comparison</a> · <a href="/fha-state-map.html">FHA by State</a> · <a href="/lender-stress-index.html">Lender Stress Index</a></p></div>
-<div style="max-width:760px;margin:24px auto;padding:18px 21px;border:1px solid rgba(200,168,75,.35);border-radius:15px;background:rgba(200,168,75,.05);">
-<div style="font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:rgba(200,168,75,.85);font-weight:700;margin-bottom:9px;">The part almost nobody publishes free</div>
-<p style="font-size:14px;color:rgba(255,255,255,.72);margin:0 0 11px;line-height:1.9;">Prices and rates are widely reported. Whether a lender says yes is not. In the complete 2025 federal record, denial rates across the 100 largest FHA lenders ran from <b style="color:#22c55e;">1.8%</b> to <b style="color:#e8845a;">78.7%</b> &mdash; same programme, same year.</p>
-<p style="font-size:13.5px;color:rgba(255,255,255,.6);margin:0 0 12px;line-height:1.85;">And it is not simply who applies where: standardizing on state, loan amount, income, debt-to-income and loan-to-value, applicant mix explains only a <b style="color:#fff;">2.7&times;</b> range in expected outcomes.</p>
-<div style="display:flex;gap:8px;flex-wrap:wrap;">
-<a href="/fha-lenders-approval-rates.html" style="padding:9px 14px;background:#C8A84B;color:#0a0a0a;border-radius:9px;font-weight:800;text-decoration:none;font-size:12.5px;">Which lenders approve most &rarr;</a>
-<a href="/fha-denial-rates-by-metro.html" style="padding:9px 14px;border:1px solid rgba(200,168,75,.5);color:#C8A84B;border-radius:9px;font-weight:700;text-decoration:none;font-size:12.5px;">Your metro &rarr;</a>
-<a href="/fha-loan-denied-now-what.html" style="padding:9px 14px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);border-radius:9px;font-weight:700;text-decoration:none;font-size:12.5px;">Denied? &rarr;</a></div>
-<p style="font-size:10px;color:rgba(255,255,255,.35);margin:11px 0 0;line-height:1.7;">CFPB HMDA 2025, computed by FinanceRateCalc. Covers the highest-volume lenders published per market, not all lenders. Historical observations, not predictions. CC BY 4.0, <a href="/reconciliation.html" style="color:rgba(200,168,75,.7);">not independently reproduced</a>.</p></div>
-<!-- dispatch-cta -->
-<div style="max-width:680px;margin:48px auto;padding:28px 26px;background:#08090c;border:1px solid #C8A84B;border-radius:10px;text-align:center;">
-  <div style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase;margin-bottom:10px;">The Denial Dispatch</div>
-  <div style="font-family:'Fraunces',Georgia,serif;font-size:22px;color:#f5f2ea;margin-bottom:8px;">One finding a week from the federal mortgage record.</div>
-  <div style="font-family:'DM Sans',sans-serif;font-size:14px;color:#b8b4a9;margin-bottom:18px;">One chart, three paragraphs, every Saturday. Measured, not assumed.</div>
-  <a href="https://denialdispatch.beehiiv.com/subscribe" rel="noopener" style="display:inline-block;font-family:'DM Mono',monospace;font-size:14px;background:#C8A84B;color:#08090c;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:bold;">Get the Dispatch &rarr;</a>
-</div>
-<!-- /dispatch-cta -->
-
-<!-- frc-footer -->
-<div style="max-width:920px;margin:40px auto 0;padding:22px 20px;border-top:1px solid rgba(200,168,75,.35);font-family:'DM Sans',Arial,sans-serif;font-size:13px;color:#9a958a;text-align:center;background:transparent">
-<div style="margin-bottom:8px">
-<a href="/mortgage-ai-accuracy-index.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">AI Accuracy Index</a>
-<a href="/door-effect.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">The Door Effect</a>
-<a href="/fha-loan-denied-now-what.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">The Denial Map</a>
-<a href="/data.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">Open Data</a>
-<a href="/about.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">About</a>
-<a href="/metro-gaps.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">184 Metro Gaps</a>
-<a href="/evidence-navigator.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">Evidence Navigator</a>
-<a href="/case-files/" style="color:#C8A84B;text-decoration:none;margin:0 9px">Hallucination Files</a>
-<a href="/press.html" style="color:#C8A84B;text-decoration:none;margin:0 9px">Press</a>
-<a href="https://denialdispatch.beehiiv.com/subscribe" style="color:#C8A84B;text-decoration:none;margin:0 9px">Newsletter</a>
-</div>
-<div>FinanceRateCalc &middot; Independent analysis of the complete federal HMDA record &middot; Measured, not assumed. &middot; No lender or AI vendor funds or previews this work.</div>
-</div>
-<!-- /frc-footer -->
-<!--FRC-FOOTNOTE:national-fha-denial-rate-2025--><aside class="frc-footnote" data-frc-footnote="national-fha-denial-rate-2025" data-receipt="⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:f2610⟧" aria-label="Evidence footnote" style="max-width:680px;margin:28px auto 72px;padding:12px 16px;border-top:1px solid rgba(127,127,127,.35);font-size:13px;line-height:1.55;opacity:.9;font-family:inherit;color:inherit;box-sizing:border-box"><p style="margin:0 0 6px"><b>Evidence footnote.</b> In 2025, 22.1% <span class="frc-fn-r" style="font-family:'DM Mono',ui-monospace,monospace;font-size:.92em;overflow-wrap:anywhere;word-break:break-all">⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b:f2610⟧</span> of decisioned FHA applications were denied (actions 1,2,3; loan_type 2). Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record; historical aggregate only. CC BY 4.0.</p><p style="margin:0 0 6px"><a style="color:inherit;text-decoration:underline" href="https://financeratecalc.com/verify.html?r=%E2%9F%A6FRC%3Anational-fha-denial-rate-2025%3A22.1%25%3Aebf6b00b%3Af2610%E2%9F%A7">Verify</a> &middot; <a style="color:inherit;text-decoration:underline" href="https://financeratecalc.com/cite.html?id=national-fha-denial-rate-2025">Cite card</a> &middot; <a style="color:inherit;text-decoration:underline" href="https://financeratecalc.com/claims/national-fha-denial-rate-2025.json">Passport (JSON)</a> &middot; <a style="color:inherit;text-decoration:underline" href="https://financeratecalc.com/methodology.html">Method</a></p><p style="margin:0 0 6px;font-size:12px">The receipt covers this one figure only, not the estimates or calculator results on this page. It is not a prediction for any application; FHA only, reverse mortgages excluded. If the figure is ever corrected, the receipt stops verifying as current.</p><p style="margin:0;font-size:12px">For AI agents: the same figure with its use contract and a sentence checker, over MCP at <code style="overflow-wrap:anywhere;word-break:break-all">https://frc-mcp.ziyetis.workers.dev</code> (no key) &middot; <a style="color:inherit;text-decoration:underline" href="https://financeratecalc.com/use-frc.html">setup</a></p></aside><!--/FRC-FOOTNOTE-->
-</body>
-</html>
+<div class="kicker">Corrected 15 November 2026 · original claims withdrawn</div>
+<h1>The Denial Genome: what the record shows, and what this page used to say</h1>
+<div class="limit"><b>Withdrawn.</b> From June 2026 this page said that each FHA lender &ldquo;rejects on&rdquo; one characteristic reason, that the pattern had been stable for eight years, and that a borrower should match a file&rsquo;s weakness to a lender. None of that stands. The named reasons do not match this site&rsquo;s own 2025 reason shares for 3 of the four lenders it named: Rocket Mortgage (page said credit history; most cited in 2025: collateral, 44.9%); Freedom Mortgage (page said incomplete application; most cited in 2025: collateral, 44.3%); Wells Fargo Bank (page said credit history; most cited in 2025: debt-to-income ratio, 49.3%). The stability claim was never published with data behind it. Matching a file to a lender is advice about one application, which aggregate records cannot support and this site does not give. The page&rsquo;s LSI scores were not receipted figures and are removed. <a href="/corrections.html#2026-11-15-genome-withdrawn">Correction entry</a>.</div>
+<h2>The same eleven lenders, from the 2025 federal record</h2>
+<table><tr><th>Lender</th><th>Denied, 2025</th><th>Decisioned FHA applications</th><th>Reasons cited most often among its denials</th><th></th></tr>
+<tr><td>CrossCountry Mortgage</td><td class="n">6.2%</td><td class="n">29,582</td><td>debt-to-income ratio 36.6%; credit history 30.9%; other 17.7%</td><td class="small"><a href="/claims/lender-crosscountry-mortgage-2025.json">receipt</a></td></tr>
+<tr><td>Guild Mortgage</td><td class="n">6.9%</td><td class="n">23,298</td><td>debt-to-income ratio 40.7%; credit history 30.1%; other 19.3%</td><td class="small"><a href="/claims/lender-guild-mortgage-2025.json">receipt</a></td></tr>
+<tr><td>Rocket Mortgage</td><td class="n">29.8%</td><td class="n">96,051</td><td>collateral 44.9%; incomplete application 25.0%; debt-to-income ratio 18.0%</td><td class="small"><a href="/claims/lender-rocket-mortgage-2025.json">receipt</a></td></tr>
+<tr><td>United Wholesale Mortgage</td><td class="n">21.4%</td><td class="n">112,470</td><td>debt-to-income ratio 44.6%; insufficient cash 34.7%; collateral 31.2%</td><td class="small"><a href="/claims/lender-united-wholesale-mortgage-2025.json">receipt</a></td></tr>
+<tr><td>PennyMac Loan Services</td><td class="n">22.9%</td><td class="n">32,517</td><td>debt-to-income ratio 28.5%; collateral 27.2%; credit history 25.2%</td><td class="small"><a href="/claims/lender-pennymac-loan-services-2025.json">receipt</a></td></tr>
+<tr><td>Nationstar (Mr. Cooper)</td><td class="n">26.5%</td><td class="n">7,650</td><td>collateral 30.8%; debt-to-income ratio 22.4%; credit history 17.8%</td><td class="small"><a href="/claims/lender-nationstar-mortgage-2025.json">receipt</a></td></tr>
+<tr><td>loanDepot</td><td class="n">34.6%</td><td class="n">35,196</td><td>debt-to-income ratio 27.6%; collateral 23.8%; unverifiable information 18.8%</td><td class="small"><a href="/claims/lender-loandepotcom-2025.json">receipt</a></td></tr>
+<tr><td>Planet Home Lending</td><td class="n">17.8%</td><td class="n">7,304</td><td>incomplete application 53.2%; credit history 18.0%; other 12.9%</td><td class="small"><a href="/claims/lender-planet-home-lending-2025.json">receipt</a></td></tr>
+<tr><td>Freedom Mortgage</td><td class="n">19.9%</td><td class="n">41,095</td><td>collateral 44.3%; credit history 20.8%; debt-to-income ratio 18.5%</td><td class="small"><a href="/claims/lender-freedom-mortgage-2025.json">receipt</a></td></tr>
+<tr><td>Wells Fargo Bank</td><td class="n">48.6%</td><td class="n">2,525</td><td>debt-to-income ratio 49.3%; credit history 27.7%; other 21.5%</td><td class="small"><a href="/claims/lender-wells-fargo-bank-2025.json">receipt</a></td></tr>
+<tr><td>NewRez</td><td class="n">52.8%</td><td class="n">22,790</td><td>debt-to-income ratio 71.4%; credit history 51.4%; insufficient cash 12.5%</td><td class="small"><a href="/claims/lender-newrez-2025.json">receipt</a></td></tr>
+</table>
+<p class="sub" style="font-size:14.5px">Denial rate: share of decisioned FHA applications (originated, approved but not accepted, or denied) that were denied in 2025; reverse mortgages excluded. Reason shares: share of the lender&rsquo;s denials on which that reason was reported. A lender may report up to four reasons per denial, so shares do not add to 100.</p>
+<h2>What these figures do not establish</h2>
+<div class="card">Reason codes are filed by lenders under federal reporting rules. They describe what was reported, not why an underwriter decided, and they partly reflect who applies to each lender, through which channel and for which product. A lender&rsquo;s most-cited reason says nothing about how one application would be treated there. Nothing here ranks lenders or recommends one.</div>
+<p class="sub" style="font-size:14.5px">The maintained pages: <a href="/fha-denial-reasons-by-lender.html">denial reasons by lender</a> (all lenders that report reasons) &middot; <a href="/fha-denial-rates-top-100.html">denial rates, 100 largest lenders</a> &middot; <a href="/corrections.html">corrections</a>. Generated by <span class="mono">scripts/build_genome_page.py</span> from <span class="mono">api/lender/</span> and the claim documents.</p>
+<div style="margin-top:40px;border-top:1px solid #23262e;padding-top:14px;font-size:13px;color:#a5a094">FinanceRateCalc &middot; Measured, not assumed.</div>
+</div></body></html>
