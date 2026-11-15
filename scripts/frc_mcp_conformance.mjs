@@ -170,8 +170,17 @@ await test("21", "application outcomes: five shares sum to ~100, the denied shar
   return { pass: Math.abs(sum - 100) < 0.3 && denied < rate && current === 5 && lv.status === "current" && !("rank" in (L || {})) && !!cit,
     evidence: `sum=${sum.toFixed(1)} denied=${denied} rate=${rate} current=${current}/5 lender=${lv.status} citation=${!!cit}` };
 });
+await test("22", "locate_denominator: a quoted rate is placed on the published cells (22.08 -> FHA, all purposes, decisioned, 262,250 / 1,187,606), an unplaceable rate returns no match without calling it wrong, and no cell is attributed to a publisher", async () => {
+  const t = toolText(await rpc("tools/call", { name: "locate_denominator", arguments: { rate_pct: 22.08 } }));
+  if (!t || !Array.isArray(t.matches)) return { pass: false, evidence: "no matches array: " + JSON.stringify(t).slice(0, 160) };
+  const hit = t.matches.find(m => m.program === "FHA" && m.loan_purpose === "all" && m.scope === "all" && m.base === "decisioned");
+  const n = toolText(await rpc("tools/call", { name: "locate_denominator", arguments: { rate_pct: 12.23 } }));
+  const none = n && n.matches.length === 0 && /not evidence the figure is wrong/.test(n.reading);
+  return { pass: !!hit && hit.denials === 262250 && hit.denominator === 1187606 && !!none && /not an attribution/.test(t.reading),
+    evidence: `placed=${!!hit} counts=${hit ? hit.denials + "/" + hit.denominator : "-"} unplaceable_none=${!!none} cells=${t.cells_searched}` };
+});
 const passed = tests.filter(t => t.pass).length;
-const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.4", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,
+const report = { suite: "frc-mcp-conformance-2026", suite_version: "1.5", endpoint: EP, server: disc.serverInfo || null, protocol_versions: disc.protocolVersions || null,
   generated_at: new Date().toISOString(), tests: tests.length, passed, conformance: passed === tests.length ? "PASS" : "FAIL",
   method: "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
   results: tests.map(({ receipt, requestState, ...t }) => t) };

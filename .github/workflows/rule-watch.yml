@@ -46,6 +46,8 @@ jobs:
         run: cd integrations/nemo-guardrails/receipt-rail && python3 test_actions.py
       - name: Edition-aware question set is generated from the receipted figures and scores its own reference answers
         run: python3 scripts/build_edition_qa.py --check && python3 scripts/build_edition_qa.py --selftest
+      - name: locate_denominator (server tool) places known figures on the denominator map
+        run: node scripts/check_locate_denominator.mjs
       - name: Reward audit is current (scripted exploit policies against both rewards)
         run: python3 scripts/reward_audit.py --check
       - name: Denominator-reasoning tasks reproduce from their seed and score their own reference answers

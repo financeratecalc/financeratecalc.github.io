@@ -14,6 +14,8 @@ const TOOLS = [
     inputSchema: { type: "object", properties: { lender: { type: "string", description: "Lender name, slug, or 20-char LEI" } }, required: ["lender"] } },
   { name: "get_application_outcomes", title: "Where FHA applications end (five outcomes), 2025", annotations: { title: "Where FHA applications end (five outcomes), 2025", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"how many FHA applications are withdrawn\", \"what share of FHA applications never reach a decision\", \"how many approved FHA loans are not taken\", \"why is the denied share 16.8% here and the denial rate 22.1% there\", \"where do <lender>'s FHA applications end\". Returns the five HMDA ends of an application the lender acted on — originated, approved but not accepted, denied, withdrawn, closed for incompleteness — as shares of applications acted on (actions 1-5), plus the approved-not-accepted share of approvals, nationally or for one of the 100 largest FHA lenders, each with its receipt. The denied share here is on a larger base than the published denial rate (22.1% of decisioned applications); both are returned so they can be reconciled. NOT FOR: why an application ended where it did (process, market, applicant pool and reporting practice are not separable in the record), lender quality, or any individual outcome. " + GUARDRAIL,
     inputSchema: { type: "object", properties: { lender: { type: "string", description: "Optional: lender name, slug or LEI (top-100 set). Omit for the national figures." } } } },
+  { name: "locate_denominator", title: "Which denominator produces this denial rate (2025)", annotations: { title: "Which denominator produces this denial rate (2025)", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"an article says the FHA denial rate is 12.8%, what is that measured over\", \"why do two sources give different VA denial rates\", \"which definition gives 10.6%\". Takes a 2025 denial rate someone quoted and returns every cell of the published denominator map that reproduces it: program (FHA or VA) x loan purpose (purchase, refinance, cash-out, all) x scope (all rows, or first-lien owner-occupied site-built 1-4 unit) x base (decisioned; all applications acted on; denied plus originated), with the denial and denominator counts behind each. A match shows which definition CAN produce the number from the 2025 HMDA file, not which one the publisher used. No match means another year, another filter, or a figure this file does not reproduce. Aggregates only; nothing here describes one applicant.",
+    inputSchema: { type: "object", required: ["rate_pct"], properties: { rate_pct: { type: "number", description: "The quoted denial rate in percent, e.g. 12.8" }, program: { type: "string", enum: ["fha", "va"], description: "Optional: search one program only. Omit to search both." }, tolerance: { type: "number", description: "Optional: how close a cell must be, in percentage points (default 0.15, maximum 0.5)" } } } },
   { name: "get_official_figure", title: "Official figure, restated as printed, with receipt (Level 2)", annotations: { title: "Official figure, restated as printed, with receipt (Level 2)", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"how many FHA loans did HUD endorse in <month>\", \"what share of FHA endorsements were purchase loans\", \"what is the FHA first-time homebuyer share\", \"what was the FHA Streamline share of refinances\", \"how many FHA loans are in force\". Also: \"how much did Ginnie Mae issue in <month>\", \"how many SBA 7(a) or 504 loans were approved in <month>\". Returns a figure from an official publication (HUD's monthly FHA Single Family Production Report; Ginnie Mae's monthly Issuance Summary; SBA's 7(a) and 504 monthly activity file) exactly as printed, with the document's SHA-256, table and row, period, the publisher's exclusion note (HECM excluded), revision status against the next edition, and a receipt. Nothing is computed by FinanceRateCalc; the receipt attests that this figure with this definition appears in that document. PARAMS: source (default hud-fhaprod), period (YYYY-MM; omitted = latest restated), figure (omitted = all figures of the edition). NOT FOR: HMDA application or origination counts (an endorsement is a loan insured after closing), denial rates, lender-level figures. Official figures copied as printed; not a prediction about any individual application.",
     inputSchema: { type: "object", properties: { source: { type: "string", description: "Source id: hud-fhaprod (FHA production report, default), ginnie-iss (Ginnie Mae monthly issuance) or sba-7a504 (SBA 7(a) and 504 monthly approvals)" }, period: { type: "string", description: "Edition period YYYY-MM (e.g. 2026-08); omitted = latest" }, figure: { type: "string", description: "Figure id, e.g. endorsements-count, purchase-share-pct, first-time-homebuyer-pct; omitted = all" } } } },
   { name: "list_lenders", title: "Top-100 FHA lenders by denial rate", annotations: { title: "Top-100 FHA lenders by denial rate", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"which FHA lender denies the most or the fewest\", \"rank FHA lenders by denial rate\", \"which lenders are covered\", \"how wide is the spread\". Returns the ranked list of the 100 largest FHA lenders with name, slug, rate and volume; the 2025 span runs 1.8 to 78.7 percent inside the same federal program. NOT FOR: lenders outside the top 100, or any recommendation about where to apply. " + GUARDRAIL,
@@ -969,6 +971,35 @@ async function callTool(name, args, env) {
       approved_not_accepted_share_of_approvals: pct(hit.ana_share_pct), denial_rate_decisioned: pct(hit.denial_rate_pct), reason_other_share_of_denials: pct(hit.reason_other_pct),
       ...base, universe: d.universe, does_not_establish: d.does_not_establish, source_url: BASE + "/data/application-outcomes-2025.json", page: BASE + "/where-fha-applications-end.html" };
   }
+  if (name === "locate_denominator") {
+    const v = Number(args.rate_pct);
+    if (!Number.isFinite(v) || v <= 0 || v >= 100) throw new Error("rate_pct must be a percentage between 0 and 100, e.g. 12.8");
+    const tol = Math.min(0.5, Math.max(0.01, Number.isFinite(Number(args.tolerance)) && args.tolerance != null ? Number(args.tolerance) : 0.15));
+    const progs = args.program ? [String(args.program).toLowerCase()] : ["fha", "va"];
+    if (progs.some(p => !["fha", "va"].includes(p))) throw new Error('program must be "fha" or "va" (the two programs the denominator map covers)');
+    const DEN = { decisioned: c => c.decisioned, acted_on: c => c.acted_on, denied_plus_originated: c => c.originated + c.denied };
+    const matches = []; let searched = 0; const sources = [];
+    for (const p of progs) {
+      const d = await getJSON(`/data/purpose/${p}-2025.json`); sources.push(BASE + `/data/purpose/${p}-2025.json`);
+      for (const [key, c] of Object.entries(d.cells || {})) {
+        const [purpose, scope] = key.split("|");
+        for (const [base, r] of Object.entries(c.rate_pct || {})) {
+          searched++;
+          if (r == null || Math.abs(r - v) > tol) continue;
+          matches.push({ program: d.program, loan_purpose: purpose, loan_purpose_definition: (d.definitions.purposes || {})[purpose] || null, scope, scope_definition: (d.definitions.scopes || {})[scope] || null,
+            base, base_definition: (d.definitions.bases || {})[base] || null, rate_pct: r, denials: c.denied, denominator: DEN[base] ? DEN[base](c) : null, distance_points: Number(Math.abs(r - v).toFixed(2)),
+            receipted: base === "decisioned" && (d.receipted_cells || []).includes(key) });
+        }
+      }
+    }
+    matches.sort((a, b) => a.distance_points - b.distance_points);
+    return { quoted_rate_pct: v, tolerance_points: tol, period: "2025", cells_searched: searched, matches,
+      reading: matches.length ? "Each match is a definition that reproduces the quoted figure from the 2025 HMDA file. A match is not an attribution: it does not show which definition the figure's publisher used. If several cells match, the figure alone cannot tell them apart."
+        : `No cell of the 2025 file is within ${tol} points of ${v}%. The figure may come from another year, another filter, or may not be reproducible from this file. That is not evidence the figure is wrong.`,
+      receipts_note: "Receipted cells are the purchase and refinance rates among decisioned applications (purpose-<program>-<purchase|refinance>-denial-rate-2025) and the program totals; other cells are published counts without a receipt.",
+      does_not_establish: ["which definition the publisher of the quoted figure used", "that a figure with no match is wrong", "any individual applicant's outcome"],
+      page: BASE + "/denominator-map.html", source_urls: sources };
+  }
   if (name === "get_official_figure") {
     const src = (args.source || "hud-fhaprod").toLowerCase();
     let period = args.period;
@@ -1067,7 +1098,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.50.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.51.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
