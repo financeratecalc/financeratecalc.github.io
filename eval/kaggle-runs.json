@@ -1,0 +1,11 @@
+{
+ "what": "Runs of the two denominator tasks on Kaggle Benchmarks, as reported by the site owner from the Kaggle notebook output. Not re-run by anyone else.",
+ "runs": [
+  {"date": "2026-11-15", "task": "integrations/kaggle/denominator_reasoning_task.py (40 items, 16 candidate denominators)", "model": "google/gemini-3.8-flash", "right": 40, "of": 40,
+   "by_kind": {"compute": "10/10", "novel": "10/10", "convert": "10/10", "infer": "10/10"},
+   "caveat": "All 40 items ran in one growing conversation (input 95 -> 4,095 tokens), so later items saw earlier ones. Fixed afterwards: one conversation per item."},
+  {"date": "2026-11-15", "task": "integrations/kaggle/denominator_grid_task.py (30 items, 105 candidate denominators, 8 with no matching cell)", "model": "the notebook's default model (not stated in the pasted output; the first run's default was google/gemini-3.8-flash)", "right": 30, "of": 30,
+   "none_items_right": "8/8", "caveat": "One conversation per item. Whether the model used a code tool is not visible in the pasted output."}
+ ],
+ "reading": "Both tasks are at ceiling for a small current model: given the table, working out which denominator produced a figure is not where it fails. The failures this site has logged from answer engines are of another kind: figures taken from pages that state no denominator, and a later edition not found (eval/answer-engine-log/). These tasks therefore do not separate models and are not offered as a leaderboard; they stay as a published sanity check with this result attached."
+}
