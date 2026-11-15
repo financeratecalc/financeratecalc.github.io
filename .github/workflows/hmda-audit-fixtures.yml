@@ -6,7 +6,7 @@ on:
         description: "CFPB file URL (FHA extract)"
         default: "https://ffiec.cfpb.gov/v2/data-browser-api/view/nationwide/csv?years=2025&loan_types=2"
 permissions:
-  contents: read
+  contents: write
 jobs:
   fixtures:
     runs-on: ubuntu-latest
@@ -23,7 +23,7 @@ jobs:
         run: python scripts/hmda_audit_sample.py /tmp/hmda_2025_fha.csv rl-env/hmda_record_audit/fixtures 2>&1 | tee /tmp/build.log | tail -5
       - name: Publish via the GitHub API
         env:
-          GH_PAT: ${{ secrets.EVAL_PAT }}
+          GH_PAT: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python - <<'PY'
           import os, json, base64, urllib.request

@@ -20,6 +20,8 @@ on:
       taskset:
         description: "frc-citation | frc-citation-temporal | hmda-record-audit"
         default: "frc-citation"
+permissions:
+  contents: write
 jobs:
   smoke:
     runs-on: ubuntu-latest
@@ -104,7 +106,7 @@ jobs:
       - name: Save summary via the GitHub API
         if: always()
         env:
-          GH_PAT: ${{ secrets.EVAL_PAT }}
+          GH_PAT: ${{ secrets.GITHUB_TOKEN }}
           MODEL: ${{ github.event.inputs.model }}
         run: |
           python - <<'PY'
@@ -139,7 +141,7 @@ jobs:
       - name: Save legacy outputs via the GitHub API
         if: always() && inputs.taskset == 'frc-citation'
         env:
-          GH_PAT: ${{ secrets.EVAL_PAT }}
+          GH_PAT: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python - <<'PY'
           import os, json, base64, glob, urllib.request

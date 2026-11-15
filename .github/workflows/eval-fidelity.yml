@@ -29,7 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.EVAL_PAT || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - name: Install eval dependencies
@@ -157,7 +157,7 @@ jobs:
       - name: Save results via the GitHub API (no git plumbing)
         if: always()
         env:
-          GH_PAT: ${{ secrets.EVAL_PAT }}
+          GH_PAT: ${{ secrets.GITHUB_TOKEN }}
           MODEL: ${{ github.event.inputs.model }}
           TASK: ${{ github.event.inputs.condition }}
         run: |
@@ -191,7 +191,7 @@ jobs:
                                            headers={"Authorization": f"token {tok}", "Content-Type": "application/json"})
               with urllib.request.urlopen(req) as r: return r.status
           if not tok:
-              print("NO EVAL_PAT SECRET"); raise SystemExit(1)
+              print("NO GITHUB TOKEN"); raise SystemExit(1)
           print("wrote", put(f"eval/runs/{name}.json", body, f"eval run {name}"))
           PY
       - uses: actions/upload-artifact@v4
