@@ -9,7 +9,9 @@ today = datetime.date.today()
 rules = {}
 for f in sorted(glob.glob(os.path.join(ROOT, "rules", "*.json"))):
     if f.endswith("index.json"): continue
-    r = json.load(open(f, encoding="utf-8")); rules[r["rule_id"]] = (r, os.path.basename(f))
+    r = json.load(open(f, encoding="utf-8"))
+    if "rule_id" not in r: continue   # candidates.json and the calendar's own JSON live in the same folder
+    rules[r["rule_id"]] = (r, os.path.basename(f))
 
 def ev(date, title, rule_id, kind, detail, certainty):
     r, fn = rules[rule_id]
