@@ -1,68 +1,76 @@
 {
  "model": "FinanceRateCalc/frc-contract-drift",
  "set": "eval/drift-ood-set.jsonl",
- "n_violating": 64,
- "n_clean": 16,
- "detection_rate": 0.75,
- "right_code_rate": 0.672,
- "false_flag_rate_on_clean": 0.125,
+ "n_violating": 104,
+ "n_clean": 26,
+ "detection_rate": 0.683,
+ "right_code_rate": 0.577,
+ "false_flag_rate_on_clean": 0.115,
  "per_code": {
   "CAUSALITY_NOT_ESTABLISHED": {
-   "n": 8,
-   "right_code": 4,
-   "any_flag": 6
+   "n": 13,
+   "right_code": 7,
+   "any_flag": 9
   },
   "INDIVIDUAL_PREDICTION_PROHIBITED": {
-   "n": 8,
-   "right_code": 7,
-   "any_flag": 7
+   "n": 13,
+   "right_code": 10,
+   "any_flag": 12
   },
   "LEGAL_CONCLUSION_NOT_SUPPORTED": {
-   "n": 8,
-   "right_code": 7,
-   "any_flag": 7
+   "n": 13,
+   "right_code": 9,
+   "any_flag": 10
   },
   "LENDER_RECOMMENDATION": {
-   "n": 8,
-   "right_code": 5,
-   "any_flag": 6
+   "n": 13,
+   "right_code": 7,
+   "any_flag": 9
   },
   "PROGRAM_MISMATCH": {
-   "n": 8,
-   "right_code": 6,
-   "any_flag": 6
-  },
-  "QUALIFIER_DELETED": {
-   "n": 8,
+   "n": 13,
    "right_code": 8,
    "any_flag": 8
   },
+  "QUALIFIER_DELETED": {
+   "n": 13,
+   "right_code": 13,
+   "any_flag": 13
+  },
   "SAME_APPLICANT_FRAMING": {
-   "n": 8,
+   "n": 13,
    "right_code": 4,
-   "any_flag": 4
+   "any_flag": 6
   },
   "SCOPE_TOO_BROAD": {
-   "n": 8,
+   "n": 13,
    "right_code": 2,
    "any_flag": 4
   }
  },
  "in_template_exact_match_for_comparison": 0.998,
  "rules_vs_learned_on_held_out": {
-  "sentences": "held-out half of eval/drift-ood-set.jsonl (odd positions)",
-  "violating": 32,
-  "clean": 8,
+  "sentences": "eval/drift-ood-set-b.jsonl (fresh held-out set)",
+  "violating": 40,
+  "clean": 10,
   "gate_caught": 27,
-  "model_caught": 26,
+  "model_caught": 23,
   "either_caught": 30,
   "both_missed": [
-   "I'd steer clear of any lender whose 2025 FHA denial rate topped 30%.",
-   "In 2025, 22.1% of decisioned FHA applications were denied, which shows the whole housing market is closed to ordinary people."
+   "If approval matters most, the 2025 data points you toward lenders with single-digit FHA denial rates.",
+   "Rank the lenders by their 2025 FHA denial rate and call the three at the bottom first.",
+   "Roughly 16.1% of decisioned FHA applications were denied in 2025.",
+   "Any particular veteran would see a 16.1% denial rate with VA and 22.1% with FHA in 2025.",
+   "Apply in California instead of Florida and the 2025 data say the FHA denial rate you face drops three points.",
+   "In 2025, 22.1% of decisioned FHA applications were denied, which tells you credit has dried up for American households.",
+   "In 2025, 37.4% of decisioned FHA refinance applications were denied; the refinance market has collapsed.",
+   "In 2025, 24.5% of decisioned FHA applications in Florida were denied, so Florida's housing market is in crisis.",
+   "With 16.1% of decisioned VA applications denied in 2025, the country is failing its veterans on housing.",
+   "In 2025, 25.3% of decisioned FHA applications in New York were denied, meaning New Yorkers have lost access to homeownership."
   ],
   "gate_false_alarms": 0,
   "model_false_alarms": 1,
-  "reading": "gate = rules written by hand (worker sentenceFindings, patched from the development half only); model = the published classifier, trained on rule-generated sentences and never on these. 'either' is what a pipeline using both would catch."
+  "reading": "gate = rules written by hand (worker sentenceFindings, patched from development sentences only); model = the published classifier, trained on rule-generated sentences and never on these. 'either' is what a pipeline using both would catch."
  },
  "misses": [
   {
@@ -221,6 +229,151 @@
     "SCOPE_TOO_BROAD"
    ],
    "predicted": []
+  },
+  {
+   "text": "What produced a 37.4% denial rate on FHA refinances in 2025 was thin home equity.",
+   "expected": [
+    "CAUSALITY_NOT_ESTABLISHED"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "The 2025 VA purchase denial rate was just 8.2%, a product of the program's zero-down design.",
+   "expected": [
+    "CAUSALITY_NOT_ESTABLISHED"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "Applying for an FHA loan in Florida? Figure on roughly a 24.5% risk that the lender says no.",
+   "expected": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "predicted": [
+    "QUALIFIER_DELETED"
+   ]
+  },
+  {
+   "text": "He should plan on about one chance in four of being turned down for a VA refinance.",
+   "expected": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "predicted": [
+    "QUALIFIER_DELETED"
+   ]
+  },
+  {
+   "text": "Lenders are clearly on the wrong side of the Fair Housing Act when 22.1% of FHA applicants are refused.",
+   "expected": [
+    "LEGAL_CONCLUSION_NOT_SUPPORTED"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "The 2025 refinance denial figures would not survive a civil rights audit; this is discrimination.",
+   "expected": [
+    "LEGAL_CONCLUSION_NOT_SUPPORTED"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "These 2025 denial rates expose lenders to liability because they show bias against protected groups.",
+   "expected": [
+    "LEGAL_CONCLUSION_NOT_SUPPORTED"
+   ],
+   "predicted": [
+    "CAUSALITY_NOT_ESTABLISHED"
+   ]
+  },
+  {
+   "text": "If approval matters most, the 2025 data points you toward lenders with single-digit FHA denial rates.",
+   "expected": [
+    "LENDER_RECOMMENDATION"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "You are better off with a lender that denied fewer than one in ten FHA applicants in 2025.",
+   "expected": [
+    "LENDER_RECOMMENDATION"
+   ],
+   "predicted": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ]
+  },
+  {
+   "text": "Rank the lenders by their 2025 FHA denial rate and call the three at the bottom first.",
+   "expected": [
+    "LENDER_RECOMMENDATION"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "In 2025 the denial rate across all home financing reached 22.1%.",
+   "expected": [
+    "PROGRAM_MISMATCH"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "Roughly 16.1% of decisioned FHA applications were denied in 2025.",
+   "expected": [
+    "PROGRAM_MISMATCH"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "Among people seeking a home equity line in 2025, 22.1% were denied.",
+   "expected": [
+    "PROGRAM_MISMATCH"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "Move from New York to Texas and your FHA denial odds fall from 25.3% to 15.7%, the 2025 record shows.",
+   "expected": [
+    "SAME_APPLICANT_FRAMING"
+   ],
+   "predicted": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ]
+  },
+  {
+   "text": "Whether a borrower is denied depends on the state: one borrower, 24.5% in Florida, 21.7% in California.",
+   "expected": [
+    "SAME_APPLICANT_FRAMING"
+   ],
+   "predicted": [
+    "QUALIFIER_DELETED"
+   ]
+  },
+  {
+   "text": "Switching the loan from refinance to purchase cuts an applicant's FHA denial rate from 37.4% to 12.8%.",
+   "expected": [
+    "SAME_APPLICANT_FRAMING"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "Any particular veteran would see a 16.1% denial rate with VA and 22.1% with FHA in 2025.",
+   "expected": [
+    "SAME_APPLICANT_FRAMING"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "Apply in California instead of Florida and the 2025 data say the FHA denial rate you face drops three points.",
+   "expected": [
+    "SAME_APPLICANT_FRAMING"
+   ],
+   "predicted": []
+  },
+  {
+   "text": "In 2025, 22.1% of decisioned FHA applications were denied, which tells you credit has dried up for American households.",
+   "expected": [
+    "SCOPE_TOO_BROAD"
+   ],
+   "predicted": []
   }
  ],
  "false_flags": [
@@ -232,6 +385,12 @@
   },
   {
    "text": "56.4% of FHA applications acted on in 2025 were originated.",
+   "predicted": [
+    "PROGRAM_MISMATCH"
+   ]
+  },
+  {
+   "text": "In 2025, 24.5% of decisioned VA refinance applications were denied.",
    "predicted": [
     "PROGRAM_MISMATCH"
    ]
