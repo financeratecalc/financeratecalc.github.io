@@ -78,6 +78,33 @@ SOURCES = {
                                "any denial or approval rate", "any lender-level or issuer-level figure", "that the figure has not been revised in a later edition (check the latest report)"],
         "quoting_rule": "Keep the publisher, the edition, the month and the unit (USD millions of securities issued) with the figure. It is a securities-issuance amount: do not present it as a loan count, an FHA-only figure, an origination total or a denial figure. If revision_status says a later edition revised it, say so.",
     },
+    "hud-lpt": {
+        "kind": "month_table",
+        "rows": "lpt",      # month rows carry the year only on the first row and in January; two blocks (NSA, then SA): the NSA block is read
+        "check": "sdq",     # the printed serious delinquency rate must equal 90-day + in foreclosure + in bankruptcy, or the run stops
+        "title": "FHA Single Family Loan Performance Trends (Credit Risk Report)",
+        "publisher": "U.S. Department of Housing and Urban Development, Office of Housing, Federal Housing Administration",
+        # file names are not uniform: FHALPT-JULY2026.pdf, FHALPT_AUG2026.pdf, FHALPT_JUN2026.pdf, FHALPT_Apr2026.pdf, FHALPT-Jan2026.pdf
+        "url_patterns": ["https://www.hud.gov/sites/default/files/Housing/documents/FHALPT_{Mon}{Y}.pdf",
+                         "https://www.hud.gov/sites/default/files/Housing/documents/FHALPT-{Mon}{Y}.pdf",
+                         "https://www.hud.gov/sites/dfiles/Housing/documents/FHALPT_{Mon}{Y}.pdf",
+                         "https://www.hud.gov/sites/dfiles/Housing/documents/FHALPT-{Mon}{Y}.pdf"],
+        "exclusions": "FHA-insured single-family forward mortgages in active insurance at month end; rates are not seasonally adjusted (the report also prints a seasonally adjusted block, which is not restated here)",
+        "table": "Table 1. Delinquency Rates by Month (non-seasonally adjusted block)",
+        "ncols": 7,
+        # id -> (0-based index among the 7 numbers on a month's row, column as described, description, unit)
+        "cells": {
+            "serious-delinquency-rate": (6, "seventh numeric column (Serious delinquency rate)", "share of FHA-insured loans in active insurance that were 90 or more days delinquent, in foreclosure or in bankruptcy at month end, not seasonally adjusted", "percent"),
+            "delinquent-90-day-rate":  (3, "fourth numeric column (90-day delinquency rate)", "share of FHA-insured loans in active insurance that were 90 or more days delinquent at month end, not seasonally adjusted", "percent"),
+            "in-foreclosure-rate":     (4, "fifth numeric column (In foreclosure)", "share of FHA-insured loans in active insurance that were in foreclosure at month end, not seasonally adjusted", "percent"),
+            "active-insurance-in-force":    (0, "first numeric column (Active insurance in force count, end of month)", "FHA-insured single-family loans in active insurance at month end", "loans"),
+        },
+        "not_comparable_with": ["HMDA denial rates (those describe applications; this describes loans already insured)", "delinquency rates for all US mortgages or for other programs",
+                                "the seasonally adjusted series printed in the same table", "the FHA production report's endorsement counts (new loans in a month, not loans outstanding)"],
+        "does_not_establish": ["why loans became delinquent", "the delinquency risk of any one borrower or loan", "any lender-level figure", "a foreclosure completion or loss rate",
+                               "that the figure has not been revised in a later edition (check the latest report)"],
+        "quoting_rule": "Keep the publisher, the edition, the month and 'not seasonally adjusted' with the figure. It is a share of FHA-insured loans outstanding at month end: do not present it as a share of applications, of all US mortgages, or as one borrower's risk.",
+    },
     "sba-7a504": {
         "kind": "xlsx_months",
         "title": "SBA 7(a) and 504 Monthly and Yearly Activity Report",
@@ -226,6 +253,39 @@ def month_rows(lines, ncols):
     return rows
 
 
+def lpt_rows(lines):
+    """Month rows of the first non-seasonally-adjusted block: a month, a year only on the first row and in January, a count
+    and six rates. {'YYYY-MM': {'cells': [...as printed], 'line': ...}}. Stops when the block ends."""
+    rows, nsa, year = {}, False, None
+    for ln in lines:
+        flat = ln.replace(" ", "").lower()
+        if flat == "non-seasonallyadjusted":
+            if rows:
+                break
+            nsa = True; continue
+        if flat == "seasonallyadjusted":
+            if rows:
+                break
+            nsa = False; continue
+        if not nsa:
+            continue
+        m = re.match(r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*(?: (\d{4}))? ([\d,]{7,}) ((?:\d{1,2}\.\d{2} ?){6})$", ln)
+        if not m:
+            continue
+        mi = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].index(m.group(1)) + 1
+        if m.group(2):
+            year = int(m.group(2))
+        elif year is None:
+            sys.exit(f"first month row carries no year ({ln}); not restating")
+        elif mi == 1:
+            sys.exit(f"a January row without a year ({ln}); not restating")
+        key = f"{year}-{mi:02d}"
+        if key in rows:
+            sys.exit(f"month {key} printed twice in the non-seasonally-adjusted block; not restating")
+        rows[key] = {"cells": [m.group(3)] + m.group(4).split(), "line": ln}
+    return rows
+
+
 def main_month_table(source, src, period, pdf, url):
     """A report whose table has one row per month and restates many prior months (Ginnie Mae: 25). The current month's
     labelled columns become receipts; every prior month on the page is kept as printed and compared with the most recent
@@ -234,21 +294,25 @@ def main_month_table(source, src, period, pdf, url):
     y, m = int(period[:4]), int(period[5:7])
     sha = sha256(pdf)
     lines = [re.sub(r"\s+", " ", ln).strip() for ln in text_of(pdf).splitlines()]
-    rows = month_rows(lines, src["ncols"])
+    rows = lpt_rows(lines) if src.get("rows") == "lpt" else month_rows(lines, src["ncols"])
     if period not in rows:
         sys.exit(f"no row for {period} with {src['ncols']} numbers in the document (months found: {sorted(rows)[-3:]}); not restating")
     for k, r in rows.items():   # the printed totals must agree with the column positions assumed here
         c = [num(x) for x in r["cells"]]
-        if c[8] + c[16] != c[17] or sum(c[9:16]) != c[16]:
+        if src.get("check") == "sdq":   # rates are rounded to two decimals, so the three parts may miss the printed sum by 0.01 each way
+            if len(c) != 7 or abs(c[3] + c[4] + c[5] - c[6]) > 0.021:
+                sys.exit(f"row {k}: 90-day + in foreclosure + in bankruptcy does not give the printed serious delinquency rate ({r['line']}); not restating")
+        elif c[8] + c[16] != c[17] or sum(c[9:16]) != c[16]:
             sys.exit(f"row {k}: printed totals do not match the assumed column layout ({r['line']}); not restating")
     month_label = f"{MON[m - 1].title()} {y}"
     figures = {}
-    for fid, (col, coldesc, desc) in src["cells"].items():
+    for fid, spec in src["cells"].items():
+        col, coldesc, desc = spec[:3]
         cell = rows[period]["cells"][col]
-        figures[fid] = {"value": num(cell), "display": cell, "unit": "USD millions", "period_kind": "month", "period": month_label, "table": src["table"],
+        figures[fid] = {"value": num(cell), "display": cell, "unit": spec[3] if len(spec) > 3 else "USD millions", "period_kind": "month", "period": month_label, "table": src["table"],
                         "row_label": coldesc.split("(")[1].rstrip(")") + ", month of " + FULL[m - 1] + " " + str(y), "column": coldesc, "line_as_printed": rows[period]["line"], "description": desc,
                         "revision": "as first printed; no later edition checked yet"}
-    history = {k: {fid: num(rows[k]["cells"][col]) for fid, (col, _, _) in src["cells"].items()} for k in sorted(rows)}
+    history = {k: {fid: num(rows[k]["cells"][spec[0]]) for fid, spec in src["cells"].items()} for k in sorted(rows)}
     earlier = sorted(f for f in os.listdir(os.path.join(ROOT, "data", "official")) if re.fullmatch(re.escape(source) + r"-\d{4}-\d{2}\.json", f) and f[len(source) + 1:-5] < period) if os.path.isdir(os.path.join(ROOT, "data", "official")) else []
     prev_path = os.path.join(ROOT, "data", "official", earlier[-1]) if earlier else None
     prev = json.load(open(prev_path, encoding="utf-8")) if prev_path else None
