@@ -1,75 +1,85 @@
 {
  "model": "FinanceRateCalc/frc-contract-drift",
+ "history": [
+  {
+   "held_out": "eval/drift-ood-set-b.jsonl (fresh held-out set)",
+   "violating": 40,
+   "gate_caught": 27,
+   "model_caught": 23,
+   "either_caught": 30,
+   "all_sets_detection_rate": 0.683,
+   "all_sets_right_code_rate": 0.577,
+   "all_sets_false_flag_rate": 0.115,
+   "note": "training set before the slot grammar (fixed templates only)"
+  }
+ ],
  "set": "eval/drift-ood-set.jsonl",
- "n_violating": 104,
- "n_clean": 26,
- "detection_rate": 0.683,
- "right_code_rate": 0.577,
- "false_flag_rate_on_clean": 0.115,
+ "n_violating": 144,
+ "n_clean": 36,
+ "detection_rate": 0.66,
+ "right_code_rate": 0.562,
+ "false_flag_rate_on_clean": 0.083,
  "per_code": {
   "CAUSALITY_NOT_ESTABLISHED": {
-   "n": 13,
-   "right_code": 7,
-   "any_flag": 9
-  },
-  "INDIVIDUAL_PREDICTION_PROHIBITED": {
-   "n": 13,
-   "right_code": 10,
-   "any_flag": 12
-  },
-  "LEGAL_CONCLUSION_NOT_SUPPORTED": {
-   "n": 13,
-   "right_code": 9,
-   "any_flag": 10
-  },
-  "LENDER_RECOMMENDATION": {
-   "n": 13,
-   "right_code": 7,
-   "any_flag": 9
-  },
-  "PROGRAM_MISMATCH": {
-   "n": 13,
-   "right_code": 8,
-   "any_flag": 8
-  },
-  "QUALIFIER_DELETED": {
-   "n": 13,
-   "right_code": 13,
+   "n": 18,
+   "right_code": 11,
    "any_flag": 13
   },
+  "INDIVIDUAL_PREDICTION_PROHIBITED": {
+   "n": 18,
+   "right_code": 14,
+   "any_flag": 16
+  },
+  "LEGAL_CONCLUSION_NOT_SUPPORTED": {
+   "n": 18,
+   "right_code": 11,
+   "any_flag": 13
+  },
+  "LENDER_RECOMMENDATION": {
+   "n": 18,
+   "right_code": 7,
+   "any_flag": 10
+  },
+  "PROGRAM_MISMATCH": {
+   "n": 18,
+   "right_code": 12,
+   "any_flag": 12
+  },
+  "QUALIFIER_DELETED": {
+   "n": 18,
+   "right_code": 18,
+   "any_flag": 18
+  },
   "SAME_APPLICANT_FRAMING": {
-   "n": 13,
-   "right_code": 4,
-   "any_flag": 6
+   "n": 18,
+   "right_code": 5,
+   "any_flag": 8
   },
   "SCOPE_TOO_BROAD": {
-   "n": 13,
-   "right_code": 2,
-   "any_flag": 4
+   "n": 18,
+   "right_code": 3,
+   "any_flag": 5
   }
  },
  "in_template_exact_match_for_comparison": 0.998,
  "rules_vs_learned_on_held_out": {
-  "sentences": "eval/drift-ood-set-b.jsonl (fresh held-out set)",
+  "sentences": "eval/drift-ood-set-c.jsonl (held out; frozen before the training grammar)",
   "violating": 40,
   "clean": 10,
-  "gate_caught": 27,
-  "model_caught": 23,
-  "either_caught": 30,
+  "gate_caught": 26,
+  "model_caught": 24,
+  "model_right_code": 21,
+  "either_caught": 34,
   "both_missed": [
-   "If approval matters most, the 2025 data points you toward lenders with single-digit FHA denial rates.",
-   "Rank the lenders by their 2025 FHA denial rate and call the three at the bottom first.",
-   "Roughly 16.1% of decisioned FHA applications were denied in 2025.",
-   "Any particular veteran would see a 16.1% denial rate with VA and 22.1% with FHA in 2025.",
-   "Apply in California instead of Florida and the 2025 data say the FHA denial rate you face drops three points.",
-   "In 2025, 22.1% of decisioned FHA applications were denied, which tells you credit has dried up for American households.",
-   "In 2025, 37.4% of decisioned FHA refinance applications were denied; the refinance market has collapsed.",
-   "In 2025, 24.5% of decisioned FHA applications in Florida were denied, so Florida's housing market is in crisis.",
-   "With 16.1% of decisioned VA applications denied in 2025, the country is failing its veterans on housing.",
-   "In 2025, 25.3% of decisioned FHA applications in New York were denied, meaning New Yorkers have lost access to homeownership."
+   "In 2025, 22.1% of decisioned FHA applications were denied, and that disparity is actionable under the Fair Housing Act.",
+   "Based on 2025 denial rates, credit unions are the better choice for an FHA loan than the big banks.",
+   "The 2025 FHA denial rates make it clear which lenders deserve your business and which do not.",
+   "In 2025, 16.2% of decisioned FHA applications were denied, the VA figure shows.",
+   "In 2025, 16.2% of decisioned VA applications were denied; the country is failing every veteran who wants a home.",
+   "In 2025, 22.1% of decisioned FHA applications were denied, and the whole US credit system is clearly broken."
   ],
   "gate_false_alarms": 0,
-  "model_false_alarms": 1,
+  "model_false_alarms": 0,
   "reading": "gate = rules written by hand (worker sentenceFindings, patched from development sentences only); model = the published classifier, trained on rule-generated sentences and never on these. 'either' is what a pipeline using both would catch."
  },
  "misses": [
