@@ -1,0 +1,55 @@
+{
+ "passport_version": "0.1",
+ "issuer": "FinanceRateCalc",
+ "issued_at": "2026-11-15T00:00:00Z",
+ "provenance": {
+  "primary_source": "CFPB/FFIEC HMDA public record 2025; data/programs/conv-2025.json (conventional closed-end, loan_type 1)",
+  "dataset": "loan_type=1 (conventional); action_taken in {1,2,3} = decisioned; reverse mortgages excluded; open-end lines of credit excluded; universe U-CONV-2025-DECISIONED (provenance/universe-expansion-2025.md)",
+  "code_history": "https://github.com/financeratecalc/financeratecalc.github.io"
+ },
+ "use_boundary": {
+  "allowed": [
+   "historical aggregate comparison",
+   "journalism",
+   "market analysis",
+   "research"
+  ],
+  "prohibited": [
+   "individual approval prediction",
+   "borrower profiling",
+   "personalized lender recommendation"
+  ],
+  "minimum_cell_size": 100
+ },
+ "attribution": {
+  "required_text": "Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record (conventional loans); historical aggregate only.",
+  "license": "CC BY 4.0"
+ },
+ "passport_id": "frc:claim:conv-national-denial-rate-2025",
+ "canonical_url": "https://financeratecalc.com/claims/conv-national-denial-rate-2025.json",
+ "claim": {
+  "metric": "conv_denial_rate",
+  "program": "conventional",
+  "value": 0.2341,
+  "n": 7376124,
+  "denials": 1726956,
+  "period": "2025",
+  "universe_id": "U-CONV-2025-DECISIONED"
+ },
+ "receipt_document": "1.0",
+ "id": "conv-national-denial-rate-2025",
+ "display_value": "23.4%",
+ "hash_rule": "jcs-sha256-8",
+ "hash8": "14988d1a",
+ "receipt": "⟦FRC:conv-national-denial-rate-2025:23.4%:14988d1a⟧",
+ "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:conv-national-denial-rate-2025:23.4%:14988d1a%E2%9F%A7",
+ "corrections_url": "https://financeratecalc.com/corrections.json",
+ "spec": "https://financeratecalc.com/spec/receipt-1.0.md",
+ "reproduce": {
+  "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+  "filters": "Keep loan_type=1 (conventional), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself. Also drop open_end_line_of_credit=1 (closed-end universe).",
+  "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+  "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/nationwide/csv?years=2025&loan_types=1",
+  "note": null
+ }
+}
