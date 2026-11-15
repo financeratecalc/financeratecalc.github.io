@@ -48,6 +48,8 @@ jobs:
         run: python3 scripts/build_edition_qa.py --check && python3 scripts/build_edition_qa.py --selftest
       - name: locate_denominator (server tool) places known figures on the denominator map
         run: node scripts/check_locate_denominator.mjs
+      - name: Sample Evidence Brief is generated from the logged answer and the published cells
+        run: python3 scripts/build_sample_brief.py --check
       - name: Reward audit is current (scripted exploit policies against both rewards)
         run: python3 scripts/reward_audit.py --check
       - name: Denominator-reasoning tasks reproduce from their seed and score their own reference answers
