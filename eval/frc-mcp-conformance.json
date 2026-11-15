@@ -1,11 +1,11 @@
 {
  "suite": "frc-mcp-conformance-2026",
- "suite_version": "1.4",
+ "suite_version": "1.5",
  "endpoint": "https://frc-mcp.ziyetis.workers.dev",
  "server": {
   "name": "financeratecalc",
   "title": "FinanceRateCalc mortgage evidence",
-  "version": "1.50.0"
+  "version": "1.51.0"
  },
  "protocol_versions": [
   "2026-07-28",
@@ -13,9 +13,9 @@
   "2025-06-18",
   "2025-03-26"
  ],
- "generated_at": "2026-11-14T16:42:10.387Z",
- "tests": 21,
- "passed": 21,
+ "generated_at": "2026-11-15T04:59:14.000Z",
+ "tests": 22,
+ "passed": 22,
  "conformance": "PASS",
  "method": "Deterministic HTTP calls against the live endpoint; no model. Behaviour tests check that a missing public condition is asked for (2026 clients) or blocked (2025 clients) and never guessed, that borrower attributes are refused, that receipts verify and tampering is detected, and that the sentence gate grades the published vectors.",
  "results": [
@@ -29,7 +29,7 @@
    "id": "02",
    "name": "tools/list is deterministic across two calls",
    "pass": true,
-   "evidence": "18 tools, same order"
+   "evidence": "19 tools, same order"
   },
   {
    "id": "03",
@@ -125,7 +125,7 @@
    "id": "18",
    "name": "resources: list is non-empty, every listed uri reads back with matching mimeType, a uri outside the publisher is refused",
    "pass": true,
-   "evidence": "resources=9 templates=5 bundle_bytes=473366 outside=refused"
+   "evidence": "resources=9 templates=5 bundle_bytes=489798 outside=refused"
   },
   {
    "id": "19",
@@ -144,7 +144,13 @@
    "name": "application outcomes: five shares sum to ~100, the denied share is on the acted-on base and lower than the decisioned denial rate, every receipt verifies as current, a lender row carries its receipt and no ranking",
    "pass": true,
    "evidence": "sum=100.1 denied=16.8 rate=22.1 current=5/5 lender=current citation=true"
+  },
+  {
+   "id": "22",
+   "name": "locate_denominator: a quoted rate is placed on the published cells (22.08 -> FHA, all purposes, decisioned, 262,250 / 1,187,606), an unplaceable rate returns no match without calling it wrong, and no cell is attributed to a publisher",
+   "pass": true,
+   "evidence": "placed=true counts=262250/1187606 unplaceable_none=true cells=96"
   }
  ],
- "sha256": "7ad9c0818852aa41270602585444ed20ab0d7e366069c7d51f44f6e1b7f28be7"
+ "sha256": "858a76844342f0796d6620edd2be0fb185955b97c1ad42fe3aee1c923a818781"
 }
