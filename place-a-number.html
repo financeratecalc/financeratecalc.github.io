@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Place a number: which cells of a table produce a quoted figure? | FinanceRateCalc</title>
+<meta name="description" content="Paste any table and a figure someone quoted. The page lists every cell, share, ratio, percent change or difference in that table that reproduces the figure. It runs in your browser; nothing is uploaded.">
+<link rel="canonical" href="https://financeratecalc.com/place-a-number.html">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@300;400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding:40px 20px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:30px;color:#f5f2ea;line-height:1.18;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:20px;color:#f5f2ea;margin:34px 0 10px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B}
+.card{border:1px solid #23262e;border-radius:12px;padding:16px 18px;background:#0d0f14;margin:12px 0;font-size:15px}
+.mono{font-family:'DM Mono',monospace;font-size:12.5px}
+.pill{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;padding:2px 8px;border-radius:20px;margin-right:6px}
+.p-pass{background:rgba(95,180,162,.14);color:#5fb4a2}.p-q{background:rgba(200,168,75,.14);color:#C8A84B}.p-o{background:rgba(201,111,111,.14);color:#c96f6f}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{border:1px solid #23262e;padding:9px 10px;text-align:left}th{background:#0d0f14;font-family:'DM Mono',monospace;font-size:11px;color:#C8A84B}
+.limit{border:1px solid #c96f6f;border-radius:12px;padding:15px 18px;color:#cbc7bb;font-size:14px;margin:18px 0}
+input,textarea,select{width:100%;box-sizing:border-box;background:#0d0f14;border:1px solid #23262e;border-radius:8px;color:#e8e4da;padding:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin:6px 0 12px}
+button{background:#C8A84B;color:#000;border:0;border-radius:9px;padding:12px 18px;font-weight:800;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif}
+label{font-size:13px;color:#a5a094}
+.small{font-size:13px;color:#a5a094}textarea{font-family:'DM Mono',monospace;font-size:12.5px}ol{padding-left:20px}li{margin:6px 0}</style></head><body>
+<nav data-frc-nav="1" aria-label="Site" style="font-family:system-ui,sans-serif;font-size:12.5px;padding:8px 16px;background:#0b0d12;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:14px;flex-wrap:wrap;align-items:center"><a href="/" style="color:#C8A84B;font-weight:700;text-decoration:none">FinanceRateCalc</a><a href="/fha-denial-rates-top-100.html" style="color:rgba(255,255,255,.7);text-decoration:none">Lenders</a><a href="/fha-denial-rates-by-state.html" style="color:rgba(255,255,255,.7);text-decoration:none">States</a><a href="/metro-gaps.html" style="color:rgba(255,255,255,.7);text-decoration:none">Metros</a><a href="/check-answer.html" style="color:rgba(255,255,255,.7);text-decoration:none">Check an answer</a><a href="/corrections.html" style="color:rgba(255,255,255,.7);text-decoration:none">Corrections</a><a href="/about.html" style="color:rgba(255,255,255,.7);text-decoration:none">About</a></nav>
+<div class="wrap">
+<div class="kicker">Tool · any table · nothing leaves your browser</div>
+<h1>Which cells of this table produce that number?</h1>
+<p class="sub">An article says &ldquo;12.8% were denied&rdquo; and links to a table. Twelve point eight percent of what? Paste the table and the figure. The page tries the figure as a cell, as a share of a row or column total, as a ratio of two cells, as one cell over itself plus one or two others, as a percent change and as a difference, and lists every definition that reproduces it.</p>
+<label for="pn-table">The table (copy it from a spreadsheet, a web page or a PDF; tabs, commas, semicolons or wide spaces between columns)</label>
+<textarea id="pn-table" rows="9" placeholder="Outcome&#9;All purposes&#9;Home purchase&#10;Originated&#9;882,114&#9;639,159&#10;Denied&#9;262,250&#9;96,186"></textarea>
+<label for="pn-figure">The figure someone quoted</label>
+<input id="pn-figure" type="text" placeholder="12.8%  or  65,327">
+<button id="pn-go" type="button">Place the figure</button> &nbsp; <a href="#" id="pn-example" class="small">try the example (2025 FHA applications by outcome)</a>
+<div id="pn-out" style="margin-top:18px"></div>
+<h2>How to read the result</h2>
+<div class="limit"><b>A match is not an attribution.</b> It shows a definition that <i>can</i> produce the figure from this table, not the one its author used. Two definitions can match the same rounded figure; a large table will match some figures by coincidence, and the page says roughly how many to expect. <b>No match is not proof of error:</b> the figure may come from another table, another edition of the same report, or a definition this search does not try.</div>
+<p class="sub" style="font-size:14.5px">The figure is matched at the precision you type: 22.1% matches anything that rounds to 22.1, and 22.08% is stricter. Everything runs in this page; the table is not uploaded, stored or logged, so it is safe to use with a table you may not share. The code is <a href="/assets/place-number.js">one file</a>.</p>
+<p class="sub" style="font-size:14.5px">For 2025 US mortgage denial rates the work is already done on the full federal file: see the <a href="/denominator-map.html">denominator map</a>. For figures that changed between editions of an official report, see the <a href="/revision-ledger.html">revision ledger</a>. A worked case with five quoted figures: <a href="/sample-evidence-brief.html">sample Evidence Brief</a>.</p>
+<div style="margin-top:40px;border-top:1px solid #23262e;padding-top:14px;font-size:13px;color:#a5a094">FinanceRateCalc &middot; Measured, not assumed. &middot; <a href="/corrections.html">Corrections</a></div>
+</div><script src="/assets/place-number.js"></script></body></html>

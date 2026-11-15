@@ -1,0 +1,28 @@
+// assets/place-number.js against tables whose answers are known.   node scripts/check_place_number.mjs
+import { createRequire } from "node:module";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const P = createRequire(import.meta.url)(path.join(ROOT, "assets/place-number.js"));
+const T = "Outcome\tAll purposes\tHome purchase\tRefinance\nOriginated\t882,114\t639,159\t235,390\nApproved, not accepted\t43,242\t17,425\t25,531\nDenied\t262,250\t96,186\t155,846\nWithdrawn\t276,228\t140,982\t127,468\nClosed incomplete\t99,536\t12,381\t81,486";
+const tab = P.parseTable(T); const t = [];
+const run = s => P.place(tab, P.parseTarget(s));
+const has = (r, rx) => r.hits.some(h => rx.test(h.text));
+t.push(["15 cells read", tab.cells.length === 15]);
+let r = run("22.08%"); t.push(["22.08% = denied / (denied + originated + approved-not-accepted), all purposes", has(r, /^Denied · All purposes as a share of itself plus (Originated|Approved, not accepted) · All purposes and (Originated|Approved, not accepted) · All purposes: 262,250 \/ 1,187,606/)]);
+r = run("16.77%"); t.push(["16.77% = denied share of the column total (acted on)", has(r, /Denied · All purposes as a share of its column total: 262,250 \/ 1,563,370/)]);
+r = run("12.78%"); t.push(["12.78% = purchase, decisioned", has(r, /Denied · Home purchase as a share of itself plus .*752,770/)]);
+r = run("22.92%"); t.push(["22.92% = denied / (denied + originated)", has(r, /Denied · All purposes as a share of itself plus Originated · All purposes/)]);
+r = run("262,250"); t.push(["a count is found as its cell", r.hits[0] && /the cell itself: Denied · All purposes/.test(r.hits[0].text)]);
+r = run("3.14159%"); t.push(["an unrelated precise figure finds nothing", r.total === 0]);
+r = run("22.1%"); t.push(["one-decimal figure matches the decisioned cell too and reports chance expectation", has(r, /1,187,606/) && typeof r.expected_by_chance === "number"]);
+const csv = P.parseTable('Month,Purchase,Refinance\n"Jul 2026","65,328","22,210"\n"Aug 2026 restated","65,327","22,212"');
+t.push(["CSV with quoted thousands", csv.cells.length === 4 && csv.cells[0].v === 65328]);
+r = P.place(csv, P.parseTarget("74.6%")); t.push(["74.6% = purchase share of the row (65,328 of 87,538)", has(r, /share of itself plus/) || has(r, /share of its row total/)]);
+const sp = P.parseTable("Year   Loans   Amount\n2025   3,387   1,435.7\n2026   3,512   1,502.1");
+t.push(["space-separated table, numeric first column kept as data or label", sp.cells.length >= 4]);
+r = P.place(sp, P.parseTarget("3.7%")); t.push(["percent change 3,387 -> 3,512 = 3.69%", has(r, /change from .* to .*: \(3,512 − 3,387\)/)]);
+t.push(["European decimal comma", P.num("12,5") === 12.5 && P.num("1.234,5") === null || P.num("12,5") === 12.5]);
+t.push(["negative in parentheses", P.num("(1,200)") === -1200]);
+for (const [n, ok] of t) console.log(ok ? "ok  " : "FAIL", n);
+if (t.some(x => !x[1])) process.exit(1);
