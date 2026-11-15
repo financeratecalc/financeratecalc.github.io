@@ -49,6 +49,9 @@ def main():
     dmap = ('Purchase-only and refinance-only rates, and every denominator, are on the <a href="/denominator-map.html">denominator map</a>.'
             if os.path.exists(os.path.join(ROOT, "data", "purpose", f"{prog}-2025.json")) else
             f'Purchase-only and refinance-only rates for {short} are not published yet; the <a href="/denominator-map.html">denominator map</a> covers FHA and VA.')
+    if prog == "conv":   # the headline rate is easy to misread against the purchase-mortgage rates quoted elsewhere
+        dmap += (' <b>What this rate covers:</b> every closed-end conventional application that reached a decision, for any loan purpose (home purchase, refinance, cash-out refinance, home improvement, other) '
+                 'and any lien position or property type. Conventional denial rates quoted elsewhere usually describe first-lien home-purchase mortgages only, a narrower set; they are not comparable with this figure.')
     n = d["national"]; o = d["outcomes_national"]
     fmt = lambda x: f"{x:,}"
     nat = claim(f"{prog}-national-denial-rate-2025")

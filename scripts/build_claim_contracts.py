@@ -16,6 +16,12 @@ FORBID = ["causal_attribution", "individual_prediction", "personalized_lender_re
 
 
 
+def _others(P):
+    """The other three programs, in words: a contract must not name its own program as the one it is compared with."""
+    o = [x for x in ("FHA", "VA", "USDA", "conventional") if x != P]
+    return f"{o[0]}, {o[1]} or {o[2]}"
+
+
 def official_limits(cid):
     """Source-specific 'does not establish' list, when the edition file carries one (sources after the first)."""
     m = re.match(r"official-([a-z0-9]+(?:-[a-z0-9]+)*?)-(\d{4}-\d{2})-", cid)
@@ -39,11 +45,12 @@ def contract_for(cid, d):
         if pm.group(2) == "national":
             return {"canonical_claim": {"template": f"In 2025, {{value}} of decisioned {P} applications in the US were denied ({c.get('denials', 0):,} denials out of {c.get('n', 0):,} applications reaching a credit decision).", "required_fields": ["period", "population", "program", "nature"]},
                     "required_qualifiers": {"period": "2025", "population": pop, "program_scope": P, "nature": "historical aggregate; association, not cause"},
-                    "does_not_establish": [f"that {P} loans are easier or harder to get than FHA, USDA or conventional loans (applicant populations differ by eligibility and composition; cross-program rates are not comparable as a judgement of programs or lenders)", "any individual's chance of denial", "any lender-level figure", "any legal conclusion"]}
+                    "does_not_establish": [f"that {P} loans are easier or harder to get than {_others(P)} loans (applicant populations differ by eligibility and composition; cross-program rates are not comparable as a judgement of programs or lenders)", "any individual's chance of denial", "any lender-level figure", "any legal conclusion"]
+                                          + (["the denial rate for conventional home-purchase mortgages: this universe covers every loan purpose (purchase, refinance, cash-out, home improvement, other) and every lien position"] if P == "conventional" else [])}
         st = pm.group(3).upper(); name = STATES.get(st, st)
         return {"canonical_claim": {"template": f"In 2025, {{value}} of decisioned {P} applications in {name} were denied ({c.get('n', 0):,} applications reaching a decision).", "required_fields": ["period", "population", "program", "nature"]},
                 "required_qualifiers": {"period": "2025", "population": f"decisioned {P} applications in {name} (" + pop.split("(", 1)[1], "program_scope": P, "nature": "historical aggregate"},
-                "does_not_establish": [f"an applicant in {name} has a {v} chance of denial", f"{name}'s lenders are stricter than another state's for a given applicant", f"a comparison with FHA or conventional rates as a judgement of programs", "any legal conclusion"]}
+                "does_not_establish": [f"an applicant in {name} has a {v} chance of denial", f"{name}'s lenders are stricter than another state's for a given applicant", f"a comparison with another program's rates as a judgement of programs", "any legal conclusion"]}
     pm = re.match(r"outcome-(va|usda|conv)-([a-z-]+)-2025$", cid)
     if pm:
         P = c.get("program", pm.group(1).upper()); key = pm.group(2).replace("-", "_")
