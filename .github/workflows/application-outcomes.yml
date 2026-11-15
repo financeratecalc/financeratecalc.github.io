@@ -93,13 +93,28 @@ jobs:
           python3 scripts/build_claim_contracts.py | tail -1
           python3 scripts/build_claims_index.py
           python3 scripts/build_receipt_hash_history.py | tail -1
-          python3 scripts/build_receipts_snapshot.py 2>/dev/null | tail -1 | cut -c1-120
-          python3 scripts/build_program_page.py "$PROG"
-          python3 scripts/build_llms_full.py | tail -1
           git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/programs universes.json claims transparency llms-full.txt rl-env/frc_citation/receipts-snapshot.json "$PROG"-loan-denial-rates-2025.html conventional-loan-denial-rates-2025.html 2>/dev/null || git add data/programs universes.json claims transparency llms-full.txt rl-env/frc_citation/receipts-snapshot.json
-          git diff --cached --quiet || git commit -m "program first release: loan_type $LT, ${{ github.event.inputs.year }} file [skip ci]"
-          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
+          # Primary outputs first, then the files derived from them. A derived file built before the pull conflicts with
+          # any push made while this run was working (it did on 2026-11-15, and the result was silently not pushed).
+          ok=0
+          for i in 1 2 3 4 5; do
+            git add data/programs universes.json claims transparency 2>/dev/null || git add data/programs universes.json claims
+            git diff --cached --quiet || git commit -q -m "program first release: loan_type $LT, ${{ github.event.inputs.year }} file [skip ci]"
+            git stash -q --include-untracked 2>/dev/null || true
+            if git pull --rebase -q origin main; then
+              git stash drop -q 2>/dev/null || true
+              python3 scripts/build_receipts_snapshot.py 2>/dev/null | tail -1 | cut -c1-120
+              python3 scripts/build_program_page.py "$PROG"
+              python3 scripts/build_llms_full.py | tail -1
+              git add llms-full.txt rl-env/frc_citation/receipts-snapshot.json "$PROG"-loan-denial-rates-2025.html
+              git diff --cached --quiet || git commit -q -m "program first release: derived files for loan_type $LT [skip ci]"
+              if git push -q origin main; then ok=1; break; fi
+            else
+              git rebase --abort 2>/dev/null || true
+            fi
+            sleep $((i*7))
+          done
+          [ "$ok" = "1" ] || { echo "::error::program first release was computed but could not be pushed"; exit 1; }
           echo "PROGRAM_RUN=1" >> $GITHUB_ENV
       - name: 2s. Denominator map (purpose split) - counts by loan purpose, scope and action; receipts for purchase and refinance; nothing written unless the total reconciles
         if: github.event.inputs.purpose_split == 'yes' && github.event.inputs.official == ''
