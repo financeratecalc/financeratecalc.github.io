@@ -26,9 +26,11 @@ Options (environment): `FRC_VERIFY_URL` (another Receipt 1.0 publisher's verify 
 
 ## Status and limits
 
-- The checking logic is unit-tested here (`python3 test_actions.py`, no network). It has not yet been run inside a live
-  NeMo Guardrails pipeline by the publisher; written against the documented custom-action and output-rail interface
-  (`@action`, `RailOutcome`, `rails.output.flows`), library v0.24.
+- The checking logic is unit-tested here (`python3 test_actions.py`, no network). The rail has also been run inside the
+  library itself (`live_test.py`, nemoguardrails 0.24.1, 15 November 2026, no model configured, output rail only): a
+  message with an issued receipt came back unchanged and the same message with one character of the receipt altered
+  was replaced by the refusal. Result on record in `live-test.json`. It has not been run in a full pipeline with a
+  model generating the message, or on any version other than 0.24.1.
 - It verifies receipts; it does not judge numbers that carry none unless the strict option is on, and then only for
   the pattern named above.
 - Any publisher that implements Receipt 1.0 (https://financeratecalc.com/spec/receipt-1.0.md) can be verified the
