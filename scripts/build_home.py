@@ -250,8 +250,13 @@ def main():
         f'<tr><td><a href="/fha-denial-rates-top-100.html">FHA denial rates and application outcomes</a></td><td>Computed from the 2025 federal HMDA file</td><td class="n">{fam["fha"]}</td>'
         f'<td>National, {states} states and territories, {lenders} lenders, metro gaps, <a href="/where-fha-applications-end.html">five outcomes</a></td></tr>')
     if va:
-        fam_rows += (f'<tr><td><a href="/va-loan-denial-rates-2025.html">VA denial rates and outcomes</a></td><td>Computed from the same file</td><td class="n">{fam["prog"]}</td>'
-                     f'<td>National, every state, five outcomes. USDA and conventional are declared and next.</td></tr>')
+        have = [(k, n, f) for k, n, f in (("usda", "USDA", "usda-loan-denial-rates-2025.html"), ("conv", "conventional", "conventional-loan-denial-rates-2025.html"))
+                if os.path.exists(os.path.join(ROOT, "data/programs", k + "-2025.json")) and os.path.exists(os.path.join(ROOT, f))]
+        links = '<a href="/va-loan-denial-rates-2025.html">VA</a>' + "".join(f', <a href="/{f}">{n}</a>' for _, n, f in have)
+        missing = [n for k, n in (("usda", "USDA"), ("conv", "conventional")) if k not in {h[0] for h in have}]
+        tail = (" " + " and ".join(missing).capitalize() + (" is" if len(missing) == 1 else " are") + " declared and next.") if missing else ""
+        fam_rows += (f'<tr><td>{links} denial rates and outcomes</td><td>Computed from the same file</td><td class="n">{fam["prog"]}</td>'
+                     f'<td>National, states, five outcomes, one page per program.{tail}</td></tr>')
     if fam["purpose"]:
         fam_rows += (f'<tr><td><a href="/denominator-map.html">Purchase and refinance denial rates</a></td><td>Computed from the same file</td><td class="n">{fam["purpose"]}</td>'
                      f'<td>The <a href="/denominator-map.html">denominator map</a>: every loan purpose, denominator and scope, so a rate quoted without one can be placed</td></tr>')
