@@ -74,3 +74,26 @@ jobs:
         run: |
           python3 scripts/inject_site_nav.py | tee /tmp/nav.txt
           grep -q "nav added to 0 pages" /tmp/nav.txt || { echo "::error::pages without a link home appeared; run scripts/inject_site_nav.py"; exit 1; }
+  nemo-live:
+    # The receipt rail inside the real NeMo Guardrails library. Manual runs only (Run workflow); the result is committed
+    # to integrations/nemo-guardrails/receipt-rail/live-test.json whether it passes or not.
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -q nemoguardrails 2>&1 | tail -2
+      - name: Two messages through the output rail (issued receipt, altered receipt)
+        run: |
+          R=$(python3 -c "import json;print(json.load(open('claims/national-fha-denial-rate-2025.json'))['receipt'])")
+          cd integrations/nemo-guardrails/receipt-rail && python3 live_test.py "$R"
+      - name: Record the result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add integrations/nemo-guardrails/receipt-rail/live-test.json
+          git diff --cached --quiet || git commit -m "receipt rail: live test in NeMo Guardrails [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
