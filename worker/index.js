@@ -16,6 +16,10 @@ const TOOLS = [
     inputSchema: { type: "object", properties: { lender: { type: "string", description: "Optional: lender name, slug or LEI (top-100 set). Omit for the national figures." } } } },
   { name: "locate_denominator", title: "Which denominator produces this denial rate (2025)", annotations: { title: "Which denominator produces this denial rate (2025)", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"an article says the FHA denial rate is 12.8%, what is that measured over\", \"why do two sources give different VA denial rates\", \"which definition gives 10.6%\". Takes a 2025 denial rate someone quoted and returns every cell of the published denominator map that reproduces it: program (FHA or VA) x loan purpose (purchase, refinance, cash-out, all) x scope (all rows, or first-lien owner-occupied site-built 1-4 unit) x base (decisioned; all applications acted on; denied plus originated), with the denial and denominator counts behind each. A match shows which definition CAN produce the number from the 2025 HMDA file, not which one the publisher used. No match means another year, another filter, or a figure this file does not reproduce. Aggregates only; nothing here describes one applicant.",
     inputSchema: { type: "object", required: ["rate_pct"], properties: { rate_pct: { type: "number", description: "The quoted denial rate in percent, e.g. 12.8" }, program: { type: "string", enum: ["fha", "va"], description: "Optional: search one program only. Omit to search both." }, tolerance: { type: "number", description: "Optional: how close a cell must be, in percentage points (default 0.15, maximum 0.5)" } } } },
+  { name: "reading_challenge", title: "Proof of reading: which cells of an official edition must be quoted", annotations: { title: "Proof of reading: which cells of an official edition must be quoted", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"how do I show that I actually opened the report I am citing\", \"prove this answer was written with the edition in hand\". A citation shows what a text points to, not that its author opened the document. Given a restated official edition (HUD FHA production, HUD loan performance, Ginnie Mae issuance, SBA 7(a)/504), the statement that cites it and a date, this returns three cells of that edition, chosen by a hash of edition + date + statement, whose values have to be read from the edition. A different statement or a different day draws different cells, so the answer cannot be prepared in advance or copied from another citation. Read the three values from the edition (data_url, or the publisher's document) and pass them to verify_reading_proof. No values are returned here. Shows possession of the edition's contents on that date; it does not show that the statement was derived from them.",
+    inputSchema: { type: "object", required: ["statement"], properties: { source: { type: "string", description: "hud-fhaprod (default), hud-lpt, ginnie-iss or sba-7a504" }, period: { type: "string", description: "Edition period YYYY-MM; omitted = latest restated edition" }, statement: { type: "string", description: "The sentence or paragraph that cites the edition, exactly as it will be published" }, date: { type: "string", description: "UTC date YYYY-MM-DD the proof is made for; omitted = today" } } } },
+  { name: "verify_reading_proof", title: "Proof of reading: check the three values", annotations: { title: "Proof of reading: check the three values", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"does this reading proof hold\", \"did the author of this citation have the edition\". Takes the edition, the statement, the date and the three values (in the order reading_challenge listed the cells), or a proof line of the form FRC-READ:<source>-<period>:<date>:<statement hash>:<v1>;<v2>;<v3> together with the statement. Returns how many of the three cells match the edition as restated, whether that edition is still the latest one restated, and the proof line to print next to the citation. Correct values are never returned on a miss. Anyone can repeat the check offline from the edition file. A match shows the values were read from the edition; it does not show the statement is true or was derived from it.",
+    inputSchema: { type: "object", required: ["statement"], properties: { source: { type: "string" }, period: { type: "string", description: "Edition period YYYY-MM (required unless proof is given)" }, statement: { type: "string", description: "The statement the proof was made for, unchanged" }, date: { type: "string", description: "UTC date YYYY-MM-DD the proof was made for (required unless proof is given)" }, values: { type: "array", items: { type: ["number", "string"] }, description: "The three values, in challenge order, as printed" }, proof: { type: "string", description: "Optional: a full FRC-READ proof line instead of source, period, date and values" } } } },
   { name: "get_official_figure", title: "Official figure, restated as printed, with receipt (Level 2)", annotations: { title: "Official figure, restated as printed, with receipt (Level 2)", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"how many FHA loans did HUD endorse in <month>\", \"what share of FHA endorsements were purchase loans\", \"what is the FHA first-time homebuyer share\", \"what was the FHA Streamline share of refinances\", \"how many FHA loans are in force\". Also: \"how much did Ginnie Mae issue in <month>\", \"how many SBA 7(a) or 504 loans were approved in <month>\". Returns a figure from an official publication (HUD's monthly FHA Single Family Production Report; Ginnie Mae's monthly Issuance Summary; SBA's 7(a) and 504 monthly activity file) exactly as printed, with the document's SHA-256, table and row, period, the publisher's exclusion note (HECM excluded), revision status against the next edition, and a receipt. Nothing is computed by FinanceRateCalc; the receipt attests that this figure with this definition appears in that document. PARAMS: source (default hud-fhaprod), period (YYYY-MM; omitted = latest restated), figure (omitted = all figures of the edition). NOT FOR: HMDA application or origination counts (an endorsement is a loan insured after closing), denial rates, lender-level figures. Official figures copied as printed; not a prediction about any individual application.",
     inputSchema: { type: "object", properties: { source: { type: "string", description: "Source id: hud-fhaprod (FHA production report, default), ginnie-iss (Ginnie Mae monthly issuance), sba-7a504 (SBA 7(a) and 504 monthly approvals) or hud-lpt (HUD FHA loan performance: serious delinquency rate, 90-day rate, in-foreclosure rate, loans in active insurance; not seasonally adjusted)" }, period: { type: "string", description: "Edition period YYYY-MM (e.g. 2026-08); omitted = latest" }, figure: { type: "string", description: "Figure id, e.g. endorsements-count, purchase-share-pct, first-time-homebuyer-pct; omitted = all" } } } },
   { name: "list_lenders", title: "Top-100 FHA lenders by denial rate", annotations: { title: "Top-100 FHA lenders by denial rate", readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, description: "ANSWERS: \"which FHA lender denies the most or the fewest\", \"rank FHA lenders by denial rate\", \"which lenders are covered\", \"how wide is the spread\". Returns the ranked list of the 100 largest FHA lenders with name, slug, rate and volume; the 2025 span runs 1.8 to 78.7 percent inside the same federal program. NOT FOR: lenders outside the top 100, or any recommendation about where to apply. " + GUARDRAIL,
@@ -577,6 +581,22 @@ function leiValid(s) {
   }
   return rem === 1;
 }
+// Proof of reading: the cells of an edition in a fixed order, and the three a given (edition, date, statement) draws.
+function normStatement(t) { return String(t).normalize("NFKC").replace(/\s+/g, " ").trim().toLowerCase(); }
+async function readingCells(d, src, period, date, statement) {
+  const cells = [];
+  for (const fid of Object.keys(d.figures).sort()) { const f = d.figures[fid]; if (typeof f.value === "number") cells.push({ fid, month: period, value: f.value, desc: f.description, where: `figures.${fid} (${f.period})` }); }
+  const hist = d.months_as_printed || {};
+  for (const m of Object.keys(hist).sort()) for (const fid of Object.keys(hist[m]).sort()) {
+    if (m === period && d.figures[fid]) continue;
+    if (typeof hist[m][fid] === "number") cells.push({ fid, month: m, value: hist[m][fid], desc: (d.figures[fid] || {}).description || fid, where: `months_as_printed.${m}.${fid}` });
+  }
+  const norm = normStatement(statement), hash = (await sha256Hex(norm)).slice(0, 8);
+  const seed = await sha256Hex(`${src}-${period}|${date}|${norm}`);
+  const pool = cells.slice(), picked = [];
+  for (let i = 0; i < 3 && pool.length; i++) picked.push(pool.splice(parseInt(seed.slice(i * 8, i * 8 + 8), 16) % pool.length, 1)[0]);
+  return { picked, total: cells.length, hash };
+}
 async function sha256Hex(text) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
@@ -987,6 +1007,43 @@ async function callTool(name, args, env) {
       approved_not_accepted_share_of_approvals: pct(hit.ana_share_pct), denial_rate_decisioned: pct(hit.denial_rate_pct), reason_other_share_of_denials: pct(hit.reason_other_pct),
       ...base, universe: d.universe, does_not_establish: d.does_not_establish, source_url: BASE + "/data/application-outcomes-2025.json", page: BASE + "/where-fha-applications-end.html" };
   }
+  if (name === "reading_challenge" || name === "verify_reading_proof") {
+    let src = (args.source || "hud-fhaprod").toLowerCase(), period = args.period, date = args.date, values = args.values, claimedHash = null;
+    const statement = String(args.statement || "");
+    if (!statement.trim()) throw new Error("statement is required: the sentence that cites the edition, exactly as published");
+    if (name === "verify_reading_proof" && args.proof) {
+      const m = String(args.proof).replace(/[⟦⟧]/g, "").trim().match(/^FRC-READ:([a-z0-9-]+)-(\d{4}-\d{2}):(\d{4}-\d{2}-\d{2}):([0-9a-f]{8}):(.+)$/);
+      if (!m) throw new Error("proof must look like FRC-READ:<source>-<period>:<date>:<statement hash>:<v1>;<v2>;<v3>");
+      src = m[1]; period = m[2]; date = m[3]; claimedHash = m[4]; values = m[5].split(";");
+    }
+    const index = await getJSON("/data/official/index.json");
+    if (!index.latest[src]) throw new Error(`Unknown source "${src}"; available: ${Object.keys(index.latest).join(", ")}`);
+    if (!period) { if (name === "verify_reading_proof") throw new Error("period is required to verify"); period = index.latest[src]; }
+    if (!(index.editions[src] || []).includes(period)) throw new Error(`No restated ${src} edition for ${period}; restated: ${(index.editions[src] || []).join(", ")}`);
+    const today = new Date().toISOString().slice(0, 10);
+    if (!date) { if (name === "verify_reading_proof") throw new Error("date is required to verify"); date = today; }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error("date must be YYYY-MM-DD (UTC)");
+    const d = await getJSON(`/data/official/${src}-${period}.json`);
+    const r = await readingCells(d, src, period, date, statement);
+    const edition = { source: src, period, title: d.document.title, edition: d.document.edition, document_sha256: d.document.sha256, publisher_url: d.document.url, data_url: BASE + `/data/official/${src}-${period}.json` };
+    const limits = "Shows that the three values were read from this edition as restated, for this statement and date. It does not show that the statement is true, or that it was written from the edition. Once a proof line is published its values are public for that statement and date only.";
+    if (name === "reading_challenge") {
+      return { edition, date, statement_hash: r.hash, cells: r.picked.map((c, i) => ({ order: i + 1, figure: c.fid, description: c.desc, month: c.month, where: c.where })),
+        how: "Read each value from the edition (figures for the edition's own period are under figures.<id>.value; earlier months are under months_as_printed.<YYYY-MM>.<id>), then call verify_reading_proof with the same source, period, statement and date and values in this order.",
+        cells_in_edition: r.total, limits };
+    }
+    if (!Array.isArray(values) || values.length !== r.picked.length) throw new Error(`values must hold ${r.picked.length} entries, in challenge order`);
+    if (claimedHash && claimedHash !== r.hash) return { verdict: "statement_mismatch", detail: "The proof line was made for a different statement (hash " + claimedHash + "; this statement hashes to " + r.hash + ").", edition, date, limits };
+    const num = (v) => { const t = String(v).replace(/[,$%\s]/g, ""); return /^-?\d+(\.\d+)?$/.test(t) ? parseFloat(t) : NaN; };
+    const hits = r.picked.map((c, i) => { const x = num(values[i]); return Number.isFinite(x) && Math.abs(x - c.value) <= 1e-9 * Math.max(1, Math.abs(c.value)); });
+    const matched = hits.filter(Boolean).length, ok = matched === r.picked.length;
+    const latest = index.latest[src];
+    return { verdict: ok ? "read" : "not_shown", matched, of: r.picked.length, cells: r.picked.map((c, i) => ({ order: i + 1, figure: c.fid, month: c.month, match: hits[i] })),
+      edition, edition_status: period === latest ? "latest restated edition" : `superseded: the latest restated ${src} edition is ${latest}`,
+      date, date_check: date > today ? "date is in the future" : (d.document.retrieved_at && date < d.document.retrieved_at.slice(0, 10) ? "date is before this edition was retrieved here" : "ok"),
+      statement_hash: r.hash, proof: ok ? `⟦FRC-READ:${src}-${period}:${date}:${r.hash}:${r.picked.map(c => String(c.value)).join(";")}⟧` : null,
+      verify_offline: "scripts/verify_reading_proof.py in the site repository repeats this check from the edition file alone.", limits };
+  }
   if (name === "locate_denominator") {
     const v = Number(args.rate_pct);
     if (!Number.isFinite(v) || v <= 0 || v >= 100) throw new Error("rate_pct must be a percentage between 0 and 100, e.g. 12.8");
@@ -1114,7 +1171,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.54.1" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.55.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });

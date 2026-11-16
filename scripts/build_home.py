@@ -375,7 +375,7 @@ def main():
 <li><b>I was denied an FHA loan</b><span><a href="/denial-code-lookup.html">What the reason on your letter means</a> and what to ask the lender in writing. No prediction, no lender pick.</span></li>
 <li><b>I report or research</b><span>The record: <a href="/fha-denial-rates-top-100.html">100 largest FHA lenders</a>, <a href="/fha-denial-rates-by-state.html">every state</a>, <a href="/metro/index.html">metros</a>, <a href="/why-fha-denial-rates-differ.html">why published rates differ</a>, <a href="/methodology.html">method</a>, <a href="/reconciliation.html">how to check us</a>.</li>
 <li><b>I publish statistics</b><span>Put a live receipt next to your own numbers with <a href="/pricing.html">the free badge</a>, or have <a href="/pricing.html">receipts issued for your figures</a>. Want to know how AI systems restate your data? Ask for a <a href="/pricing.html">citation fidelity report</a>.</span></li>
-<li><b>I build agents</b><span><a href="/mcp-server.html">MCP server</a> with {19} tools, <a href="/data-catalog.html">open datasets</a>, <a href="/spec/receipt-1.0.md">the Receipt 1.0 format</a>, <a href="/pricing.html">pricing</a>. Reading is free; the licence is <a href="/license.html">CC BY 4.0</a>.</li>
+<li><b>I build agents</b><span><a href="/mcp-server.html">MCP server</a> with {21} tools, <a href="/data-catalog.html">open datasets</a>, <a href="/spec/receipt-1.0.md">the Receipt 1.0 format</a>, <a href="/pricing.html">pricing</a>. Reading is free; the licence is <a href="/license.html">CC BY 4.0</a>.</li>
 </ul>
 
 <div class="fine">
