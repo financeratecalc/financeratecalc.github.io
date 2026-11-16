@@ -1,4 +1,8 @@
-# Reading Proof 0.1 (draft)
+# Reading Proof 0.1 (draft): a proof that the cited edition was in hand
+
+The name says more than the scheme delivers. What is proved is possession of the edition's contents by whoever made
+the proof, for one statement and one date. Reading, understanding and use are not proved. The short name is kept
+because it is what a citation's reader wants to know; the definition below is the claim.
 
 A citation says which document a text points to. It does not show that whoever wrote the text had the document
 open. A reading proof is three values from the cited edition, chosen so that they cannot be known without the
@@ -39,6 +43,18 @@ values on a miss. It should also report whether the edition is still the latest 
 
 Reference implementations: the `reading_challenge` and `verify_reading_proof` tools of the FinanceRateCalc MCP
 server (`worker/index.js`), and `scripts/verify_reading_proof.py`, which needs only the edition file.
+
+## The cited figure
+
+The drawn cells are usually not the figure the statement cites. A verifier therefore also lists every number in the
+statement (years aside) with whether it is printed anywhere in the edition, and the receipt id where the cell is one
+of the edition's own figures. That lookup does not check the label the statement gives the number; a Receipt 1.0
+mark on the figure does. A complete citation carries both: the receipt for the value, the reading proof for the
+edition.
+
+First blind trial, 2026-11-16: a small model given only the tool descriptions produced a valid proof in five calls;
+asked to obtain one without opening the edition, it matched 0 of 3 cells. One model, two attempts: a demonstration
+that the scheme works as specified, not a measurement.
 
 ## What a proof shows, and what it does not
 

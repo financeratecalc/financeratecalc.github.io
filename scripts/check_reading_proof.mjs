@@ -41,3 +41,11 @@ import { execFileSync } from "node:child_process";
   assert(failed, "offline verifier rejects the proof for another statement");
   console.log("offline verifier agrees:", ok.proof);
 }
+{ // the statement's own numbers are placed in the edition
+  const st = "Ginnie Mae issued 44,265 million USD in October 2026, down from 99,999.";
+  const ch = await callTool("reading_challenge", { source: "ginnie-iss", period: "2026-10", statement: st, date: "2026-11-16" });
+  const v = await callTool("verify_reading_proof", { source: "ginnie-iss", period: "2026-10", statement: st, date: "2026-11-16", values: ch.cells.map(c => read("ginnie-iss", "2026-10", c)) });
+  const f = Object.fromEntries(v.statement_figures.map(x => [x.number, x]));
+  assert(v.verdict === "read" && f[44265].in_edition && f[44265].receipt_id === "official-ginnie-iss-2026-10-total-issuance-musd" && f[99999].in_edition === false && !(2026 in f), "statement numbers: the printed one is found with its receipt id, the invented one is not, the year is ignored");
+  console.log("statement figures placed:", JSON.stringify(v.statement_figures));
+}
