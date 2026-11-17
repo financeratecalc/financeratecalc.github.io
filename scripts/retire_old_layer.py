@@ -36,7 +36,8 @@ def money(x):
     return f"${x:,.0f}"
 
 
-def stub(title, lead, target, target_label, why):
+def stub(title, lead, target, target_label, why, day=None):
+    day = day or TODAY
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,7 +54,7 @@ def stub(title, lead, target, target_label, why):
 <h1 style="font-size:24px;line-height:1.25">{H.escape(title)}</h1>
 <p>{lead}</p>
 <p><a href="{target}"><b>{H.escape(target_label)}</b></a></p>
-<p class="s">{why} Retired {TODAY}; recorded in the <a href="/corrections.html">corrections log</a>.</p>
+<p class="s">{why} Retired {day}; recorded in the <a href="/corrections.html">corrections log</a>.</p>
 </body>
 </html>
 """
@@ -101,6 +102,58 @@ def retire_identity(cities):
             target, label, "The arithmetic does not depend on the job; the worked example for the same city shows it with every assumption named."))
         n += 1
     return n
+
+
+# Second pass, 2026-11-18: every other family of May 2026 template pages already marked noindex.
+FAMILIES = ["dream-home-city", "dream-home-mountain", "dream-home-suburban", "dream-home-beachfront", "how-much-house", "can-i-get", "salary-to-buy", "salary-to-afford",
+            "monthly-payment-on", "down-payment-for", "down-payment-on", "income-needed-for", "should-i-refinance", "mortgage-zip-", "neighborhood-", "can-i-afford", "blog-"]
+SALARY_LIKE = ("how-much-house", "can-i-afford", "salary-to-buy", "salary-to-afford", "monthly-payment-on", "down-payment-for", "down-payment-on", "income-needed-for")
+DAY2 = "2026-11-18"
+USPS = set("AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split())
+
+
+def family_pages():
+    out = []
+    for f in sorted(glob.glob("*.html")):
+        if "calculator" in f or f in ("can-i-get-a-loan.html", "can-i-get-approved-for-mortgage.html", "mortgage-evidence-for-ai.html"):
+            continue   # interactive tools and one-off pages are reviewed separately
+        fam = next((p for p in FAMILIES if f.startswith(p)), None)
+        if not fam and re.match(r"sell-\d", f):
+            fam = "sell-N-buy"
+        st = re.search(r"-([a-z]{2})\.html$", f)
+        if not fam and f.startswith("mortgage-") and st and st.group(1).upper() in USPS:
+            fam = "mortgage-city"
+        if fam:
+            out.append((f, fam))
+    out += [(f, "city/") for f in sorted(glob.glob("city/*.html"))] + [(f, "employer/") for f in sorted(glob.glob("employer/*.html"))]
+    return out
+
+
+def retire_families():
+    n = kept = 0
+    for f, fam in family_pages():
+        s = open(f, encoding="utf-8", errors="ignore").read()
+        if re.search(r"Retired \d{4}-\d{2}-\d{2};", s):
+            n += 1; continue
+        t = re.search(r"<title>([^<|]+)", s)
+        name = re.sub(r"\s+", " ", H.unescape(t.group(1))).strip(" —-") if t else "Page"
+        name = re.sub(r"^[^\w$(]+", "", name)
+        fn = re.search(r"FRC-FOOTNOTE:([a-z0-9-]+?)-*-->", s)
+        cid = fn.group(1) if fn else ""
+        mslug = re.match(r"metro-gap-(.+)-2025$", cid)
+        if fam in SALARY_LIKE:
+            target, label = "/salary/index.html", "Worked examples by income and city, every assumption named"
+        elif mslug and os.path.exists(f"metro/{mslug.group(1)}.html"):
+            target, label = f"/metro/{mslug.group(1)}.html", "This metro's FHA record, with receipts"
+        elif cid.startswith("state-"):
+            target, label = "/fha-denial-rates-by-state.html", "FHA denial rates by state, each with a receipt"
+        else:
+            target, label = "/", "What this site publishes, and how to check it"
+        open(f, "w", encoding="utf-8").write(stub(name + ": page retired",
+            "This page was written from a template in May 2026. The prices, payments, scores and local details on it were examples or estimates with no dated source, shown beside figures from the federal record. It has been withdrawn.",
+            target, label, "This site now prints a number only if it carries a receipt or is named as an assumption.", DAY2))
+        n += 1
+    return n, kept
 
 
 def pmt(loan, rate_pct, years=30):
@@ -213,11 +266,16 @@ def main():
                 continue
             s = open(f, encoding="utf-8").read()
             hit = [b for b in BANNED if b in s]
-            if hit or not ("Retired " + TODAY in s or 'data-frc-rebuilt="' in s):
+            if hit or not (re.search(r"Retired \d{4}-\d{2}-\d{2};", s) or 'data-frc-rebuilt="' in s):
                 bad.append((f, hit))
+        for f, fam in family_pages():
+            s = open(f, encoding="utf-8", errors="ignore").read()
+            if not re.search(r"Retired \d{4}-\d{2}-\d{2};", s):
+                bad.append((f, ["template page not retired"]))
         print("old layer:", "clean" if not bad else f"{len(bad)} pages not converted, e.g. {bad[:3]}")
         sys.exit(1 if bad else 0)
     print("market notices:", retire_market())
+    print("template families retired (and hub pages left for review):", retire_families())
     print("identity notices:", retire_identity(cities))
     print("salary examples rebuilt (pages whose old payment differed from the recomputed one by more than $2):", rebuild_salary(cities))
 
