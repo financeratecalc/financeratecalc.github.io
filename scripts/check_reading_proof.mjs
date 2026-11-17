@@ -4,6 +4,7 @@ import { callTool } from "./worker_local.mjs";
 const assert = (c, m) => { if (!c) { console.error("FAIL:", m); process.exit(1); } };
 const S = "HUD's August 2026 production report shows 78,925 FHA loans endorsed in the month.";
 const read = (src, per, c) => { const d = JSON.parse(fs.readFileSync(`data/official/${src}-${per}.json`)); return c.month === per && d.figures[c.figure] ? d.figures[c.figure].value : d.months_as_printed[c.month][c.figure]; };
+const LATEST = JSON.parse(fs.readFileSync("data/official/index.json")).latest;   // editions arrive monthly; never assume which one is newest
 let n = 0;
 for (const [src, per] of [["hud-fhaprod", "2026-08"], ["hud-lpt", "2026-08"], ["ginnie-iss", "2026-10"], ["sba-7a504", "2026-10"], ["hud-fhaprod", "2026-07"]]) {
   const ch = await callTool("reading_challenge", { source: src, period: per, statement: S, date: "2026-11-16" });
@@ -11,7 +12,7 @@ for (const [src, per] of [["hud-fhaprod", "2026-08"], ["hud-lpt", "2026-08"], ["
   const vals = ch.cells.map(c => read(src, per, c));
   const ok = await callTool("verify_reading_proof", { source: src, period: per, statement: S, date: "2026-11-16", values: vals });
   assert(ok.verdict === "read" && ok.matched === 3 && ok.proof.includes("FRC-READ:" + src), src + ": correct values verify");
-  assert((per === "2026-07") === ok.edition_status.startsWith("superseded"), src + " " + per + ": edition status");
+  assert((per !== LATEST[src]) === ok.edition_status.startsWith("superseded"), src + " " + per + ": edition status");
   const viaLine = await callTool("verify_reading_proof", { statement: "  " + S.toUpperCase() + " ", proof: ok.proof });
   assert(viaLine.verdict === "read", src + ": proof line verifies; case and spacing of the statement do not matter");
   const other = await callTool("verify_reading_proof", { statement: S + " It rose.", proof: ok.proof });
