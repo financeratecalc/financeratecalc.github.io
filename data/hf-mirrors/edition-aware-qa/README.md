@@ -17,14 +17,14 @@ size_categories:
 
 # Edition-Aware QA: questions whose answer depends on the edition or the denominator
 
-85 questions generated from figures that carry verifiable receipts at financeratecalc.com. Two things make a number wrong without being invented: the publisher printed a different value in a later edition, or the rate was computed on a different denominator. Each item tests one of them.
+113 questions generated from figures that carry verifiable receipts at financeratecalc.com. Two things make a number wrong without being invented: the publisher printed a different value in a later edition, or the rate was computed on a different denominator. Each item tests one of them.
 
 | Kind | Items | What it tests |
 |---|---|---|
-| as_printed | 44 | the figure as printed in a named edition of an official report |
-| revised_between_editions | 2 | a figure two editions print differently; both values required |
-| latest_edition_value | 2 | the later value; the first-printed value given as current fails |
-| unchanged_between_editions | 17 | a figure the next edition restates unchanged |
+| as_printed | 59 | the figure as printed in a named edition of an official report |
+| revised_between_editions | 5 | a figure two editions print differently; both values required |
+| latest_edition_value | 5 | the later value; the first-printed value given as current fails |
+| unchanged_between_editions | 24 | a figure the next edition restates unchanged |
 | denominator_specified | 18 | one program and year, three denominators, three loan purposes |
 | underspecified_rate | 2 | "the denial rate" asked without a definition; a bare number is incomplete |
 
