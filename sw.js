@@ -1,6 +1,6 @@
 // Figure Radar service worker. It does one thing: when a push arrives (it carries no content), ask the server what
 // changed for this device's chosen reports and show it. Nothing is cached and no page request is intercepted.
-var API = "https://frc-mcp.ziyetis.workers.dev";
+var API = self.location.origin;   // /radar/* on this domain is answered by the server
 function hex(buf) { return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); }
 self.addEventListener("install", function () { self.skipWaiting(); });
 self.addEventListener("activate", function (e) { e.waitUntil(self.clients.claim()); });

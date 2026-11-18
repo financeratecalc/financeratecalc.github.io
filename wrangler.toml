@@ -3,6 +3,13 @@ main = "worker/index.js"
 compatibility_date = "2026-01-01"
 workers_dev = true
 
+# Figure Radar is also answered on the site's own domain, so the page talks to its own origin: no cross-site request,
+# and it keeps working on networks where *.workers.dev is not reachable. Only /radar/* is routed here.
+routes = [
+  { pattern = "financeratecalc.com/radar/*", zone_name = "financeratecalc.com" },
+  { pattern = "www.financeratecalc.com/radar/*", zone_name = "financeratecalc.com" }
+]
+
 # One small store, three uses, each under its own key prefix:
 #   (license hashes)  prepaid screening credits: sha256(license key) -> counters. No LEI list, no result, no customer data.
 #   mq:               the public misquote ledger.
