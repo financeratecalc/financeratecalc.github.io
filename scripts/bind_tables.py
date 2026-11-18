@@ -27,7 +27,8 @@ REC = re.compile(r"⟦FRC:[^⟧]*⟧")
 NOTE = re.compile(r'\n?<p class="frc-table-source"[\s\S]*?</p>')
 THRESH = 0.95
 # pages rewritten from their data by a builder that compares its own output byte for byte: bound in the manifest, not in the page
-GENERATED = {"official-figures.html", "revision-ledger.html", "fha-denial-reasons-by-lender.html"}
+GENERATED = {"official-figures.html", "revision-ledger.html", "fha-denial-reasons-by-lender.html",
+             "conventional-loan-denial-rates-2025.html", "va-loan-denial-rates-2025.html", "usda-loan-denial-rates-2025.html", "where-fha-applications-end.html"}
 ST = {"alabama": "al", "alaska": "ak", "arizona": "az", "arkansas": "ar", "california": "ca", "colorado": "co", "connecticut": "ct", "delaware": "de", "district of columbia": "dc",
       "florida": "fl", "georgia": "ga", "hawaii": "hi", "idaho": "id", "illinois": "il", "indiana": "in", "iowa": "ia", "kansas": "ks", "kentucky": "ky", "louisiana": "la", "maine": "me",
       "maryland": "md", "massachusetts": "ma", "michigan": "mi", "minnesota": "mn", "mississippi": "ms", "missouri": "mo", "montana": "mt", "nebraska": "ne", "nevada": "nv",
@@ -212,7 +213,19 @@ def main():
                 report.append({"page": f, "source": None, "best_candidate": best, "rows": len(rows), "numbers": n_nums, "rows_found": round(share, 3)})
         if changed and not check:
             open(f, "w", encoding="utf-8").write("".join(parts) + s[pos:])
-    if check:
+    if check:   # tables bound in the manifest only (builder-generated pages) are re-tested against the manifest
+        man = json.load(open("eval/table-binding.json", encoding="utf-8")) if os.path.exists("eval/table-binding.json") else {"tables": []}
+        want = {}
+        for t in man["tables"]:
+            if t.get("source") and t.get("written_in_page") is False:
+                want.setdefault(t["page"], []).append(t)
+        for f, ts in want.items():
+            s = open(f, encoding="utf-8", errors="ignore").read()
+            tabs = [table_rows(m.group(0)) for m in TABLE.finditer(s)]
+            for t in ts:
+                ok = any(len(rows) == t["rows"] and src.get(t["source"]) and sum(row_found(l, n, src[t["source"]]) for l, n in rows) / len(rows) >= THRESH for rows in tabs)
+                if not ok:
+                    bad.append((f, t["source"], "manifest-bound table no longer matches"))
         print("bound tables:", "every one still matches its source" if not bad else f"{len(bad)} no longer match, e.g. {bad[:4]}")
         sys.exit(1 if bad else 0)
     out = {"what": "Data tables on live pages and the published source each one's rows were found in. A row is found when one record of the source carries the row's name and every number printed in the row. A table is bound at 95% of rows; bound tables carry the source path and its SHA-256.",
