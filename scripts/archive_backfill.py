@@ -88,8 +88,10 @@ MONS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "n
 
 
 def period_from_name(url):
-    m = re.search(r"(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*[ _-]?((?:19|20)\d{2})", urllib.parse.unquote(url).rsplit("/", 1)[-1].replace("id=", " ").lower())
-    return f"{m.group(2)}-{MONS.index(m.group(1)) + 1:02d}" if m else None
+    # the month must stand directly before the year: "FHAPRODREPFEB2014" holds the letters "apr" (fhAPRod) long before "feb"
+    m = re.search(r"(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)[ _-]?((?:19|20)\d{2})",
+                  urllib.parse.unquote(url).rsplit("/", 1)[-1].replace("id=", " ").lower())
+    return f"{m.group(2)}-{MONS.index(m.group(1)[:3]) + 1:02d}" if m else None
 
 
 def read_fhaprod(pdf):
@@ -144,7 +146,7 @@ def run_fhaprod(caps, summary):
     json.dump({"what": "Every edition of HUD's FHA Single Family Production Report that the Internet Archive holds and that could be read: Table 4, the month and the prior month as restated. Read, not computed.",
                "source": "hud-fhaprod", "editions": [editions[p] for p in order]}, open(os.path.join(ROOT, "data", "vintage", "hud-fhaprod-editions.json"), "w", encoding="utf-8"), indent=1)
     nxt = lambda p: f"{int(p[:4]) + (p[5:] == '12')}-{(int(p[5:]) % 12) + 1:02d}"
-    changes, stats = [], {}
+    changes, stats, suspect = [], {}, []
     for p in order:
         q = nxt(p)
         if q not in editions:
@@ -154,6 +156,8 @@ def run_fhaprod(caps, summary):
                 continue
             b = editions[q]["prior_month_as_restated"][fid]
             s = stats.setdefault(fid, {"comparisons": 0, "changed": 0, "up": 0, "down": 0, "sum_change": 0.0, "sum_abs_change": 0.0, "largest": None})
+            if fid.endswith("-count") and a and abs(b - a) / a > 0.05:   # more likely two different months than a revision: listed, not counted
+                suspect.append({"figure": fid, "month": p, "in_its_edition": a, "in_the_next": b, "editions": [editions[p]["url"], editions[q]["url"]]}); continue
             s["comparisons"] += 1
             if a != b:
                 s["changed"] += 1; s["up" if b > a else "down"] += 1; s["sum_change"] += b - a; s["sum_abs_change"] += abs(b - a)
@@ -168,6 +172,7 @@ def run_fhaprod(caps, summary):
         s["sum_change"] = round(s["sum_change"], 4); s["sum_abs_change"] = round(s["sum_abs_change"], 4)
     summary.update({"editions_read": len(order), "first_edition": order[0] if order else None, "last_edition": order[-1] if order else None,
                     "consecutive_pairs": sum(1 for p in order if nxt(p) in editions), "unread": unread, "by_figure": stats,
+                    "set_aside_as_probably_two_different_months": suspect,
                     "reading": "comparisons = a month's figure in its own edition against the same month as restated in the next month's edition (Table 4 prints both). Only consecutive editions are compared."})
     json.dump(summary, open(os.path.join(ROOT, "eval", "vintage", "hud-fhaprod-summary.json"), "w", encoding="utf-8"), indent=1)
     json.dump({"what": "Every figure the next edition restated with a different value.", "changes": changes}, open(os.path.join(ROOT, "eval", "vintage", "hud-fhaprod-revisions.json"), "w", encoding="utf-8"), indent=1)
@@ -248,6 +253,8 @@ def main():
             continue
         s["months_seen_in_two_or_more_editions"] += 1
         for (pa, a), (pb, b) in zip(seq, seq[1:]):
+            if fid.endswith("-count") and a and abs(b - a) / a > 0.05:   # more likely two different months than a revision: listed, not counted
+                suspect.append({"figure": fid, "month": p, "in_its_edition": a, "in_the_next": b, "editions": [editions[p]["url"], editions[q]["url"]]}); continue
             s["comparisons"] += 1
             if a != b:
                 s["changed"] += 1; s["up" if b > a else "down"] += 1
@@ -267,6 +274,7 @@ def main():
                                                  if order and order[0] <= f"{y}-{mo:02d}" <= order[-1] and f"{y}-{mo:02d}" not in editions],
                     "editions_reissued_under_the_same_name": sorted(p for p in order if editions[p].get("reissues")),
                     "unread": unread, "by_figure": stats,
+                    "set_aside_as_probably_two_different_months": suspect,
                     "reading": "comparisons = a month's value in one edition against the same month in the next edition read (consecutive editions when none is missing). "
                                "first_to_last = the value in the month's own edition against its value in the last edition that prints it. A gap in the editions read makes a change "
                                "datable only to the interval between the two editions compared."})
