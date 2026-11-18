@@ -84,6 +84,97 @@ def read_lpt(pdf):
     return out, None
 
 
+MONS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+
+
+def period_from_name(url):
+    m = re.search(r"(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*[ _-]?((?:19|20)\d{2})", urllib.parse.unquote(url).rsplit("/", 1)[-1].replace("id=", " ").lower())
+    return f"{m.group(2)}-{MONS.index(m.group(1)) + 1:02d}" if m else None
+
+
+def read_fhaprod(pdf):
+    """({figure: (this month, prior month as restated)}, None) or (None, reason). Table 4 prints the month and the month before it."""
+    try:
+        lines = [re.sub(r"\s+", " ", ln).strip() for ln in R.text_of(pdf).splitlines()]
+    except Exception as e:
+        return None, f"{type(e).__name__}: {str(e)[:160]}"
+    out = {}
+    for fid, (table, rx, col, unit, kind, desc) in R.SOURCES["hud-fhaprod"]["cells"].items():
+        if table != "Table 4" or kind != "month" or col != 0:
+            continue
+        hits = {m.group(0): m for ln in lines for m in [re.match(rx, ln)] if m}
+        if len(hits) != 1:
+            continue
+        m = next(iter(hits.values()))
+        if m.lastindex and m.lastindex >= 2:
+            out[fid] = (R.num(m.group(1)), R.num(m.group(2)))
+    if "purchase-count" not in out or "refinance-count" not in out:
+        return None, "purchase and refinance loan-count rows not found once each (the layout of this edition differs)"
+    for j in (0, 1):   # the printed purchase share must follow from the two counts, or the columns are not what is assumed
+        pc, rc = out["purchase-count"][j], out["refinance-count"][j]
+        if "purchase-share-pct" in out and pc + rc and abs(100 * pc / (pc + rc) - out["purchase-share-pct"][j]) > 0.06:
+            return None, f"column {j + 1}: the printed purchase share does not follow from the two counts ({pc}, {rc}, {out['purchase-share-pct'][j]})"
+    return out, None
+
+
+def run_fhaprod(caps, summary):
+    editions, unread, tmp = {}, [], tempfile.mkdtemp()
+    for u in sorted(caps):
+        want = period_from_name(u)
+        if want and want in editions:
+            continue   # the same edition filed under another folder
+        for ts, orig in caps[u][:2]:
+            try:
+                data = get(f"http://web.archive.org/web/{ts}id_/{orig}")
+            except Exception as e:
+                unread.append({"url": orig, "capture": ts, "reason": f"download failed: {type(e).__name__}"}); continue
+            if data[:4] != b"%PDF":
+                unread.append({"url": orig, "capture": ts, "reason": "not a PDF"}); continue
+            p = os.path.join(tmp, "e.pdf"); open(p, "wb").write(data)
+            vals, why = read_fhaprod(p)
+            if vals is None:
+                unread.append({"url": orig, "capture": ts, "reason": why}); continue
+            if not want:
+                unread.append({"url": orig, "capture": ts, "reason": "the file name carries no month and year"}); continue
+            editions.setdefault(want, {"period": want, "url": orig, "capture": ts, "archive_url": f"https://web.archive.org/web/{ts}/{orig}", "sha256": hashlib.sha256(data).hexdigest(),
+                                       "this_month": {k: v[0] for k, v in vals.items()}, "prior_month_as_restated": {k: v[1] for k, v in vals.items()}})
+            time.sleep(1.5); break
+    order = sorted(editions)
+    os.makedirs(os.path.join(ROOT, "data", "vintage"), exist_ok=True)
+    json.dump({"what": "Every edition of HUD's FHA Single Family Production Report that the Internet Archive holds and that could be read: Table 4, the month and the prior month as restated. Read, not computed.",
+               "source": "hud-fhaprod", "editions": [editions[p] for p in order]}, open(os.path.join(ROOT, "data", "vintage", "hud-fhaprod-editions.json"), "w", encoding="utf-8"), indent=1)
+    nxt = lambda p: f"{int(p[:4]) + (p[5:] == '12')}-{(int(p[5:]) % 12) + 1:02d}"
+    changes, stats = [], {}
+    for p in order:
+        q = nxt(p)
+        if q not in editions:
+            continue
+        for fid, a in editions[p]["this_month"].items():
+            if fid not in editions[q]["prior_month_as_restated"]:
+                continue
+            b = editions[q]["prior_month_as_restated"][fid]
+            s = stats.setdefault(fid, {"comparisons": 0, "changed": 0, "up": 0, "down": 0, "sum_change": 0.0, "sum_abs_change": 0.0, "largest": None})
+            s["comparisons"] += 1
+            if a != b:
+                s["changed"] += 1; s["up" if b > a else "down"] += 1; s["sum_change"] += b - a; s["sum_abs_change"] += abs(b - a)
+                c = {"figure": fid, "month": p, "first_printed": a, "in_edition": p, "restated_as": b, "in_edition_after": q, "difference": round(b - a, 4),
+                     "relative_pct": round(100 * (b - a) / a, 4) if a else None}
+                changes.append(c)
+                if s["largest"] is None or abs(c["difference"]) > abs(s["largest"]["difference"]):
+                    s["largest"] = c
+    for s in stats.values():
+        s["share_changed_pct"] = round(100 * s["changed"] / s["comparisons"], 1) if s["comparisons"] else None
+        s["mean_change_when_changed"] = round(s["sum_change"] / s["changed"], 4) if s["changed"] else None
+        s["sum_change"] = round(s["sum_change"], 4); s["sum_abs_change"] = round(s["sum_abs_change"], 4)
+    summary.update({"editions_read": len(order), "first_edition": order[0] if order else None, "last_edition": order[-1] if order else None,
+                    "consecutive_pairs": sum(1 for p in order if nxt(p) in editions), "unread": unread, "by_figure": stats,
+                    "reading": "comparisons = a month's figure in its own edition against the same month as restated in the next month's edition (Table 4 prints both). Only consecutive editions are compared."})
+    json.dump(summary, open(os.path.join(ROOT, "eval", "vintage", "hud-fhaprod-summary.json"), "w", encoding="utf-8"), indent=1)
+    json.dump({"what": "Every figure the next edition restated with a different value.", "changes": changes}, open(os.path.join(ROOT, "eval", "vintage", "hud-fhaprod-revisions.json"), "w", encoding="utf-8"), indent=1)
+    print(json.dumps({k: v for k, v in summary.items() if k not in ("unread", "queries")}, indent=1)[:7000])
+    print("unread:", len(unread), collections.Counter(re.sub(r"\(.*", "", x["reason"])[:70] for x in unread).most_common(6))
+
+
 def main():
     source = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else "hud-lpt"
     list_only = "--list" in sys.argv
@@ -95,6 +186,17 @@ def main():
                "captures_with_distinct_content": sum(len(c) for c in caps.values()), "files_whose_content_changed_under_the_same_name": len(multi),
                "earliest_capture": stamps[0][:8] if stamps else None, "latest_capture": stamps[-1][:8] if stamps else None}
     os.makedirs(os.path.join(ROOT, "eval", "vintage"), exist_ok=True)
+    # other names the same report may have been filed under (listed only, so a gap in the editions can be explained)
+    if source == "hud-lpt":
+        try:
+            u = "http://web.archive.org/cdx/search/cdx?" + urllib.parse.urlencode({"url": "hud.gov/sites/dfiles/Housing/documents/", "matchType": "prefix", "output": "json", "collapse": "urlkey",
+                                                                                 "filter": ["statuscode:200", "urlkey:.*(lpt|loanperf|loan_perf|performance).*"], "fl": "original,timestamp", "limit": "3000"}, doseq=True)
+            rows = json.loads(get(u) or b"[]")[1:]
+            summary["other_candidate_names"] = sorted({r[0].rsplit("/", 1)[-1] for r in rows if not re.search(r"fhalpt", r[0], re.I)})[:200]
+        except Exception as e:
+            summary["other_candidate_names"] = f"query failed: {type(e).__name__}"
+    if source == "hud-fhaprod" and not list_only and urls:
+        return run_fhaprod(caps, summary)
     if list_only or source != "hud-lpt" or not urls:
         summary["files"] = [{"url": u, "captures": [ts for ts, _ in caps[u]]} for u in urls][:600]
         summary["note"] = "Availability only." if list_only or not urls else "Reading is implemented for hud-lpt; this run lists what the Archive holds for the other reports."
@@ -105,6 +207,8 @@ def main():
     editions, unread = {}, []   # period -> edition record (first capture wins; later distinct contents kept as 'reissues')
     tmp = tempfile.mkdtemp()
     for u in urls:
+        if period_from_name(u) in editions and len(caps[u]) == 1:
+            continue   # the same edition filed under another folder
         for j, (ts, orig) in enumerate(caps[u]):
             try:
                 data = get(f"http://web.archive.org/web/{ts}id_/{orig}")
