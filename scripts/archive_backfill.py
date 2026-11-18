@@ -253,8 +253,6 @@ def main():
             continue
         s["months_seen_in_two_or_more_editions"] += 1
         for (pa, a), (pb, b) in zip(seq, seq[1:]):
-            if fid.endswith("-count") and a and abs(b - a) / a > 0.05:   # more likely two different months than a revision: listed, not counted
-                suspect.append({"figure": fid, "month": p, "in_its_edition": a, "in_the_next": b, "editions": [editions[p]["url"], editions[q]["url"]]}); continue
             s["comparisons"] += 1
             if a != b:
                 s["changed"] += 1; s["up" if b > a else "down"] += 1
