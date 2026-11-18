@@ -283,6 +283,9 @@ def main():
             f"corrections history. Computed from the federal HMDA file (FHA {nat['rate_pct']:.1f}% of {nat['apps']:,} decisions denied in 2025) or restated as printed "
             f"from official reports. Free, CC BY 4.0, no lender funding.")
 
+    # the receipt field types real receipts as examples (assets/typed-placeholder.js); read from the claim documents so they verify today
+    typed = html.escape(json.dumps([J(f"claims/{c}.json")["receipt"] for c in ("national-fha-denial-rate-2025", "state-fl-2025", "state-tx-2025", "state-oh-2025")
+                                    if os.path.exists(os.path.join(ROOT, "claims", c + ".json"))], ensure_ascii=False), quote=True)
     page = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -322,7 +325,7 @@ def main():
 <main id="main">
 <form class="check" action="/verify.html" method="get">
 <label for="r">Check a receipt</label>
-<div class="row"><input id="r" name="r" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="⟦FRC:…⟧ paste a receipt from an AI answer or an article" required>
+<div class="row"><input id="r" name="r" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="⟦FRC:…⟧ paste a receipt from an AI answer or an article" data-typed="{typed}" required>
 <button type="submit">Check receipt</button></div>
 <small>The answer is one of: current, superseded by a correction, or not ours. Got a sentence instead of a receipt? <a href="/check-answer.html">Check an AI answer</a>.</small>
 </form>
@@ -384,6 +387,7 @@ def main():
 </div>
 </main>
 <script>{JS}</script>
+<script src="/assets/typed-placeholder.js" defer></script>
 </body>
 </html>
 '''

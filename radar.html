@@ -52,6 +52,12 @@ button.ghost{background:transparent;color:#C8A84B;border:1px solid #C8A84B}
 </div>
 <div class="row"><div><button id="on">Turn on notifications on this device</button></div><div><button id="test" class="ghost" disabled>Send me a test</button></div><div><button id="off" class="ghost" disabled>Turn off</button></div></div>
 <div id="state" role="status">Checking this device&hellip;</div>
+<div class="card small" id="blocked" style="display:none"><b style="color:#f5f2ea">Your browser is blocking notifications from this site.</b> It will not ask again until you allow it:<br>
+&bull; <b>Chrome on Android:</b> tap the icon to the left of the address, then Permissions, then Notifications, and choose Allow. Reload this page.<br>
+&bull; <b>Chrome or Edge on a computer:</b> click the icon to the left of the address, set Notifications to Allow, reload.<br>
+&bull; <b>Firefox:</b> click the padlock, clear the blocked Notifications permission, reload.<br>
+&bull; <b>iPhone or iPad:</b> Settings, Notifications, Figure Radar, Allow Notifications.<br>
+If the browser itself has notifications turned off in the phone&rsquo;s settings, turn those on first.</div>
 <div class="small" id="ios" style="display:none">On an iPhone or iPad: tap the share button, choose &ldquo;Add to Home Screen&rdquo;, open the page from the new icon, then turn notifications on. Apple allows web notifications only for pages added that way.</div>
 
 <h2>What it has caught so far</h2>
@@ -82,7 +88,8 @@ button.ghost{background:transparent;color:#C8A84B;border:1px solid #C8A84B}
   var reg;
   navigator.serviceWorker.register("/sw.js").then(function (r) { reg = r; return r.pushManager.getSubscription(); }).then(function (sub) {
     if (sub) { say("Notifications are on for this device."); off.disabled = false; test.disabled = false; on.textContent = "Save my choice of reports"; }
-    else say(Notification.permission === "denied" ? "Notifications are blocked for this site in your browser settings." : "Notifications are off on this device.");
+    else if (Notification.permission === "denied") { say("Notifications are blocked for this site in your browser settings."); $("blocked").style.display = "block"; }
+    else say("Notifications are off on this device.");
   }).catch(function () { say("The notification worker could not be installed in this browser."); on.disabled = true; });
   on.addEventListener("click", function () {
     var src = picked(); if (!src.length) { say("Tick at least one report."); return; }
@@ -95,7 +102,7 @@ button.ghost{background:transparent;color:#C8A84B;border:1px solid #C8A84B}
     }).then(function (sub) { return post("/radar/subscribe", { subscription: sub.toJSON(), sources: src }); }).then(function (r) {
       if (!r.ok) throw new Error(r.error || "The server refused the subscription.");
       say("On. This device will be told about: " + r.sources.join(", ") + "."); off.disabled = false; test.disabled = false; on.textContent = "Save my choice of reports";
-    }).catch(function (e) { say(e.message || "That did not work."); });
+    }).catch(function (e) { say(e.message || "That did not work."); if (Notification.permission === "denied") $("blocked").style.display = "block"; });
   });
   test.addEventListener("click", function () {
     reg.pushManager.getSubscription().then(function (s) { return post("/radar/test", { endpoint: s.endpoint }); }).then(function (r) { say(r.ok ? "Test sent; it should arrive within a few seconds." : (r.error || "The push service did not accept the test.")); });
