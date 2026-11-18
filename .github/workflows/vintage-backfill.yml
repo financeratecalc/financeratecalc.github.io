@@ -1,0 +1,43 @@
+name: Vintage backfill (archived editions of an official report, from the Internet Archive)
+# Reads every edition of a report that the Internet Archive holds, with the same reader that restates new editions, and
+# compares each month across editions. No model is called and nothing is paid for. Results: data/vintage/ and eval/vintage/.
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "hud-lpt (read and compare) | hud-fhaprod | ginnie-iss (these two: availability list only for now)"
+        default: "hud-lpt"
+      mode:
+        description: "read = download and compare | list = only count what the Archive holds"
+        default: "read"
+permissions:
+  contents: write
+  issues: write
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Read the archived editions
+        run: |
+          set -o pipefail
+          sudo apt-get install -y -qq poppler-utils >/dev/null 2>&1 || true
+          pip install -q pypdf openpyxl
+          FLAG=""; [ "${{ github.event.inputs.mode }}" = "list" ] && FLAG="--list"
+          python3 scripts/archive_backfill.py "${{ github.event.inputs.source }}" $FLAG 2>&1 | tee /tmp/vintage.log
+      - name: Commit the result
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/vintage eval/vintage 2>/dev/null || true
+          git diff --cached --quiet || git commit -q -m "vintage backfill: ${{ github.event.inputs.source }} (${{ github.event.inputs.mode }}) [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
+      - name: Post the log as an issue (logs are not readable from the API)
+        if: always()
+        env: { GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        run: |
+          body=$(tail -c 14000 /tmp/vintage.log 2>/dev/null || echo "no log written")
+          gh issue create --title "vintage backfill ${{ github.event.inputs.source }} ${{ github.event.inputs.mode }} $(date -u +%Y-%m-%dT%H:%MZ): ${{ job.status }}" --body "$body" || true
