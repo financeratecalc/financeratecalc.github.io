@@ -46,11 +46,14 @@ def main():
         g = tot[group(f)]; g[0] += 1; g[1] += nums; g[2] += recs
     rows = [{"section": k, "pages": p, "numbers": n, "receipts": r, "receipted_pct": round(100 * r / n, 1) if n else None} for k, (p, n, r) in sorted(tot.items(), key=lambda kv: -kv[1][1])]
     P, N, R = (sum(v[i] for v in tot.values()) for i in range(3))
+    tb = json.load(open("eval/table-binding.json", encoding="utf-8")) if os.path.exists("eval/table-binding.json") else {}
+    bound = tb.get("numbers_in_bound_tables", 0)   # rows found, name and numbers together, in a published file with a SHA-256
     out = {"what": "Share of the figure-like numbers printed on this site that carry a receipt, by section. Rough count; see scripts/receipt_coverage.py for what it over- and under-counts.",
            "date": dt.date.today().isoformat(), "pages": P, "retired_notices_not_counted": retired, "numbers": N, "receipts": R, "receipted_pct": round(100 * R / N, 1),
-           "named_assumption_or_its_arithmetic": labelled, "neither_pct": round(100 * (N - R - labelled) / N, 1), "sections": rows}
+           "named_assumption_or_its_arithmetic": labelled, "in_tables_bound_to_a_hashed_data_file": bound,
+           "neither": N - R - labelled - bound, "neither_pct": round(100 * (N - R - labelled - bound) / N, 1), "sections": rows}
     json.dump(out, open("eval/receipt-coverage.json", "w", encoding="utf-8"), indent=1)
-    print(f"{P} live pages ({retired} retirement notices not counted), {N} numbers: {R} receipted ({out['receipted_pct']}%), {labelled} named assumptions or arithmetic, {out['neither_pct']}% neither")
+    print(f"{P} live pages ({retired} retirement notices not counted), {N} numbers: {R} receipted ({out['receipted_pct']}%), {labelled} named assumptions or arithmetic, {bound} in tables bound to a hashed data file, {out['neither']} neither ({out['neither_pct']}%)")
 
 
 if __name__ == "__main__":

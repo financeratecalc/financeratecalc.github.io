@@ -125,7 +125,7 @@ def family_pages():
             fam = "mortgage-city"
         if fam:
             out.append((f, fam))
-    out += [(f, "city/") for f in sorted(glob.glob("city/*.html"))] + [(f, "employer/") for f in sorted(glob.glob("employer/*.html"))]
+    out += [(f, "city/") for f in sorted(glob.glob("city/*.html")) if f != "city/index.html"] + [(f, "employer/") for f in sorted(glob.glob("employer/*.html"))]
     return out
 
 
