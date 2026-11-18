@@ -3,8 +3,14 @@ main = "worker/index.js"
 compatibility_date = "2026-01-01"
 workers_dev = true
 
-# Prepaid screening credits. Stores only sha256(license key) -> counters.
-# No LEI list, no result, no customer data.
+# One small store, three uses, each under its own key prefix:
+#   (license hashes)  prepaid screening credits: sha256(license key) -> counters. No LEI list, no result, no customer data.
+#   mq:               the public misquote ledger.
+#   radar:            Figure Radar: a browser push address and the reports chosen, per device; the signing key; the event log.
 [[kv_namespaces]]
 binding = "CREDITS"
 id = "4f804c8639104c2cab42433d2ae061db"
+
+# Figure Radar: once an hour, compare the restated editions and the revision ledger with what was last announced.
+[triggers]
+crons = ["23 * * * *"]

@@ -311,7 +311,7 @@ def main():
 <a class="skip" href="#main">Skip to content</a>
 <div class="hero">
 <div class="bar"><a class="mark" href="/">Finance<i>Rate</i>Calc</a>
-<nav aria-label="Site"><a href="/verify.html">Check a receipt</a><a href="/official-figures.html">Official figures</a><a href="/fha-denial-rates-top-100.html">FHA data</a><a href="/corrections.html">Corrections</a><a href="/mcp-server.html">For AI agents</a><a href="/site-index.html">Index</a></nav></div>
+<nav aria-label="Site"><a href="/verify.html">Check a receipt</a><a href="/official-figures.html">Official figures</a><a href="/radar.html">Figure Radar</a><a href="/fha-denial-rates-top-100.html">FHA data</a><a href="/corrections.html">Corrections</a><a href="/mcp-server.html">For AI agents</a><a href="/site-index.html">Index</a></nav></div>
 <div class="field" aria-hidden="false">{field_html}</div>
 <div class="hero-in">
 <h1>Numbers in the dark. Receipts bring the light.</h1>

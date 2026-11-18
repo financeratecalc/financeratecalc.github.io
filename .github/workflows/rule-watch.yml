@@ -60,6 +60,8 @@ jobs:
         run: node scripts/check_rule_du_score.mjs
       - name: No sponsored, partner or affiliate link, no commission line, no lender-routing link anywhere on the site
         run: python3 scripts/remove_affiliate.py --check
+      - name: Figure Radar (subscribe, silent first run, one signed empty push per event, cleanup), through the server code run locally
+        run: node scripts/check_radar.mjs
       - name: Every bound table still matches its data file, row by row
         run: python3 scripts/bind_tables.py --check
       - name: Old template layer stays converted (no unsourced market figures, routing links or verdicts return)

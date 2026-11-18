@@ -1,0 +1,110 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Figure Radar: be told when an official report changes a number | FinanceRateCalc</title>
+<meta name="description" content="A notification on your phone or computer when HUD, Ginnie Mae or the SBA prints a new edition of a report, or changes a figure it had already printed. No e-mail address, no account.">
+<link rel="canonical" href="https://financeratecalc.com/radar.html">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#08090c">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@300;400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding:40px 20px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:30px;color:#f5f2ea;line-height:1.18;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:20px;color:#f5f2ea;margin:34px 0 10px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B}
+.card{border:1px solid #23262e;border-radius:12px;padding:16px 18px;background:#0d0f14;margin:12px 0;font-size:15px}
+.mono{font-family:'DM Mono',monospace;font-size:12.5px}
+.pill{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;padding:2px 8px;border-radius:20px;margin-right:6px}
+.p-pass{background:rgba(95,180,162,.14);color:#5fb4a2}.p-q{background:rgba(200,168,75,.14);color:#C8A84B}.p-o{background:rgba(201,111,111,.14);color:#c96f6f}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{border:1px solid #23262e;padding:9px 10px;text-align:left}th{background:#0d0f14;font-family:'DM Mono',monospace;font-size:11px;color:#C8A84B}
+.limit{border:1px solid #c96f6f;border-radius:12px;padding:15px 18px;color:#cbc7bb;font-size:14px;margin:18px 0}
+input,textarea,select{width:100%;box-sizing:border-box;background:#0d0f14;border:1px solid #23262e;border-radius:8px;color:#e8e4da;padding:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin:6px 0 12px}
+button{background:#C8A84B;color:#000;border:0;border-radius:9px;padding:12px 18px;font-weight:800;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif}
+label{font-size:13px;color:#a5a094}
+.small{font-size:13px;color:#a5a094}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>div{flex:1;min-width:150px}
+#card{background:#fff;color:#111;border-radius:12px;padding:22px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin:16px 0}
+#card .txt{flex:1;min-width:220px}#card .fig{font-family:'Fraunces',Georgia,serif;font-size:46px;line-height:1;color:#111}
+#card .sen{font-size:15px;line-height:1.45;margin-top:10px;color:#222}#card .cap{font-size:11.5px;color:#555;margin-top:10px}
+#card canvas{width:150px;height:150px;image-rendering:pixelated}
+button.ghost{background:transparent;color:#C8A84B;border:1px solid #C8A84B}
+</style>
+<style>
+.pick{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid #23262e}.pick:first-of-type{border-top:0}
+.pick input{width:20px;height:20px;margin:3px 0 0;flex:none;accent-color:#C8A84B}.pick b{color:#f5f2ea}.pick span{display:block;font-size:13px;color:#a5a094}
+.ev{border-left:3px solid #C8A84B;padding:6px 0 6px 14px;margin:14px 0}.ev.rev{border-left-color:#c96f6f}.ev b{color:#f5f2ea}.ev .when{font-family:'DM Mono',monospace;font-size:11px;color:#a5a094}
+#state{font-size:14px;margin:12px 0;color:#cbc7bb}button[disabled]{opacity:.45;cursor:default}
+</style></head>
+<body>
+<nav data-frc-nav="1" aria-label="Site" style="font-family:system-ui,sans-serif;font-size:12.5px;padding:8px 16px;background:#0b0d12;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:14px;flex-wrap:wrap;align-items:center"><a href="/" style="color:#C8A84B;font-weight:700;text-decoration:none">FinanceRateCalc</a><a href="/fha-denial-rates-top-100.html" style="color:rgba(255,255,255,.7);text-decoration:none">Lenders</a><a href="/fha-denial-rates-by-state.html" style="color:rgba(255,255,255,.7);text-decoration:none">States</a><a href="/metro-gaps.html" style="color:rgba(255,255,255,.7);text-decoration:none">Metros</a><a href="/check-answer.html" style="color:rgba(255,255,255,.7);text-decoration:none">Check an answer</a><a href="/corrections.html" style="color:rgba(255,255,255,.7);text-decoration:none">Corrections</a><a href="/about.html" style="color:rgba(255,255,255,.7);text-decoration:none">About</a></nav>
+<div class="wrap">
+<div class="kicker">Figure Radar &middot; free &middot; no e-mail, no account</div>
+<h1>Be told when an official report changes a number</h1>
+<p class="sub">Agencies print a figure one month and sometimes print a different value for the same month in the next edition, without a note. If you quoted the first value, nothing tells you. This does: choose the reports you rely on, and this device gets a notification when one of them prints a new edition or changes a figure it had already printed.</p>
+
+<div class="card">
+<label class="pick"><input type="checkbox" value="hud-lpt" checked><div><b>HUD &middot; FHA loan performance</b><span>Serious delinquency rate, 90-day rate, loans in foreclosure, loans insured. Monthly.</span></div></label>
+<label class="pick"><input type="checkbox" value="hud-fhaprod" checked><div><b>HUD &middot; FHA production</b><span>Loans endorsed, purchase and refinance counts, first-time buyer share. Monthly.</span></div></label>
+<label class="pick"><input type="checkbox" value="ginnie-iss"><div><b>Ginnie Mae &middot; issuance summary</b><span>Mortgage-backed securities issued, Ginnie Mae I and II. Monthly.</span></div></label>
+<label class="pick"><input type="checkbox" value="sba-7a504"><div><b>SBA &middot; 7(a) and 504 activity</b><span>Loans approved and dollars approved. Monthly.</span></div></label>
+</div>
+<div class="row"><div><button id="on">Turn on notifications on this device</button></div><div><button id="test" class="ghost" disabled>Send me a test</button></div><div><button id="off" class="ghost" disabled>Turn off</button></div></div>
+<div id="state" role="status">Checking this device&hellip;</div>
+<div class="small" id="ios" style="display:none">On an iPhone or iPad: tap the share button, choose &ldquo;Add to Home Screen&rdquo;, open the page from the new icon, then turn notifications on. Apple allows web notifications only for pages added that way.</div>
+
+<h2>What it has caught so far</h2>
+<div id="events" class="small">Loading&hellip;</div>
+
+<h2>What is stored</h2>
+<p class="sub">For each device: the push address your browser hands out, the reports you ticked, and the date. No e-mail address, no name, no IP address, no cookie. The notification itself carries no content; when it arrives, the page asks the server what happened and shows it. Turning it off deletes the entry. How many devices are subscribed is public: <a href="https://frc-mcp.ziyetis.workers.dev/radar/status">counts only</a>. The same events are readable by machines at <a href="https://frc-mcp.ziyetis.workers.dev/radar/events">/radar/events</a> and in the <a href="/revision-ledger.html">revision ledger</a>.</p>
+<div class="limit">A notification says that a report was restated here and what changed between two editions. It does not say why the agency changed a figure, and it is not advice about any loan. The check runs once an hour; an agency can publish and this page can lag by that long, or by longer if the agency moves a file.</div>
+</div>
+<script>
+(function () {
+  var API = "https://frc-mcp.ziyetis.workers.dev", $ = function (i) { return document.getElementById(i); };
+  var state = $("state"), on = $("on"), off = $("off"), test = $("test");
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function say(t) { state.textContent = t; }
+  function picked() { return [].slice.call(document.querySelectorAll(".pick input:checked")).map(function (x) { return x.value; }); }
+  function key(b64) { var p = "=".repeat((4 - b64.length % 4) % 4), raw = atob((b64 + p).replace(/-/g, "+").replace(/_/g, "/")), a = new Uint8Array(raw.length); for (var i = 0; i < raw.length; i++) a[i] = raw.charCodeAt(i); return a; }
+  function post(p, body) { return fetch(API + p, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }); }
+  fetch(API + "/radar/events").then(function (r) { return r.json(); }).then(function (d) {
+    var ev = (d.events || []).filter(function (e) { return e.kind === "revision" || e.at; });
+    $("events").innerHTML = ev.length ? ev.map(function (e) { return '<div class="ev ' + (e.kind === "revision" ? "rev" : "") + '"><b>' + esc(e.title) + '</b><br>' + esc(e.body) + '<div class="when">' + (e.at ? esc(e.at.slice(0, 10)) : "on file before the radar started") + '</div></div>'; }).join("") : "Nothing yet.";
+  }).catch(function () { $("events").textContent = "The event list could not be loaded just now; the revision ledger has the same entries."; });
+  var iosLike = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.navigator.standalone;
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+    on.disabled = true; if (iosLike) $("ios").style.display = "block";
+    say(iosLike ? "This browser needs the page added to the Home Screen first (see below)." : "This browser does not support web notifications. The revision ledger and /radar/events carry the same information."); return;
+  }
+  var reg;
+  navigator.serviceWorker.register("/sw.js").then(function (r) { reg = r; return r.pushManager.getSubscription(); }).then(function (sub) {
+    if (sub) { say("Notifications are on for this device."); off.disabled = false; test.disabled = false; on.textContent = "Save my choice of reports"; }
+    else say(Notification.permission === "denied" ? "Notifications are blocked for this site in your browser settings." : "Notifications are off on this device.");
+  }).catch(function () { say("The notification worker could not be installed in this browser."); on.disabled = true; });
+  on.addEventListener("click", function () {
+    var src = picked(); if (!src.length) { say("Tick at least one report."); return; }
+    say("Asking your browser\u2026");
+    Notification.requestPermission().then(function (p) {
+      if (p !== "granted") throw new Error("Permission was not given; nothing was stored.");
+      return fetch(API + "/radar/key").then(function (r) { return r.json(); });
+    }).then(function (k) {
+      return reg.pushManager.getSubscription().then(function (s) { return s || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key(k.publicKey) }); });
+    }).then(function (sub) { return post("/radar/subscribe", { subscription: sub.toJSON(), sources: src }); }).then(function (r) {
+      if (!r.ok) throw new Error(r.error || "The server refused the subscription.");
+      say("On. This device will be told about: " + r.sources.join(", ") + "."); off.disabled = false; test.disabled = false; on.textContent = "Save my choice of reports";
+    }).catch(function (e) { say(e.message || "That did not work."); });
+  });
+  test.addEventListener("click", function () {
+    reg.pushManager.getSubscription().then(function (s) { return post("/radar/test", { endpoint: s.endpoint }); }).then(function (r) { say(r.ok ? "Test sent; it should arrive within a few seconds." : (r.error || "The push service did not accept the test.")); });
+  });
+  off.addEventListener("click", function () {
+    reg.pushManager.getSubscription().then(function (s) { if (!s) return; return post("/radar/unsubscribe", { endpoint: s.endpoint }).then(function () { return s.unsubscribe(); }); }).then(function () {
+      say("Off. The entry for this device was deleted."); off.disabled = true; test.disabled = true; on.textContent = "Turn on notifications on this device";
+    });
+  });
+})();
+</script>
+</body></html>

@@ -1174,7 +1174,7 @@ const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods
   "Access-Control-Allow-Headers": "Content-Type, Mcp-Session-Id, MCP-Protocol-Version, Authorization",
   "Access-Control-Expose-Headers": "Mcp-Session-Id" };
 const json = (obj, status = 200) => new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...CORS } });
-const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.56.0" };
+const SERVER_INFO = { name: "financeratecalc", title: "FinanceRateCalc mortgage evidence", version: "1.57.0" };
 const PROTOCOLS = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
 // 2026-07-28: every result carries resultType and the server identifies itself in _meta. Older clients ignore both.
 const rpc = (id, result) => ({ jsonrpc: "2.0", id, result: { resultType: "complete", ...result, _meta: { ...(result._meta || {}), "io.modelcontextprotocol/serverInfo": SERVER_INFO } } });
@@ -1398,10 +1398,120 @@ async function a2aAnswer(text, origin, a2aEnv) {
 }
 const rpcErr = (id, code, message) => ({ jsonrpc: "2.0", id, error: { code, message } });
 
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Figure Radar (v1.57.0): a browser notification when an official report prints a new edition or changes a figure it
+// had already printed. No e-mail and no account: what is stored is the browser's push address and the reports chosen.
+// The push carries no content; the page's service worker asks /radar/latest what happened. Keys live under "radar:".
+// The signing key is generated here on first use and never leaves the store.
+const RADAR_SOURCES = { "hud-fhaprod": "HUD FHA production report", "hud-lpt": "HUD FHA loan performance report", "ginnie-iss": "Ginnie Mae issuance summary", "sba-7a504": "SBA 7(a) and 504 activity report" };
+const PUSH_HOSTS = /(^|\.)(fcm\.googleapis\.com|push\.services\.mozilla\.com|notify\.windows\.com|push\.apple\.com)$/;
+const b64u = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+async function radarKeys(env) {
+  const have = await env.CREDITS.get("radar:vapid", "json");
+  if (have) return have;
+  const kp = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+  const rec = { publicKey: b64u(await crypto.subtle.exportKey("raw", kp.publicKey)), jwk: await crypto.subtle.exportKey("jwk", kp.privateKey), created: new Date().toISOString() };
+  await env.CREDITS.put("radar:vapid", JSON.stringify(rec));
+  return rec;
+}
+async function radarPush(env, endpoint) {
+  const keys = await radarKeys(env), u = new URL(endpoint);
+  const enc = (o) => b64u(new TextEncoder().encode(JSON.stringify(o)));
+  const unsigned = enc({ typ: "JWT", alg: "ES256" }) + "." + enc({ aud: u.origin, exp: Math.floor(Date.now() / 1000) + 12 * 3600, sub: BASE + "/radar.html" });
+  const key = await crypto.subtle.importKey("jwk", keys.jwk, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+  const sig = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, key, new TextEncoder().encode(unsigned));
+  const r = await fetch(endpoint, { method: "POST", headers: { TTL: "86400", Urgency: "normal", "Content-Length": "0", Authorization: `vapid t=${unsigned}.${b64u(sig)}, k=${keys.publicKey}` } });
+  return r.status;
+}
+const radarSubKey = async (endpoint) => "radar:sub:" + (await sha256Hex(endpoint)).slice(0, 32);
+async function radarSubs(env) {
+  const out = []; let cursor;
+  do {
+    const page = await env.CREDITS.list({ prefix: "radar:sub:", cursor });
+    for (const k of page.keys) { const v = await env.CREDITS.get(k.name, "json"); if (v) out.push({ key: k.name, ...v }); }
+    cursor = page.list_complete ? null : page.cursor;
+  } while (cursor);
+  return out;
+}
+function radarEventsFrom(index, revisions) {
+  // every event has a stable id, so the same edition or revision is never announced twice
+  const ev = [];
+  for (const [src, periods] of Object.entries(index.editions || {})) for (const per of periods)
+    ev.push({ id: `edition:${src}:${per}`, source: src, kind: "edition", period: per, title: `${RADAR_SOURCES[src] || src}: ${per} edition restated`, body: "A new edition is on file; every figure in it carries a receipt.", url: BASE + "/official-figures.html" });
+  for (const it of revisions.items || []) {
+    const src = /hud-lpt/.test(it.claim_url || "") ? "hud-lpt" : /hud-fhaprod/.test(it.claim_url || "") ? "hud-fhaprod" : /ginnie/.test(it.claim_url || "") ? "ginnie-iss" : /sba/.test(it.claim_url || "") ? "sba-7a504" : "other";
+    ev.push({ id: `revision:${src}:${it.figure}:${it.period}`, source: src, kind: "revision", period: it.period,
+      title: `${RADAR_SOURCES[src] || it.source}: a printed figure changed`, body: `${it.description}, ${it.period}: first printed ${it.first_printed} (${it.first_printed_in}), now ${it.restated_as} (${it.restated_in}). Not marked as revised.`, url: BASE + "/revision-ledger.html" });
+  }
+  return ev;
+}
+async function radarTick(env) {
+  if (!env || !env.CREDITS) return { ok: false };
+  const [index, revisions] = await Promise.all([getJSON("/data/official/index.json"), getJSON("/data/revisions.json")]);
+  const all = radarEventsFrom(index, revisions);
+  const state = await env.CREDITS.get("radar:state", "json");
+  const seen = new Set(state ? state.seen : []);
+  const fresh = state ? all.filter(e => !seen.has(e.id)) : [];   // first run: record what exists, announce nothing
+  if (state && !fresh.length) return { ok: true, fresh: 0 };
+  const now = new Date().toISOString();
+  const log = ((state && state.log) || []).concat((state ? fresh : all.filter(e => e.kind === "revision")).map(e => ({ ...e, at: state ? now : null }))).slice(-40);
+  await env.CREDITS.put("radar:state", JSON.stringify({ seen: all.map(e => e.id), log, updated: now }));
+  let sent = 0, gone = 0;
+  if (fresh.length) {
+    const touched = new Set(fresh.map(e => e.source));
+    for (const sub of await radarSubs(env)) {
+      if (!sub.sources.some(x => touched.has(x))) continue;
+      const st = await radarPush(env, sub.endpoint).catch(() => 0);
+      if (st === 404 || st === 410) { await env.CREDITS.delete(sub.key); gone++; } else if (st >= 200 && st < 300) sent++;
+    }
+  }
+  return { ok: true, fresh: fresh.length, sent, gone };
+}
+async function radarHTTP(request, env, path) {
+  if (!env || !env.CREDITS) return json({ error: "store unavailable" }, 503);
+  const url = new URL(request.url);
+  if (path === "/radar/key") return json({ publicKey: (await radarKeys(env)).publicKey, sources: RADAR_SOURCES });
+  if (path === "/radar/events") { const st = await env.CREDITS.get("radar:state", "json"); return json({ events: ((st && st.log) || []).slice().reverse(), updated: st && st.updated, note: "Newest first. Entries without a time were already on file when the radar started." }); }
+  if (path === "/radar/status") { const subs = await radarSubs(env); const by = {}; for (const s of subs) for (const x of s.sources) by[x] = (by[x] || 0) + 1; return json({ devices: subs.length, by_report: by, stored_per_device: "push address, chosen reports, date; nothing else" }); }
+  if (path === "/radar/latest") {
+    const sub = await env.CREDITS.get("radar:sub:" + String(url.searchParams.get("e") || "").replace(/[^0-9a-f]/g, "").slice(0, 32), "json");
+    if (sub && sub.test_pending) { delete sub.test_pending; await env.CREDITS.put("radar:sub:" + url.searchParams.get("e").slice(0, 32), JSON.stringify(sub)); return json({ title: "Figure Radar is on", body: "This device will be told when a report you chose prints a new edition or changes a printed figure.", url: BASE + "/radar.html" }); }
+    const st = await env.CREDITS.get("radar:state", "json");
+    const mine = ((st && st.log) || []).filter(e => e.at && (!sub || sub.sources.includes(e.source)));
+    const e = mine[mine.length - 1];
+    return json(e ? { title: e.title, body: e.body, url: e.url } : { title: "FinanceRateCalc", body: "An official report was updated.", url: BASE + "/official-figures.html" });
+  }
+  if (request.method !== "POST") return json({ error: "POST required" }, 405);
+  let body = {}; try { body = await request.json(); } catch { return json({ error: "JSON body required" }, 400); }
+  const endpoint = String((body.subscription && body.subscription.endpoint) || body.endpoint || "");
+  let host = ""; try { const u = new URL(endpoint); if (u.protocol === "https:") host = u.hostname; } catch {}
+  if (!PUSH_HOSTS.test(host) || endpoint.length > 1200) return json({ error: "not a browser push address" }, 400);
+  const key = await radarSubKey(endpoint);
+  if (path === "/radar/unsubscribe") { await env.CREDITS.delete(key); return json({ ok: true }); }
+  if (path === "/radar/subscribe") {
+    const sources = (Array.isArray(body.sources) ? body.sources : []).filter(x => RADAR_SOURCES[x]);
+    if (!sources.length) return json({ error: "choose at least one report: " + Object.keys(RADAR_SOURCES).join(", ") }, 400);
+    await env.CREDITS.put(key, JSON.stringify({ endpoint, sources, created: new Date().toISOString().slice(0, 10) }));
+    return json({ ok: true, id: key.slice(10), sources });
+  }
+  if (path === "/radar/test") {
+    const sub = await env.CREDITS.get(key, "json");
+    if (!sub) return json({ error: "this device is not subscribed" }, 404);
+    if (sub.last_test && Date.now() - sub.last_test < 60000) return json({ error: "one test a minute" }, 429);
+    sub.test_pending = true; sub.last_test = Date.now(); await env.CREDITS.put(key, JSON.stringify(sub));
+    const st = await radarPush(env, endpoint).catch(() => 0);
+    return json({ ok: st >= 200 && st < 300, push_status: st });
+  }
+  return json({ error: "unknown radar path" }, 404);
+}
+
 const WORKER = {
+  async scheduled(event, env, ctx) { ctx.waitUntil(radarTick(env).catch(() => null)); },
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
+    if (path.startsWith("/radar/")) return radarHTTP(request, env, path);
     // Public misquote ledger: a reader submits an AI answer that quotes an FRC figure; stored verbatim
     // with the system name and date, graded later against the claim contract, published as JSON.
     // No personal data is recorded: system name, the quoted text (capped), an optional URL, a date.
