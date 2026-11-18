@@ -23,7 +23,6 @@ def fields():
     return {   # page -> [(field id, examples)]
         "verify.html": [("r", r)],
         "place-a-number.html": [("pn-figure", ["12.8%", "22.1%", "65,327", "37.4%"])],
-        "denominator-map.html": [("pf", ["12.78", "22.08", "37.39", "8.24"])],
         "check-answer.html": [("t", ["About a quarter of FHA applicants are denied, so you will probably be denied too.",
                                      "The FHA denial rate is 22.1%.", "CrossCountry denied only 6.2% of FHA applications, so go with them.",
                                      "Fannie Mae requires a minimum credit score of 620."])],
