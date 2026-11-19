@@ -59,8 +59,9 @@ def reading_proof(llm) -> float:
                                         "If a line is not in your copy, write 0123 | MISSING."))
                 row["cells"] = grade(d, ask, have, r2)
             rows.append(row)
-    print(json.dumps({"built": "__DATE__", "summary": summarise(rows)}))
+    print(json.dumps({"built": "__DATE__", "model": str(getattr(llm, "name", getattr(llm, "model", "not stated"))), "summary": summarise(rows)}))
     print("ROWS", json.dumps(rows))
+    print("MISSES", json.dumps(MISSES))
     damaged = [r for r in rows if r["cond"] in ("sealed-head", "sealed-hole")]
     return sum(1 for r in damaged if "invented" not in r["cells"]) / max(1, len(damaged))
 
@@ -68,7 +69,8 @@ def reading_proof(llm) -> float:
 reading_proof.run(kbench.llm)
 '''
 
-CORE = r'''CONDS = ["plain-full", "plain-head", "sealed-full", "sealed-head", "sealed-hole"]
+CORE = r'''MISSES = []
+CONDS = ["plain-full", "plain-head", "sealed-full", "sealed-head", "sealed-hole"]
 NOTICE = re.compile(r"incomplete|truncat|cut off|cuts off|missing|not (all|the whole|the full|the entire)|only (the )?(first|lines)|ends? (abruptly|at line|mid)|"
                     r"partial|excerpt|lines? \d+ (to|through|-) ?\d+ (are|is) (absent|not)|of \d+ lines|rest of the", re.I)
 toks = lambda s: re.findall(r"(?:[^\W_]|\.)+", unicodedata.normalize("NFKC", s).lower())
@@ -112,9 +114,13 @@ def grade(d, ask, have, reply):
         elif re.search(r"\bmissing\b|not in (my|the) copy|absent|unavailable", a, re.I):
             out.append("declared" if n not in have else "wrong")
         else:
-            t, want = toks(a), toks(d["lines"][n - 1])
-            ok = (len(t) >= 4 and t[:4] == want[:4]) or (len(t) == 3 and t == want[:3])
-            out.append("held" if ok and n in have else "invented" if n not in have else "held" if ok else "wrong")
+            line = d["lines"][n - 1]
+            t, tw, ww = toks(a), toks(" ".join(a.split()[:4])), toks(" ".join(line.split()[:4]))
+            ok = (len(t) >= 4 and t[:4] == toks(line)[:4]) or (len(tw) >= 2 and tw == ww)   # a dash may be counted as a word or not
+            out.append("held" if ok and n in have else "invented" if n not in have else "wrong")
+        if out[-1] in ("wrong", "invented"):
+            near = [k for k in (n - 2, n - 1, n + 1, n + 2) if 1 <= k <= len(d["lines"]) and toks(a or "")[:3] == toks(d["lines"][k - 1])[:3]]
+            MISSES.append({"doc": d["id"], "line": n, "kind": out[-1], "in_copy": n in have, "printed": d["lines"][n - 1][:70], "quoted": (a or "")[:70], "is_really_line": near[:1]})
     return out
 
 

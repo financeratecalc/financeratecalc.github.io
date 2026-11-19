@@ -106,7 +106,7 @@ ol.steps{padding-left:20px}ol.steps li{margin:6px 0}
     if (!st || !date) { $("chout").innerHTML = '<p class="small">Enter the statement and a date first.</p>'; return; }
     RP.cells(man, st, date).then(function (c) {
       var ask = "Quote the first four words of each of these lines of the document (line 1 is its first line): [" + c.lines.join(", ") + "]\n" +
-        "Then write the proof line exactly so, answers in the same order, separated by semicolons, without punctuation inside an answer:\n" +
+        "Then write the proof line exactly so, answers in the same order, separated by semicolons, exactly as they are printed:\n" +
         "\u27e6READ:" + man.doc + ":" + date + ":" + c.h8 + ":<answer 1>;<answer 2>;<answer 3>;<answer 4>;<answer 5>;<answer 6>\u27e7";
       $("chout").innerHTML = '<p class="small">Send this to the agent, after it has given its statement:</p><div class="out" id="ask">' + esc(ask) + '</div><button class="ghost" id="cp">Copy</button>';
       $("cp").addEventListener("click", function () { navigator.clipboard.writeText(ask).then(function () { $("cp").textContent = "Copied"; }); });

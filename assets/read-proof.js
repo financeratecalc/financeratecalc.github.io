@@ -9,17 +9,18 @@
   }
   function norm(s) { return String(s).normalize("NFKC").toLowerCase().replace(/\s+/g, " ").trim(); }
   function toks(line) { return String(line).normalize("NFKC").toLowerCase().match(/[\p{L}\p{N}.]+/gu) || []; }
-  function answer(line, n) { return toks(line).slice(0, n || 4).join(" "); }
+  function answer(line) { return toks(line).slice(0, 4).join(" "); }                                  // the first four words of letters and digits
+  function answerWs(line) { return toks(String(line).trim().split(/\s+/).slice(0, 4).join(" ")).join(" "); }  // the first four items between spaces
   function linesOf(text) { return String(text).split(/\r\n|\r|\n/).filter(function (l) { return toks(l).length >= 4; }); }
   async function manifest(text) {
     var ls = linesOf(text);
     if (ls.length < MIN_LINES) throw new Error("The document has " + ls.length + " lines of four words or more; at least " + MIN_LINES + " are needed.");
     var doc = (await sha(ls.map(norm).join("\n"))).slice(0, 16), a4 = [], a3 = [];
     for (var i = 0; i < ls.length; i++) {
-      a4.push((await sha(doc + "|" + (i + 1) + "|" + answer(ls[i], 4))).slice(0, 12));
-      a3.push((await sha(doc + "|" + (i + 1) + "|" + answer(ls[i], 3))).slice(0, 12));
+      a4.push((await sha(doc + "|" + (i + 1) + "|" + answer(ls[i]))).slice(0, 12));
+      a3.push((await sha(doc + "|" + (i + 1) + "|" + answerWs(ls[i]))).slice(0, 12));
     }
-    return { kind: "reading-proof-0.2", doc: doc, lines: ls.length, answers: a4, answers3: a3 };
+    return { kind: "reading-proof-0.2", doc: doc, lines: ls.length, answers: a4, answers_ws: a3 };
   }
   async function cells(man, statement, date) {
     var h = await sha(man.doc + "|" + date + "|" + norm(statement)), size = Math.floor(man.lines / K), out = [];
@@ -38,9 +39,9 @@
     if (m[3] !== c.h8) return { verdict: "proof belongs to a different statement" };
     var got = m[4].split(";"), held = [];
     for (var i = 0; i < K; i++) {
-      var a = got[i] || "", n = toks(a).length, L = c.lines[i], ok = false;
-      if (n >= 4) ok = (await sha(man.doc + "|" + L + "|" + answer(a, 4))).slice(0, 12) === man.answers[L - 1];
-      else if (n === 3) ok = (await sha(man.doc + "|" + L + "|" + answer(a, 3))).slice(0, 12) === man.answers3[L - 1];
+      var a = got[i] || "", L = c.lines[i], ok = false;
+      if (toks(a).length >= 4) ok = (await sha(man.doc + "|" + L + "|" + answer(a))).slice(0, 12) === man.answers[L - 1];
+      if (!ok && toks(answerWs(a)).length >= 2) ok = (await sha(man.doc + "|" + L + "|" + answerWs(a))).slice(0, 12) === man.answers_ws[L - 1];
       held.push(ok);
     }
     var miss = []; held.forEach(function (v, i) { if (!v) miss.push(i + 1); });

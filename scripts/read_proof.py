@@ -8,7 +8,8 @@
 
 The six lines follow from the hash of document + date + statement, one in each sixth of the document: they cannot be
 known before the statement is written, and a missing part of the document always leaves an answer missing.
-An answer is the first four words of the line. It shows possession of that part of the document, not understanding.
+An answer is the first four words of the line; a reader may count a dash or a bracket as a word or not, and both
+readings are accepted. It shows possession of that part of the document, not understanding.
 """
 import datetime, hashlib, json, re, sys, unicodedata
 
@@ -17,7 +18,8 @@ H = lambda s: hashlib.sha256(s.encode("utf-8")).hexdigest()
 nfkc = lambda s: unicodedata.normalize("NFKC", s).lower()
 norm = lambda s: re.sub(r"\s+", " ", nfkc(s)).strip()
 toks = lambda line: re.findall(r"(?:[^\W_]|\.)+", nfkc(line))
-answer = lambda line, n=4: " ".join(toks(line)[:n])
+answer = lambda line: " ".join(toks(line)[:4])                     # reading 1: the first four words made of letters and digits
+answer_ws = lambda line: " ".join(toks(" ".join(line.split()[:4])))  # reading 2: the first four items between spaces, dashes and all
 lines_of = lambda text: [ln for ln in re.split(r"\r\n|\r|\n", text) if len(toks(ln)) >= 4]
 
 
@@ -27,7 +29,7 @@ def manifest(text):
         raise SystemExit(f"The document has {len(ls)} lines of four words or more; at least {MIN_LINES} are needed.")
     doc = H("\n".join(norm(x) for x in ls))[:16]
     return {"kind": "reading-proof-0.2", "doc": doc, "lines": len(ls), "answers": [H(f"{doc}|{i}|{answer(x)}")[:12] for i, x in enumerate(ls, 1)],
-            "answers3": [H(f"{doc}|{i}|{answer(x, 3)}")[:12] for i, x in enumerate(ls, 1)]}   # a dash or bracket quoted as a "word" leaves three
+            "answers_ws": [H(f"{doc}|{i}|{answer_ws(x)}")[:12] for i, x in enumerate(ls, 1)]}
 
 
 def cells(man, statement, date):
@@ -49,8 +51,7 @@ def verify(man, statement, proof):
     got = ans.split(";")
 
     def held(a, L):
-        n = len(toks(a))
-        return (n >= 4 and H(f"{doc}|{L}|{answer(a)}")[:12] == man["answers"][L - 1]) or (n == 3 and H(f"{doc}|{L}|{answer(a, 3)}")[:12] == man["answers3"][L - 1])
+        return (len(toks(a)) >= 4 and H(f"{doc}|{L}|{answer(a)}")[:12] == man["answers"][L - 1]) or (len(toks(answer_ws(a))) >= 2 and H(f"{doc}|{L}|{answer_ws(a)}")[:12] == man["answers_ws"][L - 1])
     ok = [i < len(got) and held(got[i], L) for i, L in enumerate(ls)]
     return {"verdict": "read" if all(ok) else "not shown to have been read", "date": date, "lines_asked": ls, "held": ok,
             "document_sixths_not_shown": [i + 1 for i, v in enumerate(ok) if not v]}
@@ -70,6 +71,6 @@ if __name__ == "__main__":
             date = sys.argv[4] if len(sys.argv) > 4 else datetime.datetime.now(datetime.timezone.utc).date().isoformat()
             h8, ls = cells(man, sys.argv[3], date)
             print(f"Quote the first four words of each of these lines of the document (line 1 is its first line): {ls}")
-            print(f"Then write the proof line exactly so, answers in the same order, separated by semicolons, without punctuation inside an answer:\n⟦READ:{man['doc']}:{date}:{h8}:<answer 1>;<answer 2>;<answer 3>;<answer 4>;<answer 5>;<answer 6>⟧")
+            print(f"Then write the proof line exactly so, answers in the same order, separated by semicolons, exactly as they are printed:\n⟦READ:{man['doc']}:{date}:{h8}:<answer 1>;<answer 2>;<answer 3>;<answer 4>;<answer 5>;<answer 6>⟧")
         elif cmd == "verify":
             print(json.dumps(verify(man, sys.argv[3], sys.argv[4]), indent=1))
