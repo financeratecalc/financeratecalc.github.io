@@ -72,6 +72,8 @@ jobs:
         run: node scripts/check_reading_proof.mjs
       - name: Reading Proof 0.2 for any document (two implementations agree; short and holed copies fail)
         run: node scripts/check_read_proof.mjs
+      - name: Reading-proof Kaggle task scores simulated readers as intended (honest reader passes, inventor is counted)
+        run: python3 scripts/build_read_proof_task.py --selftest
       - name: Reward audit is current (scripted exploit policies against both rewards)
         run: python3 scripts/reward_audit.py --check
       - name: Denominator-reasoning tasks reproduce from their seed and score their own reference answers
