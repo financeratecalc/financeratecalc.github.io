@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reading proof: check that an AI agent had the whole document | FinanceRateCalc</title>
+<meta name="description" content="An agent says it reviewed the document. Ask it for six lines that follow from its own sentence, one from each sixth of the text. If its copy was cut short or has a hole in it, the proof fails. Runs in your browser; the document is not uploaded.">
+<link rel="canonical" href="https://financeratecalc.com/read-proof.html">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@300;400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding:40px 20px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:30px;color:#f5f2ea;line-height:1.18;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:20px;color:#f5f2ea;margin:34px 0 10px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B}
+.card{border:1px solid #23262e;border-radius:12px;padding:16px 18px;background:#0d0f14;margin:12px 0;font-size:15px}
+.mono{font-family:'DM Mono',monospace;font-size:12.5px}
+.pill{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;padding:2px 8px;border-radius:20px;margin-right:6px}
+.p-pass{background:rgba(95,180,162,.14);color:#5fb4a2}.p-q{background:rgba(200,168,75,.14);color:#C8A84B}.p-o{background:rgba(201,111,111,.14);color:#c96f6f}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{border:1px solid #23262e;padding:9px 10px;text-align:left}th{background:#0d0f14;font-family:'DM Mono',monospace;font-size:11px;color:#C8A84B}
+.limit{border:1px solid #c96f6f;border-radius:12px;padding:15px 18px;color:#cbc7bb;font-size:14px;margin:18px 0}
+input,textarea,select{width:100%;box-sizing:border-box;background:#0d0f14;border:1px solid #23262e;border-radius:8px;color:#e8e4da;padding:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin:6px 0 12px}
+button{background:#C8A84B;color:#000;border:0;border-radius:9px;padding:12px 18px;font-weight:800;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif}
+label{font-size:13px;color:#a5a094}
+.small{font-size:13px;color:#a5a094}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>div{flex:1;min-width:150px}
+#card{background:#fff;color:#111;border-radius:12px;padding:22px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin:16px 0}
+#card .txt{flex:1;min-width:220px}#card .fig{font-family:'Fraunces',Georgia,serif;font-size:46px;line-height:1;color:#111}
+#card .sen{font-size:15px;line-height:1.45;margin-top:10px;color:#222}#card .cap{font-size:11.5px;color:#555;margin-top:10px}
+#card canvas{width:150px;height:150px;image-rendering:pixelated}
+button.ghost{background:transparent;color:#C8A84B;border:1px solid #C8A84B}
+</style>
+<style>
+textarea{min-height:120px;font-family:'DM Mono',monospace;font-size:12.5px}
+.out{white-space:pre-wrap;word-break:break-word;font-family:'DM Mono',monospace;font-size:12.5px;background:#0d0f14;border:1px solid #23262e;border-radius:8px;padding:12px;margin:10px 0}
+.bar{display:flex;gap:4px;margin:12px 0}.bar div{flex:1;padding:10px 4px;text-align:center;border-radius:6px;font-family:'DM Mono',monospace;font-size:11.5px}
+.bar .y{background:rgba(95,180,162,.18);color:#5fb4a2}.bar .n{background:rgba(201,111,111,.2);color:#e08a8a}
+.verdict{font-family:'Fraunces',Georgia,serif;font-size:22px;margin:14px 0 4px}.verdict.y{color:#5fb4a2}.verdict.n{color:#e08a8a}
+button{margin:4px 8px 4px 0}button[disabled]{opacity:.45;cursor:default}
+ol.steps{padding-left:20px}ol.steps li{margin:6px 0}
+</style></head>
+<body>
+<nav data-frc-nav="1" aria-label="Site" style="font-family:system-ui,sans-serif;font-size:12.5px;padding:8px 16px;background:#0b0d12;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:14px;flex-wrap:wrap;align-items:center"><a href="/" style="color:#C8A84B;font-weight:700;text-decoration:none">FinanceRateCalc</a><a href="/fha-denial-rates-top-100.html" style="color:rgba(255,255,255,.7);text-decoration:none">Lenders</a><a href="/fha-denial-rates-by-state.html" style="color:rgba(255,255,255,.7);text-decoration:none">States</a><a href="/metro-gaps.html" style="color:rgba(255,255,255,.7);text-decoration:none">Metros</a><a href="/check-answer.html" style="color:rgba(255,255,255,.7);text-decoration:none">Check an answer</a><a href="/corrections.html" style="color:rgba(255,255,255,.7);text-decoration:none">Corrections</a><a href="/about.html" style="color:rgba(255,255,255,.7);text-decoration:none">About</a></nav>
+
+<div class="wrap">
+<div class="kicker">Reading proof &middot; any document &middot; nothing is uploaded</div>
+<h1>Did the agent have the whole document?</h1>
+<p class="sub">An AI agent writes &ldquo;I reviewed the agreement; there is no early-termination clause.&rdquo; Its copy may have been cut off at a length limit, or a retrieval step may have handed it some sections and not others. The sentence reads the same either way. This page asks the agent for six lines of the document, one from each sixth of the text, chosen by a hash of the agent&rsquo;s own sentence. A copy that is short, or has a hole in it, cannot supply them.</p>
+
+<h2>Step one: the document</h2>
+<p class="small">Paste the text, or choose a text file. It stays in this browser tab: the page makes no network request with it.</p>
+<input type="file" id="file" accept=".txt,.md,text/plain">
+<textarea id="doc" placeholder="Paste the document text here" aria-label="Document text"></textarea>
+<button id="mk">Prepare the document</button>
+<div id="docout" role="status" class="small"></div>
+<div id="dl" style="display:none"><button class="ghost" id="dlc">Save the copy to hand to the agent</button><button class="ghost" id="dlm">Save the manifest</button>
+<p class="small">The copy keeps every line of four words or more, in order; line numbers refer to it, so the agent must work from this copy. The manifest holds one short hash per line and none of the text; with it, anyone can check a proof without having the document.</p></div>
+<p class="small">Already have a manifest? <input type="file" id="mfile" accept=".json,application/json" style="width:auto;display:inline-block"></p>
+
+<h2>Step two: the agent&rsquo;s sentence</h2>
+<p class="small">The finding exactly as the agent reports it. One changed character draws six other lines, which is why a proof cannot be prepared before the sentence is written or moved to another sentence.</p>
+<textarea id="st" style="min-height:70px;font-family:'DM Sans',sans-serif;font-size:14px" placeholder="The agent's statement, exactly as reported" aria-label="Statement"></textarea>
+<div class="row"><div><label for="date">Date (UTC)</label><input id="date" type="date"></div><div style="align-self:end"><button id="ch" disabled>Draw the six lines</button></div></div>
+<div id="chout"></div>
+
+<h2>Step three: check the proof</h2>
+<p class="small">Paste the proof line the agent returned (it starts with &#10214;READ:).</p>
+<textarea id="pf" style="min-height:70px" placeholder="&#10214;READ:&hellip;&#10215;" aria-label="Proof line"></textarea>
+<button id="vf" disabled>Check</button>
+<div id="vfout" role="status"></div>
+
+<h2>What happened when it was first tried</h2>
+<p class="sub">A real supply agreement filed with the SEC was given to four agents with the same question about termination without cause. The agent with the full text answered correctly and its proof held. The agent with the first three fifths answered that no such clause existed, which is wrong, and could not complete a proof. The agent whose copy had a stretch missing from the middle answered correctly and believed five of its six lines were good; two were, because every line after the gap had moved, and it had not noticed the gap. An agent told to invent the lines it lacked declined to. Each condition was run once with one small model; the record is in <a href="/eval/read-proof/first-runs.json">first-runs.json</a>.</p>
+
+<h2>For agents and scripts</h2>
+<p class="sub">The same three steps without this page: <a href="https://github.com/financeratecalc/financeratecalc.github.io/blob/main/scripts/read_proof.py">read_proof.py</a> (Python, no dependencies) and <a href="/assets/read-proof.js">read-proof.js</a> (browser or Node). The format is written down in <a href="https://github.com/financeratecalc/financeratecalc.github.io/blob/main/spec/reading-proof-0.2.md">Reading Proof 0.2</a>. The two implementations are checked against each other daily.</p>
+
+<div class="limit"><b>What a proof shows and what it does not.</b> It shows that whoever wrote the proof line could read those six places in the document after the sentence was written. It does not show that the sentence is true, that the document was understood, or that every line was read: an agent that opens the file and looks up only the six lines passes. It is a check on missing text, which is a common and silent failure, not on reasoning. An answer is four words, so a manifest in the hands of someone determined to forge a proof is weaker than the document itself; where forgery is the concern, keep the manifest with the party doing the checking.</div>
+</div>
+<script src="/assets/read-proof.js"></script>
+<script>
+(function () {
+  var $ = function (i) { return document.getElementById(i); }, RP = self.ReadProof, man = null, canon = null;
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function save(name, text, type) { var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type: type })); a.download = name; a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000); }
+  function ready() { $("ch").disabled = $("vf").disabled = !man; }
+  $("date").value = new Date().toISOString().slice(0, 10);
+  $("file").addEventListener("change", function () { var f = this.files[0]; if (f) f.text().then(function (t) { $("doc").value = t; }); });
+  $("mfile").addEventListener("change", function () {
+    var f = this.files[0]; if (!f) return;
+    f.text().then(function (t) {
+      try { var m = JSON.parse(t); if (m.kind !== "reading-proof-0.2" || !m.answers) throw 0; man = m; canon = null; $("dl").style.display = "none";
+        $("docout").textContent = "Manifest loaded: document " + m.doc + ", " + m.lines + " lines. Proofs can be checked; the text itself is not here."; ready();
+      } catch (e) { $("docout").textContent = "That file is not a Reading Proof 0.2 manifest."; }
+    });
+  });
+  $("mk").addEventListener("click", function () {
+    $("docout").textContent = "Preparing\u2026";
+    RP.manifest($("doc").value).then(function (m) {
+      man = m; canon = RP.linesOf($("doc").value).join("\n") + "\n"; $("dl").style.display = "block";
+      $("docout").textContent = "Ready: document " + m.doc + ", " + m.lines + " lines of four words or more."; ready();
+    }).catch(function (e) { man = null; $("dl").style.display = "none"; $("docout").textContent = e.message; ready(); });
+  });
+  $("dlc").addEventListener("click", function () { if (canon) save("document-" + man.doc + ".txt", canon, "text/plain"); });
+  $("dlm").addEventListener("click", function () { if (man) save("manifest-" + man.doc + ".json", JSON.stringify(man), "application/json"); });
+  $("ch").addEventListener("click", function () {
+    var st = $("st").value.trim(), date = $("date").value;
+    if (!st || !date) { $("chout").innerHTML = '<p class="small">Enter the statement and a date first.</p>'; return; }
+    RP.cells(man, st, date).then(function (c) {
+      var ask = "Quote the first four words of each of these lines of the document (line 1 is its first line): [" + c.lines.join(", ") + "]\n" +
+        "Then write the proof line exactly so, answers in the same order, separated by semicolons, without punctuation inside an answer:\n" +
+        "\u27e6READ:" + man.doc + ":" + date + ":" + c.h8 + ":<answer 1>;<answer 2>;<answer 3>;<answer 4>;<answer 5>;<answer 6>\u27e7";
+      $("chout").innerHTML = '<p class="small">Send this to the agent, after it has given its statement:</p><div class="out" id="ask">' + esc(ask) + '</div><button class="ghost" id="cp">Copy</button>';
+      $("cp").addEventListener("click", function () { navigator.clipboard.writeText(ask).then(function () { $("cp").textContent = "Copied"; }); });
+    });
+  });
+  $("vf").addEventListener("click", function () {
+    var st = $("st").value.trim();
+    if (!st) { $("vfout").innerHTML = '<p class="small">The statement in step two is needed: the proof is bound to it.</p>'; return; }
+    RP.verify(man, st, $("pf").value).then(function (r) {
+      if (!r.held) { $("vfout").innerHTML = '<div class="verdict n">' + esc(r.verdict.charAt(0).toUpperCase() + r.verdict.slice(1)) + '</div>' +
+        (r.verdict === "proof belongs to a different statement" ? '<p class="small">The statement in step two is not, character for character, the one this proof was made for.</p>' : ""); return; }
+      var ok = r.verdict === "read", bar = r.held.map(function (v, i) { return '<div class="' + (v ? "y" : "n") + '">part ' + (i + 1) + "<br>line " + r.lines_asked[i] + "<br>" + (v ? "shown" : "not shown") + "</div>"; }).join("");
+      $("vfout").innerHTML = '<div class="verdict ' + (ok ? "y" : "n") + '">' + (ok ? "All six parts of the document were shown" : "Not shown to have been read") + '</div><div class="bar">' + bar + "</div>" +
+        '<p class="small">' + (ok ? "Whoever wrote this proof could read all six places on " + esc(r.date) + ". That is possession of the text, not a judgment on the statement."
+          : "The parts marked not shown were missing from the agent\u2019s copy, shifted by a gap earlier in it, or misquoted. Treat the statement as written without the whole document.") + "</p>";
+    });
+  });
+})();
+</script>
+</body></html>
