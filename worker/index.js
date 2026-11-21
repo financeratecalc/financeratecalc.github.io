@@ -1506,12 +1506,119 @@ async function radarHTTP(request, env, path) {
   return json({ error: "unknown radar path" }, 404);
 }
 
+// Witness (added 2026-11-21; the MCP tool list is unchanged, so the server version is too): a neutral third party for a reading proof. The party that hands out a document registers its
+// manifest here (hashes only, no text). The reader states its finding; the lines to quote are drawn here, from a nonce
+// the reader could not have known, and the answers are checked here. The result, pass or fail, is signed, dated and
+// chained to the one before it, so that neither the reader nor this witness can later change what was shown.
+// Keys live under "wit:". Three witnessed readings per document are free; after that one prepaid credit each.
+const WIT_K = 6, WIT_FREE_PER_DOC = 3, WIT_CHALLENGE_SECONDS = 900;
+const witToks = (line) => String(line).normalize("NFKC").toLowerCase().match(/[\p{L}\p{N}.]+/gu) || [];
+const witAnswer = (line) => witToks(line).slice(0, 4).join(" ");
+const witAnswerWs = (line) => witToks(String(line).trim().split(/\s+/).slice(0, 4).join(" ")).join(" ");
+const witHex = (n) => [...crypto.getRandomValues(new Uint8Array(n))].map(b => b.toString(16).padStart(2, "0")).join("");
+async function witKey(env) {
+  const have = await env.CREDITS.get("wit:key", "json");
+  if (have) return have;
+  const kp = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+  const pub = await crypto.subtle.exportKey("jwk", kp.publicKey);
+  const rec = { public_jwk: { kty: pub.kty, crv: pub.crv, x: pub.x, y: pub.y }, jwk: await crypto.subtle.exportKey("jwk", kp.privateKey), created: new Date().toISOString() };
+  rec.key_id = (await sha256Hex(rec.public_jwk.x + "." + rec.public_jwk.y)).slice(0, 16);
+  await env.CREDITS.put("wit:key", JSON.stringify(rec));
+  return rec;
+}
+function witManifestFault(m) {
+  if (!m || m.kind !== "reading-proof-0.2") return "manifest.kind must be reading-proof-0.2 (make it with /read-proof.html or scripts/read_proof.py)";
+  if (!/^[0-9a-f]{16}$/.test(String(m.doc))) return "manifest.doc must be 16 hex characters";
+  if (!Number.isInteger(m.lines) || m.lines < 60 || m.lines > 6000) return "manifest.lines must be between 60 and 6000";
+  for (const k of ["answers", "answers_ws"]) if (!Array.isArray(m[k]) || m[k].length !== m.lines || !m[k].every(h => /^[0-9a-f]{12}$/.test(h))) return "manifest." + k + " must hold one 12-hex hash per line";
+  return null;
+}
+async function witnessHTTP(request, env, path) {
+  if (!env || !env.CREDITS) return json({ error: "store unavailable" }, 503);
+  const url = new URL(request.url), now = new Date();
+  if (path === "/witness/key") { const k = await witKey(env); return json({ key_id: k.key_id, alg: "ES256 (ECDSA P-256, SHA-256), signature is IEEE P1363 r||s, base64url", public_jwk: k.public_jwk, created: k.created }); }
+  if (path === "/witness/status") { const h = (await env.CREDITS.get("wit:head", "json")) || { seq: 0, hash: null }; return json({ attestations: h.seq, chain_head: h.hash, read: h.read || 0, not_shown: h.not_shown || 0, free_per_document: WIT_FREE_PER_DOC, stored: "manifests (hashes only), attestations; no document text, no statement text, no address" }); }
+  if (path === "/witness/attestation") {
+    const a = await env.CREDITS.get("wit:att:" + String(url.searchParams.get("id") || "").replace(/[^0-9a-f]/g, "").slice(0, 16), "json");
+    return a ? json(a) : json({ error: "no attestation with that id" }, 404);
+  }
+  if (request.method !== "POST") return json({ error: "POST required" }, 405);
+  let b; try { const t = await request.text(); if (t.length > 420000) return json({ error: "body too large" }, 413); b = JSON.parse(t); } catch { return json({ error: "JSON body required" }, 400); }
+  if (path === "/witness/register") {
+    const fault = witManifestFault(b.manifest);
+    if (fault) return json({ error: fault }, 400);
+    const m = b.manifest, key = "wit:doc:" + m.doc, have = await env.CREDITS.get(key, "json");
+    if (have && (have.lines !== m.lines || have.answers[0] !== m.answers[0] || have.answers[m.lines - 1] !== m.answers[m.lines - 1])) return json({ error: "another manifest is already registered under this document id" }, 409);
+    if (!have) await env.CREDITS.put(key, JSON.stringify({ lines: m.lines, answers: m.answers, answers_ws: m.answers_ws, registered: now.toISOString(), used: 0 }), { expirationTtl: 60 * 60 * 24 * 180 });
+    return json({ status: "REGISTERED", doc: m.doc, lines: m.lines, free_readings_left: Math.max(0, WIT_FREE_PER_DOC - ((have && have.used) || 0)), kept_days: 180,
+      next: "The reader calls /witness/challenge with this doc id and its statement. Keep the manifest away from the reader: here it is not shown to anyone." });
+  }
+  if (path === "/witness/challenge") {
+    const doc = String(b.doc || ""), statement = String(b.statement || "");
+    const rec = /^[0-9a-f]{16}$/.test(doc) ? await env.CREDITS.get("wit:doc:" + doc, "json") : null;
+    if (!rec) return json({ error: "document not registered (POST its manifest to /witness/register first)" }, 404);
+    if (statement.trim().length < 12 || statement.length > 4000) return json({ error: "statement must be between 12 and 4000 characters" }, 400);
+    let credit = null;
+    if ((rec.used || 0) >= WIT_FREE_PER_DOC) {
+      const pay = { status: "PAYMENT_REQUIRED", http_status: 402, reason: `The ${WIT_FREE_PER_DOC} free witnessed readings of this document are used.`, price: "1 prepaid credit per witnessed reading", checkout_url: CREDITS_CHECKOUT, human_confirmation_required: true, payment_by_agent_allowed: false, retry: "POST again with license_key" };
+      if (!b.license_key) return json(pay, 402);
+      const lic = await validateLicense(String(b.license_key));
+      if (lic.code !== "OK") return json({ ...pay, status: lic.code }, 402);
+      const cs = await creditState(env, String(b.license_key), lic.variant_id || 2113947);
+      if (!cs || cs.remaining < 1) return json({ ...pay, reason: "No credits left on this licence." }, 402);
+      credit = cs.id;
+    }
+    const id = witHex(8), nonce = witHex(16), st = await sha256Hex(normStatement(statement));
+    // a reader could ask again until the six lines happen to miss a small gap in its copy: every draw is counted and the count is signed
+    const nk = "wit:n:" + doc + ":" + st.slice(0, 24), draw = Number((await env.CREDITS.get(nk)) || 0) + 1;
+    await env.CREDITS.put(nk, String(draw), { expirationTtl: 60 * 60 * 24 * 180 });
+    const h = await sha256Hex(doc + "|" + nonce + "|" + st), size = Math.floor(rec.lines / WIT_K), lines = [];
+    for (let j = 0; j < WIT_K; j++) lines.push(j * size + parseInt(h.slice(8 * (j + 1), 8 * (j + 2)), 16) % size + 1);
+    await env.CREDITS.put("wit:ch:" + id, JSON.stringify({ doc, st, nonce, lines, issued: now.toISOString(), credit, draw }), { expirationTtl: WIT_CHALLENGE_SECONDS });
+    return json({ status: "CHALLENGE", challenge_id: id, doc, lines, draw_number_for_this_statement: draw, answer_within_seconds: WIT_CHALLENGE_SECONDS,
+      instructions: "Quote the first four words of each of these lines of the document, exactly as printed (line 1 is its first line), in this order. If a line is not in your copy, send the word MISSING for it; do not guess. POST {challenge_id, answers:[six strings]} to /witness/answer. One answer per challenge." });
+  }
+  if (path === "/witness/answer") {
+    const id = String(b.challenge_id || "").replace(/[^0-9a-f]/g, "").slice(0, 16), ch = id ? await env.CREDITS.get("wit:ch:" + id, "json") : null;
+    if (!ch) return json({ error: "no open challenge with that id (challenges expire after 15 minutes and are answered once)" }, 404);
+    if (!Array.isArray(b.answers) || b.answers.length !== WIT_K) return json({ error: "answers must be an array of six strings" }, 400);
+    await env.CREDITS.delete("wit:ch:" + id);
+    const rec = await env.CREDITS.get("wit:doc:" + ch.doc, "json");
+    if (!rec) return json({ error: "the document is no longer registered" }, 410);
+    const held = [];
+    for (let i = 0; i < WIT_K; i++) {
+      const a = String(b.answers[i] == null ? "" : b.answers[i]).slice(0, 300), L = ch.lines[i];
+      let ok = witToks(a).length >= 4 && (await sha256Hex(ch.doc + "|" + L + "|" + witAnswer(a))).slice(0, 12) === rec.answers[L - 1];
+      if (!ok && witToks(witAnswerWs(a)).length >= 2) ok = (await sha256Hex(ch.doc + "|" + L + "|" + witAnswerWs(a))).slice(0, 12) === rec.answers_ws[L - 1];
+      held.push(ok);
+    }
+    const shown = held.filter(Boolean).length, key = await witKey(env), head = (await env.CREDITS.get("wit:head", "json")) || { seq: 0, hash: null };
+    const payload = JSON.stringify({ kind: "frc-witness-0.1", id, seq: head.seq + 1, prev: head.hash, doc: ch.doc, lines_in_document: rec.lines, statement_sha256: ch.st, nonce: ch.nonce,
+      challenge_issued_at: ch.issued, answered_at: now.toISOString(), seconds_taken: Math.round((now - new Date(ch.issued)) / 1000), lines_asked: ch.lines, held, draw_number_for_this_statement: ch.draw,
+      verdict: shown === WIT_K ? "read" : "not shown to have been read", witness: "financeratecalc.com", key_id: key.key_id });
+    const sk = await crypto.subtle.importKey("jwk", key.jwk, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+    const signature = b64u(await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, sk, new TextEncoder().encode(payload)));
+    const hash = await sha256Hex(payload);
+    const out = { payload, signature, payload_sha256: hash, line: `⟦WITNESS:${id}:${shown}/${WIT_K}:${hash.slice(0, 16)}⟧`, check_at: BASE + "/witness.html?id=" + id };
+    await env.CREDITS.put("wit:att:" + id, JSON.stringify(out), { expirationTtl: 60 * 60 * 24 * 400 });
+    await env.CREDITS.put("wit:head", JSON.stringify({ seq: head.seq + 1, hash, read: (head.read || 0) + (shown === WIT_K ? 1 : 0), not_shown: (head.not_shown || 0) + (shown === WIT_K ? 0 : 1), updated: now.toISOString() }));
+    rec.used = (rec.used || 0) + 1;
+    await env.CREDITS.put("wit:doc:" + ch.doc, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 180 });
+    if (ch.credit) await spendCredits(env, ch.credit, 1);
+    await tally(env, "witness", shown === WIT_K ? "witness:read" : "witness:not-shown");
+    return json({ status: "ATTESTED", verdict: shown === WIT_K ? "read" : "not shown to have been read", shown, of: WIT_K, held, ...out,
+      means: "Whoever answered could read the lines marked true in the registered document, within the stated seconds after the lines were drawn. It does not say the statement is true or that the document was understood." });
+  }
+  return json({ error: "unknown witness path" }, 404);
+}
+
 const WORKER = {
   async scheduled(event, env, ctx) { ctx.waitUntil(radarTick(env).catch(() => null)); },
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     if (path.startsWith("/radar/")) return radarHTTP(request, env, path);
+    if (path.startsWith("/witness/")) return witnessHTTP(request, env, path);
     // Public misquote ledger: a reader submits an AI answer that quotes an FRC figure; stored verbatim
     // with the system name and date, graded later against the claim contract, published as JSON.
     // No personal data is recorded: system name, the quoted text (capped), an optional URL, a date.

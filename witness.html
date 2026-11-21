@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Witness: a signed, dated record that an agent had the whole document | FinanceRateCalc</title>
+<meta name="description" content="A neutral third party for reading proofs. The lines an agent must quote are drawn here, checked here, and the result is signed, dated and chained. The document never leaves you; the witness holds hashes only.">
+<link rel="canonical" href="https://financeratecalc.com/witness.html">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900&family=DM+Sans:wght@300;400;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+body{background:#08090c;color:#e8e4da;font-family:'DM Sans',sans-serif;margin:0;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding:40px 20px 70px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:30px;color:#f5f2ea;line-height:1.18;margin:8px 0 12px}
+h2{font-family:'Fraunces',Georgia,serif;font-size:20px;color:#f5f2ea;margin:34px 0 10px}
+.kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:#C8A84B;text-transform:uppercase}
+.sub{color:#cbc7bb;font-size:15.5px} a{color:#C8A84B}
+.card{border:1px solid #23262e;border-radius:12px;padding:16px 18px;background:#0d0f14;margin:12px 0;font-size:15px}
+.mono{font-family:'DM Mono',monospace;font-size:12.5px}
+.pill{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;padding:2px 8px;border-radius:20px;margin-right:6px}
+.p-pass{background:rgba(95,180,162,.14);color:#5fb4a2}.p-q{background:rgba(200,168,75,.14);color:#C8A84B}.p-o{background:rgba(201,111,111,.14);color:#c96f6f}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{border:1px solid #23262e;padding:9px 10px;text-align:left}th{background:#0d0f14;font-family:'DM Mono',monospace;font-size:11px;color:#C8A84B}
+.limit{border:1px solid #c96f6f;border-radius:12px;padding:15px 18px;color:#cbc7bb;font-size:14px;margin:18px 0}
+input,textarea,select{width:100%;box-sizing:border-box;background:#0d0f14;border:1px solid #23262e;border-radius:8px;color:#e8e4da;padding:10px;font-family:'DM Sans',sans-serif;font-size:14px;margin:6px 0 12px}
+button{background:#C8A84B;color:#000;border:0;border-radius:9px;padding:12px 18px;font-weight:800;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif}
+label{font-size:13px;color:#a5a094}
+.small{font-size:13px;color:#a5a094}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>div{flex:1;min-width:150px}
+#card{background:#fff;color:#111;border-radius:12px;padding:22px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin:16px 0}
+#card .txt{flex:1;min-width:220px}#card .fig{font-family:'Fraunces',Georgia,serif;font-size:46px;line-height:1;color:#111}
+#card .sen{font-size:15px;line-height:1.45;margin-top:10px;color:#222}#card .cap{font-size:11.5px;color:#555;margin-top:10px}
+#card canvas{width:150px;height:150px;image-rendering:pixelated}
+button.ghost{background:transparent;color:#C8A84B;border:1px solid #C8A84B}
+</style>
+<style>
+textarea{min-height:110px;font-family:'DM Mono',monospace;font-size:12.5px}
+.out{white-space:pre-wrap;word-break:break-word;font-family:'DM Mono',monospace;font-size:12.5px;background:#0d0f14;border:1px solid #23262e;border-radius:8px;padding:12px;margin:10px 0}
+.bar{display:flex;gap:4px;margin:12px 0}.bar div{flex:1;padding:10px 4px;text-align:center;border-radius:6px;font-family:'DM Mono',monospace;font-size:11.5px}
+.bar .y{background:rgba(95,180,162,.18);color:#5fb4a2}.bar .n{background:rgba(201,111,111,.2);color:#e08a8a}
+.verdict{font-family:'Fraunces',Georgia,serif;font-size:22px;margin:14px 0 4px}.verdict.y{color:#5fb4a2}.verdict.n{color:#e08a8a}
+button{margin:4px 8px 4px 0}button[disabled]{opacity:.45;cursor:default}
+dl{margin:0}dt{font-family:'DM Mono',monospace;font-size:11.5px;color:#C8A84B;margin-top:10px}dd{margin:2px 0 0;font-size:14px;word-break:break-word}
+ol.who{padding-left:20px}ol.who li{margin:8px 0}
+</style></head>
+<body>
+<nav data-frc-nav="1" aria-label="Site" style="font-family:system-ui,sans-serif;font-size:12.5px;padding:8px 16px;background:#0b0d12;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:14px;flex-wrap:wrap;align-items:center"><a href="/" style="color:#C8A84B;font-weight:700;text-decoration:none">FinanceRateCalc</a><a href="/fha-denial-rates-top-100.html" style="color:rgba(255,255,255,.7);text-decoration:none">Lenders</a><a href="/fha-denial-rates-by-state.html" style="color:rgba(255,255,255,.7);text-decoration:none">States</a><a href="/metro-gaps.html" style="color:rgba(255,255,255,.7);text-decoration:none">Metros</a><a href="/check-answer.html" style="color:rgba(255,255,255,.7);text-decoration:none">Check an answer</a><a href="/corrections.html" style="color:rgba(255,255,255,.7);text-decoration:none">Corrections</a><a href="/about.html" style="color:rgba(255,255,255,.7);text-decoration:none">About</a></nav>
+
+<div class="wrap">
+<div class="kicker">Witness &middot; for work handed to AI agents</div>
+<h1>A signed, dated record that the agent had the whole document</h1>
+<p class="sub">When an agent reports on a document, the party relying on the report cannot tell whether the agent saw all of it. A <a href="/read-proof.html">reading proof</a> answers that, but only if someone other than the agent runs the check. This is that someone: the lines to quote are drawn here, the answers are checked here, and the result is signed, dated and chained to the one before it. A failed reading is recorded as carefully as a successful one.</p>
+
+<div id="att" style="display:none"><h2>Attestation</h2><div id="attout"></div></div>
+
+<h2>Who does what</h2>
+<ol class="who sub">
+<li><b>You, handing out the document</b>, register its manifest here. The manifest is one short hash per line. The text is never sent, and the manifest is not shown to anyone afterwards.</li>
+<li><b>The agent</b> states its finding to the witness. The witness draws six lines, one from each sixth of the document, using a number the agent could not know in advance.</li>
+<li><b>The agent</b> answers once, within fifteen minutes. A line it does not have is answered with the word MISSING.</li>
+<li><b>The witness</b> signs what happened: which document, the hash of the statement, when the lines were drawn, how many seconds the answer took, which parts were shown, and which draw this was for that statement. Anyone can check the signature.</li>
+</ol>
+
+<h2>Try it</h2>
+<p class="small">Step one runs in your browser; only the manifest is sent.</p>
+<textarea id="doc" placeholder="Paste the document text here (60 lines of four words or more)" aria-label="Document text"></textarea>
+<button id="reg">Register this document</button> <button class="ghost" id="dlc" disabled>Save the copy to hand to the agent</button>
+<div id="regout" role="status" class="small"></div>
+
+<label for="st">The agent&rsquo;s statement, exactly as it reports it</label>
+<textarea id="st" style="min-height:70px;font-family:'DM Sans',sans-serif;font-size:14px" aria-label="Statement"></textarea>
+<button id="ch" disabled>Draw the six lines</button>
+<div id="chout"></div>
+<div id="ansbox" style="display:none"><label for="ans">The agent&rsquo;s six answers, one per line, in order</label>
+<textarea id="ans" style="min-height:130px" aria-label="Answers"></textarea>
+<button id="send">Submit the answers</button></div>
+<div id="ansout" role="status"></div>
+
+<h2>Check an attestation</h2>
+<p class="small">The sixteen characters after &#10214;WITNESS: in an attestation line.</p>
+<div class="row"><div><input id="aid" placeholder="attestation id" aria-label="Attestation id"></div><div><button id="look">Check the signature</button></div></div>
+
+<h2>For agents: three calls</h2>
+<div class="out">POST /witness/register    {"manifest": { ...reading-proof-0.2 manifest... }}
+POST /witness/challenge   {"doc": "&lt;16 hex&gt;", "statement": "&lt;the finding&gt;"}
+POST /witness/answer      {"challenge_id": "&lt;16 hex&gt;", "answers": ["...", "...", "...", "...", "...", "..."]}
+
+GET  /witness/attestation?id=&lt;16 hex&gt;     the signed record
+GET  /witness/key                          the public key (ES256)
+GET  /witness/status                       how many attestations, and the chain head</div>
+<p class="small">A manifest is made with <a href="/assets/read-proof.js">read-proof.js</a> or <a href="https://github.com/financeratecalc/financeratecalc.github.io/blob/main/scripts/read_proof.py">read_proof.py</a>. The record format is in <a href="https://github.com/financeratecalc/financeratecalc.github.io/blob/main/spec/witness-0.1.md">Witness 0.1</a>.</p>
+
+<h2>Price</h2>
+<p class="sub">The first three witnessed readings of each document are free. After that, one prepaid credit per reading; a call without credit is answered with status 402 and a checkout link that a person has to confirm. Checking an attestation is always free, and so is everything else on this site.</p>
+
+<div class="limit"><b>What an attestation says and what it does not.</b> It says that whoever answered could read the lines marked as shown, in the registered document, within the stated number of seconds after they were drawn. It does not say the statement is true, that the document was understood, or that every line was read: an agent with the file open can look up six lines. It does not say the registered manifest belongs to the document you think it does; compare the document id with your own. The witness keeps hashes, not text, and cannot reconstruct a document or a statement. If its key were lost or misused, attestations signed after that moment would be worthless; the chain makes later insertions visible, not impossible.</div>
+</div>
+<script src="/assets/read-proof.js"></script>
+<script>
+(function () {
+  var $ = function (i) { return document.getElementById(i); }, RP = self.ReadProof, man = null, canon = null, chal = null;
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+  function api(p, body) { return fetch("/witness/" + p, body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {}).then(function (r) { return r.json().then(function (j) { j._http = r.status; return j; }); }); }
+  function b64(s) { s = s.replace(/-/g, "+").replace(/_/g, "/"); var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+  function show(a, where) {
+    return api("key").then(function (k) {
+      return crypto.subtle.importKey("jwk", k.public_jwk, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]).then(function (pub) {
+        return crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, pub, b64(a.signature), new TextEncoder().encode(a.payload));
+      }).then(function (good) {
+        var p = JSON.parse(a.payload), ok = p.verdict === "read";
+        var bar = p.held.map(function (v, i) { return '<div class="' + (v ? "y" : "n") + '">part ' + (i + 1) + "<br>line " + p.lines_asked[i] + "<br>" + (v ? "shown" : "not shown") + "</div>"; }).join("");
+        where.innerHTML = '<div class="verdict ' + (ok ? "y" : "n") + '">' + (ok ? "All six parts of the document were shown" : "Not shown to have been read") + '</div><div class="bar">' + bar + '</div>' +
+          '<div class="card"><dl><dt>signature</dt><dd>' + (good ? "valid, checked in this browser against the witness key " + esc(k.key_id) : "<b>does not verify</b>: do not rely on this record") + '</dd>' +
+          "<dt>document</dt><dd>" + esc(p.doc) + " (" + p.lines_in_document + " lines)</dd><dt>statement, as a hash</dt><dd>" + esc(p.statement_sha256) + "</dd>" +
+          "<dt>lines drawn at</dt><dd>" + esc(p.challenge_issued_at) + "</dd><dt>answered after</dt><dd>" + p.seconds_taken + " seconds</dd>" +
+          "<dt>draw for this statement</dt><dd>number " + p.draw_number_for_this_statement + (p.draw_number_for_this_statement > 1 ? " (earlier draws for the same statement exist; ask to see them)" : "") + "</dd>" +
+          "<dt>position in the chain</dt><dd>number " + p.seq + "</dd><dt>attestation line</dt><dd>" + esc(a.line) + "</dd></dl></div>";
+      });
+    });
+  }
+  function lookup(id) {
+    $("att").style.display = "block"; $("attout").textContent = "Looking it up\u2026";
+    api("attestation?id=" + encodeURIComponent(id)).then(function (a) { if (a._http !== 200) { $("attout").textContent = "No attestation with that id."; return; } return show(a, $("attout")); })
+      .catch(function () { $("attout").textContent = "The witness could not be reached."; });
+    $("att").scrollIntoView();
+  }
+  var q = new URLSearchParams(location.search).get("id"); if (q) { $("aid").value = q; lookup(q); }
+  $("look").addEventListener("click", function () { var v = ($("aid").value.match(/[0-9a-f]{16}/) || [""])[0]; if (v) lookup(v); });
+  $("reg").addEventListener("click", function () {
+    $("regout").textContent = "Preparing\u2026";
+    RP.manifest($("doc").value).then(function (m) { man = m; canon = RP.linesOf($("doc").value).join("\n") + "\n"; return api("register", { manifest: m }); }).then(function (r) {
+      if (r._http !== 200) { $("regout").textContent = r.error || "Not registered."; return; }
+      $("regout").textContent = "Registered: document " + r.doc + ", " + r.lines + " lines. Free witnessed readings left: " + r.free_readings_left + "."; $("ch").disabled = false; $("dlc").disabled = false;
+    }).catch(function (e) { $("regout").textContent = e.message || "The witness could not be reached."; });
+  });
+  $("dlc").addEventListener("click", function () { var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([canon], { type: "text/plain" })); a.download = "document-" + man.doc + ".txt"; a.click(); });
+  $("ch").addEventListener("click", function () {
+    api("challenge", { doc: man.doc, statement: $("st").value }).then(function (c) {
+      if (c._http === 402) { $("chout").innerHTML = '<p class="small">' + esc(c.reason) + ' One credit per further reading: <a href="' + esc(c.checkout_url) + '">buy credits</a>.</p>'; return; }
+      if (c._http !== 200) { $("chout").innerHTML = '<p class="small">' + esc(c.error || "No challenge.") + "</p>"; return; }
+      chal = c; var ask = "Quote the first four words of each of these lines of the document, exactly as printed (line 1 is its first line): [" + c.lines.join(", ") + "]\nGive six lines, in this order. If a line is not in your copy, write MISSING for it; do not guess.";
+      $("chout").innerHTML = '<p class="small">Send this to the agent. It has fifteen minutes and one answer.</p><div class="out">' + esc(ask) + "</div>"; $("ansbox").style.display = "block"; $("ansout").innerHTML = "";
+    });
+  });
+  $("send").addEventListener("click", function () {
+    var a = $("ans").value.split(/\r?\n/).map(function (x) { return x.replace(/^\s*\d{1,4}\s*[|:.)-]\s*/, "").trim(); }).filter(function (x) { return x; });
+    if (a.length !== 6) { $("ansout").innerHTML = '<p class="small">Six answers are needed, one per line; ' + a.length + " found.</p>"; return; }
+    api("answer", { challenge_id: chal.challenge_id, answers: a }).then(function (r) {
+      if (r._http !== 200) { $("ansout").innerHTML = '<p class="small">' + esc(r.error || "Not accepted.") + "</p>"; return; }
+      $("ansbox").style.display = "none"; return show(r, $("ansout")).then(function () { $("ansout").insertAdjacentHTML("beforeend", '<p class="small">Permanent address of this record: <a href="' + esc(r.check_at) + '">' + esc(r.check_at) + "</a></p>"); });
+    });
+  });
+})();
+</script>
+</body></html>
