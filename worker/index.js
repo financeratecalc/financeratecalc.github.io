@@ -1118,7 +1118,11 @@ async function callTool(name, args, env) {
     return { sort, lenders: list.slice(0, Math.min(args.limit || 15, 100)) };
   }
   if (name === "get_state_denial_stats") {
-    const S = await getJSON(`/api/state/${String(args.state).toLowerCase()}.json`);
+    const code = String(args.state || "").trim().toLowerCase();
+    if (!/^[a-z]{2}$/.test(code)) throw new Error("state must be a two-letter USPS code, for example OH or TX; full names are not accepted.");
+    let S;
+    try { S = await getJSON(`/api/state/${code}.json`); }
+    catch (e) { throw new Error(`No FHA figures are published for the state code "${code.toUpperCase()}". Use a two-letter USPS code of a US state, DC or PR, for example OH or TX.`); }
     return quotable(`In 2025, ${Number(S.denial_rate_pct).toFixed(1)}% of decisioned FHA applications in ${S.state} were denied (${Number(S.decisioned_applications).toLocaleString("en-US")} applications reaching a decision), against 22.1% nationally.`,
       { ...S, universe_id: "U-FHA-2025-DECISIONED" }, `state-${String(S.state).toLowerCase()}-2025`, `${Number(S.denial_rate_pct).toFixed(1)}%`, { state: S.state, metric: "fha_denial_rate", value: S.denial_rate_pct, n: S.decisioned_applications, period: "2025" });
   }
