@@ -138,7 +138,7 @@ GET  /witness/status                       how many attestations, and the chain 
     });
   });
   $("send").addEventListener("click", function () {
-    var a = $("ans").value.split(/\r?\n/).map(function (x) { return x.replace(/^\s*\d{1,4}\s*[|:.)-]\s*/, "").trim(); }).filter(function (x) { return x; });
+    var a = $("ans").value.split(/\r?\n/).map(function (x) { return x.replace(/^\s*\d{1,4}\s*\|\s*/, "").trim(); }).filter(function (x) { return x; });
     if (a.length !== 6) { $("ansout").innerHTML = '<p class="small">Six answers are needed, one per line; ' + a.length + " found.</p>"; return; }
     api("answer", { challenge_id: chal.challenge_id, answers: a }).then(function (r) {
       if (r._http !== 200) { $("ansout").innerHTML = '<p class="small">' + esc(r.error || "Not accepted.") + "</p>"; return; }
