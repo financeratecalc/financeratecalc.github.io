@@ -4,12 +4,17 @@ compatibility_date = "2026-01-01"
 workers_dev = true
 
 # Figure Radar is also answered on the site's own domain, so the page talks to its own origin: no cross-site request,
-# and it keeps working on networks where *.workers.dev is not reachable. Only /radar/* and /witness/* are routed here.
+# and it keeps working on networks where *.workers.dev is not reachable. Only the addresses listed below are routed here.
 routes = [
   { pattern = "financeratecalc.com/radar/*", zone_name = "financeratecalc.com" },
   { pattern = "www.financeratecalc.com/radar/*", zone_name = "financeratecalc.com" },
   { pattern = "financeratecalc.com/witness/*", zone_name = "financeratecalc.com" },
-  { pattern = "www.financeratecalc.com/witness/*", zone_name = "financeratecalc.com" }
+  { pattern = "www.financeratecalc.com/witness/*", zone_name = "financeratecalc.com" },
+  # The front door for agents: the home page with Link headers (and Markdown on request), the API catalog, the MCP server card.
+  # Exact addresses only; every other page is still served by the static host without passing through this code.
+  { pattern = "financeratecalc.com/", zone_name = "financeratecalc.com" },
+  { pattern = "financeratecalc.com/.well-known/api-catalog", zone_name = "financeratecalc.com" },
+  { pattern = "financeratecalc.com/.well-known/mcp/server-card.json", zone_name = "financeratecalc.com" }
 ]
 
 # One small store, three uses, each under its own key prefix:

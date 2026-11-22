@@ -1617,10 +1617,61 @@ async function witnessHTTP(request, env, path) {
   return json({ error: "unknown witness path" }, 404);
 }
 
+// The site's own front door, for agents. Two addresses on financeratecalc.com are answered here instead of by the static host,
+// because a static host cannot set response headers or a media type:
+//   /                              the page the static host serves, unchanged, plus Link headers (RFC 8288) that say where the
+//                                  API catalog, the API description, the skills index and the MCP server card are. A client
+//                                  that asks for text/markdown gets /index.md, which is generated from the same file as the page.
+//   /.well-known/api-catalog       RFC 9727 linkset: the two machine interfaces this site has and where each is described.
+// If anything here fails, the request goes to the static host as if this code were not there.
+const SITE_HOSTS = new Set(["financeratecalc.com", "www.financeratecalc.com"]);
+const HOME_LINKS = [
+  '</.well-known/api-catalog>; rel="api-catalog"',
+  '</openapi.json>; rel="service-desc"; type="application/json"',
+  '</api.html>; rel="service-doc"; type="text/html"',
+  '</.well-known/agent-skills/index.json>; rel="agent-skills"; type="application/json"',
+  '</.well-known/mcp/server-card.json>; rel="mcp-server-card"; type="application/json"',
+  '</index.md>; rel="alternate"; type="text/markdown"',
+  '</llms.txt>; rel="describedby"; type="text/plain"',
+  '</license.html>; rel="license"',
+].join(", ");
+const API_CATALOG = { linkset: [
+  { anchor: BASE + "/api/",
+    "service-desc": [{ href: BASE + "/openapi.json", type: "application/json" }],
+    "service-doc": [{ href: BASE + "/api.html", type: "text/html" }],
+    "service-meta": [{ href: BASE + "/api/index.json", type: "application/json" }] },
+  { anchor: "https://frc-mcp.ziyetis.workers.dev",
+    "service-desc": [{ href: BASE + "/.well-known/mcp/server-card.json", type: "application/json" }],
+    "service-doc": [{ href: BASE + "/mcp-server.html", type: "text/html" }],
+    "service-meta": [{ href: "https://frc-mcp.ziyetis.workers.dev/conformance", type: "application/json" }] },
+] };
+const wantsMarkdown = request => /(^|,)\s*text\/markdown\b/i.test(request.headers.get("accept") || "");
+async function siteHome(request) {
+  if (request.method !== "GET" && request.method !== "HEAD") return fetch(request);
+  try {
+    if (wantsMarkdown(request)) {
+      const md = await fetch(BASE + "/index.md", { headers: { "user-agent": request.headers.get("user-agent") || "frc-worker" } });
+      if (md.ok) {
+        const text = await md.text();
+        return new Response(request.method === "HEAD" ? null : text, { status: 200, headers: { "Content-Type": "text/markdown; charset=utf-8", "Vary": "Accept", "Link": HOME_LINKS,
+          "Cache-Control": "public, max-age=600", "X-Markdown-Source": "generated from index.html by scripts/build_agent_discovery.py", ...CORS } });
+      }
+    }
+    const page = await fetch(request);
+    const out = new Response(page.body, page);
+    out.headers.set("Link", HOME_LINKS); out.headers.append("Vary", "Accept");
+    return out;
+  } catch { return fetch(request); }
+}
+const apiCatalog = request => new Response(request.method === "HEAD" ? null : JSON.stringify(API_CATALOG), { status: 200,
+  headers: { "Content-Type": 'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"', "Link": '</.well-known/api-catalog>; rel="api-catalog"', "Cache-Control": "public, max-age=3600", ...CORS } });
+
 const WORKER = {
   async scheduled(event, env, ctx) { ctx.waitUntil(radarTick(env).catch(() => null)); },
-  async fetch(request, env) {
-    const path = new URL(request.url).pathname;
+  async fetch(request, env, ctx) {
+    const { pathname: path, hostname } = new URL(request.url);
+    if (SITE_HOSTS.has(hostname) && (path === "/" || path === "/index.html")) { if (ctx && ctx.passThroughOnException) ctx.passThroughOnException(); return siteHome(request); }
+    if (path === "/.well-known/api-catalog" && (request.method === "GET" || request.method === "HEAD")) return apiCatalog(request);
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     if (path.startsWith("/radar/")) return radarHTTP(request, env, path);
     if (path.startsWith("/witness/")) return witnessHTTP(request, env, path);

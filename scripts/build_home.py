@@ -399,6 +399,8 @@ def main():
         print("home page:", "current" if ok else "STALE"); sys.exit(0 if ok else 1)
     open(OUT, "w", encoding="utf-8").write(page)
     print(f"wrote index.html: {total} receipts ({fam}), {len(own)} corrections, {qsi['answers_graded']} graded answers")
+    import build_agent_discovery                      # index.md is the same page as Markdown; it must never lag the HTML
+    build_agent_discovery.write()
 
 
 if __name__ == "__main__":

@@ -64,6 +64,8 @@ jobs:
         run: node scripts/check_radar.mjs
       - name: Witness (drawn here, answered once, signed, chained; free allowance then credits), through the server code run locally
         run: node scripts/check_witness.mjs
+      - name: The front door for agents (Link headers, Markdown on request, API catalog, server card, skills index), through the server code run locally
+        run: (python3 scripts/build_agent_discovery.py --check || echo "::warning::agent discovery files stale; the daily snapshot job rebuilds them") && node scripts/check_agent_discovery.mjs
       - name: Typed examples in the main text fields are real receipts that verify today
         run: python3 scripts/inject_typed_examples.py --check
       - name: Every bound table still matches its data file, row by row
