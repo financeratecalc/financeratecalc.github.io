@@ -31,7 +31,7 @@ Test: `scripts/check_witness.mjs`. Page: `/witness.html`.
 | `statement_sha256` | hash of the normalised statement; the statement is not stored |
 | `nonce` | the number the lines were drawn from |
 | `challenge_issued_at`, `answered_at`, `seconds_taken` | the witness's clock |
-| `lines_asked`, `held` | the six lines and whether each was shown |
+| `lines_asked`, `held`, `line_offsets` | the six lines, whether each was shown, and whether the quotation was of the line itself (0) or its neighbour (-1, 1) |
 | `draw_number_for_this_statement` | how many times lines have been drawn for this document and statement |
 | `verdict` | `read` when all six held, else `not shown to have been read` |
 | `witness`, `key_id` | who signed |

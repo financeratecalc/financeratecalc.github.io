@@ -1585,16 +1585,17 @@ async function witnessHTTP(request, env, path) {
     await env.CREDITS.delete("wit:ch:" + id);
     const rec = await env.CREDITS.get("wit:doc:" + ch.doc, "json");
     if (!rec) return json({ error: "the document is no longer registered" }, 410);
-    const held = [];
-    for (let i = 0; i < WIT_K; i++) {
+    const held = [], offsets = [];
+    const witAt = async (a, L) => L >= 1 && L <= rec.lines && ((witToks(a).length >= 4 && (await sha256Hex(ch.doc + "|" + L + "|" + witAnswer(a))).slice(0, 12) === rec.answers[L - 1])
+      || (witToks(witAnswerWs(a)).length >= 2 && (await sha256Hex(ch.doc + "|" + L + "|" + witAnswerWs(a))).slice(0, 12) === rec.answers_ws[L - 1]));
+    for (let i = 0; i < WIT_K; i++) {   // the line asked for, or its neighbour: readers slip by one line about one time in fifteen; a gap shifts lines by far more
       const a = String(b.answers[i] == null ? "" : b.answers[i]).slice(0, 300), L = ch.lines[i];
-      let ok = witToks(a).length >= 4 && (await sha256Hex(ch.doc + "|" + L + "|" + witAnswer(a))).slice(0, 12) === rec.answers[L - 1];
-      if (!ok && witToks(witAnswerWs(a)).length >= 2) ok = (await sha256Hex(ch.doc + "|" + L + "|" + witAnswerWs(a))).slice(0, 12) === rec.answers_ws[L - 1];
-      held.push(ok);
+      const o = (await witAt(a, L)) ? 0 : (await witAt(a, L - 1)) ? -1 : (await witAt(a, L + 1)) ? 1 : null;
+      offsets.push(o); held.push(o !== null);
     }
     const shown = held.filter(Boolean).length, key = await witKey(env), head = (await env.CREDITS.get("wit:head", "json")) || { seq: 0, hash: null };
     const payload = JSON.stringify({ kind: "frc-witness-0.1", id, seq: head.seq + 1, prev: head.hash, doc: ch.doc, lines_in_document: rec.lines, statement_sha256: ch.st, nonce: ch.nonce,
-      challenge_issued_at: ch.issued, answered_at: now.toISOString(), seconds_taken: Math.round((now - new Date(ch.issued)) / 1000), lines_asked: ch.lines, held, draw_number_for_this_statement: ch.draw,
+      challenge_issued_at: ch.issued, answered_at: now.toISOString(), seconds_taken: Math.round((now - new Date(ch.issued)) / 1000), lines_asked: ch.lines, held, line_offsets: offsets, draw_number_for_this_statement: ch.draw,
       verdict: shown === WIT_K ? "read" : "not shown to have been read", witness: "financeratecalc.com", key_id: key.key_id });
     const sk = await crypto.subtle.importKey("jwk", key.jwk, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
     const signature = b64u(await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, sk, new TextEncoder().encode(payload)));

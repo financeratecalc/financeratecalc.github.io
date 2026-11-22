@@ -45,6 +45,7 @@ const r1 = await read(full);
 assert(r1.c.body.lines.length === 6 && r1.c.body.draw_number_for_this_statement === 1, "six lines, first draw");
 assert(r1.a.body.verdict === "read" && r1.a.body.shown === 6 && /^⟦WITNESS:[0-9a-f]{16}:6\/6:[0-9a-f]{16}⟧$/.test(r1.a.body.line), "a full copy is attested as read");
 assert((await call("/witness/answer", { challenge_id: r1.c.body.challenge_id, answers: quote(full, r1.c.body.lines) })).status === 404, "a challenge is answered once");
+assert(JSON.parse(r1.a.body.payload).line_offsets.every(o => o === 0), "exact quotations are recorded with offset 0");
 const r2 = await read(half);
 assert(r2.a.body.verdict !== "read" && r2.a.body.held.slice(0, 3).every(Boolean) && !r2.a.body.held.slice(3).some(Boolean) && r2.c.body.draw_number_for_this_statement === 2, "half a copy: the last three sixths are not shown, and the draw is counted");
 const r3 = await read(gap);

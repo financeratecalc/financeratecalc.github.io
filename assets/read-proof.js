@@ -37,15 +37,19 @@
     if (m[1] !== man.doc) return { verdict: "proof is for another document" };
     var c = await cells(man, statement, m[2]);
     if (m[3] !== c.h8) return { verdict: "proof belongs to a different statement" };
-    var got = m[4].split(";"), held = [];
-    for (var i = 0; i < K; i++) {
-      var a = got[i] || "", L = c.lines[i], ok = false;
-      if (toks(a).length >= 4) ok = (await sha(man.doc + "|" + L + "|" + answer(a))).slice(0, 12) === man.answers[L - 1];
-      if (!ok && toks(answerWs(a)).length >= 2) ok = (await sha(man.doc + "|" + L + "|" + answerWs(a))).slice(0, 12) === man.answers_ws[L - 1];
-      held.push(ok);
+    var got = m[4].split(";"), held = [], offs = [];
+    async function at(a, L) {
+      if (L < 1 || L > man.lines) return false;
+      if (toks(a).length >= 4 && (await sha(man.doc + "|" + L + "|" + answer(a))).slice(0, 12) === man.answers[L - 1]) return true;
+      return toks(answerWs(a)).length >= 2 && (await sha(man.doc + "|" + L + "|" + answerWs(a))).slice(0, 12) === man.answers_ws[L - 1];
+    }
+    for (var i = 0; i < K; i++) {   // the line itself, or the one above or below: readers slip by one line about one time in fifteen
+      var a = got[i] || "", L = c.lines[i], o = null;
+      if (await at(a, L)) o = 0; else if (await at(a, L - 1)) o = -1; else if (await at(a, L + 1)) o = 1;
+      offs.push(o); held.push(o !== null);
     }
     var miss = []; held.forEach(function (v, i) { if (!v) miss.push(i + 1); });
-    return { verdict: miss.length ? "not shown to have been read" : "read", date: m[2], lines_asked: c.lines, held: held, document_sixths_not_shown: miss };
+    return { verdict: miss.length ? "not shown to have been read" : "read", date: m[2], lines_asked: c.lines, held: held, line_offsets: offs, document_sixths_not_shown: miss };
   }
   var api = { K: K, MIN_LINES: MIN_LINES, norm: norm, toks: toks, answer: answer, linesOf: linesOf, manifest: manifest, cells: cells, proofLine: proofLine, verify: verify };
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.ReadProof = api;

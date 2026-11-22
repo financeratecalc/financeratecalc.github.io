@@ -114,9 +114,9 @@ def grade(d, ask, have, reply):
         elif re.search(r"\bmissing\b|not in (my|the) copy|absent|unavailable", a, re.I):
             out.append("declared" if n not in have else "wrong")
         else:
-            line = d["lines"][n - 1]
-            t, tw, ww = toks(a), toks(" ".join(a.split()[:4])), toks(" ".join(line.split()[:4]))
-            ok = (len(t) >= 4 and t[:4] == toks(line)[:4]) or (len(tw) >= 2 and tw == ww)   # a dash may be counted as a word or not
+            t, tw = toks(a), toks(" ".join(a.split()[:4]))
+            fits = lambda line: (len(t) >= 4 and t[:4] == toks(line)[:4]) or (len(tw) >= 2 and tw == toks(" ".join(line.split()[:4])))   # a dash may be counted as a word or not
+            ok = any(fits(d["lines"][k - 1]) for k in (n, n - 1, n + 1) if 1 <= k <= len(d["lines"]) and k in have)   # the line asked for, or its neighbour
             out.append("held" if ok and n in have else "invented" if n not in have else "wrong")
         if out[-1] in ("wrong", "invented"):
             near = [k for k in (n - 2, n - 1, n + 1, n + 2) if 1 <= k <= len(d["lines"]) and toks(a or "")[:3] == toks(d["lines"][k - 1])[:3]]

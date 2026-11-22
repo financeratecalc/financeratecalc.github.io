@@ -50,10 +50,14 @@ def verify(man, statement, proof):
         return {"verdict": "proof belongs to a different statement"}
     got = ans.split(";")
 
-    def held(a, L):
-        return (len(toks(a)) >= 4 and H(f"{doc}|{L}|{answer(a)}")[:12] == man["answers"][L - 1]) or (len(toks(answer_ws(a))) >= 2 and H(f"{doc}|{L}|{answer_ws(a)}")[:12] == man["answers_ws"][L - 1])
-    ok = [i < len(got) and held(got[i], L) for i, L in enumerate(ls)]
-    return {"verdict": "read" if all(ok) else "not shown to have been read", "date": date, "lines_asked": ls, "held": ok,
+    def at(a, L):
+        return 1 <= L <= man["lines"] and ((len(toks(a)) >= 4 and H(f"{doc}|{L}|{answer(a)}")[:12] == man["answers"][L - 1]) or (len(toks(answer_ws(a))) >= 2 and H(f"{doc}|{L}|{answer_ws(a)}")[:12] == man["answers_ws"][L - 1]))
+
+    def offset(a, L):   # readers quote the line above or below about one time in fifteen; a gap in a copy shifts lines by far more than one
+        return next((o for o in (0, -1, 1) if at(a, L + o)), None)
+    off = [offset(got[i], L) if i < len(got) else None for i, L in enumerate(ls)]
+    ok = [o is not None for o in off]
+    return {"verdict": "read" if all(ok) else "not shown to have been read", "date": date, "lines_asked": ls, "held": ok, "line_offsets": off,
             "document_sixths_not_shown": [i + 1 for i, v in enumerate(ok) if not v]}
 
 
