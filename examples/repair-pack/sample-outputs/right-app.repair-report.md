@@ -1,6 +1,6 @@
 # Mortgage evidence repair report
 
-Pack 1.0 · grader https://frc-mcp.ziyetis.workers.dev (deterministic sentence gate, no model; network required) · 2026-11-16T16:31:35.639Z · **6/6 pass**
+Pack 1.0 · grader https://frc-mcp.ziyetis.workers.dev (deterministic sentence gate, no model; network required) · 2026-11-23T18:47:28.839Z · **6/6 pass**
 
 ## RP01 — FHA annual MIP: the cell, not a neighbouring cell: PASS
 
