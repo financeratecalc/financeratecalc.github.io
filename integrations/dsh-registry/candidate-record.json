@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "id": "financeratecalc",
+  "registryName": "io.github.financeratecalc/frc-mcp",
+  "title": "FinanceRateCalc mortgage evidence",
+  "description": "Read-only public aggregates from US federal mortgage records: 2025 HMDA denial rates for FHA applications (national, state, metro, 100 largest FHA lenders), official monthly figures restated as printed from HUD, Ginnie Mae and SBA reports, and dated rule values. Each figure carries its denominator, source and a verifiable receipt. No individual predictions, no lender recommendations.",
+  "version": "1.55.1",
+  "classification": {
+    "isDataService": true,
+    "domains": [
+      "finance",
+      "public",
+      "research"
+    ],
+    "matchedKeywords": [
+      "statistics",
+      "mortgage",
+      "public record"
+    ]
+  },
+  "source": {
+    "kind": "official-mcp-registry",
+    "apiUrl": "https://registry.modelcontextprotocol.io/v0.1/servers",
+    "detailUrl": "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.financeratecalc%2Ffrc-mcp/versions/1.55.1",
+    "status": "active",
+    "publishedAt": "2026-11-16T10:28:08.001331Z",
+    "updatedAt": "2026-11-16T10:28:08.001331Z",
+    "retrievedAt": "2026-11-24T05:10:00Z"
+  },
+  "officialLinks": {
+    "websiteUrl": "https://financeratecalc.com/mcp-server.html",
+    "repository": {
+      "url": "https://github.com/financeratecalc/frc-mcp",
+      "source": "github",
+      "id": null,
+      "subfolder": null
+    }
+  },
+  "transports": [
+    {
+      "kind": "remote",
+      "type": "streamable-http",
+      "url": "https://frc-mcp.ziyetis.workers.dev",
+      "package": null
+    }
+  ],
+  "authentication": {
+    "mode": "none",
+    "requiredHeaders": [],
+    "reason": "No login, key or header is needed to read published figures. The batch LEI screen (screen_counterparties) returns a three-row preview without a key and its full output needs a purchased licence key; that tool and its paid unlock are excluded from this candidate."
+  },
+  "license": {
+    "status": "declared",
+    "spdxId": "MIT",
+    "evidenceUrl": "https://github.com/financeratecalc/frc-mcp/blob/main/LICENSE"
+  },
+  "maintenance": {
+    "registryStatus": "active",
+    "registryUpdatedAt": "2026-11-16T10:28:08.001331Z",
+    "ageDays": 8,
+    "repositoryActivity": "active"
+  },
+  "probe": {
+    "status": "not-run",
+    "checkedAt": null,
+    "targetUrl": "https://frc-mcp.ziyetis.workers.dev",
+    "httpStatus": null,
+    "reason": "Submitted by the operator; no probe has been run by the registry maintainers."
+  },
+  "dedupe": {
+    "level": "none",
+    "strong": [],
+    "weak": []
+  },
+  "score": {
+    "total": 75,
+    "band": "watchlist",
+    "dimensions": {
+      "authority": 20,
+      "accessibility": 25,
+      "maintenanceSecurity": 15,
+      "runtime": 0,
+      "marketGap": 10,
+      "documentation": 5
+    },
+    "reasons": [
+      "Submitter's provisional figures, for the maintainers to recompute.",
+      "authority 20/25: Official Registry entry under the publisher's verified GitHub namespace; the endpoint is named on the publisher's own domain (server card, API catalog, terms)",
+      "accessibility 25/25: one remote streamable-http endpoint; auth none",
+      "maintenance/security 15/20: registry status active; software licence declared (MIT); operated by one individual",
+      "runtime 0/15: no maintainer probe or runtime acceptance yet",
+      "market gap 10/10: domains finance, public, research; dedupe none",
+      "documentation 5/5: publisher documentation, terms, privacy policy and a bounded sample with source and denominator"
+    ],
+    "gates": [
+      "runtime acceptance not run",
+      "human review pending",
+      "first acceptance excludes screen_counterparties, screen_counterparties_quote and any paid unlock"
+    ]
+  },
+  "review": {
+    "decision": "pending",
+    "scope": "full-runtime",
+    "proposedConnectorId": "financeratecalc",
+    "reviewedAt": null,
+    "reviewedBy": null,
+    "notes": "Operator-submitted pending record for issue #103. Accountable operator: Ziya Yetis (individual), publisher of financeratecalc.com and operator of frc-mcp.ziyetis.workers.dev. Published aggregates are CC BY 4.0; figures restated from US government reports are public domain. The full batch screening output is licensed separately to its purchaser and is out of scope. The server does not accept applicant details and returns no individual lending predictions."
+  },
+  "runtimeAcceptance": {
+    "status": "not-run",
+    "checkedAt": null,
+    "reviewedBy": null,
+    "reportUrl": null,
+    "notes": "Not run. Suggested bounded read-only check: initialize, tools/list, get_state_denial_stats with state OH (expected 23.0%, 10,661 denials of 46,317 decisioned FHA applications, 2025)."
+  },
+  "evidence": [
+    {
+      "type": "official-registry",
+      "url": "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.financeratecalc%2Ffrc-mcp/versions/1.55.1",
+      "collectedAt": "2026-11-24T05:10:00Z",
+      "summary": "Official Registry status active; remote https://frc-mcp.ziyetis.workers.dev; website financeratecalc.com/mcp-server.html. The running server reports a later version."
+    },
+    {
+      "type": "official-website",
+      "url": "https://financeratecalc.com/.well-known/mcp/server-card.json",
+      "collectedAt": "2026-11-24T05:10:00Z",
+      "summary": "Server card served on the publisher's own domain; it names the workers.dev endpoint, streamable-http transport and auth none."
+    },
+    {
+      "type": "official-website",
+      "url": "https://financeratecalc.com/terms.html",
+      "collectedAt": "2026-11-24T05:10:00Z",
+      "summary": "Terms: section 1 names the operator and the workers.dev host; section 4 covers anonymous automated access and limits (no hard limit; a note is added above 200 tool calls per client per day); section 5 separates CC BY aggregates from the separately licensed batch output."
+    },
+    {
+      "type": "official-website",
+      "url": "https://financeratecalc.com/privacy.html",
+      "collectedAt": "2026-11-24T05:10:00Z",
+      "summary": "Privacy policy: section 3 states what the MCP server records (a daily counter per declared client name and tool; no questions, arguments, answers or IP addresses)."
+    },
+    {
+      "type": "official-repository",
+      "url": "https://github.com/financeratecalc/financeratecalc.github.io/blob/main/worker/index.js",
+      "collectedAt": "2026-11-24T05:10:00Z",
+      "summary": "Server source and deployment configuration (wrangler.toml) in the publisher's public repository; all 21 tools are annotated read-only."
+    },
+    {
+      "type": "license",
+      "url": "https://github.com/financeratecalc/frc-mcp/blob/main/LICENSE",
+      "collectedAt": "2026-11-24T05:10:00Z",
+      "summary": "Server software MIT. Data: CC BY 4.0 for computed aggregates (financeratecalc.com/license.html); restated US government figures are public domain."
+    },
+    {
+      "type": "official-website",
+      "url": "https://financeratecalc.com/claims/state-oh-2025.json",
+      "collectedAt": "2026-11-24T05:10:00Z",
+      "summary": "Bounded sample: Ohio 2025, 23.0% = 10,661 denials of 46,317 FHA applications that reached a decision (HMDA loan_type 2, action_taken 1-3, reverse mortgages excluded); the claim document carries the CFPB Data Browser query to reproduce it."
+    }
+  ]
+}

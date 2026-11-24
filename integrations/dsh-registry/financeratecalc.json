@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "id": "financeratecalc",
+  "name": "FinanceRateCalc·美国房贷数据",
+  "vendor": "FinanceRateCalc",
+  "icon": "🧾",
+  "category": "金融投资",
+  "summary": "美国房贷公开数据：FHA 拒贷率、HUD/Ginnie Mae/SBA 官方月度数字、规则数值，每个数字附可验证回执",
+  "description": "接入 FinanceRateCalc 官方远程 MCP，无需登录或 API Key，只读。数据来自美国联邦公开记录：2025 年 HMDA 中 FHA 贷款申请的拒贷率（全国、各州、都会区、前 100 家 FHA 贷款机构）与拒贷原因占比；HUD、Ginnie Mae、SBA 月度报告中按原文转录的官方数字，并标出后续版本是否改动；FHA 年度按揭保险费、贷款限额等带生效日期的规则数值。每个数字随附一句保留年份、口径和统计范围的可引用句子，以及形如 ⟦FRC:state-oh-2025:23.0%:34beae06⟧ 的回执，任何人都可在公开验证页核对该数字是否仍然有效。仅为历史汇总数据：不预测个人能否获批，不推荐或排名贷款机构，不构成法律、信贷或核保意见。数据以 CC BY 4.0 许可发布；内容为英文。本卡片仅涵盖免费、匿名、只读的公开汇总数据工具；按 LEI 批量筛查及其付费解锁不在本卡片范围内。",
+  "tags": [
+    "FinanceRateCalc",
+    "美国房贷",
+    "FHA",
+    "HMDA",
+    "官方统计",
+    "可验证回执",
+    "匿名使用",
+    "官方 MCP"
+  ],
+  "published": false,
+  "featured": false,
+  "homepage": "https://financeratecalc.com/mcp-server.html",
+  "probeStatus": "unverified",
+  "auth": {
+    "mode": "none"
+  },
+  "servers": [
+    {
+      "serverKey": "financeratecalc",
+      "url": "https://frc-mcp.ziyetis.workers.dev",
+      "serverName": "financeratecalc",
+      "transport": "streamable-http",
+      "headers": {
+        "Accept": "application/json, text/event-stream"
+      }
+    }
+  ],
+  "promptVariables": [
+    {
+      "name": "state",
+      "label": "美国州代码",
+      "default": "OH",
+      "placeholder": "两位 USPS 州代码，例如：OH、TX",
+      "required": true
+    },
+    {
+      "name": "sentence",
+      "label": "待核对的英文句子",
+      "default": "22.1% of mortgage applications are denied.",
+      "placeholder": "例如：22.1% of mortgage applications are denied.",
+      "required": true
+    }
+  ],
+  "prompts": [
+    {
+      "title": "查询某州 FHA 拒贷率",
+      "text": "用 FinanceRateCalc MCP 查询 {{state}} 州 2025 年 FHA 贷款申请的拒贷率，与全国水平比较，并原样保留回执",
+      "server": "financeratecalc"
+    },
+    {
+      "title": "查询 HUD 官方月度数字",
+      "text": "用 FinanceRateCalc MCP 查询 HUD 最新一期 FHA 贷款表现报告中的严重拖欠率，说明它是否改动过上一期已公布的数字，并给出回执",
+      "server": "financeratecalc"
+    },
+    {
+      "title": "核对引用句子",
+      "text": "用 FinanceRateCalc MCP 的句子核对工具检查这句话是否正确引用了全国 FHA 拒贷率，指出缺少的年份或统计范围：{{sentence}}",
+      "server": "financeratecalc"
+    }
+  ]
+}
