@@ -98,15 +98,16 @@
       <name>The Figure Token</name>
       <t>A Signed Statement is too large to sit beside a number in a sentence or in a tool result. The Figure Token is a short reference that can.</t>
       <artwork><![CDATA[
-   token   = open prefix ":" id ":" value ":" digest
-             [ ":" channel ] close
-   open    = %xE2.9F.A6   ; U+27E6, UTF-8 encoded
-   close   = %xE2.9F.A7   ; U+27E7, UTF-8 encoded
-   prefix  = 2*8ALPHA     ; chosen by the Publisher
-   id      = 1*( %x61-7A / DIGIT / "-" )
-   value   = 1*( %x21-39 / %x3B-7E )   ; as displayed; no ":", no space
-   digest  = 8HEXDIG      ; lowercase
-   channel = ALPHA 4DIGIT ; where and when this copy was issued
+token   = open prefix ":" id ":" value ":" digest
+          [ ":" channel ] close
+open    = %xE2.9F.A6   ; U+27E6, UTF-8 encoded
+close   = %xE2.9F.A7   ; U+27E7, UTF-8 encoded
+prefix  = 2*8ALPHA     ; chosen by the Publisher
+id      = 1*( %x61-7A / DIGIT / "-" )
+value   = 1*( %x21-39 / %x3B-7E )
+          ; as displayed; no ":" and no space
+digest  = 8HEXDIG      ; lowercase
+channel = ALPHA 4DIGIT ; where and when this copy was issued
 ]]></artwork>
       <t>The digest is the first eight hexadecimal characters of the SHA-256 digest of the canonical serialization of the "claim" member. The brackets were chosen because they do not occur in ordinary prose or in JSON syntax; a verifier <bcp14>SHOULD</bcp14> also accept a token whose brackets were lost in copying.</t>
       <t>The token is a pointer, not a proof. Thirty-two bits do not resist a deliberate collision, and nothing in the token is signed. A verifier <bcp14>MUST</bcp14> resolve the token to the Figure Statement and compare the full digest before reporting any state.</t>

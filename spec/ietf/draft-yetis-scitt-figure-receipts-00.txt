@@ -282,15 +282,16 @@ Yetis                      Expires 28 May 2027                  [Page 5]
 Internet-Draft              Figure Statements              November 2026
 
 
-    token   = open prefix ":" id ":" value ":" digest
-              [ ":" channel ] close
-    open    = %xE2.9F.A6   ; U+27E6, UTF-8 encoded
-    close   = %xE2.9F.A7   ; U+27E7, UTF-8 encoded
-    prefix  = 2*8ALPHA     ; chosen by the Publisher
-    id      = 1*( %x61-7A / DIGIT / "-" )
-    value   = 1*( %x21-39 / %x3B-7E )   ; as displayed; no ":", no space
-    digest  = 8HEXDIG      ; lowercase
-    channel = ALPHA 4DIGIT ; where and when this copy was issued
+   token   = open prefix ":" id ":" value ":" digest
+             [ ":" channel ] close
+   open    = %xE2.9F.A6   ; U+27E6, UTF-8 encoded
+   close   = %xE2.9F.A7   ; U+27E7, UTF-8 encoded
+   prefix  = 2*8ALPHA     ; chosen by the Publisher
+   id      = 1*( %x61-7A / DIGIT / "-" )
+   value   = 1*( %x21-39 / %x3B-7E )
+             ; as displayed; no ":" and no space
+   digest  = 8HEXDIG      ; lowercase
+   channel = ALPHA 4DIGIT ; where and when this copy was issued
 
    The digest is the first eight hexadecimal characters of the SHA-256
    digest of the canonical serialization of the "claim" member.  The
@@ -327,7 +328,6 @@ Internet-Draft              Figure Statements              November 2026
 
    unrecognized:  The id is unknown, or the digest was never issued for
       it.
-
 
 
 
