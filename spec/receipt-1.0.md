@@ -1,5 +1,7 @@
 # Receipt 1.0 — receipts for published figures
 
+> An Internet-Draft generalizes this format for any publisher and maps it onto IETF SCITT: [draft-yetis-scitt-figure-receipts](https://datatracker.ietf.org/doc/draft-yetis-scitt-figure-receipts/) (individual draft, no formal standing). Names differ there: the receipt is called a Figure Token, `stale` is `superseded`.
+
 Status: draft 1, 2026-10-21. License: CC BY 4.0. Reference implementation: FinanceRateCalc
 (`https://financeratecalc.com/.well-known/receipt.json`). Conformance suite: `spec/receipt-conformance.mjs`.
 
