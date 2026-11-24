@@ -1617,6 +1617,67 @@ async function witnessHTTP(request, env, path) {
   return json({ error: "unknown witness path" }, 404);
 }
 
+// Figure Statements (draft-yetis-scitt-figure-receipts): each published figure as a SCITT Signed Statement, a COSE_Sign1
+// object (RFC 9052) whose payload is the canonical JSON statement and whose protected header names the Issuer and Subject
+// as RFC 9943 requires. The signing key is made here on first use and never leaves the store; the public key is at
+// /statement-key. Not registered with a Transparency Service: no Receipts in the RFC 9943 sense are issued yet.
+//   GET /statement/<claim id>            application/cose, the Signed Statement
+//   GET /statement/<claim id>?view=json  the same, opened: header, payload, signature, how to check it
+//   GET /statement-key                   the public key (JWK) and its key id
+const cborHead = (major, n) => n < 24 ? [major << 5 | n] : n < 256 ? [major << 5 | 24, n] : n < 65536 ? [major << 5 | 25, n >> 8, n & 255] : [major << 5 | 26, (n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255];
+const cborInt = v => v >= 0 ? cborHead(0, v) : cborHead(1, -1 - v);
+const cborBytes = b => [...cborHead(2, b.length), ...b];
+const cborText = t => { const b = new TextEncoder().encode(t); return [...cborHead(3, b.length), ...b]; };
+const cborArray = items => [...cborHead(4, items.length), ...items.flat()];
+const cborMap = pairs => [...cborHead(5, pairs.length), ...pairs.flatMap(([k, v]) => [...k, ...v])];   // callers pass keys already in ascending order
+async function stmtKey(env) {
+  const have = await env.CREDITS.get("stmt:key", "json");
+  if (have) return have;
+  const kp = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+  const pub = await crypto.subtle.exportKey("jwk", kp.publicKey);
+  const rec = { public_jwk: { kty: pub.kty, crv: pub.crv, x: pub.x, y: pub.y }, jwk: await crypto.subtle.exportKey("jwk", kp.privateKey), created: new Date().toISOString() };
+  rec.key_id = (await sha256Hex(rec.public_jwk.x + "." + rec.public_jwk.y)).slice(0, 16);
+  await env.CREDITS.put("stmt:key", JSON.stringify(rec));
+  return rec;
+}
+const STMT_ISS = BASE;
+async function figureStatement(id) {
+  let P; try { P = await getJSON("/claims/" + id + ".json"); } catch { return null; }
+  if (!P || !P.claim || !P.receipt) return null;
+  let C = {}; try { C = await getJSON("/claims/" + id + ".contract.json"); } catch {}
+  const c = P.claim, restated = c.level === "attested restatement" || /^official-/.test(id);
+  const source = restated
+    ? { document: c.source_document || null, edition: c.edition || null, sha256: c.source_sha256 || null, table: c.table || null, row: c.row || null, exclusions: c.exclusions || null }
+    : { dataset: (P.provenance && P.provenance.primary_source) || null, population: (P.provenance && P.provenance.dataset) || null, method: BASE + "/methodology.html", reproduce: P.reproduce || null };
+  const st = { id, value: String(P.display_value), kind: restated ? "restated" : "computed", claim: c, source, issued: P.issued_at || null };
+  if (P.revision_status && P.revision_status.revised_to != null) st.source_revision = { value: P.revision_status.revised_to, edition: P.revision_status.revised_in || null, marked_by_source: false };
+  if (Array.isArray(C.does_not_establish) && C.does_not_establish.length) st.limits = C.does_not_establish;
+  return { statement: st, token: P.receipt };
+}
+async function statementHTTP(request, env, path, url) {
+  if (!env || !env.CREDITS) return json({ error: "store unavailable" }, 503);
+  const k = await stmtKey(env);
+  if (path === "/statement-key") return json({ key_id: k.key_id, alg: "ES256 (COSE algorithm -7): ECDSA P-256 with SHA-256, signature r||s", public_jwk: k.public_jwk, created: k.created,
+    issuer: STMT_ISS, profile: "https://datatracker.ietf.org/doc/draft-yetis-scitt-figure-receipts/", registered_with_transparency_service: false });
+  const id = decodeURIComponent(path.slice("/statement/".length)).toLowerCase();
+  if (!/^[a-z0-9-]{3,120}$/.test(id)) return json({ error: "expected /statement/<claim id>" }, 400);
+  const fs = await figureStatement(id);
+  if (!fs) return json({ error: "no figure with the id " + id }, 404);
+  const sub = BASE + "/claims/" + id + ".json";
+  const payload = new TextEncoder().encode(JSON.stringify(jcs(fs.statement)));
+  const protectedMap = cborMap([[cborInt(1), cborInt(-7)], [cborInt(3), cborText("application/json")], [cborInt(4), cborBytes(new TextEncoder().encode(k.key_id))],
+    [cborInt(15), cborMap([[cborInt(1), cborText(STMT_ISS)], [cborInt(2), cborText(sub)]])]]);
+  const toSign = new Uint8Array(cborArray([cborText("Signature1"), cborBytes(protectedMap), cborBytes([]), cborBytes(payload)]));
+  const key = await crypto.subtle.importKey("jwk", k.jwk, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+  const sig = new Uint8Array(await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, key, toSign));
+  if (url.searchParams.get("view") === "json") return json({ profile: "draft-yetis-scitt-figure-receipts-00", protected: { alg: "ES256", content_type: "application/json", kid: k.key_id, cwt_claims: { iss: STMT_ISS, sub } },
+    statement: fs.statement, figure_token: fs.token, signature: b64u(sig), key: "https://frc-mcp.ziyetis.workers.dev/statement-key",
+    check: "Fetch the same address without ?view=json: a COSE_Sign1 (CBOR tag 18). Verify the ES256 signature over Sig_structure [\"Signature1\", protected, h'', payload] with the key at /statement-key. The payload is this statement in JCS form.",
+    not_yet: "Not registered with a SCITT Transparency Service; no Receipt (RFC 9943) is attached. The signature shows this publisher issued the statement; it does not show the figure is correct." });
+  const cose = new Uint8Array([0xd2, ...cborArray([cborBytes(protectedMap), cborMap([]), cborBytes(payload), cborBytes(sig)])]);
+  return new Response(cose, { status: 200, headers: { "Content-Type": 'application/cose; cose-type="cose-sign1"', "Cache-Control": "no-store", ...CORS } });
+}
+
 // The site's own front door, for agents. Two addresses on financeratecalc.com are answered here instead of by the static host,
 // because a static host cannot set response headers or a media type:
 //   /                              the page the static host serves, unchanged, plus Link headers (RFC 8288) that say where the
@@ -1675,6 +1736,7 @@ const WORKER = {
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
     if (path.startsWith("/radar/")) return radarHTTP(request, env, path);
     if (path.startsWith("/witness/")) return witnessHTTP(request, env, path);
+    if ((path.startsWith("/statement/") || path === "/statement-key") && request.method === "GET") return statementHTTP(request, env, path, new URL(request.url));
     // Public misquote ledger: a reader submits an AI answer that quotes an FRC figure; stored verbatim
     // with the system name and date, graded later against the claim contract, published as JSON.
     // No personal data is recorded: system name, the quoted text (capped), an optional URL, a date.
