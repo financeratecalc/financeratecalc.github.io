@@ -29,7 +29,7 @@ const call = async (p, body) => { const r = await mod.fetch(new Request("https:/
 
 const text = fs.readFileSync(path.join(ROOT, "eval/read-proof/fixture-agreement.txt"), "utf8"), all = RP.linesOf(text), man = await RP.manifest(text);
 const quote = (copy, lines) => lines.map(L => { const hit = copy.find(x => x.n === L); return hit ? hit.t.split(/\s+/).slice(0, 4).join(" ") : "MISSING"; });
-const full = all.map((t, i) => ({ n: i + 1, t })), half = full.slice(0, Math.floor(all.length / 2));
+const full = all.map((t, i) => ({ n: i + 1, t })), half = full.slice(0, 3 * Math.floor(all.length / 6));   // exactly the first three sixths as the server cuts them: one line more and a draw at the start of the fourth sixth would be held
 // a copy with a gap is renumbered by its reader, who does not know lines are missing
 const gap = all.slice(0, Math.floor(all.length * 0.35)).concat(all.slice(Math.floor(all.length * 0.55))).map((t, i) => ({ n: i + 1, t }));
 const ST = "The Buyer can leave early only under clause 14.3.";
