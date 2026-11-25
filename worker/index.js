@@ -1644,12 +1644,17 @@ async function stmtKey(env) {
 const STMT_ISS = BASE;
 const STMT_TEST = { "test-late-correction": "/spec/ietf/vectors/test-late-correction.json", "test-staged-correction": "/spec/ietf/vectors/test-staged-correction.json" };   // test Subjects: issued by the real key, labelled as tests, never counted as figures
 async function figureStatement(id, rev) {
-  if (STMT_TEST[id]) { let T; try { T = await getJSON(STMT_TEST[id]); } catch { return null; }
+  if (STMT_TEST[id]) { let T; try { T = await getJSON(STMT_TEST[id]); } catch { throw Object.assign(new Error("source file unavailable: " + STMT_TEST[id]), { unavailable: true }); }
     const n = rev ? parseInt(rev, 10) : T.revisions.length; if (!(n >= 1 && n <= T.revisions.length)) return null;
     return { statement: T.revisions[n - 1], token: null, sub: T.sub, test: true, revision: n, revisions: T.revisions.length }; }
-  let P; try { P = await getJSON("/claims/" + id + ".json"); } catch { return null; }
+  // A statement is signed only from complete inputs. On 2026-11-25 an independent reader (K. Gruszka) fetched a statement for
+  // metro-gap-fort-wayne-in-2025 that lacked its limits member: the read of the contract file had failed and the statement
+  // was built without it, signed, and so carried a digest that was on no list. A failed read now means no statement.
+  const need = async (path) => { try { return await getJSON(path); } catch (e) { if (/ 404 /.test(String(e && e.message))) return null; throw Object.assign(new Error("source file unavailable: " + path), { unavailable: true }); } };
+  const P = await need("/claims/" + id + ".json");
   if (!P || !P.claim || !P.receipt) return null;
-  let C = {}; try { C = await getJSON("/claims/" + id + ".contract.json"); } catch {}
+  const C = await need("/claims/" + id + ".contract.json");
+  if (!C) throw Object.assign(new Error("no contract file for " + id), { unavailable: true });   // every receipted figure has one; its absence is a fault, not a shorter statement
   const c = P.claim, restated = c.level === "attested restatement" || /^official-/.test(id);
   const source = restated
     ? { document: c.source_document || null, edition: c.edition || null, sha256: c.source_sha256 || null, table: c.table || null, row: c.row || null, exclusions: c.exclusions || null }
@@ -1666,7 +1671,8 @@ async function statementHTTP(request, env, path, url) {
     issuer: STMT_ISS, profile: "https://datatracker.ietf.org/doc/draft-yetis-scitt-figure-receipts/", registered_with_transparency_service: false });
   const id = decodeURIComponent(path.slice("/statement/".length)).toLowerCase();
   if (!/^[a-z0-9-]{3,120}$/.test(id)) return json({ error: "expected /statement/<claim id>" }, 400);
-  const fs = await figureStatement(id, url.searchParams.get("rev"));
+  let fs; try { fs = await figureStatement(id, url.searchParams.get("rev")); }
+  catch (e) { return new Response(JSON.stringify({ error: "A file this statement is built from could not be read just now, so no statement was issued. Try again shortly.", detail: String(e && e.message || e) }), { status: 503, headers: { "Content-Type": "application/json", "Retry-After": "30", ...CORS } }); }
   if (!fs) return json({ error: "no figure with the id " + id }, 404);
   const sub = fs.sub || BASE + "/claims/" + id + ".json";
   const payload = new TextEncoder().encode(JSON.stringify(jcs(fs.statement)));
@@ -1680,14 +1686,16 @@ async function statementHTTP(request, env, path, url) {
   // Every digest issued for a figure is listed in the public repository (transparency/statement-digests.json, append-only, dated
   // by its commits), so an earlier reference can be told from a forged one without asking this server to remember anything.
   const digest = [...new Uint8Array(await crypto.subtle.digest("SHA-256", toSign))].map(x => x.toString(16).padStart(2, "0")).join("");
-  let hist = []; try { const L = await getJSON("/transparency/statement-digests.json"); hist = (fs.test ? (L.test_vectors || {}) : (L.digests || {}))[id] || []; } catch {}
+  let hist = [], histRead = true; try { const L = await getJSON("/transparency/statement-digests.json"); hist = (fs.test ? (L.test_vectors || {}) : (L.digests || {}))[id] || []; } catch { histRead = false; }
   const inForce = fs.test ? (hist.length ? hist[hist.length - 1].digest : null) : digest;   // a test Subject can be fetched at an earlier revision; the statement in force is the last one listed
   const asked = (url.searchParams.get("digest") || "").toLowerCase();
   if (asked) {
     if (!/^[0-9a-f]{64}$/.test(asked)) return json({ error: "digest must be 64 hex characters: SHA-256 over the statement's to-be-signed structure" }, 400);
-    const state = asked === inForce ? "current" : hist.some(h => h.digest === asked) ? "superseded" : "unrecognized";
+    if (!histRead) return new Response(JSON.stringify({ error: "The list of issued digests could not be read just now, so no answer is given: without it an earlier statement would be reported as never issued. Try again shortly." }), { status: 503, headers: { "Content-Type": "application/json", "Retry-After": "30", ...CORS } });
+    const row = hist.find(h => h.digest === asked), state = asked === inForce ? "current" : row ? (row.issued_in_error ? "issued_in_error" : "superseded") : "unrecognized";
     return json({ iss: STMT_ISS, sub, ...(fs.test ? { test_subject: true } : {}), asked_digest: asked, state, checked_at: new Date().toISOString(), checked_by: url.origin + path, current_digest: inForce, current_value: fs.statement.value, source_revision: fs.statement.source_revision || null,
-      meaning: { current: "This is the statement the publisher issues for this figure now.", superseded: "The publisher issued this statement earlier and has since issued another for the same figure. Compare with the current one.", unrecognized: "The publisher has no record of issuing a statement with this digest for this figure." }[state],
+      meaning: { current: "This is the statement the publisher issues for this figure now.", superseded: "The publisher issued this statement earlier and has since issued another for the same figure. Compare with the current one.", issued_in_error: "The publisher signed and served this statement by mistake; it was never the statement in force. Use the current one. The note says what was wrong.", unrecognized: "The publisher has no record of issuing a statement with this digest for this figure." }[state],
+      ...(row && row.note ? { note_on_this_digest: row.note } : {}),
       history: BASE + "/transparency/statement-digests.json", history_begins: "2026-11-25", note: "Digests are listed from 2026-11-25; a statement issued and replaced before that day cannot be recognised." });
   }
   if (url.searchParams.get("view") === "json") return json({ profile: "draft-yetis-scitt-figure-receipts-00", protected: { alg: "ES256", content_type: "application/json", kid: k.key_id, cwt_claims: { iss: STMT_ISS, sub } },

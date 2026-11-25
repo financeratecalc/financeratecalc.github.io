@@ -13,7 +13,9 @@ const store = new Map();
 const KV = { async get(k, t) { const v = store.get(k); return v == null ? null : (t === "json" ? JSON.parse(v) : v); }, async put(k, v) { store.set(k, v); }, async delete(k) { store.delete(k); },
   async getWithMetadata(k) { return { value: store.get(k) ?? null, metadata: null }; }, async list() { return { keys: [], list_complete: true }; } };
 let HIST = null;   // when set, stands in for the published digest list
+let BREAK = null;  // when set, a function of the path that returns a status to fail with (a read that goes wrong)
 globalThis.fetch = async (u) => { const url = new URL(typeof u === "string" ? u : u.url); if (url.hostname !== "financeratecalc.com") throw new Error("network call blocked: " + url.href);
+  if (BREAK) { const code = BREAK(url.pathname); if (code === "throw") throw new Error("connection reset"); if (code) return new Response("x", { status: code }); }
   if (HIST && url.pathname === "/transparency/statement-digests.json") return new Response(JSON.stringify(HIST));
   const f = path.join(ROOT, decodeURIComponent(url.pathname).slice(1)); return fs.existsSync(f) && fs.statSync(f).isFile() ? new Response(fs.readFileSync(f)) : new Response("not found", { status: 404 }); };
 if (!globalThis.caches) globalThis.caches = { default: { match: async () => undefined, put: async () => {} } };
@@ -55,6 +57,7 @@ async function check(id) {
   assert(st.id === id && st.value === String(doc.display_value) && JSON.stringify(jcs(st.claim)) === JSON.stringify(jcs(doc.claim)) && (st.kind === "restated" || st.kind === "computed"), id + ": statement does not match the claim document");
   const h8 = crypto.createHash("sha256").update(JSON.stringify(jcs(st.claim))).digest("hex").slice(0, 8);
   assert(doc.receipt.includes(":" + h8), id + ": the token's digest is not the digest of the statement's claim member");
+  assert(Array.isArray(st.limits) && st.limits.length > 0, id + ": a statement must carry its limits");
   if (st.kind === "restated") assert(st.source.document && /^[0-9a-f]{64}$/.test(st.source.sha256) && st.source.table, id + ": a restated figure must name its document, digest and table");
   if (doc.revision_status && doc.revision_status.revised_to != null) assert(st.source_revision && st.source_revision.value === doc.revision_status.revised_to && st.source_revision.marked_by_source === false, id + ": source revision missing");
   return { raw, st };
@@ -94,6 +97,18 @@ st = await (await tv("?digest=" + "0".repeat(64))).json(); assert(st.state === "
 assert((await tv("?rev=3")).status === 404 && !ids.includes("test-late-correction"), "no third revision, and the test Subject is not a figure");
 const built = JSON.parse(fs.readFileSync(path.join(ROOT, "spec/ietf/vectors/hud-lpt-2026-08-earlier-form.constructed.json"), "utf8"));
 assert(built.issued === false && built.digest === crypto.createHash("sha256").update(Buffer.from(built.to_be_signed_hex, "hex")).digest("hex") && !JSON.parse(built.payload_utf8).source_revision, "the constructed earlier form is labelled as not issued and its digest follows from its bytes");
+// A statement is signed only from complete inputs. On 2026-11-25 an outside reader was served a signed statement for
+// metro-gap-fort-wayne-in-2025 without its limits member, because the read of the contract file had failed. Whatever goes
+// wrong with a read, the answer is 503 and no signature; the stray digest stays on the list, marked as issued in error.
+const FW = "metro-gap-fort-wayne-in-2025", fwGood = tbs(Buffer.from(await (await get("/statement/" + FW)).arrayBuffer()));
+for (const [what, fail] of [["contract 500", p => p.endsWith(".contract.json") ? 500 : 0], ["contract 404", p => p.endsWith(".contract.json") ? 404 : 0], ["contract reset", p => p.endsWith(".contract.json") ? "throw" : 0], ["claim 502", p => p.endsWith(FW + ".json") ? 502 : 0], ["claim reset", p => p.endsWith(FW + ".json") ? "throw" : 0]]) {
+  BREAK = fail; const rr = await get("/statement/" + FW), rj = await get("/statement/" + FW + "?view=json"); BREAK = null;
+  assert(rr.status === 503 && rr.headers.get("retry-after") && !/cose/.test(rr.headers.get("content-type")) && rj.status === 503, "a failed read (" + what + ") must give 503 and no signed statement"); }
+BREAK = p => p.endsWith("statement-digests.json") ? 500 : 0; r = await get("/statement/" + FW + "?digest=" + fwGood); BREAK = null;
+assert(r.status === 503, "no answer about a digest when the list cannot be read");
+HIST = null; const FWBAD = "bf059ab518eea35ffebe0bcd5da1739aa7280dcc5f7c0a74eae58057f9ed7946";
+st = await (await get("/statement/" + FW + "?digest=" + FWBAD)).json(); if (process.env.DBG) console.log(st, fwGood); assert(st.state === "issued_in_error" && /limits/.test(st.note_on_this_digest) && st.current_digest === fwGood, "the statement served by mistake is named as such");
+st = await (await get("/statement/" + FW + "?digest=" + fwGood)).json(); assert(st.state === "current", "the Fort Wayne statement in force");
 // the published list, built with the published key id, names the statement in force for every figure
 HIST = null; const { currentDigests } = await import("./build_statement_digests.mjs"); const listed = JSON.parse(fs.readFileSync(path.join(ROOT, "transparency/statement-digests.json"), "utf8"));
 const cur = await currentDigests(); let unlisted = 0; for (const id of ids) if (!(listed.digests[id] || []).some(h => h.digest === cur[id].digest)) unlisted++;

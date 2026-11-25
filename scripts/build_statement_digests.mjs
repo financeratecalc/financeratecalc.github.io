@@ -41,6 +41,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const day = new Date().toISOString().slice(0, 10);
   for (const id of missing) have.digests[id] = [...(have.digests[id] || []), { digest: cur[id].digest, value: cur[id].value, first_listed: day }];
   have.test_vectors = have.test_vectors || {}; let addedTests = 0;
+  // Statements that were signed and served but should not have been. They stay on the list, marked, placed before the statement
+  // in force: a reader who holds one must be able to learn that it was ours and that it was wrong.
+  const ERRORS = [{ id: "metro-gap-fort-wayne-in-2025", digest: "bf059ab518eea35ffebe0bcd5da1739aa7280dcc5f7c0a74eae58057f9ed7946", first_listed: "2026-11-25", issued_in_error: true,
+    note: "Signed and served at about 08:27 UTC on 2026-11-25 without its limits member: the read of the contract file failed and the statement was built without it. Found by an independent reader (K. Gruszka, proofbundle). Value, source and claim were the same as in the statement in force. Since the fix of the same day the service issues no statement when a file it is built from cannot be read." }];
+  for (const e of ERRORS) { const { id, ...row } = e, list = have.digests[id] || []; if (!list.some(h => h.digest === e.digest)) { have.digests[id] = [{ ...row, value: (list[0] || cur[id] || {}).value }, ...list]; addedTests++; } }
   for (const [id, revs] of Object.entries(cur.__tests)) for (const r of revs) if (!(have.test_vectors[id] || []).some(h => h.digest === r.digest)) { have.test_vectors[id] = [...(have.test_vectors[id] || []), { ...r, first_listed: day }]; addedTests++; }
   // Each version of the list names the SHA-256 of the version before it, so the signed, logged versions form a chain: an entry
   // cannot be dropped from an earlier version without breaking the link from every later one.

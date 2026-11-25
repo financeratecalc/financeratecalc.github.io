@@ -1,6 +1,6 @@
 name: Statement probe (the live check endpoint, asked from outside)
-# Asks the live service the three questions a verifier asks: a digest in force, a digest never issued, and the staged test
-# Subject. The answer is recorded with where and when it was asked from, because a check is only as good as the vantage
+# Asks the live service the questions a verifier asks: a digest in force, a digest never issued, the staged test Subject, and a
+# statement that was issued in error. The answer is recorded with where and when it was asked from, because a check is only as good as the vantage
 # point it was made from. Manual.
 on:
   workflow_dispatch:
@@ -21,6 +21,8 @@ jobs:
           cases = [("in force", hud, L["digests"][hud][-1]["digest"], "current"),
                    ("never issued", hud, "5ee0c9a1b8f2d4e6a7c3b9d1e5f7a2c4b6d8e0f1a3c5e7b9d2f4a6c8e0b1d3f5", "unrecognized"),
                    ("staged test, revision 1", "test-staged-correction", L["test_vectors"]["test-staged-correction"][0]["digest"], "current" if len(L["test_vectors"]["test-staged-correction"]) == 1 else "superseded")]
+          fw = "metro-gap-fort-wayne-in-2025"
+          cases += [("in force", fw, L["digests"][fw][-1]["digest"], "current")] + [("issued in error", fw, h["digest"], "issued_in_error") for h in L["digests"][fw] if h.get("issued_in_error")]
           out, bad = [], 0
           for what, sid, dg, want in cases:
               req = urllib.request.Request(EP + sid + "?digest=" + dg, headers={"User-Agent": "frc-statement-probe", "Cache-Control": "no-cache"})
