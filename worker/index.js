@@ -1686,7 +1686,7 @@ async function statementHTTP(request, env, path, url) {
   if (asked) {
     if (!/^[0-9a-f]{64}$/.test(asked)) return json({ error: "digest must be 64 hex characters: SHA-256 over the statement's to-be-signed structure" }, 400);
     const state = asked === inForce ? "current" : hist.some(h => h.digest === asked) ? "superseded" : "unrecognized";
-    return json({ iss: STMT_ISS, sub, ...(fs.test ? { test_subject: true } : {}), asked_digest: asked, state, current_digest: inForce, current_value: fs.statement.value, source_revision: fs.statement.source_revision || null,
+    return json({ iss: STMT_ISS, sub, ...(fs.test ? { test_subject: true } : {}), asked_digest: asked, state, checked_at: new Date().toISOString(), checked_by: url.origin + path, current_digest: inForce, current_value: fs.statement.value, source_revision: fs.statement.source_revision || null,
       meaning: { current: "This is the statement the publisher issues for this figure now.", superseded: "The publisher issued this statement earlier and has since issued another for the same figure. Compare with the current one.", unrecognized: "The publisher has no record of issuing a statement with this digest for this figure." }[state],
       history: BASE + "/transparency/statement-digests.json", history_begins: "2026-11-25", note: "Digests are listed from 2026-11-25; a statement issued and replaced before that day cannot be recognised." });
   }
