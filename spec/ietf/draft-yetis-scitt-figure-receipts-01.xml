@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" version="3" ipr="trust200902" docName="draft-yetis-scitt-figure-receipts-01" category="info" submissionType="IETF" xml:lang="en" tocInclude="true" sortRefs="true" symRefs="true">
+  <front>
+    <title abbrev="Figure Statements">Figure Statements: A SCITT Profile for Published Figures Given to AI Agents</title>
+    <seriesInfo name="Internet-Draft" value="draft-yetis-scitt-figure-receipts-01"/>
+    <author fullname="Ziya Yetiş" asciiFullname="Ziya Yetis" initials="Z." surname="Yetiş" asciiSurname="Yetis">
+      <organization>FinanceRateCalc</organization>
+      <address>
+        <postal><country>Turkey</country></postal>
+        <email>press@financeratecalc.com</email>
+        <uri>https://financeratecalc.com</uri>
+      </address>
+    </author>
+    <date year="2026" month="November" day="25"/>
+    <area>Security</area>
+    <workgroup>SCITT</workgroup>
+    <keyword>provenance</keyword>
+    <keyword>statistics</keyword>
+    <keyword>AI agents</keyword>
+    <abstract>
+      <t>Profiles of SCITT for AI agents record what an agent did: which tool it called, under whose authority, and what bytes came back. They state, correctly, that they do not show whether those bytes were true. This document profiles the layer underneath: a Signed Statement, issued by the publisher of a figure, that binds the figure to its source, period and population, and that is superseded when the publisher corrects the figure or when the original source prints a different value in a later edition. It also defines a reference to such a statement that an agent-side record can carry, and a short token that travels with the figure through prose, so that a later reader can find the statement and learn whether the figure is still the one published.</t>
+      <t>The profile makes a narrow claim. It shows that a figure is the one a named publisher published, from a named source, and whether it has changed since. It does not show that the figure is correct.</t>
+    </abstract>
+  </front>
+  <middle>
+    <section anchor="intro">
+      <name>Introduction</name>
+      <t>An AI agent that answers a question with a statistic usually obtained the statistic from somewhere: a tool, a retrieved page, a data service. Several current proposals make the agent's side of this exchange accountable. A SCITT profile for agent action receipts <xref target="I-D.noa-scitt-ai-agent-receipt"/> records each governed action in a signed, hash-chained record. An execution receipt <xref target="I-D.zambo-aer1"/> commits to the exact bytes a tool returned. A measurement capsule <xref target="I-D.templeman-scitt-measurement-capsule"/> records what a third party observed against what a subject declared.</t>
+      <t>Each of these is explicit about its boundary. A receipt for an action shows that a record was issued by a key and has not been altered; it does not show that the agent's inputs were true. A commitment to output bytes shows that the bytes match; it says nothing about the value inside them. The SCITT architecture itself is as plain: registering a Statement only proves that it was produced by an Issuer <xref target="RFC9943"/>.</t>
+      <t>So a chain of agent receipts can be complete and verifiable while the number at the end of it is stale. This happens in practice in two ways that the agent cannot see:</t>
+      <ul>
+        <li>The publisher corrects a figure. Copies of the earlier value persist in caches, datasets and model outputs.</li>
+        <li>The original source restates a figure. Official statistical reports print the previous period beside the current one, and the restated value sometimes differs from the value first printed, without any mark. <xref target="impl"/> reports five such cases found in two monthly reports of one agency.</li>
+      </ul>
+      <t>This document defines a Figure Statement: a SCITT Signed Statement whose Issuer is the publisher of the figure and whose Subject is the figure. It is the publisher's half of the record. An agent-side receipt can then commit to output that carries a reference to a Figure Statement, and a Relying Party can check both halves.</t>
+      <t>The reference by which an agent-side record points at a Figure Statement (<xref target="reference"/>) follows the requirements proposed in <xref target="I-D.gruszka-scitt-statement-identification"/>, and was added in this revision in response to review on the SCITT mailing list.</t>
+      <t>Defining payload formats is outside the charter of the SCITT Working Group. This document is offered as an individual profile, in the same way as the agent profiles it complements.</t>
+    </section>
+    <section anchor="terms">
+      <name>Terminology</name>
+      <t>The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>" and "<bcp14>MAY</bcp14>" in this document are to be interpreted as described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all capitals, as shown here.</t>
+      <t>Artifact, Statement, Signed Statement, Issuer, Subject, Transparency Service, Receipt, Transparent Statement and Relying Party are used as defined in <xref target="RFC9943"/>. In this document "Receipt" always has that meaning.</t>
+      <dl>
+        <dt>Figure:</dt>
+        <dd>A single published value together with what it measures: a quantity, a period, a population and a source.</dd>
+        <dt>Publisher:</dt>
+        <dd>The party that publishes a Figure and issues the Figure Statement for it. The Publisher may have computed the Figure or may be restating a Figure printed by someone else.</dd>
+        <dt>Computed Figure:</dt>
+        <dd>A Figure the Publisher derived from a dataset by a stated method.</dd>
+        <dt>Restated Figure:</dt>
+        <dd>A Figure the Publisher copied, without computation, from a document issued by another party (the Source).</dd>
+        <dt>Edition:</dt>
+        <dd>One dated issue of a recurring Source document.</dd>
+        <dt>Figure Statement:</dt>
+        <dd>The Statement defined in <xref target="statement"/>.</dd>
+        <dt>Figure Reference:</dt>
+        <dd>The structured reference to one Figure Statement defined in <xref target="reference"/>.</dd>
+        <dt>Figure Token:</dt>
+        <dd>The short textual pointer defined in <xref target="token"/>.</dd>
+      </dl>
+    </section>
+    <section anchor="statement">
+      <name>The Figure Statement</name>
+      <t>A Figure Statement is a JSON object. Before hashing or signing it is serialized with the JSON Canonicalization Scheme <xref target="RFC8785"/>. It has the following members.</t>
+      <dl>
+        <dt>id (string, <bcp14>REQUIRED</bcp14>):</dt>
+        <dd>An identifier for the Figure, unique within the Publisher, made of lowercase letters, digits and hyphens. It does not change when the value changes.</dd>
+        <dt>value (string, <bcp14>REQUIRED</bcp14>):</dt>
+        <dd>The Figure exactly as it is displayed, including any unit sign and digit grouping.</dd>
+        <dt>kind (string, <bcp14>REQUIRED</bcp14>):</dt>
+        <dd>"computed" or "restated".</dd>
+        <dt>claim (object, <bcp14>REQUIRED</bcp14>):</dt>
+        <dd>The machine form of the Figure: at least a numeric value, a metric name and a period. This is the object the Figure Token's digest is taken over (<xref target="token"/>).</dd>
+        <dt>source (object, <bcp14>REQUIRED</bcp14>):</dt>
+        <dd>
+          <t>For a Restated Figure: the title of the Source document, its Edition, the SHA-256 digest of the document as retrieved, the table and the row or cell the value was copied from, and any exclusion the Source states for that table.</t>
+          <t>For a Computed Figure: the dataset and its version or digest, the definition of the population, the numerator and the denominator as counts where they exist, and a reference to the method.</t>
+        </dd>
+        <dt>issued (string, <bcp14>REQUIRED</bcp14>):</dt>
+        <dd>The time of issue, as an <xref target="RFC3339"/> timestamp.</dd>
+        <dt>supersedes (string, <bcp14>OPTIONAL</bcp14>):</dt>
+        <dd>The Figure Token of the Figure Statement this one replaces.</dd>
+        <dt>source_revision (object, <bcp14>OPTIONAL</bcp14>):</dt>
+        <dd>For a Restated Figure only: the value the Source printed for the same period in a later Edition, and that Edition. See <xref target="revision"/>.</dd>
+        <dt>limits (array of strings, <bcp14>OPTIONAL</bcp14>):</dt>
+        <dd>Statements the Figure does not support, in the Publisher's words; for example that an aggregate rate is not a probability for an individual.</dd>
+      </dl>
+      <t>A Publisher <bcp14>MUST NOT</bcp14> issue a Figure Statement of kind "restated" for a value it has adjusted, rounded differently from the Source, or derived from several cells.</t>
+    </section>
+    <section anchor="scitt">
+      <name>Use with SCITT</name>
+      <t>A Figure Statement is carried as the payload of a Signed Statement <xref target="RFC9943"/>, a COSE_Sign1 object <xref target="RFC9052"/>, with these requirements in addition to those of the architecture.</t>
+      <ul>
+        <li>The Issuer (CWT Claims "iss") <bcp14>MUST</bcp14> be an HTTPS URI under the Publisher's control.</li>
+        <li>The Subject (CWT Claims "sub") <bcp14>MUST</bcp14> be an HTTPS URI that contains the Figure's id and at which the current Figure Statement can be retrieved.</li>
+        <li>The content type <bcp14>MUST</bcp14> be "application/json". The payload <bcp14>MUST</bcp14> be the canonical serialization.</li>
+      </ul>
+      <t>When a Figure changes, for any of the reasons in <xref target="revision"/>, the Publisher <bcp14>MUST</bcp14> issue a new Signed Statement with the same Issuer and Subject, and <bcp14>SHOULD</bcp14> register it with every Transparency Service that holds the earlier one. The earlier Signed Statement is not withdrawn. This follows the architecture's guidance for an Issuer whose view of an Artifact changes.</t>
+      <t>Registration matters here for a specific reason. A Publisher that corrects a Figure quietly, replacing the value and leaving no trace, defeats every downstream check. A Transparency Service that holds both statements, with Receipts, dates the change by a log the Publisher does not control.</t>
+    </section>
+    <section anchor="reference">
+      <name>The Figure Reference</name>
+      <t>A record made on the agent's side needs to say which Figure Statement, and which revision of it, the agent relied on. A Figure Reference says this with three values.</t>
+      <dl>
+        <dt>iss:</dt>
+        <dd>The Issuer of the Signed Statement.</dd>
+        <dt>sub:</dt>
+        <dd>The Subject of the Signed Statement.</dd>
+        <dt>digest:</dt>
+        <dd>The SHA-256 digest of the COSE Sig_structure of the Signed Statement, that is, of the CBOR encoding of ["Signature1", body_protected, external_aad, payload] as defined in <xref target="RFC9052"/>, with an empty external_aad and the payload attached. This is the "ToBeSigned" scheme of <xref target="I-D.gruszka-scitt-statement-identification"/>.</dd>
+      </dl>
+      <t>The digest is taken over the to-be-signed structure and not over the transmitted bytes for a practical reason. Signature algorithms in common use are randomized, so the same statement, signed or fetched twice, can differ in its signature bytes; and Receipts added to the unprotected header change the transmitted bytes without changing the statement. Neither changes this digest. The payload alone would not do either, because it omits the Issuer and Subject.</t>
+      <t>A Figure Reference is carried outside the content it describes: in a member of the agent-side record, or in a structured field of a tool result, so that a verifier can read it without parsing output text or the statement's payload. How a particular record format carries the three values is for that format to define. An optional member listing one Figure Reference for each source a decision used, as proposed for <xref target="I-D.dobson-ai-decision-receipt"/>, is sufficient.</t>
+      <t>A Publisher <bcp14>MUST</bcp14> make public, for each Figure, the digests of every Figure Statement it has issued for it, in order of issue, and <bcp14>MUST NOT</bcp14> remove an entry. Given a Figure Reference, a verifier reports one of:</t>
+      <dl>
+        <dt>current:</dt>
+        <dd>The digest is that of the statement now in force for the Subject.</dd>
+        <dt>superseded:</dt>
+        <dd>The digest is in the Publisher's list for the Subject but is not the last entry. The verifier reports the statement now in force.</dd>
+        <dt>unrecognized:</dt>
+        <dd>The digest is not in the list for the Subject.</dd>
+      </dl>
+      <t>These states are a matter of time, and neither party can settle them alone. If the agent-side record is not anchored in time by something the agent's operator does not control, a later correction by the Publisher cannot be told from what the agent saw. If the Publisher's list is not dated by something the Publisher does not control, a digest the agent anchored cannot be told from one the Publisher never issued. Registration of each Figure Statement with a Transparency Service provides the second; until then a Publisher <bcp14>SHOULD</bcp14> at least commit its list to a public log it does not operate.</t>
+    </section>
+    <section anchor="token">
+      <name>The Figure Token</name>
+      <t>A Signed Statement, and a Figure Reference, are too large to sit beside a number in a sentence. The Figure Token is a short pointer that can. It serves a human reader and text that has left its structured carrier; where a structured field is available, the Figure Reference is the thing to carry.</t>
+      <artwork><![CDATA[
+token   = open prefix ":" id ":" value ":" digest
+          [ ":" channel ] close
+open    = %xE2.9F.A6   ; U+27E6, UTF-8 encoded
+close   = %xE2.9F.A7   ; U+27E7, UTF-8 encoded
+prefix  = 2*8ALPHA     ; chosen by the Publisher
+id      = 1*( %x61-7A / DIGIT / "-" )
+value   = 1*( %x21-39 / %x3B-7E )
+          ; as displayed; no ":" and no space
+digest  = 8HEXDIG      ; lowercase
+channel = ALPHA 4DIGIT ; where and when this copy was issued
+]]></artwork>
+      <t>The digest is the first eight hexadecimal characters of the SHA-256 digest of the canonical serialization of the "claim" member. The brackets were chosen because they do not occur in ordinary prose or in JSON syntax; a verifier <bcp14>SHOULD</bcp14> also accept a token whose brackets were lost in copying.</t>
+      <t>The token is a pointer, not a proof. Thirty-two bits do not resist a deliberate collision, and nothing in the token is signed. A verifier <bcp14>MUST</bcp14> resolve the token to the Figure Statement and compare the full digest before reporting any state.</t>
+      <t>A Publisher makes the following discoverable at a well-known location on the Issuer's origin: the prefix it uses, a URI template from id to Figure Statement, the digest rule and any earlier rule with its end date, and a list of every digest ever issued for each id.</t>
+    </section>
+    <section anchor="verify">
+      <name>Verification</name>
+      <t>Given a token, a verifier retrieves the current Figure Statement for the id and reports exactly one of these states.</t>
+      <dl>
+        <dt>current:</dt>
+        <dd>The digest matches the current statement and the value in the token equals its "value" member.</dd>
+        <dt>superseded:</dt>
+        <dd>The digest does not match the current statement but appears in the Publisher's list of issued digests for that id. The Figure was changed after this token was issued. The verifier reports the current value.</dd>
+        <dt>altered:</dt>
+        <dd>The digest matches the current statement but the value in the token does not. The number beside a genuine reference was changed.</dd>
+        <dt>unrecognized:</dt>
+        <dd>The id is unknown, or the digest was never issued for it.</dd>
+      </dl>
+      <t>Independently of the state, if the current statement has a "source_revision" member the verifier <bcp14>MUST</bcp14> report it. A token can be "current", because the Publisher's record of the first printing is unchanged, while the Source has since printed another value.</t>
+      <t>Verification needs only the Publisher's public files. A verifier <bcp14>SHOULD</bcp14> be able to run where the reader is, without sending the token to the Publisher (see <xref target="privacy"/>).</t>
+    </section>
+    <section anchor="revision">
+      <name>Changes to a Figure</name>
+      <t>Three different events change what a careful reader should be told. They are kept apart because they have different authors.</t>
+      <ol>
+        <li>The Publisher corrects its own Figure. A new Figure Statement is issued with "supersedes". Earlier tokens verify as "superseded".</li>
+        <li>The Source issues a marked revision. For a Restated Figure the Publisher issues a statement for the revised value, citing the revising Edition, and adds "source_revision" to the statement for the first printing.</li>
+        <li>The Source prints a different value for the same period in a later Edition without marking it. The Publisher treats it exactly as case 2. The absence of a mark is recorded in the "source_revision" member, since the reader of the later Edition has no other way to learn that the value moved.</li>
+      </ol>
+      <t>In cases 2 and 3 the statement for the first printing remains true as a record of what that Edition printed, and its token remains "current". A Publisher of Restated Figures therefore needs to read each new Edition against the last, for the periods both contain, before issuing statements for the new one.</t>
+    </section>
+    <section anchor="agents">
+      <name>Use with Agent Receipts and Tool Protocols</name>
+      <t>A tool that returns a Figure to an agent <bcp14>SHOULD</bcp14> return the Figure Reference, and <bcp14>MAY</bcp14> return the Figure Token, in a structured field of the result, in addition to any text. Measurement reported in <xref target="impl"/> found that a token placed in prose is dropped by a language model in nearly every restatement, so the text is not a reliable carrier.</t>
+      <t>Where an agent-side record commits to the bytes of a tool result, as in <xref target="I-D.zambo-aer1"/> and <xref target="I-D.noa-scitt-ai-agent-receipt"/>, and those bytes contain Figure References, the two records compose without either format changing. Composition is stronger where the agent-side record carries the references in a member of its own (<xref target="reference"/>): a verifier then learns which statements were relied on without parsing the output at all. A Relying Party verifies the agent-side record to learn what was returned and when, and then checks each reference to learn whether that statement was current, superseded or never issued. Neither check implies the other.</t>
+      <t>An agent or its operator <bcp14>MAY</bcp14> re-verify tokens at the time an answer is shown, not only at the time the tool was called. For long-running work and for stored memory the two times differ, and a Figure can be superseded between them.</t>
+    </section>
+    <section anchor="limits">
+      <name>What a Figure Statement Does Not Establish</name>
+      <ul>
+        <li>That the Figure is correct. A Publisher can compute wrongly, and a Source can print a wrong value. The statement makes the Publisher accountable for what it published; it does not check it.</li>
+        <li>That the population or the denominator is the right one for a reader's question. They are stated so that the reader can decide.</li>
+        <li>That a Restated Figure is the Source's latest value. It is the value in the named Edition.</li>
+        <li>Anything about a sentence built around the Figure. A current token beside a number does not license a causal claim, a forecast or a statement about an individual.</li>
+        <li>That the party presenting a token is the Publisher or is endorsed by it.</li>
+      </ul>
+    </section>
+    <section anchor="security">
+      <name>Security Considerations</name>
+      <t>The considerations of <xref target="RFC9943"/> apply. The following are specific to this profile.</t>
+      <t>Short digest. The eight-character digest is an index. An attacker can construct a different claim object with the same eight characters. This yields nothing unless a verifier trusts the token alone, which <xref target="token"/> forbids.</t>
+      <t>Borrowed tokens. A genuine token can be placed beside an unrelated number or an unrelated sentence. The "altered" state detects a changed value. It does not detect a changed meaning; see <xref target="limits"/>.</t>
+      <t>A list kept only by the Publisher. The list of issued digests required by <xref target="reference"/> is evidence only to the extent that its history cannot be rewritten. A Publisher that hosts it alone can remove an entry and make a superseded statement look as if it was never issued.</t>
+      <t>Equivocation by the Publisher. Without registration, a Publisher can serve different statements to different readers or rewrite its list of issued digests. Registration with a Transparency Service, and Receipts, are what make the history checkable.</t>
+      <t>Source documents. The digest of a Source document shows which bytes the Publisher read. If the Source replaces a document under the same name, the digest no longer matches the document a reader retrieves. Publishers <bcp14>SHOULD</bcp14> record a public archive capture of the bytes they read.</t>
+    </section>
+    <section anchor="privacy">
+      <name>Privacy Considerations</name>
+      <t>A verification request tells the Publisher that someone holds a given Figure, and when. A Publisher that offers a verification service <bcp14>SHOULD</bcp14> store no network address and no full user-agent string with such requests, and <bcp14>SHOULD</bcp14> publish what it does store. Because verification needs only public files, a verifier can run in the reader's own software and make no request that names the token.</t>
+      <t>A Figure Statement describes published aggregates. It <bcp14>MUST NOT</bcp14> contain information about an identifiable person.</t>
+    </section>
+    <section anchor="iana">
+      <name>IANA Considerations</name>
+      <t>This document has no IANA actions.</t>
+    </section>
+    <section anchor="impl">
+      <name>Implementation Status</name>
+      <t>This section is to be removed before publication as an RFC. It follows <xref target="RFC7942"/>.</t>
+      <t>One implementation exists, operated by the author at financeratecalc.com. As of the date of this document:</t>
+      <ul>
+        <li>716 Figures carry tokens: figures computed from the public United States Home Mortgage Disclosure Act record, and figures restated from monthly reports of the Department of Housing and Urban Development, Ginnie Mae and the Small Business Administration.</li>
+        <li>The claim object, digest rule, token syntax, verification states and the well-known manifest are implemented. Some member and state names differ from this document, which generalizes them (the implementation says "stale" where this document says "superseded", and "display_value" for "value"). A verification service, an in-browser verifier that uses only the public files, and a conformance suite that another publisher can run against its own site are public.</li>
+        <li>A tool server returns each Figure with its token to AI agents.</li>
+        <li>Since revision -00: each of the 716 Figures is served as a COSE_Sign1 Signed Statement (ES256) with the Issuer and Subject in the CWT Claims header and the canonical Figure Statement as payload. A Figure Reference with the digest rule of <xref target="reference"/> is returned with it, and a check answers current, superseded or unrecognized for a given digest. The list of issued digests is a file in the publisher's public repository, signed and recorded in a public transparency log of another kind each time it changes; it begins on 25 November 2026, so a statement replaced before that date cannot be recognized.</li>
+        <li>Verification of the signatures and recomputation of the digests were repeated with a CBOR library and a cryptographic library that share no code with the implementation. Because the signatures are randomized, the implementation's own test fetches a statement twice and requires different bytes and the same digest.</li>
+        <li>Not yet implemented: registration of Signed Statements with a SCITT Transparency Service, and therefore Receipts as defined in <xref target="RFC9943"/>. The tool server does not yet return the Figure Reference in a structured field of its results; it returns the token.</li>
+      </ul>
+      <t>Two observations from operating it bear on the design.</t>
+      <t>Comparing consecutive Editions of two monthly reports of one agency found five values printed in one Edition and printed differently in the next, with no revision mark: three loan counts that moved by one or two, and two delinquency rates that moved by 0.06 percentage point. The "source_revision" member and case 3 of <xref target="revision"/> exist because of these.</t>
+      <t>In one measured condition, a language model that was given a sentence ending in a token and asked to answer a user's question kept the token in 1 of 36 answers when it was attached to the number, and in none when it stood at the end of the sentence. The recommendation in <xref target="agents"/> to carry the token in a structured field follows from this.</t>
+    </section>
+    <section anchor="ack" numbered="false">
+      <name>Acknowledgements</name>
+      <t>Justin Dobson argued that a token inside output bytes is not enough and that an agent-side record should carry an explicit reference, and pointed out that the question is one of time on both sides. Konrad Gruszka pointed to the identification rule used for the reference. <xref target="reference"/> is the result. Errors are the author's.</t>
+    </section>
+  </middle>
+  <back>
+    <references>
+      <name>References</name>
+      <references>
+        <name>Normative References</name>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119">
+          <front><title>Key words for use in RFCs to Indicate Requirement Levels</title><author initials="S." surname="Bradner"/><date year="1997" month="March"/></front>
+          <seriesInfo name="BCP" value="14"/><seriesInfo name="RFC" value="2119"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174">
+          <front><title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title><author initials="B." surname="Leiba"/><date year="2017" month="May"/></front>
+          <seriesInfo name="BCP" value="14"/><seriesInfo name="RFC" value="8174"/>
+        </reference>
+        <reference anchor="RFC3339" target="https://www.rfc-editor.org/info/rfc3339">
+          <front><title>Date and Time on the Internet: Timestamps</title><author initials="G." surname="Klyne"/><author initials="C." surname="Newman"/><date year="2002" month="July"/></front>
+          <seriesInfo name="RFC" value="3339"/>
+        </reference>
+        <reference anchor="RFC8785" target="https://www.rfc-editor.org/info/rfc8785">
+          <front><title>JSON Canonicalization Scheme (JCS)</title><author initials="A." surname="Rundgren"/><author initials="B." surname="Jordan"/><author initials="S." surname="Erdtman"/><date year="2020" month="June"/></front>
+          <seriesInfo name="RFC" value="8785"/>
+        </reference>
+        <reference anchor="RFC9052" target="https://www.rfc-editor.org/info/rfc9052">
+          <front><title>CBOR Object Signing and Encryption (COSE): Structures and Process</title><author initials="J." surname="Schaad"/><date year="2022" month="August"/></front>
+          <seriesInfo name="STD" value="96"/><seriesInfo name="RFC" value="9052"/>
+        </reference>
+        <reference anchor="RFC9943" target="https://www.rfc-editor.org/info/rfc9943">
+          <front><title>An Architecture for Trustworthy and Transparent Digital Supply Chains</title><author initials="H." surname="Birkholz"/><author initials="A." surname="Delignat-Lavaud"/><author initials="C." surname="Fournet"/><author initials="Y." surname="Deshpande"/><author initials="S." surname="Lasker"/><date year="2026" month="June"/></front>
+          <seriesInfo name="RFC" value="9943"/>
+        </reference>
+      </references>
+      <references>
+        <name>Informative References</name>
+        <reference anchor="RFC7942" target="https://www.rfc-editor.org/info/rfc7942">
+          <front><title>Improving Awareness of Running Code: The Implementation Status Section</title><author initials="Y." surname="Sheffer"/><author initials="A." surname="Farrel"/><date year="2016" month="July"/></front>
+          <seriesInfo name="BCP" value="205"/><seriesInfo name="RFC" value="7942"/>
+        </reference>
+        <reference anchor="I-D.noa-scitt-ai-agent-receipt" target="https://datatracker.ietf.org/doc/draft-noa-scitt-ai-agent-receipt/">
+          <front><title>A SCITT Profile for AI-Agent Action Receipts</title><author initials="T." surname="Toraman"/><date year="2026" month="August"/></front>
+          <seriesInfo name="Internet-Draft" value="draft-noa-scitt-ai-agent-receipt-01"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="I-D.gruszka-scitt-statement-identification" target="https://datatracker.ietf.org/doc/draft-gruszka-scitt-statement-identification/">
+          <front><title>Requirements and Test Cases for Identifying SCITT Signed Statements</title><author initials="K." surname="Gruszka"/><date year="2026" month="November"/></front>
+          <seriesInfo name="Internet-Draft" value="draft-gruszka-scitt-statement-identification-05"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="I-D.dobson-ai-decision-receipt" target="https://datatracker.ietf.org/doc/draft-dobson-ai-decision-receipt/">
+          <front><title>The AI-Decision-Receipt HTTP Response Header Field</title><author initials="J." surname="Dobson"/><date year="2026" month="October"/></front>
+          <seriesInfo name="Internet-Draft" value="draft-dobson-ai-decision-receipt-00"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="I-D.zambo-aer1" target="https://datatracker.ietf.org/doc/draft-zambo-aer1/">
+          <front><title>AER-1</title><author initials="B." surname="Zambo"/><date year="2026" month="October"/></front>
+          <seriesInfo name="Internet-Draft" value="draft-zambo-aer1-23"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="I-D.templeman-scitt-measurement-capsule" target="https://datatracker.ietf.org/doc/draft-templeman-scitt-measurement-capsule/">
+          <front><title>Declared-versus-Observed Measurement Capsules: A Profile for Third-Party Measurement Statements in SCITT</title><author initials="N." surname="Templeman"/><date year="2026" month="October"/></front>
+          <seriesInfo name="Internet-Draft" value="draft-templeman-scitt-measurement-capsule-01"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+      </references>
+    </references>
+  </back>
+</rfc>
