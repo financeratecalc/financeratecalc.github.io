@@ -42,10 +42,17 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   for (const id of missing) have.digests[id] = [...(have.digests[id] || []), { digest: cur[id].digest, value: cur[id].value, first_listed: day }];
   have.test_vectors = have.test_vectors || {}; let addedTests = 0;
   for (const [id, revs] of Object.entries(cur.__tests)) for (const r of revs) if (!(have.test_vectors[id] || []).some(h => h.digest === r.digest)) { have.test_vectors[id] = [...(have.test_vectors[id] || []), { ...r, first_listed: day }]; addedTests++; }
+  // Each version of the list names the SHA-256 of the version before it, so the signed, logged versions form a chain: an entry
+  // cannot be dropped from an earlier version without breaking the link from every later one.
+  const prevBytes = fs.existsSync(OUT) ? fs.readFileSync(OUT) : null, changed = missing.length || addedTests || !have.sequence;
+  const { createHash } = await import("node:crypto");
+  const sequence = changed ? (have.sequence || 1) + (have.sequence ? 1 : (prevBytes ? 1 : 0)) : have.sequence;
+  const previous_sha256 = changed ? (prevBytes ? createHash("sha256").update(prevBytes).digest("hex") : null) : (have.previous_sha256 ?? null);
   const doc = { what: "Every digest of a Figure Statement this publisher has issued, per figure, oldest first. The last entry is the statement in force. Entries are only ever added.",
     digest_rule: "SHA-256 over the COSE Sig_structure [\"Signature1\", protected, h'', payload] of the statement (the ToBeSigned scheme); lowercase hex",
     key: "https://financeratecalc.com/transparency/statement-key.json", key_id: pubDoc.key_id, profile: "https://datatracker.ietf.org/doc/draft-yetis-scitt-figure-receipts/",
-    history_begins: have.history_begins || day, updated: (missing.length || addedTests) ? day : (have.updated || day), figures: Object.keys(have.digests).length,
+    sequence, previous_sha256, chain_note: "previous_sha256 is the SHA-256 of this file as it stood at the previous sequence number; every version is signed and recorded in the Sigstore Rekor log (bundle beside this file) and kept in the repository history.",
+    history_begins: have.history_begins || day, updated: changed ? day : (have.updated || day), figures: Object.keys(have.digests).length,
     test_vectors_note: "Test Subjects, not published figures: statements issued in order by the same key so that the superseded state can be checked. See /spec/ietf/vectors/.", test_vectors: have.test_vectors,
     digests: Object.fromEntries(Object.keys(have.digests).sort().map(k => [k, have.digests[k]])) };
   fs.writeFileSync(OUT, JSON.stringify(doc, null, 1) + "\n");
