@@ -12,7 +12,9 @@ const assert = (c, m) => { if (!c) { console.error("FAIL:", m); process.exit(1);
 const store = new Map();
 const KV = { async get(k, t) { const v = store.get(k); return v == null ? null : (t === "json" ? JSON.parse(v) : v); }, async put(k, v) { store.set(k, v); }, async delete(k) { store.delete(k); },
   async getWithMetadata(k) { return { value: store.get(k) ?? null, metadata: null }; }, async list() { return { keys: [], list_complete: true }; } };
+let HIST = null;   // when set, stands in for the published digest list
 globalThis.fetch = async (u) => { const url = new URL(typeof u === "string" ? u : u.url); if (url.hostname !== "financeratecalc.com") throw new Error("network call blocked: " + url.href);
+  if (HIST && url.pathname === "/transparency/statement-digests.json") return new Response(JSON.stringify(HIST));
   const f = path.join(ROOT, decodeURIComponent(url.pathname).slice(1)); return fs.existsSync(f) && fs.statSync(f).isFile() ? new Response(fs.readFileSync(f)) : new Response("not found", { status: 404 }); };
 if (!globalThis.caches) globalThis.caches = { default: { match: async () => undefined, put: async () => {} } };
 const tmp = path.join(os.tmpdir(), "frc-stmt-" + process.pid + ".mjs"); fs.copyFileSync(path.join(ROOT, "worker/index.js"), tmp);
@@ -66,6 +68,25 @@ r = await get("/statement/..%2Findex"); assert(r.status === 400, "path character
 const view = await (await get("/statement/state-oh-2025?view=json")).json();
 assert(view.statement.value === "23.0%" && view.figure_token.includes("state-oh-2025") && /Not registered/.test(view.not_yet) && view.protected.cwt_claims.iss === "https://financeratecalc.com", "opened view");
 assert(store.size === 1 && store.has("stmt:key"), "nothing is stored but the key");
+// A reference that survives re-signing: two fetches give different signature bytes and the same ToBeSigned digest; the digest
+// is the SHA-256 of the Sig_structure, computed here from the bytes served.
+const tbs = raw => { const [top] = read(raw), [prot, , payload] = top.value; return crypto.createHash("sha256").update(Buffer.concat([head(4, 4), head(3, 10), Buffer.from("Signature1"), bstr(prot), bstr(Buffer.alloc(0)), bstr(payload)])).digest("hex"); };
+const a1 = Buffer.from(await (await get("/statement/state-oh-2025")).arrayBuffer()), a2 = Buffer.from(await (await get("/statement/state-oh-2025")).arrayBuffer());
+assert(!a1.equals(a2) && tbs(a1) === tbs(a2) && tbs(a1) === view.reference.digest.value && view.reference.digest.scheme === "ToBeSigned" && view.reference.sub.endsWith("/claims/state-oh-2025.json"), "the reference digest must not depend on the signature bytes");
+let st = await (await get("/statement/state-oh-2025?digest=" + tbs(a1))).json(); assert(st.state === "current" && st.current_value === "23.0%", "current digest");
+st = await (await get("/statement/state-oh-2025?digest=" + "0".repeat(64))).json(); assert(st.state === "unrecognized", "a digest never issued");
+assert((await get("/statement/state-oh-2025?digest=xyz")).status === 400, "malformed digest");
+// the late-correction case: the statement in force when an agent pinned it is replaced afterwards
+const old = "ab".repeat(32); HIST = { digests: { "state-oh-2025": [{ digest: old, first_listed: "2026-11-25" }, { digest: tbs(a1), first_listed: "2026-11-26" }] } };
+st = await (await get("/statement/state-oh-2025?digest=" + old)).json(); assert(st.state === "superseded" && st.current_digest === tbs(a1), "an earlier digest reports superseded and gives the current one");
+st = await (await get("/statement/official-hud-lpt-2026-08-serious-delinquency-rate?digest=" + tbs(Buffer.from(await (await get("/statement/official-hud-lpt-2026-08-serious-delinquency-rate")).arrayBuffer())))).json();
+assert(st.state === "current" && st.source_revision && st.source_revision.value === 6.48, "a current statement still reports that the source restated the figure");
+// the published list, built with the published key id, names the statement in force for every figure
+HIST = null; const { currentDigests } = await import("./build_statement_digests.mjs"); const listed = JSON.parse(fs.readFileSync(path.join(ROOT, "transparency/statement-digests.json"), "utf8"));
+const cur = await currentDigests(); let unlisted = 0; for (const id of ids) if (!(listed.digests[id] || []).some(h => h.digest === cur[id].digest)) unlisted++;
+const pubKey = JSON.parse(fs.readFileSync(path.join(ROOT, "transparency/statement-key.json"), "utf8"));
+assert(pubKey.key_id === crypto.createHash("sha256").update(pubKey.public_jwk.x + "." + pubKey.public_jwk.y).digest("hex").slice(0, 16) && listed.key_id === pubKey.key_id, "published key id does not follow from the published key");
+if (unlisted) console.log(`note: ${unlisted} current statement digest(s) not yet in the published list`);
 const di = process.argv.indexOf("--dump");
 if (di > 0) { const d = process.argv[di + 1]; fs.mkdirSync(d, { recursive: true }); fs.writeFileSync(path.join(d, "key.json"), JSON.stringify(keyDoc)); for (const [id, raw] of Object.entries(kept)) fs.writeFileSync(path.join(d, id + ".cose"), raw); }
 console.log(`figure statements: ${ids.length} signed statements verify (${restated} restated, ${ids.length - restated} computed, ${revised} carrying a source revision); header, payload and token digest agree with the claim documents`);

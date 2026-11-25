@@ -69,7 +69,7 @@ jobs:
       - name: WebMCP tools give the same verdict as the verify service for every receipt issued; find and get carry receipts that verify
         run: node scripts/check_webmcp.mjs
       - name: Figure Statements (every receipted figure as a COSE_Sign1 Signed Statement whose signature, Issuer, Subject and payload check out), through the server code run locally
-        run: node scripts/check_statements.mjs
+        run: node scripts/check_statements.mjs && (node scripts/build_statement_digests.mjs --check || echo "::warning::a current statement digest is not yet listed; the claim transparency job adds it")
       - name: Typed examples in the main text fields are real receipts that verify today
         run: python3 scripts/inject_typed_examples.py --check
       - name: Every bound table still matches its data file, row by row

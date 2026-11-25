@@ -1623,6 +1623,7 @@ async function witnessHTTP(request, env, path) {
 // /statement-key. Not registered with a Transparency Service: no Receipts in the RFC 9943 sense are issued yet.
 //   GET /statement/<claim id>            application/cose, the Signed Statement
 //   GET /statement/<claim id>?view=json  the same, opened: header, payload, signature, how to check it
+//   GET /statement/<claim id>?digest=<64 hex>  is this the current statement, an earlier one, or one never issued?
 //   GET /statement-key                   the public key (JWK) and its key id
 const cborHead = (major, n) => n < 24 ? [major << 5 | n] : n < 256 ? [major << 5 | 24, n] : n < 65536 ? [major << 5 | 25, n >> 8, n & 255] : [major << 5 | 26, (n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255];
 const cborInt = v => v >= 0 ? cborHead(0, v) : cborHead(1, -1 - v);
@@ -1670,8 +1671,24 @@ async function statementHTTP(request, env, path, url) {
   const toSign = new Uint8Array(cborArray([cborText("Signature1"), cborBytes(protectedMap), cborBytes([]), cborBytes(payload)]));
   const key = await crypto.subtle.importKey("jwk", k.jwk, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
   const sig = new Uint8Array(await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, key, toSign));
+  // A reference to this statement that does not depend on the signature bytes (ECDSA signatures differ each time) or on where
+  // it is registered: SHA-256 over the to-be-signed structure, the "ToBeSigned" scheme of draft-gruszka-scitt-statement-identification.
+  // Every digest issued for a figure is listed in the public repository (transparency/statement-digests.json, append-only, dated
+  // by its commits), so an earlier reference can be told from a forged one without asking this server to remember anything.
+  const digest = [...new Uint8Array(await crypto.subtle.digest("SHA-256", toSign))].map(x => x.toString(16).padStart(2, "0")).join("");
+  let hist = []; try { hist = ((await getJSON("/transparency/statement-digests.json")).digests || {})[id] || []; } catch {}
+  const asked = (url.searchParams.get("digest") || "").toLowerCase();
+  if (asked) {
+    if (!/^[0-9a-f]{64}$/.test(asked)) return json({ error: "digest must be 64 hex characters: SHA-256 over the statement's to-be-signed structure" }, 400);
+    const state = asked === digest ? "current" : hist.some(h => h.digest === asked) ? "superseded" : "unrecognized";
+    return json({ iss: STMT_ISS, sub, asked_digest: asked, state, current_digest: digest, current_value: fs.statement.value, source_revision: fs.statement.source_revision || null,
+      meaning: { current: "This is the statement the publisher issues for this figure now.", superseded: "The publisher issued this statement earlier and has since issued another for the same figure. Compare with the current one.", unrecognized: "The publisher has no record of issuing a statement with this digest for this figure." }[state],
+      history: BASE + "/transparency/statement-digests.json", history_begins: "2026-11-25", note: "Digests are listed from 2026-11-25; a statement issued and replaced before that day cannot be recognised." });
+  }
   if (url.searchParams.get("view") === "json") return json({ profile: "draft-yetis-scitt-figure-receipts-00", protected: { alg: "ES256", content_type: "application/json", kid: k.key_id, cwt_claims: { iss: STMT_ISS, sub } },
-    statement: fs.statement, figure_token: fs.token, signature: b64u(sig), key: "https://frc-mcp.ziyetis.workers.dev/statement-key",
+    statement: fs.statement, figure_token: fs.token,
+    reference: { iss: STMT_ISS, sub, digest: { alg: "sha-256", scheme: "ToBeSigned", value: digest }, check: "https://frc-mcp.ziyetis.workers.dev/statement/" + id + "?digest=" + digest },
+    issued_digests: hist, signature: b64u(sig), key: "https://frc-mcp.ziyetis.workers.dev/statement-key",
     check: "Fetch the same address without ?view=json: a COSE_Sign1 (CBOR tag 18). Verify the ES256 signature over Sig_structure [\"Signature1\", protected, h'', payload] with the key at /statement-key. The payload is this statement in JCS form.",
     not_yet: "Not registered with a SCITT Transparency Service; no Receipt (RFC 9943) is attached. The signature shows this publisher issued the statement; it does not show the figure is correct." });
   const cose = new Uint8Array([0xd2, ...cborArray([cborBytes(protectedMap), cborMap([]), cborBytes(payload), cborBytes(sig)])]);
