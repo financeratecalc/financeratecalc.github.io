@@ -81,6 +81,19 @@ const old = "ab".repeat(32); HIST = { digests: { "state-oh-2025": [{ digest: old
 st = await (await get("/statement/state-oh-2025?digest=" + old)).json(); assert(st.state === "superseded" && st.current_digest === tbs(a1), "an earlier digest reports superseded and gives the current one");
 st = await (await get("/statement/official-hud-lpt-2026-08-serious-delinquency-rate?digest=" + tbs(Buffer.from(await (await get("/statement/official-hud-lpt-2026-08-serious-delinquency-rate")).arrayBuffer())))).json();
 assert(st.state === "current" && st.source_revision && st.source_revision.value === 6.48, "a current statement still reports that the source restated the figure");
+// the test Subject: two statements really issued in order; the first reports superseded, the second current, and neither is a published figure
+const tv = async q => (await get("/statement/test-late-correction" + q));
+const t1 = Buffer.from(await (await tv("?rev=1")).arrayBuffer()), t2 = Buffer.from(await (await tv("")).arrayBuffer());
+const [tt] = read(t2), [th] = read(tt.value[0]); assert(th.get(15).get(2) === "https://financeratecalc.com/spec/ietf/vectors/test-late-correction.json", "test Subject");
+const p1 = JSON.parse(read(t1)[0].value[2].toString("utf8")), p2 = JSON.parse(tt.value[2].toString("utf8"));
+assert(!p1.source_revision && p2.source_revision.value === 6.48 && /Test fixture/.test(p1.test) && /Test fixture/.test(p2.test) && tbs(t1) !== tbs(t2), "the two revisions differ by the source revision and say they are tests");
+HIST = { digests: {}, test_vectors: { "test-late-correction": [{ digest: tbs(t1), revision: 1 }, { digest: tbs(t2), revision: 2 }] } };
+st = await (await tv("?digest=" + tbs(t1))).json(); assert(st.state === "superseded" && st.current_digest === tbs(t2) && st.test_subject === true, "the first revision is superseded");
+st = await (await tv("?digest=" + tbs(t2))).json(); assert(st.state === "current", "the second revision is in force");
+st = await (await tv("?digest=" + "0".repeat(64))).json(); assert(st.state === "unrecognized", "a digest never issued for the test Subject");
+assert((await tv("?rev=3")).status === 404 && !ids.includes("test-late-correction"), "no third revision, and the test Subject is not a figure");
+const built = JSON.parse(fs.readFileSync(path.join(ROOT, "spec/ietf/vectors/hud-lpt-2026-08-earlier-form.constructed.json"), "utf8"));
+assert(built.issued === false && built.digest === crypto.createHash("sha256").update(Buffer.from(built.to_be_signed_hex, "hex")).digest("hex") && !JSON.parse(built.payload_utf8).source_revision, "the constructed earlier form is labelled as not issued and its digest follows from its bytes");
 // the published list, built with the published key id, names the statement in force for every figure
 HIST = null; const { currentDigests } = await import("./build_statement_digests.mjs"); const listed = JSON.parse(fs.readFileSync(path.join(ROOT, "transparency/statement-digests.json"), "utf8"));
 const cur = await currentDigests(); let unlisted = 0; for (const id of ids) if (!(listed.digests[id] || []).some(h => h.digest === cur[id].digest)) unlisted++;

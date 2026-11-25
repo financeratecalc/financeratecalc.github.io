@@ -1642,7 +1642,11 @@ async function stmtKey(env) {
   return rec;
 }
 const STMT_ISS = BASE;
-async function figureStatement(id) {
+const STMT_TEST = { "test-late-correction": "/spec/ietf/vectors/test-late-correction.json" };   // test Subjects: issued by the real key, labelled as tests, never counted as figures
+async function figureStatement(id, rev) {
+  if (STMT_TEST[id]) { let T; try { T = await getJSON(STMT_TEST[id]); } catch { return null; }
+    const n = rev ? parseInt(rev, 10) : T.revisions.length; if (!(n >= 1 && n <= T.revisions.length)) return null;
+    return { statement: T.revisions[n - 1], token: null, sub: T.sub, test: true, revision: n, revisions: T.revisions.length }; }
   let P; try { P = await getJSON("/claims/" + id + ".json"); } catch { return null; }
   if (!P || !P.claim || !P.receipt) return null;
   let C = {}; try { C = await getJSON("/claims/" + id + ".contract.json"); } catch {}
@@ -1662,9 +1666,9 @@ async function statementHTTP(request, env, path, url) {
     issuer: STMT_ISS, profile: "https://datatracker.ietf.org/doc/draft-yetis-scitt-figure-receipts/", registered_with_transparency_service: false });
   const id = decodeURIComponent(path.slice("/statement/".length)).toLowerCase();
   if (!/^[a-z0-9-]{3,120}$/.test(id)) return json({ error: "expected /statement/<claim id>" }, 400);
-  const fs = await figureStatement(id);
+  const fs = await figureStatement(id, url.searchParams.get("rev"));
   if (!fs) return json({ error: "no figure with the id " + id }, 404);
-  const sub = BASE + "/claims/" + id + ".json";
+  const sub = fs.sub || BASE + "/claims/" + id + ".json";
   const payload = new TextEncoder().encode(JSON.stringify(jcs(fs.statement)));
   const protectedMap = cborMap([[cborInt(1), cborInt(-7)], [cborInt(3), cborText("application/json")], [cborInt(4), cborBytes(new TextEncoder().encode(k.key_id))],
     [cborInt(15), cborMap([[cborInt(1), cborText(STMT_ISS)], [cborInt(2), cborText(sub)]])]]);
@@ -1676,17 +1680,18 @@ async function statementHTTP(request, env, path, url) {
   // Every digest issued for a figure is listed in the public repository (transparency/statement-digests.json, append-only, dated
   // by its commits), so an earlier reference can be told from a forged one without asking this server to remember anything.
   const digest = [...new Uint8Array(await crypto.subtle.digest("SHA-256", toSign))].map(x => x.toString(16).padStart(2, "0")).join("");
-  let hist = []; try { hist = ((await getJSON("/transparency/statement-digests.json")).digests || {})[id] || []; } catch {}
+  let hist = []; try { const L = await getJSON("/transparency/statement-digests.json"); hist = (fs.test ? (L.test_vectors || {}) : (L.digests || {}))[id] || []; } catch {}
+  const inForce = fs.test ? (hist.length ? hist[hist.length - 1].digest : null) : digest;   // a test Subject can be fetched at an earlier revision; the statement in force is the last one listed
   const asked = (url.searchParams.get("digest") || "").toLowerCase();
   if (asked) {
     if (!/^[0-9a-f]{64}$/.test(asked)) return json({ error: "digest must be 64 hex characters: SHA-256 over the statement's to-be-signed structure" }, 400);
-    const state = asked === digest ? "current" : hist.some(h => h.digest === asked) ? "superseded" : "unrecognized";
-    return json({ iss: STMT_ISS, sub, asked_digest: asked, state, current_digest: digest, current_value: fs.statement.value, source_revision: fs.statement.source_revision || null,
+    const state = asked === inForce ? "current" : hist.some(h => h.digest === asked) ? "superseded" : "unrecognized";
+    return json({ iss: STMT_ISS, sub, ...(fs.test ? { test_subject: true } : {}), asked_digest: asked, state, current_digest: inForce, current_value: fs.statement.value, source_revision: fs.statement.source_revision || null,
       meaning: { current: "This is the statement the publisher issues for this figure now.", superseded: "The publisher issued this statement earlier and has since issued another for the same figure. Compare with the current one.", unrecognized: "The publisher has no record of issuing a statement with this digest for this figure." }[state],
       history: BASE + "/transparency/statement-digests.json", history_begins: "2026-11-25", note: "Digests are listed from 2026-11-25; a statement issued and replaced before that day cannot be recognised." });
   }
   if (url.searchParams.get("view") === "json") return json({ profile: "draft-yetis-scitt-figure-receipts-00", protected: { alg: "ES256", content_type: "application/json", kid: k.key_id, cwt_claims: { iss: STMT_ISS, sub } },
-    statement: fs.statement, figure_token: fs.token,
+    statement: fs.statement, figure_token: fs.token, ...(fs.test ? { test_subject: true, revision: fs.revision, revisions: fs.revisions, in_force: digest === inForce } : {}),
     reference: { iss: STMT_ISS, sub, digest: { alg: "sha-256", scheme: "ToBeSigned", value: digest }, check: "https://frc-mcp.ziyetis.workers.dev/statement/" + id + "?digest=" + digest },
     issued_digests: hist, signature: b64u(sig), key: "https://frc-mcp.ziyetis.workers.dev/statement-key",
     check: "Fetch the same address without ?view=json: a COSE_Sign1 (CBOR tag 18). Verify the ES256 signature over Sig_structure [\"Signature1\", protected, h'', payload] with the key at /statement-key. The payload is this statement in JCS form.",

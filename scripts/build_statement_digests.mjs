@@ -25,7 +25,13 @@ export async function currentDigests(root = ROOT) {
   const ids = JSON.parse(fs.readFileSync(path.join(root, "claims/index.json"), "utf8")).claims.filter(c => c.receipt).map(c => c.id), out = {};
   for (const id of ids) { const v = await (await worker.fetch(new Request("https://frc-mcp.ziyetis.workers.dev/statement/" + id + "?view=json"), { CREDITS: KV })).json();
     if (!v.reference || v.protected.kid !== pubDoc.key_id) throw new Error("no reference for " + id); out[id] = { digest: v.reference.digest.value, value: v.statement.value }; }
+  // test Subjects: every revision, in order of issue
+  const tests = {};
+  for (const id of ["test-late-correction"]) { const call = async q => (await worker.fetch(new Request("https://frc-mcp.ziyetis.workers.dev/statement/" + id + "?view=json" + q), { CREDITS: KV })).json();
+    const last = await call(""); if (!last.reference) continue; tests[id] = [];
+    for (let n = 1; n <= last.revisions; n++) { const v = await call("&rev=" + n); tests[id].push({ digest: v.reference.digest.value, revision: n }); } }
   globalThis.fetch = realFetch;
+  Object.defineProperty(out, "__tests", { value: tests, enumerable: false });
   return out;
 }
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
@@ -34,10 +40,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   if (process.argv.includes("--check")) { if (missing.length) { console.log("statement digests not listed for:", missing.slice(0, 8).join(", "), missing.length > 8 ? "…" : ""); process.exit(1); } console.log("statement digests: every current statement is listed"); process.exit(0); }
   const day = new Date().toISOString().slice(0, 10);
   for (const id of missing) have.digests[id] = [...(have.digests[id] || []), { digest: cur[id].digest, value: cur[id].value, first_listed: day }];
+  have.test_vectors = have.test_vectors || {}; let addedTests = 0;
+  for (const [id, revs] of Object.entries(cur.__tests)) for (const r of revs) if (!(have.test_vectors[id] || []).some(h => h.digest === r.digest)) { have.test_vectors[id] = [...(have.test_vectors[id] || []), { ...r, first_listed: day }]; addedTests++; }
   const doc = { what: "Every digest of a Figure Statement this publisher has issued, per figure, oldest first. The last entry is the statement in force. Entries are only ever added.",
     digest_rule: "SHA-256 over the COSE Sig_structure [\"Signature1\", protected, h'', payload] of the statement (the ToBeSigned scheme); lowercase hex",
     key: "https://financeratecalc.com/transparency/statement-key.json", key_id: pubDoc.key_id, profile: "https://datatracker.ietf.org/doc/draft-yetis-scitt-figure-receipts/",
-    history_begins: have.history_begins || day, updated: missing.length ? day : (have.updated || day), figures: Object.keys(have.digests).length, digests: Object.fromEntries(Object.keys(have.digests).sort().map(k => [k, have.digests[k]])) };
+    history_begins: have.history_begins || day, updated: (missing.length || addedTests) ? day : (have.updated || day), figures: Object.keys(have.digests).length,
+    test_vectors_note: "Test Subjects, not published figures: statements issued in order by the same key so that the superseded state can be checked. See /spec/ietf/vectors/.", test_vectors: have.test_vectors,
+    digests: Object.fromEntries(Object.keys(have.digests).sort().map(k => [k, have.digests[k]])) };
   fs.writeFileSync(OUT, JSON.stringify(doc, null, 1) + "\n");
   console.log(`statement digests: ${missing.length} added, ${doc.figures} figures listed`);
 }
