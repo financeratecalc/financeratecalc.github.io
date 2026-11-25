@@ -27,7 +27,7 @@ export async function currentDigests(root = ROOT) {
     if (!v.reference || v.protected.kid !== pubDoc.key_id) throw new Error("no reference for " + id); out[id] = { digest: v.reference.digest.value, value: v.statement.value }; }
   // test Subjects: every revision, in order of issue
   const tests = {};
-  for (const id of ["test-late-correction"]) { const call = async q => (await worker.fetch(new Request("https://frc-mcp.ziyetis.workers.dev/statement/" + id + "?view=json" + q), { CREDITS: KV })).json();
+  for (const id of ["test-late-correction", "test-staged-correction"]) { const call = async q => (await worker.fetch(new Request("https://frc-mcp.ziyetis.workers.dev/statement/" + id + "?view=json" + q), { CREDITS: KV })).json();
     const last = await call(""); if (!last.reference) continue; tests[id] = [];
     for (let n = 1; n <= last.revisions; n++) { const v = await call("&rev=" + n); tests[id].push({ digest: v.reference.digest.value, revision: n }); } }
   globalThis.fetch = realFetch;

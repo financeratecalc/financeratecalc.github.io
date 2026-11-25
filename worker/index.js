@@ -1642,7 +1642,7 @@ async function stmtKey(env) {
   return rec;
 }
 const STMT_ISS = BASE;
-const STMT_TEST = { "test-late-correction": "/spec/ietf/vectors/test-late-correction.json" };   // test Subjects: issued by the real key, labelled as tests, never counted as figures
+const STMT_TEST = { "test-late-correction": "/spec/ietf/vectors/test-late-correction.json", "test-staged-correction": "/spec/ietf/vectors/test-staged-correction.json" };   // test Subjects: issued by the real key, labelled as tests, never counted as figures
 async function figureStatement(id, rev) {
   if (STMT_TEST[id]) { let T; try { T = await getJSON(STMT_TEST[id]); } catch { return null; }
     const n = rev ? parseInt(rev, 10) : T.revisions.length; if (!(n >= 1 && n <= T.revisions.length)) return null;
