@@ -1,0 +1,40 @@
+name: Statement probe (the live check endpoint, asked from outside)
+# Asks the live service the three questions a verifier asks: a digest in force, a digest never issued, and the staged test
+# Subject. The answer is recorded with where and when it was asked from, because a check is only as good as the vantage
+# point it was made from. Manual.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ask
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, datetime
+          EP = "https://frc-mcp.ziyetis.workers.dev/statement/"
+          L = json.load(open("transparency/statement-digests.json"))
+          hud = "official-hud-lpt-2026-08-serious-delinquency-rate"
+          cases = [("in force", hud, L["digests"][hud][-1]["digest"], "current"),
+                   ("never issued", hud, "5ee0c9a1b8f2d4e6a7c3b9d1e5f7a2c4b6d8e0f1a3c5e7b9d2f4a6c8e0b1d3f5", "unrecognized"),
+                   ("staged test, revision 1", "test-staged-correction", L["test_vectors"]["test-staged-correction"][0]["digest"], "current" if len(L["test_vectors"]["test-staged-correction"]) == 1 else "superseded")]
+          out, bad = [], 0
+          for what, sid, dg, want in cases:
+              req = urllib.request.Request(EP + sid + "?digest=" + dg, headers={"User-Agent": "frc-statement-probe", "Cache-Control": "no-cache"})
+              r = urllib.request.urlopen(req, timeout=30); j = json.loads(r.read())
+              ok = j.get("state") == want and j.get("asked_digest") == dg
+              bad += 0 if ok else 1
+              out.append({"case": what, "subject": sid, "asked_digest": dg, "expected": want, "state": j.get("state"), "echoed_digest": j.get("asked_digest"), "checked_at": j.get("checked_at"), "cache_status": r.headers.get("cf-cache-status"), "ok": ok})
+              print(("OK  " if ok else "FAIL"), what, "->", j.get("state"), "| echoed", str(j.get("asked_digest"))[:12], "| checked_at", j.get("checked_at"), "| cf-cache", r.headers.get("cf-cache-status"))
+          json.dump({"generated": datetime.datetime.utcnow().isoformat() + "Z", "vantage": "GitHub-hosted runner, python urllib, User-Agent frc-statement-probe", "results": out}, open("eval/statement-probe.json", "w"), indent=1)
+          raise SystemExit(1 if bad else 0)
+          PY
+      - name: Commit
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add eval/statement-probe.json; git diff --cached --quiet || git commit -m "statement probe [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
