@@ -37,6 +37,15 @@ def main():
         s["compared"] += pec.get("compared", len(rv)); s["revised"] += pec.get("changed", sum(1 for r in rv if r.get("revised")))
     src_rows = "".join(f'<tr><td><b>{E(s["title"])}</b><br><span class="small">{E(s["publisher"])}</span></td><td class=n>{len(s["editions"])}</td>'
                        f'<td class=n>{s["compared"]}</td><td class=n><b>{s["revised"]}</b></td></tr>' for s in per.values())
+    # each edition named in a row links to the publisher's own file, so the reader reaches the source in one step
+    doc_url = {}
+    for f in glob.glob(os.path.join(ROOT, "data", "official", "*.json")):
+        if os.path.basename(f) != "index.json":
+            dd = json.load(open(f, encoding="utf-8"))["document"]
+            if dd.get("url"): doc_url[(dd["title"], dd["edition"])] = dd["url"]
+    def ed(src, name):
+        u = doc_url.get((src, str(name)))
+        return f'<a href="{E(u)}" rel="noopener">{E(str(name))}</a>' if u else E(str(name))
     rows = ""
     shown, hidden = [], {}
     for i in feed["items"]:   # every changed figure that carries a receipt; of the others, the first 20 per source (the feed has all)
@@ -49,8 +58,8 @@ def main():
     for i in shown:
         rc = (f'<a href="{E(i["claim_url"].replace("https://financeratecalc.com", ""))}">{E(i["receipt_of_first_printing"])}</a>' if i.get("claim_url") else "no receipt issued for this month")
         rows += (f'<tr><td>{E(i["source"])}<br><span class="small">{E(i["description"])}</span></td><td>{E(i["period"])}</td>'
-                 f'<td class=n>{fmt(i["first_printed"])}<br><span class="small">{E(i["first_printed_in"])}</span></td>'
-                 f'<td class=n><b>{fmt(i["restated_as"])}</b><br><span class="small">{E(str(i["restated_in"]))}</span></td>'
+                 f'<td class=n>{fmt(i["first_printed"])}<br><span class="small">{ed(i["source"], i["first_printed_in"])}</span></td>'
+                 f'<td class=n><b>{fmt(i["restated_as"])}</b><br><span class="small">{ed(i["source"], i["restated_in"])}</span></td>'
                  f'<td class=n>{i["difference"]:+,}</td><td class="r small">{rc}</td></tr>')
     if not rows:
         rows = '<tr><td colspan="6">No changed figure found so far.</td></tr>'

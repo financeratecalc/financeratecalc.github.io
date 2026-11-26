@@ -130,6 +130,15 @@ def main():
             doc["provenance"]["primary_source"] = f"CFPB/FFIEC HMDA public record 2025; data/purpose/{um.group(1)}-2025.json"
             doc["provenance"]["dataset"] = f"loan_type={LT} ({obj.get('program')}); {obj.get('loan_purpose')}; action_taken in {{1,2,3}} = decisioned; reverse mortgages excluded; universe {obj.get('universe_id')} (provenance/universe-purpose-split-2025.md)"
             doc["attribution"]["required_text"] = f"Source: FinanceRateCalc analysis of the public CFPB HMDA 2025 record ({obj.get('program')} loans); historical aggregate only."
+        # A reader who follows a receipt to this document must be able to open the source in one step (an outside review
+        # on 2026-11-26 found the document's address only in data/official/). Outside the claim member, so no receipt changes.
+        src_extra = None
+        om = re.match(r"official-(.+?-\d{4}-\d{2})-", cid)
+        if om and os.path.exists(os.path.join(ROOT, "data", "official", om.group(1) + ".json")):
+            od = json.load(open(os.path.join(ROOT, "data", "official", om.group(1) + ".json"), encoding="utf-8"))["document"]
+            if od.get("url"):
+                src_extra = {"source_url": od["url"], "source_record": f"{BASE}/data/official/{om.group(1)}.json"}
+                if od.get("retrieved_at"): src_extra["source_retrieved_at"] = od["retrieved_at"]
         if cid.startswith("official-") and "claim" not in doc:
             doc["provenance"] = {"primary_source": obj["source_document"] + " — " + obj["edition"], "dataset": "official publication; figure copied as printed, not computed; " + obj["exclusions"],
                                  "source_sha256": obj["source_sha256"], "code_history": "https://github.com/financeratecalc/financeratecalc.github.io"}
@@ -137,6 +146,7 @@ def main():
         h = sha8(obj)
         new = dict(doc)
         new["claim"] = obj
+        if src_extra: new["provenance"] = {**(doc.get("provenance") or {}), **src_extra}
         new.update({"receipt_document": "1.0", "id": cid, "display_value": cur, "hash_rule": "jcs-sha256-8", "hash8": h,
                     "receipt": f"⟦FRC:{cid}:{cur}:{h}⟧", "verify_url": VERIFY + f"%E2%9F%A6FRC:{cid}:{cur}:{h}%E2%9F%A7",
                     "corrections_url": f"{BASE}/corrections.json", "spec": f"{BASE}/spec/receipt-1.0.md"})

@@ -1,9 +1,10 @@
-/* <frc-receipt r="⟦FRC:id:value:hash8⟧"></frc-receipt>
+/* <frc-receipt r="⟦FRC:id:value:hash8⟧">value</frc-receipt>
    A small, dependency-free badge any page can place next to a number that came from FinanceRateCalc.
    It shows the figure, asks the public verify endpoint whether the receipt is still current, and links to the check.
    Nothing is tracked beyond the verify call itself (which is how the publisher counts that a figure was used).
    Usage:  <script src="https://financeratecalc.com/assets/receipt-badge.js" defer></script>
-           The 2025 FHA denial rate was <frc-receipt r="⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b⟧"></frc-receipt>.
+           The 2025 FHA denial rate was <frc-receipt r="⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b⟧">22.1%</frc-receipt>.
+   Write the value between the tags as well: it is what a reader sees when the script does not run.
    Licence: CC BY 4.0. */
 (function () {
   if (customElements.get("frc-receipt")) return;
