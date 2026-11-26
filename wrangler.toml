@@ -14,7 +14,13 @@ routes = [
   # Exact addresses only; every other page is still served by the static host without passing through this code.
   { pattern = "financeratecalc.com/", zone_name = "financeratecalc.com" },
   { pattern = "financeratecalc.com/.well-known/api-catalog", zone_name = "financeratecalc.com" },
-  { pattern = "financeratecalc.com/.well-known/mcp/server-card.json", zone_name = "financeratecalc.com" }
+  { pattern = "financeratecalc.com/.well-known/mcp/server-card.json", zone_name = "financeratecalc.com" },
+  # Figure Statements on the Issuer's own origin. Besides matching the iss claim, this address answers clients that the
+  # workers.dev edge refuses: on 2026-11-26 an outside verifier reported HTTP 403 (Cloudflare error 1010) for Python's
+  # default client on frc-mcp.ziyetis.workers.dev; the same client is answered on this domain.
+  { pattern = "financeratecalc.com/statement/*", zone_name = "financeratecalc.com" },
+  { pattern = "www.financeratecalc.com/statement/*", zone_name = "financeratecalc.com" },
+  { pattern = "financeratecalc.com/statement-key", zone_name = "financeratecalc.com" }
 ]
 
 # One small store, three uses, each under its own key prefix:
