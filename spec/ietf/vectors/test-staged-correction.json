@@ -5,9 +5,11 @@
  "iss": "https://financeratecalc.com",
  "sub": "https://financeratecalc.com/spec/ietf/vectors/test-staged-correction.json",
  "fetch": {
-  "revision_1": "https://frc-mcp.ziyetis.workers.dev/statement/test-staged-correction?rev=1",
-  "in_force": "https://frc-mcp.ziyetis.workers.dev/statement/test-staged-correction",
-  "check": "https://frc-mcp.ziyetis.workers.dev/statement/test-staged-correction?digest=<64 hex>"
+  "revision_1": "https://financeratecalc.com/statement/test-staged-correction?rev=1",
+  "in_force": "https://financeratecalc.com/statement/test-staged-correction",
+  "check": "https://financeratecalc.com/statement/test-staged-correction?digest=<64 hex>",
+  "revision_2": "https://financeratecalc.com/statement/test-staged-correction?rev=2",
+  "also_at": "https://frc-mcp.ziyetis.workers.dev/statement/test-staged-correction (same service; refuses Python's default client at the edge)"
  },
  "log": [
   {
@@ -21,6 +23,10 @@
   {
    "date": "2026-11-26",
    "event": "revision 2 issued 2026-11-26T02:33:42Z and listed"
+  },
+  {
+   "date": "2026-11-26",
+   "event": "revision 3 issued 2026-11-26T20:12:01Z: revision 2 plus not_before, the hash of block 0000000000000000000134b4c450bcb33c5a37d7f2c659060aeed1e8e202dd5e (reported height 977699), after the SCITT list showed that two upper bounds do not order the receipt and revision 2"
   }
  ],
  "revisions": [
@@ -98,6 +104,53 @@
     "edition": "Sep 2026 report",
     "marked_by_source": false
    }
+  },
+  {
+   "id": "test-staged-correction",
+   "value": "6.42",
+   "kind": "restated",
+   "claim": {
+    "metric": "official_hud_lpt_serious_delinquency_rate",
+    "value": 6.42,
+    "unit": "percent",
+    "period": "Aug 2026",
+    "source_document": "FHA Single Family Loan Performance Trends (Credit Risk Report)",
+    "edition": "Aug 2026 report",
+    "source_sha256": "7156b9744c245278bb5b0dd2d4b1e22cfbefdc814631330d84d54d028d625804",
+    "table": "Table 1. Delinquency Rates by Month (non-seasonally adjusted block)",
+    "row": "Serious delinquency rate, month of August 2026",
+    "exclusions": "FHA-insured single-family forward mortgages in active insurance at month end; rates are not seasonally adjusted (the report also prints a seasonally adjusted block, which is not restated here)",
+    "level": "attested restatement"
+   },
+   "source": {
+    "document": "FHA Single Family Loan Performance Trends (Credit Risk Report)",
+    "edition": "Aug 2026 report",
+    "sha256": "7156b9744c245278bb5b0dd2d4b1e22cfbefdc814631330d84d54d028d625804",
+    "table": "Table 1. Delinquency Rates by Month (non-seasonally adjusted block)",
+    "row": "Serious delinquency rate, month of August 2026",
+    "exclusions": "FHA-insured single-family forward mortgages in active insurance at month end; rates are not seasonally adjusted (the report also prints a seasonally adjusted block, which is not restated here)"
+   },
+   "limits": [
+    "why loans became delinquent",
+    "the delinquency risk of any one borrower or loan",
+    "any lender-level figure",
+    "a foreclosure completion or loss rate",
+    "that the figure has not been revised in a later edition (check the latest report)"
+   ],
+   "test": "Test fixture, not a published figure. Revision 3 repeats revision 2 and adds not_before: the hash of a Bitcoin block mined after the block that anchors the agent-side receipt. It exists so that the order of that receipt and a superseding statement can be derived from bytes.",
+   "issued": "2026-11-26T20:12:01Z",
+   "source_revision": {
+    "value": 6.48,
+    "edition": "Sep 2026 report",
+    "marked_by_source": false
+   },
+   "not_before": {
+    "chain": "bitcoin-mainnet",
+    "block_hash": "0000000000000000000134b4c450bcb33c5a37d7f2c659060aeed1e8e202dd5e",
+    "height_as_reported": 977699,
+    "meaning": "This statement was made after the block with this hash was mined. A verifier takes the block's height from a chain it has validated, not from this member.",
+    "read_from": "two public explorers that agreed (transparency/block-readings.json); a report, not validation by the publisher"
+   }
   }
  ],
  "expected": {
@@ -146,14 +199,16 @@
   "established": [
    "revision 1 was the only revision listed in two signed, logged publisher views (sequences 2 and 3)",
    "the receipt referencing revision 1 existed no later than block height 977556",
-   "the list containing revision 2 existed no later than 2026-11-26T02:36:46Z by Rekor's clock"
+   "the list containing revision 2 existed no later than 2026-11-26T02:36:46Z by Rekor's clock",
+   "revision 3 was made after the block with hash 0000000000000000000134b4c450bcb33c5a37d7f2c659060aeed1e8e202dd5e was mined (it carries that hash in its signed bytes)",
+   "given a validated chain in which that block is at a height above 977556: the receipt anchored in block 977556 existed before revision 3 was made. This is the order of the receipt and revision 3, from bytes and heights, with no clock."
   ],
   "not_established": [
-   "that the receipt preceded revision 2: both facts are upper bounds, one a block height and one a log's clock; neither bounds the other from below",
+   "that the receipt preceded revision 2: both facts are upper bounds, one a block height and one a log's clock; neither bounds the other from below. Revision 2 stays unordered; revision 3 does not change that.",
    "the earliest time revision 2 was issued: the publisher states 2026-11-26T02:33:42Z; nothing outside the publisher shows it",
    "that revision 2 did not exist when sequence 3 was signed: sequence 3 is the publisher's own declaration of completeness for this Subject; it commits the publisher and would expose a contradiction, but it is not proof of absence"
   ],
   "earlier_views": "Each sequence is the file at https://financeratecalc.com/transparency/statement-digests.json as it stood then; retrieve it from the repository history and compare its SHA-256 with list_sha256 and with previous_sha256 in the next sequence.",
-  "what_would_establish_the_order": "A superseding statement that carries the hash of a recent block cannot have been made before that block; a receipt anchored at or below that height is then shown to precede it, from the bytes, with no clock. Revision 2 does not carry one. See draft-fassbender-scitt-time-anchor for height-based bounds."
+  "what_would_establish_the_order": "Done for revision 3 (route 1 on the SCITT list, 2026-11-26): it carries not_before. Not done: registration of the superseding statement in the same log as the receipt (route 2), which orders the two only under a profile rule that a superseding statement counts from its registration."
  }
 }
