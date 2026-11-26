@@ -6,9 +6,17 @@ note: The home page of financeratecalc.com as Markdown, generated from the same 
 
 # Numbers in the dark. Receipts bring the light.
 
-AI systems quote statistics with the wrong month, the wrong denominator, or a value the publisher has since revised. Every figure here carries a **receipt**: a short code that fixes the number to its source file, its definition and its period. Move the light over a number to read its receipt.
+AI systems quote statistics with the wrong month, the wrong denominator, or a value the publisher has since revised. Every figure here carries a **receipt**: a short code that fixes the number to its source file, its definition and its period. Move the light over a number to read its receipt, or [change one digit in the sentence below](#try) and watch the receipt catch it.
 
 Point at any number in the field. Each one is a real figure from a public record, with the receipt that proves where it came from.
+
+## Change one digit. See what a receipt does.
+
+This sentence carries a receipt. Check it as issued, then change the number the way a careless quote would.
+
+In 2025, Quoted value of decisioned FHA applications were denied. ⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b⟧
+
+Nothing has been checked yet. Press “Check this number”: the page asks the public verify service, the same one an AI agent or a newsroom script would ask.
 
 ## Three receipts, as issued
 

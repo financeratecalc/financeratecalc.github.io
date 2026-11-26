@@ -8,6 +8,7 @@ data/official/, claims/, corrections.json, eval/). Nothing is typed. The analyti
 website structured data live in assets/home-head.html; the claim JSON-LD block is added afterwards by
 scripts/build_claim_jsonld.py. --check exits 1 if the committed page (ignoring that injected block) differs.
 """
+import datetime
 import glob
 import html
 import json
@@ -38,9 +39,9 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
 .fig.revised{color:var(--amber)}
 .fig.near::after{content:"";position:absolute;left:10px;right:10px;bottom:2px;height:2px;background:var(--gold)}
 .fig.revised.near::after{background:var(--amber)}
-.hero-in{position:relative;z-index:3;max-width:1120px;margin:0 auto;padding:clamp(70px,13vw,150px) 24px clamp(40px,6vw,70px);pointer-events:none}
+.hero-in{position:relative;z-index:3;max-width:1120px;margin:0 auto;padding:clamp(34px,5vw,64px) 24px clamp(22px,3vw,34px);pointer-events:none}
 .hero-in>*{pointer-events:auto}
-h1{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:clamp(36px,5.6vw,70px);line-height:1.03;letter-spacing:-2px;max-width:11.5ch}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:clamp(32px,4.4vw,54px);line-height:1.04;letter-spacing:-1.5px;max-width:13ch}
 .lede{margin-top:22px;font-size:clamp(17px,1.8vw,19.5px);line-height:1.6;max-width:42ch;color:var(--soft)}
 .lede b{color:var(--ink);font-weight:600}
 .reading{position:relative;z-index:4;max-width:1120px;margin:0 auto;padding:0 24px 30px}
@@ -88,7 +89,31 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;
 .fine .links{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:16px}
 .fine .links a{color:var(--soft)}
 .fine p{max-width:88ch;color:var(--dim)}
-@media(max-width:900px){.hero{display:flex;flex-direction:column}.hero .bar{order:0}.hero-in{order:1;padding-bottom:18px}.field{order:2;position:relative;inset:auto;height:330px;margin:0 8px}.reading{order:3;width:100%}.fig{left:var(--mx);top:calc(var(--my)*.86);font-size:clamp(18px,5.6vw,30px)}h1,.lede{max-width:none}}
+/* the first thing on the page: one receipt, one digit to change */
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.try{margin:22px 0 0;scroll-margin-top:16px;border:1px solid rgba(200,168,75,.35);background:var(--panel);max-width:900px}
+.try-top{padding:26px 26px 20px}
+.try h2{margin:0 0 6px;font-size:clamp(24px,3.2vw,34px);border:0;padding:0}
+.try .how{color:var(--soft);margin:0 0 20px;max-width:62ch}
+.try-s{font-family:'Fraunces',Georgia,serif;font-size:clamp(20px,2.5vw,27px);line-height:1.45;margin:0}
+.try-s input{font:inherit;font-weight:900;color:var(--gold);background:#06070a;border:0;border-bottom:2px solid var(--gold);width:5.2ch;padding:0 .12em;text-align:center;border-radius:0}
+.try-r{display:block;margin-top:14px;font:500 13.5px/1.5 'DM Mono',ui-monospace,monospace;color:var(--soft);overflow-wrap:anywhere}
+.try-r b{color:var(--gold);font-weight:500}
+.try-b{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.try-b button{font:600 15px 'DM Sans',system-ui,sans-serif;padding:11px 18px;border:1px solid var(--gold);background:var(--gold);color:#0b0c10;cursor:pointer}
+.try-b button.q{background:none;color:var(--gold)}
+.try-b button[disabled]{opacity:.55;cursor:progress}
+.try-o{border-top:1px solid var(--rule);padding:20px 26px 24px;border-left:4px solid var(--dim)}
+.try-o[data-s=current]{border-left-color:var(--ok)}.try-o[data-s=altered]{border-left-color:var(--void)}.try-o[data-s=other]{border-left-color:var(--amber)}
+.try-v{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:clamp(22px,2.8vw,30px);margin:0;line-height:1.2}
+.try-o[data-s=current] .try-v{color:var(--ok)}.try-o[data-s=altered] .try-v{color:var(--void)}.try-o[data-s=other] .try-v{color:var(--amber)}
+.try-m{margin:6px 0 0;color:var(--soft);max-width:66ch}
+.try-d{display:grid;grid-template-columns:max-content 1fr;gap:6px 22px;margin:16px 0 0;font-size:15px}
+.try-d dt{color:var(--dim)}.try-d dd{margin:0;font-family:'DM Mono',ui-monospace,monospace;overflow-wrap:anywhere}
+.try-l{display:flex;gap:8px 22px;flex-wrap:wrap;margin:16px 0 0;font-size:15px}
+.try-n{margin:14px 0 0;font-size:14px;color:var(--dim);max-width:70ch}
+@media(max-width:560px){.try-top{padding:20px 16px 16px}.try-o{padding:16px}.try-d{grid-template-columns:1fr;gap:0}.try-d dd{margin-bottom:8px}}
+@media(max-width:900px){.hero{display:flex;flex-direction:column}.hero .bar{order:0}.hero-in{order:1;padding-bottom:18px}.field{order:2;position:relative;inset:auto;height:200px;margin:0 8px}.reading{order:3;width:100%}.fig{left:var(--mx);top:calc(var(--my)*.86);font-size:clamp(18px,5.6vw,30px)}h1,.lede{max-width:none}}
 @media(max-width:760px){.two,.split{grid-template-columns:1fr}.two>div+div{padding-left:0;border-left:0;border-top:1px solid var(--rule)}.doors li{grid-template-columns:1fr;gap:4px}td,th{padding-right:10px}.hide-s{display:none}h1{letter-spacing:-1.2px}}
 @media(prefers-reduced-motion:reduce){.fig{--lit:.55 !important;filter:none;transition:none}.hero::before{transition:none}}
 """
@@ -122,6 +147,45 @@ JS = r"""
   }
   figs.forEach(function(f){ f.addEventListener('click',function(){ pinned=f; show(f); });
     f.addEventListener('focus',function(){ f.style.setProperty('--lit','1'); show(f); }); });
+})();
+
+/* One receipt, one digit. The check is the public verify service, asked only when the visitor presses a button; the
+   channel letter d marks these as demonstrations so they are never counted as use of a figure. */
+(function(){
+  var box=document.getElementById('try'); if(!box) return;
+  var D=box.dataset, inp=document.getElementById('tv'), rc=document.getElementById('tr'), out=document.getElementById('to'),
+      b0=document.getElementById('tc'), b1=document.getElementById('t1');
+  var esc=function(x){return String(x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  var val=function(){return inp.value.trim().replace(/[\s:\u27e7]/g,'');};
+  var token=function(ch){return '\u27e6FRC:'+D.id+':'+val()+':'+D.hash+(ch?':'+D.chan:'')+'\u27e7';};
+  var show=function(){rc.innerHTML='\u27e6FRC:'+esc(D.id)+':<b>'+esc(val()||'?')+'</b>:'+esc(D.hash)+'\u27e7';
+    b1.textContent=val()===D.value?'Change one digit for me':'Put the number back';};
+  var paint=function(s,head,msg,quoted,current){
+    out.dataset.s=s;
+    out.innerHTML='<p class="try-v">'+esc(head)+'</p><p class="try-m">'+esc(msg)+'</p>'+
+      '<dl class="try-d"><dt>Quoted value</dt><dd>'+esc(quoted)+'</dd><dt>Current value</dt><dd>'+esc(current)+'</dd><dt>Receipt hash</dt><dd>'+esc(D.hash)+'</dd></dl>'+
+      '<p class="try-l"><a href="/verify.html?r='+encodeURIComponent(token(false))+'">Open this check on its own page</a><a href="/claims/'+esc(D.id)+'.json">Claim document</a><a href="'+esc(D.source)+'" rel="noopener">Source record (CFPB HMDA 2025)</a><a href="/methodology.html">How it was computed</a></p>'+
+      '<p class="try-n">The receipt fixes this number to its definition, period and population. It shows the publisher issued the figure and whether the quote still matches; it does not show the figure is right.</p>';
+  };
+  var check=function(){
+    var q=val(); if(!q){paint('other','Not a receipt','There is no number to check.','(empty)','\u2014'); return;}
+    b0.disabled=b1.disabled=true; out.dataset.s=''; out.innerHTML='<p class="try-m">Asking the verify service\u2026</p>';
+    fetch(D.api+encodeURIComponent(token(true)),{headers:{Accept:'application/json'}}).then(function(r){return r.json();}).then(function(d){
+      if(d.valid===false) paint('other','Not issued','The publisher has no figure that matches this receipt.',q,'\u2014');
+      else if(d.status==='current') paint('current','Current','The quoted value is the figure the publisher issues today.',d.quoted_value,d.current_value);
+      else if(d.status==='hash-current-value-mismatch') paint('altered','Altered \u2014 quoted value differs from the current figure','The receipt belongs to this figure, but the number beside it is not the one that was issued.',d.quoted_value,d.current_value);
+      else paint('other',d.status,'See the full answer on the check page.',d.quoted_value||q,d.current_value||'\u2014');
+    }).catch(function(){
+      var same=q===D.value;   // the service could not be reached: say so, and compare with the value this page was built from
+      paint(same?'current':'altered',(same?'Current':'Altered \u2014 quoted value differs from the current figure')+' (checked on this page only)','The verify service could not be reached, so this compares your number with the value this page was built from. Use the link below for the live check.',q,D.value);
+    }).then(function(){b0.disabled=b1.disabled=false;});
+  };
+  var bump=function(){   // change the last digit by one, the smallest edit that still reads as a plausible figure
+    if(val()!==D.value){inp.value=D.value;} else {inp.value=D.value.replace(/(\d)(?=\D*$)/,function(c){return String((+c+1)%10);});}
+    show(); check();
+  };
+  inp.addEventListener('input',show); inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();check();}});
+  b0.addEventListener('click',check); b1.addEventListener('click',bump); show();
 })();
 """
 E = html.escape
@@ -286,6 +350,17 @@ def main():
     # the receipt field types real receipts as examples (assets/typed-placeholder.js); read from the claim documents so they verify today
     typed = html.escape(json.dumps([J(f"claims/{c}.json")["receipt"] for c in ("national-fha-denial-rate-2025", "state-fl-2025", "state-tx-2025", "state-oh-2025")
                                     if os.path.exists(os.path.join(ROOT, "claims", c + ".json"))], ensure_ascii=False), quote=True)
+    # the live experiment at the top: one receipt of ours, read from its claim document so it verifies today
+    tc = J("claims/national-fha-denial-rate-2025.json")
+    try_html = (f'<section class="try" id="try" aria-labelledby="try-h" data-id="{E(tc["id"])}" data-value="{E(tc["display_value"])}" data-hash="{E(tc["hash8"])}" '
+                f'data-chan="d{datetime.date.today():%y%m}" data-api="https://frc-mcp.ziyetis.workers.dev/verify?r=" data-source="https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025">'
+                '<div class="try-top"><h2 id="try-h">Change one digit. See what a receipt does.</h2>'
+                '<p class="how">This sentence carries a receipt. Check it as issued, then change the number the way a careless quote would.</p>'
+                f'<p class="try-s">In 2025, <label><span class="vh">Quoted value</span><input id="tv" type="text" value="{E(tc["display_value"])}" inputmode="decimal" autocomplete="off" spellcheck="false" maxlength="8"></label> of decisioned FHA applications were denied.'
+                f'<span class="try-r" id="tr" aria-label="Receipt">{E(tc["receipt"])}</span></p>'
+                '<div class="try-b"><button type="button" id="tc">Check this number</button><button type="button" id="t1" class="q">Change one digit for me</button></div></div>'
+                '<div class="try-o" id="to" aria-live="polite"><p class="try-m">Nothing has been checked yet. Press &ldquo;Check this number&rdquo;: the page asks the public verify service, the same one an AI agent or a newsroom script would ask.</p></div>'
+                '</section>')
     page = f'''<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -318,11 +393,12 @@ def main():
 <div class="field" aria-hidden="false">{field_html}</div>
 <div class="hero-in">
 <h1>Numbers in the dark. Receipts bring the light.</h1>
-<p class="lede">AI systems quote statistics with the wrong month, the wrong denominator, or a value the publisher has since revised. Every figure here carries a <b>receipt</b>: a short code that fixes the number to its source file, its definition and its period. Move the light over a number to read its receipt.</p>
+<p class="lede">AI systems quote statistics with the wrong month, the wrong denominator, or a value the publisher has since revised. Every figure here carries a <b>receipt</b>: a short code that fixes the number to its source file, its definition and its period. Move the light over a number to read its receipt, or <a href="#try">change one digit in the sentence below</a> and watch the receipt catch it.</p>
 </div>
 <div class="reading"><div class="reading-box" id="reading" aria-live="polite"><span class="hint">Point at any number in the field. Each one is a real figure from a public record, with the receipt that proves where it came from.</span></div></div>
 </div>
 <main id="main">
+{try_html}
 <form class="check" action="/verify.html" method="get">
 <label for="r">Check a receipt</label>
 <div class="row"><input id="r" name="r" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="⟦FRC:…⟧ paste a receipt from an AI answer or an article" data-typed="{typed}" required>

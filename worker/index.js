@@ -1860,7 +1860,7 @@ const WORKER = {
       let everIssued = false;
       if (!hashRule) { try { const hh = await getJSON("/transparency/receipt-hash-history.json"); everIssued = ((hh.hashes || {})[id] || []).includes(h); } catch {} }
       const status = hashRule ? (current === value ? "current" : "hash-current-value-mismatch") : everIssued ? "stale" : "unrecognized";
-      const CH = { m: "MCP tool output", w: "site page", p: "answer page", c: "cite card", f: "evidence footnote on a site page", l: "lender page", s: "state page", t: "top-100 table", h: "Hugging Face dataset", a: "API JSON", r: "RL environment" };
+      const CH = { m: "MCP tool output", w: "site page", p: "answer page", c: "cite card", f: "evidence footnote on a site page", l: "lender page", s: "state page", t: "top-100 table", h: "Hugging Face dataset", a: "API JSON", r: "RL environment", d: "demonstration on the home page (a visitor trying the check; not a use of the figure)" };
       const issued = chan ? { channel: channel[0], channel_meaning: CH[channel[0]] || "unknown channel", issued_month: "20" + channel.slice(1, 3) + "-" + channel.slice(3, 5) } : { channel: "none", channel_meaning: "receipt issued before channel tagging (pre-October 2026) or segment dropped in copying" };
       try { await tally(env, "verify", `${channel}:${status}`); } catch {}
       try { await logVerify(env, request, channel, status, id); } catch {}

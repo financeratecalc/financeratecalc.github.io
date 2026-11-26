@@ -45,9 +45,9 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
 .fig.revised{color:var(--amber)}
 .fig.near::after{content:"";position:absolute;left:10px;right:10px;bottom:2px;height:2px;background:var(--gold)}
 .fig.revised.near::after{background:var(--amber)}
-.hero-in{position:relative;z-index:3;max-width:1120px;margin:0 auto;padding:clamp(70px,13vw,150px) 24px clamp(40px,6vw,70px);pointer-events:none}
+.hero-in{position:relative;z-index:3;max-width:1120px;margin:0 auto;padding:clamp(34px,5vw,64px) 24px clamp(22px,3vw,34px);pointer-events:none}
 .hero-in>*{pointer-events:auto}
-h1{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:clamp(36px,5.6vw,70px);line-height:1.03;letter-spacing:-2px;max-width:11.5ch}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:clamp(32px,4.4vw,54px);line-height:1.04;letter-spacing:-1.5px;max-width:13ch}
 .lede{margin-top:22px;font-size:clamp(17px,1.8vw,19.5px);line-height:1.6;max-width:42ch;color:var(--soft)}
 .lede b{color:var(--ink);font-weight:600}
 .reading{position:relative;z-index:4;max-width:1120px;margin:0 auto;padding:0 24px 30px}
@@ -95,11 +95,34 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;
 .fine .links{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:16px}
 .fine .links a{color:var(--soft)}
 .fine p{max-width:88ch;color:var(--dim)}
-@media(max-width:900px){.hero{display:flex;flex-direction:column}.hero .bar{order:0}.hero-in{order:1;padding-bottom:18px}.field{order:2;position:relative;inset:auto;height:330px;margin:0 8px}.reading{order:3;width:100%}.fig{left:var(--mx);top:calc(var(--my)*.86);font-size:clamp(18px,5.6vw,30px)}h1,.lede{max-width:none}}
+/* the first thing on the page: one receipt, one digit to change */
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.try{margin:22px 0 0;scroll-margin-top:16px;border:1px solid rgba(200,168,75,.35);background:var(--panel);max-width:900px}
+.try-top{padding:26px 26px 20px}
+.try h2{margin:0 0 6px;font-size:clamp(24px,3.2vw,34px);border:0;padding:0}
+.try .how{color:var(--soft);margin:0 0 20px;max-width:62ch}
+.try-s{font-family:'Fraunces',Georgia,serif;font-size:clamp(20px,2.5vw,27px);line-height:1.45;margin:0}
+.try-s input{font:inherit;font-weight:900;color:var(--gold);background:#06070a;border:0;border-bottom:2px solid var(--gold);width:5.2ch;padding:0 .12em;text-align:center;border-radius:0}
+.try-r{display:block;margin-top:14px;font:500 13.5px/1.5 'DM Mono',ui-monospace,monospace;color:var(--soft);overflow-wrap:anywhere}
+.try-r b{color:var(--gold);font-weight:500}
+.try-b{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.try-b button{font:600 15px 'DM Sans',system-ui,sans-serif;padding:11px 18px;border:1px solid var(--gold);background:var(--gold);color:#0b0c10;cursor:pointer}
+.try-b button.q{background:none;color:var(--gold)}
+.try-b button[disabled]{opacity:.55;cursor:progress}
+.try-o{border-top:1px solid var(--rule);padding:20px 26px 24px;border-left:4px solid var(--dim)}
+.try-o[data-s=current]{border-left-color:var(--ok)}.try-o[data-s=altered]{border-left-color:var(--void)}.try-o[data-s=other]{border-left-color:var(--amber)}
+.try-v{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:clamp(22px,2.8vw,30px);margin:0;line-height:1.2}
+.try-o[data-s=current] .try-v{color:var(--ok)}.try-o[data-s=altered] .try-v{color:var(--void)}.try-o[data-s=other] .try-v{color:var(--amber)}
+.try-m{margin:6px 0 0;color:var(--soft);max-width:66ch}
+.try-d{display:grid;grid-template-columns:max-content 1fr;gap:6px 22px;margin:16px 0 0;font-size:15px}
+.try-d dt{color:var(--dim)}.try-d dd{margin:0;font-family:'DM Mono',ui-monospace,monospace;overflow-wrap:anywhere}
+.try-l{display:flex;gap:8px 22px;flex-wrap:wrap;margin:16px 0 0;font-size:15px}
+.try-n{margin:14px 0 0;font-size:14px;color:var(--dim);max-width:70ch}
+@media(max-width:560px){.try-top{padding:20px 16px 16px}.try-o{padding:16px}.try-d{grid-template-columns:1fr;gap:0}.try-d dd{margin-bottom:8px}}
+@media(max-width:900px){.hero{display:flex;flex-direction:column}.hero .bar{order:0}.hero-in{order:1;padding-bottom:18px}.field{order:2;position:relative;inset:auto;height:200px;margin:0 8px}.reading{order:3;width:100%}.fig{left:var(--mx);top:calc(var(--my)*.86);font-size:clamp(18px,5.6vw,30px)}h1,.lede{max-width:none}}
 @media(max-width:760px){.two,.split{grid-template-columns:1fr}.two>div+div{padding-left:0;border-left:0;border-top:1px solid var(--rule)}.doors li{grid-template-columns:1fr;gap:4px}td,th{padding-right:10px}.hide-s{display:none}h1{letter-spacing:-1.2px}}
 @media(prefers-reduced-motion:reduce){.fig{--lit:.55 !important;filter:none;transition:none}.hero::before{transition:none}}
 </style>
-<script type="application/ld+json" id="frc-claims-jsonld">{"@context":"https://schema.org","@graph":[{"@type":"Claim","@id":"https://financeratecalc.com/claims/national-fha-denial-rate-2025.json","name":"fha_denial_rate","text":"In 2025, 22.1% of decisioned FHA applications were denied (actions 1,2,3; loan_type 2).","url":"https://financeratecalc.com/claims/national-fha-denial-rate-2025.json","datePublished":"2026-08-12","author":{"@type":"Organization","name":"FinanceRateCalc","url":"https://financeratecalc.com"},"license":"https://creativecommons.org/licenses/by/4.0/","isBasedOn":"https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025","temporalCoverage":"2025","spatialCoverage":"United States","identifier":[{"@type":"PropertyValue","propertyID":"frc_passport_id","value":"frc:claim:national-fha-denial-rate-2025"},{"@type":"PropertyValue","propertyID":"sha256","value":"13b9b986cadd5354334783289c87dbed27cb0cd7f1532da687a3b4b89f844c90"}],"additionalProperty":[{"@type":"PropertyValue","name":"required_qualifier:period","value":"2025"},{"@type":"PropertyValue","name":"required_qualifier:population","value":"decisioned FHA applications"},{"@type":"PropertyValue","name":"required_qualifier:program_scope","value":"FHA only, not all mortgages"},{"@type":"PropertyValue","name":"does_not_establish","value":"22.1% of ALL US mortgage applications were denied"},{"@type":"PropertyValue","name":"does_not_establish","value":"22.1% applies to purchase-only or refinance-only segments"},{"@type":"PropertyValue","name":"does_not_establish","value":"any individual's denial probability"},{"@type":"PropertyValue","name":"definition","value":"denials (action 3) / decisioned applications (actions 1,2,3), FHA (loan_type 2)"},{"@type":"PropertyValue","name":"unit","value":"share_of_decisioned_applications"},{"@type":"PropertyValue","name":"receipt_verification","value":"https://financeratecalc.com/verify.html"},{"@type":"PropertyValue","name":"contract","value":"https://financeratecalc.com/claims/national-fha-denial-rate-2025.contract.json"}]},{"@type":"Claim","@id":"https://financeratecalc.com/claims/major-lender-span-2025.json","name":"fha_denial_rate_span_major_lenders","text":"Across the top-100 FHA lenders by volume in 2025, lender-level denial rates spanned 1.8%–78.7%.","url":"https://financeratecalc.com/claims/major-lender-span-2025.json","datePublished":"2026-08-12","author":{"@type":"Organization","name":"FinanceRateCalc","url":"https://financeratecalc.com"},"license":"https://creativecommons.org/licenses/by/4.0/","isBasedOn":"https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025","temporalCoverage":"2025","spatialCoverage":"United States","identifier":[{"@type":"PropertyValue","propertyID":"frc_passport_id","value":"frc:claim:major-lender-span-2025"},{"@type":"PropertyValue","propertyID":"sha256","value":"46e8c103bc455ecc0f5fc392b1143775b8b47578cfb2607dc831ea34b1f4f356"}],"additionalProperty":[{"@type":"PropertyValue","name":"required_qualifier:period","value":"2025"},{"@type":"PropertyValue","name":"required_qualifier:universe","value":"top-100 FHA lenders by volume"},{"@type":"PropertyValue","name":"required_qualifier:program_scope","value":"FHA only"},{"@type":"PropertyValue","name":"does_not_establish","value":"all US mortgage lenders fall within 1.8%–78.7%"},{"@type":"PropertyValue","name":"does_not_establish","value":"the span applies outside FHA"},{"@type":"PropertyValue","name":"definition","value":"minimum and maximum lender-level denial rates under the published denominator rule"},{"@type":"PropertyValue","name":"unit","value":"range"},{"@type":"PropertyValue","name":"receipt_verification","value":"https://financeratecalc.com/verify.html"},{"@type":"PropertyValue","name":"contract","value":"https://financeratecalc.com/claims/major-lender-span-2025.contract.json"}]},{"@type":"Claim","@id":"https://financeratecalc.com/claims/door-effect-38pct-2026.json","name":"door_effect_share","text":"In 2025 FHA decisions, lender identity was associated with 38.0% of the EXPLAINABLE variation in denial outcomes (McFadden R2 0.171→0.276), on observable federal-record characteristics.","url":"https://financeratecalc.com/claims/door-effect-38pct-2026.json","datePublished":"2026-08-12","author":{"@type":"Organization","name":"FinanceRateCalc","url":"https://financeratecalc.com"},"license":"https://creativecommons.org/licenses/by/4.0/","isBasedOn":"https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025","temporalCoverage":"2025","spatialCoverage":"United States","identifier":[{"@type":"PropertyValue","propertyID":"frc_passport_id","value":"frc:claim:door-effect-38pct-2026"},{"@type":"PropertyValue","propertyID":"sha256","value":"7ee3a792731f10a3efc177de797609617a7a3d27b7e79b7c2966dc4f1d3f2193"}],"additionalProperty":[{"@type":"PropertyValue","name":"required_qualifier:period","value":"2025"},{"@type":"PropertyValue","name":"required_qualifier:population","value":"decisioned FHA applications (859,090)"},{"@type":"PropertyValue","name":"required_qualifier:metric_scope","value":"share of explainable variation"},{"@type":"PropertyValue","name":"required_qualifier:association_not_causation","value":true},{"@type":"PropertyValue","name":"required_qualifier:observable_data_limit","value":"HMDA contains no credit scores"},{"@type":"PropertyValue","name":"does_not_establish","value":"lenders CAUSED 38% of denials"},{"@type":"PropertyValue","name":"does_not_establish","value":"38% of every individual denial is lender-driven"},{"@type":"PropertyValue","name":"does_not_establish","value":"a borrower would be approved by switching lenders"},{"@type":"PropertyValue","name":"does_not_establish","value":"unlawful conduct by any lender"},{"@type":"PropertyValue","name":"definition","value":null},{"@type":"PropertyValue","name":"unit","value":null},{"@type":"PropertyValue","name":"receipt_verification","value":"https://financeratecalc.com/verify.html"},{"@type":"PropertyValue","name":"contract","value":"https://financeratecalc.com/claims/door-effect-38pct-2026.contract.json"}]}]}</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -109,11 +132,12 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;
 <div class="field" aria-hidden="false"><button type="button" class="fig current" style="--dx:60%;--dy:17%;--mx:16%;--my:12%" data-r="⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b⟧" data-l="of decisioned FHA applications denied, 2025" data-s="current">22.1%</button><button type="button" class="fig current" style="--dx:77%;--dy:12%;--mx:50%;--my:8%" data-r="⟦FRC:va-national-denial-rate-2025:16.1%:32bdf09e⟧" data-l="of decisioned VA applications denied, 2025" data-s="current">16.1%</button><button type="button" class="fig current" style="--dx:92%;--dy:20%;--mx:84%;--my:14%" data-r="⟦FRC:purpose-fha-purchase-denial-rate-2025:12.8%:25976868⟧" data-l="of decisioned FHA home-purchase applications denied, 2025" data-s="current">12.8%</button><button type="button" class="fig current" style="--dx:66%;--dy:30%;--mx:30%;--my:30%" data-r="⟦FRC:purpose-fha-refinance-denial-rate-2025:37.4%:aa99d715⟧" data-l="of decisioned FHA refinance applications denied, 2025" data-s="current">37.4%</button><button type="button" class="fig current" style="--dx:84%;--dy:33%;--mx:68%;--my:28%" data-r="⟦FRC:purpose-va-purchase-denial-rate-2025:8.2%:3ae2ad39⟧" data-l="of decisioned VA home-purchase applications denied, 2025" data-s="current">8.2%</button><button type="button" class="fig current" style="--dx:58%;--dy:44%;--mx:14%;--my:48%" data-r="⟦FRC:purpose-va-refinance-denial-rate-2025:24.5%:57b68786⟧" data-l="of decisioned VA refinance applications denied, 2025" data-s="current">24.5%</button><button type="button" class="fig current" style="--dx:74%;--dy:47%;--mx:48%;--my:46%" data-r="⟦FRC:state-tx-2025:15.7%:2b2c170b⟧" data-l="FHA denial rate in TX, 2025" data-s="current">15.7%</button><button type="button" class="fig current" style="--dx:91%;--dy:45%;--mx:84%;--my:48%" data-r="⟦FRC:state-ca-2025:21.7%:a4885178⟧" data-l="FHA denial rate in CA, 2025" data-s="current">21.7%</button><button type="button" class="fig current" style="--dx:64%;--dy:60%;--mx:28%;--my:66%" data-r="⟦FRC:state-fl-2025:24.5%:0751d0e8⟧" data-l="FHA denial rate in FL, 2025" data-s="current">24.5%</button><button type="button" class="fig current" style="--dx:81%;--dy:61%;--mx:66%;--my:64%" data-r="⟦FRC:state-ny-2025:25.3%:f83abf68⟧" data-l="FHA denial rate in NY, 2025" data-s="current">25.3%</button><button type="button" class="fig current" style="--dx:94%;--dy:70%;--mx:12%;--my:84%" data-r="⟦FRC:outcome-withdrawn-2025:17.7%:79b8651e⟧" data-l="of FHA applications acted on were withdrawn, 2025" data-s="current">17.7%</button><button type="button" class="fig current" style="--dx:57%;--dy:73%;--mx:46%;--my:84%" data-r="⟦FRC:outcome-originated-2025:56.4%:f1459509⟧" data-l="of FHA applications acted on were originated, 2025" data-s="current">56.4%</button><button type="button" class="fig restated" style="--dx:72%;--dy:75%;--mx:82%;--my:82%" data-r="⟦FRC:official-hud-fhaprod-2026-07-endorsements-count:87,538:1cf07e47⟧" data-l="HUD: FHA single-family loans endorsed for insurance in the month, Jul 2026" data-s="restated">87,538</button><button type="button" class="fig revised" style="--dx:87%;--dy:82%;--mx:60%;--my:96%" data-r="⟦FRC:official-hud-fhaprod-2026-07-purchase-count:65,328:35e63550⟧" data-l="HUD: purchase loans endorsed in the month, Jul 2026 — later restated as 65,327" data-s="revised">65,328</button></div>
 <div class="hero-in">
 <h1>Numbers in the dark. Receipts bring the light.</h1>
-<p class="lede">AI systems quote statistics with the wrong month, the wrong denominator, or a value the publisher has since revised. Every figure here carries a <b>receipt</b>: a short code that fixes the number to its source file, its definition and its period. Move the light over a number to read its receipt.</p>
+<p class="lede">AI systems quote statistics with the wrong month, the wrong denominator, or a value the publisher has since revised. Every figure here carries a <b>receipt</b>: a short code that fixes the number to its source file, its definition and its period. Move the light over a number to read its receipt, or <a href="#try">change one digit in the sentence below</a> and watch the receipt catch it.</p>
 </div>
 <div class="reading"><div class="reading-box" id="reading" aria-live="polite"><span class="hint">Point at any number in the field. Each one is a real figure from a public record, with the receipt that proves where it came from.</span></div></div>
 </div>
 <main id="main">
+<section class="try" id="try" aria-labelledby="try-h" data-id="national-fha-denial-rate-2025" data-value="22.1%" data-hash="ebf6b00b" data-chan="d2611" data-api="https://frc-mcp.ziyetis.workers.dev/verify?r=" data-source="https://ffiec.cfpb.gov/data-publication/snapshot-national-loan-level-dataset/2025"><div class="try-top"><h2 id="try-h">Change one digit. See what a receipt does.</h2><p class="how">This sentence carries a receipt. Check it as issued, then change the number the way a careless quote would.</p><p class="try-s">In 2025, <label><span class="vh">Quoted value</span><input id="tv" type="text" value="22.1%" inputmode="decimal" autocomplete="off" spellcheck="false" maxlength="8"></label> of decisioned FHA applications were denied.<span class="try-r" id="tr" aria-label="Receipt">⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b⟧</span></p><div class="try-b"><button type="button" id="tc">Check this number</button><button type="button" id="t1" class="q">Change one digit for me</button></div></div><div class="try-o" id="to" aria-live="polite"><p class="try-m">Nothing has been checked yet. Press &ldquo;Check this number&rdquo;: the page asks the public verify service, the same one an AI agent or a newsroom script would ask.</p></div></section>
 <form class="check" action="/verify.html" method="get">
 <label for="r">Check a receipt</label>
 <div class="row"><input id="r" name="r" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="⟦FRC:…⟧ paste a receipt from an AI answer or an article" data-typed="[&quot;⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b⟧&quot;, &quot;⟦FRC:state-fl-2025:24.5%:0751d0e8⟧&quot;, &quot;⟦FRC:state-tx-2025:15.7%:2b2c170b⟧&quot;, &quot;⟦FRC:state-oh-2025:23.0%:34beae06⟧&quot;]" required>
@@ -208,6 +232,45 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;
   }
   figs.forEach(function(f){ f.addEventListener('click',function(){ pinned=f; show(f); });
     f.addEventListener('focus',function(){ f.style.setProperty('--lit','1'); show(f); }); });
+})();
+
+/* One receipt, one digit. The check is the public verify service, asked only when the visitor presses a button; the
+   channel letter d marks these as demonstrations so they are never counted as use of a figure. */
+(function(){
+  var box=document.getElementById('try'); if(!box) return;
+  var D=box.dataset, inp=document.getElementById('tv'), rc=document.getElementById('tr'), out=document.getElementById('to'),
+      b0=document.getElementById('tc'), b1=document.getElementById('t1');
+  var esc=function(x){return String(x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  var val=function(){return inp.value.trim().replace(/[\s:\u27e7]/g,'');};
+  var token=function(ch){return '\u27e6FRC:'+D.id+':'+val()+':'+D.hash+(ch?':'+D.chan:'')+'\u27e7';};
+  var show=function(){rc.innerHTML='\u27e6FRC:'+esc(D.id)+':<b>'+esc(val()||'?')+'</b>:'+esc(D.hash)+'\u27e7';
+    b1.textContent=val()===D.value?'Change one digit for me':'Put the number back';};
+  var paint=function(s,head,msg,quoted,current){
+    out.dataset.s=s;
+    out.innerHTML='<p class="try-v">'+esc(head)+'</p><p class="try-m">'+esc(msg)+'</p>'+
+      '<dl class="try-d"><dt>Quoted value</dt><dd>'+esc(quoted)+'</dd><dt>Current value</dt><dd>'+esc(current)+'</dd><dt>Receipt hash</dt><dd>'+esc(D.hash)+'</dd></dl>'+
+      '<p class="try-l"><a href="/verify.html?r='+encodeURIComponent(token(false))+'">Open this check on its own page</a><a href="/claims/'+esc(D.id)+'.json">Claim document</a><a href="'+esc(D.source)+'" rel="noopener">Source record (CFPB HMDA 2025)</a><a href="/methodology.html">How it was computed</a></p>'+
+      '<p class="try-n">The receipt fixes this number to its definition, period and population. It shows the publisher issued the figure and whether the quote still matches; it does not show the figure is right.</p>';
+  };
+  var check=function(){
+    var q=val(); if(!q){paint('other','Not a receipt','There is no number to check.','(empty)','\u2014'); return;}
+    b0.disabled=b1.disabled=true; out.dataset.s=''; out.innerHTML='<p class="try-m">Asking the verify service\u2026</p>';
+    fetch(D.api+encodeURIComponent(token(true)),{headers:{Accept:'application/json'}}).then(function(r){return r.json();}).then(function(d){
+      if(d.valid===false) paint('other','Not issued','The publisher has no figure that matches this receipt.',q,'\u2014');
+      else if(d.status==='current') paint('current','Current','The quoted value is the figure the publisher issues today.',d.quoted_value,d.current_value);
+      else if(d.status==='hash-current-value-mismatch') paint('altered','Altered \u2014 quoted value differs from the current figure','The receipt belongs to this figure, but the number beside it is not the one that was issued.',d.quoted_value,d.current_value);
+      else paint('other',d.status,'See the full answer on the check page.',d.quoted_value||q,d.current_value||'\u2014');
+    }).catch(function(){
+      var same=q===D.value;   // the service could not be reached: say so, and compare with the value this page was built from
+      paint(same?'current':'altered',(same?'Current':'Altered \u2014 quoted value differs from the current figure')+' (checked on this page only)','The verify service could not be reached, so this compares your number with the value this page was built from. Use the link below for the live check.',q,D.value);
+    }).then(function(){b0.disabled=b1.disabled=false;});
+  };
+  var bump=function(){   // change the last digit by one, the smallest edit that still reads as a plausible figure
+    if(val()!==D.value){inp.value=D.value;} else {inp.value=D.value.replace(/(\d)(?=\D*$)/,function(c){return String((+c+1)%10);});}
+    show(); check();
+  };
+  inp.addEventListener('input',show); inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();check();}});
+  b0.addEventListener('click',check); b1.addEventListener('click',bump); show();
 })();
 </script>
 <script src="/assets/typed-placeholder.js" defer></script>
