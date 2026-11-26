@@ -99,5 +99,58 @@
     "marked_by_source": false
    }
   }
- ]
+ ],
+ "expected": {
+  "note": "What a verifier can establish, by observation. The earliest issuance time of revision 2 is left unresolved: the evidence gives an upper bound and a publisher-declared earlier view, not proof of absence. (Form suggested on the SCITT list, 2026-11-26.)",
+  "observations": [
+   {
+    "at": "2026-11-25T18:50:33Z",
+    "view": "digest list sequence 2",
+    "list_sha256": "324719d3e7fd185fcca8fc070025cefa69263106e7fe545851cabf9665bd4806",
+    "rekor_log_index": 4109308172,
+    "revisions_listed": [
+     1
+    ],
+    "status_of_revision_1": "current"
+   },
+   {
+    "at": "2026-11-25T19:12:23Z",
+    "event": "receipt referencing revision 1 anchored",
+    "evidence": "Bitcoin block 977556, hash 00000000000000000000b8574baec04b7181b0fe67734b028feef9515f1b2c81",
+    "by": "https://sebbi.pro (NT-95SB-UR5L)"
+   },
+   {
+    "at": "2026-11-25T21:00:25Z",
+    "view": "digest list sequence 3",
+    "list_sha256": "2acaf7a071b9fcd868dbb2d268586196b9fc58b11bf7fa689a808711fa2ead7e",
+    "rekor_log_index": 4111617764,
+    "revisions_listed": [
+     1
+    ],
+    "status_of_revision_1": "current"
+   },
+   {
+    "at": "2026-11-26T02:36:46Z",
+    "view": "digest list sequence 4",
+    "list_sha256": "62c1670ff2ee6a2a4e0fb7a7a2bcdcbdae9c7c3d5de81855cd4404f06673507e",
+    "rekor_log_index": 4116513926,
+    "revisions_listed": [
+     1,
+     2
+    ],
+    "status_of_revision_1": "superseded",
+    "status_of_revision_2": "current"
+   }
+  ],
+  "established": [
+   "revision 1 was listed as the only revision in two signed, logged publisher views, one before and one after the anchor",
+   "the receipt referencing revision 1 existed by 2026-11-25T19:12:23Z",
+   "revision 2 existed by 2026-11-26T02:36:46Z"
+  ],
+  "not_established": [
+   "the earliest time revision 2 was issued: the publisher states 2026-11-26T02:33:42Z; nothing outside the publisher shows it",
+   "that revision 2 did not exist when sequence 3 was signed: sequence 3 is the publisher's own declaration of completeness for this Subject (the list states it holds every digest issued), so it commits the publisher to that view and would expose a contradiction, but it is not proof of absence"
+  ],
+  "earlier_views": "Each sequence is the file at https://financeratecalc.com/transparency/statement-digests.json as it stood then; retrieve it from the repository history and compare its SHA-256 with list_sha256 and with previous_sha256 in the next sequence."
+ }
 }
