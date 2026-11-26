@@ -1,0 +1,32 @@
+name: Block reading (a recent Bitcoin block, as two explorers report it)
+# A statement that supersedes an earlier one carries the hash of a recent block, so that it has a lower bound of its own:
+# it cannot have been made before that block. This reads the block six below the tip from two independent explorers and
+# records it only if they agree. These are the explorers' reports; the publisher validates no chain. A verifier looks the
+# hash up on a chain it has validated itself. Manual.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  read:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, datetime, pathlib, re
+          def get(u):
+              return urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "FinanceRateCalc/1.0 (press@financeratecalc.com)"}), timeout=60).read().decode().strip()
+          tip = int(get("https://mempool.space/api/blocks/tip/height")); h = tip - 6
+          a = get(f"https://mempool.space/api/block-height/{h}"); b = get(f"https://blockstream.info/api/block-height/{h}")
+          assert re.fullmatch(r"[0-9a-f]{64}", a) and a == b, f"explorers disagree or malformed: {a} {b}"
+          p = pathlib.Path("transparency/block-readings.json"); d = json.load(open(p)) if p.exists() else {"what": "Recent Bitcoin blocks as reported by two explorers that agreed, read by a GitHub-hosted runner. Reports, not validation: look the hash up on a chain you have validated.", "readings": []}
+          d["readings"].append({"height_as_reported": h, "block_hash": a, "tip_height_as_reported": tip, "sources": ["mempool.space", "blockstream.info"], "read_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")})
+          json.dump(d, open(p, "w"), indent=1); open(p, "a").write("\n"); print(h, a)
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add transparency/block-readings.json; git diff --cached --quiet || git commit -m "block reading [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
