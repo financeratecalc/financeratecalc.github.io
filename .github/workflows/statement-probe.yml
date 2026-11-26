@@ -14,7 +14,7 @@ jobs:
       - name: Ask
         run: |
           python3 - <<'PY'
-          import json, urllib.request, datetime
+          import json, urllib.request, urllib.error, datetime
           EP = "https://frc-mcp.ziyetis.workers.dev/statement/"
           L = json.load(open("transparency/statement-digests.json"))
           hud = "official-hud-lpt-2026-08-serious-delinquency-rate"
@@ -32,7 +32,21 @@ jobs:
               bad += 0 if ok else 1
               out.append({"case": what, "subject": sid, "asked_digest": dg, "expected": want, "state": j.get("state"), "echoed_digest": j.get("asked_digest"), "checked_at": j.get("checked_at"), "cache_status": r.headers.get("cf-cache-status"), "ok": ok})
               print(("OK  " if ok else "FAIL"), what, "->", j.get("state"), "| echoed", str(j.get("asked_digest"))[:12], "| checked_at", j.get("checked_at"), "| cf-cache", r.headers.get("cf-cache-status"))
-          json.dump({"generated": datetime.datetime.utcnow().isoformat() + "Z", "vantage": "GitHub-hosted runner, python urllib, User-Agent frc-statement-probe", "results": out}, open("eval/statement-probe.json", "w"), indent=1)
+          # A verifier's script often uses its language's default client. An outside reader reported HTTP 403 for Python's default
+          # User-Agent from one vantage point; record what each common default gets from here, on both addresses. Recorded, not failed.
+          clients = []
+          for host in ("https://frc-mcp.ziyetis.workers.dev/statement/", "https://financeratecalc.com/statement/"):
+              for ua in (None, "curl/8.5.0", "python-requests/2.32.3", "Go-http-client/2.0", "frc-statement-probe"):
+                  rq = urllib.request.Request(host + hud + "?digest=" + L["digests"][hud][-1]["digest"]) if ua is None else urllib.request.Request(host + hud + "?digest=" + L["digests"][hud][-1]["digest"], headers={"User-Agent": ua})
+                  try:
+                      rr = urllib.request.urlopen(rq, timeout=30); code, body, ray = rr.status, rr.read()[:80].decode("utf8", "replace"), rr.headers.get("cf-ray")
+                  except urllib.error.HTTPError as e:
+                      code, body, ray = e.code, e.read()[:120].decode("utf8", "replace"), e.headers.get("cf-ray")
+                  except Exception as e:
+                      code, body, ray = None, str(e)[:120], None
+                  clients.append({"address": host, "user_agent": ua or "Python-urllib (default)", "http": code, "cf_ray_pop": (ray or "").split("-")[-1], "body_start": body})
+                  print("client", host.split("/")[2], "|", ua or "Python-urllib default", "->", code, "|", (ray or "").split("-")[-1], "|", body[:60].replace("\n", " "))
+          json.dump({"generated": datetime.datetime.utcnow().isoformat() + "Z", "vantage": "GitHub-hosted runner, python urllib, User-Agent frc-statement-probe", "results": out, "default_clients": clients}, open("eval/statement-probe.json", "w"), indent=1)
           raise SystemExit(1 if bad else 0)
           PY
       - name: Commit
