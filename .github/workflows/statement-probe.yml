@@ -23,6 +23,7 @@ jobs:
                    ("staged test, revision 1", "test-staged-correction", L["test_vectors"]["test-staged-correction"][0]["digest"], "current" if len(L["test_vectors"]["test-staged-correction"]) == 1 else "superseded")]
           fw = "metro-gap-fort-wayne-in-2025"
           cases += [("in force", fw, L["digests"][fw][-1]["digest"], "current")] + [("issued in error", fw, h["digest"], "issued_in_error") for h in L["digests"][fw] if h.get("issued_in_error")]
+          cases += [("demonstration: " + k, k, v[-1]["digest"], "current") for k, v in L["test_vectors"].items() if k.startswith("example-")]
           out, bad = [], 0
           for what, sid, dg, want in cases:
               req = urllib.request.Request(EP + sid + "?digest=" + dg, headers={"User-Agent": "frc-statement-probe", "Cache-Control": "no-cache"})

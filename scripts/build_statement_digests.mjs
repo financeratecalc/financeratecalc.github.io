@@ -27,7 +27,7 @@ export async function currentDigests(root = ROOT) {
     if (!v.reference || v.protected.kid !== pubDoc.key_id) throw new Error("no reference for " + id); out[id] = { digest: v.reference.digest.value, value: v.statement.value }; }
   // test Subjects: every revision, in order of issue
   const tests = {};
-  for (const id of ["test-late-correction", "test-staged-correction"]) { const call = async q => (await worker.fetch(new Request("https://frc-mcp.ziyetis.workers.dev/statement/" + id + "?view=json" + q), { CREDITS: KV })).json();
+  for (const id of ["test-late-correction", "test-staged-correction", "example-eurostat-prc-hpi-q-eu27-2026q2", "example-eurostat-demo-mlexpec-eu27-2024"]) { const call = async q => (await worker.fetch(new Request("https://frc-mcp.ziyetis.workers.dev/statement/" + id + "?view=json" + q), { CREDITS: KV })).json();
     const last = await call(""); if (!last.reference) continue; tests[id] = [];
     for (let n = 1; n <= last.revisions; n++) { const v = await call("&rev=" + n); tests[id].push({ digest: v.reference.digest.value, revision: n }); } }
   globalThis.fetch = realFetch;
@@ -58,7 +58,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     key: "https://financeratecalc.com/transparency/statement-key.json", key_id: pubDoc.key_id, profile: "https://datatracker.ietf.org/doc/draft-yetis-scitt-figure-receipts/",
     sequence, previous_sha256, chain_note: "previous_sha256 is the SHA-256 of this file as it stood at the previous sequence number; every version is signed and recorded in the Sigstore Rekor log (bundle beside this file) and kept in the repository history.",
     history_begins: have.history_begins || day, updated: changed ? day : (have.updated || day), figures: Object.keys(have.digests).length,
-    test_vectors_note: "Test Subjects, not published figures: statements issued in order by the same key so that the superseded state can be checked. See /spec/ietf/vectors/.", test_vectors: have.test_vectors,
+    test_vectors_note: "Test Subjects and demonstration Subjects, not this site's published figures. Test Subjects (/spec/ietf/vectors/) are statements issued in order so that the superseded state can be checked. Demonstration Subjects (/spec/ietf/examples/, ids beginning example-) restate a figure of another publisher under the same profile.", test_vectors: have.test_vectors,
     digests: Object.fromEntries(Object.keys(have.digests).sort().map(k => [k, have.digests[k]])) };
   fs.writeFileSync(OUT, JSON.stringify(doc, null, 1) + "\n");
   console.log(`statement digests: ${missing.length} added, ${doc.figures} figures listed`);

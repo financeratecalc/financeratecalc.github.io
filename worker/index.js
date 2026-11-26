@@ -1642,11 +1642,13 @@ async function stmtKey(env) {
   return rec;
 }
 const STMT_ISS = BASE;
-const STMT_TEST = { "test-late-correction": "/spec/ietf/vectors/test-late-correction.json", "test-staged-correction": "/spec/ietf/vectors/test-staged-correction.json" };   // test Subjects: issued by the real key, labelled as tests, never counted as figures
+const STMT_TEST = { "test-late-correction": "/spec/ietf/vectors/test-late-correction.json", "test-staged-correction": "/spec/ietf/vectors/test-staged-correction.json",
+  // demonstration Subjects: another publisher's figure, in another jurisdiction and field, restated under the same profile; never counted as this site's figures
+  "example-eurostat-prc-hpi-q-eu27-2026q2": "/spec/ietf/examples/example-eurostat-prc-hpi-q-eu27-2026q2.json", "example-eurostat-demo-mlexpec-eu27-2024": "/spec/ietf/examples/example-eurostat-demo-mlexpec-eu27-2024.json" };   // test Subjects: issued by the real key, labelled as tests, never counted as figures
 async function figureStatement(id, rev) {
   if (STMT_TEST[id]) { let T; try { T = await getJSON(STMT_TEST[id]); } catch { throw Object.assign(new Error("source file unavailable: " + STMT_TEST[id]), { unavailable: true }); }
     const n = rev ? parseInt(rev, 10) : T.revisions.length; if (!(n >= 1 && n <= T.revisions.length)) return null;
-    return { statement: T.revisions[n - 1], token: null, sub: T.sub, test: true, revision: n, revisions: T.revisions.length }; }
+    return { statement: T.revisions[n - 1], token: null, sub: T.sub, test: true, demo: !!T.demonstration, revision: n, revisions: T.revisions.length }; }
   // A statement is signed only from complete inputs. On 2026-11-25 an independent reader (K. Gruszka) fetched a statement for
   // metro-gap-fort-wayne-in-2025 that lacked its limits member: the read of the contract file had failed and the statement
   // was built without it, signed, and so carried a digest that was on no list. A failed read now means no statement.
@@ -1693,13 +1695,13 @@ async function statementHTTP(request, env, path, url) {
     if (!/^[0-9a-f]{64}$/.test(asked)) return json({ error: "digest must be 64 hex characters: SHA-256 over the statement's to-be-signed structure" }, 400);
     if (!histRead) return new Response(JSON.stringify({ error: "The list of issued digests could not be read just now, so no answer is given: without it an earlier statement would be reported as never issued. Try again shortly." }), { status: 503, headers: { "Content-Type": "application/json", "Retry-After": "30", ...CORS } });
     const row = hist.find(h => h.digest === asked), state = asked === inForce ? "current" : row ? (row.issued_in_error ? "issued_in_error" : "superseded") : "unrecognized";
-    return json({ iss: STMT_ISS, sub, ...(fs.test ? { test_subject: true } : {}), asked_digest: asked, state, checked_at: new Date().toISOString(), checked_by: url.origin + path, current_digest: inForce, current_value: fs.statement.value, source_revision: fs.statement.source_revision || null,
+    return json({ iss: STMT_ISS, sub, ...(fs.test ? { [fs.demo ? "demonstration_subject" : "test_subject"]: true } : {}), asked_digest: asked, state, checked_at: new Date().toISOString(), checked_by: url.origin + path, current_digest: inForce, current_value: fs.statement.value, source_revision: fs.statement.source_revision || null,
       meaning: { current: "This is the statement the publisher issues for this figure now.", superseded: "The publisher issued this statement earlier and has since issued another for the same figure. Compare with the current one.", issued_in_error: "The publisher signed and served this statement by mistake; it was never the statement in force. Use the current one. The note says what was wrong.", unrecognized: "The publisher has no record of issuing a statement with this digest for this figure." }[state],
       ...(row && row.note ? { note_on_this_digest: row.note } : {}),
       history: BASE + "/transparency/statement-digests.json", history_begins: "2026-11-25", note: "Digests are listed from 2026-11-25; a statement issued and replaced before that day cannot be recognised." });
   }
   if (url.searchParams.get("view") === "json") return json({ profile: "draft-yetis-scitt-figure-receipts-00", protected: { alg: "ES256", content_type: "application/json", kid: k.key_id, cwt_claims: { iss: STMT_ISS, sub } },
-    statement: fs.statement, figure_token: fs.token, ...(fs.test ? { test_subject: true, revision: fs.revision, revisions: fs.revisions, in_force: digest === inForce } : {}),
+    statement: fs.statement, figure_token: fs.token, ...(fs.test ? { [fs.demo ? "demonstration_subject" : "test_subject"]: true, revision: fs.revision, revisions: fs.revisions, in_force: digest === inForce } : {}),
     reference: { iss: STMT_ISS, sub, digest: { alg: "sha-256", scheme: "ToBeSigned", value: digest }, check: "https://frc-mcp.ziyetis.workers.dev/statement/" + id + "?digest=" + digest },
     issued_digests: hist, signature: b64u(sig), key: "https://frc-mcp.ziyetis.workers.dev/statement-key",
     check: "Fetch the same address without ?view=json: a COSE_Sign1 (CBOR tag 18). Verify the ES256 signature over Sig_structure [\"Signature1\", protected, h'', payload] with the key at /statement-key. The payload is this statement in JCS form.",

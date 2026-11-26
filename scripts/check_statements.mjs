@@ -109,6 +109,17 @@ assert(r.status === 503, "no answer about a digest when the list cannot be read"
 HIST = null; const FWBAD = "bf059ab518eea35ffebe0bcd5da1739aa7280dcc5f7c0a74eae58057f9ed7946";
 st = await (await get("/statement/" + FW + "?digest=" + FWBAD)).json(); if (process.env.DBG) console.log(st, fwGood); assert(st.state === "issued_in_error" && /limits/.test(st.note_on_this_digest) && st.current_digest === fwGood, "the statement served by mistake is named as such");
 st = await (await get("/statement/" + FW + "?digest=" + fwGood)).json(); assert(st.state === "current", "the Fort Wayne statement in force");
+// Demonstration Subjects: another publisher's figure, restated under the same profile. The statement must carry the digest of
+// the captured response, and that digest must be the SHA-256 of the archived bytes; the value must be the one observation in them.
+for (const ex of ["example-eurostat-prc-hpi-q-eu27-2026q2", "example-eurostat-demo-mlexpec-eu27-2024"]) {
+  const rr = await get("/statement/" + ex); assert(rr.status === 200, ex + ": not served");
+  const [tp] = read(Buffer.from(await rr.arrayBuffer())), [pr, , pl, sg] = tp.value, sx = JSON.parse(pl.toString("utf8"));
+  assert(crypto.verify("sha256", Buffer.concat([head(4, 4), head(3, 10), Buffer.from("Signature1"), bstr(pr), bstr(Buffer.alloc(0)), bstr(pl)]), { key: pub, dsaEncoding: "ieee-p1363" }, sg), ex + ": signature");
+  const file = sx.source.archived_copy.replace("https://financeratecalc.com/", ""), bytes = fs.readFileSync(path.join(ROOT, file));
+  assert(crypto.createHash("sha256").update(bytes).digest("hex") === sx.source.sha256, ex + ": the digest in the statement is not the digest of the archived response");
+  const obs = Object.values(JSON.parse(bytes.toString("utf8")).value); assert(obs.length === 1 && String(obs[0]) === sx.value && sx.kind === "restated" && sx.limits.length >= 4, ex + ": value is not the one observation in the response");
+  const vj = await (await get("/statement/" + ex + "?view=json")).json(); assert(vj.demonstration_subject === true && !vj.test_subject && !ids.includes(ex), ex + ": must be labelled a demonstration and not counted as a figure");
+}
 // the published list, built with the published key id, names the statement in force for every figure
 HIST = null; const { currentDigests } = await import("./build_statement_digests.mjs"); const listed = JSON.parse(fs.readFileSync(path.join(ROOT, "transparency/statement-digests.json"), "utf8"));
 const cur = await currentDigests(); let unlisted = 0; for (const id of ids) if (!(listed.digests[id] || []).some(h => h.digest === cur[id].digest)) unlisted++;
