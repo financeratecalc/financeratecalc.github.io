@@ -1,0 +1,39 @@
+name: International sources (capture as retrieved)
+# Fetches the responses named in data/intl/sources.json exactly as the publisher serves them, stores the bytes and their
+# SHA-256 with the time and address of retrieval. Nothing is parsed or computed here. Manual.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture
+        run: |
+          python3 - <<'PY'
+          import json, hashlib, urllib.request, datetime, pathlib
+          S = json.load(open("data/intl/sources.json"))["sources"]
+          raw = pathlib.Path("data/intl/raw"); raw.mkdir(parents=True, exist_ok=True)
+          mp = pathlib.Path("data/intl/manifest.json"); man = json.load(open(mp)) if mp.exists() else {"captures": []}
+          for s in S:
+              req = urllib.request.Request(s["url"], headers={"User-Agent": "FinanceRateCalc/1.0 (open research; press@financeratecalc.com)", "Accept": "application/json"})
+              with urllib.request.urlopen(req, timeout=120) as r:
+                  blob = r.read(); hdr = {k: r.headers.get(k) for k in ("Content-Type", "Last-Modified", "ETag", "Date")}
+              json.loads(blob)   # must be JSON; fail loudly otherwise
+              sha = hashlib.sha256(blob).hexdigest()
+              prev = [c for c in man["captures"] if c["id"] == s["id"]]
+              if prev and prev[-1]["sha256"] == sha:
+                  print("unchanged", s["id"], sha[:12]); continue
+              n = len(prev) + 1; f = raw / f'{s["id"]}.r{n}.json'; f.write_bytes(blob)
+              man["captures"].append({"id": s["id"], "capture": n, "file": str(f), "sha256": sha, "bytes": len(blob), "url": s["url"],
+                                      "retrieved_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "response_headers": hdr})
+              print("captured", s["id"], sha[:12], len(blob))
+          json.dump(man, open(mp, "w"), indent=1); open(mp, "a").write("\n")
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/intl; git diff --cached --quiet || git commit -m "international sources: captured as retrieved [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
