@@ -20,7 +20,7 @@ HOSTS = r"dpbolvw\.net|anrdoezrs\.net|jdoqocy\.com|tkqlhce\.com|kqzyfj\.com|ownw
 ANCHOR = re.compile(r"<a\b[^>]*>.*?</a>", re.S)
 LEFT = re.compile(r"earn a commission|Commission may be earned|Affiliate links?\b[^<]{0,40}(?:we may|\.)|#ad\b", re.I)
 ROUTE = re.compile(r'\s*<a\b[^>]*href="/(?:fha-lenders-approval-rates|apply-to-multiple-mortgage-lenders)\.html"[^>]*>[^<]*(?:Which lenders approve most|Apply to more than one)[^<]*</a>')
-SKIP = {"corrections.html", "affiliate-disclosure.html", "about.html"}
+SKIP = {"corrections.html", "affiliate-disclosure.html", "about.html", "watch.html"}   # watch.html lists the recorded wording it searches for
 DIV = re.compile(r"<(/?)div\b[^>]*>")
 
 
