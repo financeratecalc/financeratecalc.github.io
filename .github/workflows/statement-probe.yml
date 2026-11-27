@@ -46,7 +46,24 @@ jobs:
                       code, body, ray = None, str(e)[:120], None
                   clients.append({"address": host, "user_agent": ua or "Python-urllib (default)", "http": code, "cf_ray_pop": (ray or "").split("-")[-1], "body_start": body})
                   print("client", host.split("/")[2], "|", ua or "Python-urllib default", "->", code, "|", (ray or "").split("-")[-1], "|", body[:60].replace("\n", " "))
-          json.dump({"generated": datetime.datetime.utcnow().isoformat() + "Z", "vantage": "GitHub-hosted runner, python urllib, User-Agent frc-statement-probe", "results": out, "default_clients": clients}, open("eval/statement-probe.json", "w"), indent=1)
+          # Does the edge serve the bytes that were published? (T. Meister, SCITT list, 2026-11-27: an edge setting injected a
+          # script into a publisher's HTML, so one vantage point reproduced the sealed bytes and another did not.) Compare the
+          # SHA-256 of what this runner is served with the SHA-256 of the file in this checkout. Recorded, not failed.
+          import hashlib
+          served = []
+          for rel in ("verify.html", "revision-ledger.html", "for-newsrooms.html", "llms.txt", "transparency/statement-digests.json", "transparency/statement-key.json",
+                      "claims/national-fha-denial-rate-2025.json", "spec/ietf/vectors/test-staged-correction.json", ".well-known/agent-skills/index.json", "assets/receipt-badge.js"):
+              want = hashlib.sha256(open(rel, "rb").read()).hexdigest(); row = {"path": rel, "published_sha256": want, "published_bytes": len(open(rel, "rb").read())}
+              for ua in (None, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"):
+                  rq = urllib.request.Request("https://financeratecalc.com/" + rel, headers=({"User-Agent": ua} if ua else {}) | {"Cache-Control": "no-cache"})
+                  try:
+                      rr = urllib.request.urlopen(rq, timeout=30); body = rr.read(); got = hashlib.sha256(body).hexdigest()
+                      row["python_default" if ua is None else "browser_like"] = {"http": rr.status, "bytes": len(body), "same_bytes": got == want, "cf_ray_pop": (rr.headers.get("cf-ray") or "").split("-")[-1], "cf_cache": rr.headers.get("cf-cache-status")}
+                  except Exception as e:
+                      row["python_default" if ua is None else "browser_like"] = {"error": str(e)[:100]}
+              served.append(row)
+              print("bytes", rel, "|", {k: (v.get("same_bytes"), v.get("bytes")) for k, v in row.items() if isinstance(v, dict)}, "| published", row["published_bytes"])
+          json.dump({"generated": datetime.datetime.utcnow().isoformat() + "Z", "vantage": "GitHub-hosted runner, python urllib, User-Agent frc-statement-probe", "results": out, "default_clients": clients, "served_bytes": served}, open("eval/statement-probe.json", "w"), indent=1)
           raise SystemExit(1 if bad else 0)
           PY
       - name: Commit
