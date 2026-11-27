@@ -69,11 +69,11 @@ An agency published the figure; we compute nothing. The receipt binds the number
 
 ## We publish our own errors
 
-A receipt is only worth something if the publisher admits when a number changes. The log has 33 dated entries; several were found because an AI system quoted a stale copy of ours exactly.
+A receipt is only worth something if the publisher admits when a number changes. The log has 34 dated entries; several were found because an AI system quoted a stale copy of ours exactly.
 
+- 2026-11-26 Our own error, found 2026-11-26 by an outside review of the site: two pages still invited readers to see which lender “fits your file”,…
 - 2026-11-17 Our own error, found 2026-11-17 by counting every number printed on this site: about 6 in 100 carried a receipt
 - 2026-11-16 Our own error, found 2026-11-16 in the same review: this site said it carried no affiliate links while 78 partner links were still live
-- 2026-11-16 Our own error, found 2026-11-16 while reading which pages AI crawlers fetch: 948 pages written in May 2026 did not meet this site’s present…
 
 [Read the corrections log](https://financeratecalc.com/corrections.html) · [feed for machines](https://financeratecalc.com/corrections.json)
 
