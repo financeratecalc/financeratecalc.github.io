@@ -11,14 +11,14 @@
         <uri>https://financeratecalc.com</uri>
       </address>
     </author>
-    <date year="2026" month="November" day="25"/>
+    <date year="2026" month="December" day="4"/>
     <area>Security</area>
     <workgroup>SCITT</workgroup>
     <keyword>provenance</keyword>
     <keyword>statistics</keyword>
     <keyword>AI agents</keyword>
     <abstract>
-      <t>Profiles of SCITT for AI agents record what an agent did: which tool it called, under whose authority, and what bytes came back. They state, correctly, that they do not show whether those bytes were true. This document profiles the layer underneath: a Signed Statement, issued by the publisher of a figure, that binds the figure to its source, period and population, and that is superseded when the publisher corrects the figure or when the original source prints a different value in a later edition. It also defines a reference to such a statement that an agent-side record can carry, and a short token that travels with the figure through prose, so that a later reader can find the statement and learn whether the figure is still the one published.</t>
+      <t>Profiles of SCITT for AI agents record what an agent did: which tool it called, under whose authority, and what bytes came back. They state, correctly, that they do not show whether those bytes were true. This document profiles the layer underneath: a Signed Statement, issued by the publisher of a figure, that binds the figure to its source, period and population, and that is superseded when the publisher corrects the figure or when the original source prints a different value in a later edition. It also defines a reference to such a statement that an agent-side record can carry, and a short token that travels with the figure through prose, so that a later reader can find the statement and learn whether the figure is still the one published. A superseding statement can carry the hash of a recent block of a public chain, which gives it a lower bound in time of its own, so that a record anchored earlier on the agent's side can be shown to precede the correction.</t>
       <t>The profile makes a narrow claim. It shows that a figure is the one a named publisher published, from a named source, and whether it has changed since. It does not show that the figure is correct.</t>
     </abstract>
   </front>
@@ -33,7 +33,7 @@
         <li>The original source restates a figure. Official statistical reports print the previous period beside the current one, and the restated value sometimes differs from the value first printed, without any mark. <xref target="impl"/> reports five such cases found in two monthly reports of one agency.</li>
       </ul>
       <t>This document defines a Figure Statement: a SCITT Signed Statement whose Issuer is the publisher of the figure and whose Subject is the figure. It is the publisher's half of the record. An agent-side receipt can then commit to output that carries a reference to a Figure Statement, and a Relying Party can check both halves.</t>
-      <t>The reference by which an agent-side record points at a Figure Statement (<xref target="reference"/>) follows the requirements proposed in <xref target="I-D.gruszka-scitt-statement-identification"/>, and was added in this revision in response to review on the SCITT mailing list.</t>
+      <t>The reference by which an agent-side record points at a Figure Statement (<xref target="reference"/>) follows the requirements proposed in <xref target="I-D.gruszka-scitt-statement-identification"/>, and was added in this revision in response to review on the SCITT mailing list. So were the state "issued in error" (<xref target="reference"/>), the lower bound in time for a superseding statement (<xref target="order"/>) and the requirement that a verification result say where it was obtained (<xref target="vantage"/>). Each came from an implementation that was checked by someone other than its author.</t>
       <t>Defining payload formats is outside the charter of the SCITT Working Group. This document is offered as an individual profile, in the same way as the agent profiles it complements.</t>
     </section>
     <section anchor="terms">
@@ -84,8 +84,11 @@
         <dd>For a Restated Figure only: the value the Source printed for the same period in a later Edition, and that Edition. See <xref target="revision"/>.</dd>
         <dt>limits (array of strings, <bcp14>OPTIONAL</bcp14>):</dt>
         <dd>Statements the Figure does not support, in the Publisher's words; for example that an aggregate rate is not a probability for an individual.</dd>
+        <dt>not_before (object, <bcp14>OPTIONAL</bcp14>):</dt>
+        <dd>The identifier of a block of a public chain that the Publisher observed before issuing the statement: "chain", a name for the chain, and "block_hash", the block's hash. It <bcp14>MAY</bcp14> also give the height the Publisher was told; that value is informative. See <xref target="order"/>.</dd>
       </dl>
       <t>A Publisher <bcp14>MUST NOT</bcp14> issue a Figure Statement of kind "restated" for a value it has adjusted, rounded differently from the Source, or derived from several cells.</t>
+      <t>A Publisher that builds Figure Statements on request <bcp14>MUST NOT</bcp14> sign one when any input it is built from could not be read. It answers that no statement is available and that the request can be repeated. A statement built from incomplete inputs is a valid Signed Statement from the right key, and nothing in it shows that a member is missing; <xref target="impl"/> reports such a case.</t>
     </section>
     <section anchor="scitt">
       <name>Use with SCITT</name>
@@ -109,6 +112,7 @@
         <dt>digest:</dt>
         <dd>The SHA-256 digest of the COSE Sig_structure of the Signed Statement, that is, of the CBOR encoding of ["Signature1", body_protected, external_aad, payload] as defined in <xref target="RFC9052"/>, with an empty external_aad and the payload attached. This is the "ToBeSigned" scheme of <xref target="I-D.gruszka-scitt-statement-identification"/>.</dd>
       </dl>
+      <t>A Figure Reference <bcp14>MUST</bcp14> name the rule by which its digest was computed, together with the hash algorithm, for example as {"alg": "sha-256", "scheme": "ToBeSigned", "value": ...}. Several rules in current use select the same statements and give different values: the rule above, an identifier over the protected header and payload with a different encoding <xref target="I-D.moore-scitt-ciris-ceg"/>, and a digest over the transmitted bytes <xref target="I-D.wright-verdict-record"/>. Without the name, two correct implementations fail to find each other's statements.</t>
       <t>The digest is taken over the to-be-signed structure and not over the transmitted bytes for a practical reason. Signature algorithms in common use are randomized, so the same statement, signed or fetched twice, can differ in its signature bytes; and Receipts added to the unprotected header change the transmitted bytes without changing the statement. Neither changes this digest. The payload alone would not do either, because it omits the Issuer and Subject.</t>
       <t>A Figure Reference is carried outside the content it describes: in a member of the agent-side record, or in a structured field of a tool result, so that a verifier can read it without parsing output text or the statement's payload. How a particular record format carries the three values is for that format to define. An optional member listing one Figure Reference for each source a decision used, as proposed for <xref target="I-D.dobson-ai-decision-receipt"/>, is sufficient.</t>
       <t>A Publisher <bcp14>MUST</bcp14> make public, for each Figure, the digests of every Figure Statement it has issued for it, in order of issue, and <bcp14>MUST NOT</bcp14> remove an entry. Given a Figure Reference, a verifier reports one of:</t>
@@ -117,10 +121,28 @@
         <dd>The digest is that of the statement now in force for the Subject.</dd>
         <dt>superseded:</dt>
         <dd>The digest is in the Publisher's list for the Subject but is not the last entry. The verifier reports the statement now in force.</dd>
+        <dt>issued in error:</dt>
+        <dd>The digest is in the Publisher's list for the Subject, marked as issued in error: the Publisher signed and served the statement, and it was never the statement in force. The verifier reports the statement now in force and any note the Publisher gives, and <bcp14>MUST NOT</bcp14> treat the statement as an earlier one that was in force.</dd>
         <dt>unrecognized:</dt>
         <dd>The digest is not in the list for the Subject.</dd>
       </dl>
+      <t>A statement issued in error verifies under the Publisher's key, and only a rule that reads the Publisher's list can tell it from a statement in force. A Publisher that finds it has served such a statement <bcp14>MUST</bcp14> add its digest to the list, marked, with the date and the cause. It <bcp14>MUST NOT</bcp14> leave it out: a statement signed by the Publisher and answered "unrecognized" by the Publisher looks like a forgery to anyone who holds it.</t>
+      <t>Each version of the list <bcp14>SHOULD</bcp14> carry a sequence number and the digest of the version before it, so that a result can name the version it read and a third party can repeat the check on the same bytes.</t>
       <t>These states are a matter of time, and neither party can settle them alone. If the agent-side record is not anchored in time by something the agent's operator does not control, a later correction by the Publisher cannot be told from what the agent saw. If the Publisher's list is not dated by something the Publisher does not control, a digest the agent anchored cannot be told from one the Publisher never issued. Registration of each Figure Statement with a Transparency Service provides the second; until then a Publisher <bcp14>SHOULD</bcp14> at least commit its list to a public log it does not operate.</t>
+    </section>
+    <section anchor="order">
+      <name>Ordering a Reference and a Correction</name>
+      <t>A Relying Party often needs to know more than whether a statement is now superseded. It needs to know whether the agent relied on it before it was superseded. That is a question about the order of two records made by two parties.</t>
+      <t>Most time evidence available today is an upper bound: an anchor in a public chain shows that bytes existed no later than a given block, and an entry in a log shows that bytes existed no later than the log's time for it. Two upper bounds do not order two records, whatever the interval between them.</t>
+      <t>A superseding Figure Statement that carries "not_before" has a lower bound of its own. It cannot have been made before the named block was mined. If an agent-side record is anchored in the same chain at a height at or below that block's height, the agent-side record existed before the superseding statement was made. The order then follows from the bytes and the heights, with no clock on either side.</t>
+      <t>A verifier using this rule:</t>
+      <ul>
+        <li><bcp14>MUST</bcp14> take the height of the named block from a chain it has validated itself, by looking the hash up, and not from the statement or from a third party's report of the chain.</li>
+        <li><bcp14>MUST</bcp14> compare heights and not block times. A block's time is declared by the party that produced it.</li>
+        <li>Learns nothing about statements that do not carry "not_before". A revision issued without it stays unordered against the agent-side record, even if a later revision carries it.</li>
+      </ul>
+      <t>A Publisher need not validate a chain itself, and usually reads a block hash from a service. A wrong hash loses the Publisher the bound; it cannot give the Publisher an earlier or a later one, because a hash that is not in the chain bounds nothing.</t>
+      <t>Registration of both records in one Transparency Service gives an order of registrations, not of the records. It orders the records only under a rule that a superseding statement takes effect from its registration. A Publisher that registers its Figure Statements and relies on this <bcp14>MUST NOT</bcp14> serve a superseding statement, or answer "superseded" for the statement it replaces, before the superseding statement is registered.</t>
     </section>
     <section anchor="token">
       <name>The Figure Token</name>
@@ -156,6 +178,11 @@ channel = ALPHA 4DIGIT ; where and when this copy was issued
       </dl>
       <t>Independently of the state, if the current statement has a "source_revision" member the verifier <bcp14>MUST</bcp14> report it. A token can be "current", because the Publisher's record of the first printing is unchanged, while the Source has since printed another value.</t>
       <t>Verification needs only the Publisher's public files. A verifier <bcp14>SHOULD</bcp14> be able to run where the reader is, without sending the token to the Publisher (see <xref target="privacy"/>).</t>
+      <section anchor="vantage">
+        <name>Where a Result Was Obtained</name>
+        <t>What a verifier receives from a Publisher's address can depend on where the request was made and what the client looked like. Caches can serve an earlier answer, and services in front of a Publisher can refuse some clients or alter what they serve. None of this is an attack, and none of it is visible in a result that says only "current" or "not current". Two parties checking the same reference at the same moment can then both be right and disagree.</t>
+        <t>A verification result that is recorded or passed to another party <bcp14>SHOULD</bcp14> state the time it was obtained, the address asked, where the request was made from as far as the verifier can tell, and the client used. A result obtained from the Publisher's published list by digest, rather than from a live answer, <bcp14>SHOULD</bcp14> name the version of the list it read.</t>
+      </section>
     </section>
     <section anchor="revision">
       <name>Changes to a Figure</name>
@@ -190,12 +217,21 @@ channel = ALPHA 4DIGIT ; where and when this copy was issued
       <t>Borrowed tokens. A genuine token can be placed beside an unrelated number or an unrelated sentence. The "altered" state detects a changed value. It does not detect a changed meaning; see <xref target="limits"/>.</t>
       <t>A list kept only by the Publisher. The list of issued digests required by <xref target="reference"/> is evidence only to the extent that its history cannot be rewritten. A Publisher that hosts it alone can remove an entry and make a superseded statement look as if it was never issued.</t>
       <t>Equivocation by the Publisher. Without registration, a Publisher can serve different statements to different readers or rewrite its list of issued digests. Registration with a Transparency Service, and Receipts, are what make the history checkable.</t>
+      <t>Statements built from incomplete inputs. A Publisher that assembles statements on request can sign one from which a member is missing, for example when the read of one input fails. Such a statement verifies. <xref target="statement"/> forbids issuing it, and <xref target="reference"/> requires that one issued anyway be listed as issued in error; the list is how a reader can tell.</t>
+      <t>Key compromise and rotation. One key signs every statement of a Publisher. A Publisher <bcp14>SHOULD</bcp14> publish its key at a stable address on the Issuer's origin together with the dates from which it is used, and when it replaces a key, <bcp14>SHOULD</bcp14> list the old key with the date it stopped being used. If a key is compromised, statements signed with it after the date of compromise cannot be told from forgeries by their signature alone; the list of issued digests, if its history is held outside the Publisher's control, is then the only way to tell them apart. This is a further reason for registration.</t>
       <t>Source documents. The digest of a Source document shows which bytes the Publisher read. If the Source replaces a document under the same name, the digest no longer matches the document a reader retrieves. Publishers <bcp14>SHOULD</bcp14> record a public archive capture of the bytes they read.</t>
     </section>
     <section anchor="privacy">
       <name>Privacy Considerations</name>
       <t>A verification request tells the Publisher that someone holds a given Figure, and when. A Publisher that offers a verification service <bcp14>SHOULD</bcp14> store no network address and no full user-agent string with such requests, and <bcp14>SHOULD</bcp14> publish what it does store. Because verification needs only public files, a verifier can run in the reader's own software and make no request that names the token.</t>
       <t>A Figure Statement describes published aggregates. It <bcp14>MUST NOT</bcp14> contain information about an identifiable person.</t>
+    </section>
+    <section anchor="related">
+      <name>Related Work</name>
+      <t>A working paper of the Bank for International Settlements <xref target="BIS-WP1374"/> describes a prototype that binds statistical datasets exchanged in SDMX to their source: each dataset, and optionally each time series, is hashed; batches are summarized in a Merkle root anchored in a public ledger; and a signed credential travels in the file. It works at the level of the dataset and the series. It lists the anchoring of individual observations and verification by AI agents as future work, and does not describe how a corrected dataset is related to the one it replaces. This profile works at the level of one figure, and is mainly about that relation. The two are complementary: a dataset-level anchor can show which file a figure was read from, and a Figure Statement can say what the figure in it was and whether it has since changed.</t>
+      <t>A register of a publisher's disclosed figures, committed together as of a date, chained to the previous set and anchored, answers a different question from a Figure Statement: what the publisher had disclosed on a date, and what it has withdrawn since. A register-level profile is in preparation by T. Meister; its entries can be cited by a Figure Reference once the reference names the register's digest rule.</t>
+      <t>Height-based time bounds from a public chain, and verification against a chain the verifier has validated, are specified in <xref target="I-D.fassbender-scitt-time-anchor"/>; <xref target="order"/> uses them and does not define them again.</t>
+      <t>A verdict record <xref target="I-D.wright-verdict-record"/> is written by a party that wrote neither the agent-side record nor the Figure Statement, and states whether the two agree under a named rule. Verdict records over the test Subjects of this profile are described in <xref target="impl"/>.</t>
     </section>
     <section anchor="iana">
       <name>IANA Considerations</name>
@@ -209,17 +245,21 @@ channel = ALPHA 4DIGIT ; where and when this copy was issued
         <li>716 Figures carry tokens: figures computed from the public United States Home Mortgage Disclosure Act record, and figures restated from monthly reports of the Department of Housing and Urban Development, Ginnie Mae and the Small Business Administration.</li>
         <li>The claim object, digest rule, token syntax, verification states and the well-known manifest are implemented. Some member and state names differ from this document, which generalizes them (the implementation says "stale" where this document says "superseded", and "display_value" for "value"). A verification service, an in-browser verifier that uses only the public files, and a conformance suite that another publisher can run against its own site are public.</li>
         <li>A tool server returns each Figure with its token to AI agents.</li>
-        <li>Since revision -00: each of the 716 Figures is served as a COSE_Sign1 Signed Statement (ES256) with the Issuer and Subject in the CWT Claims header and the canonical Figure Statement as payload. A Figure Reference with the digest rule of <xref target="reference"/> is returned with it, and a check answers current, superseded or unrecognized for a given digest. The list of issued digests is a file in the publisher's public repository, signed and recorded in a public transparency log of another kind each time it changes; it begins on 25 November 2026, so a statement replaced before that date cannot be recognized.</li>
+        <li>Since revision -00: each of the 716 Figures is served as a COSE_Sign1 Signed Statement (ES256) with the Issuer and Subject in the CWT Claims header and the canonical Figure Statement as payload, on the Issuer's own origin. A Figure Reference that names its digest rule is returned with it, and a check answers current, superseded, issued in error or unrecognized for a given digest, stating the time and address of the check. The list of issued digests is a file in the publisher's public repository with a sequence number and the digest of the previous version; it is signed and recorded in a public transparency log of another kind each time it changes, and it begins on 25 November 2026, so a statement replaced before that date cannot be recognized.</li>
         <li>Verification of the signatures and recomputation of the digests were repeated with a CBOR library and a cryptographic library that share no code with the implementation. Because the signatures are randomized, the implementation's own test fetches a statement twice and requires different bytes and the same digest.</li>
         <li>Not yet implemented: registration of Signed Statements with a SCITT Transparency Service, and therefore Receipts as defined in <xref target="RFC9943"/>. The tool server does not yet return the Figure Reference in a structured field of its results; it returns the token.</li>
       </ul>
+      <t>Checks by others. Between 08:25 and 08:33 UTC on 25 November 2026 an independent reader fetched all 716 statements and compared the digest of each with the published list. 715 matched. One, fetched once, verified under the publisher's key and was on no list: the read of one input file had failed and the statement had been built and signed without its "limits" member. The implementation now signs nothing when an input cannot be read, and the digest is listed as issued in error. The requirements on incomplete inputs and on the state "issued in error" in this revision come from this result.</t>
+      <t>Composition. Two test Subjects, issued with the same key and labelled as tests, exercise the states. For one of them, an agent-side record that referenced revision 1 was sealed by the operator of <xref target="I-D.dobson-ai-decision-receipt"/> and anchored in Bitcoin block 977556 before revision 2 was issued. Revision 2 carries no block hash, and its order against that record cannot be derived from the records. Revision 3 adds "not_before" naming a later block, so the record precedes revision 3 by heights alone. A third party wrote verdict records under <xref target="I-D.wright-verdict-record"/> over the three test cases and registered them with a Transparency Service whose policy refuses a statement that cites one not registered; a statement citing the unregistered revision 2 was refused. Each record names the version of the digest list it read.</t>
+      <t>Vantage. The same third party reported that its checks from one network location received an HTTP 403 response for one common default client at the publisher's first service address, and answers for a client that looked like a browser. The cause was a setting of the network service in front of that address, not of the implementation. The statements are now also served from the Issuer's origin, where the same client receives answers. A comparison of the bytes served with the bytes published found the data files, including the statements' sources and the digest list, served unchanged, and the HTML pages altered by the same network service. <xref target="vantage"/> follows from this.</t>
+      <t>Other publishers. Two figures of another publisher, a statistical office in another jurisdiction and outside housing finance, were restated under this profile from responses captured as retrieved, as demonstrations. The profile needed no change; the source digest is then of a data service's response as retrieved, not of a document the publisher keeps unchanged, which each statement states among its limits.</t>
       <t>Two observations from operating it bear on the design.</t>
       <t>Comparing consecutive Editions of two monthly reports of one agency found five values printed in one Edition and printed differently in the next, with no revision mark: three loan counts that moved by one or two, and two delinquency rates that moved by 0.06 percentage point. The "source_revision" member and case 3 of <xref target="revision"/> exist because of these.</t>
       <t>In one measured condition, a language model that was given a sentence ending in a token and asked to answer a user's question kept the token in 1 of 36 answers when it was attached to the number, and in none when it stood at the end of the sentence. The recommendation in <xref target="agents"/> to carry the token in a structured field follows from this.</t>
     </section>
     <section anchor="ack" numbered="false">
       <name>Acknowledgements</name>
-      <t>Justin Dobson argued that a token inside output bytes is not enough and that an agent-side record should carry an explicit reference, and pointed out that the question is one of time on both sides. Konrad Gruszka pointed to the identification rule used for the reference. <xref target="reference"/> is the result. Errors are the author's.</t>
+      <t>Justin Dobson argued that a token inside output bytes is not enough and that an agent-side record should carry an explicit reference, and pointed out that the question is one of time on both sides. Konrad Gruszka pointed to the identification rule used for the reference, and checked every statement of the implementation against its list, which found the fault described in <xref target="impl"/>. Tiago Pinto showed that the first ordering claimed for the test Subject did not follow from the records, and gave the rule in <xref target="order"/>. Darren Wright wrote the verdict records and found the vantage problem. Thomas Meister showed that the same problem had appeared at other publishers. Eric Moore's identifier and Justin Dobson's comparison of it led to the requirement that a reference name its rule. Errors are the author's.</t>
     </section>
   </middle>
   <back>
@@ -272,6 +312,25 @@ channel = ALPHA 4DIGIT ; where and when this copy was issued
           <front><title>The AI-Decision-Receipt HTTP Response Header Field</title><author initials="J." surname="Dobson"/><date year="2026" month="October"/></front>
           <seriesInfo name="Internet-Draft" value="draft-dobson-ai-decision-receipt-00"/>
           <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="I-D.wright-verdict-record" target="https://datatracker.ietf.org/doc/draft-wright-verdict-record/">
+          <front><title>Verdict Records: Results on Claims that Cite Receipts as Evidence</title><author initials="D." surname="Wright"/><date year="2026" month="November"/></front>
+          <seriesInfo name="Internet-Draft" value="draft-wright-verdict-record-03"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="I-D.fassbender-scitt-time-anchor" target="https://datatracker.ietf.org/doc/draft-fassbender-scitt-time-anchor/">
+          <front><title>Umarise's Bitcoin-Anchored Temporal Proofs</title><author initials="J." surname="Fassbender"/><date year="2026" month="October"/></front>
+          <seriesInfo name="Internet-Draft" value="draft-fassbender-scitt-time-anchor-08"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="I-D.moore-scitt-ciris-ceg" target="https://datatracker.ietf.org/doc/draft-moore-scitt-ciris-ceg/">
+          <front><title>Signed Attestation Rows of the CIRIS Epistemic Grammar and Their Relationship to SCITT</title><author initials="E." surname="Moore"/><date year="2026" month="November"/></front>
+          <seriesInfo name="Internet-Draft" value="draft-moore-scitt-ciris-ceg-04"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="BIS-WP1374" target="https://www.bis.org/publ/work1374.htm">
+          <front><title>Verifiable official statistics: a blockchain-based approach</title><author initials="M." surname="Rusev"/><author initials="R." surname="Schmidt"/><author initials="E." surname="Lambe"/><author initials="C." surname="Schmieder"/><author initials="G. P." surname="Tice"/><date year="2026" month="September"/></front>
+          <seriesInfo name="BIS Working Papers" value="1374"/>
         </reference>
         <reference anchor="I-D.zambo-aer1" target="https://datatracker.ietf.org/doc/draft-zambo-aer1/">
           <front><title>AER-1</title><author initials="B." surname="Zambo"/><date year="2026" month="October"/></front>

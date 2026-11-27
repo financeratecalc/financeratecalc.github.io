@@ -4,8 +4,8 @@
 
 SCITT                                                           Z. Yetiş
 Internet-Draft                                           FinanceRateCalc
-Intended status: Informational                          25 November 2026
-Expires: 29 May 2027
+Intended status: Informational                           4 December 2026
+Expires: 7 June 2027
 
 
   Figure Statements: A SCITT Profile for Published Figures Given to AI
@@ -25,7 +25,10 @@ Abstract
    such a statement that an agent-side record can carry, and a short
    token that travels with the figure through prose, so that a later
    reader can find the statement and learn whether the figure is still
-   the one published.
+   the one published.  A superseding statement can carry the hash of a
+   recent block of a public chain, which gives it a lower bound in time
+   of its own, so that a record anchored earlier on the agent's side can
+   be shown to precede the correction.
 
    The profile makes a narrow claim.  It shows that a figure is the one
    a named publisher published, from a named source, and whether it has
@@ -46,16 +49,13 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 29 May 2027.
+   This Internet-Draft will expire on 7 June 2027.
 
 
 
-
-
-
-Yetis                      Expires 29 May 2027                  [Page 1]
+Yetis                      Expires 7 June 2027                  [Page 1]
 
-Internet-Draft              Figure Statements              November 2026
+Internet-Draft              Figure Statements              December 2026
 
 
 Copyright Notice
@@ -75,24 +75,27 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
-   2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   4
    3.  The Figure Statement  . . . . . . . . . . . . . . . . . . . .   4
-   4.  Use with SCITT  . . . . . . . . . . . . . . . . . . . . . . .   5
+   4.  Use with SCITT  . . . . . . . . . . . . . . . . . . . . . . .   6
    5.  The Figure Reference  . . . . . . . . . . . . . . . . . . . .   6
-   6.  The Figure Token  . . . . . . . . . . . . . . . . . . . . . .   7
-   7.  Verification  . . . . . . . . . . . . . . . . . . . . . . . .   8
-   8.  Changes to a Figure . . . . . . . . . . . . . . . . . . . . .   8
-   9.  Use with Agent Receipts and Tool Protocols  . . . . . . . . .   9
-   10. What a Figure Statement Does Not Establish  . . . . . . . . .   9
-   11. Security Considerations . . . . . . . . . . . . . . . . . . .  10
-   12. Privacy Considerations  . . . . . . . . . . . . . . . . . . .  10
-   13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  11
-   14. Implementation Status . . . . . . . . . . . . . . . . . . . .  11
-   Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . .  12
-   References  . . . . . . . . . . . . . . . . . . . . . . . . . . .  12
-     Normative References  . . . . . . . . . . . . . . . . . . . . .  12
-     Informative References  . . . . . . . . . . . . . . . . . . . .  13
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  14
+   6.  Ordering a Reference and a Correction . . . . . . . . . . . .   8
+   7.  The Figure Token  . . . . . . . . . . . . . . . . . . . . . .   9
+   8.  Verification  . . . . . . . . . . . . . . . . . . . . . . . .  10
+     8.1.  Where a Result Was Obtained . . . . . . . . . . . . . . .  10
+   9.  Changes to a Figure . . . . . . . . . . . . . . . . . . . . .  11
+   10. Use with Agent Receipts and Tool Protocols  . . . . . . . . .  11
+   11. What a Figure Statement Does Not Establish  . . . . . . . . .  12
+   12. Security Considerations . . . . . . . . . . . . . . . . . . .  12
+   13. Privacy Considerations  . . . . . . . . . . . . . . . . . . .  13
+   14. Related Work  . . . . . . . . . . . . . . . . . . . . . . . .  13
+   15. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
+   16. Implementation Status . . . . . . . . . . . . . . . . . . . .  14
+   Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . .  17
+   References  . . . . . . . . . . . . . . . . . . . . . . . . . . .  17
+     Normative References  . . . . . . . . . . . . . . . . . . . . .  17
+     Informative References  . . . . . . . . . . . . . . . . . . . .  17
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  19
 
 1.  Introduction
 
@@ -103,16 +106,16 @@ Table of Contents
    [I-D.noa-scitt-ai-agent-receipt] records each governed action in a
    signed, hash-chained record.  An execution receipt [I-D.zambo-aer1]
    commits to the exact bytes a tool returned.  A measurement capsule
+
+
+
+Yetis                      Expires 7 June 2027                  [Page 2]
+
+Internet-Draft              Figure Statements              December 2026
+
+
    [I-D.templeman-scitt-measurement-capsule] records what a third party
    observed against what a subject declared.
-
-
-
-
-Yetis                      Expires 29 May 2027                  [Page 2]
-
-Internet-Draft              Figure Statements              November 2026
-
 
    Each of these is explicit about its boundary.  A receipt for an
    action shows that a record was issued by a key and has not been
@@ -132,7 +135,7 @@ Internet-Draft              Figure Statements              November 2026
    *  The original source restates a figure.  Official statistical
       reports print the previous period beside the current one, and the
       restated value sometimes differs from the value first printed,
-      without any mark.  Section 14 reports five such cases found in two
+      without any mark.  Section 16 reports five such cases found in two
       monthly reports of one agency.
 
    This document defines a Figure Statement: a SCITT Signed Statement
@@ -144,11 +147,28 @@ Internet-Draft              Figure Statements              November 2026
    The reference by which an agent-side record points at a
    Figure Statement (Section 5) follows the requirements proposed in
    [I-D.gruszka-scitt-statement-identification], and was added in this
-   revision in response to review on the SCITT mailing list.
+   revision in response to review on the SCITT mailing list.  So were
+   the state "issued in error" (Section 5), the lower bound in time for
+   a superseding statement (Section 6) and the requirement that a
+   verification result say where it was obtained (Section 8.1).  Each
+   came from an implementation that was checked by someone other than
+   its author.
 
    Defining payload formats is outside the charter of the SCITT Working
    Group.  This document is offered as an individual profile, in the
    same way as the agent profiles it complements.
+
+
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                  [Page 3]
+
+Internet-Draft              Figure Statements              December 2026
+
 
 2.  Terminology
 
@@ -161,14 +181,6 @@ Internet-Draft              Figure Statements              November 2026
    Service, Receipt, Transparent Statement and Relying Party are used as
    defined in [RFC9943].  In this document "Receipt" always has that
    meaning.
-
-
-
-
-Yetis                      Expires 29 May 2027                  [Page 3]
-
-Internet-Draft              Figure Statements              November 2026
-
 
    Figure:  A single published value together with what it measures: a
       quantity, a period, a population and a source.
@@ -190,7 +202,7 @@ Internet-Draft              Figure Statements              November 2026
    Figure Reference:  The structured reference to one Figure Statement
       defined in Section 5.
 
-   Figure Token:  The short textual pointer defined in Section 6.
+   Figure Token:  The short textual pointer defined in Section 7.
 
 3.  The Figure Statement
 
@@ -207,24 +219,21 @@ Internet-Draft              Figure Statements              November 2026
 
    kind (string, REQUIRED):  "computed" or "restated".
 
+
+
+Yetis                      Expires 7 June 2027                  [Page 4]
+
+Internet-Draft              Figure Statements              December 2026
+
+
    claim (object, REQUIRED):  The machine form of the Figure: at least a
       numeric value, a metric name and a period.  This is the object the
-      Figure Token's digest is taken over (Section 6).
+      Figure Token's digest is taken over (Section 7).
 
    source (object, REQUIRED):  For a Restated Figure: the title of the
       Source document, its Edition, the SHA-256 digest of the document
       as retrieved, the table and the row or cell the value was copied
       from, and any exclusion the Source states for that table.
-
-
-
-
-
-
-Yetis                      Expires 29 May 2027                  [Page 4]
-
-Internet-Draft              Figure Statements              November 2026
-
 
       For a Computed Figure: the dataset and its version or digest, the
       definition of the population, the numerator and the denominator as
@@ -238,15 +247,40 @@ Internet-Draft              Figure Statements              November 2026
 
    source_revision (object, OPTIONAL):  For a Restated Figure only: the
       value the Source printed for the same period in a later Edition,
-      and that Edition.  See Section 8.
+      and that Edition.  See Section 9.
 
    limits (array of strings, OPTIONAL):  Statements the Figure does not
       support, in the Publisher's words; for example that an aggregate
       rate is not a probability for an individual.
 
+   not_before (object, OPTIONAL):  The identifier of a block of a public
+      chain that the Publisher observed before issuing the statement:
+      "chain", a name for the chain, and "block_hash", the block's hash.
+      It MAY also give the height the Publisher was told; that value is
+      informative.  See Section 6.
+
    A Publisher MUST NOT issue a Figure Statement of kind "restated" for
    a value it has adjusted, rounded differently from the Source, or
    derived from several cells.
+
+   A Publisher that builds Figure Statements on request MUST NOT sign
+   one when any input it is built from could not be read.  It answers
+   that no statement is available and that the request can be repeated.
+   A statement built from incomplete inputs is a valid Signed Statement
+   from the right key, and nothing in it shows that a member is missing;
+   Section 16 reports such a case.
+
+
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                  [Page 5]
+
+Internet-Draft              Figure Statements              December 2026
+
 
 4.  Use with SCITT
 
@@ -264,23 +298,12 @@ Internet-Draft              Figure Statements              November 2026
    *  The content type MUST be "application/json".  The payload MUST be
       the canonical serialization.
 
-   When a Figure changes, for any of the reasons in Section 8, the
+   When a Figure changes, for any of the reasons in Section 9, the
    Publisher MUST issue a new Signed Statement with the same Issuer and
    Subject, and SHOULD register it with every Transparency Service that
    holds the earlier one.  The earlier Signed Statement is not
    withdrawn.  This follows the architecture's guidance for an Issuer
    whose view of an Artifact changes.
-
-
-
-
-
-
-
-Yetis                      Expires 29 May 2027                  [Page 5]
-
-Internet-Draft              Figure Statements              November 2026
-
 
    Registration matters here for a specific reason.  A Publisher that
    corrects a Figure quietly, replacing the value and leaving no trace,
@@ -304,6 +327,25 @@ Internet-Draft              Figure Statements              November 2026
       with an empty external_aad and the payload attached.  This is the
       "ToBeSigned" scheme of
       [I-D.gruszka-scitt-statement-identification].
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                  [Page 6]
+
+Internet-Draft              Figure Statements              December 2026
+
+
+   A Figure Reference MUST name the rule by which its digest was
+   computed, together with the hash algorithm, for example as {"alg":
+   "sha-256", "scheme": "ToBeSigned", "value": ...}. Several rules in
+   current use select the same statements and give different values: the
+   rule above, an identifier over the protected header and payload with
+   a different encoding [I-D.moore-scitt-ciris-ceg], and a digest over
+   the transmitted bytes [I-D.wright-verdict-record].  Without the name,
+   two correct implementations fail to find each other's statements.
 
    The digest is taken over the to-be-signed structure and not over the
    transmitted bytes for a practical reason.  Signature algorithms in
@@ -330,18 +372,40 @@ Internet-Draft              Figure Statements              November 2026
       Subject.
 
    superseded:  The digest is in the Publisher's list for the Subject
-
-
-
-Yetis                      Expires 29 May 2027                  [Page 6]
-
-Internet-Draft              Figure Statements              November 2026
-
-
       but is not the last entry.  The verifier reports the statement now
       in force.
 
+   issued in error:  The digest is in the Publisher's list for the
+      Subject, marked as issued in error: the Publisher signed and
+      served the statement, and it was never the statement in force.
+      The verifier reports the statement now in force and any note the
+      Publisher gives, and MUST NOT treat the statement as an earlier
+      one that was in force.
+
    unrecognized:  The digest is not in the list for the Subject.
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                  [Page 7]
+
+Internet-Draft              Figure Statements              December 2026
+
+
+   A statement issued in error verifies under the Publisher's key, and
+   only a rule that reads the Publisher's list can tell it from a
+   statement in force.  A Publisher that finds it has served such a
+   statement MUST add its digest to the list, marked, with the date and
+   the cause.  It MUST NOT leave it out: a statement signed by the
+   Publisher and answered "unrecognized" by the Publisher looks like a
+   forgery to anyone who holds it.
+
+   Each version of the list SHOULD carry a sequence number and the
+   digest of the version before it, so that a result can name the
+   version it read and a third party can repeat the check on the same
+   bytes.
 
    These states are a matter of time, and neither party can settle them
    alone.  If the agent-side record is not anchored in time by something
@@ -353,7 +417,60 @@ Internet-Draft              Figure Statements              November 2026
    Service provides the second; until then a Publisher SHOULD at least
    commit its list to a public log it does not operate.
 
-6.  The Figure Token
+6.  Ordering a Reference and a Correction
+
+   A Relying Party often needs to know more than whether a statement is
+   now superseded.  It needs to know whether the agent relied on it
+   before it was superseded.  That is a question about the order of two
+   records made by two parties.
+
+   Most time evidence available today is an upper bound: an anchor in a
+   public chain shows that bytes existed no later than a given block,
+   and an entry in a log shows that bytes existed no later than the
+   log's time for it.  Two upper bounds do not order two records,
+   whatever the interval between them.
+
+   A superseding Figure Statement that carries "not_before" has a lower
+   bound of its own.  It cannot have been made before the named block
+   was mined.  If an agent-side record is anchored in the same chain at
+   a height at or below that block's height, the agent-side record
+   existed before the superseding statement was made.  The order then
+   follows from the bytes and the heights, with no clock on either side.
+
+   A verifier using this rule:
+
+   *  MUST take the height of the named block from a chain it has
+      validated itself, by looking the hash up, and not from the
+      statement or from a third party's report of the chain.
+
+
+
+Yetis                      Expires 7 June 2027                  [Page 8]
+
+Internet-Draft              Figure Statements              December 2026
+
+
+   *  MUST compare heights and not block times.  A block's time is
+      declared by the party that produced it.
+
+   *  Learns nothing about statements that do not carry "not_before".  A
+      revision issued without it stays unordered against the agent-side
+      record, even if a later revision carries it.
+
+   A Publisher need not validate a chain itself, and usually reads a
+   block hash from a service.  A wrong hash loses the Publisher the
+   bound; it cannot give the Publisher an earlier or a later one,
+   because a hash that is not in the chain bounds nothing.
+
+   Registration of both records in one Transparency Service gives an
+   order of registrations, not of the records.  It orders the records
+   only under a rule that a superseding statement takes effect from its
+   registration.  A Publisher that registers its Figure Statements and
+   relies on this MUST NOT serve a superseding statement, or answer
+   "superseded" for the statement it replaces, before the superseding
+   statement is registered.
+
+7.  The Figure Token
 
    A Signed Statement, and a Figure Reference, are too large to sit
    beside a number in a sentence.  The Figure Token is a short pointer
@@ -378,28 +495,28 @@ Internet-Draft              Figure Statements              November 2026
    in JSON syntax; a verifier SHOULD also accept a token whose brackets
    were lost in copying.
 
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                  [Page 9]
+
+Internet-Draft              Figure Statements              December 2026
+
+
    The token is a pointer, not a proof.  Thirty-two bits do not resist a
    deliberate collision, and nothing in the token is signed.  A verifier
    MUST resolve the token to the Figure Statement and compare the full
    digest before reporting any state.
-
-
-
-
-
-
-
-Yetis                      Expires 29 May 2027                  [Page 7]
-
-Internet-Draft              Figure Statements              November 2026
-
 
    A Publisher makes the following discoverable at a well-known location
    on the Issuer's origin: the prefix it uses, a URI template from id to
    Figure Statement, the digest rule and any earlier rule with its end
    date, and a list of every digest ever issued for each id.
 
-7.  Verification
+8.  Verification
 
    Given a token, a verifier retrieves the current Figure Statement for
    the id and reports exactly one of these states.
@@ -426,9 +543,33 @@ Internet-Draft              Figure Statements              November 2026
 
    Verification needs only the Publisher's public files.  A verifier
    SHOULD be able to run where the reader is, without sending the token
-   to the Publisher (see Section 12).
+   to the Publisher (see Section 13).
 
-8.  Changes to a Figure
+8.1.  Where a Result Was Obtained
+
+   What a verifier receives from a Publisher's address can depend on
+   where the request was made and what the client looked like.  Caches
+   can serve an earlier answer, and services in front of a Publisher can
+   refuse some clients or alter what they serve.  None of this is an
+   attack, and none of it is visible in a result that says only
+   "current" or "not current".  Two parties checking the same reference
+   at the same moment can then both be right and disagree.
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 10]
+
+Internet-Draft              Figure Statements              December 2026
+
+
+   A verification result that is recorded or passed to another party
+   SHOULD state the time it was obtained, the address asked, where the
+   request was made from as far as the verifier can tell, and the client
+   used.  A result obtained from the Publisher's published list by
+   digest, rather than from a live answer, SHOULD name the version of
+   the list it read.
+
+9.  Changes to a Figure
 
    Three different events change what a careful reader should be told.
    They are kept apart because they have different authors.
@@ -440,15 +581,6 @@ Internet-Draft              Figure Statements              November 2026
        Publisher issues a statement for the revised value, citing the
        revising Edition, and adds "source_revision" to the statement for
        the first printing.
-
-
-
-
-
-Yetis                      Expires 29 May 2027                  [Page 8]
-
-Internet-Draft              Figure Statements              November 2026
-
 
    3.  The Source prints a different value for the same period in a
        later Edition without marking it.  The Publisher treats it
@@ -462,12 +594,12 @@ Internet-Draft              Figure Statements              November 2026
    each new Edition against the last, for the periods both contain,
    before issuing statements for the new one.
 
-9.  Use with Agent Receipts and Tool Protocols
+10.  Use with Agent Receipts and Tool Protocols
 
    A tool that returns a Figure to an agent SHOULD return the
    Figure Reference, and MAY return the Figure Token, in a structured
    field of the result, in addition to any text.  Measurement reported
-   in Section 14 found that a token placed in prose is dropped by a
+   in Section 16 found that a token placed in prose is dropped by a
    language model in nearly every restatement, so the text is not a
    reliable carrier.
 
@@ -478,6 +610,14 @@ Internet-Draft              Figure Statements              November 2026
    record carries the references in a member of its own (Section 5): a
    verifier then learns which statements were relied on without parsing
    the output at all.  A Relying Party verifies the agent-side record to
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 11]
+
+Internet-Draft              Figure Statements              December 2026
+
+
    learn what was returned and when, and then checks each reference to
    learn whether that statement was current, superseded or never issued.
    Neither check implies the other.
@@ -487,7 +627,7 @@ Internet-Draft              Figure Statements              November 2026
    work and for stored memory the two times differ, and a Figure can be
    superseded between them.
 
-10.  What a Figure Statement Does Not Establish
+11.  What a Figure Statement Does Not Establish
 
    *  That the Figure is correct.  A Publisher can compute wrongly, and
       a Source can print a wrong value.  The statement makes the
@@ -499,13 +639,6 @@ Internet-Draft              Figure Statements              November 2026
    *  That a Restated Figure is the Source's latest value.  It is the
       value in the named Edition.
 
-
-
-Yetis                      Expires 29 May 2027                  [Page 9]
-
-Internet-Draft              Figure Statements              November 2026
-
-
    *  Anything about a sentence built around the Figure.  A current
       token beside a number does not license a causal claim, a forecast
       or a statement about an individual.
@@ -513,7 +646,7 @@ Internet-Draft              Figure Statements              November 2026
    *  That the party presenting a token is the Publisher or is endorsed
       by it.
 
-11.  Security Considerations
+12.  Security Considerations
 
    The considerations of [RFC9943] apply.  The following are specific to
    this profile.
@@ -521,21 +654,47 @@ Internet-Draft              Figure Statements              November 2026
    Short digest.  The eight-character digest is an index.  An attacker
    can construct a different claim object with the same eight
    characters.  This yields nothing unless a verifier trusts the token
-   alone, which Section 6 forbids.
+   alone, which Section 7 forbids.
 
    Borrowed tokens.  A genuine token can be placed beside an unrelated
    number or an unrelated sentence.  The "altered" state detects a
-   changed value.  It does not detect a changed meaning; see Section 10.
+   changed value.  It does not detect a changed meaning; see Section 11.
 
    A list kept only by the Publisher.  The list of issued digests
    required by Section 5 is evidence only to the extent that its history
    cannot be rewritten.  A Publisher that hosts it alone can remove an
    entry and make a superseded statement look as if it was never issued.
 
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 12]
+
+Internet-Draft              Figure Statements              December 2026
+
+
    Equivocation by the Publisher.  Without registration, a Publisher can
    serve different statements to different readers or rewrite its list
    of issued digests.  Registration with a Transparency Service, and
    Receipts, are what make the history checkable.
+
+   Statements built from incomplete inputs.  A Publisher that assembles
+   statements on request can sign one from which a member is missing,
+   for example when the read of one input fails.  Such a statement
+   verifies.  Section 3 forbids issuing it, and Section 5 requires that
+   one issued anyway be listed as issued in error; the list is how a
+   reader can tell.
+
+   Key compromise and rotation.  One key signs every statement of a
+   Publisher.  A Publisher SHOULD publish its key at a stable address on
+   the Issuer's origin together with the dates from which it is used,
+   and when it replaces a key, SHOULD list the old key with the date it
+   stopped being used.  If a key is compromised, statements signed with
+   it after the date of compromise cannot be told from forgeries by
+   their signature alone; the list of issued digests, if its history is
+   held outside the Publisher's control, is then the only way to tell
+   them apart.  This is a further reason for registration.
 
    Source documents.  The digest of a Source document shows which bytes
    the Publisher read.  If the Source replaces a document under the same
@@ -543,7 +702,7 @@ Internet-Draft              Figure Statements              November 2026
    Publishers SHOULD record a public archive capture of the bytes they
    read.
 
-12.  Privacy Considerations
+13.  Privacy Considerations
 
    A verification request tells the Publisher that someone holds a given
    Figure, and when.  A Publisher that offers a verification service
@@ -555,18 +714,53 @@ Internet-Draft              Figure Statements              November 2026
    A Figure Statement describes published aggregates.  It MUST NOT
    contain information about an identifiable person.
 
+14.  Related Work
+
+   A working paper of the Bank for International Settlements
+   [BIS-WP1374] describes a prototype that binds statistical datasets
+   exchanged in SDMX to their source: each dataset, and optionally each
+   time series, is hashed; batches are summarized in a Merkle root
+   anchored in a public ledger; and a signed credential travels in the
+   file.  It works at the level of the dataset and the series.  It lists
 
 
-Yetis                      Expires 29 May 2027                 [Page 10]
+
+Yetis                      Expires 7 June 2027                 [Page 13]
 
-Internet-Draft              Figure Statements              November 2026
+Internet-Draft              Figure Statements              December 2026
 
 
-13.  IANA Considerations
+   the anchoring of individual observations and verification by AI
+   agents as future work, and does not describe how a corrected dataset
+   is related to the one it replaces.  This profile works at the level
+   of one figure, and is mainly about that relation.  The two are
+   complementary: a dataset-level anchor can show which file a figure
+   was read from, and a Figure Statement can say what the figure in it
+   was and whether it has since changed.
+
+   A register of a publisher's disclosed figures, committed together as
+   of a date, chained to the previous set and anchored, answers a
+   different question from a Figure Statement: what the publisher had
+   disclosed on a date, and what it has withdrawn since.  A register-
+   level profile is in preparation by T.  Meister; its entries can be
+   cited by a Figure Reference once the reference names the register's
+   digest rule.
+
+   Height-based time bounds from a public chain, and verification
+   against a chain the verifier has validated, are specified in
+   [I-D.fassbender-scitt-time-anchor]; Section 6 uses them and does not
+   define them again.
+
+   A verdict record [I-D.wright-verdict-record] is written by a party
+   that wrote neither the agent-side record nor the Figure Statement,
+   and states whether the two agree under a named rule.  Verdict records
+   over the test Subjects of this profile are described in Section 16.
+
+15.  IANA Considerations
 
    This document has no IANA actions.
 
-14.  Implementation Status
+16.  Implementation Status
 
    This section is to be removed before publication as an RFC.  It
    follows [RFC7942].
@@ -584,6 +778,14 @@ Internet-Draft              Figure Statements              November 2026
       state names differ from this document, which generalizes them (the
       implementation says "stale" where this document says "superseded",
       and "display_value" for "value").  A verification service, an in-
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 14]
+
+Internet-Draft              Figure Statements              December 2026
+
+
       browser verifier that uses only the public files, and a
       conformance suite that another publisher can run against its own
       site are public.
@@ -593,13 +795,15 @@ Internet-Draft              Figure Statements              November 2026
    *  Since revision -00: each of the 716 Figures is served as a
       COSE_Sign1 Signed Statement (ES256) with the Issuer and Subject in
       the CWT Claims header and the canonical Figure Statement as
-      payload.  A Figure Reference with the digest rule of Section 5 is
-      returned with it, and a check answers current, superseded or
-      unrecognized for a given digest.  The list of issued digests is a
-      file in the publisher's public repository, signed and recorded in
-      a public transparency log of another kind each time it changes; it
-      begins on 25 November 2026, so a statement replaced before that
-      date cannot be recognized.
+      payload, on the Issuer's own origin.  A Figure Reference that
+      names its digest rule is returned with it, and a check answers
+      current, superseded, issued in error or unrecognized for a given
+      digest, stating the time and address of the check.  The list of
+      issued digests is a file in the publisher's public repository with
+      a sequence number and the digest of the previous version; it is
+      signed and recorded in a public transparency log of another kind
+      each time it changes, and it begins on 25 November 2026, so a
+      statement replaced before that date cannot be recognized.
 
    *  Verification of the signatures and recomputation of the digests
       were repeated with a CBOR library and a cryptographic library that
@@ -607,22 +811,63 @@ Internet-Draft              Figure Statements              November 2026
       randomized, the implementation's own test fetches a statement
       twice and requires different bytes and the same digest.
 
-
-
-
-
-
-
-Yetis                      Expires 29 May 2027                 [Page 11]
-
-Internet-Draft              Figure Statements              November 2026
-
-
    *  Not yet implemented: registration of Signed Statements with a
       SCITT Transparency Service, and therefore Receipts as defined in
       [RFC9943].  The tool server does not yet return the
       Figure Reference in a structured field of its results; it returns
       the token.
+
+   Checks by others.  Between 08:25 and 08:33 UTC on 25 November 2026 an
+   independent reader fetched all 716 statements and compared the digest
+   of each with the published list. 715 matched.  One, fetched once,
+   verified under the publisher's key and was on no list: the read of
+   one input file had failed and the statement had been built and signed
+   without its "limits" member.  The implementation now signs nothing
+   when an input cannot be read, and the digest is listed as issued in
+   error.  The requirements on incomplete inputs and on the state
+   "issued in error" in this revision come from this result.
+
+   Composition.  Two test Subjects, issued with the same key and
+   labelled as tests, exercise the states.  For one of them, an agent-
+   side record that referenced revision 1 was sealed by the operator of
+   [I-D.dobson-ai-decision-receipt] and anchored in Bitcoin block 977556
+   before revision 2 was issued.  Revision 2 carries no block hash, and
+   its order against that record cannot be derived from the records.
+   Revision 3 adds "not_before" naming a later block, so the record
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 15]
+
+Internet-Draft              Figure Statements              December 2026
+
+
+   precedes revision 3 by heights alone.  A third party wrote verdict
+   records under [I-D.wright-verdict-record] over the three test cases
+   and registered them with a Transparency Service whose policy refuses
+   a statement that cites one not registered; a statement citing the
+   unregistered revision 2 was refused.  Each record names the version
+   of the digest list it read.
+
+   Vantage.  The same third party reported that its checks from one
+   network location received an HTTP 403 response for one common default
+   client at the publisher's first service address, and answers for a
+   client that looked like a browser.  The cause was a setting of the
+   network service in front of that address, not of the implementation.
+   The statements are now also served from the Issuer's origin, where
+   the same client receives answers.  A comparison of the bytes served
+   with the bytes published found the data files, including the
+   statements' sources and the digest list, served unchanged, and the
+   HTML pages altered by the same network service.  Section 8.1 follows
+   from this.
+
+   Other publishers.  Two figures of another publisher, a statistical
+   office in another jurisdiction and outside housing finance, were
+   restated under this profile from responses captured as retrieved, as
+   demonstrations.  The profile needed no change; the source digest is
+   then of a data service's response as retrieved, not of a document the
+   publisher keeps unchanged, which each statement states among its
+   limits.
 
    Two observations from operating it bear on the design.
 
@@ -630,22 +875,44 @@ Internet-Draft              Figure Statements              November 2026
    found five values printed in one Edition and printed differently in
    the next, with no revision mark: three loan counts that moved by one
    or two, and two delinquency rates that moved by 0.06 percentage
-   point.  The "source_revision" member and case 3 of Section 8 exist
+   point.  The "source_revision" member and case 3 of Section 9 exist
    because of these.
 
    In one measured condition, a language model that was given a sentence
    ending in a token and asked to answer a user's question kept the
    token in 1 of 36 answers when it was attached to the number, and in
    none when it stood at the end of the sentence.  The recommendation in
-   Section 9 to carry the token in a structured field follows from this.
+   Section 10 to carry the token in a structured field follows from
+   this.
+
+
+
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 16]
+
+Internet-Draft              Figure Statements              December 2026
+
 
 Acknowledgements
 
    Justin Dobson argued that a token inside output bytes is not enough
    and that an agent-side record should carry an explicit reference, and
    pointed out that the question is one of time on both sides.  Konrad
-   Gruszka pointed to the identification rule used for the reference.
-   Section 5 is the result.  Errors are the author's.
+   Gruszka pointed to the identification rule used for the reference,
+   and checked every statement of the implementation against its list,
+   which found the fault described in Section 16.  Tiago Pinto showed
+   that the first ordering claimed for the test Subject did not follow
+   from the records, and gave the rule in Section 6.  Darren Wright
+   wrote the verdict records and found the vantage problem.  Thomas
+   Meister showed that the same problem had appeared at other
+   publishers.  Eric Moore's identifier and Justin Dobson's comparison
+   of it led to the requirement that a reference name its rule.  Errors
+   are the author's.
 
 References
 
@@ -667,13 +934,6 @@ Normative References
               Canonicalization Scheme (JCS)", RFC 8785, June 2020,
               <https://www.rfc-editor.org/info/rfc8785>.
 
-
-
-Yetis                      Expires 29 May 2027                 [Page 12]
-
-Internet-Draft              Figure Statements              November 2026
-
-
    [RFC9052]  Schaad, J., "CBOR Object Signing and Encryption (COSE):
               Structures and Process", STD 96, RFC 9052, August 2022,
               <https://www.rfc-editor.org/info/rfc9052>.
@@ -685,6 +945,21 @@ Internet-Draft              Figure Statements              November 2026
 
 Informative References
 
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 17]
+
+Internet-Draft              Figure Statements              December 2026
+
+
+   [BIS-WP1374]
+              Rusev, M., Schmidt, R., Lambe, E., Schmieder, C., and G.
+              P. Tice, "Verifiable official statistics: a blockchain-
+              based approach", BIS Working Papers 1374, September 2026,
+              <https://www.bis.org/publ/work1374.htm>.
+
    [I-D.dobson-ai-decision-receipt]
               Dobson, J., "The AI-Decision-Receipt HTTP Response Header
               Field", Work in Progress, Internet-Draft, draft-dobson-ai-
@@ -692,12 +967,26 @@ Informative References
               <https://datatracker.ietf.org/doc/draft-dobson-ai-
               decision-receipt/>.
 
+   [I-D.fassbender-scitt-time-anchor]
+              Fassbender, J., "Umarise's Bitcoin-Anchored Temporal
+              Proofs", Work in Progress, Internet-Draft, draft-
+              fassbender-scitt-time-anchor-08, October 2026,
+              <https://datatracker.ietf.org/doc/draft-fassbender-scitt-
+              time-anchor/>.
+
    [I-D.gruszka-scitt-statement-identification]
               Gruszka, K., "Requirements and Test Cases for Identifying
               SCITT Signed Statements", Work in Progress, Internet-
               Draft, draft-gruszka-scitt-statement-identification-05,
               November 2026, <https://datatracker.ietf.org/doc/draft-
               gruszka-scitt-statement-identification/>.
+
+   [I-D.moore-scitt-ciris-ceg]
+              Moore, E., "Signed Attestation Rows of the CIRIS Epistemic
+              Grammar and Their Relationship to SCITT", Work in
+              Progress, Internet-Draft, draft-moore-scitt-ciris-ceg-04,
+              November 2026, <https://datatracker.ietf.org/doc/draft-
+              moore-scitt-ciris-ceg/>.
 
    [I-D.noa-scitt-ai-agent-receipt]
               Toraman, T., "A SCITT Profile for AI-Agent Action
@@ -714,21 +1003,24 @@ Informative References
               <https://datatracker.ietf.org/doc/draft-templeman-scitt-
               measurement-capsule/>.
 
+
+
+Yetis                      Expires 7 June 2027                 [Page 18]
+
+Internet-Draft              Figure Statements              December 2026
+
+
+   [I-D.wright-verdict-record]
+              Wright, D., "Verdict Records: Results on Claims that Cite
+              Receipts as Evidence", Work in Progress, Internet-Draft,
+              draft-wright-verdict-record-03, November 2026,
+              <https://datatracker.ietf.org/doc/draft-wright-verdict-
+              record/>.
+
    [I-D.zambo-aer1]
               Zambo, B., "AER-1", Work in Progress, Internet-Draft,
               draft-zambo-aer1-23, October 2026,
               <https://datatracker.ietf.org/doc/draft-zambo-aer1/>.
-
-
-
-
-
-
-
-Yetis                      Expires 29 May 2027                 [Page 13]
-
-Internet-Draft              Figure Statements              November 2026
-
 
    [RFC7942]  Sheffer, Y. and A. Farrel, "Improving Awareness of Running
               Code: The Implementation Status Section", BCP 205,
@@ -769,16 +1061,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-Yetis                      Expires 29 May 2027                 [Page 14]
+Yetis                      Expires 7 June 2027                 [Page 19]
