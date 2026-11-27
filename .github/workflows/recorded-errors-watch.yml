@@ -1,0 +1,21 @@
+name: Recorded errors watch (daily; reports only)
+# Searches the published site for wording already recorded as an error in the corrections log. It changes no page:
+# it writes transparency/recorded-errors-watch.json and watch.html, and the history of each finding is kept there.
+on:
+  schedule:
+    - cron: "41 3 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Watch
+        run: python3 scripts/watch_recorded_errors.py
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add transparency/recorded-errors-watch.json watch.html; git diff --cached --quiet || git commit -m "recorded errors watch [skip ci]"
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin main && break; sleep $((i*7)); done
