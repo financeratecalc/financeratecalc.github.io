@@ -18,6 +18,8 @@ In 2025, Quoted value of decisioned FHA applications were denied. ⟦FRC:nationa
 
 Nothing has been checked yet. Press “Check this number”: the page asks the public verify service, the same one an AI agent or a newsroom script would ask.
 
+Want the whole chain? [One figure, followed from a HUD report to an AI decision, with every check and who made it](https://financeratecalc.com/one-figure.html).
+
 ## Three receipts, as issued
 
 - `⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b⟧`

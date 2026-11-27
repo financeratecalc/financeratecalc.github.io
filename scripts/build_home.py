@@ -164,7 +164,7 @@ JS = r"""
     out.dataset.s=s;
     out.innerHTML='<p class="try-v">'+esc(head)+'</p><p class="try-m">'+esc(msg)+'</p>'+
       '<dl class="try-d"><dt>Quoted value</dt><dd>'+esc(quoted)+'</dd><dt>Current value</dt><dd>'+esc(current)+'</dd><dt>Receipt hash</dt><dd>'+esc(D.hash)+'</dd></dl>'+
-      '<p class="try-l"><a href="/verify.html?r='+encodeURIComponent(token(false))+'">Open this check on its own page</a><a href="/claims/'+esc(D.id)+'.json">Claim document</a><a href="'+esc(D.source)+'" rel="noopener">Source record (CFPB HMDA 2025)</a><a href="/methodology.html">How it was computed</a></p>'+
+      '<p class="try-l"><a href="/verify.html?r='+encodeURIComponent(token(false))+'">Open this check on its own page</a><a href="/claims/'+esc(D.id)+'.json">Claim document</a><a href="'+esc(D.source)+'" rel="noopener">Source record (CFPB HMDA 2025)</a><a href="/methodology.html">How it was computed</a><a href="/one-figure.html">Follow one figure through every check</a></p>'+
       '<p class="try-n">The receipt fixes this number to its definition, period and population. It shows the publisher issued the figure and whether the quote still matches; it does not show the figure is right.</p>';
   };
   var check=function(){
@@ -360,6 +360,7 @@ def main():
                 f'<span class="try-r" id="tr" aria-label="Receipt">{E(tc["receipt"])}</span></p>'
                 '<div class="try-b"><button type="button" id="tc">Check this number</button><button type="button" id="t1" class="q">Change one digit for me</button></div></div>'
                 '<div class="try-o" id="to" aria-live="polite"><p class="try-m">Nothing has been checked yet. Press &ldquo;Check this number&rdquo;: the page asks the public verify service, the same one an AI agent or a newsroom script would ask.</p></div>'
+                '<p class="try-n" style="padding:0 26px 20px;margin:0">Want the whole chain? <a href="/one-figure.html">One figure, followed from a HUD report to an AI decision, with every check and who made it</a>.</p>'
                 '</section>')
     page = f'''<!DOCTYPE html>
 <html lang="en">

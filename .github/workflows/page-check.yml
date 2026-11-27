@@ -1,0 +1,34 @@
+name: Page check (a live page, run in a real browser)
+# Opens a page of the live site in Chrome on a GitHub-hosted runner and records what its in-browser checks report.
+# Manual. Records nothing to the repository; read the log.
+on:
+  workflow_dispatch:
+    inputs:
+      page:
+        description: "Path on financeratecalc.com"
+        default: "one-figure.html"
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open the page
+        env:
+          PAGE: ${{ github.event.inputs.page }}
+        run: |
+          npm i --silent playwright-core@1.48.2 >/dev/null
+          cat > run.js <<'JS'
+          const { chromium } = require('playwright-core');
+          (async () => {
+            const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome' });
+            const p = await b.newPage();
+            p.on('pageerror', e => console.log('pageerror', e.message));
+            await p.goto('https://financeratecalc.com/' + process.env.PAGE, { waitUntil: 'networkidle' });
+            await p.waitForTimeout(3000);
+            const out = await p.evaluate(() => [...document.querySelectorAll('.st')].map(e => (e.id || '-') + ' | ' + e.textContent.trim() + ' | ' + ((document.getElementById('m' + (e.id || '').slice(1)) || {}).textContent || '').trim().slice(0, 260)));
+            out.forEach(l => console.log('STATE', l));
+            await b.close();
+          })();
+          JS
+          node run.js
