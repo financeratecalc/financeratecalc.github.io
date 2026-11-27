@@ -58,6 +58,8 @@ async function check(id) {
   const h8 = crypto.createHash("sha256").update(JSON.stringify(jcs(st.claim))).digest("hex").slice(0, 8);
   assert(doc.receipt.includes(":" + h8), id + ": the token's digest is not the digest of the statement's claim member");
   assert(Array.isArray(st.limits) && st.limits.length > 0, id + ": a statement must carry its limits");
+  const names = o => o && typeof o === "object" ? (Array.isArray(o) ? o.flatMap(names) : Object.entries(o).flatMap(([k, v]) => [k, ...names(v)])) : [];
+  assert(names(st).every(k => /^[\x00-\x7f]*$/.test(k)), id + ": member names must be ASCII (draft -01, Use with SCITT)");
   if (st.kind === "restated") assert(st.source.document && /^[0-9a-f]{64}$/.test(st.source.sha256) && st.source.table, id + ": a restated figure must name its document, digest and table");
   if (doc.revision_status && doc.revision_status.revised_to != null) assert(st.source_revision && st.source_revision.value === doc.revision_status.revised_to && st.source_revision.marked_by_source === false, id + ": source revision missing");
   return { raw, st };

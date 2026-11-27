@@ -82,19 +82,19 @@ Table of Contents
    6.  Ordering a Reference and a Correction . . . . . . . . . . . .   8
    7.  The Figure Token  . . . . . . . . . . . . . . . . . . . . . .   9
    8.  Verification  . . . . . . . . . . . . . . . . . . . . . . . .  10
-     8.1.  Where a Result Was Obtained . . . . . . . . . . . . . . .  10
+     8.1.  Where a Result Was Obtained . . . . . . . . . . . . . . .  11
    9.  Changes to a Figure . . . . . . . . . . . . . . . . . . . . .  11
-   10. Use with Agent Receipts and Tool Protocols  . . . . . . . . .  11
+   10. Use with Agent Receipts and Tool Protocols  . . . . . . . . .  12
    11. What a Figure Statement Does Not Establish  . . . . . . . . .  12
-   12. Security Considerations . . . . . . . . . . . . . . . . . . .  12
-   13. Privacy Considerations  . . . . . . . . . . . . . . . . . . .  13
-   14. Related Work  . . . . . . . . . . . . . . . . . . . . . . . .  13
-   15. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
-   16. Implementation Status . . . . . . . . . . . . . . . . . . . .  14
+   12. Security Considerations . . . . . . . . . . . . . . . . . . .  13
+   13. Privacy Considerations  . . . . . . . . . . . . . . . . . . .  14
+   14. Related Work  . . . . . . . . . . . . . . . . . . . . . . . .  14
+   15. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  15
+   16. Implementation Status . . . . . . . . . . . . . . . . . . . .  15
    Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . .  17
    References  . . . . . . . . . . . . . . . . . . . . . . . . . . .  17
      Normative References  . . . . . . . . . . . . . . . . . . . . .  17
-     Informative References  . . . . . . . . . . . . . . . . . . . .  17
+     Informative References  . . . . . . . . . . . . . . . . . . . .  18
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  19
 
 1.  Introduction
@@ -298,6 +298,11 @@ Internet-Draft              Figure Statements              December 2026
    *  The content type MUST be "application/json".  The payload MUST be
       the canonical serialization.
 
+   *  Member names in the payload MUST be ASCII.  The ordering rule of
+      [RFC8785] sorts names by UTF-16 code units, and implementations
+      that sort by code points disagree for some non-ASCII names; values
+      are not affected.
+
    When a Figure changes, for any of the reasons in Section 9, the
    Publisher MUST issue a new Signed Statement with the same Issuer and
    Subject, and SHOULD register it with every Transparency Service that
@@ -322,11 +327,6 @@ Internet-Draft              Figure Statements              December 2026
    sub:  The Subject of the Signed Statement.
 
    digest:  The SHA-256 digest of the COSE Sig_structure of the Signed
-      Statement, that is, of the CBOR encoding of ["Signature1",
-      body_protected, external_aad, payload] as defined in [RFC9052],
-      with an empty external_aad and the payload attached.  This is the
-      "ToBeSigned" scheme of
-      [I-D.gruszka-scitt-statement-identification].
 
 
 
@@ -337,6 +337,12 @@ Yetis                      Expires 7 June 2027                  [Page 6]
 
 Internet-Draft              Figure Statements              December 2026
 
+
+      Statement, that is, of the CBOR encoding of ["Signature1",
+      body_protected, external_aad, payload] as defined in [RFC9052],
+      with an empty external_aad and the payload attached.  This is the
+      "ToBeSigned" scheme of
+      [I-D.gruszka-scitt-statement-identification].
 
    A Figure Reference MUST name the rule by which its digest was
    computed, together with the hash algorithm, for example as {"alg":
@@ -376,13 +382,7 @@ Internet-Draft              Figure Statements              December 2026
       in force.
 
    issued in error:  The digest is in the Publisher's list for the
-      Subject, marked as issued in error: the Publisher signed and
-      served the statement, and it was never the statement in force.
-      The verifier reports the statement now in force and any note the
-      Publisher gives, and MUST NOT treat the statement as an earlier
-      one that was in force.
 
-   unrecognized:  The digest is not in the list for the Subject.
 
 
 
@@ -393,6 +393,14 @@ Yetis                      Expires 7 June 2027                  [Page 7]
 
 Internet-Draft              Figure Statements              December 2026
 
+
+      Subject, marked as issued in error: the Publisher signed and
+      served the statement, and it was never the statement in force.
+      The verifier reports the statement now in force and any note the
+      Publisher gives, and MUST NOT treat the statement as an earlier
+      one that was in force.
+
+   unrecognized:  The digest is not in the list for the Subject.
 
    A statement issued in error verifies under the Publisher's key, and
    only a rule that reads the Publisher's list can tell it from a
@@ -430,6 +438,18 @@ Internet-Draft              Figure Statements              December 2026
    log's time for it.  Two upper bounds do not order two records,
    whatever the interval between them.
 
+
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                  [Page 8]
+
+Internet-Draft              Figure Statements              December 2026
+
+
    A superseding Figure Statement that carries "not_before" has a lower
    bound of its own.  It cannot have been made before the named block
    was mined.  If an agent-side record is anchored in the same chain at
@@ -442,13 +462,6 @@ Internet-Draft              Figure Statements              December 2026
    *  MUST take the height of the named block from a chain it has
       validated itself, by looking the hash up, and not from the
       statement or from a third party's report of the chain.
-
-
-
-Yetis                      Expires 7 June 2027                  [Page 8]
-
-Internet-Draft              Figure Statements              December 2026
-
 
    *  MUST compare heights and not block times.  A block's time is
       declared by the party that produced it.
@@ -478,6 +491,21 @@ Internet-Draft              Figure Statements              December 2026
    structured carrier; where a structured field is available, the
    Figure Reference is the thing to carry.
 
+
+
+
+
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                  [Page 9]
+
+Internet-Draft              Figure Statements              December 2026
+
+
    token   = open prefix ":" id ":" value ":" digest
              [ ":" channel ] close
    open    = %xE2.9F.A6   ; U+27E6, UTF-8 encoded
@@ -494,17 +522,6 @@ Internet-Draft              Figure Statements              December 2026
    brackets were chosen because they do not occur in ordinary prose or
    in JSON syntax; a verifier SHOULD also accept a token whose brackets
    were lost in copying.
-
-
-
-
-
-
-
-Yetis                      Expires 7 June 2027                  [Page 9]
-
-Internet-Draft              Figure Statements              December 2026
-
 
    The token is a pointer, not a proof.  Thirty-two bits do not resist a
    deliberate collision, and nothing in the token is signed.  A verifier
@@ -536,6 +553,15 @@ Internet-Draft              Figure Statements              December 2026
    unrecognized:  The id is unknown, or the digest was never issued for
       it.
 
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 10]
+
+Internet-Draft              Figure Statements              December 2026
+
+
    Independently of the state, if the current statement has a
    "source_revision" member the verifier MUST report it.  A token can be
    "current", because the Publisher's record of the first printing is
@@ -555,17 +581,11 @@ Internet-Draft              Figure Statements              December 2026
    "current" or "not current".  Two parties checking the same reference
    at the same moment can then both be right and disagree.
 
-
-
-Yetis                      Expires 7 June 2027                 [Page 10]
-
-Internet-Draft              Figure Statements              December 2026
-
-
    A verification result that is recorded or passed to another party
    SHOULD state the time it was obtained, the address asked, where the
-   request was made from as far as the verifier can tell, and the client
-   used.  A result obtained from the Publisher's published list by
+   request was made from as far as the verifier can tell, the client
+   used, and, where the check was made by software, the release of that
+   software.  A result obtained from the Publisher's published list by
    digest, rather than from a live answer, SHOULD name the version of
    the list it read.
 
@@ -587,6 +607,16 @@ Internet-Draft              Figure Statements              December 2026
        exactly as case 2.  The absence of a mark is recorded in the
        "source_revision" member, since the reader of the later Edition
        has no other way to learn that the value moved.
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 11]
+
+Internet-Draft              Figure Statements              December 2026
+
 
    In cases 2 and 3 the statement for the first printing remains true as
    a record of what that Edition printed, and its token remains
@@ -610,14 +640,6 @@ Internet-Draft              Figure Statements              December 2026
    record carries the references in a member of its own (Section 5): a
    verifier then learns which statements were relied on without parsing
    the output at all.  A Relying Party verifies the agent-side record to
-
-
-
-Yetis                      Expires 7 June 2027                 [Page 11]
-
-Internet-Draft              Figure Statements              December 2026
-
-
    learn what was returned and when, and then checks each reference to
    learn whether that statement was current, superseded or never issued.
    Neither check implies the other.
@@ -643,6 +665,15 @@ Internet-Draft              Figure Statements              December 2026
       token beside a number does not license a causal claim, a forecast
       or a statement about an individual.
 
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 12]
+
+Internet-Draft              Figure Statements              December 2026
+
+
    *  That the party presenting a token is the Publisher or is endorsed
       by it.
 
@@ -665,15 +696,6 @@ Internet-Draft              Figure Statements              December 2026
    cannot be rewritten.  A Publisher that hosts it alone can remove an
    entry and make a superseded statement look as if it was never issued.
 
-
-
-
-
-Yetis                      Expires 7 June 2027                 [Page 12]
-
-Internet-Draft              Figure Statements              December 2026
-
-
    Equivocation by the Publisher.  Without registration, a Publisher can
    serve different statements to different readers or rewrite its list
    of issued digests.  Registration with a Transparency Service, and
@@ -695,6 +717,18 @@ Internet-Draft              Figure Statements              December 2026
    their signature alone; the list of issued digests, if its history is
    held outside the Publisher's control, is then the only way to tell
    them apart.  This is a further reason for registration.
+
+
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 13]
+
+Internet-Draft              Figure Statements              December 2026
+
 
    Source documents.  The digest of a Source document shows which bytes
    the Publisher read.  If the Source replaces a document under the same
@@ -722,14 +756,6 @@ Internet-Draft              Figure Statements              December 2026
    time series, is hashed; batches are summarized in a Merkle root
    anchored in a public ledger; and a signed credential travels in the
    file.  It works at the level of the dataset and the series.  It lists
-
-
-
-Yetis                      Expires 7 June 2027                 [Page 13]
-
-Internet-Draft              Figure Statements              December 2026
-
-
    the anchoring of individual observations and verification by AI
    agents as future work, and does not describe how a corrected dataset
    is related to the one it replaces.  This profile works at the level
@@ -750,6 +776,15 @@ Internet-Draft              Figure Statements              December 2026
    against a chain the verifier has validated, are specified in
    [I-D.fassbender-scitt-time-anchor]; Section 6 uses them and does not
    define them again.
+
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 14]
+
+Internet-Draft              Figure Statements              December 2026
+
 
    A verdict record [I-D.wright-verdict-record] is written by a party
    that wrote neither the agent-side record nor the Figure Statement,
@@ -778,14 +813,6 @@ Internet-Draft              Figure Statements              December 2026
       state names differ from this document, which generalizes them (the
       implementation says "stale" where this document says "superseded",
       and "display_value" for "value").  A verification service, an in-
-
-
-
-Yetis                      Expires 7 June 2027                 [Page 14]
-
-Internet-Draft              Figure Statements              December 2026
-
-
       browser verifier that uses only the public files, and a
       conformance suite that another publisher can run against its own
       site are public.
@@ -804,6 +831,16 @@ Internet-Draft              Figure Statements              December 2026
       signed and recorded in a public transparency log of another kind
       each time it changes, and it begins on 25 November 2026, so a
       statement replaced before that date cannot be recognized.
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 15]
+
+Internet-Draft              Figure Statements              December 2026
+
 
    *  Verification of the signatures and recomputation of the digests
       were repeated with a CBOR library and a cryptographic library that
@@ -834,14 +871,6 @@ Internet-Draft              Figure Statements              December 2026
    before revision 2 was issued.  Revision 2 carries no block hash, and
    its order against that record cannot be derived from the records.
    Revision 3 adds "not_before" naming a later block, so the record
-
-
-
-Yetis                      Expires 7 June 2027                 [Page 15]
-
-Internet-Draft              Figure Statements              December 2026
-
-
    precedes revision 3 by heights alone.  A third party wrote verdict
    records under [I-D.wright-verdict-record] over the three test cases
    and registered them with a Transparency Service whose policy refuses
@@ -860,6 +889,14 @@ Internet-Draft              Figure Statements              December 2026
    statements' sources and the digest list, served unchanged, and the
    HTML pages altered by the same network service.  Section 8.1 follows
    from this.
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 16]
+
+Internet-Draft              Figure Statements              December 2026
+
 
    Other publishers.  Two figures of another publisher, a statistical
    office in another jurisdiction and outside housing finance, were
@@ -885,19 +922,6 @@ Internet-Draft              Figure Statements              December 2026
    Section 10 to carry the token in a structured field follows from
    this.
 
-
-
-
-
-
-
-
-
-Yetis                      Expires 7 June 2027                 [Page 16]
-
-Internet-Draft              Figure Statements              December 2026
-
-
 Acknowledgements
 
    Justin Dobson argued that a token inside output bytes is not enough
@@ -922,6 +946,14 @@ Normative References
               Requirement Levels", BCP 14, RFC 2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 17]
+
+Internet-Draft              Figure Statements              December 2026
+
+
    [RFC3339]  Klyne, G. and C. Newman, "Date and Time on the Internet:
               Timestamps", RFC 3339, July 2002,
               <https://www.rfc-editor.org/info/rfc3339>.
@@ -945,15 +977,6 @@ Normative References
 
 Informative References
 
-
-
-
-
-Yetis                      Expires 7 June 2027                 [Page 17]
-
-Internet-Draft              Figure Statements              December 2026
-
-
    [BIS-WP1374]
               Rusev, M., Schmidt, R., Lambe, E., Schmieder, C., and G.
               P. Tice, "Verifiable official statistics: a blockchain-
@@ -973,6 +996,19 @@ Internet-Draft              Figure Statements              December 2026
               fassbender-scitt-time-anchor-08, October 2026,
               <https://datatracker.ietf.org/doc/draft-fassbender-scitt-
               time-anchor/>.
+
+
+
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 18]
+
+Internet-Draft              Figure Statements              December 2026
+
 
    [I-D.gruszka-scitt-statement-identification]
               Gruszka, K., "Requirements and Test Cases for Identifying
@@ -1003,13 +1039,6 @@ Internet-Draft              Figure Statements              December 2026
               <https://datatracker.ietf.org/doc/draft-templeman-scitt-
               measurement-capsule/>.
 
-
-
-Yetis                      Expires 7 June 2027                 [Page 18]
-
-Internet-Draft              Figure Statements              December 2026
-
-
    [I-D.wright-verdict-record]
               Wright, D., "Verdict Records: Results on Claims that Cite
               Receipts as Evidence", Work in Progress, Internet-Draft,
@@ -1028,6 +1057,14 @@ Internet-Draft              Figure Statements              December 2026
               <https://www.rfc-editor.org/info/rfc7942>.
 
 Author's Address
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 19]
+
+Internet-Draft              Figure Statements              December 2026
+
 
    Ziya Yetiş
    FinanceRateCalc
@@ -1061,4 +1098,23 @@ Author's Address
 
 
 
-Yetis                      Expires 7 June 2027                 [Page 19]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Yetis                      Expires 7 June 2027                 [Page 20]

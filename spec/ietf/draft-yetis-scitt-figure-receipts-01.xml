@@ -97,6 +97,7 @@
         <li>The Issuer (CWT Claims "iss") <bcp14>MUST</bcp14> be an HTTPS URI under the Publisher's control.</li>
         <li>The Subject (CWT Claims "sub") <bcp14>MUST</bcp14> be an HTTPS URI that contains the Figure's id and at which the current Figure Statement can be retrieved.</li>
         <li>The content type <bcp14>MUST</bcp14> be "application/json". The payload <bcp14>MUST</bcp14> be the canonical serialization.</li>
+        <li>Member names in the payload <bcp14>MUST</bcp14> be ASCII. The ordering rule of <xref target="RFC8785"/> sorts names by UTF-16 code units, and implementations that sort by code points disagree for some non-ASCII names; values are not affected.</li>
       </ul>
       <t>When a Figure changes, for any of the reasons in <xref target="revision"/>, the Publisher <bcp14>MUST</bcp14> issue a new Signed Statement with the same Issuer and Subject, and <bcp14>SHOULD</bcp14> register it with every Transparency Service that holds the earlier one. The earlier Signed Statement is not withdrawn. This follows the architecture's guidance for an Issuer whose view of an Artifact changes.</t>
       <t>Registration matters here for a specific reason. A Publisher that corrects a Figure quietly, replacing the value and leaving no trace, defeats every downstream check. A Transparency Service that holds both statements, with Receipts, dates the change by a log the Publisher does not control.</t>
@@ -181,7 +182,7 @@ channel = ALPHA 4DIGIT ; where and when this copy was issued
       <section anchor="vantage">
         <name>Where a Result Was Obtained</name>
         <t>What a verifier receives from a Publisher's address can depend on where the request was made and what the client looked like. Caches can serve an earlier answer, and services in front of a Publisher can refuse some clients or alter what they serve. None of this is an attack, and none of it is visible in a result that says only "current" or "not current". Two parties checking the same reference at the same moment can then both be right and disagree.</t>
-        <t>A verification result that is recorded or passed to another party <bcp14>SHOULD</bcp14> state the time it was obtained, the address asked, where the request was made from as far as the verifier can tell, and the client used. A result obtained from the Publisher's published list by digest, rather than from a live answer, <bcp14>SHOULD</bcp14> name the version of the list it read.</t>
+        <t>A verification result that is recorded or passed to another party <bcp14>SHOULD</bcp14> state the time it was obtained, the address asked, where the request was made from as far as the verifier can tell, the client used, and, where the check was made by software, the release of that software. A result obtained from the Publisher's published list by digest, rather than from a live answer, <bcp14>SHOULD</bcp14> name the version of the list it read.</t>
       </section>
     </section>
     <section anchor="revision">
