@@ -58,6 +58,13 @@ jobs:
                   rq = urllib.request.Request("https://financeratecalc.com/" + rel, headers=({"User-Agent": ua} if ua else {}) | {"Cache-Control": "no-cache"})
                   try:
                       rr = urllib.request.urlopen(rq, timeout=30); body = rr.read(); got = hashlib.sha256(body).hexdigest()
+                      if got != want and ua is None:
+                          import difflib
+                          pub = open(rel, "rb").read().decode("utf8", "replace"); srv = body.decode("utf8", "replace")
+                          sm = difflib.SequenceMatcher(None, pub, srv, autojunk=False)
+                          row["inserted_by_edge"] = [srv[j1:j2][:500] for tag, i1, i2, j1, j2 in sm.get_opcodes() if tag in ("insert", "replace")][:4]
+                          row["removed_by_edge"] = [pub[i1:i2][:200] for tag, i1, i2, j1, j2 in sm.get_opcodes() if tag in ("delete", "replace")][:4]
+                          print("edge diff", rel, json.dumps(row["inserted_by_edge"])[:900], "| removed:", json.dumps(row["removed_by_edge"])[:300])
                       row["python_default" if ua is None else "browser_like"] = {"http": rr.status, "bytes": len(body), "same_bytes": got == want, "cf_ray_pop": (rr.headers.get("cf-ray") or "").split("-")[-1], "cf_cache": rr.headers.get("cf-cache-status")}
                   except Exception as e:
                       row["python_default" if ua is None else "browser_like"] = {"error": str(e)[:100]}
