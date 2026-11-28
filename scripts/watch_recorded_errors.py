@@ -30,7 +30,7 @@ FAMILIES = [
     {"id": "personal-prediction", "name": "Wording that predicts one application or picks a lender for a reader",
      "entries": ["2026-11-27-fits-your-file", "2026-10-31-phrasing", "2026-11-27-stories-and-prediction-pages"],
      "patterns": [r"\bfits your file\b", r"\byour odds\b", r"\bwill deny you\b", r"\byou will be approved\b",
-                  r"\bestimate your odds\b", r"\bwhich lender (?:type )?fits you\b", r"\bsee if you qualify\b",
+                  r"\bestimate your odds\b", r"\bwhich lender (?:type )?fits (?:you|your)\b", r"\bGet routed\b", r"\bsee if you qualify\b",
                   r"\bthe same (?:FHA )?application faces\b", r"\bapproval odds\b", r"\bPre-Flight Check\b",
                   r"\b(?:files|profiles) like yours\b", r"\bbest lender match\b", r"\byour (?:two|second) doors?\b"]},
     {"id": "sales", "name": "Affiliate, commission and lead-generation wording",

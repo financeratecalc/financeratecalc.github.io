@@ -1,7 +1,7 @@
 {
- "fixture_version": "1.6",
+ "fixture_version": "1.7",
  "generated": "2026-11-28",
- "purpose": "Published expectations for the live frc-mcp evidence behaviour. Each fixture names the rule, the source document, the inputs and the exact expected status, value, cell and reason codes. Deterministic; no model. Fixture 1.1 (2026-10-12) adds the rule-sentence gate on the four non-MIP rule files, including a cross-rule provenance error observed in the wild. Fixture 1.2 (2026-10-12) adds figure-role binding: a right number under the wrong role, a published percentage on the wrong tier, an assumed date, and a stated date before the rule's start. Fixture 1.3 (2026-10-12) adds per-claim condition binding (units, use, band read from the figure's own clause), every-rate checking, and a whole-result receipt scan. Fixture 1.4 (2026-10-12): claim year vs source year; two roles in one clause left unbound. Fixture 1.5 (2026-11-28) adds eight sentences about the site's own HMDA figures (national and lender denial rates): a value from a superseded universe, an aggregate stated as one applicant's chance, a scope widened to all mortgages, two lender recommendations the gate passed before v1.50, same-applicant framing and a stated cause. Fixture 1.6 (2026-11-28) adds twelve indirect forms of lender advice that the gate passed before v1.51 (modal advice, suitability, avoidance, routing, profile language, advice as a question) and two correct sentences with their limits that must still pass.",
+ "purpose": "Published expectations for the live frc-mcp evidence behaviour. Each fixture names the rule, the source document, the inputs and the exact expected status, value, cell and reason codes. Deterministic; no model. Fixture 1.1 (2026-10-12) adds the rule-sentence gate on the four non-MIP rule files, including a cross-rule provenance error observed in the wild. Fixture 1.2 (2026-10-12) adds figure-role binding: a right number under the wrong role, a published percentage on the wrong tier, an assumed date, and a stated date before the rule's start. Fixture 1.3 (2026-10-12) adds per-claim condition binding (units, use, band read from the figure's own clause), every-rate checking, and a whole-result receipt scan. Fixture 1.4 (2026-10-12): claim year vs source year; two roles in one clause left unbound. Fixture 1.5 (2026-11-28) adds eight sentences about the site's own HMDA figures (national and lender denial rates): a value from a superseded universe, an aggregate stated as one applicant's chance, a scope widened to all mortgages, two lender recommendations the gate passed before v1.50, same-applicant framing and a stated cause. Fixture 1.6 (2026-11-28) adds twelve indirect forms of lender advice that the gate passed before v1.51 (modal advice, suitability, avoidance, routing, profile language, advice as a question) and two correct sentences with their limits that must still pass. Fixture 1.7 (2026-11-28) adds twelve more indirect forms (a lender's disposition toward a kind of file, better off elsewhere, where to begin, a red flag), ten of which passed gate v1.51.",
  "fixtures": [
   {
    "rule_id": "frc:rule:hud-ml-2023-05-annual-mip",
@@ -1770,6 +1770,246 @@
    "group": "hmda_claim_sentences",
    "expected_reason_codes": [],
    "note": "a correct figure with its limit must still pass"
+  },
+  {
+   "claim_id": "frc:claim:lender-crosscountry-mortgage-2025",
+   "source_url": "https://financeratecalc.com/claims/lender-crosscountry-mortgage-2025.json",
+   "source_vintage": "CFPB/FFIEC HMDA public record 2025",
+   "tool": "check_claim_contract",
+   "id": "EV76",
+   "title": "indirect lender advice: the rational route",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:lender-crosscountry-mortgage-2025",
+    "proposed_sentence": "In 2025, CrossCountry Mortgage denied 6.2% of its decisioned FHA applications; the rational route is CrossCountry."
+   },
+   "expected_status": "block",
+   "group": "indirect_lender_advice",
+   "expected_reason_codes": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "10 of these 12 passed gate v1.51"
+  },
+  {
+   "claim_id": "frc:claim:lender-crosscountry-mortgage-2025",
+   "source_url": "https://financeratecalc.com/claims/lender-crosscountry-mortgage-2025.json",
+   "source_vintage": "CFPB/FFIEC HMDA public record 2025",
+   "tool": "check_claim_contract",
+   "id": "EV77",
+   "title": "indirect lender advice: better served by",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:lender-crosscountry-mortgage-2025",
+    "proposed_sentence": "In 2025, CrossCountry Mortgage denied 6.2% of its decisioned FHA applications; a borrower in this band may be better served by CrossCountry."
+   },
+   "expected_status": "block",
+   "group": "indirect_lender_advice",
+   "expected_reason_codes": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "10 of these 12 passed gate v1.51"
+  },
+  {
+   "claim_id": "frc:claim:lender-newrez-2025",
+   "source_url": "https://financeratecalc.com/claims/lender-newrez-2025.json",
+   "source_vintage": "CFPB/FFIEC HMDA public record 2025",
+   "tool": "check_claim_contract",
+   "id": "EV78",
+   "title": "indirect lender advice: the practical implication is to avoid",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:lender-newrez-2025",
+    "proposed_sentence": "In 2025, NewRez denied 52.8% of its decisioned FHA applications; the practical implication is to avoid it."
+   },
+   "expected_status": "block",
+   "group": "indirect_lender_advice",
+   "expected_reason_codes": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "10 of these 12 passed gate v1.51"
+  },
+  {
+   "claim_id": "frc:claim:lender-crosscountry-mortgage-2025",
+   "source_url": "https://financeratecalc.com/claims/lender-crosscountry-mortgage-2025.json",
+   "source_vintage": "CFPB/FFIEC HMDA public record 2025",
+   "tool": "check_claim_contract",
+   "id": "EV79",
+   "title": "indirect lender advice: less hostile to high-DTI files",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:lender-crosscountry-mortgage-2025",
+    "proposed_sentence": "In 2025, CrossCountry Mortgage denied 6.2% of its decisioned FHA applications; this lender is less hostile to high-DTI files."
+   },
+   "expected_status": "block",
+   "group": "indirect_lender_advice",
+   "expected_reason_codes": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "10 of these 12 passed gate v1.51"
+  },
+  {
+   "claim_id": "frc:claim:lender-crosscountry-mortgage-2025",
+   "source_url": "https://financeratecalc.com/claims/lender-crosscountry-mortgage-2025.json",
+   "source_vintage": "CFPB/FFIEC HMDA public record 2025",
+   "tool": "check_claim_contract",
+   "id": "EV80",
+   "title": "indirect lender advice: a broker would go there first",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:lender-crosscountry-mortgage-2025",
+    "proposed_sentence": "In 2025, CrossCountry Mortgage denied 6.2% of its decisioned FHA applications; an experienced broker would probably go there first."
+   },
+   "expected_status": "block",
+   "group": "indirect_lender_advice",
+   "expected_reason_codes": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "10 of these 12 passed gate v1.51"
+  },
+  {
+   "claim_id": "frc:claim:lender-newrez-2025",
+   "source_url": "https://financeratecalc.com/claims/lender-newrez-2025.json",
+   "source_vintage": "CFPB/FFIEC HMDA public record 2025",
+   "tool": "check_claim_contract",
+   "id": "EV81",
+   "title": "indirect lender advice: should look elsewhere",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:lender-newrez-2025",
+    "proposed_sentence": "In 2025, NewRez denied 52.8% of its decisioned FHA applications; borrowers should look elsewhere."
+   },
+   "expected_status": "block",
+   "group": "indirect_lender_advice",
+   "expected_reason_codes": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "10 of these 12 passed gate v1.51"
+  },
+  {
+   "claim_id": "frc:claim:lender-crosscountry-mortgage-2025",
+   "source_url": "https://financeratecalc.com/claims/lender-crosscountry-mortgage-2025.json",
+   "source_vintage": "CFPB/FFIEC HMDA public record 2025",
+   "tool": "check_claim_contract",
+   "id": "EV82",
+   "title": "indirect lender advice: the friendliest door for marginal files",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:lender-crosscountry-mortgage-2025",
+    "proposed_sentence": "In 2025, CrossCountry Mortgage denied 6.2% of its decisioned FHA applications, which makes it the friendliest door for marginal files."
+   },
+   "expected_status": "block",
+   "group": "indirect_lender_advice",
+   "expected_reason_codes": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "10 of these 12 passed gate v1.51"
+  },
+  {
+   "claim_id": "frc:claim:lender-newrez-2025",
+   "source_url": "https://financeratecalc.com/claims/lender-newrez-2025.json",
+   "source_vintage": "CFPB/FFIEC HMDA public record 2025",
+   "tool": "check_claim_contract",
+   "id": "EV83",
+   "title": "indirect lender advice: would not bother applying",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:lender-newrez-2025",
+    "proposed_sentence": "In 2025, NewRez denied 52.8% of its decisioned FHA applications; I would not bother applying there."
+   },
+   "expected_status": "block",
+   "group": "indirect_lender_advice",
+   "expected_reason_codes": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "10 of these 12 passed gate v1.51"
+  },
+  {
+   "claim_id": "frc:claim:lender-crosscountry-mortgage-2025",
+   "source_url": "https://financeratecalc.com/claims/lender-crosscountry-mortgage-2025.json",
+   "source_vintage": "CFPB/FFIEC HMDA public record 2025",
+   "tool": "check_claim_contract",
+   "id": "EV84",
+   "title": "indirect lender advice: where to begin for a borderline file",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:lender-crosscountry-mortgage-2025",
+    "proposed_sentence": "In 2025, CrossCountry Mortgage denied 6.2% of its decisioned FHA applications; if your file is borderline, CrossCountry is where to begin."
+   },
+   "expected_status": "block",
+   "group": "indirect_lender_advice",
+   "expected_reason_codes": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "10 of these 12 passed gate v1.51"
+  },
+  {
+   "claim_id": "frc:claim:lender-newrez-2025",
+   "source_url": "https://financeratecalc.com/claims/lender-newrez-2025.json",
+   "source_vintage": "CFPB/FFIEC HMDA public record 2025",
+   "tool": "check_claim_contract",
+   "id": "EV85",
+   "title": "indirect lender advice: better off elsewhere",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:lender-newrez-2025",
+    "proposed_sentence": "In 2025, NewRez denied 52.8% of its decisioned FHA applications, so applicants are better off elsewhere."
+   },
+   "expected_status": "block",
+   "group": "indirect_lender_advice",
+   "expected_reason_codes": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "10 of these 12 passed gate v1.51"
+  },
+  {
+   "claim_id": "frc:claim:lender-crosscountry-mortgage-2025",
+   "source_url": "https://financeratecalc.com/claims/lender-crosscountry-mortgage-2025.json",
+   "source_vintage": "CFPB/FFIEC HMDA public record 2025",
+   "tool": "check_claim_contract",
+   "id": "EV86",
+   "title": "indirect lender advice: more forgiving of weak files",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:lender-crosscountry-mortgage-2025",
+    "proposed_sentence": "In 2025, CrossCountry Mortgage denied 6.2% of its decisioned FHA applications; it is more forgiving of weak files."
+   },
+   "expected_status": "block",
+   "group": "indirect_lender_advice",
+   "expected_reason_codes": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "10 of these 12 passed gate v1.51"
+  },
+  {
+   "claim_id": "frc:claim:lender-newrez-2025",
+   "source_url": "https://financeratecalc.com/claims/lender-newrez-2025.json",
+   "source_vintage": "CFPB/FFIEC HMDA public record 2025",
+   "tool": "check_claim_contract",
+   "id": "EV87",
+   "title": "indirect lender advice: a red flag for anyone shopping",
+   "client": "2025",
+   "input": {
+    "gate": true,
+    "passport_id": "frc:claim:lender-newrez-2025",
+    "proposed_sentence": "In 2025, NewRez denied 52.8% of its decisioned FHA applications, a red flag for anyone shopping for an FHA loan."
+   },
+   "expected_status": "block",
+   "group": "indirect_lender_advice",
+   "expected_reason_codes": [
+    "INDIVIDUAL_PREDICTION_PROHIBITED"
+   ],
+   "note": "10 of these 12 passed gate v1.51"
   }
  ]
 }
