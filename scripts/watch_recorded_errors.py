@@ -31,7 +31,8 @@ FAMILIES = [
      "entries": ["2026-11-27-fits-your-file", "2026-10-31-phrasing", "2026-11-27-stories-and-prediction-pages"],
      "patterns": [r"\bfits your file\b", r"\byour odds\b", r"\bwill deny you\b", r"\byou will be approved\b",
                   r"\bestimate your odds\b", r"\bwhich lender (?:type )?fits you\b", r"\bsee if you qualify\b",
-                  r"\bthe same (?:FHA )?application faces\b"]},
+                  r"\bthe same (?:FHA )?application faces\b", r"\bapproval odds\b", r"\bPre-Flight Check\b",
+                  r"\b(?:files|profiles) like yours\b", r"\bbest lender match\b", r"\byour (?:two|second) doors?\b"]},
     {"id": "sales", "name": "Affiliate, commission and lead-generation wording",
      "entries": ["2026-11-16-partner-links"],
      "patterns": [r"\bmay earn a commission\b", r"\bcommission may be earned\b",
@@ -131,8 +132,12 @@ def merge(hits, prev, t):
 def page(doc):
     E = html.escape
     open_n = sum(1 for f in doc["findings"] if f["open"])
+    open_f = [f for f in doc["findings"] if f["open"]]
+    pages = {f["url"] for f in open_f}
+    fams = {f["family"] for f in open_f}
+    user_pages = {u for u in pages if u.endswith((".html", "/"))}
     head = ("Of the five error families recorded in our corrections log, none was found again in the last check." if open_n == 0
-            else f"{open_n} recorded error{'s' if open_n != 1 else ''} found again in the last check.")
+            else f"{open_n} matches of recorded wording, on {len(pages)} files, in {len(fams)} of the five families.")
     fam_rows = "".join(
         f'<tr><td><b>{E(f["name"])}</b><br><span class="s">{" · ".join(E(p) for p in f["patterns"])}</span></td>'
         f'<td>{" ".join(f"<a href=\"/corrections.html#{E(e)}\">{E(e[:10])}</a>" for e in f["entries"])}</td>'
@@ -165,10 +170,11 @@ table{{width:100%;border-collapse:collapse;font-size:15px}}td,th{{text-align:lef
 <p><b>Last check</b>{E(doc["checked_at"].replace("T", " ").replace("Z", " UTC"))}</p>
 <p><b>Scanned</b>{scanned}</p>
 <p><b>Checks</b>{len(FAMILIES)} error families, {sum(len(f["patterns"]) for f in FAMILIES)} patterns</p>
-<p><b>Found again</b>{open_n}</p>
+<p><b>Found again</b>{open_n} matches on {len(pages)} files: {len(user_pages)} pages for readers, {len(pages) - len(user_pages)} machine-readable or internal files. Many matches are one template repeated across pages.</p>
 <p><b>Not covered</b>whether any figure is right; comparison with outside sources; anything about Bitcoin or other parties&rsquo; records; errors nobody has recorded yet</p>
 </div>
 <p>This watch is limited on purpose. Each family below is wording this site has already found on its own pages, recorded in the <a href="/corrections.html">corrections log</a> and removed. Once a day every published file of the kinds listed is searched for it again. The watch only reports: it does not change any page. A finding stays on this page with the time it was first seen, and when it is fixed it stays as &ldquo;gone&rdquo; with the time it was last seen.</p>
+<p class="s">Retirement notices are skipped because they quote what they retired; a notice replaces the whole page, so skipping it cannot hide a product that is still offered on that page.</p>
 <p class="s">Not searched: {len(doc["not_scanned"]["records"])} files that record the errors in order to correct them ({E(", ".join(doc["not_scanned"]["records"]))}); {doc["not_scanned"]["retirement_notices"]:,} retirement notices, which quote what they retired; and {E(SKIP_DIRS_WHY)}.</p>
 <p class="s">Matches set aside rather than reported: {len(doc["excepted"])} (a negated sentence such as &ldquo;nobody can tell you your odds&rdquo;, a quotation, or a page that records the error by name). Each is listed with its reason in the machine-readable file.</p>
 <h2>The five families</h2>
