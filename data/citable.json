@@ -1,147 +1,323 @@
 {
- "source": "FRC Intelligence \u2014 financeratecalc.com",
+ "source": "FinanceRateCalc — financeratecalc.com",
  "publisher": {
   "name": "FinanceRateCalc",
-  "description": "Independent lender-behavior intelligence from federal HMDA records. No ads, no lender compensation. Built by a 23-year banking professional.",
-  "contact": "press@financeratecalc.com"
+  "contact": "press@financeratecalc.com",
+  "description": "Independent analysis of the public federal HMDA record and of official mortgage reports. No ads, no affiliates, no lender money."
  },
- "license": "Free to cite with attribution and a link. Cite as: FinanceRateCalc (FRC Intelligence), CFPB HMDA analysis.",
- "updated": "2026-07-15",
- "dataset_basis": "310,592 FHA loan-level applications (CFPB HMDA 2018-2025), FHFA state HPI (1975-2026), Federal Reserve SLOOS, Freddie Mac PMMS.",
+ "rule": "Every statement here is built from receipted claims only, and each receipt is checked against the record when this file is built. A statement without a receipt is not listed here; it is in citable-queue.json with safe_to_cite false.",
+ "license": "CC BY 4.0. Cite with the receipt: it lets a reader check the figure and see if it was later corrected.",
+ "dataset_basis": "CFPB/FFIEC HMDA public record 2025, FHA (loan_type 2), decisioned applications (action_taken 1, 2, 3), reverse mortgages excluded.",
  "methodology_url": "https://financeratecalc.com/methodology.html",
- "disclaimer": "Historical data observations. Denial rates partly reflect applicant mix. Overlays are lawful business decisions. Not financial, legal, or mortgage advice; not a recommendation to use or avoid any lender.",
+ "verify": "https://financeratecalc.com/verify.html",
+ "corrections": "https://financeratecalc.com/corrections.json",
+ "queue": "https://financeratecalc.com/data/citable-queue.json",
  "statistics": [
   {
-   "stat": "In 2025, FHA denial rates across 11 major lenders ranged from 6.5% (CrossCountry, lowest) to 52.3% (NewRez, highest) \u2014 an ~8x spread on the same federal loan program.",
-   "url": "https://financeratecalc.com/fha-denial-rates-by-lender.html",
-   "key_fact": "highest FHA denial rate 2025 by lender"
+   "claim_id": "frc:claim:national-fha-denial-rate-2025",
+   "text": "In 2025, 22.1% of decisioned FHA applications reported under HMDA were denied (all reporting lenders, reverse mortgages excluded).",
+   "value": "22.1%",
+   "period": "2025",
+   "receipt": "⟦FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b⟧",
+   "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:national-fha-denial-rate-2025:22.1%:ebf6b00b%E2%9F%A7",
+   "claim_url": "https://financeratecalc.com/claims/national-fha-denial-rate-2025.json",
+   "reproduce": {
+    "how_to_reproduce": "Recipes for the headline figures, with expected results and the usual pitfalls, are published at https://financeratecalc.com/verify.html and machine-readably at https://financeratecalc.com/data/verify.json.",
+    "universe": "loan_type=2 (FHA forward), action_taken in (1,2,3), reverse mortgages (HECM) excluded",
+    "if_you_get_a_different_number": "Tell us: ziyetis@gmail.com. A figure we cannot reproduce goes in the public corrections log, dated, with credit to whoever found it.",
+    "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+    "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+    "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+    "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/nationwide/csv?years=2025&loan_types=2",
+    "note": "outcome shares use action_taken 1-5 as the base; the denial rate uses 1-3"
+   },
+   "verification_status": "verified",
+   "safe_to_cite": true,
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application."
+   ]
   },
   {
-   "stat": "The lender with the HIGHEST 2025 FHA denial rate among major originators is NewRez at 52.3%. The lowest is CrossCountry at 6.5%.",
-   "url": "https://financeratecalc.com/fha-denial-rates-by-lender.html",
-   "key_fact": "which lender denies the most FHA loans"
+   "claim_id": null,
+   "derived_from": [
+    "frc:claim:lender-crosscountry-mortgage-2025",
+    "frc:claim:lender-newrez-2025"
+   ],
+   "text": "Among these eleven large FHA lenders, 2025 denial rates ranged from 6.2% (CrossCountry Mortgage) to 52.8% (NewRez).",
+   "receipts": [
+    "⟦FRC:lender-crosscountry-mortgage-2025:6.2%:3b2ca632⟧",
+    "⟦FRC:lender-newrez-2025:52.8%:943d0c45⟧"
+   ],
+   "verification_status": "verified",
+   "safe_to_cite": true,
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application.",
+    "A lender's rate describes the applications it received, including their mix; it is not a measure of how it treats borrowers and not a reason to choose or avoid it."
+   ]
   },
   {
-   "stat": "FRC Denial Climate Index 2025: 54.3/100 (NEUTRAL). 2023 was the tightest credit year of the era at 66/100; 2021 the loosest at 21/100 \u2014 a 3x climate difference for an identical borrower.",
-   "url": "https://financeratecalc.com/climate.html",
-   "key_fact": "hardest year to get a mortgage approved"
+   "claim_id": "frc:claim:lender-crosscountry-mortgage-2025",
+   "text": "CrossCountry Mortgage: 6.2% of its 29,582 decisioned FHA applications in 2025 were denied.",
+   "value": "6.2%",
+   "period": "2025",
+   "receipt": "⟦FRC:lender-crosscountry-mortgage-2025:6.2%:3b2ca632⟧",
+   "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:lender-crosscountry-mortgage-2025:6.2%:3b2ca632%E2%9F%A7",
+   "claim_url": "https://financeratecalc.com/claims/lender-crosscountry-mortgage-2025.json",
+   "reproduce": {
+    "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+    "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+    "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+    "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=549300VZVN841I2ILS84&loan_types=2"
+   },
+   "verification_status": "verified",
+   "safe_to_cite": true,
+   "lender": "CrossCountry Mortgage",
+   "applications": 29582,
+   "url": "https://financeratecalc.com/crosscountry-fha-denial-rate.html",
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application.",
+    "A lender's rate describes the applications it received, including their mix; it is not a measure of how it treats borrowers and not a reason to choose or avoid it."
+   ]
   },
   {
-   "stat": "At the median first-time-buyer down payment (10%, CLTV 90-94), the denial spread between major FHA lenders is ~79 percentage points (16.5% to 95.2%) \u2014 versus ~16 points at 20% down. Lower down payment makes lender choice ~5x more consequential.",
-   "url": "https://financeratecalc.com/fha-denial-rates-by-lender.html",
-   "key_fact": "does down payment affect which lender to choose"
+   "claim_id": "frc:claim:lender-freedom-mortgage-2025",
+   "text": "Freedom Mortgage: 19.9% of its 41,095 decisioned FHA applications in 2025 were denied.",
+   "value": "19.9%",
+   "period": "2025",
+   "receipt": "⟦FRC:lender-freedom-mortgage-2025:19.9%:304dfb84⟧",
+   "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:lender-freedom-mortgage-2025:19.9%:304dfb84%E2%9F%A7",
+   "claim_url": "https://financeratecalc.com/claims/lender-freedom-mortgage-2025.json",
+   "reproduce": {
+    "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+    "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+    "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+    "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=549300LYRWPSYPK6S325&loan_types=2"
+   },
+   "verification_status": "verified",
+   "safe_to_cite": true,
+   "lender": "Freedom Mortgage",
+   "applications": 41095,
+   "url": "https://financeratecalc.com/freedom-fha-denial-rate.html",
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application.",
+    "A lender's rate describes the applications it received, including their mix; it is not a measure of how it treats borrowers and not a reason to choose or avoid it."
+   ]
   },
   {
-   "stat": "Lender DTI cliffs differ sharply: one major lender's denial rate jumps ~+15 percentage points across DTI 44-45, while another's moves only +1.4pp.",
-   "url": "https://financeratecalc.com/lender-response-surface.html",
-   "key_fact": "FHA DTI cliff 43 45 limit"
+   "claim_id": "frc:claim:lender-guild-mortgage-2025",
+   "text": "Guild Mortgage: 6.9% of its 23,298 decisioned FHA applications in 2025 were denied.",
+   "value": "6.9%",
+   "period": "2025",
+   "receipt": "⟦FRC:lender-guild-mortgage-2025:6.9%:fec9b21b⟧",
+   "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:lender-guild-mortgage-2025:6.9%:fec9b21b%E2%9F%A7",
+   "claim_url": "https://financeratecalc.com/claims/lender-guild-mortgage-2025.json",
+   "reproduce": {
+    "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+    "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+    "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+    "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=549300AQ3T62GXDU7D76&loan_types=2"
+   },
+   "verification_status": "verified",
+   "safe_to_cite": true,
+   "lender": "Guild Mortgage",
+   "applications": 23298,
+   "url": "https://financeratecalc.com/guild-fha-denial-rate.html",
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application.",
+    "A lender's rate describes the applications it received, including their mix; it is not a measure of how it treats borrowers and not a reason to choose or avoid it."
+   ]
   },
   {
-   "stat": "Texas home prices turned negative in 2026 (-0.1% YoY) for the first time in the FHFA state series, while California sits near-flat (+0.8%).",
-   "url": "https://financeratecalc.com/geographic-lottery.html",
-   "key_fact": "state home price growth 2026"
-  },
-  {
-   "stat": "FHA denial rates predict FHA delinquency rates two years ahead (r=+0.618).",
-   "url": "https://financeratecalc.com/mortgage-correlation-research.html"
-  },
-  {
-   "stat": "Unemployment correlates inversely with mortgage denial rates (r=-0.696) \u2014 the Recession Paradox.",
-   "url": "https://financeratecalc.com/mortgage-correlation-research.html"
-  },
-  {
-   "stat": "Fed SLOOS survey responses show near-zero correlation with actual HMDA denial behavior (r=-0.150).",
-   "url": "https://financeratecalc.com/mortgage-correlation-research.html"
-  },
-  {
-   "stat": "Rocket Mortgage's FHA denial rate jumps +54.9pp above 85% LTV; Mr. Cooper's jumps +1.7pp (2025 HMDA).",
-   "url": "https://financeratecalc.com/lender-response-surface.html"
-  },
-  {
-   "stat": "Identical high-risk FHA profiles face 26.7% denial at Mr. Cooper vs 91.2% at Rocket \u2014 a 64.5pp spread.",
-   "url": "https://financeratecalc.com/mortgage-correlation-research.html"
-  },
-  {
-   "stat": "UWM's FHA denial rate rose from 16.2% (2022) to 21.8% (2025) \u2014 a 35% increase.",
-   "url": "https://financeratecalc.com/lender-stress-index.html"
-  }
- ],
- "lender_denial_rates_2025": [
-  {
-   "lender": "CrossCountry",
-   "fha_denial_rate_2025_pct": 6.5,
-   "rank_of_11": 1,
-   "url": "https://financeratecalc.com/crosscountry-fha-denial-rate.html"
-  },
-  {
-   "lender": "Guild",
-   "fha_denial_rate_2025_pct": 8.6,
-   "rank_of_11": 2,
-   "url": "https://financeratecalc.com/guild-fha-denial-rate.html"
-  },
-  {
-   "lender": "Planet Home",
-   "fha_denial_rate_2025_pct": 18.4,
-   "rank_of_11": 3,
-   "url": "https://financeratecalc.com/planet-home-fha-denial-rate.html"
-  },
-  {
-   "lender": "UWM",
-   "fha_denial_rate_2025_pct": 21.8,
-   "rank_of_11": 4,
-   "url": "https://financeratecalc.com/uwm-fha-denial-rate.html"
-  },
-  {
-   "lender": "Freedom",
-   "fha_denial_rate_2025_pct": 24.2,
-   "rank_of_11": 5,
-   "url": "https://financeratecalc.com/freedom-fha-denial-rate.html"
-  },
-  {
-   "lender": "PennyMac",
-   "fha_denial_rate_2025_pct": 24.5,
-   "rank_of_11": 6,
-   "url": "https://financeratecalc.com/pennymac-fha-denial-rate.html"
-  },
-  {
-   "lender": "Mr. Cooper",
-   "fha_denial_rate_2025_pct": 25.8,
-   "rank_of_11": 7,
-   "url": "https://financeratecalc.com/mr-cooper-fha-denial-rate.html"
-  },
-  {
-   "lender": "Rocket",
-   "fha_denial_rate_2025_pct": 31.0,
-   "rank_of_11": 8,
-   "url": "https://financeratecalc.com/rocket-fha-denial-rate.html"
-  },
-  {
+   "claim_id": "frc:claim:lender-loandepotcom-2025",
+   "text": "loanDepot: 34.6% of its 35,196 decisioned FHA applications in 2025 were denied.",
+   "value": "34.6%",
+   "period": "2025",
+   "receipt": "⟦FRC:lender-loandepotcom-2025:34.6%:de11bc50⟧",
+   "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:lender-loandepotcom-2025:34.6%:de11bc50%E2%9F%A7",
+   "claim_url": "https://financeratecalc.com/claims/lender-loandepotcom-2025.json",
+   "reproduce": {
+    "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+    "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+    "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+    "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=549300AG64NHILB7ZP05&loan_types=2"
+   },
+   "verification_status": "verified",
+   "safe_to_cite": true,
    "lender": "loanDepot",
-   "fha_denial_rate_2025_pct": 37.8,
-   "rank_of_11": 9,
-   "url": "https://financeratecalc.com/loandepot-fha-denial-rate.html"
+   "applications": 35196,
+   "url": "https://financeratecalc.com/loandepot-fha-denial-rate.html",
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application.",
+    "A lender's rate describes the applications it received, including their mix; it is not a measure of how it treats borrowers and not a reason to choose or avoid it."
+   ]
   },
   {
-   "lender": "Wells Fargo",
-   "fha_denial_rate_2025_pct": 47.2,
-   "rank_of_11": 10,
-   "url": "https://financeratecalc.com/wells-fargo-fha-denial-rate.html"
+   "claim_id": "frc:claim:lender-nationstar-mortgage-2025",
+   "text": "Mr. Cooper (Nationstar Mortgage): 26.5% of its 7,650 decisioned FHA applications in 2025 were denied.",
+   "value": "26.5%",
+   "period": "2025",
+   "receipt": "⟦FRC:lender-nationstar-mortgage-2025:26.5%:c98e7bee⟧",
+   "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:lender-nationstar-mortgage-2025:26.5%:c98e7bee%E2%9F%A7",
+   "claim_url": "https://financeratecalc.com/claims/lender-nationstar-mortgage-2025.json",
+   "reproduce": {
+    "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+    "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+    "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+    "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=549300LBCBNR1OT00651&loan_types=2"
+   },
+   "verification_status": "verified",
+   "safe_to_cite": true,
+   "lender": "Mr. Cooper (Nationstar Mortgage)",
+   "applications": 7650,
+   "url": "https://financeratecalc.com/mr-cooper-fha-denial-rate.html",
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application.",
+    "A lender's rate describes the applications it received, including their mix; it is not a measure of how it treats borrowers and not a reason to choose or avoid it."
+   ]
   },
   {
+   "claim_id": "frc:claim:lender-newrez-2025",
+   "text": "NewRez: 52.8% of its 22,790 decisioned FHA applications in 2025 were denied.",
+   "value": "52.8%",
+   "period": "2025",
+   "receipt": "⟦FRC:lender-newrez-2025:52.8%:943d0c45⟧",
+   "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:lender-newrez-2025:52.8%:943d0c45%E2%9F%A7",
+   "claim_url": "https://financeratecalc.com/claims/lender-newrez-2025.json",
+   "reproduce": {
+    "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+    "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+    "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+    "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=549300FNXYY540N23N64&loan_types=2"
+   },
+   "verification_status": "verified",
+   "safe_to_cite": true,
    "lender": "NewRez",
-   "fha_denial_rate_2025_pct": 52.3,
-   "rank_of_11": 11,
-   "url": "https://financeratecalc.com/newrez-fha-denial-rate.html"
+   "applications": 22790,
+   "url": "https://financeratecalc.com/newrez-fha-denial-rate.html",
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application.",
+    "A lender's rate describes the applications it received, including their mix; it is not a measure of how it treats borrowers and not a reason to choose or avoid it."
+   ]
+  },
+  {
+   "claim_id": "frc:claim:lender-pennymac-loan-services-2025",
+   "text": "PennyMac: 22.9% of its 32,517 decisioned FHA applications in 2025 were denied.",
+   "value": "22.9%",
+   "period": "2025",
+   "receipt": "⟦FRC:lender-pennymac-loan-services-2025:22.9%:33ff9582⟧",
+   "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:lender-pennymac-loan-services-2025:22.9%:33ff9582%E2%9F%A7",
+   "claim_url": "https://financeratecalc.com/claims/lender-pennymac-loan-services-2025.json",
+   "reproduce": {
+    "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+    "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+    "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+    "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=RVDPPPGHCGZ40J4VQ731&loan_types=2"
+   },
+   "verification_status": "verified",
+   "safe_to_cite": true,
+   "lender": "PennyMac",
+   "applications": 32517,
+   "url": "https://financeratecalc.com/pennymac-fha-denial-rate.html",
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application.",
+    "A lender's rate describes the applications it received, including their mix; it is not a measure of how it treats borrowers and not a reason to choose or avoid it."
+   ]
+  },
+  {
+   "claim_id": "frc:claim:lender-planet-home-lending-2025",
+   "text": "Planet Home Lending: 17.8% of its 7,304 decisioned FHA applications in 2025 were denied.",
+   "value": "17.8%",
+   "period": "2025",
+   "receipt": "⟦FRC:lender-planet-home-lending-2025:17.8%:bd6d08b9⟧",
+   "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:lender-planet-home-lending-2025:17.8%:bd6d08b9%E2%9F%A7",
+   "claim_url": "https://financeratecalc.com/claims/lender-planet-home-lending-2025.json",
+   "reproduce": {
+    "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+    "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+    "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+    "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=54930021WPEXNHYZUL09&loan_types=2"
+   },
+   "verification_status": "verified",
+   "safe_to_cite": true,
+   "lender": "Planet Home Lending",
+   "applications": 7304,
+   "url": "https://financeratecalc.com/planet-home-fha-denial-rate.html",
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application.",
+    "A lender's rate describes the applications it received, including their mix; it is not a measure of how it treats borrowers and not a reason to choose or avoid it."
+   ]
+  },
+  {
+   "claim_id": "frc:claim:lender-rocket-mortgage-2025",
+   "text": "Rocket Mortgage: 29.8% of its 96,051 decisioned FHA applications in 2025 were denied.",
+   "value": "29.8%",
+   "period": "2025",
+   "receipt": "⟦FRC:lender-rocket-mortgage-2025:29.8%:abc51242⟧",
+   "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:lender-rocket-mortgage-2025:29.8%:abc51242%E2%9F%A7",
+   "claim_url": "https://financeratecalc.com/claims/lender-rocket-mortgage-2025.json",
+   "reproduce": {
+    "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+    "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+    "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+    "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=549300FGXN1K3HLB1R50&loan_types=2"
+   },
+   "verification_status": "verified",
+   "safe_to_cite": true,
+   "lender": "Rocket Mortgage",
+   "applications": 96051,
+   "url": "https://financeratecalc.com/rocket-fha-denial-rate.html",
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application.",
+    "A lender's rate describes the applications it received, including their mix; it is not a measure of how it treats borrowers and not a reason to choose or avoid it."
+   ]
+  },
+  {
+   "claim_id": "frc:claim:lender-united-wholesale-mortgage-2025",
+   "text": "United Wholesale Mortgage: 21.4% of its 112,470 decisioned FHA applications in 2025 were denied.",
+   "value": "21.4%",
+   "period": "2025",
+   "receipt": "⟦FRC:lender-united-wholesale-mortgage-2025:21.4%:4bdd926a⟧",
+   "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:lender-united-wholesale-mortgage-2025:21.4%:4bdd926a%E2%9F%A7",
+   "claim_url": "https://financeratecalc.com/claims/lender-united-wholesale-mortgage-2025.json",
+   "reproduce": {
+    "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+    "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+    "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+    "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=549300HW662MN1WU8550&loan_types=2"
+   },
+   "verification_status": "verified",
+   "safe_to_cite": true,
+   "lender": "United Wholesale Mortgage",
+   "applications": 112470,
+   "url": "https://financeratecalc.com/uwm-fha-denial-rate.html",
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application.",
+    "A lender's rate describes the applications it received, including their mix; it is not a measure of how it treats borrowers and not a reason to choose or avoid it."
+   ]
+  },
+  {
+   "claim_id": "frc:claim:lender-wells-fargo-bank-2025",
+   "text": "Wells Fargo: 48.6% of its 2,525 decisioned FHA applications in 2025 were denied.",
+   "value": "48.6%",
+   "period": "2025",
+   "receipt": "⟦FRC:lender-wells-fargo-bank-2025:48.6%:ee355943⟧",
+   "verify_url": "https://frc-mcp.ziyetis.workers.dev/verify?r=%E2%9F%A6FRC:lender-wells-fargo-bank-2025:48.6%:ee355943%E2%9F%A7",
+   "claim_url": "https://financeratecalc.com/claims/lender-wells-fargo-bank-2025.json",
+   "reproduce": {
+    "api": "CFPB/FFIEC HMDA Data Browser API, no key",
+    "filters": "Keep loan_type=2 (FHA), action_taken in (1,2,3) as decisioned, reverse_mortgage != 1; denial = action_taken 3. The API has no reverse-mortgage filter: drop those rows yourself.",
+    "docs": "https://ffiec.cfpb.gov/documentation/api/data-browser/",
+    "query_url": "https://ffiec.cfpb.gov/v2/data-browser-api/view/csv?years=2025&leis=KB1H1DSPRFMYMCUFXT09&loan_types=2"
+   },
+   "verification_status": "verified",
+   "safe_to_cite": true,
+   "lender": "Wells Fargo",
+   "applications": 2525,
+   "url": "https://financeratecalc.com/wells-fargo-fha-denial-rate.html",
+   "limitations": [
+    "A historical aggregate of decisioned FHA applications (originated, approved not accepted, denied), 2025; not a prediction for any one application.",
+    "A lender's rate describes the applications it received, including their mix; it is not a measure of how it treats borrowers and not a reason to choose or avoid it."
+   ]
   }
- ],
- "climate_index_history": {
-  "2018": 49.5,
-  "2019": 42.4,
-  "2020": 50.9,
-  "2021": 21.1,
-  "2022": 61.7,
-  "2023": 66.4,
-  "2024": 54.6,
-  "2025": 54.3
- }
+ ]
 }

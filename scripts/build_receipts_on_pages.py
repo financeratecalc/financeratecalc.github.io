@@ -101,6 +101,8 @@ def main():
     # lender pages
     for f in sorted(glob.glob(os.path.join(ROOT, "*-fha-denial-rate.html"))):
         slug = os.path.basename(f)[:-len("-fha-denial-rate.html")]
+        if slug == "newrez":  # older template: receipt placed by the alias loop below
+            continue
         if not os.path.exists(os.path.join(ROOT, "api", "lender", slug + ".json")):
             rec(("no-claim", slug)); continue
         rec(patch(f, f"lender-{slug}-2025", r"<p style=\"font-size:15px;color:#fff;font-weight:700;margin-bottom:8px;\">[^<]*FHA denial rate in 2025 was [0-9.]+%\.</p>", code="l"))
@@ -109,7 +111,7 @@ def main():
              'wells-fargo':'wells-fargo-bank','us-bank-n-a':'us-bank','crosscountry':'crosscountry-mortgage','loandepot':'loandepotcom',
              'planet-home':'planet-home-lending','mr-cooper':'nationstar-mortgage','uwm':'united-wholesale-mortgage','loan-store':'the-loan-store',
              'loanunited-com':'loanunitedcom','m-t-bank':'mandt-bank','v-i-p-mortgage':'vip-mortgage','velocio-mortgage-l-l-c':'velocio-mortgage',
-             'village-capital-investment':'village-capital-and-investment'}
+             'village-capital-investment':'village-capital-and-investment','newrez':'newrez'}
     for s_, a_ in ALIAS.items():
         f = os.path.join(ROOT, f"{s_}-fha-denial-rate.html")
         if os.path.exists(f):

@@ -65,7 +65,8 @@ EXCEPT = {"terms.html": "the terms list retired products by name, as a record",
           "license.html": "a dated publication record keeps the count it had on its date (see the corrections log)",
           "ask-any-ai.html": "tells readers to watch for this wording in AI answers",
           "docket/FRC-2026-0001.md": "a dated record of AI answers observed offering this",
-          "RUNBOOK.md": "internal operations notes, kept as written; not a page for readers"}
+          "RUNBOOK.md": "internal operations notes, kept as written; not a page for readers",
+          "data/citable-queue.json": "lists withdrawn statements verbatim, each marked safe_to_cite false, so that anyone who cited one can find it"}
 # A match preceded by a negation in the same sentence, or set in quotation marks, is a statement about the wording, not the wording.
 NEG = re.compile(r"\b(?:not|no|nobody|never|cannot|can't|isn't|doesn't|does not|nor|neither|without)\b[^.!?]{0,70}$", re.I)
 QUOTE_OPEN = "\u201c\"\u2018'&ldquo;&quot;"
