@@ -38,6 +38,9 @@ E.append(ev("2027-01-01", "2027 values take effect: FHA limits, conforming limit
             "Every 2026 limit becomes a historical value. Anything that says 'the 2027 limit is $832,750' is wrong from this day. The public re-scan of stale constants runs on 2027-01-02 and is published as eval/stale-constants-scan-2027-01-02.json.", "fixed by the rule"))
 E.append(ev("2027-01-02", "Pre-registered re-scan: how much public code still carries 2026 limits", "frc:rule:fhfa-conforming-loan-limits-2026", "measurement",
             "Pre-registered 2026-10-18. The same stale-constant scan that found 29 repositories with 2025 values in October 2026 runs on this date against the 2026 values, and its result is published unedited. Prediction: at least 20 public repositories will carry a 2026 limit as current on 2027-01-02.", "pre-registered"))
+if "frc:rule:fhfa-conforming-loan-limits-2027" in rules:
+    E.append(ev("2026-11-28", "Published: 2027 conforming loan limit rule file (FHFA announced on 2026-11-24)", "frc:rule:fhfa-conforming-loan-limits-2027", "published",
+                "FHFA announced the 2027 values on 2026-11-24, the date this calendar expected. The rule file was published four days later, not the same day as planned, because nothing checked the date when it passed; a check now does (scripts/check_rule_calendar_due.py).", "recorded"))
 E = sorted(E, key=lambda e: (e["date"] or "9999", e["title"]))
 pred = "Prediction (2026-10-18): on 2027-01-02 at least 20 public GitHub repositories will present a 2026 conforming or FHA limit as the current value."
 out = {"generated": today.isoformat(), "purpose": "Every date on which a US mortgage rule constant stops being valid or its replacement is expected, from FinanceRateCalc's dated rule files. Subscribe: rule-calendar.ics. Not legal advice; expected dates are patterns of recent years, not commitments.",
@@ -46,7 +49,7 @@ out = {"generated": today.isoformat(), "purpose": "Every date on which a US mort
 json.dump(out, open(os.path.join(ROOT, "rules", "rule-calendar.json"), "w"), indent=1, ensure_ascii=False)
 
 def ics_date(d): return d.replace("-", "")
-def esc(s): return s.replace("\\", "\\\\").replace(";", "\;").replace(",", "\\,").replace("\n", "\\n")
+def esc(s): return s.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
 lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//FinanceRateCalc//US mortgage rule expiry calendar//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
          "X-WR-CALNAME:US mortgage rule expiries (FinanceRateCalc)", "X-WR-CALDESC:When FHA and conforming loan limits\\, MIP and HOEPA/QM thresholds stop being valid\\, and when replacements are expected.", "REFRESH-INTERVAL;VALUE=DURATION:P1W"]
 for e in E:
@@ -83,4 +86,5 @@ table{{width:100%;border-collapse:collapse;font-size:14px}} th,td{{border-bottom
 <p class="meta">Expected announcement dates are the pattern of recent years, not commitments by any agency. Rule tables are transcribed by FinanceRateCalc from the public sources named in each file; not legal or underwriting advice; corrections at <a href="/corrections.html">corrections.html</a>. CC BY 4.0.</p>
 </div></body></html>"""
 open(os.path.join(ROOT, "rule-calendar.html"), "w", encoding="utf-8").write(page)
+import subprocess, sys; subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "inject_site_nav.py")], check=False)  # the page is rebuilt whole; keep the site nav
 print(len(E), "events")

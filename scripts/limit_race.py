@@ -160,6 +160,7 @@ td.correct,td.not_yet_correct{{color:#5fb4a2;font-weight:700}} td.stale_2026{{co
 <p class="meta">Engines are provider APIs with their own web search (not the consumer apps); conditions are labelled in each day's file under <a href="https://github.com/financeratecalc/financeratecalc.github.io/tree/main/eval/race-2027">eval/race-2027</a>. Raw answers kept verbatim. Grading rules: <a href="https://github.com/financeratecalc/financeratecalc.github.io/blob/main/scripts/limit_race.py">scripts/limit_race.py</a>. Companion: <a href="/correction-latency.html">correction latency</a> · <a href="/rule-calendar.html">rule calendar</a> · check your own code: <a href="https://github.com/financeratecalc/financeratecalc.github.io/tree/main/rulecheck">Rule Watch</a>. CC BY 4.0.</p>
 </div></body></html>"""
     open(os.path.join(ROOT, "race-2027.html"), "w", encoding="utf-8").write(page)
+    import subprocess; subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "inject_site_nav.py")], check=False)  # keep the site nav
 
 
 if __name__ == "__main__":
