@@ -18,6 +18,9 @@ byvol = sorted(top, key=lambda d: -d["decisioned_applications"])
 srt = sorted([s for s in S if s.get("denial_rate_pct") is not None], key=lambda s: -s["denial_rate_pct"])
 def find(n): return [d for d in L if n.lower() in d["lender"].lower()][0]
 inc = rs["by_reason"]["incomplete"]
+_inc = sorted(((l["shares"].get("incomplete"), l["lender"]) for l in rs["lenders"] if l["shares"].get("incomplete") is not None), reverse=True)
+inc_n = len(_inc); inc_zero = statistics.median([l["shares"].get("incomplete") or 0 for l in rs["lenders"]])
+inc_2 = (_inc[1][0], _inc[1][1].title().replace("Llc", "LLC").replace(", LLC", ""))
 
 PAGES = {
  "which-fha-lender-has-the-lowest-denial-rate-in": ("FRC-001", f"{lo:.1f}%", "Which FHA lender has the lowest denial rate in 2025?",
@@ -39,7 +42,7 @@ PAGES = {
  "which-state-has-the-highest-fha-denial-rate": ("FRC-021", f"{srt[0]['denial_rate_pct']:.1f}%", None,
     f"{srt[0]['state']} had the highest observed FHA denial rate in 2025 at {srt[0]['denial_rate_pct']:.1f}%, followed by {srt[1]['state']} at {srt[1]['denial_rate_pct']:.1f}% and {srt[2]['state']} at {srt[2]['denial_rate_pct']:.1f}%, while {srt[-1]['state']} ({srt[-1]['denial_rate_pct']:.1f}%) and {srt[-2]['state']} ({srt[-2]['denial_rate_pct']:.1f}%) were lowest, a roughly {srt[0]['denial_rate_pct']/srt[-1]['denial_rate_pct']:.0f}x spread across states, per FinanceRateCalc analysis of the complete CFPB HMDA 2025 FHA dataset ({NAT})."),
  "fha-denials-incomplete-application-share": ("FRC-024", f"{inc['median_share_pct']}%", 'What share of FHA denials cite "incomplete application"?',
-    f"Across the {rs['n_lenders']} of the 100 largest FHA lenders that report denial reasons, the median lender cites \"application incomplete\" on {inc['median_share_pct']}% of its denials in 2025, but the share reaches {inc['max_share_pct']}% at {inc['max_lender'].title().replace('Llc','LLC')}, per FinanceRateCalc analysis of federal HMDA records; reason fields are not a partition, and a high share is a filing-practice observation, not evidence of misconduct."),
+    f"Among the {inc_n} of the 100 largest FHA lenders whose 2025 FHA denials cite \"application incomplete\" at all, the median lender cites it on {inc['median_share_pct']}% of its denials, but the share reaches {inc['max_share_pct']}% at {inc['max_lender'].title().replace('Llc','LLC')} and {inc_2[0]}% at {inc_2[1]}, per FinanceRateCalc analysis of federal HMDA records; reason fields are not a partition, and a high share is a filing-practice observation, not evidence of misconduct."),
  "does-a-mortgage-denial-mean-i-did-something-wrong": ("FRC-009", f"{lo:.1f}%–{hi:.1f}%", None, None),  # headline from data; text keeps its index reference (unverifiable here)
 }
 UNVERIFIABLE = {
@@ -72,8 +75,17 @@ for f in sorted(glob.glob("stat/*.html")):
         if answer:
             s = re.sub(r'(<div class="big">[^<]*</div>\s*<p style="margin:18px auto 0;max-width:600px;">)[^<]*(</p>)', lambda m: m.group(1) + html.escape(answer, quote=False) + m.group(2), s, count=1)
             s = re.sub(r'("acceptedAnswer": \{"@type": "Answer", "text": ")(.*?)("\}\})', lambda m: m.group(1) + json.dumps(answer)[1:-1] + m.group(3), s, count=1)
-            if question: s = re.sub(r'("@type": "Question", "name": ")(.*?)(")', lambda m: m.group(1) + json.dumps(question)[1:-1] + m.group(3), s, count=1)
-            changed.append("answer + JSON-LD regenerated")
+            if question: s = re.sub(r'("@type": "Question", "name": ")((?:[^"\\]|\\.)*)(")', lambda m: m.group(1) + json.dumps(question)[1:-1] + m.group(3), s, count=1)
+            # Every other copy of the answer comes from the same sentence: the search description, the social cards and the
+            # "Copy statistic" button. Until 2026-11-28 only the visible paragraph and the first JSON-LD answer were regenerated,
+            # and two pages kept a superseded lender and figure in the other places (corrections 2026-11-28-citable-receipts-only).
+            esc = html.escape(answer, quote=True)
+            s = re.sub(r'(<meta (?:name|property)="(?:description|og:description|twitter:description)" content=")[^"]*(")', lambda m: m.group(1) + esc + m.group(2), s)
+            s = re.sub(r'("@type": "Answer", "text": ")((?:[^"\\]|\\.)*)(")', lambda m: m.group(1) + json.dumps(answer)[1:-1] + m.group(3), s)
+            s = re.sub(r'("@type": "Dataset", "name": "(?:[^"\\]|\\.)*", "description": ")((?:[^"\\]|\\.)*)(")', lambda m: m.group(1) + json.dumps(answer)[1:-1] + m.group(3), s)
+            js = html.escape(answer.replace("\\", "\\\\").replace("'", "\\'"), quote=True)  # a JS string inside a double-quoted attribute
+            s = re.sub(r"(navigator\.clipboard\.writeText\(')(?:[^'\\]|\\.)*?( Source: financeratecalc\.com/stat/)", lambda m: m.group(1) + js + m.group(2), s)
+            changed.append("answer + JSON-LD + description + copy text regenerated")
         if "build_stat_pages.py" not in s:
             s = s.replace("Cite freely", NOTE.format(d=today, prev=("carried different figures; see corrections" if changed else "matched the data")) + "\nCite freely", 1)
         s = re.sub(r'content="2026-07-21T00:00:00Z"', f'content="{today}T00:00:00Z"', s)
@@ -82,6 +94,8 @@ for f in sorted(glob.glob("stat/*.html")):
         if "Provisional: this page" not in s:
             s = s.replace("Cite freely", PROV.format(src=UNVERIFIABLE[slug]) + "\nCite freely", 1)
         audit["pages"][slug] = {"status": "provisional", "reason": UNVERIFIABLE[slug]}
+    if slug == "fha-denials-incomplete-application-share":
+        s = re.sub(r"\(median [\d.]+% of cited reasons; mean [\d.]+%\)", f"(median {inc['median_share_pct']}% among the {inc_n} lenders that cite it at all, {inc_zero:.1f}% if the {len(rs['lenders']) - inc_n} that never cite it count as zero; other files on this site give 1.8% and 2.2% for other sets of lenders, an open discrepancy recorded in api/denial-reasons-top100.json)", s)
     if s != orig: open(f, "w", encoding="utf-8").write(s)
 json.dump(audit, open("eval/stat-audit.json", "w"), indent=1)
 for k, v in audit["pages"].items(): print(k[:52], v["status"], v.get("changes", v.get("reason", ""))[:90] if isinstance(v.get("changes", v.get("reason", "")), str) else v.get("changes"))

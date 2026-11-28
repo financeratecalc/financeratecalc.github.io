@@ -128,6 +128,69 @@ def lender_hub():
     return out
 
 
+ALIAS = {"rocket": "rocket-mortgage", "pennymac": "pennymac-loan-services", "freedom": "freedom-mortgage", "guild": "guild-mortgage",
+         "wells-fargo": "wells-fargo-bank", "us-bank-n-a": "us-bank", "crosscountry": "crosscountry-mortgage", "loandepot": "loandepotcom",
+         "planet-home": "planet-home-lending", "mr-cooper": "nationstar-mortgage", "uwm": "united-wholesale-mortgage", "loan-store": "the-loan-store",
+         "loanunited-com": "loanunitedcom", "m-t-bank": "mandt-bank", "v-i-p-mortgage": "vip-mortgage", "velocio-mortgage-l-l-c": "velocio-mortgage",
+         "village-capital-investment": "village-capital-and-investment"}
+
+
+def lender_surfaces():
+    """Every lender page with a claim document: the hero, the search description, the FAQ answers and the receipt all carry the
+    claim's value, and the receipt is on the page. Added 2026-11-28: the NewRez page had neither a receipt nor the headline
+    sentence, so lender_pages() skipped it, and its hero showed a superseded 52.3% against a receipted 52.8%."""
+    out = []
+    for f in sorted(glob.glob(os.path.join(ROOT, "*-fha-denial-rate.html"))):
+        slug = os.path.basename(f)[:-len("-fha-denial-rate.html")]
+        cid = f"lender-{ALIAS.get(slug, slug)}-2025"
+        cp = os.path.join(ROOT, "claims", cid + ".json")
+        if not os.path.exists(cp):
+            continue
+        v = json.load(open(cp, encoding="utf-8"))["display_value"]
+        h = open(f, encoding="utf-8").read()
+        spots = {}
+        md = re.search(r'<meta name="description" content="([^"]*)"', h)
+        m = re.search(r"denied ([\d.]+)%", md.group(1)) if md else None
+        if m:
+            spots["description"] = m.group(1) + "%"
+        for i, mm in enumerate(re.finditer(r"(?:FHA denial rate is|denied) ([\d.]+)% of the FHA", h)):
+            spots[f"faq{i}"] = mm.group(1) + "%"
+        b = re.search(r'<div class="big">([\d.]+%)</div>', h)
+        if b:
+            spots["hero"] = b.group(1)
+        if f"\u27e6FRC:{cid}:" not in h:
+            spots["receipt"] = "missing"
+        wrong = {k: x for k, x in spots.items() if x != v}
+        if wrong:
+            out.append((os.path.relpath(f, ROOT), v, wrong))
+    return out
+
+
+def stat_surfaces():
+    """Each statistics page states one figure in five places: the headline, the answer, the search description, the structured data
+    and the "Copy statistic" text. The headline must appear in the other four. Added 2026-11-28: two pages named a superseded
+    lender and figure in the description, the structured data and the copy text while the page showed the current one."""
+    import html as _h
+    out = []
+    for f in sorted(glob.glob(os.path.join(ROOT, "stat", "*.html"))):
+        s = open(f, encoding="utf-8").read()
+        if "Provisional: this page" in s:
+            continue
+        b = re.search(r'<div class="big"[^>]*>([^<]+)<', s)
+        if not b or not re.search(r"\d", b.group(1)) or b.group(1).startswith("FRC-"):
+            continue
+        v = b.group(1).strip()
+        md = re.search(r'<meta name="description" content="([^"]*)"', s)
+        cp = re.search(r"clipboard\.writeText\('((?:[^'\\]|\\.)*)'", s)
+        ld = " ".join(re.findall(r'<script type="application/ld\+json">(.*?)</script>', s, re.S))
+        parts = {"description": md and _h.unescape(md.group(1)), "copy": cp and _h.unescape(cp.group(1)), "structured data": ld}
+        for k, t in parts.items():
+            for x in re.split(r"[–-]", v):
+                if t is None or x not in t:
+                    out.append((os.path.relpath(f, ROOT), v, k)); break
+    return out
+
+
 def main():
     fix = "--fix" in sys.argv
     log = {"generated": datetime.date.today().isoformat(), "state_pages": [], "lender_pages": []}
@@ -157,6 +220,10 @@ def main():
         bad += 1; print(f"{rel}: {cid} {spots}")
     for rel, word, v, want, ctx in side_copies():
         bad += 1; print(f"{rel}: {word} {v}% but data says {want}% :: {ctx}")
+    for rel, v, wrong in lender_surfaces():
+        bad += 1; print(f"{rel}: claim says {v}; {wrong}")
+    for rel, v, where in stat_surfaces():
+        bad += 1; print(f"{rel}: headline {v} not in its {where}")
     if fix:
         p = os.path.join(ROOT, "eval", f"page-value-fix-{log['generated']}.json")
         json.dump(log, open(p, "w"), indent=1, ensure_ascii=False)
