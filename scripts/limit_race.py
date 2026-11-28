@@ -59,7 +59,10 @@ def grade(text, q, truth):
         if q["value_2026"] in nums and re.search(r"\b2027\b[^.]{0,80}\$?\s?" + f"{q['value_2026']:,}", text):
             return ("stale_2026", "presents the 2026 value as the 2027 limit")
         if nums and any(n != q["value_2026"] for n in nums):
-            return ("premature_number", "gives a 2027 figure before FHFA/HUD published one: " + ", ".join(f"${n:,}" for n in nums if n != q["value_2026"]))
+            # name the figure the answer attaches to 2027 (within 80 characters after the year), not every number it quotes as context
+            near = [int(x.replace(",", "")) for m in re.finditer(r"\b2027\b[^.]{0,80}", text) for x in re.findall(r"\$\s?(\d{1,3}(?:,\d{3})+)", m.group(0))]
+            shown = [n for n in near if n != q["value_2026"]] or [n for n in nums if n != q["value_2026"]]
+            return ("premature_number", "gives a 2027 figure before FHFA/HUD published one: " + ", ".join(f"${n:,}" for n in dict.fromkeys(shown)))
         if q["value_2026"] in nums:
             return ("stale_2026", "gives the 2026 value without saying 2027 is unannounced")
         return ("no_number", "no figure and no statement that it is unannounced")

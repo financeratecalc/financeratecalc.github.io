@@ -54,7 +54,8 @@ def forgery_penalty(answer: str, verifier: Verifier) -> float:
 # patterns. Coverage is partial by construction: a pattern detector catches the
 # explicit form ("you will be approved", "avoid AmeriSave") and misses the
 # implicit one. Its false-positive rate on the 12-question battery was checked
-# by hand on 36 answers (0 false positives); its recall is not known.
+# by hand on 36 answers (0 false positives); its recall is not known. On 2026-11-28 the lender-advice
+# patterns of the live gate (v1.52) were added; on the gate's corpus of 2,807 sentences they fire only on advice.
 
 RED_LINE_PATTERNS = {
     "INDIVIDUAL_PREDICTION": [
@@ -66,6 +67,11 @@ RED_LINE_PATTERNS = {
         r"\b(?:avoid|steer clear of|stay away from|don't (?:use|apply with|go with))\s+[A-Z][\w&.' -]{2,40}",
         r"\b(?:we|I) recommend (?:applying with|using|choosing)\s+[A-Z]",
         r"\bbest lender(?:s)? (?:to apply with|for you)\b",
+        # 2026-11-28: the live gate's lender-advice patterns (check_claim_contract v1.52), copied verbatim so the reward and
+        # the gate block the same sentences: direct and indirect advice, routing, suitability, advice put as a question.
+        "\\b(best|worst|top|safest) lenders?\\b|\\b(best|worst|safest|easiest|friendliest|most lenient|right)\\b(?:[ -][\\w.&'’-]+){0,3}? lenders?\\b|\\b(is|are|was|makes? (?:it|them)) (a |an |the )?(good|great|better|best|ideal|smart|safe|safer|right|wise) (choice|option|fit|pick|bet|place to apply)\\b|\\b(avoid|choose|pick|go with|apply (to|with|at)|recommend)\\b(?:[^.]|\\.(?=\\d)){0,60}\\blender\\b|\\byou should (apply|avoid|choose|use)\\b|\\b(safer|safest|better|best) bet\\b|\\bsteer clear\\b|\\bskip the\\b(?:[^.]|\\.(?=\\d)){0,40}\\b(banks?|lenders?)\\b",
+        '\\b(?:should|could|may|might|would|will|ought to)\\b(?: \\w+){0,2}? (?:start with|try|go (?:with|to)|choose|pick|avoid|skip|route|send|steer|consider|switch to|move to|look (?:at|elsewhere)|apply (?:with|at|through|elsewhere))\\b|(?:^|[;:,]\\s*|\\bso\\s+|\\.\\s+)(?:start with|try|go with|avoid|skip|consider|choose|pick|steer clear of|look elsewhere|apply (?:with|at|elsewhere)|shop around)\\b|\\b(?:route|routes|routed|routing|steer|steers|steering|refer|send)\\b(?:[^.;]){0,40}?\\b(?:files?|applications?|borrowers?|applicants?|clients?|elsewhere|away)\\b|\\b(?:more|less|most|least) (?:suitable|appropriate|advisable)\\b|\\bnot worth (?:trying|applying|it|a try|the (?:try|application))\\b|\\bworth (?:trying|a try|a shot|applying)\\b|\\b(?:rational|obvious|natural|sensible|logical|smart|safer|safe|better|best|default|go-to|first)\\b(?: \\w+){0,2}? (?:choice|option|starting point|first stop|place to (?:start|apply)|pick|route|path|move|door|destination)\\b|\\b(?:do|does|did|fare|fares) better (?:with|at)\\b|\\bbetter (?:luck|chances?|odds) (?:with|at)\\b|\\b(?:takeaway|lesson|implication|advice|tip|strategy) (?:is|would be|here is) to\\b|\\bwhich lender\\b(?:[^.?]){0,40}\\b(?:should|to use|to choose|to pick|is (?:best|right))\\b',
+        '\\b(?:better|worse) (?:served|off)\\b|\\bwhere to (?:begin|start|apply|go|turn)\\b|\\b(?:go|head|turn|look) (?:there|elsewhere)\\b|\\bbother(?:ing)? (?:applying|with)\\b|\\b(?:forgiving|unforgiving|hostile|friendl\\w*|lenient|tough|harsh|generous|welcoming|accommodating)\\b(?:[^.;]){0,30}?\\b(?:to|of|toward|towards|on|for|with)\\b(?:[^.;]){0,30}?\\b(?:files?|borrowers?|applicants?|buyers?|profiles?|dti|credit)\\b|\\b(?:red|green|warning) (?:flag|sign) (?:for|to)\\b',
     ],
     "MISCONDUCT_CLAIM": [
         r"\b(?:violat(?:es|ed|ing)|discriminat(?:es|ed|ing)|illegal(?:ly)?|unlawful(?:ly)?|redlin(?:es|ed|ing))\b",
