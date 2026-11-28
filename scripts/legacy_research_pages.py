@@ -111,6 +111,8 @@ SUB = [
     (re.compile(r'(<a [^>]*href="/evidence-navigator\.html"[^>]*>)Get a file analysis — free →</a>'), r"\1Evidence Navigator →</a>"),
     (re.compile(r'(<a [^>]*href="/evidence-navigator\.html"[^>]*>)Analyze a file →</a>'), r"\1Evidence Navigator →</a>"),
     (re.compile(r'(<a [^>]*href="/evidence-navigator\.html"[^>]*>)⚡ Analyze a file</a>'), r"\1Evidence Navigator</a>"),
+    (re.compile(r'(<a [^>]*href="/evidence-navigator\.html"[^>]*>)Route my file(?: — free)? →</a>'), r"\1Evidence Navigator →</a>"),
+    (re.compile(r'(<a [^>]*href="/evidence-navigator\.html"[^>]*>)⚡ Route my file</a>'), r"\1Evidence Navigator</a>"),
     # search index and dictionary
     (re.compile(r'\{"t": "The Black Hole Report 2025", "u": "/black-hole-report\.html"[^}]*\},\s*'), ""),
     (re.compile(r'\{"t": "Shock Beta", "u": "/shock-beta\.html"[^}]*\},\s*'), ""),

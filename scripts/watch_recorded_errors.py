@@ -40,7 +40,7 @@ FAMILIES = [
     {"id": "retired-products", "name": "Products and research pages already withdrawn",
      "entries": ["2026-10-20-fresh-eyes", "2026-11-28-legacy-research-pages"],
      "patterns": [r"\bTalk to Zai\b", r"\bAsk Zai\b", r"\bZai Pro\b", r"\bPro \$49/mo\b", r"\bVerdict Case File\b",
-                  r'href="/frc-banker-ai\.html"', r"\bAnalyze a file\b", r"\bGet a file analysis\b",
+                  r'href="/frc-banker-ai\.html"', r"\bAnalyze a file\b", r"\bGet a file analysis\b", r"\bRoute my file\b",
                   r"\bBlack Hole Report\b", r"\bShock Beta\b"]},
     {"id": "old-figures", "name": "Figures and rules already corrected",
      "entries": ["2026-11-15-credit-score-minimums", "2026-11-27-fits-your-file"],
