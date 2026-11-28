@@ -60,6 +60,8 @@ jobs:
         run: node scripts/check_rule_du_score.mjs
       - name: No sponsored, partner or affiliate link, no commission line, no lender-routing link anywhere on the site
         run: python3 scripts/remove_affiliate.py --check
+      - name: Retired legacy research pages stay retired, and their scores and report boxes stay off other pages
+        run: python3 scripts/legacy_research_pages.py --check
       - name: Figure Radar (subscribe, silent first run, one signed empty push per event, cleanup), through the server code run locally
         run: node scripts/check_radar.mjs
       - name: Witness (drawn here, answered once, signed, chained; free allowance then credits), through the server code run locally

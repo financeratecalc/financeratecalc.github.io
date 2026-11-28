@@ -37,10 +37,11 @@ FAMILIES = [
      "entries": ["2026-11-16-partner-links"],
      "patterns": [r"\bmay earn a commission\b", r"\bcommission may be earned\b",
                   r'rel="[^"]*\bsponsored\b', r"(?<!no )(?<!not )\baffiliate links? (?:help|support|on this page)\b"]},
-    {"id": "retired-products", "name": "Products withdrawn in September 2026",
-     "entries": ["2026-10-20-fresh-eyes"],
+    {"id": "retired-products", "name": "Products and research pages already withdrawn",
+     "entries": ["2026-10-20-fresh-eyes", "2026-11-28-legacy-research-pages"],
      "patterns": [r"\bTalk to Zai\b", r"\bAsk Zai\b", r"\bZai Pro\b", r"\bPro \$49/mo\b", r"\bVerdict Case File\b",
-                  r'href="/frc-banker-ai\.html"']},
+                  r'href="/frc-banker-ai\.html"', r"\bAnalyze a file\b", r"\bGet a file analysis\b",
+                  r"\bBlack Hole Report\b", r"\bShock Beta\b"]},
     {"id": "old-figures", "name": "Figures and rules already corrected",
      "entries": ["2026-11-15-credit-score-minimums", "2026-11-27-fits-your-file"],
      "patterns": [r"\b320 (?:metros|metro areas|metropolitan areas|MSAs)\b", r"\bminimum 620 for FHA\b",
@@ -139,8 +140,10 @@ def page(doc):
     pages = {f["url"] for f in open_f}
     fams = {f["family"] for f in open_f}
     user_pages = {u for u in pages if u.endswith((".html", "/"))}
-    head = ("Of the five error families recorded in our corrections log, none was found again in the last check." if open_n == 0
-            else f"{open_n} matches of recorded wording, on {len(pages)} files, in {len(fams)} of the five families.")
+    head = ("0 active matches for the five error families this watch defines." if open_n == 0
+            else f"{open_n} active matches for the five error families this watch defines, on {len(pages)} files, in {len(fams)} of them.")
+    scope = ("This is all the watch says. It does not show that the site is correct or verified: it only searches again for wording "
+             "already recorded as an error.")
     fam_rows = "".join(
         f'<tr><td><b>{E(f["name"])}</b><br><span class="s">{" · ".join(E(p) for p in f["patterns"])}</span></td>'
         f'<td>{" ".join(f"<a href=\"/corrections.html#{E(e)}\">{E(e[:10])}</a>" for e in f["entries"])}</td>'
@@ -169,6 +172,7 @@ table{{width:100%;border-collapse:collapse;font-size:15px}}td,th{{text-align:lef
 <body><div class="wrap">
 <p class="k"><a href="/">FinanceRateCalc</a> · recorded errors watch</p>
 <h1>{E(head)}</h1>
+<p><b>{E(scope)}</b></p>
 <div class="box">
 <p><b>Last check</b>{E(doc["checked_at"].replace("T", " ").replace("Z", " UTC"))}</p>
 <p><b>Scanned</b>{scanned}</p>
