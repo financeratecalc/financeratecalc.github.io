@@ -1,6 +1,6 @@
 # Mortgage evidence repair pack — does your app make these six mistakes?
 
-Six questions a mortgage calculator or assistant tends to answer with a number that exists in the official table but is bound to the wrong role, tier, year or condition, or produced when a condition is missing. The pack tests **your** app, not FinanceRateCalc. The grader is FinanceRateCalc's deterministic sentence gate (`check_claim_contract`): no model judges the output, and the gate's own behaviour is published and tested on every deploy ([conformance](https://financeratecalc.com/conformance.html), 53 fixtures).
+Six questions a mortgage calculator or assistant tends to answer with a number that exists in the official table but is bound to the wrong role, tier, year or condition, or produced when a condition is missing. The pack tests **your** app, not FinanceRateCalc. The grader is FinanceRateCalc's deterministic sentence gate (`check_claim_contract`): no model judges the output, and the gate's own behaviour is published and tested on every deploy ([conformance](https://financeratecalc.com/conformance.html), 61 fixtures).
 
 This is what a failing run looks like (an app that gets five of six "almost right"):
 
