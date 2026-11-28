@@ -1,13 +1,13 @@
 {
  "suite": "frc-mcp-evidence-conformance",
  "suite_version": "1.4",
- "fixture_version": "1.4",
+ "fixture_version": "1.5",
  "endpoint": "https://frc-mcp.ziyetis.workers.dev",
  "server_version": "1.57.0",
  "protocol_version": "2026-07-28 (fixtures marked client=2025 use the 2025 path)",
- "generated_at": "2026-11-26T21:18:49.883Z",
- "tests": 53,
- "passed": 53,
+ "generated_at": "2026-11-28T06:21:03.616Z",
+ "tests": 61,
+ "passed": 61,
  "status": "evidence_fixture_pass",
  "groups": {
   "evidence_conformance": {
@@ -41,6 +41,10 @@
   "figure_role_binding": {
    "tests": 20,
    "passed": 20
+  },
+  "hmda_claim_sentences": {
+   "tests": 8,
+   "passed": 8
   }
  },
  "independent_reproduction_status": "not_independently_reproduced",
@@ -880,7 +884,126 @@
     "receipt": true
    },
    "pass": true
+  },
+  {
+   "id": "EV54",
+   "title": "figure stated as the claim's safe wording",
+   "group": "hmda_claim_sentences",
+   "client": "2025",
+   "expected_status": "pass",
+   "observed": {
+    "verdict": "pass",
+    "codes": [],
+    "receipt": false
+   },
+   "pass": true
+  },
+  {
+   "id": "EV55",
+   "title": "value from a superseded universe",
+   "group": "hmda_claim_sentences",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "VALUE_MISMATCH"
+    ],
+    "receipt": false
+   },
+   "pass": true
+  },
+  {
+   "id": "EV56",
+   "title": "national rate stated as one applicant's chance",
+   "group": "hmda_claim_sentences",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "INDIVIDUAL_PREDICTION_PROHIBITED"
+    ],
+    "receipt": false
+   },
+   "pass": true
+  },
+  {
+   "id": "EV57",
+   "title": "FHA rate widened to all mortgages",
+   "group": "hmda_claim_sentences",
+   "client": "2025",
+   "expected_status": "needs_qualifier",
+   "observed": {
+    "verdict": "needs_qualifier",
+    "codes": [
+     "SCOPE_TOO_BROAD",
+     "QUALIFIER_DELETED"
+    ],
+    "receipt": false
+   },
+   "pass": true
+  },
+  {
+   "id": "EV58",
+   "title": "lender recommendation with a qualifier between adjective and noun",
+   "group": "hmda_claim_sentences",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "INDIVIDUAL_PREDICTION_PROHIBITED"
+    ],
+    "receipt": false
+   },
+   "pass": true
+  },
+  {
+   "id": "EV59",
+   "title": "lender recommendation as 'a good choice'",
+   "group": "hmda_claim_sentences",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "INDIVIDUAL_PREDICTION_PROHIBITED"
+    ],
+    "receipt": false
+   },
+   "pass": true
+  },
+  {
+   "id": "EV60",
+   "title": "two applicant pools presented as one borrower",
+   "group": "hmda_claim_sentences",
+   "client": "2025",
+   "expected_status": "block",
+   "observed": {
+    "verdict": "block",
+    "codes": [
+     "SAME_APPLICANT_FRAMING"
+    ],
+    "receipt": false
+   },
+   "pass": true
+  },
+  {
+   "id": "EV61",
+   "title": "cause stated for a lender's rate",
+   "group": "hmda_claim_sentences",
+   "client": "2025",
+   "expected_status": "needs_qualifier",
+   "observed": {
+    "verdict": "needs_qualifier",
+    "codes": [
+     "CAUSALITY_NOT_ESTABLISHED"
+    ],
+    "receipt": false
+   },
+   "pass": true
   }
  ],
- "report_sha256": "49bd890cc4fd63bbe6a610b2d815cbdbcce8bb618907729d5474d99c9a8414ce"
+ "report_sha256": "1811286f6760bf85561ba0d86841d23be70f5227c86b144208793051f6c3eeb3"
 }
