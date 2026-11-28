@@ -30,7 +30,7 @@ FAMILIES = [
     {"id": "personal-prediction", "name": "Wording that predicts one application or picks a lender for a reader",
      "entries": ["2026-11-27-fits-your-file", "2026-10-31-phrasing", "2026-11-27-stories-and-prediction-pages"],
      "patterns": [r"\bfits your file\b", r"\byour odds\b", r"\bwill deny you\b", r"\byou will be approved\b",
-                  r"\bestimate your odds\b", r"\bwhich lender (?:type )?fits (?:you|your)\b", r"\bGet routed\b", r"\bsee if you qualify\b",
+                  r"\bestimate your odds\b", r"\bwhich lender (?:type )?fits (?:you|your)\b", r"\bGet routed\b", r"\bwho will say yes\b", r"\bhighest historical fit\b", r"\bsee if you qualify\b",
                   r"\bthe same (?:FHA )?application faces\b", r"\bapproval odds\b", r"\bPre-Flight Check\b",
                   r"\b(?:files|profiles) like yours\b", r"\bbest lender match\b", r"\byour (?:two|second) doors?\b"]},
     {"id": "sales", "name": "Affiliate, commission and lead-generation wording",
@@ -38,9 +38,9 @@ FAMILIES = [
      "patterns": [r"\bmay earn a commission\b", r"\bcommission may be earned\b",
                   r'rel="[^"]*\bsponsored\b', r"(?<!no )(?<!not )\baffiliate links? (?:help|support|on this page)\b"]},
     {"id": "retired-products", "name": "Products and research pages already withdrawn",
-     "entries": ["2026-10-20-fresh-eyes", "2026-11-28-legacy-research-pages"],
+     "entries": ["2026-10-20-fresh-eyes", "2026-11-28-legacy-research-pages", "2026-11-28-ofi-family"],
      "patterns": [r"\bTalk to Zai\b", r"\bAsk Zai\b", r"\bZai Pro\b", r"\bPro \$49/mo\b", r"\bVerdict Case File\b",
-                  r'href="/frc-banker-ai\.html"', r"\bAnalyze a file\b", r"\bGet a file analysis\b", r"\bRoute my file\b",
+                  r'href="/frc-banker-ai\.html"', r"\bAnalyze a file\b", r"\bGet a file analysis\b", r"\bRoute my file\b", r"\bOverlay Friction Index\b", r"\bOFI (?:Insight|Analysis)\b",
                   r"\bBlack Hole Report\b", r"\bShock Beta\b"]},
     {"id": "old-figures", "name": "Figures and rules already corrected",
      "entries": ["2026-11-15-credit-score-minimums", "2026-11-27-fits-your-file"],
@@ -94,7 +94,7 @@ def scan():
                 text = open(os.path.join(d, fn), encoding="utf-8", errors="replace").read()
             except OSError:
                 continue
-            if ext == ".html" and RETIRED.search(text):
+            if (ext == ".html" and RETIRED.search(text)) or (ext == ".json" and re.match(r'\s*\{\s*"retired":', text)):
                 skipped_retired += 1; continue
             counts[ext] += 1
             for fam, r in rx:
